@@ -30,6 +30,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:OME="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
 	xmlns:AML="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd"
+	xmlns:CLI="http://www.openmicroscopy.org/XMLschemas/CLI/RC1/CLI.xsd"
+	xmlns:MLI="http://www.openmicroscopy.org/XMLschemas/MLI/IR2/MLI.xsd"
 	xmlns:STD="http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"
 	xmlns:Bin="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"
 	xmlns:CA="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"
@@ -44,6 +46,8 @@
 	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2008-09</xsl:variable>
 	<xsl:variable name="newSTDNS">http://www.openmicroscopy.org/Schemas/STD/2008-09</xsl:variable>
 	<xsl:variable name="newAMLNS">http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09</xsl:variable>
+	<xsl:variable name="newMLINS">http://www.openmicroscopy.org/Schemas/MLI/2008-09</xsl:variable>
+	<xsl:variable name="newCLINS">http://www.openmicroscopy.org/Schemas/CLI/2008-09</xsl:variable>
 
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
@@ -131,6 +135,9 @@
 			<map from="Rhodamine-6G" to="Rhodamine6G"/>
 			<map from="Coumarin-C30" to="CoumarinC30"/>
 			<map from="e-" to="EMinus"/>
+		</mapping>
+		<mapping name="FormalOutputIBelongTo">
+			<map from="[Feature]" to="[Region]"/>
 		</mapping>
 	</xsl:variable>
 
@@ -785,16 +792,6 @@
 					<xsl:value-of select="."/>
 				</xsl:for-each>
 		</xsl:variable>
-		<xsl:variable name="Z0">
-				<xsl:for-each select="@* [name() = 'Z0']">
-					<xsl:value-of select="."/>
-				</xsl:for-each>
-		</xsl:variable>
-		<xsl:variable name="T0">
-				<xsl:for-each select="@* [name() = 'T0']">
-					<xsl:value-of select="."/>
-				</xsl:for-each>
-		</xsl:variable>
 		<xsl:variable name="X1">
 				<xsl:for-each select="@* [name() = 'X1']">
 					<xsl:value-of select="."/>
@@ -802,6 +799,56 @@
 		</xsl:variable>
 		<xsl:variable name="Y1">
 				<xsl:for-each select="@* [name() = 'Y1']">
+					<xsl:value-of select="."/>
+				</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="startX">
+			<xsl:choose>
+				<xsl:when test="$X1 > $X0">
+					<xsl:value-of select="$X0"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$X1"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="width">
+			<xsl:choose>
+				<xsl:when test="$X1 > $X0">
+					<xsl:number value="$X1 - $X0"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:number value="$X0 - $X1"/>
+				</xsl:otherwise>
+			</xsl:choose>		
+		</xsl:variable>
+		<xsl:variable name="startY">
+			<xsl:choose>
+				<xsl:when test="$Y1 > $Y0">
+					<xsl:value-of select="$Y0"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$Y1"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="height">
+			<xsl:choose>
+				<xsl:when test="$Y1 > $Y0">
+					<xsl:number value="$Y1 - $Y0"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:number value="$Y0 - $Y1"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="Z0">
+				<xsl:for-each select="@* [name() = 'Z0']">
+					<xsl:value-of select="."/>
+				</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="T0">
+				<xsl:for-each select="@* [name() = 'T0']">
 					<xsl:value-of select="."/>
 				</xsl:for-each>
 		</xsl:variable>
@@ -815,21 +862,41 @@
 					<xsl:value-of select="."/>
 				</xsl:for-each>
 		</xsl:variable>
+		<xsl:variable name="theMaxT">
+			<xsl:if test="$T1 > $T0">
+				<xsl:value-of select="$T1"/>
+			</xsl:if>
+		</xsl:variable>
+		<xsl:variable name="theMaxZ">
+			<xsl:if test="$Z1 > $Z0">
+				<xsl:value-of select="$Z1"/>
+			</xsl:if>
+		</xsl:variable>
+		<xsl:variable name="theMinT">
+			<xsl:if test="$T1 > $T0">
+				<xsl:value-of select="$T0"/>
+			</xsl:if>
+		</xsl:variable>
+		<xsl:variable name="theMinZ">
+			<xsl:if test="$Z1 > $Z0">
+				<xsl:value-of select="$Z0"/>
+			</xsl:if>
+		</xsl:variable>
 		<xsl:element name="ROI" namespace="{$newOMENS}">
 			<xsl:variable name="shapeEndID"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
 			<xsl:attribute name="ID">ROI:<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
 			<xsl:element name="Union" namespace="{$newOMENS}">
 				
 				<xsl:call-template name="ByTZROI">
-					<xsl:with-param name="theTEnd"><xsl:value-of select="$T1"/></xsl:with-param>
-					<xsl:with-param name="theZEnd"><xsl:value-of select="$Z1"/></xsl:with-param>
+					<xsl:with-param name="theTEnd"><xsl:value-of select="$theMaxT"/></xsl:with-param>
+					<xsl:with-param name="theZEnd"><xsl:value-of select="$theMaxZ"/></xsl:with-param>
 					<xsl:with-param name="parentID"><xsl:value-of select="$parentID"/></xsl:with-param>
-					<xsl:with-param name="theZ"><xsl:value-of select="$Z0"/></xsl:with-param>
-					<xsl:with-param name="theT"><xsl:value-of select="$T0"/></xsl:with-param>
-					<xsl:with-param name="x"><xsl:value-of select="$X0"/></xsl:with-param>
-					<xsl:with-param name="y"><xsl:value-of select="$Y0"/></xsl:with-param>
-					<xsl:with-param name="width"><xsl:value-of select="$X1"/></xsl:with-param>
-					<xsl:with-param name="height"><xsl:value-of select="$Y1"/></xsl:with-param>
+					<xsl:with-param name="theZ"><xsl:value-of select="$theMinZ"/></xsl:with-param>
+					<xsl:with-param name="theT"><xsl:value-of select="$theMinT"/></xsl:with-param>
+					<xsl:with-param name="x"><xsl:value-of select="$startX"/></xsl:with-param>
+					<xsl:with-param name="y"><xsl:value-of select="$startY"/></xsl:with-param>
+					<xsl:with-param name="width"><xsl:value-of select="$width"/></xsl:with-param>
+					<xsl:with-param name="height"><xsl:value-of select="$height"/></xsl:with-param>
 				</xsl:call-template>
 			</xsl:element>
 		</xsl:element>
@@ -844,7 +911,7 @@
 		<xsl:param name="y"/>
 		<xsl:param name="width"/>
 		<xsl:param name="height"/>
-		<xsl:if test="not($theZ = $theZEnd)">
+		<xsl:if test="not($theZ > $theZEnd)">
 			<xsl:element name="Shape" namespace="{$newOMENS}">
 				<xsl:attribute name="ID">Shape:Z<xsl:value-of select="$theZ"/>:T<xsl:value-of select="$theT"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
 				<xsl:attribute name="theZ"><xsl:value-of select="$theZ"/></xsl:attribute>
@@ -879,7 +946,7 @@
 		<xsl:param name="y"/>
 		<xsl:param name="width"/>
 		<xsl:param name="height"/>
-		<xsl:if test="not($theT = $theTEnd)">
+		<xsl:if test="not($theT > $theTEnd)">
 			<xsl:call-template name="ByTZROI">
 				<xsl:with-param name="theTEnd"><xsl:value-of select="$theTEnd"/></xsl:with-param>
 				<xsl:with-param name="theZEnd"><xsl:value-of select="$theZEnd"/></xsl:with-param>
@@ -956,6 +1023,94 @@
 		</xsl:element>
 	</xsl:template>
 
+	
+	<!-- 
+	Move all AML:Description Elements the OME namespace
+	-->
+	<xsl:template match="AML:Description">
+		<xsl:element name="Description" namespace="{$newOMENS}">
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	In AML:AnalysisModule rename FeatureIterator to RegionIterator, NewFeatureName to NewRegionName
+	-->
+	<xsl:template match="AML:AnalysisModule">
+		<xsl:element name="AnalysisModule" namespace="{$newAMLNS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='FeatureIterator'">
+						<xsl:attribute name="RegionIterator">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='NewFeatureName'">
+						<xsl:attribute name="NewRegionName">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	In CLI:ExecutionInstructions rename MakesNewFeature to MakesNewRegion
+	-->
+	<xsl:template match="CLI:ExecutionInstructions">
+		<xsl:element name="ExecutionInstructions" namespace="{$newCLINS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='MakesNewFeature'">
+						<xsl:attribute name="MakesNewRegion">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	In AML:FormalOutput update enum IBelongTo
+	-->
+	<xsl:template match="AML:FormalOutput">
+		<xsl:element name="FormalOutput" namespace="{$newAMLNS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='IBelongTo'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName" select="'FormalOutputIBelongTo'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
 
 	<!-- Rewriting all namespaces -->
 
@@ -965,6 +1120,7 @@
 			xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09"
 			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
 			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
+			xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd">
 			<xsl:apply-templates/>
@@ -997,6 +1153,18 @@
 
 	<xsl:template match="AML:*">
 		<xsl:element name="{name()}" namespace="{$newAMLNS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="CLI:*">
+		<xsl:element name="{name()}" namespace="{$newCLINS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="MLI:*">
+		<xsl:element name="{name()}" namespace="{$newMLINS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>

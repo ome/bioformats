@@ -31,6 +31,8 @@
   xmlns:xsl = "http://www.w3.org/1999/XSL/Transform"
   xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-09"
   xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09"
+  xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2008-09"
+  xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2008-09"
   xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09"
   xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
   xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09"
@@ -50,6 +52,8 @@
  <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2009-09</xsl:variable>
  <xsl:variable name="newSTDNS">http://www.openmicroscopy.org/Schemas/STD/2009-09</xsl:variable>
  <xsl:variable name="newAMLNS">http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09</xsl:variable>
+ <xsl:variable name="newMLINS">http://www.openmicroscopy.org/Schemas/MLI/2009-09</xsl:variable>
+ <xsl:variable name="newCLINS">http://www.openmicroscopy.org/Schemas/CLI/2009-09</xsl:variable>
  
   <xsl:output method="xml" indent="yes"/>
   <xsl:preserve-space elements="*"/>
@@ -150,6 +154,18 @@
 
   <xsl:template match="AML:*">
   	<xsl:element name="{name()}" namespace="{$newAMLNS}">
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="MLI:*">
+  	<xsl:element name="{name()}" namespace="{$newMLINS}">
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="CLI:*">
+  	<xsl:element name="{name()}" namespace="{$newCLINS}">
       <xsl:apply-templates select="@*|node()"/>
     </xsl:element>
   </xsl:template>
@@ -399,6 +415,18 @@ Rename attribute OMEName into UserName
 	This template is for BinData inside BinaryFile inside OTF
 	-->
 	<xsl:template match="OME:OTF/Bin:BinaryFile/Bin:BinData">
+		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:attribute name="BigEndian">false</xsl:attribute>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- 
+	In Bin:BinData add BigEndian attribute.
+	This template is for BinData inside BinaryFile inside AML:InstallationFile
+	-->
+	<xsl:template match="AML:InstallationFile/Bin:BinaryFile/Bin:BinData">
 		<xsl:element name="Bin:BinData" namespace="{$newBINNS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:attribute name="BigEndian">false</xsl:attribute>
@@ -1208,6 +1236,36 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
     <xsl:choose>
       <xsl:when test="local-name(..) = 'Screen'">
         <xsl:element name="Description" namespace="{$newSPWNS}">
+          <xsl:apply-templates select="node()"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="local-name(..) = 'AnalysisModule'">
+        <xsl:element name="Description" namespace="{$newAMLNS}">
+          <xsl:apply-templates select="node()"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="local-name(..) = 'Entry'">
+        <xsl:element name="Description" namespace="{$newAMLNS}">
+          <xsl:apply-templates select="node()"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="local-name(..) = 'FormalInput'">
+        <xsl:element name="Description" namespace="{$newAMLNS}">
+          <xsl:apply-templates select="node()"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="local-name(..) = 'FormalOutput'">
+        <xsl:element name="Description" namespace="{$newAMLNS}">
+          <xsl:apply-templates select="node()"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="local-name(..) = 'LookupTable'">
+        <xsl:element name="Description" namespace="{$newAMLNS}">
+          <xsl:apply-templates select="node()"/>
+        </xsl:element>
+      </xsl:when>
+      <xsl:when test="local-name(..) = 'Category'">
+        <xsl:element name="Description" namespace="{$newAMLNS}">
           <xsl:apply-templates select="node()"/>
         </xsl:element>
       </xsl:when>
