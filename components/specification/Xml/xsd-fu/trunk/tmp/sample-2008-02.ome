@@ -127,7 +127,7 @@
 				 isOn="false"/>
 			<Projection ZStart="0" ZStop="0"/>
 			<Time TStart="0" TStop="0"/>
-			<ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="urn:lsid:-.-:ROI:1"/>
+			<ROI X0="0" Y0="0" Z0="0" T0="0" X1="1" Y1="1" Z1="2" T1="2" ID="urn:lsid:-.-:ROI:1"/>
 		</DisplayOptions>
 		<StageLabel Name="Name17" X="3.14159E0" Y="3.14159E0" Z="3.14159E0"/>
 		<Pixels ID="urn:lsid:-.-:Pixels:1" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
@@ -212,7 +212,7 @@
 		</Region>
 		<CA:CustomAttributes>
 		</CA:CustomAttributes>
-		<ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="urn:lsid:-.-:ROI:1"/>
+		<ROI X0="0" Y0="0" Z0="0" T0="0" X1="1" Y1="1" Z1="2" T1="2" ID="urn:lsid:-.-:ROI:2"/>
 		<MicrobeamManipulation ID="urn:lsid:-.-:MicrobeamManipulation:1" Type="FRAP">
 			<ROIRef ID="urn:lsid:-.-:ROI:4"/>
 			<ExperimenterRef ID="urn:lsid:-.-:Experimenter:1"/>
