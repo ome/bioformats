@@ -34,4 +34,17 @@ import java.util.ArrayList;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class IniList extends ArrayList<IniTable> { }
+public class IniList extends ArrayList<IniTable> {
+
+  // -- IniList methods --
+
+  /** Gets the table with the given name (header). */
+  public IniTable getTable(String tableName) {
+    for (IniTable table : this) {
+      String header = table.get(IniTable.HEADER_KEY);
+      if (tableName.equals(header)) return table;
+    }
+    return null;
+  }
+
+}

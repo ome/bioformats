@@ -64,6 +64,7 @@ public class IniParser {
   {
     IniList list = new IniList();
     IniTable attrs = null;
+    String chapter = null;
     int no = 1;
     StringBuffer sb = new StringBuffer();
     while (true) {
@@ -77,8 +78,17 @@ public class IniParser {
         continue;
       }
 
+      // check for chapter header
+      if (line.startsWith("{")) {
+        // strip curly braces
+        int end = line.length();
+        if (line.endsWith("}")) end--;
+        chapter = line.substring(1, end);
+        continue;
+      }
+
+      // check for section header
       if (line.startsWith("[")) {
-        // section header
         attrs = new IniTable();
         list.add(attrs);
 
@@ -86,6 +96,7 @@ public class IniParser {
         int end = line.length();
         if (line.endsWith("]")) end--;
         String header = line.substring(1, end);
+        if (chapter != null) header = chapter + ": " + header;
 
         attrs.put(IniTable.HEADER_KEY, header);
         no += num;
