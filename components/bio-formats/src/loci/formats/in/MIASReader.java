@@ -31,6 +31,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -591,16 +592,13 @@ public class MIASReader extends FormatReader {
     wellColumns = 1;
 
     if (resultFile != null) {
-      RandomAccessInputStream s = new RandomAccessInputStream(resultFile);
-
       String[] cols = null;
       Vector<String> rows = new Vector<String>();
 
       boolean doKeyValue = true;
       int nStarLines = 0;
 
-      String analysisResults = s.readString((int) s.length());
-      s.close();
+      String analysisResults = DataTools.readFile(resultFile);
       String[] lines = analysisResults.split("\n");
 
       for (String line : lines) {
@@ -716,8 +714,7 @@ public class MIASReader extends FormatReader {
       int series = getSeriesNumber(position[0], position[1]);
 
       if (name.endsWith("detail.txt")) {
-        RandomAccessInputStream s = new RandomAccessInputStream(file);
-        String data = s.readString((int) s.length());
+        String data = DataTools.readFile(file);
         String[] lines = data.split("\n");
         int start = 0;
         while (start < lines.length && !lines[start].startsWith("Label")) {
@@ -733,8 +730,6 @@ public class MIASReader extends FormatReader {
           populateROI(columnNames, lines[j].split("\t"), series,
             j - start - 1, position[2], position[3], store);
         }
-
-        s.close();
       }
       else if (name.endsWith("AllModesOverlay.tif")) {
         // original color for each channel is stored in
@@ -932,8 +927,9 @@ public class MIASReader extends FormatReader {
     String date = null;
 
     String templateFile = plateFiles.get(plate);
-    RandomAccessInputStream s = new RandomAccessInputStream(templateFile);
-    String[] lines = s.readString((int) s.length()).split("\r\n");
+    String data = DataTools.readFile(templateFile);
+    String[] lines = data.split("\r\n");
+
     for (String line : lines) {
       int eq = line.indexOf("=");
       if (eq != -1) {

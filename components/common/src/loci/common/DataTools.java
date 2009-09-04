@@ -68,6 +68,19 @@ public final class DataTools {
 
   // -- Data reading --
 
+  /** Reads the contents of the given file into a string. */
+  public static String readFile(String id) throws IOException {
+    RandomAccessInputStream in = new RandomAccessInputStream(id);
+    long idLen = in.length();
+    if (idLen > Integer.MAX_VALUE) {
+      throw new IOException("File too large");
+    }
+    int len = (int) idLen;
+    String data = in.readString(len);
+    in.close();
+    return data;
+  }
+
   /** Reads 1 signed byte [-128, 127]. */
   public static byte readSignedByte(DataInput in) throws IOException {
     byte[] b = (byte[]) eightBytes.get();
