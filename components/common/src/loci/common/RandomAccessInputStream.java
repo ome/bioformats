@@ -197,14 +197,17 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   /**
    * Reads a string ending with one of the characters in the given string.
    *
-   * @see findString(String)
+   * @see #findString(String)
    */
   public String readString(String lastChars) throws IOException {
-    String[] terminators = new String[lastChars.length()];
-    for (int i=0; i<terminators.length; i++) {
-      terminators[i] = lastChars.substring(i, i + 1);
+    if (lastChars.length() == 1) return findString(lastChars);
+    else {
+      String[] terminators = new String[lastChars.length()];
+      for (int i=0; i<terminators.length; i++) {
+        terminators[i] = lastChars.substring(i, i + 1);
+      }
+      return findString(terminators);
     }
-    return findString(terminators);
   }
 
   /**
@@ -264,7 +267,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
         int index = out.indexOf(term, i == 0 ? 0 : i - tagLen);
         if (index >= 0) {
           match = true;
-          seek(index + tagLen); // reset input stream to proper location
+          seek(startPos + index + tagLen); // reset stream to proper location
           out.setLength(index + tagLen); // trim output
           break;
         }
