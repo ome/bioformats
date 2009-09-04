@@ -722,9 +722,11 @@ public abstract class FormatReader extends FormatHandler
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       String[] s = getSeriesUsedFiles(noPixels);
-      for (String file : s) {
-        if (!files.contains(file)) {
-          files.add(file);
+      if (s != null) {
+        for (String file : s) {
+          if (!files.contains(file)) {
+            files.add(file);
+          }
         }
       }
     }
