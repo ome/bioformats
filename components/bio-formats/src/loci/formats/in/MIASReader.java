@@ -341,11 +341,17 @@ public class MIASReader extends FormatReader {
         }
       }
       else if (f.isDirectory()) {
-        plateDirs.add(dir);
+        // plate directories should start with 3 digits
+        try {
+          int plateIndex = Integer.parseInt(dir.substring(0, 3));
+          plateDirs.add(dir);
+        }
+        catch (NumberFormatException e) { }
       }
     }
 
     int nPlates = plateDirs.size();
+    debug("Found " + nPlates + " plates.");
 
     tiffs = new String[nPlates][][];
     readers = new MinimalTiffReader[nPlates][][];
@@ -365,7 +371,20 @@ public class MIASReader extends FormatReader {
       for (String dir : list) {
         Location f = new Location(plateDir, dir);
         if (f.getName().startsWith("Well") || f.getName().length() == 4) {
-          wellDirectories.add(f.getAbsolutePath());
+          // directory name is valid, but we need to make sure that the
+          // directory contains a TIFF or a subdirectory
+          String[] wellList = f.list(true);
+          if (wellList != null) {
+            boolean validWell = false;
+            for (String potentialTIFF : wellList) {
+              if (potentialTIFF.toLowerCase().endsWith(".tif") ||
+                new Location(f, potentialTIFF).isDirectory()) {
+                validWell = true;
+                break;
+              }
+            }
+            if (validWell) wellDirectories.add(f.getAbsolutePath());
+          }
         }
         else if (f.getName().equals("results")) {
           String[] resultsList = f.list(true);
@@ -387,6 +406,7 @@ public class MIASReader extends FormatReader {
           plateFiles.add(f.getAbsolutePath());
         }
       }
+      debug("Plate " + i + " has " + wellDirectories.size() + " wells.");
       readers[i] = new MinimalTiffReader[wellDirectories.size()][];
       tiffs[i] = new String[wellDirectories.size()][];
       zCount[i] = new int[wellDirectories.size()];
@@ -418,7 +438,7 @@ public class MIASReader extends FormatReader {
             if (dir.length() == 1 && file.isDirectory()) {
               cCount[i][j]++;
 
-              String[] tiffs = file.list();
+              String[] tiffs = file.list(true);
               for (String tiff : tiffs) {
                 String name = tiff.toLowerCase();
                 if (name.endsWith(".tif") || name.endsWith(".tiff")) {
@@ -484,6 +504,8 @@ public class MIASReader extends FormatReader {
 
         Arrays.sort(tiffFiles);
         tiffs[i][j] = tiffFiles;
+        debug("Well " + j + " in plate " + i + " has " +
+          tiffFiles.length + " files.");
         readers[i][j] = new MinimalTiffReader[tiffFiles.length];
         for (int k=0; k<tiffFiles.length; k++) {
           readers[i][j][k] = new MinimalTiffReader();
@@ -504,7 +526,14 @@ public class MIASReader extends FormatReader {
     bpp = new int[nSeries];
     plateAndWell = new int[nSeries][2];
 
-    // assume that all wells have the same dimensions
+    if (readers.length == 0) {
+      throw new FormatException("No plates were found.");
+    }
+    else if (readers[0].length == 0) {
+      throw new FormatException("No wells were found in the first plate.");
+    }
+
+    // assume that all wells have the same width, height, and pixel type
     readers[0][0][0].setId(tiffs[0][0][0]);
     tileWidth = readers[0][0][0].getSizeX();
     tileHeight = readers[0][0][0].getSizeY();
@@ -927,7 +956,8 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, plate, 0);
         }
         else if (key.equals("Magnification")) {
-          store.setObjectiveNominalMagnification(new Integer(value), plate, 0);
+          int mag = (int) Float.parseFloat(value);
+          store.setObjectiveNominalMagnification(new Integer(mag), plate, 0);
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
