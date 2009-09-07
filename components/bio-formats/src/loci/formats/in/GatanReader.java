@@ -73,7 +73,7 @@ public class GatanReader extends FormatReader {
   private long pixelOffset;
 
   /** List of pixel sizes. */
-  private Vector pixelSizes;
+  private Vector<String> pixelSizes;
 
   private int bytesPerPixel;
 
@@ -139,7 +139,7 @@ public class GatanReader extends FormatReader {
     status("Verifying Gatan format");
 
     core[0].littleEndian = false;
-    pixelSizes = new Vector();
+    pixelSizes = new Vector<String>();
 
     in.order(false);
 
@@ -207,15 +207,15 @@ public class GatanReader extends FormatReader {
     Float pixZ = new Float(1);
 
     if (pixelSizes.size() > 0) {
-      pixX = new Float((String) pixelSizes.get(0));
+      pixX = new Float(pixelSizes.get(0));
     }
 
     if (pixelSizes.size() > 1) {
-      pixY = new Float((String) pixelSizes.get(1));
+      pixY = new Float(pixelSizes.get(1));
     }
 
     if (pixelSizes.size() > 2) {
-      pixZ = new Float((String) pixelSizes.get(2));
+      pixZ = new Float(pixelSizes.get(2));
     }
 
     store.setDimensionsPhysicalSizeX(pixX, 0, 0);

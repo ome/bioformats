@@ -238,9 +238,7 @@ public class AVIReader extends FormatReader {
 
     String listString;
 
-    type = in.readString(4);
-    size = in.readInt();
-    fcc = in.readString(4);
+    readChunkHeader();
 
     if (type.equals("RIFF")) {
       if (!fcc.equals("AVI ")) {
@@ -272,15 +270,11 @@ public class AVIReader extends FormatReader {
       }
       else if (listString.equals("LIST")) {
         spos = in.getFilePointer();
-        type = in.readString(4);
-        size = in.readInt();
-        fcc = in.readString(4);
+        readChunkHeader();
 
         in.seek(spos);
         if (fcc.equals("hdrl")) {
-          type = in.readString(4);
-          size = in.readInt();
-          fcc = in.readString(4);
+          readChunkHeader();
 
           if (type.equals("LIST")) {
             if (fcc.equals("hdrl")) {
@@ -319,9 +313,7 @@ public class AVIReader extends FormatReader {
           long startPos = in.getFilePointer();
           long streamSize = size;
 
-          type = in.readString(4);
-          size = in.readInt();
-          fcc = in.readString(4);
+          readChunkHeader();
 
           if (type.equals("LIST")) {
             if (fcc.equals("strl")) {
@@ -438,17 +430,13 @@ public class AVIReader extends FormatReader {
           }
         }
         else if (fcc.equals("movi")) {
-          type = in.readString(4);
-          size = in.readInt();
-          fcc = in.readString(4);
+          readChunkHeader();
 
           if (type.equals("LIST")) {
             if (fcc.equals("movi")) {
               spos = in.getFilePointer();
               if (spos >= in.length() - 12) break;
-              type = in.readString(4);
-              size = in.readInt();
-              fcc = in.readString(4);
+              readChunkHeader();
               if (!(type.equals("LIST") && (fcc.equals("rec ") ||
                 fcc.equals("movi"))))
               {
@@ -591,6 +579,12 @@ public class AVIReader extends FormatReader {
       throw new FormatException("Unsupported compression : " + bmpCompression);
     }
     return buf;
+  }
+
+  private void readChunkHeader() throws IOException {
+    type = in.readString(4);
+    size = in.readInt();
+    fcc = in.readString(4);
   }
 
 }

@@ -82,7 +82,7 @@ public class ZeissZVIReader extends FormatReader {
   private int[] offsets;
   private int[][] coordinates;
 
-  private Hashtable timestamps, exposureTime;
+  private Hashtable<Integer, String> timestamps, exposureTime;
   private int cIndex = -1;
   private boolean isTiled;
   private int tileRows, tileColumns;
@@ -119,10 +119,9 @@ public class ZeissZVIReader extends FormatReader {
     if (magic != ZVI_MAGIC_BYTES) return false;
     try {
       POITools p = new POITools(stream);
-      Vector files = p.getDocumentList();
+      Vector<String> files = p.getDocumentList();
       String filename = "SummaryInformation";
-      for (int i=0; i<files.size(); i++) {
-        String f = (String) files.get(i);
+      for (String f : files) {
         if (f.trim().endsWith(filename)) return true;
       }
     }
@@ -355,8 +354,8 @@ public class ZeissZVIReader extends FormatReader {
     debug("ZeissZVIReader.initFile(" + id + ")");
     super.initFile(id);
 
-    timestamps = new Hashtable();
-    exposureTime = new Hashtable();
+    timestamps = new Hashtable<Integer, String>();
+    exposureTime = new Hashtable<Integer, String>();
     poi = new POITools(Location.getMappedId(id));
     tagsToParse = new Vector<RandomAccessInputStream>();
 
@@ -391,9 +390,9 @@ public class ZeissZVIReader extends FormatReader {
 
     // parse each embedded file
 
-    Vector cIndices = new Vector();
-    Vector zIndices = new Vector();
-    Vector tIndices = new Vector();
+    Vector<Integer> cIndices = new Vector<Integer>();
+    Vector<Integer> zIndices = new Vector<Integer>();
+    Vector<Integer> tIndices = new Vector<Integer>();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -573,7 +572,7 @@ public class ZeissZVIReader extends FormatReader {
 
     long firstStamp = 0;
     if (timestamps.size() > 0) {
-      String timestamp = (String) timestamps.get(new Integer(0));
+      String timestamp = timestamps.get(new Integer(0));
       firstStamp = parseTimestamp(timestamp);
       store.setImageCreationDate(DateTools.convertDate(
         (long) (firstStamp / 1600), DateTools.ZVI), 0);
@@ -587,7 +586,7 @@ public class ZeissZVIReader extends FormatReader {
 
     for (int plane=0; plane<getImageCount(); plane++) {
       int[] zct = getZCTCoords(plane);
-      String exposure = (String) exposureTime.get(new Integer(zct[1]));
+      String exposure = exposureTime.get(new Integer(zct[1]));
       Float exp = new Float(0.0);
       try { exp = new Float(exposure); }
       catch (NumberFormatException e) { }
@@ -595,7 +594,7 @@ public class ZeissZVIReader extends FormatReader {
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
 
       if (plane < timestamps.size()) {
-        String timestamp = (String) timestamps.get(new Integer(plane));
+        String timestamp = timestamps.get(new Integer(plane));
         long stamp = parseTimestamp(timestamp);
         stamp -= firstStamp;
         store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
@@ -877,7 +876,7 @@ public class ZeissZVIReader extends FormatReader {
   {
     // scan stream for offsets to each ROI
 
-    Vector roiOffsets = new Vector();
+    Vector<Long> roiOffsets = new Vector<Long>();
     s.seek(0);
     while (s.getFilePointer() < s.length() - 8) {
       // find next ROI signature
@@ -893,7 +892,7 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     for (int shape=0; shape<roiOffsets.size(); shape++) {
-      s.seek(((Long) roiOffsets.get(shape)).longValue() + 18);
+      s.seek(roiOffsets.get(shape).longValue() + 18);
 
       int length = s.readInt();
       s.skipBytes(length + 10);
@@ -908,7 +907,7 @@ public class ZeissZVIReader extends FormatReader {
 
       // read text label and font data
       long nextOffset = shape < roiOffsets.size() - 1 ?
-        ((Long) roiOffsets.get(shape + 1)).longValue() : s.length();
+        roiOffsets.get(shape + 1).longValue() : s.length();
 
       long nameBlock = s.getFilePointer();
       long fontBlock = s.getFilePointer();

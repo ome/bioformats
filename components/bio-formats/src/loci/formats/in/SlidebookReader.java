@@ -286,7 +286,7 @@ public class SlidebookReader extends FormatReader {
 
     float pixelSize = 1f;
     String objective = null;
-    Vector pixelSizeZ = new Vector();
+    Vector<Float> pixelSizeZ = new Vector<Float>();
 
     long pixelBytes = 0;
     for (int i=0; i<pixelLengths.size(); i++) {
@@ -426,10 +426,10 @@ public class SlidebookReader extends FormatReader {
       }
       if (getSizeC() == 0) core[i].sizeC = 1;
       if (getSizeZ() == 0) core[i].sizeZ = 1;
-      core[i].sizeT = (int) (pixels /
-        (getSizeX() * getSizeY() * getSizeZ() * getSizeC()));
+      int nPlanes = getSizeZ() * getSizeC();
+      core[i].sizeT = (int) (pixels / (getSizeX() * getSizeY() * nPlanes));
       if (getSizeT() == 0) core[i].sizeT = 1;
-      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
       core[i].dimensionOrder = "XYZTC";
       core[i].indexed = false;
@@ -477,7 +477,7 @@ public class SlidebookReader extends FormatReader {
       }
 
       if (idx < pixelSizeZ.size()) {
-        store.setDimensionsPhysicalSizeZ((Float) pixelSizeZ.get(idx), i, 0);
+        store.setDimensionsPhysicalSizeZ(pixelSizeZ.get(idx), i, 0);
       }
     }
 

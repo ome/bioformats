@@ -188,7 +188,7 @@ public class LegacyQTReader extends FormatReader {
       r.setVar("one", 1f);
       r.exec("timeInfo = new TimeInfo(zero, zero)");
       r.exec("moviePlayer.setTime(zero)");
-      Vector v = new Vector();
+      Vector<Integer> v = new Vector<Integer>();
       int time = 0;
       Integer q = new Integer(time);
       do {
@@ -202,7 +202,7 @@ public class LegacyQTReader extends FormatReader {
       core[0].imageCount = v.size();
       times = new int[getImageCount()];
       for (int i=0; i<times.length; i++) {
-        q = (Integer) v.elementAt(i);
+        q = v.elementAt(i);
         times[i] = q.intValue();
       }
 

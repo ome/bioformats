@@ -138,7 +138,7 @@ public class L2DReader extends FormatReader {
 
     // parse key/value pairs from file - this gives us a list of scans
 
-    Vector scans = new Vector();
+    Vector<String> scans = new Vector<String>();
 
     String line = in.readLine().trim();
     while (line != null && line.length() > 0) {
@@ -165,9 +165,9 @@ public class L2DReader extends FormatReader {
 
     core = new CoreMetadata[scans.size()];
 
-    Vector comments = new Vector();
-    Vector wavelengths = new Vector();
-    Vector dates = new Vector();
+    Vector<String> comments = new Vector<String>();
+    Vector<String> wavelengths = new Vector<String>();
+    Vector<String> dates = new Vector<String>();
     String model = null;
 
     for (int i=0; i<scans.size(); i++) {
@@ -175,7 +175,7 @@ public class L2DReader extends FormatReader {
       core[i] = new CoreMetadata();
       tiffs[i] = new Vector();
       metadataFiles[i] = new Vector();
-      String scanName = (String) scans.get(i);
+      String scanName = scans.get(i);
       Location scanDir = new Location(parent, scanName);
 
       // read .scn file from each scan
@@ -258,17 +258,17 @@ public class L2DReader extends FormatReader {
     for (int i=0; i<scans.size(); i++) {
       store.setImageInstrumentRef(instrumentID, i);
 
-      store.setImageName((String) scans.get(i), i);
-      store.setImageDescription((String) comments.get(i), i);
+      store.setImageName(scans.get(i), i);
+      store.setImageDescription(comments.get(i), i);
 
-      String date = (String) dates.get(i);
+      String date = dates.get(i);
       if (date != null) {
         date = DateTools.formatDate(date, DATE_FORMAT);
         store.setImageCreationDate(date, i);
       }
       else MetadataTools.setDefaultCreationDate(store, id, i);
 
-      String c = (String) wavelengths.get(i);
+      String c = wavelengths.get(i);
       if (c != null) {
         String[] waves = c.split("[, ]");
         if (waves.length < getEffectiveSizeC()) {

@@ -140,7 +140,7 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- Static fields --
 
-  private static Hashtable metadataKeys = createKeys();
+  private static Hashtable<Integer, String> metadataKeys = createKeys();
 
   // -- Fields --
 
@@ -1302,8 +1302,8 @@ public class ZeissLSMReader extends FormatReader {
     return referencedLSMs.toArray(new String[0]);
   }
 
-  private static Hashtable createKeys() {
-    Hashtable h = new Hashtable();
+  private static Hashtable<Integer, String> createKeys() {
+    Hashtable<Integer, String> h = new Hashtable<Integer, String>();
     h.put(new Integer(0x10000001), "Name");
     h.put(new Integer(0x4000000c), "Name");
     h.put(new Integer(0x50000001), "Name");

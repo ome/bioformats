@@ -63,7 +63,7 @@ public class IPWReader extends FormatReader {
   // -- Fields --
 
   /** List of embedded image file names (one per image plane). */
-  private Hashtable imageFiles;
+  private Hashtable<Integer, String> imageFiles;
 
   /** Helper reader - parses embedded files from the OLE document. */
   private POITools poi;
@@ -92,7 +92,7 @@ public class IPWReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream stream =
-      poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
+      poi.getDocumentStream(imageFiles.get(new Integer(0)));
     TiffParser tp = new TiffParser(stream);
     IFDList ifds = tp.getIFDs();
     IFD firstIFD = ifds.get(0);
@@ -123,7 +123,7 @@ public class IPWReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     RandomAccessInputStream stream =
-      poi.getDocumentStream((String) imageFiles.get(new Integer(no)));
+      poi.getDocumentStream(imageFiles.get(new Integer(no)));
     TiffParser tp = new TiffParser(stream);
     IFDList ifds = tp.getIFDs();
     tp.getSamples(ifds.get(0), buf, x, y, w, h);
@@ -153,12 +153,11 @@ public class IPWReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     poi = new POITools(Location.getMappedId(currentId));
 
-    imageFiles = new Hashtable();
+    imageFiles = new Hashtable<Integer, String>();
 
-    Vector fileList = poi.getDocumentList();
+    Vector<String> fileList = poi.getDocumentList();
 
-    for (int i=0; i<fileList.size(); i++) {
-      String name = (String) fileList.get(i);
+    for (String name : fileList) {
       String relativePath =
         name.substring(name.lastIndexOf(File.separator) + 1);
 
@@ -232,7 +231,7 @@ public class IPWReader extends FormatReader {
     status("Populating metadata");
 
     RandomAccessInputStream stream =
-      poi.getDocumentStream((String) imageFiles.get(new Integer(0)));
+      poi.getDocumentStream(imageFiles.get(new Integer(0)));
     TiffParser tp = new TiffParser(stream);
     IFDList ifds = tp.getIFDs();
     stream.close();

@@ -103,8 +103,8 @@ public class GIFReader extends FormatReader {
   private byte[] pixelStack;
   private byte[] pixels;
 
-  private Vector images;
-  private Vector colorTables;
+  private Vector<byte[]> images;
+  private Vector<int[]> colorTables;
 
   // -- Constructor --
 
@@ -142,11 +142,11 @@ public class GIFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    act = (int[]) colorTables.get(no);
+    act = colorTables.get(no);
 
-    byte[] b = (byte[]) images.get(no);
+    byte[] b = images.get(no);
     if (no > 0 && transparency) {
-      byte[] prev = (byte[]) images.get(no - 1);
+      byte[] prev = images.get(no - 1);
       int idx = transIndex;
       if (idx >= 127) idx = 0;
       for (int i=0; i<b.length; i++) {
@@ -174,7 +174,8 @@ public class GIFReader extends FormatReader {
       gct = lct = act;
       prefix = null;
       suffix = pixelStack = pixels = null;
-      images = colorTables = null;
+      images = null;
+      colorTables = null;
       Arrays.fill(dBlock, (byte) 0);
     }
   }
@@ -190,8 +191,8 @@ public class GIFReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
     in.order(true);
-    images = new Vector();
-    colorTables = new Vector();
+    images = new Vector<byte[]>();
+    colorTables = new Vector<int[]>();
 
     String ident = in.readString(6);
 
@@ -503,7 +504,7 @@ public class GIFReader extends FormatReader {
       }
 
       if (lastImage != -1) {
-        byte[] prev = (byte[]) images.get(lastImage);
+        byte[] prev = images.get(lastImage);
         System.arraycopy(prev, 0, dest, 0, getSizeX() * getSizeY());
       }
     }

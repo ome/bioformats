@@ -27,10 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
-import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -723,8 +722,7 @@ public class MIASReader extends FormatReader {
         if (start >= lines.length) continue;
 
         String[] columns = lines[start].split("\t");
-        Vector<String> columnNames = new Vector<String>();
-        for (String v : columns) columnNames.add(v);
+        List<String> columnNames = Arrays.asList(columns);
 
         for (int j=start+1; j<lines.length; j++) {
           populateROI(columnNames, lines[j].split("\t"), series,
@@ -826,7 +824,7 @@ public class MIASReader extends FormatReader {
     return position;
   }
 
-  private void populateROI(Vector<String> columns, String[] data, int series,
+  private void populateROI(List<String> columns, String[] data, int series,
     int roi, int time, int z, MetadataStore store)
   {
     float cx = Float.parseFloat(data[columns.indexOf("Col")]);

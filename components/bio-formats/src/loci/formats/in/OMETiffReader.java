@@ -195,7 +195,7 @@ public class OMETiffReader extends FormatReader {
     info = new OMETiffPlane[seriesCount][];
 
     // compile list of file/UUID mappings
-    Hashtable files = new Hashtable();
+    Hashtable<String, String> files = new Hashtable<String, String>();
     boolean needSearch = false;
     for (int i=0; i<imageCount; i++) {
       int pixelsCount = meta.getPixelsCount(i);
@@ -224,7 +224,7 @@ public class OMETiffReader extends FormatReader {
             }
             else filename = normalizeFilename(dir, filename);
           }
-          String existing = (String) files.get(uuid);
+          String existing = files.get(uuid);
           if (existing == null) files.put(uuid, filename);
           else if (!existing.equals(filename)) {
             throw new FormatException("Inconsistent UUID filenames");
@@ -238,7 +238,7 @@ public class OMETiffReader extends FormatReader {
       Enumeration en = files.keys();
       while (en.hasMoreElements()) {
         String uuid = (String) en.nextElement();
-        String filename = (String) files.get(uuid);
+        String filename = files.get(uuid);
         if (filename.equals("")) {
           // TODO search...
           // should scan only other .ome.tif files
@@ -254,7 +254,7 @@ public class OMETiffReader extends FormatReader {
     HashSet fileSet = new HashSet(); // ensure no duplicate filenames
     for (int i=0; i<numUUIDs; i++) {
       String uuid = (String) en.nextElement();
-      String filename = (String) files.get(uuid);
+      String filename = files.get(uuid);
       fileSet.add(filename);
     }
     used = new String[fileSet.size()];
@@ -262,7 +262,8 @@ public class OMETiffReader extends FormatReader {
     for (int i=0; i<used.length; i++) used[i] = (String) iter.next();
 
     // process TiffData elements
-    Hashtable readers = new Hashtable();
+    Hashtable<String, IFormatReader> readers =
+      new Hashtable<String, IFormatReader>();
     int s = 0;
     for (int i=0; i<imageCount; i++) {
       debug("Image[" + i + "] {");
@@ -327,10 +328,10 @@ public class OMETiffReader extends FormatReader {
           // get reader object for this filename
           if (filename == null) {
             if (uuid == null) filename = id;
-            else filename = (String) files.get(uuid);
+            else filename = files.get(uuid);
           }
           else filename = normalizeFilename(dir, filename);
-          IFormatReader r = (IFormatReader) readers.get(filename);
+          IFormatReader r = readers.get(filename);
           if (r == null) {
             r = new TiffReader();
             readers.put(filename, r);
@@ -482,16 +483,16 @@ public class OMETiffReader extends FormatReader {
 
     // remove null CoreMetadata entries
 
-    Vector series = new Vector();
-    Vector planeInfo = new Vector();
+    Vector<CoreMetadata> series = new Vector<CoreMetadata>();
+    Vector<OMETiffPlane[]> planeInfo = new Vector<OMETiffPlane[]>();
     for (int i=0; i<core.length; i++) {
       if (core[i] != null) {
         series.add(core[i]);
         planeInfo.add(info[i]);
       }
     }
-    core = (CoreMetadata[]) series.toArray(new CoreMetadata[0]);
-    info = (OMETiffPlane[][]) planeInfo.toArray(new OMETiffPlane[0][0]);
+    core = series.toArray(new CoreMetadata[series.size()]);
+    info = planeInfo.toArray(new OMETiffPlane[0][0]);
   }
 
   // -- Helper methods --

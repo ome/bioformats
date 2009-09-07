@@ -46,36 +46,36 @@ public class MetamorphHandler extends DefaultHandler {
 
   private Hashtable metadata;
 
-  private Vector timestamps;
+  private Vector<String> timestamps;
   private String imageName;
   private String date;
-  private Vector wavelengths;
-  private Vector zPositions;
+  private Vector<Integer> wavelengths;
+  private Vector<Float> zPositions;
   private float pixelSizeX, pixelSizeY;
   private float temperature;
   private String binning;
   private float readOutRate, zoom;
   private float positionX, positionY;
-  private Vector exposures;
+  private Vector<Float> exposures;
 
   // -- Constructor --
 
   public MetamorphHandler(Hashtable metadata) {
     super();
     this.metadata = metadata;
-    timestamps = new Vector();
-    wavelengths = new Vector();
-    zPositions = new Vector();
-    exposures = new Vector();
+    timestamps = new Vector<String>();
+    wavelengths = new Vector<Integer>();
+    zPositions = new Vector<Float>();
+    exposures = new Vector<Float>();
   }
 
   // -- MetamorphHandler API methods --
 
-  public Vector getTimestamps() { return timestamps; }
+  public Vector<String> getTimestamps() { return timestamps; }
 
-  public Vector getWavelengths() { return wavelengths; }
+  public Vector<Integer> getWavelengths() { return wavelengths; }
 
-  public Vector getZPositions() { return zPositions; }
+  public Vector<Float> getZPositions() { return zPositions; }
 
   public String getDate() { return date; }
 
@@ -97,7 +97,7 @@ public class MetamorphHandler extends DefaultHandler {
 
   public float getStagePositionY() { return positionY; }
 
-  public Vector getExposures() { return exposures; }
+  public Vector<Float> getExposures() { return exposures; }
 
   // -- DefaultHandler API methods --
 

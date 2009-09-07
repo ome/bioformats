@@ -104,7 +104,7 @@ public class OpenlabReader extends FormatReader {
   private String fmt = "";
   private int[][] planeOffsets;
 
-  private Vector luts;
+  private Vector<byte[][]> luts;
   private int lastPlane;
 
   private String gain, detectorOffset, xPos, yPos, zPos;
@@ -128,9 +128,9 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
-    Object lut = luts.get(planeOffsets[series][lastPlane]);
+    byte[][] lut = luts.get(planeOffsets[series][lastPlane]);
     if (lut == null) return null;
-    return lut instanceof byte[][] ? (byte[][]) lut : null;
+    return lut;
   }
 
   /**
@@ -308,7 +308,7 @@ public class OpenlabReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    luts = new Vector();
+    luts = new Vector<byte[][]>();
 
     status("Verifying Openlab LIFF format");
 
@@ -344,7 +344,7 @@ public class OpenlabReader extends FormatReader {
 
     int imagesFound = 0;
 
-    Vector representativePlanes = new Vector();
+    Vector<PlaneInfo> representativePlanes = new Vector<PlaneInfo>();
 
     while (in.getFilePointer() + 8 < in.length()) {
       long fp = in.getFilePointer();
@@ -388,7 +388,7 @@ public class OpenlabReader extends FormatReader {
         }
 
         for (int i=0; i<representativePlanes.size(); i++) {
-          PlaneInfo p = (PlaneInfo) representativePlanes.get(i);
+          PlaneInfo p = representativePlanes.get(i);
           if (planes[imagesFound].width == p.width &&
             planes[imagesFound].height == p.height &&
             (planes[imagesFound].volumeType == p.volumeType ||
@@ -493,7 +493,7 @@ public class OpenlabReader extends FormatReader {
     int nSeries = representativePlanes.size();
     planeOffsets = new int[nSeries][];
     Vector<Integer> tmpOffsets = new Vector<Integer>();
-    Vector names = new Vector();
+    Vector<String> names = new Vector<String>();
 
     core = new CoreMetadata[nSeries];
 

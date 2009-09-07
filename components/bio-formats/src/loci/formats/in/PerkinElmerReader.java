@@ -366,7 +366,8 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<files.length; i++) allFiles.add(files[i]);
+    allFiles.addAll(Arrays.asList(files));
+
     if (isTiff) Arrays.sort(files);
     else {
       Comparator c = new Comparator() {

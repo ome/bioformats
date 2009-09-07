@@ -61,7 +61,7 @@ public class MicromanagerReader extends FormatReader {
   private MinimalTiffReader tiffReader;
 
   /** List of TIFF files to open. */
-  private Vector tiffs;
+  private Vector<String> tiffs;
 
   private String metadataFile;
 
@@ -74,7 +74,7 @@ public class MicromanagerReader extends FormatReader {
   private int gain;
   private String binning, detectorID, detectorModel, detectorManufacturer;
   private float temperature;
-  private Vector voltage;
+  private Vector<Float> voltage;
   private String cameraRef;
   private String cameraMode;
 
@@ -137,7 +137,7 @@ public class MicromanagerReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     int[] coords = getZCTCoords(no);
-    tiffReader.setId((String) tiffs.get(no));
+    tiffReader.setId(tiffs.get(no));
     return tiffReader.openBytes(0, buf, x, y, w, h);
   }
 
@@ -190,7 +190,7 @@ public class MicromanagerReader extends FormatReader {
 
     // find the name of a TIFF file
     String baseTiff = null;
-    tiffs = new Vector();
+    tiffs = new Vector<String>();
     int pos = 0;
     while (true) {
       pos = s.indexOf("FileName", pos);
@@ -216,8 +216,8 @@ public class MicromanagerReader extends FormatReader {
 
     status("Populating metadata");
 
-    Vector stamps = new Vector();
-    Vector voltage = new Vector();
+    Vector<Float> stamps = new Vector<Float>();
+    voltage = new Vector<Float>();
 
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
@@ -339,7 +339,7 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
-    timestamps = (Float[]) stamps.toArray(new Float[0]);
+    timestamps = stamps.toArray(new Float[stamps.size()]);
     Arrays.sort(timestamps);
 
     // build list of TIFF files
@@ -384,7 +384,7 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
-    tiffReader.setId((String) tiffs.get(0));
+    tiffReader.setId(tiffs.get(0));
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     if (getSizeT() == 0) core[0].sizeT = tiffs.size() / getSizeC();
@@ -440,7 +440,7 @@ public class MicromanagerReader extends FormatReader {
       store.setDetectorSettingsBinning(binning, 0, i);
       store.setDetectorSettingsGain(new Float(gain), 0, i);
       if (i < voltage.size()) {
-        store.setDetectorSettingsVoltage((Float) voltage.get(i), 0, i);
+        store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
       }
       store.setDetectorSettingsDetector(detectorID, 0, i);
     }

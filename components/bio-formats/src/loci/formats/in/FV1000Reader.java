@@ -312,9 +312,8 @@ public class FV1000Reader extends FormatReader {
 
     if (isOIB) {
       String infoFile = null;
-      Vector list = poi.getDocumentList();
-      for (int i=0; i<list.size(); i++) {
-        String name = (String) list.get(i);
+      Vector<String> list = poi.getDocumentList();
+      for (String name : list) {
         if (name.endsWith("OibInfo.txt")) {
           infoFile = name;
           break;
@@ -448,7 +447,7 @@ public class FV1000Reader extends FormatReader {
           value = value.substring(1, value.length() - 1);
         }
 
-        value = value.replaceAll("/", File.separator);
+        value = value.replace('/', File.separatorChar);
         value = value.replace('\\', File.separatorChar);
         while (value.indexOf("GST") != -1) {
           String first = value.substring(0, value.indexOf("GST"));
@@ -713,7 +712,7 @@ public class FV1000Reader extends FormatReader {
           value = value.replaceAll("\"", "");
           if (key.equals("DataName")) {
             if (!isPreviewName(value)) {
-              value = value.replaceAll("/", File.separator);
+              value = value.replace('/', File.separatorChar);
               value = value.replace('\\', File.separatorChar);
               while (value.indexOf("GST") != -1) {
                 String first = value.substring(0, value.indexOf("GST"));

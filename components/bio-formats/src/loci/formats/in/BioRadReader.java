@@ -104,7 +104,7 @@ public class BioRadReader extends FormatReader {
   private byte[][][] lut;
   private int lastChannel;
 
-  private Vector noteStrings;
+  private Vector<Note> noteStrings;
 
   private Vector<Float> offset, gain;
 
@@ -232,7 +232,7 @@ public class BioRadReader extends FormatReader {
 
     status("Reading image dimensions");
 
-    noteStrings = new Vector();
+    noteStrings = new Vector<Note>();
 
     // read header
 
@@ -345,13 +345,13 @@ public class BioRadReader extends FormatReader {
       n.p = n.p.substring(0, ndx).trim();
 
       String value = n.p.replaceAll("=", "");
-      Vector v = new Vector();
+      Vector<String> v = new Vector<String>();
       StringTokenizer t = new StringTokenizer(value, " ");
       while (t.hasMoreTokens()) {
         String token = t.nextToken().trim();
         if (token.length() > 0) v.add(token);
       }
-      String[] tokens = (String[]) v.toArray(new String[0]);
+      String[] tokens = v.toArray(new String[v.size()]);
       try {
         if (tokens.length > 1) {
           int noteType = Integer.parseInt(tokens[1]);
@@ -404,7 +404,7 @@ public class BioRadReader extends FormatReader {
     String[] list = parent.list(true);
     Arrays.sort(list);
 
-    Vector pics = new Vector();
+    Vector<String> pics = new Vector<String>();
 
     for (int i=0; i<list.length; i++) {
       if (list[i].endsWith("lse.xml")) {
@@ -442,9 +442,7 @@ public class BioRadReader extends FormatReader {
     core[0].dimensionOrder = "XYCTZ";
 
     boolean multipleFiles = false;
-    for (int q=0; q<noteStrings.size(); q++) {
-      Note n = (Note) noteStrings.get(q);
-
+    for (Note n : noteStrings) {
       switch (n.type) {
         case NOTE_TYPE_USER:
           // TODO : this should be an overlay
@@ -806,13 +804,13 @@ public class BioRadReader extends FormatReader {
 
       if (n.p.indexOf("AXIS") != -1) {
         n.p = n.p.replaceAll("=", "");
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         StringTokenizer tokens = new StringTokenizer(n.p, " ");
         while (tokens.hasMoreTokens()) {
           String token = tokens.nextToken().trim();
           if (token.length() > 0) v.add(token);
         }
-        String[] values = (String[]) v.toArray(new String[0]);
+        String[] values = v.toArray(new String[v.size()]);
         String key = values[0];
         String noteType = values[1];
 
@@ -899,7 +897,7 @@ public class BioRadReader extends FormatReader {
       if (pics.size() == 1) core[0].sizeC = 1;
     }
 
-    picFiles = (String[]) pics.toArray(new String[0]);
+    picFiles = pics.toArray(new String[pics.size()]);
     Arrays.sort(picFiles);
     if (picFiles.length > 0) {
       if (getSizeC() == 0) core[0].sizeC = 1;

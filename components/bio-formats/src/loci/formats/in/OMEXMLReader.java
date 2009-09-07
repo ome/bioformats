@@ -82,9 +82,9 @@ public class OMEXMLReader extends FormatReader {
   // -- Fields --
 
   // compression value and offset for each BinData element
-  private Vector binDataOffsets;
-  private Vector binDataLengths;
-  private Vector compression;
+  private Vector<Long> binDataOffsets;
+  private Vector<Long> binDataLengths;
+  private Vector<String> compression;
 
   private String omexml;
 
@@ -117,9 +117,9 @@ public class OMEXMLReader extends FormatReader {
       index += core[i].imageCount;
     }
 
-    long offset = ((Long) binDataOffsets.get(index)).longValue();
-    long length = ((Long) binDataLengths.get(index)).longValue();
-    String compress = (String) compression.get(index);
+    long offset = binDataOffsets.get(index).longValue();
+    long length = binDataLengths.get(index).longValue();
+    String compress = compression.get(index);
 
     in.seek(offset - 64);
 
@@ -153,7 +153,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     if (length < 0 && index + 1 < binDataOffsets.size()) {
-      length = ((Long) binDataOffsets.get(index + 1)).longValue() - offset;
+      length = binDataOffsets.get(index + 1).longValue() - offset;
     }
     else if (length < 0) {
       length = in.length() - offset;
@@ -228,9 +228,9 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
 
-    binDataOffsets = new Vector();
-    binDataLengths = new Vector();
-    compression = new Vector();
+    binDataOffsets = new Vector<Long>();
+    binDataLengths = new Vector<Long>();
+    compression = new Vector<String>();
 
     DefaultHandler handler = new OMEXMLHandler();
     XMLTools.parseXML(in, handler);

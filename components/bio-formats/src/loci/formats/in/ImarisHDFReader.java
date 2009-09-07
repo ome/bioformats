@@ -167,14 +167,14 @@ public class ImarisHDFReader extends FormatReader {
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 1.0f;
 
-    emWave = new Vector();
-    exWave = new Vector();
-    channelMin = new Vector();
-    channelMax = new Vector();
-    gain = new Vector();
-    pinhole = new Vector();
-    channelName = new Vector();
-    microscopyMode = new Vector();
+    emWave = new Vector<String>();
+    exWave = new Vector<String>();
+    channelMin = new Vector<String>();
+    channelMax = new Vector<String>();
+    gain = new Vector<String>();
+    pinhole = new Vector<String>();
+    channelName = new Vector<String>();
+    microscopyMode = new Vector<String>();
 
     seriesCount = 0;
 

@@ -82,7 +82,7 @@ public class PrairieReader extends FormatReader {
   private boolean readXML = false, readCFG = false;
 
   private int zt;
-  private Vector f, gains, offsets;
+  private Vector<String> f, gains, offsets;
   private boolean isZ;
   private float pixelSizeX, pixelSizeY;
   private String date, laserPower;
@@ -221,9 +221,9 @@ public class PrairieReader extends FormatReader {
         currentId = id;
       }
 
-      f = new Vector();
-      gains = new Vector();
-      offsets = new Vector();
+      f = new Vector<String>();
+      gains = new Vector<String>();
+      offsets = new Vector<String>();
       zt = 0;
 
       RandomAccessInputStream is = new RandomAccessInputStream(id);
@@ -270,8 +270,8 @@ public class PrairieReader extends FormatReader {
         store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
         store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
         for (int i=0; i<getSizeC(); i++) {
-          String gain = i < gains.size() ? (String) gains.get(i) : null;
-          String offset = i < offsets.size() ? (String) offsets.get(i) : null;
+          String gain = i < gains.size() ? gains.get(i) : null;
+          String offset = i < offsets.size() ? offsets.get(i) : null;
 
           if (offset != null) {
             store.setDetectorSettingsOffset(new Float(offset), 0, i);

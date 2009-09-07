@@ -128,8 +128,7 @@ public class APNGReader extends FormatReader {
 
     int[] coords = frameCoordinates.get(no);
 
-    for (int i=0; i<blocks.size(); i++) {
-      PNGBlock block = blocks.get(i);
+    for (PNGBlock block : blocks) {
       if (!block.type.equals("IDAT") && !block.type.equals("fdAT") &&
         !block.type.equals("acTL") && !block.type.equals("fcTL"))
       {

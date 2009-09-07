@@ -487,8 +487,8 @@ public class FlexReader extends FormatReader {
     IFD ifd = ifds[wellRow][wellCol].get(0);
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX, true));
 
-    Vector n = new Vector();
-    Vector f = new Vector();
+    Vector<String> n = new Vector<String>();
+    Vector<String> f = new Vector<String>();
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
     XMLTools.parseXML(xml.getBytes(), handler);
@@ -512,7 +512,7 @@ public class FlexReader extends FormatReader {
     factors[wellRow][wellCol] = new double[totalPlanes];
     int max = 0;
     for (int i=0; i<fsize; i++) {
-      String factor = (String) f.get(i);
+      String factor = f.get(i);
       double q = 1;
       try {
         q = Double.parseDouble(factor);
@@ -809,7 +809,7 @@ public class FlexReader extends FormatReader {
 
   /** SAX handler for parsing XML. */
   public class FlexHandler extends DefaultHandler {
-    private Vector names, factors;
+    private Vector<String> names, factors;
     private MetadataStore store;
 
     private int nextLaser = -1;
@@ -835,8 +835,8 @@ public class FlexReader extends FormatReader {
 
     private StringBuffer charData = new StringBuffer();
 
-    public FlexHandler(Vector names, Vector factors, MetadataStore store,
-      boolean populateCore, int well)
+    public FlexHandler(Vector<String> names, Vector<String> factors,
+      MetadataStore store, boolean populateCore, int well)
     {
       this.names = names;
       this.factors = factors;

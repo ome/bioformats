@@ -269,7 +269,7 @@ public class MetamorphReader extends BaseTiffReader {
       int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
       int nstages = 0;
       String z = null, c = null, t = null;
-      Vector hasZ = new Vector();
+      Vector<Boolean> hasZ = new Vector<Boolean>();
       waveNames = new Vector<String>();
       stageNames = new Vector<String>();
       boolean useWaveNames = true;
@@ -323,8 +323,8 @@ public class MetamorphReader extends BaseTiffReader {
       Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
       for (int i=0; i<cc; i++) {
-        boolean hasZ1 = ((Boolean) hasZ.get(i)).booleanValue();
-        boolean hasZ2 = i != 0 && ((Boolean) hasZ.get(i - 1)).booleanValue();
+        boolean hasZ1 = hasZ.get(i).booleanValue();
+        boolean hasZ2 = i != 0 && hasZ.get(i - 1).booleanValue();
         if (i > 0 && hasZ1 != hasZ2) {
           if (!differentZs) seriesCount *= 2;
           differentZs = true;
@@ -335,7 +335,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (differentZs) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
-          if (((Boolean) hasZ.get(i)).booleanValue()) channelsInFirstSeries++;
+          if (hasZ.get(i).booleanValue()) channelsInFirstSeries++;
           else firstSeriesChannels[i] = false;
         }
       }
@@ -373,7 +373,7 @@ public class MetamorphReader extends BaseTiffReader {
         int ns = nstages == 0 ? 1 : nstages;
         for (int s=0; s<ns; s++) {
           for (int j=0; j<cc; j++) {
-            boolean validZ = ((Boolean) hasZ.get(j)).booleanValue();
+            boolean validZ = hasZ.get(j).booleanValue();
             int seriesNdx = s * (seriesCount / ns);
             seriesNdx += (seriesCount == 1 || validZ) ? 0 : 1;
             stks[seriesNdx][pt[seriesNdx]] = prefix;
@@ -492,7 +492,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
-    Vector timestamps = null;
+    Vector<String> timestamps = null;
     MetamorphHandler handler = null;
 
     MetadataStore store =
@@ -607,19 +607,18 @@ public class MetamorphReader extends BaseTiffReader {
       timestamps = handler.getTimestamps();
 
       for (int t=0; t<timestamps.size(); t++) {
-        addSeriesMeta("timestamp " + t, DateTools.formatDate(
-          (String) timestamps.get(t), MEDIUM_DATE_FORMAT));
+        addSeriesMeta("timestamp " + t, DateTools.formatDate(timestamps.get(t),
+          MEDIUM_DATE_FORMAT));
       }
 
       long startDate = 0;
       if (timestamps.size() > 0) {
-        startDate = DateTools.getTime((String)
-          timestamps.get(0), MEDIUM_DATE_FORMAT);
+        startDate = DateTools.getTime(timestamps.get(0), MEDIUM_DATE_FORMAT);
       }
 
       Float positionX = new Float(handler.getStagePositionX());
       Float positionY = new Float(handler.getStagePositionY());
-      Vector exposureTimes = handler.getExposures();
+      Vector<Float> exposureTimes = handler.getExposures();
       if (exposureTimes.size() == 0) {
         for (int p=0; p<getImageCount(); p++) {
           exposureTimes.add(exposureTime);
@@ -657,7 +656,7 @@ public class MetamorphReader extends BaseTiffReader {
 
         if (timestamps.size() > 0) {
           if (coords[2] < timestamps.size()) index = coords[2];
-          String stamp = (String) timestamps.get(index);
+          String stamp = timestamps.get(index);
           long ms = DateTools.getTime(stamp, MEDIUM_DATE_FORMAT);
           deltaT = new Float((ms - startDate) / 1000f);
         }
@@ -668,7 +667,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index < exposureTimes.size()) {
-          exposureTime = (Float) exposureTimes.get(index);
+          exposureTime = exposureTimes.get(index);
         }
 
         store.setPlaneTimingDeltaT(deltaT, i, 0, p);
@@ -727,7 +726,7 @@ public class MetamorphReader extends BaseTiffReader {
       TiffRational[] uic3 = entry instanceof TiffRational[] ?
         (TiffRational[]) entry : new TiffRational[] {(TiffRational) entry};
       wave = new double[uic3.length];
-      Vector uniqueWavelengths = new Vector();
+      Vector<Double> uniqueWavelengths = new Vector<Double>();
       for (int i=0; i<uic3.length; i++) {
         wave[i] = uic3[i].doubleValue();
         addSeriesMeta("Wavelength [" + intFormatMax(i, mmPlanes) + "]",

@@ -85,25 +85,25 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     core[0].sizeC = 0;
 
-    Vector timestamps = handler.getTimestamps();
-    Vector wavelengths = handler.getWavelengths();
-    Vector zPositions = handler.getZPositions();
-    Vector exposures = handler.getExposures();
+    Vector<String> timestamps = handler.getTimestamps();
+    Vector<Integer> wavelengths = handler.getWavelengths();
+    Vector<Float> zPositions = handler.getZPositions();
+    Vector<Float> exposures = handler.getExposures();
 
     // calculate axis sizes
 
-    Vector uniqueC = new Vector();
+    Vector<Integer> uniqueC = new Vector<Integer>();
     for (int i=0; i<wavelengths.size(); i++) {
-      Integer c = (Integer) wavelengths.get(i);
+      Integer c = wavelengths.get(i);
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
       }
     }
     core[0].sizeC = uniqueC.size();
 
-    Vector uniqueZ = new Vector();
+    Vector<Float> uniqueZ = new Vector<Float>();
     for (int i=0; i<zPositions.size(); i++) {
-      Float z = (Float) zPositions.get(i);
+      Float z = zPositions.get(i);
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
     core[0].sizeZ = uniqueZ.size();
@@ -118,29 +118,29 @@ public class MetamorphTiffReader extends BaseTiffReader {
     String parse = "yyyyMMdd HH:mm:ss.SSS";
 
     for (int i=0; i<timestamps.size(); i++) {
-      long timestamp = DateTools.getTime((String) timestamps.get(i), parse);
+      long timestamp = DateTools.getTime(timestamps.get(i), parse);
       addGlobalMeta("timestamp " + i, timestamp);
     }
     for (int i=0; i<exposures.size(); i++) {
       addGlobalMeta("exposure time " + i + " (ms)",
-        ((Float) exposures.get(i)).floatValue() * 1000);
+        exposures.get(i).floatValue() * 1000);
     }
 
     long startDate = 0;
     if (timestamps.size() > 0) {
-      startDate = DateTools.getTime((String) timestamps.get(0), parse);
+      startDate = DateTools.getTime(timestamps.get(0), parse);
     }
 
     for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       if (coords[2] < timestamps.size()) {
-        String stamp = (String) timestamps.get(coords[2]);
+        String stamp = timestamps.get(coords[2]);
         long ms = DateTools.getTime(stamp, parse);
         store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
           0, 0, i);
       }
       if (i < exposures.size()) {
-        store.setPlaneTimingExposureTime((Float) exposures.get(i), 0, 0, i);
+        store.setPlaneTimingExposureTime(exposures.get(i), 0, 0, i);
       }
     }
 

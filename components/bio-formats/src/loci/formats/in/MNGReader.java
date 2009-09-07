@@ -159,7 +159,7 @@ public class MNGReader extends FormatReader {
 
     in.skipBytes(32);
 
-    Vector stack = new Vector();
+    Vector<Long> stack = new Vector<Long>();
     int maxIterations = 0;
     int currentIteration = 0;
 
@@ -185,7 +185,7 @@ public class MNGReader extends FormatReader {
         maxIterations = in.readInt();
       }
       else if (code.equals("ENDL")) {
-        long seek = ((Long) stack.get(stack.size() - 1)).longValue();
+        long seek = stack.get(stack.size() - 1).longValue();
         if (currentIteration < maxIterations) {
           in.seek(seek);
           currentIteration++;
@@ -204,8 +204,8 @@ public class MNGReader extends FormatReader {
 
     // easiest way to get image dimensions is by opening the first plane
 
-    Hashtable seriesOffsets = new Hashtable();
-    Hashtable seriesLengths = new Hashtable();
+    Hashtable<String, Vector> seriesOffsets = new Hashtable<String, Vector>();
+    Hashtable<String, Vector> seriesLengths = new Hashtable<String, Vector>();
 
     for (int i=0; i<offsets[0].size(); i++) {
       long offset = ((Long) offsets[0].get(i)).longValue();
@@ -229,20 +229,20 @@ public class MNGReader extends FormatReader {
         AWTImageTools.getPixelType(img);
       Vector v = new Vector();
       if (seriesOffsets.containsKey(data)) {
-        v = (Vector) seriesOffsets.get(data);
+        v = seriesOffsets.get(data);
       }
       v.add(new Long(offset));
       seriesOffsets.put(data, v);
 
       v = new Vector();
       if (seriesLengths.containsKey(data)) {
-        v = (Vector) seriesLengths.get(data);
+        v = seriesLengths.get(data);
       }
       v.add(new Long(end));
       seriesLengths.put(data, v);
     }
 
-    String[] keys = (String[]) seriesOffsets.keySet().toArray(new String[0]);
+    String[] keys = seriesOffsets.keySet().toArray(new String[0]);
 
     if (keys.length == 0) {
       throw new FormatException("Pixel data not found.");
@@ -260,10 +260,10 @@ public class MNGReader extends FormatReader {
       core[i].sizeC = Integer.parseInt(st.nextToken());
       core[i].pixelType = Integer.parseInt(st.nextToken());
       core[i].rgb = core[i].sizeC > 1;
-      offsets[i] = (Vector) seriesOffsets.get(keys[i]);
+      offsets[i] = seriesOffsets.get(keys[i]);
       core[i].imageCount = offsets[i].size();
       core[i].sizeT = core[i].imageCount;
-      lengths[i] = (Vector) seriesLengths.get(keys[i]);
+      lengths[i] = seriesLengths.get(keys[i]);
       core[i].sizeZ = 1;
       core[i].dimensionOrder = "XYCZT";
       core[i].interleaved = false;

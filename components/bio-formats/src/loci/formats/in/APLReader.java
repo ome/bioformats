@@ -166,7 +166,7 @@ public class APLReader extends FormatReader {
     // look for the directory that contains TIFF and XML files
 
     Location dir = new Location(parentDirectory);
-    String[] list = dir.list();
+    String[] list = dir.list(true);
     String topDirectory = null;
     for (String f : list) {
       Location file = new Location(dir, f);

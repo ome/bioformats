@@ -73,7 +73,7 @@ public class InCellReader extends FormatReader {
   private int fieldCount;
 
   private int wellRows, wellCols;
-  private Hashtable wellCoordinates;
+  private Hashtable<Integer, int[]> wellCoordinates;
   private Vector<Float> posX, posY;
 
   private int firstRow, firstCol;
@@ -81,7 +81,7 @@ public class InCellReader extends FormatReader {
 
   private boolean[][] exclude;
 
-  private Vector channelsPerTimepoint;
+  private Vector<Integer> channelsPerTimepoint;
   private boolean oneTimepointPerSeries;
   private int totalChannels;
 
@@ -217,7 +217,7 @@ public class InCellReader extends FormatReader {
 
     emWaves = new Vector<Integer>();
     exWaves = new Vector<Integer>();
-    channelsPerTimepoint = new Vector();
+    channelsPerTimepoint = new Vector<Integer>();
     metadataFiles = new Vector<String>();
 
     // build list of companion files
@@ -232,7 +232,7 @@ public class InCellReader extends FormatReader {
 
     // parse metadata from the .xdce or .xml file
 
-    wellCoordinates = new Hashtable();
+    wellCoordinates = new Hashtable<Integer, int[]>();
     posX = new Vector<Float>();
     posY = new Vector<Float>();
 
@@ -250,7 +250,6 @@ public class InCellReader extends FormatReader {
     if (getSizeC() == 0) core[0].sizeC = 1;
     if (getSizeT() == 0) core[0].sizeT = 1;
 
-    Vector wells = new Vector();
     int seriesCount = 0;
 
     if (exclude != null) {
@@ -278,9 +277,8 @@ public class InCellReader extends FormatReader {
     }
     if (oneTimepointPerSeries) {
       int imageCount = 0;
-      for (int i=0; i<channelsPerTimepoint.size(); i++) {
-        int c = ((Integer) channelsPerTimepoint.get(i)).intValue();
-        imageCount += c * getSizeZ();
+      for (Integer timepoint : channelsPerTimepoint) {
+        imageCount += timepoint.intValue() * getSizeZ();
       }
       seriesCount = (totalImages / imageCount) * getSizeT();
     }
@@ -293,7 +291,7 @@ public class InCellReader extends FormatReader {
     core = new CoreMetadata[seriesCount];
     for (int i=0; i<seriesCount; i++) {
       int c = oneTimepointPerSeries ?
-        ((Integer) channelsPerTimepoint.get(i % sizeT)).intValue() : sizeC;
+        channelsPerTimepoint.get(i % sizeT).intValue() : sizeC;
 
       core[i] = new CoreMetadata();
       core[i].sizeZ = z;
@@ -394,7 +392,7 @@ public class InCellReader extends FormatReader {
         i % channelsPerTimepoint.size() : 0;
       for (int time=0; time<getSizeT(); time++) {
         if (!oneTimepointPerSeries) timepoint = time;
-        int c = ((Integer) channelsPerTimepoint.get(timepoint)).intValue();
+        int c = channelsPerTimepoint.get(timepoint).intValue();
         for (int q=0; q<getSizeZ()*c; q++) {
           Image img = imageFiles[well][field][timepoint][q];
           if (img == null) continue;
@@ -551,7 +549,7 @@ public class InCellReader extends FormatReader {
         for (int well=0; well<wellRows*wellCols; well++) {
           for (int field=0; field<fieldCount; field++) {
             for (int t=0; t<getSizeT(); t++) {
-              int channels = ((Integer) channelsPerTimepoint.get(t)).intValue();
+              int channels = channelsPerTimepoint.get(t).intValue();
               imageFiles[well][field][t] = new Image[channels * getSizeZ()];
             }
           }
@@ -566,7 +564,7 @@ public class InCellReader extends FormatReader {
           channelsPerTimepoint.add(new Integer(getSizeC()));
         }
         for (int i=0; i<channelsPerTimepoint.size(); i++) {
-          int c = ((Integer) channelsPerTimepoint.get(i)).intValue();
+          int c = channelsPerTimepoint.get(i).intValue();
           if (c == 0) {
             channelsPerTimepoint.setElementAt(new Integer(getSizeC()), i);
           }
@@ -603,7 +601,7 @@ public class InCellReader extends FormatReader {
         int z = Integer.parseInt(attributes.getValue("z_index"));
         int c = Integer.parseInt(attributes.getValue("wave_index"));
         int t = Integer.parseInt(attributes.getValue("time_index"));
-        int channels = ((Integer) channelsPerTimepoint.get(t)).intValue();
+        int channels = channelsPerTimepoint.get(t).intValue();
 
         int index = FormatTools.getIndex("XYZCT", getSizeZ(),
           channels, 1, getSizeZ() * channels, z, c, 0);
