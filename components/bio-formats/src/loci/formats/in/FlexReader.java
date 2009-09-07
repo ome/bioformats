@@ -72,13 +72,16 @@ public class FlexReader extends FormatReader {
   public static final String[] SUFFIXES =
     new String[] {FLEX_SUFFIX, MEA_SUFFIX};
 
+  public static final String SCREENING = "Screening";
+  public static final String ARCHIVE = "Archive";
+
   // -- Static fields --
 
   /**
    * Mapping from server names stored in the .mea file to actual server names.
    */
-  private static HashMap<String, String> serverMap =
-    new HashMap<String, String>();
+  private static HashMap<String, String[]> serverMap =
+    new HashMap<String, String[]>();
 
   // -- Fields --
 
@@ -1109,7 +1112,7 @@ public class FlexReader extends FormatReader {
   /** SAX handler for parsing XML from .mea files. */
   public class MeaHandler extends DefaultHandler {
     private Vector<String> flex = new Vector<String>();
-    private String hostname = null;
+    private String[] hostnames = null;
 
     // -- MeaHandler API methods --
 
@@ -1121,11 +1124,13 @@ public class FlexReader extends FormatReader {
       String localName, String qName, Attributes attributes)
     {
       if (qName.equals("Host")) {
-        hostname = attributes.getValue("name");
-        hostname = serverMap.get(hostname);
-        if (hostname != null) {
-          hostname = hostname.replace('/', File.separatorChar);
-          hostname = hostname.replace('\\', File.separatorChar);
+        String hostname = attributes.getValue("name");
+        hostnames = serverMap.get(hostname);
+        if (hostnames != null) {
+          for (int i=0; i<hostnames.length; i++) {
+            hostnames[i] = hostnames[i].replace('/', File.separatorChar);
+            hostnames[i] = hostnames[i].replace('\\', File.separatorChar);
+          }
         }
       }
       else if (qName.equals("Picture")) {
@@ -1134,13 +1139,17 @@ public class FlexReader extends FormatReader {
         path = path.replace('/', File.separatorChar);
         path = path.replace('\\', File.separatorChar);
         debug("Found .flex in .mea: " + path);
-        if (hostname != null) {
-          path = hostname + File.separator + path;
-          Location file = new Location(path);
-          if (!file.exists()) {
+        if (hostnames != null) {
+          int numberOfFlexFiles = flex.size();
+          for (String hostname : hostnames) {
+            String filename = hostname + File.separator + path;
+            if (new Location(filename).exists()) {
+              flex.add(filename);
+            }
+          }
+          if (flex.size() == numberOfFlexFiles) {
             warn(path + " was in .mea, but does not actually exist.");
           }
-          else flex.add(path);
         }
       }
     }
@@ -1166,7 +1175,27 @@ public class FlexReader extends FormatReader {
           throw new FormatException("Server " + realName + " was not found.");
         }
 
-        serverMap.put(alias, realName);
+        if (realName.endsWith(File.separator)) {
+          realName.substring(0, realName.length() - 1);
+        }
+        String baseName = realName;
+        if (baseName.endsWith(SCREENING)) {
+          baseName = baseName.substring(0, baseName.lastIndexOf(SCREENING));
+        }
+        else if (baseName.endsWith(ARCHIVE)) {
+          baseName = baseName.substring(0, baseName.lastIndexOf(ARCHIVE));
+        }
+
+        Vector<String> names = new Vector<String>();
+        names.add(baseName);
+        Location screening =
+          new Location(baseName + File.separator + SCREENING);
+        Location archive = new Location(baseName + File.separator + ARCHIVE);
+
+        if (screening.exists()) names.add(screening.getAbsolutePath());
+        if (archive.exists()) names.add(archive.getAbsolutePath());
+
+        serverMap.put(alias, names.toArray(new String[names.size()]));
       }
     }
   }
