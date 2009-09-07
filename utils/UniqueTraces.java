@@ -3,7 +3,7 @@
 //
 
 import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Reads in a bunch of stack traces from standard input,
@@ -13,7 +13,7 @@ public class UniqueTraces {
 
   public static void main(String[] args) throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    Vector traces = new Vector();
+    ArrayList<String> traces = new ArrayList<String>();
     StringBuffer buf = null;
     while (true) {
       String line = in.readLine();
@@ -34,7 +34,7 @@ public class UniqueTraces {
     traces.add(buf.toString());
 
     String[] traceStrings = new String[traces.size()];
-    traces.copyInto(traceStrings);
+    traces.toArray(traceStrings);
 
     for (int i=0; i<traceStrings.length; i++) {
       String s = traceStrings[i];

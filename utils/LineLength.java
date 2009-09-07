@@ -3,8 +3,8 @@
 //
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
 
 /**
  * Scans text files for lines longer than a specified length.
@@ -24,7 +24,7 @@ public class LineLength implements FileFilter {
     int tabWidth = TABWIDTH;
     boolean checkTabs = true, checkEndSpaces = true;
     boolean lociHacks = false;
-    Vector v = new Vector();
+    ArrayList<File> fileList = new ArrayList<File>();
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
         // argument is a flag
@@ -50,7 +50,7 @@ public class LineLength implements FileFilter {
       else dir = args[i].substring(0, slash);
       File[] files = new File(dir).listFiles(new LineLength(args[i]));
       if (files != null) {
-        for (int j=0; j<files.length; j++) v.add(strip(files[j]));
+        for (int j=0; j<files.length; j++) fileList.add(strip(files[j]));
       }
     }
 
@@ -58,8 +58,8 @@ public class LineLength implements FileFilter {
     Arrays.fill(spaces, ' ');
     String tabSpaces = new String(spaces);
 
-    File[] files = new File[v.size()];
-    v.copyInto(files);
+    File[] files = new File[fileList.size()];
+    fileList.toArray(files);
     if (files.length == 0) {
       System.out.println("No matching files found.");
       System.exit(2);

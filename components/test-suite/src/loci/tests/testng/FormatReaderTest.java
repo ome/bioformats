@@ -86,7 +86,7 @@ public class FormatReaderTest {
   public static ConfigurationTree config;
 
   /** List of files to skip. */
-  public static List skipFiles = new LinkedList();
+  public static List<String> skipFiles = new LinkedList<String>();
 
   /** Global shared reader for use in all tests. */
   private static BufferedImageReader reader;
@@ -119,7 +119,6 @@ public class FormatReaderTest {
    */
   public void testBufferedImageDimensions() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testBufferedImageDimensions";
     boolean success = true;
     String msg = null;
@@ -176,7 +175,6 @@ public class FormatReaderTest {
    */
   public void testByteArrayDimensions() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testByteArrayDimensions";
     boolean success = true;
     String msg = null;
@@ -215,7 +213,6 @@ public class FormatReaderTest {
    */
   public void testThumbnailImageDimensions() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testThumbnailImageDimensions";
     boolean success = true;
     String msg = null;
@@ -276,7 +273,6 @@ public class FormatReaderTest {
    */
   public void testThumbnailByteArrayDimensions() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testThumbnailByteArrayDimensions";
     boolean success = true;
     String msg = null;
@@ -309,7 +305,6 @@ public class FormatReaderTest {
    */
   public void testImageCount() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testImageCount";
     boolean success = true;
     String msg = null;
@@ -329,7 +324,7 @@ public class FormatReaderTest {
       LogTools.trace(t);
       success = false;
     }
-    result(testName, success);
+    result(testName, success, msg);
   }
 
   /**
@@ -337,7 +332,6 @@ public class FormatReaderTest {
    */
   public void testOMEXML() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testOMEXML";
     String msg = null;
     try {
@@ -392,7 +386,6 @@ public class FormatReaderTest {
    */
   public void testSaneOMEXML() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testSaneOMEXML";
     String msg = null;
     try {
@@ -456,7 +449,6 @@ public class FormatReaderTest {
   public void testConsistent() {
     if (!initFile()) return;
     if (config == null) throw new SkipException("No config tree");
-    String file = reader.getCurrentFile();
     String testName = "testConsistent";
     boolean success = true;
     String msg = null;
@@ -583,7 +575,6 @@ public class FormatReaderTest {
   public void testPerformance() {
     if (!initFile()) return;
     if (config == null) throw new SkipException("No config tree");
-    String file = reader.getCurrentFile();
     String testName = "testPerformance";
     boolean success = true;
     String msg = null;
@@ -678,7 +669,6 @@ public class FormatReaderTest {
    */
   public void testValidXML() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testValidXML";
     boolean success = true;
     try {
@@ -700,7 +690,6 @@ public class FormatReaderTest {
   public void testPixelsHashes() {
     if (!initFile()) return;
     if (config == null) throw new SkipException("No config tree");
-    String file = reader.getCurrentFile();
     String testName = "testPixelsHashes";
     boolean success = true;
     String msg = null;
@@ -731,7 +720,6 @@ public class FormatReaderTest {
    */
   public void testIsThisType() {
     if (!initFile()) return;
-    String file = reader.getCurrentFile();
     String testName = "testIsThisType";
     boolean success = true;
     String msg = null;
@@ -806,7 +794,6 @@ public class FormatReaderTest {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
     LogTools.println("Generating configuration: " + file);
-    Exception exc = null;
     try {
       StringBuffer line = new StringBuffer();
       line.append("\"");

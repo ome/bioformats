@@ -32,7 +32,7 @@ public class ReflectionPerformance {
   public static void benchmarkFast() throws Exception {
     System.out.println();
     System.out.println("--== Fast method benchmark, no args ==--");
-    Class c = ReflectionPerformance.class;
+    Class<ReflectionPerformance> c = ReflectionPerformance.class;
     Method method = c.getMethod("fastMethod");
 
     ReflectedUniverse r = new ReflectedUniverse();
@@ -72,7 +72,7 @@ public class ReflectionPerformance {
   public static void benchmarkFastWithArg() throws Exception {
     System.out.println();
     System.out.println("--== Fast method benchmark, w/ arg ==--");
-    Class c = ReflectionPerformance.class;
+    Class<ReflectionPerformance> c = ReflectionPerformance.class;
     Method method = c.getMethod("fastMethod", int.class);
 
     ReflectedUniverse r = new ReflectedUniverse();
@@ -115,7 +115,7 @@ public class ReflectionPerformance {
   public static void benchmarkSlow() throws Exception {
     System.out.println();
     System.out.println("--== Slow method benchmark, no args ==--");
-    Class c = ReflectionPerformance.class;
+    Class<ReflectionPerformance> c = ReflectionPerformance.class;
     Method method = c.getMethod("slowMethod");
 
     ReflectedUniverse r = new ReflectedUniverse();
@@ -155,7 +155,7 @@ public class ReflectionPerformance {
   public static void benchmarkSlowWithArg() throws Exception {
     System.out.println();
     System.out.println("--== Slow method benchmark, w/ arg ==--");
-    Class c = ReflectionPerformance.class;
+    Class<ReflectionPerformance> c = ReflectionPerformance.class;
     Method method = c.getMethod("slowMethod", int.class);
 
     ReflectedUniverse r = new ReflectedUniverse();

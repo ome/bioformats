@@ -7,6 +7,7 @@ import java.lang.reflect.*;
 /** Uses reflection to print a bunch of information about a class. */
 public class DumpClass {
 
+  @SuppressWarnings("unchecked")
   public static void main(String[] args) throws Exception {
     for (int i=0; i<args.length; i++) {
       Class c = Class.forName(args[i]);

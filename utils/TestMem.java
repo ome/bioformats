@@ -2,15 +2,16 @@
 // TestMem.java
 //
 
-import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /** A little GUI for testing Java memory behavior. */
+@SuppressWarnings("serial")
 public class TestMem extends JFrame implements ActionListener {
   private static final int MEM = 32 * 1024 * 1024; // 32 MB
 
+  @SuppressWarnings("unused")
   private byte[] data;
   private JLabel memTotal, memMax, memFree, memUsed;
 

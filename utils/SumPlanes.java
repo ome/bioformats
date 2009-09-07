@@ -39,7 +39,7 @@ public class SumPlanes {
     // Assuming that all images have the same dimensions and type
     int w = images[0].getWidth();
     int h = images[0].getHeight();
-    int type = images[0].getType();
+    //int type = images[0].getType();
 
     BufferedImage result = new BufferedImage(w, h,
       BufferedImage.TYPE_USHORT_GRAY); // type == 0 for some reason...

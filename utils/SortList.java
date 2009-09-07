@@ -3,8 +3,8 @@
 //
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
 
 /** Sorts a text file alphabetically, removing duplicates. */
 public class SortList {
@@ -12,16 +12,16 @@ public class SortList {
   public static void main(String[] args) throws Exception {
     boolean showDups = args[0].equals("-v");
     String file = args[showDups ? 1 : 0];
-    Vector v = new Vector();
+    ArrayList<String> lineList = new ArrayList<String>();
     BufferedReader fin = new BufferedReader(new FileReader(file));
     while (true) {
       String line = fin.readLine();
       if (line == null) break;
-      v.add(line);
+      lineList.add(line);
     }
     fin.close();
-    String[] lines = new String[v.size()];
-    v.copyInto(lines);
+    String[] lines = new String[lineList.size()];
+    lineList.toArray(lines);
     Arrays.sort(lines);
     new File(file).renameTo(new File(file + ".old"));
     PrintWriter fout = new PrintWriter(new FileWriter(file));

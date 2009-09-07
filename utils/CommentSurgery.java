@@ -16,7 +16,6 @@ public class CommentSurgery {
     // the -test flag will print proposed changes to stdout
     // rather than actually changing the comment
     boolean test = args[0].equals("-test");
-    int start = test ? 1 : 0;
 
     for (int i=0; i<args.length; i++) {
       String id = args[i];

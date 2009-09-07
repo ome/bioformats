@@ -95,7 +95,6 @@ public class ZipTester {
 
     Runtime r = Runtime.getRuntime();
     String[] cmd;
-    Process p;
 
     // test zip archive
     String zip = id + ".zip";
