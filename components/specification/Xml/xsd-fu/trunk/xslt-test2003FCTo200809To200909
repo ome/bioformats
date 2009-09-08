@@ -37,7 +37,7 @@ from copy import deepcopy
 from xsltbasic import XsltBasic
 # We're using lxml's ElementTree implementation for XML manipulation due to
 # its XSLT integration.
-from lxml.etree import XML, XSLT, Element, SubElement, ElementTree, dump, parse
+from lxml.etree import XML, XSLT, XMLSchema, XMLSchemaValidateError, Element, SubElement, ElementTree, dump, parse
 
 # Handle Python 2.5 built-in ElementTree
 #try:
@@ -70,6 +70,9 @@ def run_stylesheet(xslt, document):
 class Test2003FCto200809to200909(XsltBasic):
     STYLESHEET = "../../../Xslt/2003-FC-to-2008-09.xsl"
     STYLESHEET2 = "../../../Xslt/2008-09-to-2009-09.xsl"
+
+    OLD_VALIDATION = "../../../Xml/Release/2003-FC/V2/ome.xsd"
+    NEW_VALIDATION = "../../../Xml/Working/ome.xsd"
     
     DOCUMENT = "tmp/sample-2003-FC.ome"
     
@@ -99,6 +102,61 @@ class Test2003FCto200809to200909(XsltBasic):
         
         """
         print self.result
+
+    def test_validate_input(self):
+        """
+            Checks that the input validates
+        """
+        # load the old schema
+        try:
+            schema = XMLSchema(parse(self.OLD_VALIDATION))
+        except:
+            # chosen schema failed to laod
+            print "Validator Internal error: XSD schema file could not be found [OLD]"
+
+        # validating the document tree against the loaded schema
+        # according to the docs this should not throw an exception - but it does!
+        try:
+            schema.validate(self.old_root)
+            isXsdValid = True
+            for err in schema.error_log:
+                isXsdValid = False
+                print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Input", err.line, None, "XSD", None, err.message)
+
+        except XMLSchemaValidateError:
+            isXsdValid = False
+            print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Input", None, None, "XML", None, "Processing the XML data has generated an unspecified error in the XML sub-system. This is usually a result of an incorrect top level block. Please check the OME block is well-formed and that the schemaLocation is specified correctly. This may also be caused by a missing namespace prefix or incorrect xmlns attribute.")
+
+        self.assertTrue(isXsdValid);
+
+
+    def test_validate_output(self):
+        """
+            Checks that the output validates
+        """
+        # load the new schema
+        try:
+            schema = XMLSchema(parse(self.NEW_VALIDATION))
+        except:
+            # chosen schema failed to laod
+            print "Validator Internal error: XSD schema file could not be found [NEW]"
+
+        # validating the document tree against the loaded schema
+        # according to the docs this should not throw an exception - but it does!
+        try:
+            schema.validate(self.new_root)
+            isXsdValid = True
+            for err in schema.error_log:
+                isXsdValid = False
+                print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Output", err.line, None, "XSD", None, err.message)
+
+        except XMLSchemaValidateError:
+            isXsdValid = False
+            print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Output", None, None, "XML", None, "Processing the XML data has generated an unspecified error in the XML sub-system. This is usually a result of an incorrect top level block. Please check the OME block is well-formed and that the schemaLocation is specified correctly. This may also be caused by a missing namespace prefix or incorrect xmlns attribute.")
+            print "File is invalid"
+            
+        self.assertTrue(isXsdValid);
+    
         
 if __name__ == '__main__':
     unittest.main()

@@ -328,7 +328,7 @@
 			 Category="Category1" ProgramID="ProgramID1" ModuleName="ModuleName1" ID="urn:lsid:-.-:Module:1">
 			<Description xml:lang="en">Description5</Description>
 			<AM:Declaration>
-				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName1">
+				<AM:FormalInput UserDefined="false" Count="+" Name="FormalInputName1" SemanticTypeName="SemanticTypeName1">
 					<AM:LookupTable Name="Name45">
 						<AM:Entry Value="Value1" Label="Label1"/>
 						<AM:Entry Value="Value3" Label="Label3"/>
@@ -337,7 +337,7 @@
 					</AM:LookupTable>
 					<Description xml:lang="en">Description7</Description>
 				</AM:FormalInput>
-				<AM:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName3">
+				<AM:FormalOutput IBelongTo="[Region]" Count="+" Name="FormalOutputName1" SemanticTypeName="SemanticTypeName3">
 					<Description xml:lang="en">Description8</Description>
 				</AM:FormalOutput>
 			</AM:Declaration>
@@ -377,7 +377,7 @@
 			 Category="Category3" ProgramID="ProgramID3" ModuleName="ModuleName3" ID="urn:lsid:-.-:Module:2">
 			<Description xml:lang="en">Description9</Description>
 			<AM:Declaration>
-				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName5">
+				<AM:FormalInput UserDefined="false" Count="+" Name="FormalInputName2" SemanticTypeName="SemanticTypeName5">
 					<AM:LookupTable Name="Name47">
 						<AM:Entry Value="Value9" Label="Label7"/>
 						<AM:Entry Value="Value11" Label="Label9"/>
@@ -386,7 +386,7 @@
 					</AM:LookupTable>
 					<Description xml:lang="en">Description11</Description>
 				</AM:FormalInput>
-				<AM:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName7">
+				<AM:FormalOutput IBelongTo="[Region]" Count="+" Name="FormalOutputName2" SemanticTypeName="SemanticTypeName7">
 					<Description xml:lang="en">Description12</Description>
 				</AM:FormalOutput>
 			</AM:Declaration>
@@ -426,7 +426,7 @@
 			 Category="Category5" ProgramID="ProgramID5" ModuleName="ModuleName5" ID="urn:lsid:-.-:Module:3">
 			<Description xml:lang="en">Description13</Description>
 			<AM:Declaration>
-				<AM:FormalInput UserDefined="false" Count="+" Name=" " SemanticTypeName="SemanticTypeName9">
+				<AM:FormalInput UserDefined="false" Count="+" Name="FormalInputName9" SemanticTypeName="SemanticTypeName9">
 					<AM:LookupTable Name="Name49">
 						<AM:Entry Value="Value19" Label="Label13"/>
 						<AM:Entry Value="Value21" Label="Label15"/>
@@ -435,7 +435,7 @@
 					</AM:LookupTable>
 					<Description xml:lang="en">Description15</Description>
 				</AM:FormalInput>
-				<AM:FormalOutput IBelongTo="[Region]" Count="+" Name=" " SemanticTypeName="SemanticTypeName11">
+				<AM:FormalOutput IBelongTo="[Region]" Count="+" Name="FormalOutputName9" SemanticTypeName="SemanticTypeName11">
 					<Description xml:lang="en">Description16</Description>
 				</AM:FormalOutput>
 			</AM:Declaration>
