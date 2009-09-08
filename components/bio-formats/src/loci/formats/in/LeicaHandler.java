@@ -295,11 +295,9 @@ public class LeicaHandler extends DefaultHandler {
           if (coreMeta.sizeY != 0) {
             if (coreMeta.sizeZ == 1) {
               coreMeta.sizeZ = len;
-              store.setDimensionsPhysicalSizeZ(physicalSize, numDatasets, 0);
             }
             else if (coreMeta.sizeT == 1) {
               coreMeta.sizeT = len;
-              store.setDimensionsTimeIncrement(physicalSize, numDatasets, 0);
             }
           }
           else {
@@ -316,7 +314,6 @@ public class LeicaHandler extends DefaultHandler {
           }
           else {
             coreMeta.sizeZ = len;
-            store.setDimensionsPhysicalSizeZ(physicalSize, numDatasets, 0);
           }
           bytesPerAxis.put(new Integer(nBytes), "Z");
           break;
@@ -329,7 +326,6 @@ public class LeicaHandler extends DefaultHandler {
           }
           else {
             coreMeta.sizeT = len;
-            store.setDimensionsTimeIncrement(physicalSize, numDatasets, 0);
           }
           bytesPerAxis.put(new Integer(nBytes), "T");
           break;
@@ -351,6 +347,13 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (id.equals("dblZoom")) {
         zoom = new Float(value);
+      }
+      else if (id.equals("dblStepSize")) {
+        float zStep = (float) (Double.parseDouble(value) * 1000000);
+        store.setDimensionsPhysicalSizeZ(new Float(zStep), numDatasets, 0);
+      }
+      else if (id.equals("nDelayTime_s")) {
+        store.setDimensionsTimeIncrement(new Float(value), numDatasets, 0);
       }
       else if (id.equals("CameraName")) {
         store.setDetectorModel(value, numDatasets, 0);
