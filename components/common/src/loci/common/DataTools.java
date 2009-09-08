@@ -850,7 +850,10 @@ public final class DataTools {
    */
   public static int indexOf(Object[] array, Object value) {
     for (int i=0; i<array.length; i++) {
-      if (value.equals(array[i])) return i;
+      if (value == null) {
+        if (array[i] == null) return i;
+      }
+      else if (value.equals(array[i])) return i;
     }
     return -1;
   }
