@@ -789,6 +789,10 @@ public class FV1000Reader extends FormatReader {
       usedFiles.add(id);
       if (!isOIB) {
         Location dir = new Location(tiffPath);
+        if (!dir.exists()) {
+          throw new FormatException(
+            "Required directory " + tiffPath + " was not found.");
+        }
         String[] list = mappedOIF ?
           Location.getIdMap().keySet().toArray(new String[0]) : dir.list();
         for (int i=0; i<list.length; i++) {
