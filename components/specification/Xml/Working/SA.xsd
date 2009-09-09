@@ -53,7 +53,7 @@
 		Reagent
 	-->
 	
-	<xsd:element name="StructuredAnnotation"> <!-- top level definition -->
+	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				MISSING
