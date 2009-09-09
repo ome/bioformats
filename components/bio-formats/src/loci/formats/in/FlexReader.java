@@ -1195,7 +1195,30 @@ public class FlexReader extends FormatReader {
         if (screening.exists()) names.add(screening.getAbsolutePath());
         if (archive.exists()) names.add(archive.getAbsolutePath());
 
-        serverMap.put(alias, names.toArray(new String[names.size()]));
+        mapServer(alias, names.toArray(new String[names.size()]));
+      }
+    }
+  }
+
+  /**
+   * Map the server named 'alias' to the path 'realName'.
+   * @throw FormatException if 'realName' does not exist.
+   */
+  public static void mapServer(String alias, String[] realNames)
+    throws FormatException
+  {
+    if (alias != null) {
+      if (realNames == null) {
+        serverMap.remove(alias);
+      }
+      else {
+        for (String server : realNames) {
+          if (!new Location(server).exists()) {
+            throw new FormatException("Server " + server + " does not exist.");
+          }
+        }
+
+        serverMap.put(alias, realNames);
       }
     }
   }
@@ -1225,8 +1248,8 @@ public class FlexReader extends FormatReader {
       int eq = line.indexOf("=");
       if (eq == -1 || line.startsWith("#")) continue;
       String alias = line.substring(0, eq).trim();
-      String server = line.substring(eq + 1).trim();
-      mapServer(alias, server);
+      String[] servers = line.substring(eq + 1).trim().split(";");
+      mapServer(alias, servers);
     }
     s.close();
   }
