@@ -144,15 +144,17 @@ public abstract class DelegateReader extends FormatReader {
     return nativeReader.openBytes(no, buf, x, y, w, h);
   }
 
-  // -- IFormatHandler API methods --
-
-  /* @see IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    if (nativeReader != null) nativeReader.close();
-    if (legacyReader != null) legacyReader.close();
-    nativeReaderInitialized = legacyReaderInitialized = false;
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (nativeReader != null) nativeReader.close(fileOnly);
+    if (legacyReader != null) legacyReader.close(fileOnly);
+    if (!fileOnly) {
+      nativeReaderInitialized = legacyReaderInitialized = false;
+    }
   }
+
+  // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
