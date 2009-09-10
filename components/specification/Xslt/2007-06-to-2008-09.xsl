@@ -549,18 +549,35 @@
 			<xsl:variable name="shapeEndID"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
 			<xsl:attribute name="ID">ROI:<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
 			<xsl:element name="Union" namespace="{$newOMENS}">
-				
-				<xsl:call-template name="ByTZROI">
-					<xsl:with-param name="theTEnd"><xsl:value-of select="$theMaxT"/></xsl:with-param>
-					<xsl:with-param name="theZEnd"><xsl:value-of select="$theMaxZ"/></xsl:with-param>
-					<xsl:with-param name="parentID"><xsl:value-of select="$parentID"/></xsl:with-param>
-					<xsl:with-param name="theZ"><xsl:value-of select="$theMinZ"/></xsl:with-param>
-					<xsl:with-param name="theT"><xsl:value-of select="$theMinT"/></xsl:with-param>
-					<xsl:with-param name="x"><xsl:value-of select="$startX"/></xsl:with-param>
-					<xsl:with-param name="y"><xsl:value-of select="$startY"/></xsl:with-param>
-					<xsl:with-param name="width"><xsl:value-of select="$width"/></xsl:with-param>
-					<xsl:with-param name="height"><xsl:value-of select="$height"/></xsl:with-param>
-				</xsl:call-template>
+				<xsl:choose>
+					<xsl:when test="(($theMaxT = $theMinT) and ($theMaxZ = $theMinZ) and not(( $T0 = 'NaN') or ( $Z0 = 'NaN') or ( $T1 = 'NaN') or ( $Z1 = 'NaN') ))">
+						<xsl:element name="Shape" namespace="{$newOMENS}">
+							<xsl:attribute name="ID">Shape:Z<xsl:value-of select="$theMinZ"/>:T<xsl:value-of select="$theMinT"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
+							<xsl:attribute name="theZ"><xsl:value-of select="$theMinZ"/></xsl:attribute>
+							<xsl:attribute name="theT"><xsl:value-of select="$theMinT"/></xsl:attribute>
+							<xsl:comment>Converted to single Rect</xsl:comment>
+							<xsl:element name="Rect" namespace="{$newOMENS}">
+								<xsl:attribute name="x"><xsl:value-of select="$startX"/></xsl:attribute>
+								<xsl:attribute name="y"><xsl:value-of select="$startY"/></xsl:attribute>
+								<xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute>
+								<xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute>
+							</xsl:element>
+						</xsl:element>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="ByTZROI">
+							<xsl:with-param name="theTEnd"><xsl:value-of select="$theMaxT"/></xsl:with-param>
+							<xsl:with-param name="theZEnd"><xsl:value-of select="$theMaxZ"/></xsl:with-param>
+							<xsl:with-param name="parentID"><xsl:value-of select="$parentID"/></xsl:with-param>
+							<xsl:with-param name="theZ"><xsl:value-of select="$theMinZ"/></xsl:with-param>
+							<xsl:with-param name="theT"><xsl:value-of select="$theMinT"/></xsl:with-param>
+							<xsl:with-param name="x"><xsl:value-of select="$startX"/></xsl:with-param>
+							<xsl:with-param name="y"><xsl:value-of select="$startY"/></xsl:with-param>
+							<xsl:with-param name="width"><xsl:value-of select="$width"/></xsl:with-param>
+							<xsl:with-param name="height"><xsl:value-of select="$height"/></xsl:with-param>
+						</xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
@@ -574,7 +591,7 @@
 		<xsl:param name="y"/>
 		<xsl:param name="width"/>
 		<xsl:param name="height"/>
-		<xsl:if test="not($theZ > $theZEnd)">
+		<xsl:if test="$theZEnd >= $theZ">
 			<xsl:element name="Shape" namespace="{$newOMENS}">
 				<xsl:attribute name="ID">Shape:Z<xsl:value-of select="$theZ"/>:T<xsl:value-of select="$theT"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
 				<xsl:attribute name="theZ"><xsl:value-of select="$theZ"/></xsl:attribute>
@@ -609,7 +626,7 @@
 		<xsl:param name="y"/>
 		<xsl:param name="width"/>
 		<xsl:param name="height"/>
-		<xsl:if test="not($theT > $theTEnd)">
+		<xsl:if test="$theTEnd >= $theT">
 			<xsl:call-template name="ByTZROI">
 				<xsl:with-param name="theTEnd"><xsl:value-of select="$theTEnd"/></xsl:with-param>
 				<xsl:with-param name="theZEnd"><xsl:value-of select="$theZEnd"/></xsl:with-param>
@@ -624,7 +641,7 @@
 			<xsl:call-template name="ByZROI">
 				<xsl:with-param name="theZEnd"><xsl:value-of select="$theZEnd"/></xsl:with-param>
 				<xsl:with-param name="parentID"><xsl:value-of select="$parentID"/></xsl:with-param>
-				<xsl:with-param name="theZ"><xsl:value-of select="$theZ + 1"/></xsl:with-param>
+				<xsl:with-param name="theZ"><xsl:value-of select="$theZ"/></xsl:with-param>
 				<xsl:with-param name="theT"><xsl:value-of select="$theT"/></xsl:with-param>
 				<xsl:with-param name="x"><xsl:value-of select="$x"/></xsl:with-param>
 				<xsl:with-param name="y"><xsl:value-of select="$y"/></xsl:with-param>

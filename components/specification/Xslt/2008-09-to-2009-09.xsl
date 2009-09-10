@@ -49,11 +49,11 @@
   <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09</xsl:variable>
   <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2009-09</xsl:variable>
   <xsl:variable name="newCANS">http://www.openmicroscopy.org/Schemas/CA/2009-09</xsl:variable>
- <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2009-09</xsl:variable>
- <xsl:variable name="newSTDNS">http://www.openmicroscopy.org/Schemas/STD/2009-09</xsl:variable>
- <xsl:variable name="newAMLNS">http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09</xsl:variable>
- <xsl:variable name="newMLINS">http://www.openmicroscopy.org/Schemas/MLI/2009-09</xsl:variable>
- <xsl:variable name="newCLINS">http://www.openmicroscopy.org/Schemas/CLI/2009-09</xsl:variable>
+  <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2009-09</xsl:variable>
+  <xsl:variable name="newSTDNS">http://www.openmicroscopy.org/Schemas/STD/2009-09</xsl:variable>
+  <xsl:variable name="newAMLNS">http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09</xsl:variable>
+  <xsl:variable name="newMLINS">http://www.openmicroscopy.org/Schemas/MLI/2009-09</xsl:variable>
+  <xsl:variable name="newCLINS">http://www.openmicroscopy.org/Schemas/CLI/2009-09</xsl:variable>
  
   <xsl:output method="xml" indent="yes"/>
   <xsl:preserve-space elements="*"/>
@@ -110,6 +110,10 @@
     xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09"
     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+    xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
+    xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
+    xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
+    xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
       <xsl:apply-templates/>
@@ -1277,6 +1281,15 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
     </xsl:choose>
   </xsl:template>
 
+
+ <!-- SA processing -->
+
+ <!-- Rename XmlAnnotation to XMLAnnotation -->
+  <xsl:template match="SA:XmlAnnotation">
+    <xsl:element name="XMLAnnotation" namespace="{$newSANS}">
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:element>
+  </xsl:template>
 
   <!-- Default processing -->
   <xsl:template match="@*|node()">
