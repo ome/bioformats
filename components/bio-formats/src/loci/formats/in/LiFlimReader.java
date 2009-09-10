@@ -24,19 +24,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.zip.GZIPInputStream;
 
 import loci.common.DataTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
+import loci.common.Location;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -82,14 +89,26 @@ public class LiFlimReader extends FormatReader {
 
   // -- Fields --
 
+  /** Offset to start of pixel data. */
+  private long dataOffset;
+
   /** Parsed configuration data. */
   private IniList ini;
 
   /** True if gzip compression was used to deflate the pixels. */
   private boolean gzip;
 
-  /** Byte offset to each plane in the file. */
+  /** Byte offset to each image plane. */
   private long[] offsets;
+
+  /** Byte count for each image plane. */
+  private int[] counts;
+
+  /** Stream to use for reading gzip-compressed pixel data. */
+  private DataInputStream gz;
+
+  /** Image number indicating position in gzip stream. */
+  private int gzPos;
 
   // -- Constructor --
 
@@ -107,7 +126,51 @@ public class LiFlimReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    // TODO
+
+    int sizeX = getSizeX();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bytesPerPlane = getSizeX() * getSizeY() * bpp;
+
+    int size = bpp * w * h;
+
+    if (gzip) {
+      prepareGZipStream(no);
+
+      // read compressed data
+      byte[] bytes = new byte[bytesPerPlane];
+      gz.readFully(bytes);
+
+      // crop data
+      if (w == sizeX) {
+        // copy data directly, in one block
+        System.arraycopy(bytes, sizeX * y, buf, 0, buf.length);
+      }
+      else {
+        // copy data line by line
+        for (int r=0; r<h; r++) {
+          int bytesIndex = bpp * (sizeX * (r + y) + x);
+          int bufIndex = bpp * w * r;
+          System.arraycopy(bytes, bytesIndex, buf, bufIndex, bpp * w);
+        }
+      }
+    }
+    else if (w == sizeX) {
+      // read data directly, in one block
+      int scan = bpp * sizeX;
+      in.seek(dataOffset + bytesPerPlane * no + scan * y);
+      in.readFully(buf, 0, size);
+    }
+    else {
+      // read data line by line
+      int scan = bpp * sizeX;
+      in.seek(dataOffset + bytesPerPlane * no + scan * y + bpp * x);
+      int read = bpp * w;
+      for (int i=0; i<size; i+=read) {
+        in.readFully(buf, i, read);
+        in.skipBytes(scan - read);
+      }
+    }
+
     return buf;
   }
 
@@ -115,9 +178,12 @@ public class LiFlimReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      dataOffset = 0;
       ini = null;
       gzip = false;
-      offsets = null;
+      if (gz != null) gz.close();
+      gz = null;
+      gzPos = 0;
     }
   }
 
@@ -129,7 +195,7 @@ public class LiFlimReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-    parseIni();
+    parseHeader();
 
     initOriginalMetadata();
     initCoreMetadata();
@@ -138,10 +204,11 @@ public class LiFlimReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void parseIni() throws IOException {
-    String iniData = in.findString("{END}");
+  private void parseHeader() throws IOException {
+    String headerData = in.findString("{END}");
+    dataOffset = in.getFilePointer();
     IniParser parser = new IniParser();
-    ini = parser.parseINI(new BufferedReader(new StringReader(iniData)));
+    ini = parser.parseINI(new BufferedReader(new StringReader(headerData)));
   }
 
   private void initOriginalMetadata() {
@@ -149,6 +216,7 @@ public class LiFlimReader extends FormatReader {
     for (IniTable table : ini) {
       String name = table.get(IniTable.HEADER_KEY);
       for (String key : table.keySet()) {
+        if (key.equals(IniTable.HEADER_KEY)) continue;
         String value = table.get(key);
         addGlobalMeta(name + " - " + key, value);
       }
@@ -224,6 +292,38 @@ public class LiFlimReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
+  }
+
+  private void prepareGZipStream(int no) throws IOException {
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bytesPerPlane = getSizeX() * getSizeY() * bpp;
+
+    if (gz == null || no < gzPos) {
+      // reinitialize gzip stream
+      if (gz != null) gz.close();
+
+      // seek to start of pixel data
+      String path = Location.getMappedId(currentId);
+      FileInputStream fis = new FileInputStream(path);
+      skip(fis, dataOffset);
+
+      // create gzip stream
+      gz = new DataInputStream(new GZIPInputStream(fis));
+      gzPos = 0;
+    }
+
+    // seek to correct image number
+    skip(gz, bytesPerPlane * (no - gzPos));
+    gzPos = no + 1;
+  }
+
+  private void skip(InputStream is, long num) throws IOException {
+    long skipLeft = num;
+    while (skipLeft > 0) {
+      long skip = is.skip(skipLeft);
+      if (skip <= 0) throw new IOException("Cannot skip bytes");
+      skipLeft -= skip;
+    }
   }
 
 }
