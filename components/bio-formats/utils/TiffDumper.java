@@ -3,6 +3,8 @@
 //
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import loci.common.RandomAccessInputStream;
 import loci.formats.tiff.*;
 
@@ -25,10 +27,31 @@ public class TiffDumper {
       for (Integer key : ifd.keySet()) {
         int k = key.intValue();
         String name = IFD.getIFDTagName(k);
-        Object value = ifd.getIFDValue(k);
+        String value = prettyValue(ifd.getIFDValue(k), 0);
         System.out.println(name + " = " + value);
       }
     }
+  }
+
+  private static String prettyValue(Object value, int indent) {
+    if (!value.getClass().isArray()) return value.toString();
+
+    char[] spaceChars = new char[indent];
+    Arrays.fill(spaceChars, ' ');
+    String spaces = new String(spaceChars);
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("{\n");
+    for (int i=0; i<Array.getLength(value); i++) {
+      sb.append(spaces);
+      sb.append("  ");
+      Object component = Array.get(value, i);
+      sb.append(prettyValue(component, indent + 2));
+      sb.append("\n");
+    }
+    sb.append(spaces);
+    sb.append("}");
+    return sb.toString();
   }
 
 }
