@@ -784,23 +784,30 @@ public final class DataTools {
   public static float[] normalizeFloats(float[] data) {
     float[] rtn = new float[data.length];
 
-    // make a quick pass through to determine the real min and max values
-
+    // determine the finite min and max values
     float min = Float.MAX_VALUE;
     float max = Float.MIN_VALUE;
-    float range = max - min;
-
     for (int i=0; i<data.length; i++) {
+      if (data[i] == Float.POSITIVE_INFINITY ||
+        data[i] == Float.NEGATIVE_INFINITY)
+      {
+        continue;
+      }
       if (data[i] < min) min = data[i];
       if (data[i] > max) max = data[i];
     }
 
-    // now normalize; min => 0.0, max => 1.0
+    // normalize infinity values
+    for (int i=0; i<data.length; i++) {
+      if (data[i] == Float.POSITIVE_INFINITY) data[i] = max;
+      else if (data[i] == Float.NEGATIVE_INFINITY) data[i] = min;
+    }
 
+    // now normalize; min => 0.0, max => 1.0
+    float range = max - min;
     for (int i=0; i<rtn.length; i++) {
       rtn[i] = (data[i] - min) / range;
     }
-
     return rtn;
   }
 
@@ -811,15 +818,27 @@ public final class DataTools {
   public static double[] normalizeDoubles(double[] data) {
     double[] rtn = new double[data.length];
 
+    // determine the finite min and max values
     double min = Double.MAX_VALUE;
     double max = Double.MIN_VALUE;
-    double range = max - min;
-
     for (int i=0; i<data.length; i++) {
+      if (data[i] == Double.POSITIVE_INFINITY ||
+        data[i] == Double.NEGATIVE_INFINITY)
+      {
+        continue;
+      }
       if (data[i] < min) min = data[i];
       if (data[i] > max) max = data[i];
     }
 
+    // normalize infinity values
+    for (int i=0; i<data.length; i++) {
+      if (data[i] == Double.POSITIVE_INFINITY) data[i] = max;
+      else if (data[i] == Double.NEGATIVE_INFINITY) data[i] = min;
+    }
+
+    // now normalize; min => 0.0, max => 1.0
+    double range = max - min;
     for (int i=0; i<rtn.length; i++) {
       rtn[i] = (data[i] - min) / range;
     }
