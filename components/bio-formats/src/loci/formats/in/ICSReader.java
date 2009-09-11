@@ -166,10 +166,13 @@ public class ICSReader extends FormatReader {
         data = new byte[len * getSizeC()];
         in.read(data);
       }
+      else if (!gzip && (no % getSizeC()) == 0) {
+        in.read(data);
+      }
 
       for (int row=y; row<h + y; row++) {
         for (int col=x; col<w + x; col++) {
-          System.arraycopy(data, bpp * (no + sizeC *
+          System.arraycopy(data, bpp * ((no % getSizeC()) + sizeC *
             (row * getSizeX() + col)), buf, bpp * (row * w + col), bpp);
         }
       }
