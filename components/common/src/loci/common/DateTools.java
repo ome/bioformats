@@ -64,6 +64,15 @@ public final class DateTools {
 
   // -- Date handling --
 
+  /**
+   * Converts from two-word tick representation to milliseconds.
+   * Mainly useful in conjunction with COBOL date conversion.
+   */
+  public static long getMillisFromTicks(long hi, long lo) {
+    long ticks = ((hi << 32) | lo);
+    return ticks / 10000; // 100 ns = 0.0001 ms
+  }
+
   /** Converts the given timestamp into an ISO 8601 date. */
   public static String convertDate(long stamp, int format) {
     // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
