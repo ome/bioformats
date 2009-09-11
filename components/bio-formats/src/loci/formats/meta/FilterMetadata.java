@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -361,30 +361,6 @@ public class FilterMetadata implements MetadataStore {
     store.setDisplayOptionsZoom(zoom, imageIndex);
   }
 
-  // -- DisplayOptionsProjection property storage -
-
-  /* @see MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
-  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
-    store.setDisplayOptionsProjectionZStart(zStart, imageIndex);
-  }
-
-  /* @see MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
-  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
-    store.setDisplayOptionsProjectionZStop(zStop, imageIndex);
-  }
-
-  // -- DisplayOptionsTime property storage -
-
-  /* @see MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
-  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
-    store.setDisplayOptionsTimeTStart(tStart, imageIndex);
-  }
-
-  /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
-  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
-    store.setDisplayOptionsTimeTStop(tStop, imageIndex);
-  }
-
   // -- Ellipse property storage -
 
   /* @see MetadataStore#setEllipseCx(String, int, int, int) */
@@ -637,41 +613,6 @@ public class FilterMetadata implements MetadataStore {
     store.setFilterSetModel(value, instrumentIndex, filterSetIndex);
   }
 
-  // -- GreyChannel property storage -
-
-  /* @see MetadataStore#setGreyChannelBlackLevel(Float, int) */
-  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
-    store.setGreyChannelBlackLevel(blackLevel, imageIndex);
-  }
-
-  /* @see MetadataStore#setGreyChannelChannelNumber(Integer, int) */
-  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
-    store.setGreyChannelChannelNumber(channelNumber, imageIndex);
-  }
-
-  /* @see MetadataStore#setGreyChannelGamma(Float, int) */
-  public void setGreyChannelGamma(Float gamma, int imageIndex) {
-    store.setGreyChannelGamma(gamma, imageIndex);
-  }
-
-  /* @see MetadataStore#setGreyChannelWhiteLevel(Float, int) */
-  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
-    store.setGreyChannelWhiteLevel(whiteLevel, imageIndex);
-  }
-
-  /* @see MetadataStore#setGreyChannelisOn(Boolean, int) */
-  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
-    store.setGreyChannelisOn(isOn, imageIndex);
-  }
-
-  // -- GreyChannelMap property storage -
-
-  /* @see MetadataStore#setGreyChannelMapColorMap(String, int) */
-  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
-    String value = filter ? DataTools.sanitize(colorMap) : colorMap;
-    store.setGreyChannelMapColorMap(value, imageIndex);
-  }
-
   // -- Group property storage -
 
   /* @see MetadataStore#setGroupID(String, int) */
@@ -748,12 +689,6 @@ public class FilterMetadata implements MetadataStore {
   public void setImageName(String name, int imageIndex) {
     String value = filter ? DataTools.sanitize(name) : name;
     store.setImageName(value, imageIndex);
-  }
-
-  /* @see MetadataStore#setImageObjective(String, int) */
-  public void setImageObjective(String objective, int imageIndex) {
-    String value = filter ? DataTools.sanitize(objective) : objective;
-    store.setImageObjective(value, imageIndex);
   }
 
   // -- ImagingEnvironment property storage -

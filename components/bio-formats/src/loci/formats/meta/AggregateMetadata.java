@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1248,62 +1248,6 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  // - DisplayOptionsProjection property retrieval -
-
-  /* @see MetadataRetrieve#getDisplayOptionsProjectionZStart(int) */
-  public Integer getDisplayOptionsProjectionZStart(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getDisplayOptionsProjectionZStart(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getDisplayOptionsProjectionZStop(int) */
-  public Integer getDisplayOptionsProjectionZStop(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getDisplayOptionsProjectionZStop(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  // - DisplayOptionsTime property retrieval -
-
-  /* @see MetadataRetrieve#getDisplayOptionsTimeTStart(int) */
-  public Integer getDisplayOptionsTimeTStart(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getDisplayOptionsTimeTStart(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
-  public Integer getDisplayOptionsTimeTStop(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getDisplayOptionsTimeTStop(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
   // - Ellipse property retrieval -
 
   /* @see MetadataRetrieve#getEllipseCx(int, int, int) */
@@ -1829,88 +1773,6 @@ public class AggregateMetadata implements IMetadata {
     return null;
   }
 
-  // - GreyChannel property retrieval -
-
-  /* @see MetadataRetrieve#getGreyChannelBlackLevel(int) */
-  public Float getGreyChannelBlackLevel(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Float result = retrieve.getGreyChannelBlackLevel(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getGreyChannelChannelNumber(int) */
-  public Integer getGreyChannelChannelNumber(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Integer result = retrieve.getGreyChannelChannelNumber(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getGreyChannelGamma(int) */
-  public Float getGreyChannelGamma(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Float result = retrieve.getGreyChannelGamma(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getGreyChannelWhiteLevel(int) */
-  public Float getGreyChannelWhiteLevel(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Float result = retrieve.getGreyChannelWhiteLevel(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getGreyChannelisOn(int) */
-  public Boolean getGreyChannelisOn(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Boolean result = retrieve.getGreyChannelisOn(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  // - GreyChannelMap property retrieval -
-
-  /* @see MetadataRetrieve#getGreyChannelMapColorMap(int) */
-  public String getGreyChannelMapColorMap(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getGreyChannelMapColorMap(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
   // - Group property retrieval -
 
   /* @see MetadataRetrieve#getGroupID(int) */
@@ -2067,19 +1929,6 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getImageName(imageIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
-  /* @see MetadataRetrieve#getImageObjective(int) */
-  public String getImageObjective(int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getImageObjective(imageIndex);
         if (result != null) return result;
       }
     }
@@ -5970,54 +5819,6 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  // - DisplayOptionsProjection property storage -
-
-  /* @see MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
-  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setDisplayOptionsProjectionZStart(zStart, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
-  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setDisplayOptionsProjectionZStop(zStop, imageIndex);
-      }
-    }
-  }
-
-  // - DisplayOptionsTime property storage -
-
-  /* @see MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
-  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setDisplayOptionsTimeTStart(tStart, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
-  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setDisplayOptionsTimeTStop(tStop, imageIndex);
-      }
-    }
-  }
-
   // - Ellipse property storage -
 
   /* @see MetadataStore#setEllipseCx(String, int, int, int) */
@@ -6465,76 +6266,6 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  // - GreyChannel property storage -
-
-  /* @see MetadataStore#setGreyChannelBlackLevel(Float, int) */
-  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setGreyChannelBlackLevel(blackLevel, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setGreyChannelChannelNumber(Integer, int) */
-  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setGreyChannelChannelNumber(channelNumber, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setGreyChannelGamma(Float, int) */
-  public void setGreyChannelGamma(Float gamma, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setGreyChannelGamma(gamma, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setGreyChannelWhiteLevel(Float, int) */
-  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setGreyChannelWhiteLevel(whiteLevel, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setGreyChannelisOn(Boolean, int) */
-  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setGreyChannelisOn(isOn, imageIndex);
-      }
-    }
-  }
-
-  // - GreyChannelMap property storage -
-
-  /* @see MetadataStore#setGreyChannelMapColorMap(String, int) */
-  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setGreyChannelMapColorMap(colorMap, imageIndex);
-      }
-    }
-  }
-
   // - Group property storage -
 
   /* @see MetadataStore#setGroupID(String, int) */
@@ -6669,17 +6400,6 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setImageName(name, imageIndex);
-      }
-    }
-  }
-
-  /* @see MetadataStore#setImageObjective(String, int) */
-  public void setImageObjective(String objective, int imageIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setImageObjective(objective, imageIndex);
       }
     }
   }

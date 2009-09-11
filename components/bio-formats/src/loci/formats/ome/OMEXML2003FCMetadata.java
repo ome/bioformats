@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -650,34 +650,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return displayOptions == null ? null : displayOptions.getZoom();
   }
 
-  // - DisplayOptionsProjection property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsProjectionZStart(int) */
-  public Integer getDisplayOptionsProjectionZStart(int imageIndex) {
-    ProjectionNode projection = getProjectionNode(imageIndex, false);
-    return projection == null ? null : projection.getZstart();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsProjectionZStop(int) */
-  public Integer getDisplayOptionsProjectionZStop(int imageIndex) {
-    ProjectionNode projection = getProjectionNode(imageIndex, false);
-    return projection == null ? null : projection.getZstop();
-  }
-
-  // - DisplayOptionsTime property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsTimeTStart(int) */
-  public Integer getDisplayOptionsTimeTStart(int imageIndex) {
-    TimeNode time = getTimeNode(imageIndex, false);
-    return time == null ? null : time.getTstart();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
-  public Integer getDisplayOptionsTimeTStop(int imageIndex) {
-    TimeNode time = getTimeNode(imageIndex, false);
-    return time == null ? null : time.getTstop();
-  }
-
   // - Ellipse property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getEllipseCx(int, int, int) */
@@ -932,46 +904,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return filterSet == null ? null : filterSet.getModel();
   }
 
-  // - GreyChannel property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelBlackLevel(int) */
-  public Float getGreyChannelBlackLevel(int imageIndex) {
-    // NB: BlackLevel unsupported for schema version 2003-FC
-    return null;
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelChannelNumber(int) */
-  public Integer getGreyChannelChannelNumber(int imageIndex) {
-    // NB: ChannelNumber unsupported for schema version 2003-FC
-    return null;
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelGamma(int) */
-  public Float getGreyChannelGamma(int imageIndex) {
-    // NB: Gamma unsupported for schema version 2003-FC
-    return null;
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelWhiteLevel(int) */
-  public Float getGreyChannelWhiteLevel(int imageIndex) {
-    // NB: WhiteLevel unsupported for schema version 2003-FC
-    return null;
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelisOn(int) */
-  public Boolean getGreyChannelisOn(int imageIndex) {
-    // NB: isOn unsupported for schema version 2003-FC
-    return null;
-  }
-
-  // - GreyChannelMap property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelMapColorMap(int) */
-  public String getGreyChannelMapColorMap(int imageIndex) {
-    // NB: ColorMap unsupported for schema version 2003-FC
-    return null;
-  }
-
   // - Group property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getGroupID(int) */
@@ -1056,12 +988,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
   public String getImageName(int imageIndex) {
     ImageNode image = getImageNode(imageIndex, false);
     return image == null ? null : image.getName();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getImageObjective(int) */
-  public String getImageObjective(int imageIndex) {
-    ObjectiveRefNode objectiveRef = getObjectiveRefNode(imageIndex, false);
-    return objectiveRef == null ? null : objectiveRef.getNodeID();
   }
 
   // - ImagingEnvironment property retrieval -
@@ -3021,38 +2947,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     displayOptionsNode.setZoom(zoom);
   }
 
-  // - DisplayOptionsProjection property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
-  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
-    if (zStart == null) return;
-    ProjectionNode projectionNode = getProjectionNode(imageIndex, true);
-    projectionNode.setZstart(zStart);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
-  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
-    if (zStop == null) return;
-    ProjectionNode projectionNode = getProjectionNode(imageIndex, true);
-    projectionNode.setZstop(zStop);
-  }
-
-  // - DisplayOptionsTime property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
-  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
-    if (tStart == null) return;
-    TimeNode timeNode = getTimeNode(imageIndex, true);
-    timeNode.setTstart(tStart);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
-  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
-    if (tStop == null) return;
-    TimeNode timeNode = getTimeNode(imageIndex, true);
-    timeNode.setTstop(tStop);
-  }
-
   // - Ellipse property storage -
 
   /* @see loci.formats.meta.MetadataStore#setEllipseCx(String, int, int, int) */
@@ -3318,40 +3212,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     filterSetNode.setModel(model);
   }
 
-  // - GreyChannel property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelBlackLevel(Float, int) */
-  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
-    // NB: BlackLevel unsupported for schema version 2003-FC
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelChannelNumber(Integer, int) */
-  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
-    // NB: ChannelNumber unsupported for schema version 2003-FC
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelGamma(Float, int) */
-  public void setGreyChannelGamma(Float gamma, int imageIndex) {
-    // NB: Gamma unsupported for schema version 2003-FC
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelWhiteLevel(Float, int) */
-  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
-    // NB: WhiteLevel unsupported for schema version 2003-FC
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelisOn(Boolean, int) */
-  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
-    // NB: isOn unsupported for schema version 2003-FC
-  }
-
-  // - GreyChannelMap property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelMapColorMap(String, int) */
-  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
-    // NB: ColorMap unsupported for schema version 2003-FC
-  }
-
   // - Group property storage -
 
   /* @see loci.formats.meta.MetadataStore#setGroupID(String, int) */
@@ -3486,13 +3346,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (name == null) return;
     ImageNode imageNode = getImageNode(imageIndex, true);
     imageNode.setName(name);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setImageObjective(String, int) */
-  public void setImageObjective(String objective, int imageIndex) {
-    if (objective == null) return;
-    ObjectiveRefNode objectiveRefNode = getObjectiveRefNode(imageIndex, true);
-    objectiveRefNode.setNodeID(objective);
   }
 
   // - ImagingEnvironment property storage -
@@ -5394,30 +5247,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     return imageDisplayOptionsNode;
   }
 
-  // Image+/DisplayOptions/Projection
-  private ProjectionNode imageDisplayOptionsProjectionNode = null;
-  private int imageDisplayOptionsProjectionNodeImageIndex = -1;
-  private ProjectionNode getProjectionNode(int imageIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsProjectionNodeImageIndex != imageIndex) match = false;
-    if (match) return imageDisplayOptionsProjectionNode;
-    imageDisplayOptionsProjectionNode = null;
-    imageDisplayOptionsProjectionNodeImageIndex = imageIndex;
-
-    // get Image+/DisplayOptions node
-    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
-    if (displayOptions == null) return null;
-    // get Projection node
-    ProjectionNode projection = displayOptions.getProjection();
-    if (projection == null) {
-      if (create) projection = new ProjectionNode(displayOptions);
-      else return null;
-    }
-    imageDisplayOptionsProjectionNode = projection;
-    return imageDisplayOptionsProjectionNode;
-  }
-
   // Image+/DisplayOptions/ROI+
   private ROINode imageDisplayOptionsROINode = null;
   private int imageDisplayOptionsROINodeImageIndex = -1;
@@ -5442,30 +5271,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     List list = displayOptions.getROIList();
     imageDisplayOptionsROINode = (ROINode) list.get(roiIndex);
     return imageDisplayOptionsROINode;
-  }
-
-  // Image+/DisplayOptions/Time
-  private TimeNode imageDisplayOptionsTimeNode = null;
-  private int imageDisplayOptionsTimeNodeImageIndex = -1;
-  private TimeNode getTimeNode(int imageIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsTimeNodeImageIndex != imageIndex) match = false;
-    if (match) return imageDisplayOptionsTimeNode;
-    imageDisplayOptionsTimeNode = null;
-    imageDisplayOptionsTimeNodeImageIndex = imageIndex;
-
-    // get Image+/DisplayOptions node
-    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
-    if (displayOptions == null) return null;
-    // get Time node
-    TimeNode time = displayOptions.getTime();
-    if (time == null) {
-      if (create) time = new TimeNode(displayOptions);
-      else return null;
-    }
-    imageDisplayOptionsTimeNode = time;
-    return imageDisplayOptionsTimeNode;
   }
 
   // Image+/ImagingEnvironment
@@ -6202,16 +6007,10 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     // Image+/DisplayOptions
     imageDisplayOptionsNode = null;
     imageDisplayOptionsNodeImageIndex = -1;
-    // Image+/DisplayOptions/Projection
-    imageDisplayOptionsProjectionNode = null;
-    imageDisplayOptionsProjectionNodeImageIndex = -1;
     // Image+/DisplayOptions/ROI+
     imageDisplayOptionsROINode = null;
     imageDisplayOptionsROINodeImageIndex = -1;
     imageDisplayOptionsROINodeROIIndex = -1;
-    // Image+/DisplayOptions/Time
-    imageDisplayOptionsTimeNode = null;
-    imageDisplayOptionsTimeNodeImageIndex = -1;
     // Image+/ImagingEnvironment
     imageImagingEnvironmentNode = null;
     imageImagingEnvironmentNodeImageIndex = -1;

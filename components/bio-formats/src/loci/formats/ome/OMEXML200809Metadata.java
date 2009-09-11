@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -677,34 +677,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return displayOptions == null ? null : displayOptions.getZoom();
   }
 
-  // - DisplayOptionsProjection property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsProjectionZStart(int) */
-  public Integer getDisplayOptionsProjectionZStart(int imageIndex) {
-    ProjectionNode projection = getProjectionNode(imageIndex, false);
-    return projection == null ? null : projection.getZStart();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsProjectionZStop(int) */
-  public Integer getDisplayOptionsProjectionZStop(int imageIndex) {
-    ProjectionNode projection = getProjectionNode(imageIndex, false);
-    return projection == null ? null : projection.getZStop();
-  }
-
-  // - DisplayOptionsTime property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsTimeTStart(int) */
-  public Integer getDisplayOptionsTimeTStart(int imageIndex) {
-    TimeNode time = getTimeNode(imageIndex, false);
-    return time == null ? null : time.getTStart();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
-  public Integer getDisplayOptionsTimeTStop(int imageIndex) {
-    TimeNode time = getTimeNode(imageIndex, false);
-    return time == null ? null : time.getTStop();
-  }
-
   // - Ellipse property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getEllipseCx(int, int, int) */
@@ -959,46 +931,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return filterSet == null ? null : filterSet.getModel();
   }
 
-  // - GreyChannel property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelBlackLevel(int) */
-  public Float getGreyChannelBlackLevel(int imageIndex) {
-    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
-    return greyChannel == null ? null : greyChannel.getBlackLevel();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelChannelNumber(int) */
-  public Integer getGreyChannelChannelNumber(int imageIndex) {
-    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
-    return greyChannel == null ? null : greyChannel.getChannelNumber();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelGamma(int) */
-  public Float getGreyChannelGamma(int imageIndex) {
-    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
-    return greyChannel == null ? null : greyChannel.getGamma();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelWhiteLevel(int) */
-  public Float getGreyChannelWhiteLevel(int imageIndex) {
-    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
-    return greyChannel == null ? null : greyChannel.getWhiteLevel();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelisOn(int) */
-  public Boolean getGreyChannelisOn(int imageIndex) {
-    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
-    return greyChannel == null ? null : greyChannel.getisOn();
-  }
-
-  // - GreyChannelMap property retrieval -
-
-  /* @see loci.formats.meta.MetadataRetrieve#getGreyChannelMapColorMap(int) */
-  public String getGreyChannelMapColorMap(int imageIndex) {
-    GreyChannelNode greyChannel = getGreyChannelNode(imageIndex, false);
-    return greyChannel == null ? null : greyChannel.getColorMap();
-  }
-
   // - Group property retrieval -
 
   /* @see loci.formats.meta.MetadataRetrieve#getGroupID(int) */
@@ -1083,12 +1015,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public String getImageName(int imageIndex) {
     ImageNode image = getImageNode(imageIndex, false);
     return image == null ? null : image.getName();
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#getImageObjective(int) */
-  public String getImageObjective(int imageIndex) {
-    ObjectiveRefNode objectiveRef = getObjectiveRefNode(imageIndex, false);
-    return objectiveRef == null ? null : objectiveRef.getNodeID();
   }
 
   // - ImagingEnvironment property retrieval -
@@ -3074,38 +3000,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     displayOptionsNode.setZoom(zoom);
   }
 
-  // - DisplayOptionsProjection property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
-  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
-    if (zStart == null) return;
-    ProjectionNode projectionNode = getProjectionNode(imageIndex, true);
-    projectionNode.setZStart(zStart);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
-  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
-    if (zStop == null) return;
-    ProjectionNode projectionNode = getProjectionNode(imageIndex, true);
-    projectionNode.setZStop(zStop);
-  }
-
-  // - DisplayOptionsTime property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
-  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
-    if (tStart == null) return;
-    TimeNode timeNode = getTimeNode(imageIndex, true);
-    timeNode.setTStart(tStart);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
-  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
-    if (tStop == null) return;
-    TimeNode timeNode = getTimeNode(imageIndex, true);
-    timeNode.setTStop(tStop);
-  }
-
   // - Ellipse property storage -
 
   /* @see loci.formats.meta.MetadataStore#setEllipseCx(String, int, int, int) */
@@ -3393,52 +3287,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     filterSetNode.setModel(model);
   }
 
-  // - GreyChannel property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelBlackLevel(Float, int) */
-  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
-    if (blackLevel == null) return;
-    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
-    greyChannelNode.setBlackLevel(blackLevel);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelChannelNumber(Integer, int) */
-  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
-    if (channelNumber == null) return;
-    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
-    greyChannelNode.setChannelNumber(channelNumber);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelGamma(Float, int) */
-  public void setGreyChannelGamma(Float gamma, int imageIndex) {
-    if (gamma == null) return;
-    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
-    greyChannelNode.setGamma(gamma);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelWhiteLevel(Float, int) */
-  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
-    if (whiteLevel == null) return;
-    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
-    greyChannelNode.setWhiteLevel(whiteLevel);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelisOn(Boolean, int) */
-  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
-    if (isOn == null) return;
-    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
-    greyChannelNode.setisOn(isOn);
-  }
-
-  // - GreyChannelMap property storage -
-
-  /* @see loci.formats.meta.MetadataStore#setGreyChannelMapColorMap(String, int) */
-  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
-    if (colorMap == null) return;
-    GreyChannelNode greyChannelNode = getGreyChannelNode(imageIndex, true);
-    greyChannelNode.setColorMap(colorMap);
-  }
-
   // - Group property storage -
 
   /* @see loci.formats.meta.MetadataStore#setGroupID(String, int) */
@@ -3575,13 +3423,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     if (name == null) return;
     ImageNode imageNode = getImageNode(imageIndex, true);
     imageNode.setName(name);
-  }
-
-  /* @see loci.formats.meta.MetadataStore#setImageObjective(String, int) */
-  public void setImageObjective(String objective, int imageIndex) {
-    if (objective == null) return;
-    ObjectiveRefNode objectiveRefNode = getObjectiveRefNode(imageIndex, true);
-    objectiveRefNode.setNodeID(objective);
   }
 
   // - ImagingEnvironment property storage -
@@ -5617,430 +5458,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     return imageDisplayOptionsNode;
   }
 
-  // Image+/DisplayOptions/GreyChannel
-  private GreyChannelNode imageDisplayOptionsGreyChannelNode = null;
-  private int imageDisplayOptionsGreyChannelNodeImageIndex = -1;
-  private GreyChannelNode getGreyChannelNode(int imageIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsGreyChannelNodeImageIndex != imageIndex) match = false;
-    if (match) return imageDisplayOptionsGreyChannelNode;
-    imageDisplayOptionsGreyChannelNode = null;
-    imageDisplayOptionsGreyChannelNodeImageIndex = imageIndex;
-
-    // get Image+/DisplayOptions node
-    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
-    if (displayOptions == null) return null;
-    // get GreyChannel node
-    GreyChannelNode greyChannel = displayOptions.getGreyChannel();
-    if (greyChannel == null) {
-      if (create) greyChannel = new GreyChannelNode(displayOptions);
-      else return null;
-    }
-    imageDisplayOptionsGreyChannelNode = greyChannel;
-    return imageDisplayOptionsGreyChannelNode;
-  }
-
-  // Image+/DisplayOptions/Projection
-  private ProjectionNode imageDisplayOptionsProjectionNode = null;
-  private int imageDisplayOptionsProjectionNodeImageIndex = -1;
-  private ProjectionNode getProjectionNode(int imageIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsProjectionNodeImageIndex != imageIndex) match = false;
-    if (match) return imageDisplayOptionsProjectionNode;
-    imageDisplayOptionsProjectionNode = null;
-    imageDisplayOptionsProjectionNodeImageIndex = imageIndex;
-
-    // get Image+/DisplayOptions node
-    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
-    if (displayOptions == null) return null;
-    // get Projection node
-    ProjectionNode projection = displayOptions.getProjection();
-    if (projection == null) {
-      if (create) projection = new ProjectionNode(displayOptions);
-      else return null;
-    }
-    imageDisplayOptionsProjectionNode = projection;
-    return imageDisplayOptionsProjectionNode;
-  }
-
-  // Image+/DisplayOptions/ROI+
-  private ROINode imageDisplayOptionsROINode = null;
-  private int imageDisplayOptionsROINodeImageIndex = -1;
-  private int imageDisplayOptionsROINodeROIIndex = -1;
-  private ROINode getROINode(int imageIndex, int roiIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROINodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROINodeROIIndex != roiIndex) match = false;
-    if (match) return imageDisplayOptionsROINode;
-    imageDisplayOptionsROINode = null;
-    imageDisplayOptionsROINodeImageIndex = imageIndex;
-    imageDisplayOptionsROINodeROIIndex = roiIndex;
-
-    // get Image+/DisplayOptions node
-    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
-    if (displayOptions == null) return null;
-    // get ROI+ node
-    int count = displayOptions.getROICount();
-    if (!create && count <= roiIndex) return null;
-    for (int i=count; i<=roiIndex; i++) new ROINode(displayOptions);
-    List list = displayOptions.getROIList();
-    imageDisplayOptionsROINode = (ROINode) list.get(roiIndex);
-    return imageDisplayOptionsROINode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union
-  private UnionNode imageDisplayOptionsROIUnionNode = null;
-  private int imageDisplayOptionsROIUnionNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionNodeROIIndex = -1;
-  private UnionNode getUnionNode(int imageIndex, int roiIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionNodeROIIndex != roiIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionNode;
-    imageDisplayOptionsROIUnionNode = null;
-    imageDisplayOptionsROIUnionNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionNodeROIIndex = roiIndex;
-
-    // get Image+/DisplayOptions/ROI+ node
-    ROINode roi = getROINode(imageIndex, roiIndex, create);
-    if (roi == null) return null;
-    // get Union node
-    UnionNode union = roi.getUnion();
-    if (union == null) {
-      if (create) union = new UnionNode(roi);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionNode = union;
-    return imageDisplayOptionsROIUnionNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+
-  private ShapeNode imageDisplayOptionsROIUnionShapeNode = null;
-  private int imageDisplayOptionsROIUnionShapeNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeNodeShapeIndex = -1;
-  private ShapeNode getShapeNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeNode;
-    imageDisplayOptionsROIUnionShapeNode = null;
-    imageDisplayOptionsROIUnionShapeNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union node
-    UnionNode union = getUnionNode(imageIndex, roiIndex, create);
-    if (union == null) return null;
-    // get Shape+ node
-    int count = union.getShapeCount();
-    if (!create && count <= shapeIndex) return null;
-    for (int i=count; i<=shapeIndex; i++) new ShapeNode(union);
-    List list = union.getShapeList();
-    imageDisplayOptionsROIUnionShapeNode = (ShapeNode) list.get(shapeIndex);
-    return imageDisplayOptionsROIUnionShapeNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Circle
-  private CircleNode imageDisplayOptionsROIUnionShapeCircleNode = null;
-  private int imageDisplayOptionsROIUnionShapeCircleNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeCircleNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex = -1;
-  private CircleNode getCircleNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeCircleNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeCircleNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeCircleNode;
-    imageDisplayOptionsROIUnionShapeCircleNode = null;
-    imageDisplayOptionsROIUnionShapeCircleNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeCircleNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Circle node
-    CircleNode circle = shape.getCircle();
-    if (circle == null) {
-      if (create) circle = new CircleNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapeCircleNode = circle;
-    return imageDisplayOptionsROIUnionShapeCircleNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Ellipse
-  private EllipseNode imageDisplayOptionsROIUnionShapeEllipseNode = null;
-  private int imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex = -1;
-  private EllipseNode getEllipseNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeEllipseNode;
-    imageDisplayOptionsROIUnionShapeEllipseNode = null;
-    imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Ellipse node
-    EllipseNode ellipse = shape.getEllipse();
-    if (ellipse == null) {
-      if (create) ellipse = new EllipseNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapeEllipseNode = ellipse;
-    return imageDisplayOptionsROIUnionShapeEllipseNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Line
-  private LineNode imageDisplayOptionsROIUnionShapeLineNode = null;
-  private int imageDisplayOptionsROIUnionShapeLineNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeLineNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeLineNodeShapeIndex = -1;
-  private LineNode getLineNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeLineNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeLineNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeLineNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeLineNode;
-    imageDisplayOptionsROIUnionShapeLineNode = null;
-    imageDisplayOptionsROIUnionShapeLineNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeLineNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeLineNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Line node
-    LineNode line = shape.getLine();
-    if (line == null) {
-      if (create) line = new LineNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapeLineNode = line;
-    return imageDisplayOptionsROIUnionShapeLineNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Mask
-  private MaskNode imageDisplayOptionsROIUnionShapeMaskNode = null;
-  private int imageDisplayOptionsROIUnionShapeMaskNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeMaskNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex = -1;
-  private MaskNode getMaskNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeMaskNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeMaskNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeMaskNode;
-    imageDisplayOptionsROIUnionShapeMaskNode = null;
-    imageDisplayOptionsROIUnionShapeMaskNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeMaskNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Mask node
-    MaskNode mask = shape.getMask();
-    if (mask == null) {
-      if (create) mask = new MaskNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapeMaskNode = mask;
-    return imageDisplayOptionsROIUnionShapeMaskNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Mask/MaskPixels
-  private MaskPixelsNode imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = null;
-  private int imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex = -1;
-  private MaskPixelsNode getMaskPixelsNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = null;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+/Mask node
-    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, create);
-    if (mask == null) return null;
-    // get MaskPixels node
-    MaskPixelsNode maskPixels = mask.getMaskPixels();
-    if (maskPixels == null) {
-      if (create) maskPixels = new MaskPixelsNode(mask);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = maskPixels;
-    return imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Point
-  private PointNode imageDisplayOptionsROIUnionShapePointNode = null;
-  private int imageDisplayOptionsROIUnionShapePointNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapePointNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapePointNodeShapeIndex = -1;
-  private PointNode getPointNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapePointNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapePointNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapePointNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapePointNode;
-    imageDisplayOptionsROIUnionShapePointNode = null;
-    imageDisplayOptionsROIUnionShapePointNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapePointNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapePointNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Point node
-    PointNode point = shape.getPoint();
-    if (point == null) {
-      if (create) point = new PointNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapePointNode = point;
-    return imageDisplayOptionsROIUnionShapePointNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Polygon
-  private PolygonNode imageDisplayOptionsROIUnionShapePolygonNode = null;
-  private int imageDisplayOptionsROIUnionShapePolygonNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapePolygonNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex = -1;
-  private PolygonNode getPolygonNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapePolygonNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapePolygonNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapePolygonNode;
-    imageDisplayOptionsROIUnionShapePolygonNode = null;
-    imageDisplayOptionsROIUnionShapePolygonNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapePolygonNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Polygon node
-    PolygonNode polygon = shape.getPolygon();
-    if (polygon == null) {
-      if (create) polygon = new PolygonNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapePolygonNode = polygon;
-    return imageDisplayOptionsROIUnionShapePolygonNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Polyline
-  private PolylineNode imageDisplayOptionsROIUnionShapePolylineNode = null;
-  private int imageDisplayOptionsROIUnionShapePolylineNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapePolylineNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex = -1;
-  private PolylineNode getPolylineNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapePolylineNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapePolylineNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapePolylineNode;
-    imageDisplayOptionsROIUnionShapePolylineNode = null;
-    imageDisplayOptionsROIUnionShapePolylineNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapePolylineNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Polyline node
-    PolylineNode polyline = shape.getPolyline();
-    if (polyline == null) {
-      if (create) polyline = new PolylineNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapePolylineNode = polyline;
-    return imageDisplayOptionsROIUnionShapePolylineNode;
-  }
-
-  // Image+/DisplayOptions/ROI+/Union/Shape+/Rect
-  private RectNode imageDisplayOptionsROIUnionShapeRectNode = null;
-  private int imageDisplayOptionsROIUnionShapeRectNodeImageIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeRectNodeROIIndex = -1;
-  private int imageDisplayOptionsROIUnionShapeRectNodeShapeIndex = -1;
-  private RectNode getRectNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsROIUnionShapeRectNodeImageIndex != imageIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeRectNodeROIIndex != roiIndex) match = false;
-    if (imageDisplayOptionsROIUnionShapeRectNodeShapeIndex != shapeIndex) match = false;
-    if (match) return imageDisplayOptionsROIUnionShapeRectNode;
-    imageDisplayOptionsROIUnionShapeRectNode = null;
-    imageDisplayOptionsROIUnionShapeRectNodeImageIndex = imageIndex;
-    imageDisplayOptionsROIUnionShapeRectNodeROIIndex = roiIndex;
-    imageDisplayOptionsROIUnionShapeRectNodeShapeIndex = shapeIndex;
-
-    // get Image+/DisplayOptions/ROI+/Union/Shape+ node
-    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
-    if (shape == null) return null;
-    // get Rect node
-    RectNode rect = shape.getRect();
-    if (rect == null) {
-      if (create) rect = new RectNode(shape);
-      else return null;
-    }
-    imageDisplayOptionsROIUnionShapeRectNode = rect;
-    return imageDisplayOptionsROIUnionShapeRectNode;
-  }
-
-  // Image+/DisplayOptions/Time
-  private TimeNode imageDisplayOptionsTimeNode = null;
-  private int imageDisplayOptionsTimeNodeImageIndex = -1;
-  private TimeNode getTimeNode(int imageIndex, boolean create) {
-    // check whether indices match last request (i.e., node is cached)
-    boolean match = true;
-    if (imageDisplayOptionsTimeNodeImageIndex != imageIndex) match = false;
-    if (match) return imageDisplayOptionsTimeNode;
-    imageDisplayOptionsTimeNode = null;
-    imageDisplayOptionsTimeNodeImageIndex = imageIndex;
-
-    // get Image+/DisplayOptions node
-    DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
-    if (displayOptions == null) return null;
-    // get Time node
-    TimeNode time = displayOptions.getTime();
-    if (time == null) {
-      if (create) time = new TimeNode(displayOptions);
-      else return null;
-    }
-    imageDisplayOptionsTimeNode = time;
-    return imageDisplayOptionsTimeNode;
-  }
-
   // Image+/ImagingEnvironment
   private ImagingEnvironmentNode imageImagingEnvironmentNode = null;
   private int imageImagingEnvironmentNodeImageIndex = -1;
@@ -6508,6 +5925,358 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     }
     imagePixelsTiffDataUUIDNode = uuid;
     return imagePixelsTiffDataUUIDNode;
+  }
+
+  // Image+/ROI+
+  private ROINode imageROINode = null;
+  private int imageROINodeImageIndex = -1;
+  private int imageROINodeROIIndex = -1;
+  private ROINode getROINode(int imageIndex, int roiIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROINodeImageIndex != imageIndex) match = false;
+    if (imageROINodeROIIndex != roiIndex) match = false;
+    if (match) return imageROINode;
+    imageROINode = null;
+    imageROINodeImageIndex = imageIndex;
+    imageROINodeROIIndex = roiIndex;
+
+    // get Image+ node
+    ImageNode image = getImageNode(imageIndex, create);
+    if (image == null) return null;
+    // get ROI+ node
+    int count = image.getROICount();
+    if (!create && count <= roiIndex) return null;
+    for (int i=count; i<=roiIndex; i++) new ROINode(image);
+    List list = image.getROIList();
+    imageROINode = (ROINode) list.get(roiIndex);
+    return imageROINode;
+  }
+
+  // Image+/ROI+/Union
+  private UnionNode imageROIUnionNode = null;
+  private int imageROIUnionNodeImageIndex = -1;
+  private int imageROIUnionNodeROIIndex = -1;
+  private UnionNode getUnionNode(int imageIndex, int roiIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionNodeROIIndex != roiIndex) match = false;
+    if (match) return imageROIUnionNode;
+    imageROIUnionNode = null;
+    imageROIUnionNodeImageIndex = imageIndex;
+    imageROIUnionNodeROIIndex = roiIndex;
+
+    // get Image+/ROI+ node
+    ROINode roi = getROINode(imageIndex, roiIndex, create);
+    if (roi == null) return null;
+    // get Union node
+    UnionNode union = roi.getUnion();
+    if (union == null) {
+      if (create) union = new UnionNode(roi);
+      else return null;
+    }
+    imageROIUnionNode = union;
+    return imageROIUnionNode;
+  }
+
+  // Image+/ROI+/Union/Shape+
+  private ShapeNode imageROIUnionShapeNode = null;
+  private int imageROIUnionShapeNodeImageIndex = -1;
+  private int imageROIUnionShapeNodeROIIndex = -1;
+  private int imageROIUnionShapeNodeShapeIndex = -1;
+  private ShapeNode getShapeNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeNode;
+    imageROIUnionShapeNode = null;
+    imageROIUnionShapeNodeImageIndex = imageIndex;
+    imageROIUnionShapeNodeROIIndex = roiIndex;
+    imageROIUnionShapeNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union node
+    UnionNode union = getUnionNode(imageIndex, roiIndex, create);
+    if (union == null) return null;
+    // get Shape+ node
+    int count = union.getShapeCount();
+    if (!create && count <= shapeIndex) return null;
+    for (int i=count; i<=shapeIndex; i++) new ShapeNode(union);
+    List list = union.getShapeList();
+    imageROIUnionShapeNode = (ShapeNode) list.get(shapeIndex);
+    return imageROIUnionShapeNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Circle
+  private CircleNode imageROIUnionShapeCircleNode = null;
+  private int imageROIUnionShapeCircleNodeImageIndex = -1;
+  private int imageROIUnionShapeCircleNodeROIIndex = -1;
+  private int imageROIUnionShapeCircleNodeShapeIndex = -1;
+  private CircleNode getCircleNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeCircleNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeCircleNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeCircleNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeCircleNode;
+    imageROIUnionShapeCircleNode = null;
+    imageROIUnionShapeCircleNodeImageIndex = imageIndex;
+    imageROIUnionShapeCircleNodeROIIndex = roiIndex;
+    imageROIUnionShapeCircleNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Circle node
+    CircleNode circle = shape.getCircle();
+    if (circle == null) {
+      if (create) circle = new CircleNode(shape);
+      else return null;
+    }
+    imageROIUnionShapeCircleNode = circle;
+    return imageROIUnionShapeCircleNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Ellipse
+  private EllipseNode imageROIUnionShapeEllipseNode = null;
+  private int imageROIUnionShapeEllipseNodeImageIndex = -1;
+  private int imageROIUnionShapeEllipseNodeROIIndex = -1;
+  private int imageROIUnionShapeEllipseNodeShapeIndex = -1;
+  private EllipseNode getEllipseNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeEllipseNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeEllipseNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeEllipseNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeEllipseNode;
+    imageROIUnionShapeEllipseNode = null;
+    imageROIUnionShapeEllipseNodeImageIndex = imageIndex;
+    imageROIUnionShapeEllipseNodeROIIndex = roiIndex;
+    imageROIUnionShapeEllipseNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Ellipse node
+    EllipseNode ellipse = shape.getEllipse();
+    if (ellipse == null) {
+      if (create) ellipse = new EllipseNode(shape);
+      else return null;
+    }
+    imageROIUnionShapeEllipseNode = ellipse;
+    return imageROIUnionShapeEllipseNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Line
+  private LineNode imageROIUnionShapeLineNode = null;
+  private int imageROIUnionShapeLineNodeImageIndex = -1;
+  private int imageROIUnionShapeLineNodeROIIndex = -1;
+  private int imageROIUnionShapeLineNodeShapeIndex = -1;
+  private LineNode getLineNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeLineNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeLineNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeLineNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeLineNode;
+    imageROIUnionShapeLineNode = null;
+    imageROIUnionShapeLineNodeImageIndex = imageIndex;
+    imageROIUnionShapeLineNodeROIIndex = roiIndex;
+    imageROIUnionShapeLineNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Line node
+    LineNode line = shape.getLine();
+    if (line == null) {
+      if (create) line = new LineNode(shape);
+      else return null;
+    }
+    imageROIUnionShapeLineNode = line;
+    return imageROIUnionShapeLineNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Mask
+  private MaskNode imageROIUnionShapeMaskNode = null;
+  private int imageROIUnionShapeMaskNodeImageIndex = -1;
+  private int imageROIUnionShapeMaskNodeROIIndex = -1;
+  private int imageROIUnionShapeMaskNodeShapeIndex = -1;
+  private MaskNode getMaskNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeMaskNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeMaskNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeMaskNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeMaskNode;
+    imageROIUnionShapeMaskNode = null;
+    imageROIUnionShapeMaskNodeImageIndex = imageIndex;
+    imageROIUnionShapeMaskNodeROIIndex = roiIndex;
+    imageROIUnionShapeMaskNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Mask node
+    MaskNode mask = shape.getMask();
+    if (mask == null) {
+      if (create) mask = new MaskNode(shape);
+      else return null;
+    }
+    imageROIUnionShapeMaskNode = mask;
+    return imageROIUnionShapeMaskNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Mask/MaskPixels
+  private MaskPixelsNode imageROIUnionShapeMaskMaskPixelsNode = null;
+  private int imageROIUnionShapeMaskMaskPixelsNodeImageIndex = -1;
+  private int imageROIUnionShapeMaskMaskPixelsNodeROIIndex = -1;
+  private int imageROIUnionShapeMaskMaskPixelsNodeShapeIndex = -1;
+  private MaskPixelsNode getMaskPixelsNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeMaskMaskPixelsNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeMaskMaskPixelsNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeMaskMaskPixelsNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeMaskMaskPixelsNode;
+    imageROIUnionShapeMaskMaskPixelsNode = null;
+    imageROIUnionShapeMaskMaskPixelsNodeImageIndex = imageIndex;
+    imageROIUnionShapeMaskMaskPixelsNodeROIIndex = roiIndex;
+    imageROIUnionShapeMaskMaskPixelsNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+/Mask node
+    MaskNode mask = getMaskNode(imageIndex, roiIndex, shapeIndex, create);
+    if (mask == null) return null;
+    // get MaskPixels node
+    MaskPixelsNode maskPixels = mask.getMaskPixels();
+    if (maskPixels == null) {
+      if (create) maskPixels = new MaskPixelsNode(mask);
+      else return null;
+    }
+    imageROIUnionShapeMaskMaskPixelsNode = maskPixels;
+    return imageROIUnionShapeMaskMaskPixelsNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Point
+  private PointNode imageROIUnionShapePointNode = null;
+  private int imageROIUnionShapePointNodeImageIndex = -1;
+  private int imageROIUnionShapePointNodeROIIndex = -1;
+  private int imageROIUnionShapePointNodeShapeIndex = -1;
+  private PointNode getPointNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapePointNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapePointNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapePointNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapePointNode;
+    imageROIUnionShapePointNode = null;
+    imageROIUnionShapePointNodeImageIndex = imageIndex;
+    imageROIUnionShapePointNodeROIIndex = roiIndex;
+    imageROIUnionShapePointNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Point node
+    PointNode point = shape.getPoint();
+    if (point == null) {
+      if (create) point = new PointNode(shape);
+      else return null;
+    }
+    imageROIUnionShapePointNode = point;
+    return imageROIUnionShapePointNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Polygon
+  private PolygonNode imageROIUnionShapePolygonNode = null;
+  private int imageROIUnionShapePolygonNodeImageIndex = -1;
+  private int imageROIUnionShapePolygonNodeROIIndex = -1;
+  private int imageROIUnionShapePolygonNodeShapeIndex = -1;
+  private PolygonNode getPolygonNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapePolygonNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapePolygonNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapePolygonNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapePolygonNode;
+    imageROIUnionShapePolygonNode = null;
+    imageROIUnionShapePolygonNodeImageIndex = imageIndex;
+    imageROIUnionShapePolygonNodeROIIndex = roiIndex;
+    imageROIUnionShapePolygonNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Polygon node
+    PolygonNode polygon = shape.getPolygon();
+    if (polygon == null) {
+      if (create) polygon = new PolygonNode(shape);
+      else return null;
+    }
+    imageROIUnionShapePolygonNode = polygon;
+    return imageROIUnionShapePolygonNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Polyline
+  private PolylineNode imageROIUnionShapePolylineNode = null;
+  private int imageROIUnionShapePolylineNodeImageIndex = -1;
+  private int imageROIUnionShapePolylineNodeROIIndex = -1;
+  private int imageROIUnionShapePolylineNodeShapeIndex = -1;
+  private PolylineNode getPolylineNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapePolylineNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapePolylineNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapePolylineNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapePolylineNode;
+    imageROIUnionShapePolylineNode = null;
+    imageROIUnionShapePolylineNodeImageIndex = imageIndex;
+    imageROIUnionShapePolylineNodeROIIndex = roiIndex;
+    imageROIUnionShapePolylineNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Polyline node
+    PolylineNode polyline = shape.getPolyline();
+    if (polyline == null) {
+      if (create) polyline = new PolylineNode(shape);
+      else return null;
+    }
+    imageROIUnionShapePolylineNode = polyline;
+    return imageROIUnionShapePolylineNode;
+  }
+
+  // Image+/ROI+/Union/Shape+/Rect
+  private RectNode imageROIUnionShapeRectNode = null;
+  private int imageROIUnionShapeRectNodeImageIndex = -1;
+  private int imageROIUnionShapeRectNodeROIIndex = -1;
+  private int imageROIUnionShapeRectNodeShapeIndex = -1;
+  private RectNode getRectNode(int imageIndex, int roiIndex, int shapeIndex, boolean create) {
+    // check whether indices match last request (i.e., node is cached)
+    boolean match = true;
+    if (imageROIUnionShapeRectNodeImageIndex != imageIndex) match = false;
+    if (imageROIUnionShapeRectNodeROIIndex != roiIndex) match = false;
+    if (imageROIUnionShapeRectNodeShapeIndex != shapeIndex) match = false;
+    if (match) return imageROIUnionShapeRectNode;
+    imageROIUnionShapeRectNode = null;
+    imageROIUnionShapeRectNodeImageIndex = imageIndex;
+    imageROIUnionShapeRectNodeROIIndex = roiIndex;
+    imageROIUnionShapeRectNodeShapeIndex = shapeIndex;
+
+    // get Image+/ROI+/Union/Shape+ node
+    ShapeNode shape = getShapeNode(imageIndex, roiIndex, shapeIndex, create);
+    if (shape == null) return null;
+    // get Rect node
+    RectNode rect = shape.getRect();
+    if (rect == null) {
+      if (create) rect = new RectNode(shape);
+      else return null;
+    }
+    imageROIUnionShapeRectNode = rect;
+    return imageROIUnionShapeRectNode;
   }
 
   // Image+/Region+
@@ -7290,73 +7059,6 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     // Image+/DisplayOptions
     imageDisplayOptionsNode = null;
     imageDisplayOptionsNodeImageIndex = -1;
-    // Image+/DisplayOptions/GreyChannel
-    imageDisplayOptionsGreyChannelNode = null;
-    imageDisplayOptionsGreyChannelNodeImageIndex = -1;
-    // Image+/DisplayOptions/Projection
-    imageDisplayOptionsProjectionNode = null;
-    imageDisplayOptionsProjectionNodeImageIndex = -1;
-    // Image+/DisplayOptions/ROI+
-    imageDisplayOptionsROINode = null;
-    imageDisplayOptionsROINodeImageIndex = -1;
-    imageDisplayOptionsROINodeROIIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union
-    imageDisplayOptionsROIUnionNode = null;
-    imageDisplayOptionsROIUnionNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionNodeROIIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+
-    imageDisplayOptionsROIUnionShapeNode = null;
-    imageDisplayOptionsROIUnionShapeNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Circle
-    imageDisplayOptionsROIUnionShapeCircleNode = null;
-    imageDisplayOptionsROIUnionShapeCircleNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeCircleNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeCircleNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Ellipse
-    imageDisplayOptionsROIUnionShapeEllipseNode = null;
-    imageDisplayOptionsROIUnionShapeEllipseNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeEllipseNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeEllipseNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Line
-    imageDisplayOptionsROIUnionShapeLineNode = null;
-    imageDisplayOptionsROIUnionShapeLineNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeLineNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeLineNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Mask
-    imageDisplayOptionsROIUnionShapeMaskNode = null;
-    imageDisplayOptionsROIUnionShapeMaskNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeMaskNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeMaskNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Mask/MaskPixels
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNode = null;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeMaskMaskPixelsNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Point
-    imageDisplayOptionsROIUnionShapePointNode = null;
-    imageDisplayOptionsROIUnionShapePointNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapePointNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapePointNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Polygon
-    imageDisplayOptionsROIUnionShapePolygonNode = null;
-    imageDisplayOptionsROIUnionShapePolygonNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapePolygonNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapePolygonNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Polyline
-    imageDisplayOptionsROIUnionShapePolylineNode = null;
-    imageDisplayOptionsROIUnionShapePolylineNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapePolylineNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapePolylineNodeShapeIndex = -1;
-    // Image+/DisplayOptions/ROI+/Union/Shape+/Rect
-    imageDisplayOptionsROIUnionShapeRectNode = null;
-    imageDisplayOptionsROIUnionShapeRectNodeImageIndex = -1;
-    imageDisplayOptionsROIUnionShapeRectNodeROIIndex = -1;
-    imageDisplayOptionsROIUnionShapeRectNodeShapeIndex = -1;
-    // Image+/DisplayOptions/Time
-    imageDisplayOptionsTimeNode = null;
-    imageDisplayOptionsTimeNodeImageIndex = -1;
     // Image+/ImagingEnvironment
     imageImagingEnvironmentNode = null;
     imageImagingEnvironmentNodeImageIndex = -1;
@@ -7431,6 +7133,64 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     imagePixelsTiffDataUUIDNodeImageIndex = -1;
     imagePixelsTiffDataUUIDNodePixelsIndex = -1;
     imagePixelsTiffDataUUIDNodeTiffDataIndex = -1;
+    // Image+/ROI+
+    imageROINode = null;
+    imageROINodeImageIndex = -1;
+    imageROINodeROIIndex = -1;
+    // Image+/ROI+/Union
+    imageROIUnionNode = null;
+    imageROIUnionNodeImageIndex = -1;
+    imageROIUnionNodeROIIndex = -1;
+    // Image+/ROI+/Union/Shape+
+    imageROIUnionShapeNode = null;
+    imageROIUnionShapeNodeImageIndex = -1;
+    imageROIUnionShapeNodeROIIndex = -1;
+    imageROIUnionShapeNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Circle
+    imageROIUnionShapeCircleNode = null;
+    imageROIUnionShapeCircleNodeImageIndex = -1;
+    imageROIUnionShapeCircleNodeROIIndex = -1;
+    imageROIUnionShapeCircleNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Ellipse
+    imageROIUnionShapeEllipseNode = null;
+    imageROIUnionShapeEllipseNodeImageIndex = -1;
+    imageROIUnionShapeEllipseNodeROIIndex = -1;
+    imageROIUnionShapeEllipseNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Line
+    imageROIUnionShapeLineNode = null;
+    imageROIUnionShapeLineNodeImageIndex = -1;
+    imageROIUnionShapeLineNodeROIIndex = -1;
+    imageROIUnionShapeLineNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Mask
+    imageROIUnionShapeMaskNode = null;
+    imageROIUnionShapeMaskNodeImageIndex = -1;
+    imageROIUnionShapeMaskNodeROIIndex = -1;
+    imageROIUnionShapeMaskNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Mask/MaskPixels
+    imageROIUnionShapeMaskMaskPixelsNode = null;
+    imageROIUnionShapeMaskMaskPixelsNodeImageIndex = -1;
+    imageROIUnionShapeMaskMaskPixelsNodeROIIndex = -1;
+    imageROIUnionShapeMaskMaskPixelsNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Point
+    imageROIUnionShapePointNode = null;
+    imageROIUnionShapePointNodeImageIndex = -1;
+    imageROIUnionShapePointNodeROIIndex = -1;
+    imageROIUnionShapePointNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Polygon
+    imageROIUnionShapePolygonNode = null;
+    imageROIUnionShapePolygonNodeImageIndex = -1;
+    imageROIUnionShapePolygonNodeROIIndex = -1;
+    imageROIUnionShapePolygonNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Polyline
+    imageROIUnionShapePolylineNode = null;
+    imageROIUnionShapePolylineNodeImageIndex = -1;
+    imageROIUnionShapePolylineNodeROIIndex = -1;
+    imageROIUnionShapePolylineNodeShapeIndex = -1;
+    // Image+/ROI+/Union/Shape+/Rect
+    imageROIUnionShapeRectNode = null;
+    imageROIUnionShapeRectNodeImageIndex = -1;
+    imageROIUnionShapeRectNodeROIIndex = -1;
+    imageROIUnionShapeRectNodeShapeIndex = -1;
     // Image+/Region+
     imageRegionNode = null;
     imageRegionNodeImageIndex = -1;

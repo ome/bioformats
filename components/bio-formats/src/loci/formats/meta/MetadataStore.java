@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -472,38 +472,6 @@ public interface MetadataStore {
    */
   void setDisplayOptionsZoom(Float zoom, int imageIndex);
 
-  // - DisplayOptionsProjection property storage -
-
-  /**
-   * For a particular DisplayOptionsProjection, sets the first focal plane to include in the maximum intensity projection.
-   * @param zStart the first focal plane to include in the maximum intensity projection
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex);
-
-  /**
-   * For a particular DisplayOptionsProjection, sets the last focal plane to include in the maximum intensity projection.
-   * @param zStop the last focal plane to include in the maximum intensity projection
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex);
-
-  // - DisplayOptionsTime property storage -
-
-  /**
-   * For a particular DisplayOptionsTime, sets the first time point to include in the animation.
-   * @param tStart the first time point to include in the animation
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex);
-
-  /**
-   * For a particular DisplayOptionsTime, sets the last time point to include in the animation.
-   * @param tStop the last time point to include in the animation
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex);
-
   // - Ellipse property storage -
 
   /**
@@ -830,52 +798,6 @@ public interface MetadataStore {
    */
   void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex);
 
-  // - GreyChannel property storage -
-
-  /**
-   * For a particular GreyChannel, sets dimmest pixel value; anything below this will be set to 0.
-   * @param blackLevel dimmest pixel value; anything below this will be set to 0
-   * @param imageIndex index of the Image
-   */
-  void setGreyChannelBlackLevel(Float blackLevel, int imageIndex);
-
-  /**
-   * For a particular GreyChannel, sets actual channel number, indexed from 0.
-   * @param channelNumber actual channel number, indexed from 0
-   * @param imageIndex index of the Image
-   */
-  void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex);
-
-  /**
-   * For a particular GreyChannel, sets gamma value for this channel.
-   * @param gamma gamma value for this channel
-   * @param imageIndex index of the Image
-   */
-  void setGreyChannelGamma(Float gamma, int imageIndex);
-
-  /**
-   * For a particular GreyChannel, sets brightest pixel value; anything above this will be set to 255.
-   * @param whiteLevel brightest pixel value; anything above this will be set to 255
-   * @param imageIndex index of the Image
-   */
-  void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex);
-
-  /**
-   * For a particular GreyChannel, sets TODO.
-   * @param isOn TODO
-   * @param imageIndex index of the Image
-   */
-  void setGreyChannelisOn(Boolean isOn, int imageIndex);
-
-  // - GreyChannelMap property storage -
-
-  /**
-   * For a particular GreyChannelMap, sets describes color mapping function - Greyscale, Spectrum, or Blackbody.
-   * @param colorMap describes color mapping function - Greyscale, Spectrum, or Blackbody
-   * @param imageIndex index of the Image
-   */
-  void setGreyChannelMapColorMap(String colorMap, int imageIndex);
-
   // - Group property storage -
 
   /**
@@ -965,13 +887,6 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    */
   void setImageName(String name, int imageIndex);
-
-  /**
-   * For a particular Image, sets reference to the objective used when acquiring this image.
-   * @param objective reference to the objective used when acquiring this image
-   * @param imageIndex index of the Image
-   */
-  void setImageObjective(String objective, int imageIndex);
 
   // - ImagingEnvironment property storage -
 

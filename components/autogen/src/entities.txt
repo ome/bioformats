@@ -678,11 +678,6 @@ getter = getNodeID
 setter = setNodeID
 description = unique label identifying the display options
 
-# FIXME xsd-fu needs to include get/setPixels methods in DisplayOptionsNode
-#[DisplayOptions Pixels]
-#type = String
-#description = the pixels to which these display options correspond
-
 [DisplayOptions Zoom]
 type = Float
 description = zoom factor for use in the display (NOT THE LENS ZOOM)
@@ -691,266 +686,16 @@ description = zoom factor for use in the display (NOT THE LENS ZOOM)
 type = String
 description = specifies to display the image as grayscale or RGB
 
-## RedChannel ##
-
-# FIXME xsd-fu needs to include RedChannelNode (extension of ChannelSpecNode)
-#[RedChannel]
-#path = Image+/DisplayOptions/RedChannel
-#description = information about the red channel for a particular image
-#
-# FIXME the 2003FC path below will cause compilation errors because RedChannel
-# is not of type RedChannelNode, but DisplayChannelNode; need a notation to
-# specify the distinction between node type and method getter name
-#[RedChannel 2003FC]
-#path = Image+/CA/DisplayOptions/RedChannel
-#
-#[RedChannel ChannelNumber]
-#type = Integer
-#description = TODO
-#
-#[RedChannel WhiteLevel]
-#type = Float
-#description = TODO
-#
-#[RedChannel BlackLevel]
-#type = Float
-#description = TODO
-#
-#[RedChannel Gamma]
-#type = Float
-#description = TODO
-
-## RedChannelToggle ##
-
-# FIXME xsd-fu needs to include RedChannelNode (extension of ChannelSpecNode)
-#[RedChannelToggle]
-#description = visibility toggle for a particular image's red channel
-#path = Image+/DisplayOptions/RedChannel
-#
-#[RedChannelToggle 2003FC]
-#path = Image+/CA/DisplayOptions
-#
-#[RedChannelToggle Enabled]
-#type = Boolean
-#getter = getisOn
-#setter = setisOn
-#description = indicator for whether red channel is active in the display
-#
-#[RedChannelToggle Enabled 2003FC
-#getter = isRedChannelOn
-#setter = setRedChannelOn
-
-## GreenChannel ##
-
-# FIXME xsd-fu needs to include GreenChannelNode (extension of ChannelSpecNode)
-#[GreenChannel]
-#path = Image+/DisplayOptions/GreenChannel
-#description = information about the green channel for a particular image
-#
-# FIXME the 2003FC path below will cause compilation errors because GreenChannel
-# is not of type GreenChannelNode, but DisplayChannelNode; need a notation to
-# specify the distinction between node type and method getter name
-#[GreenChannel 2003FC]
-#path = Image+/CA/DisplayOptions/GreenChannel
-#
-#[GreenChannel ChannelNumber]
-#type = Integer
-#description = TODO
-#
-#[GreenChannel WhiteLevel]
-#type = Float
-#description = TODO
-#
-#[GreenChannel BlackLevel]
-#type = Float
-#description = TODO
-#
-#[GreenChannel Gamma]
-#type = Float
-#description = TODO
-
-## GreenChannelToggle ##
-
-# FIXME xsd-fu needs to include GreenChannelNode (extension of ChannelSpecNode)
-#[GreenChannelToggle]
-#description = visibility toggle for a particular image's green channel
-#path = Image+/DisplayOptions/GreenChannel
-#
-#[GreenChannelToggle 2003FC]
-#path = Image+/CA/DisplayOptions
-#
-#[GreenChannelToggle Enabled]
-#type = Boolean
-#getter = getisOn
-#setter = setisOn
-#description = indicator for whether Green channel is active in the display
-#
-#[GreenChannelToggle Enabled 2003FC
-#getter = isGreenChannelOn
-#setter = setGreenChannelOn
-
-## BlueChannel ##
-
-# FIXME xsd-fu needs to include BlueChannelNode (extension of ChannelSpecNode)
-#[BlueChannel]
-#path = Image+/DisplayOptions/BlueChannel
-#description = information about the blue channel for a particular image
-#
-# FIXME the 2003FC path below will cause compilation errors because BlueChannel
-# is not of type BlueChannelNode, but DisplayChannelNode; need a notation to
-# specify the distinction between node type and method getter name
-#[BlueChannel 2003FC]
-#path = Image+/CA/DisplayOptions/BlueChannel
-#
-#[BlueChannel ChannelNumber]
-#type = Integer
-#description = TODO
-#
-#[BlueChannel WhiteLevel]
-#type = Float
-#description = TODO
-#
-#[BlueChannel BlackLevel]
-#type = Float
-#description = TODO
-#
-#[BlueChannel Gamma]
-#type = Float
-#description = TODO
-
-## BlueChannelToggle ##
-
-# FIXME xsd-fu needs to include BlueChannelNode (extension of ChannelSpecNode)
-#[BlueChannelToggle]
-#description = visibility toggle for a particular image's blue channel
-#path = Image+/DisplayOptions/BlueChannel
-#
-#[BlueChannelToggle 2003FC]
-#path = Image+/CA/DisplayOptions
-#
-#[BlueChannelToggle Enabled]
-#type = Boolean
-#getter = getisOn
-#setter = setisOn
-#description = indicator for whether red channel is active in the display
-#
-#[BlueChannelToggle Enabled 2003FC
-#getter = isBlueChannelOn
-#setter = setBlueChannelOn
-
-## GreyChannel ##
-
-[GreyChannel]
-path = Image+/DisplayOptions/GreyChannel
-description = information about the grey channel for a particular image
-#
-# FIXME the 2003FC path below will cause compilation errors because
-# GreyChannel is not of type GreyChannelNode, but DisplayChannelNode; need a
-# notation to specify the distinction between node type and method getter name
-#[GreyChannel 2003FC]
-#path = Image+/CA/DisplayOptions/GreyChannel
-[GreyChannel 2003FC]
-path = -
-
-[GreyChannel ChannelNumber]
-type = Integer
-description = actual channel number, indexed from 0
-
-[GreyChannel WhiteLevel]
-type = Float
-description = brightest pixel value; anything above this will be set to 255
-
-[GreyChannel BlackLevel]
-type = Float
-description = dimmest pixel value; anything below this will be set to 0
-
-[GreyChannel Gamma]
-type = Float
-description = gamma value for this channel
-
-[GreyChannel isOn]
-type = Boolean
-description = TODO
-
-[GreyChannel isOn 2003FC]
-path = -
-
-## GreyChannelMap ##
-
-[GreyChannelMap]
-path = Image+/DisplayOptions/GreyChannel
-description = color map setting for a particular image's grey channel
-
-#[GreyChannelMap 2003FC]
-#path = Image+/CA/DisplayOptions
-[GreyChannelMap 2003FC]
-path = -
-
-[GreyChannelMap ColorMap]
-type = String
-description = describes color mapping function - Greyscale, Spectrum, or \
-              Blackbody
-
-# FIXME need to implement this conversion method in OMEXMLNode
-#[GreyChannelMap ColorMap 2003FC]
-#type = Boolean
-#getter = isDisplayRGB
-#setter = setDisplayRGB
-
-## DisplayOptionsProjection ##
-
-[DisplayOptionsProjection]
-path = Image+/DisplayOptions/Projection
-description = maximum intensity projection-related display options \
-              for a particular image
-
-[DisplayOptionsProjection ZStart]
-type = Integer
-description = the first focal plane to include \
-              in the maximum intensity projection
-
-[DisplayOptionsProjection ZStart 2003FC]
-getter = getZstart
-setter = setZstart
-
-[DisplayOptionsProjection ZStop]
-type = Integer
-description = the last focal plane to include \
-              in the maximum intensity projection
-
-[DisplayOptionsProjection ZStop 2003FC]
-getter = getZstop
-setter = setZstop
-
-## DisplayOptionsTime ##
-
-[DisplayOptionsTime]
-path = Image+/DisplayOptions/Time
-description = time range-related display options for a particular image
-
-[DisplayOptionsTime TStart]
-type = Integer
-description = the first time point to include in the animation
-
-[DisplayOptionsTime TStart 2003FC]
-getter = getTstart
-setter = setTstart
-
-[DisplayOptionsTime TStop]
-type = Integer
-description = the last time point to include in the animation
-
-[DisplayOptionsTime TStop 2003FC]
-getter = getTstop
-setter = setTstop
-
 ## ROI ##
 
 [ROI]
 countable = true
-path = Image+/DisplayOptions/ROI+
-description = a 5D bounding box region of interest in the metadata store \
+path = Image+/ROI+
+description = a 5D region of interest in the metadata store \
               with a particular index
+
+[ROI 2003FC]
+path = Image+/DisplayOptions/ROI+
 
 [ROI ID]
 type = String
@@ -1021,7 +766,7 @@ path = -
 
 [RoiLink]
 countable = true
-path = Image+/DisplayOptions/ROI+/RoiLink+
+path = Image+/ROI+/RoiLink+
 description = TODO
 
 [RoiLink 2003FC]
@@ -1068,7 +813,7 @@ description = reference to an ROI associated with the microbeam manipulation
 
 [Shape]
 countable = true
-path = Image+/DisplayOptions/ROI+/Union/Shape+
+path = Image+/ROI+/Union/Shape+
 description = arbitrary shape in an ROI
 
 [Shape 2003FC]
@@ -1196,6 +941,7 @@ path = -
 path = -
 
 [Shape FontStyle 2003FC]
+path = -
 
 [Shape FontVariant]
 type = String
@@ -1588,7 +1334,7 @@ path = -
 # before then.
 
 [Path]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Path
+path = Image+/ROI+/Union/Shape+/Path
 description = describes a path
 
 [Path 200809]
@@ -1616,7 +1362,7 @@ description = EXPERIMENTAL
 ## Rect ##
 
 [Rect]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Rect
+path = Image+/ROI+/Union/Shape+/Rect
 description = describes a rectangle
 
 [Rect 2003FC]
@@ -1667,7 +1413,7 @@ setter = settransform
 ## Circle ##
 
 [Circle]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Circle
+path = Image+/ROI+/Union/Shape+/Circle
 description = describes a circle
 
 [Circle 2003FC]
@@ -1712,7 +1458,7 @@ setter = settransform
 ## Ellipse ##
 
 [Ellipse]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Ellipse
+path = Image+/ROI+/Union/Shape+/Ellipse
 description = describes an ellipse
 
 [Ellipse 2003FC]
@@ -1763,7 +1509,7 @@ setter = settransform
 ## Line ##
 
 [Line]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Line
+path = Image+/ROI+/Union/Shape+/Line
 description = describes a line
 
 [Line 2003FC]
@@ -1814,7 +1560,7 @@ setter = settransform
 ## Point ##
 
 [Point]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Point
+path = Image+/ROI+/Union/Shape+/Point
 description = describes a point (filled circle)
 
 [Point 2003FC]
@@ -1859,7 +1605,7 @@ setter = settransform
 ## Polygon ##
 
 [Polygon]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Polygon
+path = Image+/ROI+/Union/Shape+/Polygon
 description = describes a polygon
 
 [Polygon 2003FC]
@@ -1892,7 +1638,7 @@ setter = settransform
 ## Polyline ##
 
 [Polyline]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Polyline
+path = Image+/ROI+/Union/Shape+/Polyline
 description = describes a set of lines
 
 [Polyline 2003FC]
@@ -1925,7 +1671,7 @@ setter = settransform
 ## Mask ##
 
 [Mask]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Mask
+path = Image+/ROI+/Union/Shape+/Mask
 description = TODO
 
 [Mask 2003FC]
@@ -1976,7 +1722,7 @@ setter = settransform
 ## MaskPixels ##
 
 [MaskPixels]
-path = Image+/DisplayOptions/ROI+/Union/Shape+/Mask/MaskPixels
+path = Image+/ROI+/Union/Shape+/Mask/MaskPixels
 description = TODO
 
 [MaskPixels 2003FC]

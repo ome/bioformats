@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -473,28 +473,6 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
 
-  // - DisplayOptionsProjection property retrieval -
-
-  /* @see MetadataRetrieve#getDisplayOptionsProjectionZStart(int) */
-  public Integer getDisplayOptionsProjectionZStart(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayOptionsProjectionZStop(int) */
-  public Integer getDisplayOptionsProjectionZStop(int imageIndex) {
-    return null;
-  }
-
-  // - DisplayOptionsTime property retrieval -
-
-  /* @see MetadataRetrieve#getDisplayOptionsTimeTStart(int) */
-  public Integer getDisplayOptionsTimeTStart(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getDisplayOptionsTimeTStop(int) */
-  public Integer getDisplayOptionsTimeTStop(int imageIndex) {
-    return null;
-  }
-
   // - Ellipse property retrieval -
 
   /* @see MetadataRetrieve#getEllipseCx(int, int, int) */
@@ -678,36 +656,6 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
 
-  // - GreyChannel property retrieval -
-
-  /* @see MetadataRetrieve#getGreyChannelBlackLevel(int) */
-  public Float getGreyChannelBlackLevel(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getGreyChannelChannelNumber(int) */
-  public Integer getGreyChannelChannelNumber(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getGreyChannelGamma(int) */
-  public Float getGreyChannelGamma(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getGreyChannelWhiteLevel(int) */
-  public Float getGreyChannelWhiteLevel(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getGreyChannelisOn(int) */
-  public Boolean getGreyChannelisOn(int imageIndex) {
-    return null;
-  }
-
-  // - GreyChannelMap property retrieval -
-
-  /* @see MetadataRetrieve#getGreyChannelMapColorMap(int) */
-  public String getGreyChannelMapColorMap(int imageIndex) {
-    return null;
-  }
-
   // - Group property retrieval -
 
   /* @see MetadataRetrieve#getGroupID(int) */
@@ -762,10 +710,6 @@ public class DummyMetadata implements IMetadata {
   }
   /* @see MetadataRetrieve#getImageName(int) */
   public String getImageName(int imageIndex) {
-    return null;
-  }
-  /* @see MetadataRetrieve#getImageObjective(int) */
-  public String getImageObjective(int imageIndex) {
     return null;
   }
 
@@ -2124,26 +2068,6 @@ public class DummyMetadata implements IMetadata {
   public void setDisplayOptionsZoom(Float zoom, int imageIndex) {
   }
 
-  // - DisplayOptionsProjection property storage -
-
-  /* @see MetadataStore#setDisplayOptionsProjectionZStart(Integer, int) */
-  public void setDisplayOptionsProjectionZStart(Integer zStart, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayOptionsProjectionZStop(Integer, int) */
-  public void setDisplayOptionsProjectionZStop(Integer zStop, int imageIndex) {
-  }
-
-  // - DisplayOptionsTime property storage -
-
-  /* @see MetadataStore#setDisplayOptionsTimeTStart(Integer, int) */
-  public void setDisplayOptionsTimeTStart(Integer tStart, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setDisplayOptionsTimeTStop(Integer, int) */
-  public void setDisplayOptionsTimeTStop(Integer tStop, int imageIndex) {
-  }
-
   // - Ellipse property storage -
 
   /* @see MetadataStore#setEllipseCx(String, int, int, int) */
@@ -2318,34 +2242,6 @@ public class DummyMetadata implements IMetadata {
   public void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex) {
   }
 
-  // - GreyChannel property storage -
-
-  /* @see MetadataStore#setGreyChannelBlackLevel(Float, int) */
-  public void setGreyChannelBlackLevel(Float blackLevel, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setGreyChannelChannelNumber(Integer, int) */
-  public void setGreyChannelChannelNumber(Integer channelNumber, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setGreyChannelGamma(Float, int) */
-  public void setGreyChannelGamma(Float gamma, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setGreyChannelWhiteLevel(Float, int) */
-  public void setGreyChannelWhiteLevel(Float whiteLevel, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setGreyChannelisOn(Boolean, int) */
-  public void setGreyChannelisOn(Boolean isOn, int imageIndex) {
-  }
-
-  // - GreyChannelMap property storage -
-
-  /* @see MetadataStore#setGreyChannelMapColorMap(String, int) */
-  public void setGreyChannelMapColorMap(String colorMap, int imageIndex) {
-  }
-
   // - Group property storage -
 
   /* @see MetadataStore#setGroupID(String, int) */
@@ -2398,10 +2294,6 @@ public class DummyMetadata implements IMetadata {
 
   /* @see MetadataStore#setImageName(String, int) */
   public void setImageName(String name, int imageIndex) {
-  }
-
-  /* @see MetadataStore#setImageObjective(String, int) */
-  public void setImageObjective(String objective, int imageIndex) {
   }
 
   // - ImagingEnvironment property storage -

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Aug 17, 2009 1:34:36 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -490,34 +490,6 @@ public interface MetadataRetrieve {
    */
   Float getDisplayOptionsZoom(int imageIndex);
 
-  // - DisplayOptionsProjection property retrieval -
-
-  /**
-   * For a particular DisplayOptionsProjection, gets the first focal plane to include in the maximum intensity projection.
-   * @param imageIndex index of the Image
-   */
-  Integer getDisplayOptionsProjectionZStart(int imageIndex);
-
-  /**
-   * For a particular DisplayOptionsProjection, gets the last focal plane to include in the maximum intensity projection.
-   * @param imageIndex index of the Image
-   */
-  Integer getDisplayOptionsProjectionZStop(int imageIndex);
-
-  // - DisplayOptionsTime property retrieval -
-
-  /**
-   * For a particular DisplayOptionsTime, gets the first time point to include in the animation.
-   * @param imageIndex index of the Image
-   */
-  Integer getDisplayOptionsTimeTStart(int imageIndex);
-
-  /**
-   * For a particular DisplayOptionsTime, gets the last time point to include in the animation.
-   * @param imageIndex index of the Image
-   */
-  Integer getDisplayOptionsTimeTStop(int imageIndex);
-
   // - Ellipse property retrieval -
 
   /**
@@ -805,46 +777,6 @@ public interface MetadataRetrieve {
    */
   String getFilterSetModel(int instrumentIndex, int filterSetIndex);
 
-  // - GreyChannel property retrieval -
-
-  /**
-   * For a particular GreyChannel, gets dimmest pixel value; anything below this will be set to 0.
-   * @param imageIndex index of the Image
-   */
-  Float getGreyChannelBlackLevel(int imageIndex);
-
-  /**
-   * For a particular GreyChannel, gets actual channel number, indexed from 0.
-   * @param imageIndex index of the Image
-   */
-  Integer getGreyChannelChannelNumber(int imageIndex);
-
-  /**
-   * For a particular GreyChannel, gets gamma value for this channel.
-   * @param imageIndex index of the Image
-   */
-  Float getGreyChannelGamma(int imageIndex);
-
-  /**
-   * For a particular GreyChannel, gets brightest pixel value; anything above this will be set to 255.
-   * @param imageIndex index of the Image
-   */
-  Float getGreyChannelWhiteLevel(int imageIndex);
-
-  /**
-   * For a particular GreyChannel, gets TODO.
-   * @param imageIndex index of the Image
-   */
-  Boolean getGreyChannelisOn(int imageIndex);
-
-  // - GreyChannelMap property retrieval -
-
-  /**
-   * For a particular GreyChannelMap, gets describes color mapping function - Greyscale, Spectrum, or Blackbody.
-   * @param imageIndex index of the Image
-   */
-  String getGreyChannelMapColorMap(int imageIndex);
-
   // - Group property retrieval -
 
   /**
@@ -922,12 +854,6 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    */
   String getImageName(int imageIndex);
-
-  /**
-   * For a particular Image, gets reference to the objective used when acquiring this image.
-   * @param imageIndex index of the Image
-   */
-  String getImageObjective(int imageIndex);
 
   // - ImagingEnvironment property retrieval -
 
