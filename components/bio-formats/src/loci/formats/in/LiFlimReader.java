@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -95,14 +96,19 @@ public class LiFlimReader extends FormatReader {
   /** Parsed configuration data. */
   private IniList ini;
 
+  private String version;
+  private String compression;
+  private String datatype;
+  private String channels;
+  private String xLen;
+  private String yLen;
+  private String zLen;
+  private String phases;
+  private String frequencies;
+  private String timestamps;
+
   /** True if gzip compression was used to deflate the pixels. */
   private boolean gzip;
-
-  /** Byte offset to each image plane. */
-  private long[] offsets;
-
-  /** Byte count for each image plane. */
-  private int[] counts;
 
   /** Stream to use for reading gzip-compressed pixel data. */
   private DataInputStream gz;
@@ -194,9 +200,11 @@ public class LiFlimReader extends FormatReader {
     debug("LiFlimReader.initFile(" + id + ")");
     super.initFile(id);
 
+    status("Parsing header");
     in = new RandomAccessInputStream(id);
     parseHeader();
 
+    status("Parsing metadata");
     initOriginalMetadata();
     initCoreMetadata();
     initOMEMetadata();
@@ -218,23 +226,25 @@ public class LiFlimReader extends FormatReader {
       for (String key : table.keySet()) {
         if (key.equals(IniTable.HEADER_KEY)) continue;
         String value = table.get(key);
-        addGlobalMeta(name + " - " + key, value);
+        String metaKey = name + " - " + key;
+        addGlobalMeta(metaKey, value);
+
+        // save important values regardless of isMetadataCollected()
+        if (metaKey.equals(VERSION_KEY)) version = value;
+        else if (metaKey.equals(COMPRESSION_KEY)) compression = value;
+        else if (metaKey.equals(DATATYPE_KEY)) datatype = value;
+        else if (metaKey.equals(C_KEY)) channels = value;
+        else if (metaKey.equals(X_KEY)) xLen = value;
+        else if (metaKey.equals(Y_KEY)) yLen = value;
+        else if (metaKey.equals(Z_KEY)) zLen = value;
+        else if (metaKey.equals(P_KEY)) phases = value;
+        else if (metaKey.equals(F_KEY)) frequencies = value;
+        else if (metaKey.equals(T_KEY)) timestamps = value;
       }
     }
   }
 
   private void initCoreMetadata() throws FormatException {
-    String version = (String) getGlobalMeta(VERSION_KEY);
-    String compression = (String) getGlobalMeta(COMPRESSION_KEY);
-    String datatype = (String) getGlobalMeta(DATATYPE_KEY);
-    String channels = (String) getGlobalMeta(C_KEY);
-    String x = (String) getGlobalMeta(X_KEY);
-    String y = (String) getGlobalMeta(Y_KEY);
-    String z = (String) getGlobalMeta(Z_KEY);
-    String phases = (String) getGlobalMeta(P_KEY);
-    String frequencies = (String) getGlobalMeta(F_KEY);
-    String timestamps = (String) getGlobalMeta(T_KEY);
-
     // check version number
     if (DataTools.indexOf(KNOWN_VERSIONS, version) < 0) {
       LogTools.warnDebug("Warning: unknown LI-FLIM version: " + version);
@@ -259,9 +269,9 @@ public class LiFlimReader extends FormatReader {
 
     // check dimensional extents
     int sizeC = Integer.parseInt(channels);
-    int sizeX = Integer.parseInt(x);
-    int sizeY = Integer.parseInt(y);
-    int sizeZ = Integer.parseInt(z);
+    int sizeX = Integer.parseInt(xLen);
+    int sizeY = Integer.parseInt(yLen);
+    int sizeZ = Integer.parseInt(zLen);
     int sizeT = Integer.parseInt(timestamps);
     int sizeP = Integer.parseInt(phases);
     if (sizeP > 1) {
@@ -288,10 +298,65 @@ public class LiFlimReader extends FormatReader {
   }
 
   private void initOMEMetadata() {
+    int times = timestamps == null ? 0 : Integer.parseInt(timestamps);
+
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
+    MetadataTools.populatePixels(store, this, times > 0);
+
+    // timestamps
+    long firstStamp = 0;
+    for (int t=0; t<times; t++) {
+      String stampValue = (String)
+        getGlobalMeta("FLIMIMAGE: TIMESTAMPS - t" + t);
+      if (stampValue == null) break;
+      String[] stampWords = stampValue.split(" ");
+      long stampHi = Long.parseLong(stampWords[0]);
+      long stampLo = Long.parseLong(stampWords[1]);
+      long stamp = DateTools.getMillisFromTicks(stampHi, stampLo);
+      Float deltaT;
+      if (t == 0) {
+        String date = DateTools.convertDate(stamp, DateTools.COBOL);
+        store.setImageCreationDate(date, 0);
+        firstStamp = stamp;
+        deltaT = new Float(0);
+      }
+      else {
+        long ms = stamp - firstStamp;
+        deltaT = new Float(ms / 1000f);
+      }
+      for (int c=0; c<core[0].sizeC; c++) {
+        for (int z=0; z<core[0].sizeZ; z++) {
+          int index = getIndex(z, c, t);
+          store.setPlaneTimingDeltaT(deltaT, 0, 0, index);
+        }
+      }
+    }
+
+    if (firstStamp == 0) {
+      MetadataTools.setDefaultCreationDate(store, currentId, 0);
+    }
+
+    // regions of interest
+    StringBuilder points = new StringBuilder();
+    String numRegionsValue = (String) getGlobalMeta("ROI: INFO - numregions");
+    int numRegions = numRegionsValue == null ?
+      0 : Integer.parseInt(numRegionsValue);
+    for (int roi=0; roi<numRegions; roi++) {
+      String roiPrefix = "ROI: ROI" + roi + " - ";
+      String roiName = (String) getGlobalMeta(roiPrefix + "name");
+      String numPointsValue = (String) getGlobalMeta(roiPrefix + "numpoints");
+      int numPoints = numPointsValue == null ?
+        0 : Integer.parseInt(numPointsValue);
+      points.setLength(0);
+      for (int p=0; p<numPoints; p++) {
+        String point = (String) getGlobalMeta(roiPrefix + "p" + p);
+        if (point == null) continue;
+        if (p > 0) points.append(" ");
+        points.append(point.replaceAll(" ", ","));
+      }
+      store.setPolygonPoints(points.toString(), 0, roi, 0);
+    }
   }
 
   private void prepareGZipStream(int no) throws IOException {
