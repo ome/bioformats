@@ -1088,7 +1088,6 @@ public class LeicaReader extends FormatReader {
         store.setObjectiveID(objectiveID, 0, objective);
         if (objective == 0) {
           store.setObjectiveSettingsObjective(objectiveID, series);
-          store.setImageObjective(objectiveID, series);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {
