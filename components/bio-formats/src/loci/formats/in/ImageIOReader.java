@@ -100,6 +100,7 @@ public abstract class ImageIOReader extends FormatReader {
     core[0].imageCount = 1;
     BufferedImage img =
       ImageIO.read(new DataInputStream(new RandomAccessInputStream(currentId)));
+    if (img == null) throw new FormatException("Invalid image stream");
 
     core[0].sizeX = img.getWidth();
     core[0].sizeY = img.getHeight();
