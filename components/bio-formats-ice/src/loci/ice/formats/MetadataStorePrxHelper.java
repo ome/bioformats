@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -39,18 +39,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.createRoot(__ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -82,17 +82,17 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getOMEXML");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 return __del.getOMEXML(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -124,17 +124,17 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getServant");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 return __del.getServant(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -165,18 +165,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setArcType(type, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -207,18 +207,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setChannelComponentColorDomain(colorDomain, imageIndex, logicalChannelIndex, channelComponentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -249,18 +249,648 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setChannelComponentIndex(index, imageIndex, logicalChannelIndex, channelComponentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex)
+    {
+        setChannelComponentPixels(pixels, imageIndex, logicalChannelIndex, channelComponentIndex, null, false);
+    }
+
+    public void
+    setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex, java.util.Map<String, String> __ctx)
+    {
+        setChannelComponentPixels(pixels, imageIndex, logicalChannelIndex, channelComponentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setChannelComponentPixels(pixels, imageIndex, logicalChannelIndex, channelComponentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setCircleCx(cx, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setCircleCx(cx, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setCircleCx(cx, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setCircleCy(cy, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setCircleCy(cy, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setCircleCy(cy, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setCircleID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setCircleID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setCircleID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setCircleR(r, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setCircleR(r, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setCircleR(r, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setCircleTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setCircleTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setCircleTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setContactExperimenter(String experimenter, int groupIndex)
+    {
+        setContactExperimenter(experimenter, groupIndex, null, false);
+    }
+
+    public void
+    setContactExperimenter(String experimenter, int groupIndex, java.util.Map<String, String> __ctx)
+    {
+        setContactExperimenter(experimenter, groupIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setContactExperimenter(String experimenter, int groupIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setContactExperimenter(experimenter, groupIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetDescription(String description, int datasetIndex)
+    {
+        setDatasetDescription(description, datasetIndex, null, false);
+    }
+
+    public void
+    setDatasetDescription(String description, int datasetIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetDescription(description, datasetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetDescription(String description, int datasetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetDescription(description, datasetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetExperimenterRef(String experimenterRef, int datasetIndex)
+    {
+        setDatasetExperimenterRef(experimenterRef, datasetIndex, null, false);
+    }
+
+    public void
+    setDatasetExperimenterRef(String experimenterRef, int datasetIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetExperimenterRef(experimenterRef, datasetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetExperimenterRef(String experimenterRef, int datasetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetExperimenterRef(experimenterRef, datasetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetGroupRef(String groupRef, int datasetIndex)
+    {
+        setDatasetGroupRef(groupRef, datasetIndex, null, false);
+    }
+
+    public void
+    setDatasetGroupRef(String groupRef, int datasetIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetGroupRef(groupRef, datasetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetGroupRef(String groupRef, int datasetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetGroupRef(groupRef, datasetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetID(String id, int datasetIndex)
+    {
+        setDatasetID(id, datasetIndex, null, false);
+    }
+
+    public void
+    setDatasetID(String id, int datasetIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetID(id, datasetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetID(String id, int datasetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetID(id, datasetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetLocked(boolean locked, int datasetIndex)
+    {
+        setDatasetLocked(locked, datasetIndex, null, false);
+    }
+
+    public void
+    setDatasetLocked(boolean locked, int datasetIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetLocked(locked, datasetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetLocked(boolean locked, int datasetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetLocked(locked, datasetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetName(String name, int datasetIndex)
+    {
+        setDatasetName(name, datasetIndex, null, false);
+    }
+
+    public void
+    setDatasetName(String name, int datasetIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetName(name, datasetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetName(String name, int datasetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetName(name, datasetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDatasetRefID(String id, int imageIndex, int datasetRefIndex)
+    {
+        setDatasetRefID(id, imageIndex, datasetRefIndex, null, false);
+    }
+
+    public void
+    setDatasetRefID(String id, int imageIndex, int datasetRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setDatasetRefID(id, imageIndex, datasetRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDatasetRefID(String id, int imageIndex, int datasetRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDatasetRefID(id, imageIndex, datasetRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex)
+    {
+        setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex, null, false);
+    }
+
+    public void
+    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    {
+        setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -291,18 +921,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorGain(gain, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -333,18 +963,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorID(id, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -375,18 +1005,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorManufacturer(manufacturer, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -417,18 +1047,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorModel(model, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -459,18 +1089,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorOffset(offset, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -501,18 +1131,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorSerialNumber(serialNumber, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex)
+    {
+        setDetectorSettingsBinning(binning, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setDetectorSettingsBinning(binning, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDetectorSettingsBinning(binning, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -543,18 +1215,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorSettingsDetector(detector, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -585,18 +1257,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -627,18 +1299,102 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex)
+    {
+        setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex)
+    {
+        setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -669,18 +1425,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorType(type, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -711,18 +1467,228 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDetectorVoltage(voltage, instrumentIndex, detectorIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex)
+    {
+        setDetectorZoom(zoom, instrumentIndex, detectorIndex, null, false);
+    }
+
+    public void
+    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    {
+        setDetectorZoom(zoom, instrumentIndex, detectorIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDetectorZoom(zoom, instrumentIndex, detectorIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDichroicID(String id, int instrumentIndex, int dichroicIndex)
+    {
+        setDichroicID(id, instrumentIndex, dichroicIndex, null, false);
+    }
+
+    public void
+    setDichroicID(String id, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
+    {
+        setDichroicID(id, instrumentIndex, dichroicIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDichroicID(String id, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDichroicID(id, instrumentIndex, dichroicIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
+    {
+        setDichroicLotNumber(lotNumber, instrumentIndex, dichroicIndex, null, false);
+    }
+
+    public void
+    setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
+    {
+        setDichroicLotNumber(lotNumber, instrumentIndex, dichroicIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDichroicLotNumber(lotNumber, instrumentIndex, dichroicIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex)
+    {
+        setDichroicManufacturer(manufacturer, instrumentIndex, dichroicIndex, null, false);
+    }
+
+    public void
+    setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
+    {
+        setDichroicManufacturer(manufacturer, instrumentIndex, dichroicIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDichroicManufacturer(manufacturer, instrumentIndex, dichroicIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDichroicModel(String model, int instrumentIndex, int dichroicIndex)
+    {
+        setDichroicModel(model, instrumentIndex, dichroicIndex, null, false);
+    }
+
+    public void
+    setDichroicModel(String model, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
+    {
+        setDichroicModel(model, instrumentIndex, dichroicIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDichroicModel(String model, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDichroicModel(model, instrumentIndex, dichroicIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -753,18 +1719,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -795,18 +1761,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -837,18 +1803,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -879,18 +1845,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -921,18 +1887,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDimensionsWaveIncrement(waveIncrement, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -963,18 +1929,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDimensionsWaveStart(waveStart, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setDisplayOptionsDisplay(String display, int imageIndex)
+    {
+        setDisplayOptionsDisplay(display, imageIndex, null, false);
+    }
+
+    public void
+    setDisplayOptionsDisplay(String display, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setDisplayOptionsDisplay(display, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setDisplayOptionsDisplay(String display, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setDisplayOptionsDisplay(display, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1005,186 +2013,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDisplayOptionsID(id, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
-            }
-        }
-    }
-
-    public void
-    setDisplayOptionsProjectionZStart(int zStart, int imageIndex)
-    {
-        setDisplayOptionsProjectionZStart(zStart, imageIndex, null, false);
-    }
-
-    public void
-    setDisplayOptionsProjectionZStart(int zStart, int imageIndex, java.util.Map<String, String> __ctx)
-    {
-        setDisplayOptionsProjectionZStart(zStart, imageIndex, __ctx, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void
-    setDisplayOptionsProjectionZStart(int zStart, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
-    {
-        if(__explicitCtx && __ctx == null)
-        {
-            __ctx = _emptyContext;
-        }
-        int __cnt = 0;
-        while(true)
-        {
-            Ice._ObjectDel __delBase = null;
-            try
-            {
-                __delBase = __getDelegate();
-                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
-                __del.setDisplayOptionsProjectionZStart(zStart, imageIndex, __ctx);
-                return;
-            }
-            catch(IceInternal.LocalExceptionWrapper __ex)
-            {
-                __handleExceptionWrapper(__delBase, __ex);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __cnt = __handleException(__delBase, __ex, __cnt);
-            }
-        }
-    }
-
-    public void
-    setDisplayOptionsProjectionZStop(int zStop, int imageIndex)
-    {
-        setDisplayOptionsProjectionZStop(zStop, imageIndex, null, false);
-    }
-
-    public void
-    setDisplayOptionsProjectionZStop(int zStop, int imageIndex, java.util.Map<String, String> __ctx)
-    {
-        setDisplayOptionsProjectionZStop(zStop, imageIndex, __ctx, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void
-    setDisplayOptionsProjectionZStop(int zStop, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
-    {
-        if(__explicitCtx && __ctx == null)
-        {
-            __ctx = _emptyContext;
-        }
-        int __cnt = 0;
-        while(true)
-        {
-            Ice._ObjectDel __delBase = null;
-            try
-            {
-                __delBase = __getDelegate();
-                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
-                __del.setDisplayOptionsProjectionZStop(zStop, imageIndex, __ctx);
-                return;
-            }
-            catch(IceInternal.LocalExceptionWrapper __ex)
-            {
-                __handleExceptionWrapper(__delBase, __ex);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __cnt = __handleException(__delBase, __ex, __cnt);
-            }
-        }
-    }
-
-    public void
-    setDisplayOptionsTimeTStart(int tStart, int imageIndex)
-    {
-        setDisplayOptionsTimeTStart(tStart, imageIndex, null, false);
-    }
-
-    public void
-    setDisplayOptionsTimeTStart(int tStart, int imageIndex, java.util.Map<String, String> __ctx)
-    {
-        setDisplayOptionsTimeTStart(tStart, imageIndex, __ctx, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void
-    setDisplayOptionsTimeTStart(int tStart, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
-    {
-        if(__explicitCtx && __ctx == null)
-        {
-            __ctx = _emptyContext;
-        }
-        int __cnt = 0;
-        while(true)
-        {
-            Ice._ObjectDel __delBase = null;
-            try
-            {
-                __delBase = __getDelegate();
-                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
-                __del.setDisplayOptionsTimeTStart(tStart, imageIndex, __ctx);
-                return;
-            }
-            catch(IceInternal.LocalExceptionWrapper __ex)
-            {
-                __handleExceptionWrapper(__delBase, __ex);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __cnt = __handleException(__delBase, __ex, __cnt);
-            }
-        }
-    }
-
-    public void
-    setDisplayOptionsTimeTStop(int tStop, int imageIndex)
-    {
-        setDisplayOptionsTimeTStop(tStop, imageIndex, null, false);
-    }
-
-    public void
-    setDisplayOptionsTimeTStop(int tStop, int imageIndex, java.util.Map<String, String> __ctx)
-    {
-        setDisplayOptionsTimeTStop(tStop, imageIndex, __ctx, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void
-    setDisplayOptionsTimeTStop(int tStop, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
-    {
-        if(__explicitCtx && __ctx == null)
-        {
-            __ctx = _emptyContext;
-        }
-        int __cnt = 0;
-        while(true)
-        {
-            Ice._ObjectDel __delBase = null;
-            try
-            {
-                __delBase = __getDelegate();
-                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
-                __del.setDisplayOptionsTimeTStop(tStop, imageIndex, __ctx);
-                return;
-            }
-            catch(IceInternal.LocalExceptionWrapper __ex)
-            {
-                __handleExceptionWrapper(__delBase, __ex);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1215,18 +2055,606 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setDisplayOptionsZoom(zoom, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setEllipseCx(cx, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setEllipseCx(cx, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEllipseCx(cx, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setEllipseCy(cy, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setEllipseCy(cy, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEllipseCy(cy, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setEllipseID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setEllipseID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEllipseID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setEllipseRx(rx, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setEllipseRx(rx, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEllipseRx(rx, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setEllipseRy(ry, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setEllipseRy(ry, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEllipseRy(ry, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setEllipseTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setEllipseTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEllipseTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
+    {
+        setEmFilterLotNumber(lotNumber, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setEmFilterLotNumber(lotNumber, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEmFilterLotNumber(lotNumber, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex)
+    {
+        setEmFilterManufacturer(manufacturer, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setEmFilterManufacturer(manufacturer, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEmFilterManufacturer(manufacturer, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEmFilterModel(String model, int instrumentIndex, int filterIndex)
+    {
+        setEmFilterModel(model, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setEmFilterModel(String model, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setEmFilterModel(model, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEmFilterModel(String model, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEmFilterModel(model, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setEmFilterType(String type, int instrumentIndex, int filterIndex)
+    {
+        setEmFilterType(type, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setEmFilterType(String type, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setEmFilterType(type, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setEmFilterType(String type, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setEmFilterType(type, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
+    {
+        setExFilterLotNumber(lotNumber, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setExFilterLotNumber(lotNumber, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setExFilterLotNumber(lotNumber, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex)
+    {
+        setExFilterManufacturer(manufacturer, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setExFilterManufacturer(manufacturer, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setExFilterManufacturer(manufacturer, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setExFilterModel(String model, int instrumentIndex, int filterIndex)
+    {
+        setExFilterModel(model, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setExFilterModel(String model, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setExFilterModel(model, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setExFilterModel(String model, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setExFilterModel(model, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setExFilterType(String type, int instrumentIndex, int filterIndex)
+    {
+        setExFilterType(type, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setExFilterType(String type, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setExFilterType(type, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setExFilterType(String type, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setExFilterType(type, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1257,18 +2685,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimentDescription(description, experimentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setExperimentExperimenterRef(String experimenterRef, int experimentIndex)
+    {
+        setExperimentExperimenterRef(experimenterRef, experimentIndex, null, false);
+    }
+
+    public void
+    setExperimentExperimenterRef(String experimenterRef, int experimentIndex, java.util.Map<String, String> __ctx)
+    {
+        setExperimentExperimenterRef(experimenterRef, experimentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setExperimentExperimenterRef(String experimenterRef, int experimentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setExperimentExperimenterRef(experimenterRef, experimentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1299,18 +2769,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimentID(id, experimentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1341,18 +2811,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimentType(type, experimentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1383,18 +2853,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimenterEmail(email, experimenterIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1425,18 +2895,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimenterFirstName(firstName, experimenterIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1467,18 +2937,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimenterID(id, experimenterIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1509,18 +2979,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimenterInstitution(institution, experimenterIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1551,18 +3021,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimenterLastName(lastName, experimenterIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1593,18 +3063,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setExperimenterMembershipGroup(group, experimenterIndex, groupRefIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setExperimenterOMEName(String omeName, int experimenterIndex)
+    {
+        setExperimenterOMEName(omeName, experimenterIndex, null, false);
+    }
+
+    public void
+    setExperimenterOMEName(String omeName, int experimenterIndex, java.util.Map<String, String> __ctx)
+    {
+        setExperimenterOMEName(omeName, experimenterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setExperimenterOMEName(String omeName, int experimenterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setExperimenterOMEName(omeName, experimenterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1635,18 +3147,690 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setFilamentType(type, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex)
+    {
+        setFilterFilterWheel(filterWheel, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterFilterWheel(filterWheel, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterFilterWheel(filterWheel, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterID(String id, int instrumentIndex, int filterIndex)
+    {
+        setFilterID(id, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setFilterID(String id, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterID(id, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterID(String id, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterID(id, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
+    {
+        setFilterLotNumber(lotNumber, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterLotNumber(lotNumber, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterLotNumber(lotNumber, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex)
+    {
+        setFilterManufacturer(manufacturer, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterManufacturer(manufacturer, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterManufacturer(manufacturer, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterModel(String model, int instrumentIndex, int filterIndex)
+    {
+        setFilterModel(model, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setFilterModel(String model, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterModel(model, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterModel(String model, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterModel(model, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetDichroic(dichroic, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetDichroic(dichroic, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetDichroic(dichroic, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetEmFilter(emFilter, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetEmFilter(emFilter, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetEmFilter(emFilter, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetExFilter(exFilter, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetExFilter(exFilter, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetExFilter(exFilter, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetID(String id, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetID(id, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetID(String id, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetID(id, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetID(String id, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetID(id, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetLotNumber(lotNumber, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetLotNumber(lotNumber, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetLotNumber(lotNumber, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetManufacturer(manufacturer, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetManufacturer(manufacturer, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetManufacturer(manufacturer, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterSetModel(String model, int instrumentIndex, int filterSetIndex)
+    {
+        setFilterSetModel(model, instrumentIndex, filterSetIndex, null, false);
+    }
+
+    public void
+    setFilterSetModel(String model, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterSetModel(model, instrumentIndex, filterSetIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterSetModel(String model, int instrumentIndex, int filterSetIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterSetModel(model, instrumentIndex, filterSetIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setFilterType(String type, int instrumentIndex, int filterIndex)
+    {
+        setFilterType(type, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setFilterType(String type, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setFilterType(type, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setFilterType(String type, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setFilterType(type, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setGroupID(String id, int groupIndex)
+    {
+        setGroupID(id, groupIndex, null, false);
+    }
+
+    public void
+    setGroupID(String id, int groupIndex, java.util.Map<String, String> __ctx)
+    {
+        setGroupID(id, groupIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setGroupID(String id, int groupIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setGroupID(id, groupIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setGroupName(String name, int groupIndex)
+    {
+        setGroupName(name, groupIndex, null, false);
+    }
+
+    public void
+    setGroupName(String name, int groupIndex, java.util.Map<String, String> __ctx)
+    {
+        setGroupName(name, groupIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setGroupName(String name, int groupIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setGroupName(name, groupIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setImageAcquiredPixels(String acquiredPixels, int imageIndex)
+    {
+        setImageAcquiredPixels(acquiredPixels, imageIndex, null, false);
+    }
+
+    public void
+    setImageAcquiredPixels(String acquiredPixels, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setImageAcquiredPixels(acquiredPixels, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setImageAcquiredPixels(String acquiredPixels, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setImageAcquiredPixels(acquiredPixels, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1677,18 +3861,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImageCreationDate(creationDate, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1719,18 +3903,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImageDefaultPixels(defaultPixels, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1761,18 +3945,144 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImageDescription(description, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setImageExperimentRef(String experimentRef, int imageIndex)
+    {
+        setImageExperimentRef(experimentRef, imageIndex, null, false);
+    }
+
+    public void
+    setImageExperimentRef(String experimentRef, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setImageExperimentRef(experimentRef, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setImageExperimentRef(String experimentRef, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setImageExperimentRef(experimentRef, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setImageExperimenterRef(String experimenterRef, int imageIndex)
+    {
+        setImageExperimenterRef(experimenterRef, imageIndex, null, false);
+    }
+
+    public void
+    setImageExperimenterRef(String experimenterRef, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setImageExperimenterRef(experimenterRef, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setImageExperimenterRef(String experimenterRef, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setImageExperimenterRef(experimenterRef, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setImageGroupRef(String groupRef, int imageIndex)
+    {
+        setImageGroupRef(groupRef, imageIndex, null, false);
+    }
+
+    public void
+    setImageGroupRef(String groupRef, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setImageGroupRef(groupRef, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setImageGroupRef(String groupRef, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setImageGroupRef(groupRef, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1803,18 +4113,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImageID(id, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1845,18 +4155,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImageInstrumentRef(instrumentRef, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1887,18 +4197,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImageName(name, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1929,18 +4239,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImagingEnvironmentAirPressure(airPressure, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1971,18 +4281,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImagingEnvironmentCO2Percent(cO2Percent, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2013,18 +4323,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImagingEnvironmentHumidity(humidity, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2055,18 +4365,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setImagingEnvironmentTemperature(temperature, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2097,18 +4407,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setInstrumentID(id, instrumentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2139,18 +4449,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLaserFrequencyMultiplication(frequencyMultiplication, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2181,18 +4491,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLaserLaserMedium(laserMedium, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLaserPockelCell(boolean pockelCell, int instrumentIndex, int lightSourceIndex)
+    {
+        setLaserPockelCell(pockelCell, instrumentIndex, lightSourceIndex, null, false);
+    }
+
+    public void
+    setLaserPockelCell(boolean pockelCell, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    {
+        setLaserPockelCell(pockelCell, instrumentIndex, lightSourceIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLaserPockelCell(boolean pockelCell, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLaserPockelCell(pockelCell, instrumentIndex, lightSourceIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2223,18 +4575,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLaserPulse(pulse, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex)
+    {
+        setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex, null, false);
+    }
+
+    public void
+    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    {
+        setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2265,18 +4659,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLaserTuneable(tuneable, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2307,18 +4701,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLaserType(type, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2349,18 +4743,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLaserWavelength(wavelength, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2391,18 +4785,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceID(id, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2433,18 +4827,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceManufacturer(manufacturer, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2475,18 +4869,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceModel(model, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2517,18 +4911,144 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourcePower(power, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
+    {
+        setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null, false);
+    }
+
+    public void
+    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
+    {
+        setLightSourceRefLightSource(lightSource, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null, false);
+    }
+
+    public void
+    setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setLightSourceRefLightSource(lightSource, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLightSourceRefLightSource(lightSource, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
+    {
+        setLightSourceRefWavelength(wavelength, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null, false);
+    }
+
+    public void
+    setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setLightSourceRefWavelength(wavelength, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLightSourceRefWavelength(wavelength, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2559,18 +5079,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceSerialNumber(serialNumber, instrumentIndex, lightSourceIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2601,18 +5121,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2643,18 +5163,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceSettingsLightSource(lightSource, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2685,18 +5205,270 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLightSourceSettingsWavelength(wavelength, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLineID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setLineID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setLineID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setLineID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLineID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLineID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setLineTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setLineTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLineTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setLineX1(x1, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setLineX1(x1, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLineX1(x1, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setLineX2(x2, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setLineX2(x2, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLineX2(x2, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setLineY1(y1, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setLineY1(y1, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLineY1(y1, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setLineY2(y2, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setLineY2(y2, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLineY2(y2, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2727,18 +5499,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelContrastMethod(contrastMethod, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex)
+    {
+        setLogicalChannelDetector(detector, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setLogicalChannelDetector(detector, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLogicalChannelDetector(detector, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2769,18 +5583,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelEmWave(emWave, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2811,18 +5625,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelExWave(exWave, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex)
+    {
+        setLogicalChannelFilterSet(filterSet, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setLogicalChannelFilterSet(filterSet, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLogicalChannelFilterSet(filterSet, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2853,18 +5709,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelFluor(fluor, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2895,18 +5751,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelID(id, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2937,18 +5793,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelIlluminationType(illuminationType, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex)
+    {
+        setLogicalChannelLightSource(lightSource, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setLogicalChannelLightSource(lightSource, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLogicalChannelLightSource(lightSource, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2979,18 +5877,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelMode(mode, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3021,18 +5919,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelName(name, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3063,18 +5961,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3105,18 +6003,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelOTF(otf, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3147,18 +6045,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelPhotometricInterpretation(photometricInterpretation, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3189,18 +6087,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3231,18 +6129,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelPockelCellSetting(pockelCellSetting, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3273,18 +6171,1026 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setLogicalChannelSamplesPerPixel(samplesPerPixel, imageIndex, logicalChannelIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex)
+    {
+        setLogicalChannelSecondaryEmissionFilter(secondaryEmissionFilter, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setLogicalChannelSecondaryEmissionFilter(secondaryEmissionFilter, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLogicalChannelSecondaryEmissionFilter(secondaryEmissionFilter, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex)
+    {
+        setLogicalChannelSecondaryExcitationFilter(secondaryExcitationFilter, imageIndex, logicalChannelIndex, null, false);
+    }
+
+    public void
+    setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    {
+        setLogicalChannelSecondaryExcitationFilter(secondaryExcitationFilter, imageIndex, logicalChannelIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setLogicalChannelSecondaryExcitationFilter(secondaryExcitationFilter, imageIndex, logicalChannelIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskHeight(height, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskHeight(height, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskHeight(height, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskPixelsExtendedPixelType(extendedPixelType, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskPixelsExtendedPixelType(extendedPixelType, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskPixelsExtendedPixelType(extendedPixelType, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskPixelsID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskPixelsID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskPixelsID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskPixelsSizeX(sizeX, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskPixelsSizeX(sizeX, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskPixelsSizeX(sizeX, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskPixelsSizeY(sizeY, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskPixelsSizeY(sizeY, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskPixelsSizeY(sizeY, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskWidth(width, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskWidth(width, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskWidth(width, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskX(x, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskX(x, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskX(x, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setMaskY(y, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setMaskY(y, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMaskY(y, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex)
+    {
+        setMicrobeamManipulationExperimenterRef(experimenterRef, imageIndex, microbeamManipulationIndex, null, false);
+    }
+
+    public void
+    setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicrobeamManipulationExperimenterRef(experimenterRef, imageIndex, microbeamManipulationIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicrobeamManipulationExperimenterRef(experimenterRef, imageIndex, microbeamManipulationIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex)
+    {
+        setMicrobeamManipulationID(id, imageIndex, microbeamManipulationIndex, null, false);
+    }
+
+    public void
+    setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicrobeamManipulationID(id, imageIndex, microbeamManipulationIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicrobeamManipulationID(id, imageIndex, microbeamManipulationIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex)
+    {
+        setMicrobeamManipulationRefID(id, experimentIndex, microbeamManipulationRefIndex, null, false);
+    }
+
+    public void
+    setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicrobeamManipulationRefID(id, experimentIndex, microbeamManipulationRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicrobeamManipulationRefID(id, experimentIndex, microbeamManipulationRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex)
+    {
+        setMicrobeamManipulationType(type, imageIndex, microbeamManipulationIndex, null, false);
+    }
+
+    public void
+    setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicrobeamManipulationType(type, imageIndex, microbeamManipulationIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicrobeamManipulationType(type, imageIndex, microbeamManipulationIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicroscopeID(String id, int instrumentIndex)
+    {
+        setMicroscopeID(id, instrumentIndex, null, false);
+    }
+
+    public void
+    setMicroscopeID(String id, int instrumentIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicroscopeID(id, instrumentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicroscopeID(String id, int instrumentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicroscopeID(id, instrumentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicroscopeManufacturer(String manufacturer, int instrumentIndex)
+    {
+        setMicroscopeManufacturer(manufacturer, instrumentIndex, null, false);
+    }
+
+    public void
+    setMicroscopeManufacturer(String manufacturer, int instrumentIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicroscopeManufacturer(manufacturer, instrumentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicroscopeManufacturer(String manufacturer, int instrumentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicroscopeManufacturer(manufacturer, instrumentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicroscopeModel(String model, int instrumentIndex)
+    {
+        setMicroscopeModel(model, instrumentIndex, null, false);
+    }
+
+    public void
+    setMicroscopeModel(String model, int instrumentIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicroscopeModel(model, instrumentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicroscopeModel(String model, int instrumentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicroscopeModel(model, instrumentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicroscopeSerialNumber(String serialNumber, int instrumentIndex)
+    {
+        setMicroscopeSerialNumber(serialNumber, instrumentIndex, null, false);
+    }
+
+    public void
+    setMicroscopeSerialNumber(String serialNumber, int instrumentIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicroscopeSerialNumber(serialNumber, instrumentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicroscopeSerialNumber(String serialNumber, int instrumentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicroscopeSerialNumber(serialNumber, instrumentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setMicroscopeType(String type, int instrumentIndex)
+    {
+        setMicroscopeType(type, instrumentIndex, null, false);
+    }
+
+    public void
+    setMicroscopeType(String type, int instrumentIndex, java.util.Map<String, String> __ctx)
+    {
+        setMicroscopeType(type, instrumentIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setMicroscopeType(String type, int instrumentIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setMicroscopeType(type, instrumentIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex)
+    {
+        setOTFBinaryFile(binaryFile, instrumentIndex, otfIndex, null, false);
+    }
+
+    public void
+    setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex, java.util.Map<String, String> __ctx)
+    {
+        setOTFBinaryFile(binaryFile, instrumentIndex, otfIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setOTFBinaryFile(binaryFile, instrumentIndex, otfIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3315,18 +7221,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setOTFID(id, instrumentIndex, otfIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3357,18 +7263,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setOTFObjective(objective, instrumentIndex, otfIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3399,18 +7305,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setOTFOpticalAxisAveraged(opticalAxisAveraged, instrumentIndex, otfIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3441,18 +7347,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setOTFPixelType(pixelType, instrumentIndex, otfIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3483,18 +7389,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setOTFSizeX(sizeX, instrumentIndex, otfIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3525,18 +7431,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setOTFSizeY(sizeY, instrumentIndex, otfIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3567,18 +7473,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3609,18 +7515,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveCorrection(correction, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3651,18 +7557,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveID(id, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3693,18 +7599,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveImmersion(immersion, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex)
+    {
+        setObjectiveIris(iris, instrumentIndex, objectiveIndex, null, false);
+    }
+
+    public void
+    setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    {
+        setObjectiveIris(iris, instrumentIndex, objectiveIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setObjectiveIris(iris, instrumentIndex, objectiveIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3735,18 +7683,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3777,18 +7725,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveManufacturer(manufacturer, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3819,18 +7767,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveModel(model, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3861,18 +7809,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveNominalMagnification(nominalMagnification, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3903,18 +7851,186 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveSerialNumber(serialNumber, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex)
+    {
+        setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex, null, false);
+    }
+
+    public void
+    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setObjectiveSettingsMedium(String medium, int imageIndex)
+    {
+        setObjectiveSettingsMedium(medium, imageIndex, null, false);
+    }
+
+    public void
+    setObjectiveSettingsMedium(String medium, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setObjectiveSettingsMedium(medium, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setObjectiveSettingsMedium(String medium, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setObjectiveSettingsMedium(medium, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setObjectiveSettingsObjective(String objective, int imageIndex)
+    {
+        setObjectiveSettingsObjective(objective, imageIndex, null, false);
+    }
+
+    public void
+    setObjectiveSettingsObjective(String objective, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setObjectiveSettingsObjective(objective, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setObjectiveSettingsObjective(String objective, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setObjectiveSettingsObjective(objective, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex)
+    {
+        setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex, null, false);
+    }
+
+    public void
+    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3945,18 +8061,102 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPathD(String d, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPathD(d, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPathD(d, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPathD(d, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPathID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPathID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPathID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPathID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPathID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPathID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -3987,18 +8187,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsBigEndian(bigEndian, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4029,18 +8229,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsDimensionOrder(dimensionOrder, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4071,18 +8271,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsID(id, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4113,18 +8313,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsPixelType(pixelType, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4155,18 +8355,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsSizeC(sizeC, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4197,18 +8397,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsSizeT(sizeT, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4239,18 +8439,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsSizeX(sizeX, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4281,18 +8481,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsSizeY(sizeY, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4323,18 +8523,102 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPixelsSizeZ(sizeZ, imageIndex, pixelsIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex)
+    {
+        setPlaneHashSHA1(hashSHA1, imageIndex, pixelsIndex, planeIndex, null, false);
+    }
+
+    public void
+    setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlaneHashSHA1(hashSHA1, imageIndex, pixelsIndex, planeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlaneHashSHA1(hashSHA1, imageIndex, pixelsIndex, planeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex)
+    {
+        setPlaneID(id, imageIndex, pixelsIndex, planeIndex, null, false);
+    }
+
+    public void
+    setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlaneID(id, imageIndex, pixelsIndex, planeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlaneID(id, imageIndex, pixelsIndex, planeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4365,18 +8649,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlaneTheC(theC, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4407,18 +8691,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlaneTheT(theT, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4449,18 +8733,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlaneTheZ(theZ, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4491,18 +8775,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4533,18 +8817,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex)
+    {
+        setPlateColumnNamingConvention(columnNamingConvention, plateIndex, null, false);
+    }
+
+    public void
+    setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlateColumnNamingConvention(columnNamingConvention, plateIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlateColumnNamingConvention(columnNamingConvention, plateIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4575,18 +8901,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlateDescription(description, plateIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4617,18 +8943,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlateExternalIdentifier(externalIdentifier, plateIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4659,18 +8985,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlateID(id, plateIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4701,18 +9027,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlateName(name, plateIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4743,18 +9069,144 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlateRefID(id, screenIndex, plateRefIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlateRefSample(int sample, int screenIndex, int plateRefIndex)
+    {
+        setPlateRefSample(sample, screenIndex, plateRefIndex, null, false);
+    }
+
+    public void
+    setPlateRefSample(int sample, int screenIndex, int plateRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlateRefSample(sample, screenIndex, plateRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlateRefSample(int sample, int screenIndex, int plateRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlateRefSample(sample, screenIndex, plateRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlateRefWell(String well, int screenIndex, int plateRefIndex)
+    {
+        setPlateRefWell(well, screenIndex, plateRefIndex, null, false);
+    }
+
+    public void
+    setPlateRefWell(String well, int screenIndex, int plateRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlateRefWell(well, screenIndex, plateRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlateRefWell(String well, int screenIndex, int plateRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlateRefWell(well, screenIndex, plateRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlateRowNamingConvention(String rowNamingConvention, int plateIndex)
+    {
+        setPlateRowNamingConvention(rowNamingConvention, plateIndex, null, false);
+    }
+
+    public void
+    setPlateRowNamingConvention(String rowNamingConvention, int plateIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlateRowNamingConvention(rowNamingConvention, plateIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlateRowNamingConvention(String rowNamingConvention, int plateIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlateRowNamingConvention(rowNamingConvention, plateIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4785,18 +9237,858 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setPlateStatus(status, plateIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlateWellOriginX(double wellOriginX, int plateIndex)
+    {
+        setPlateWellOriginX(wellOriginX, plateIndex, null, false);
+    }
+
+    public void
+    setPlateWellOriginX(double wellOriginX, int plateIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlateWellOriginX(wellOriginX, plateIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlateWellOriginX(double wellOriginX, int plateIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlateWellOriginX(wellOriginX, plateIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPlateWellOriginY(double wellOriginY, int plateIndex)
+    {
+        setPlateWellOriginY(wellOriginY, plateIndex, null, false);
+    }
+
+    public void
+    setPlateWellOriginY(double wellOriginY, int plateIndex, java.util.Map<String, String> __ctx)
+    {
+        setPlateWellOriginY(wellOriginY, plateIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPlateWellOriginY(double wellOriginY, int plateIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPlateWellOriginY(wellOriginY, plateIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPointCx(cx, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPointCx(cx, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPointCx(cx, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPointCy(cy, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPointCy(cy, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPointCy(cy, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPointID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPointID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPointID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPointID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPointID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPointID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPointR(String r, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPointR(r, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPointR(String r, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPointR(r, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPointR(String r, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPointR(r, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPointTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPointTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPointTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPolygonID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPolygonID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPolygonID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPolygonPoints(points, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPolygonPoints(points, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPolygonPoints(points, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPolygonTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPolygonTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPolygonTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPolylineID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPolylineID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPolylineID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPolylinePoints(points, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPolylinePoints(points, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPolylinePoints(points, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setPolylineTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setPolylineTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPolylineTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setProjectDescription(String description, int projectIndex)
+    {
+        setProjectDescription(description, projectIndex, null, false);
+    }
+
+    public void
+    setProjectDescription(String description, int projectIndex, java.util.Map<String, String> __ctx)
+    {
+        setProjectDescription(description, projectIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setProjectDescription(String description, int projectIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setProjectDescription(description, projectIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setProjectExperimenterRef(String experimenterRef, int projectIndex)
+    {
+        setProjectExperimenterRef(experimenterRef, projectIndex, null, false);
+    }
+
+    public void
+    setProjectExperimenterRef(String experimenterRef, int projectIndex, java.util.Map<String, String> __ctx)
+    {
+        setProjectExperimenterRef(experimenterRef, projectIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setProjectExperimenterRef(String experimenterRef, int projectIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setProjectExperimenterRef(experimenterRef, projectIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setProjectGroupRef(String groupRef, int projectIndex)
+    {
+        setProjectGroupRef(groupRef, projectIndex, null, false);
+    }
+
+    public void
+    setProjectGroupRef(String groupRef, int projectIndex, java.util.Map<String, String> __ctx)
+    {
+        setProjectGroupRef(groupRef, projectIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setProjectGroupRef(String groupRef, int projectIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setProjectGroupRef(groupRef, projectIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setProjectID(String id, int projectIndex)
+    {
+        setProjectID(id, projectIndex, null, false);
+    }
+
+    public void
+    setProjectID(String id, int projectIndex, java.util.Map<String, String> __ctx)
+    {
+        setProjectID(id, projectIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setProjectID(String id, int projectIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setProjectID(id, projectIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setProjectName(String name, int projectIndex)
+    {
+        setProjectName(name, projectIndex, null, false);
+    }
+
+    public void
+    setProjectName(String name, int projectIndex, java.util.Map<String, String> __ctx)
+    {
+        setProjectName(name, projectIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setProjectName(String name, int projectIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setProjectName(name, projectIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setProjectRefID(String id, int datasetIndex, int projectRefIndex)
+    {
+        setProjectRefID(id, datasetIndex, projectRefIndex, null, false);
+    }
+
+    public void
+    setProjectRefID(String id, int datasetIndex, int projectRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setProjectRefID(id, datasetIndex, projectRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setProjectRefID(String id, int datasetIndex, int projectRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setProjectRefID(id, datasetIndex, projectRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex)
+    {
+        setPumpLightSource(lightSource, instrumentIndex, lightSourceIndex, null, false);
+    }
+
+    public void
+    setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    {
+        setPumpLightSource(lightSource, instrumentIndex, lightSourceIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setPumpLightSource(lightSource, instrumentIndex, lightSourceIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4827,18 +10119,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIID(id, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex)
+    {
+        setROIRefID(id, imageIndex, microbeamManipulationIndex, roiRefIndex, null, false);
+    }
+
+    public void
+    setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setROIRefID(id, imageIndex, microbeamManipulationIndex, roiRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setROIRefID(id, imageIndex, microbeamManipulationIndex, roiRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4869,18 +10203,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIT0(t0, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4911,18 +10245,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIT1(t1, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4953,18 +10287,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIX0(x0, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -4995,18 +10329,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIX1(x1, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5037,18 +10371,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIY0(y0, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5079,18 +10413,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIY1(y1, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5121,18 +10455,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIZ0(z0, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5163,18 +10497,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setROIZ1(z1, imageIndex, roiIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5205,18 +10539,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setReagentDescription(description, screenIndex, reagentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5247,18 +10581,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setReagentID(id, screenIndex, reagentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5289,18 +10623,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setReagentName(name, screenIndex, reagentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5331,18 +10665,522 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setReagentReagentIdentifier(reagentIdentifier, screenIndex, reagentIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setRectHeight(height, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setRectHeight(height, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRectHeight(height, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRectID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setRectID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setRectID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setRectID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRectID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRectID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setRectTransform(transform, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setRectTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRectTransform(transform, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setRectWidth(width, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setRectWidth(width, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRectWidth(width, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRectX(String x, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setRectX(x, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setRectX(String x, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setRectX(x, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRectX(String x, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRectX(x, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRectY(String y, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setRectY(y, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setRectY(String y, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setRectY(y, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRectY(String y, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRectY(y, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRegionID(String id, int imageIndex, int regionIndex)
+    {
+        setRegionID(id, imageIndex, regionIndex, null, false);
+    }
+
+    public void
+    setRegionID(String id, int imageIndex, int regionIndex, java.util.Map<String, String> __ctx)
+    {
+        setRegionID(id, imageIndex, regionIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRegionID(String id, int imageIndex, int regionIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRegionID(id, imageIndex, regionIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRegionName(String name, int imageIndex, int regionIndex)
+    {
+        setRegionName(name, imageIndex, regionIndex, null, false);
+    }
+
+    public void
+    setRegionName(String name, int imageIndex, int regionIndex, java.util.Map<String, String> __ctx)
+    {
+        setRegionName(name, imageIndex, regionIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRegionName(String name, int imageIndex, int regionIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRegionName(name, imageIndex, regionIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRegionTag(String tag, int imageIndex, int regionIndex)
+    {
+        setRegionTag(tag, imageIndex, regionIndex, null, false);
+    }
+
+    public void
+    setRegionTag(String tag, int imageIndex, int regionIndex, java.util.Map<String, String> __ctx)
+    {
+        setRegionTag(tag, imageIndex, regionIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRegionTag(String tag, int imageIndex, int regionIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRegionTag(tag, imageIndex, regionIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex)
+    {
+        setRoiLinkDirection(direction, imageIndex, roiIndex, roiLinkIndex, null, false);
+    }
+
+    public void
+    setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex, java.util.Map<String, String> __ctx)
+    {
+        setRoiLinkDirection(direction, imageIndex, roiIndex, roiLinkIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRoiLinkDirection(direction, imageIndex, roiIndex, roiLinkIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex)
+    {
+        setRoiLinkName(name, imageIndex, roiIndex, roiLinkIndex, null, false);
+    }
+
+    public void
+    setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex, java.util.Map<String, String> __ctx)
+    {
+        setRoiLinkName(name, imageIndex, roiIndex, roiLinkIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRoiLinkName(name, imageIndex, roiIndex, roiLinkIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex)
+    {
+        setRoiLinkRef(ref, imageIndex, roiIndex, roiLinkIndex, null, false);
+    }
+
+    public void
+    setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex, java.util.Map<String, String> __ctx)
+    {
+        setRoiLinkRef(ref, imageIndex, roiIndex, roiLinkIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setRoiLinkRef(ref, imageIndex, roiIndex, roiLinkIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5373,18 +11211,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenAcquisitionEndTime(endTime, screenIndex, screenAcquisitionIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5415,18 +11253,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenAcquisitionID(id, screenIndex, screenAcquisitionIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5457,18 +11295,102 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenAcquisitionStartTime(startTime, screenIndex, screenAcquisitionIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setScreenDescription(String description, int screenIndex)
+    {
+        setScreenDescription(description, screenIndex, null, false);
+    }
+
+    public void
+    setScreenDescription(String description, int screenIndex, java.util.Map<String, String> __ctx)
+    {
+        setScreenDescription(description, screenIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setScreenDescription(String description, int screenIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setScreenDescription(description, screenIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setScreenExtern(String extern, int screenIndex)
+    {
+        setScreenExtern(extern, screenIndex, null, false);
+    }
+
+    public void
+    setScreenExtern(String extern, int screenIndex, java.util.Map<String, String> __ctx)
+    {
+        setScreenExtern(extern, screenIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setScreenExtern(String extern, int screenIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setScreenExtern(extern, screenIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5499,18 +11421,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenID(id, screenIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5541,18 +11463,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenName(name, screenIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5583,18 +11505,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenProtocolDescription(protocolDescription, screenIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5625,18 +11547,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenProtocolIdentifier(protocolIdentifier, screenIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5667,18 +11589,102 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenReagentSetDescription(reagentSetDescription, screenIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex)
+    {
+        setScreenReagentSetIdentifier(reagentSetIdentifier, screenIndex, null, false);
+    }
+
+    public void
+    setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex, java.util.Map<String, String> __ctx)
+    {
+        setScreenReagentSetIdentifier(reagentSetIdentifier, screenIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setScreenReagentSetIdentifier(reagentSetIdentifier, screenIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setScreenRefID(String id, int plateIndex, int screenRefIndex)
+    {
+        setScreenRefID(id, plateIndex, screenRefIndex, null, false);
+    }
+
+    public void
+    setScreenRefID(String id, int plateIndex, int screenRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setScreenRefID(id, plateIndex, screenRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setScreenRefID(String id, int plateIndex, int screenRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setScreenRefID(id, plateIndex, screenRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5709,18 +11715,1404 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setScreenType(type, screenIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeBaselineShift(baselineShift, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeBaselineShift(baselineShift, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeBaselineShift(baselineShift, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeDirection(direction, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeDirection(direction, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeDirection(direction, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFillColor(fillColor, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFillColor(fillColor, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFillColor(fillColor, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFillOpacity(fillOpacity, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFillOpacity(fillOpacity, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFillOpacity(fillOpacity, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFillRule(fillRule, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFillRule(fillRule, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFillRule(fillRule, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFontFamily(fontFamily, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFontFamily(fontFamily, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFontFamily(fontFamily, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFontSize(fontSize, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFontSize(fontSize, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFontSize(fontSize, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFontStretch(fontStretch, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFontStretch(fontStretch, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFontStretch(fontStretch, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFontStyle(fontStyle, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFontStyle(fontStyle, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFontStyle(fontStyle, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFontVariant(fontVariant, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFontVariant(fontVariant, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFontVariant(fontVariant, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeFontWeight(fontWeight, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeFontWeight(fontWeight, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeFontWeight(fontWeight, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeG(g, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeG(g, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeG(g, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeGlyphOrientationVertical(glyphOrientationVertical, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeGlyphOrientationVertical(glyphOrientationVertical, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeGlyphOrientationVertical(glyphOrientationVertical, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeID(id, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeID(id, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeID(id, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeLocked(boolean locked, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeLocked(locked, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeLocked(boolean locked, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeLocked(locked, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeLocked(boolean locked, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeLocked(locked, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeAttribute(strokeAttribute, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeAttribute(strokeAttribute, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeAttribute(strokeAttribute, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeColor(strokeColor, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeColor(strokeColor, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeColor(strokeColor, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeDashArray(strokeDashArray, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeDashArray(strokeDashArray, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeDashArray(strokeDashArray, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeLineCap(strokeLineCap, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeLineCap(strokeLineCap, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeLineCap(strokeLineCap, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeLineJoin(strokeLineJoin, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeLineJoin(strokeLineJoin, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeLineJoin(strokeLineJoin, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeStrokeWidth(strokeWidth, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeStrokeWidth(strokeWidth, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeStrokeWidth(strokeWidth, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeText(text, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeText(text, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeText(text, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeTextAnchor(textAnchor, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeTextAnchor(textAnchor, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeTextAnchor(textAnchor, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeTextDecoration(textDecoration, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeTextDecoration(textDecoration, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeTextDecoration(textDecoration, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeTextFill(textFill, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeTextFill(textFill, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeTextFill(textFill, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeTextStroke(textStroke, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeTextStroke(textStroke, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeTextStroke(textStroke, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeTheT(theT, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeTheT(theT, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeTheT(theT, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeVectorEffect(vectorEffect, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeVectorEffect(vectorEffect, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeVectorEffect(vectorEffect, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeVisibility(boolean visibility, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeVisibility(visibility, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeVisibility(boolean visibility, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeVisibility(visibility, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeVisibility(boolean visibility, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeVisibility(visibility, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex)
+    {
+        setShapeWritingMode(writingMode, imageIndex, roiIndex, shapeIndex, null, false);
+    }
+
+    public void
+    setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    {
+        setShapeWritingMode(writingMode, imageIndex, roiIndex, shapeIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setShapeWritingMode(writingMode, imageIndex, roiIndex, shapeIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5751,18 +13143,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStageLabelName(name, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5793,18 +13185,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStageLabelX(x, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5835,18 +13227,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStageLabelY(y, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5877,18 +13269,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStageLabelZ(z, imageIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5919,18 +13311,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -5961,18 +13353,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6003,18 +13395,144 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setThumbnailHref(String href, int imageIndex)
+    {
+        setThumbnailHref(href, imageIndex, null, false);
+    }
+
+    public void
+    setThumbnailHref(String href, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setThumbnailHref(href, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setThumbnailHref(String href, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setThumbnailHref(href, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setThumbnailID(String id, int imageIndex)
+    {
+        setThumbnailID(id, imageIndex, null, false);
+    }
+
+    public void
+    setThumbnailID(String id, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setThumbnailID(id, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setThumbnailID(String id, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setThumbnailID(id, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setThumbnailMIMEtype(String mimEtype, int imageIndex)
+    {
+        setThumbnailMIMEtype(mimEtype, imageIndex, null, false);
+    }
+
+    public void
+    setThumbnailMIMEtype(String mimEtype, int imageIndex, java.util.Map<String, String> __ctx)
+    {
+        setThumbnailMIMEtype(mimEtype, imageIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setThumbnailMIMEtype(String mimEtype, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setThumbnailMIMEtype(mimEtype, imageIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6045,18 +13563,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataFileName(fileName, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6087,18 +13605,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataFirstC(firstC, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6129,18 +13647,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataFirstT(firstT, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6171,18 +13689,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataFirstZ(firstZ, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6213,18 +13731,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataIFD(ifd, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6255,18 +13773,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataNumPlanes(numPlanes, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6297,18 +13815,228 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setTiffDataUUID(uuid, imageIndex, pixelsIndex, tiffDataIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setTransmittanceRangeCutIn(int cutIn, int instrumentIndex, int filterIndex)
+    {
+        setTransmittanceRangeCutIn(cutIn, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setTransmittanceRangeCutIn(int cutIn, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setTransmittanceRangeCutIn(cutIn, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setTransmittanceRangeCutIn(int cutIn, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setTransmittanceRangeCutIn(cutIn, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setTransmittanceRangeCutInTolerance(int cutInTolerance, int instrumentIndex, int filterIndex)
+    {
+        setTransmittanceRangeCutInTolerance(cutInTolerance, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setTransmittanceRangeCutInTolerance(int cutInTolerance, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setTransmittanceRangeCutInTolerance(cutInTolerance, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setTransmittanceRangeCutInTolerance(int cutInTolerance, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setTransmittanceRangeCutInTolerance(cutInTolerance, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setTransmittanceRangeCutOut(int cutOut, int instrumentIndex, int filterIndex)
+    {
+        setTransmittanceRangeCutOut(cutOut, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setTransmittanceRangeCutOut(int cutOut, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setTransmittanceRangeCutOut(cutOut, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setTransmittanceRangeCutOut(int cutOut, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setTransmittanceRangeCutOut(cutOut, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setTransmittanceRangeCutOutTolerance(int cutOutTolerance, int instrumentIndex, int filterIndex)
+    {
+        setTransmittanceRangeCutOutTolerance(cutOutTolerance, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setTransmittanceRangeCutOutTolerance(int cutOutTolerance, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setTransmittanceRangeCutOutTolerance(cutOutTolerance, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setTransmittanceRangeCutOutTolerance(int cutOutTolerance, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setTransmittanceRangeCutOutTolerance(cutOutTolerance, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex)
+    {
+        setTransmittanceRangeTransmittance(transmittance, instrumentIndex, filterIndex, null, false);
+    }
+
+    public void
+    setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx)
+    {
+        setTransmittanceRangeTransmittance(transmittance, instrumentIndex, filterIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setTransmittanceRangeTransmittance(transmittance, instrumentIndex, filterIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6339,18 +14067,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setUUID(uuid, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6381,18 +14109,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellColumn(column, plateIndex, wellIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6423,18 +14151,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellExternalDescription(externalDescription, plateIndex, wellIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6465,18 +14193,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellExternalIdentifier(externalIdentifier, plateIndex, wellIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6507,18 +14235,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellID(id, plateIndex, wellIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setWellReagent(String reagent, int plateIndex, int wellIndex)
+    {
+        setWellReagent(reagent, plateIndex, wellIndex, null, false);
+    }
+
+    public void
+    setWellReagent(String reagent, int plateIndex, int wellIndex, java.util.Map<String, String> __ctx)
+    {
+        setWellReagent(reagent, plateIndex, wellIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setWellReagent(String reagent, int plateIndex, int wellIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setWellReagent(reagent, plateIndex, wellIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6549,18 +14319,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellRow(row, plateIndex, wellIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6591,18 +14361,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellSampleID(id, plateIndex, wellIndex, wellSampleIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex)
+    {
+        setWellSampleImageRef(imageRef, plateIndex, wellIndex, wellSampleIndex, null, false);
+    }
+
+    public void
+    setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    {
+        setWellSampleImageRef(imageRef, plateIndex, wellIndex, wellSampleIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setWellSampleImageRef(imageRef, plateIndex, wellIndex, wellSampleIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6633,18 +14445,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellSampleIndex(index, plateIndex, wellIndex, wellSampleIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6675,18 +14487,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6717,18 +14529,60 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
+            }
+        }
+    }
+
+    public void
+    setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex)
+    {
+        setWellSampleRefID(id, screenIndex, screenAcquisitionIndex, wellSampleRefIndex, null, false);
+    }
+
+    public void
+    setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex, java.util.Map<String, String> __ctx)
+    {
+        setWellSampleRefID(id, screenIndex, screenAcquisitionIndex, wellSampleRefIndex, __ctx, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void
+    setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    {
+        if(__explicitCtx && __ctx == null)
+        {
+            __ctx = _emptyContext;
+        }
+        int __cnt = 0;
+        while(true)
+        {
+            Ice._ObjectDel __delBase = null;
+            try
+            {
+                __delBase = __getDelegate(false);
+                _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
+                __del.setWellSampleRefID(id, screenIndex, screenAcquisitionIndex, wellSampleRefIndex, __ctx);
+                return;
+            }
+            catch(IceInternal.LocalExceptionWrapper __ex)
+            {
+                __handleExceptionWrapper(__delBase, __ex, null);
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6759,18 +14613,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6801,18 +14655,18 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _MetadataStoreDel __del = (_MetadataStoreDel)__delBase;
                 __del.setWellType(type, plateIndex, wellIndex, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -6915,9 +14769,16 @@ public final class MetadataStorePrxHelper extends Ice.ObjectPrxHelperBase implem
         MetadataStorePrx __d = null;
         if(__obj != null)
         {
-            MetadataStorePrxHelper __h = new MetadataStorePrxHelper();
-            __h.__copyFrom(__obj);
-            __d = __h;
+            try
+            {
+                __d = (MetadataStorePrx)__obj;
+            }
+            catch(ClassCastException ex)
+            {
+                MetadataStorePrxHelper __h = new MetadataStorePrxHelper();
+                __h.__copyFrom(__obj);
+                __d = __h;
+            }
         }
         return __d;
     }

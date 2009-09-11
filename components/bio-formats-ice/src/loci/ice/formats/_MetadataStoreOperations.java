@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -27,6 +27,36 @@ public interface _MetadataStoreOperations
 
     void setChannelComponentIndex(int index, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Ice.Current __current);
 
+    void setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Ice.Current __current);
+
+    void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setContactExperimenter(String experimenter, int groupIndex, Ice.Current __current);
+
+    void setDatasetDescription(String description, int datasetIndex, Ice.Current __current);
+
+    void setDatasetExperimenterRef(String experimenterRef, int datasetIndex, Ice.Current __current);
+
+    void setDatasetGroupRef(String groupRef, int datasetIndex, Ice.Current __current);
+
+    void setDatasetID(String id, int datasetIndex, Ice.Current __current);
+
+    void setDatasetLocked(boolean locked, int datasetIndex, Ice.Current __current);
+
+    void setDatasetName(String name, int datasetIndex, Ice.Current __current);
+
+    void setDatasetRefID(String id, int imageIndex, int datasetRefIndex, Ice.Current __current);
+
+    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, Ice.Current __current);
+
     void setDetectorGain(float gain, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     void setDetectorID(String id, int instrumentIndex, int detectorIndex, Ice.Current __current);
@@ -43,11 +73,27 @@ public interface _MetadataStoreOperations
 
     void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
+    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, Ice.Current __current);
+
+    void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
     void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setDichroicID(String id, int instrumentIndex, int dichroicIndex, Ice.Current __current);
+
+    void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex, Ice.Current __current);
+
+    void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex, Ice.Current __current);
+
+    void setDichroicModel(String model, int instrumentIndex, int dichroicIndex, Ice.Current __current);
 
     void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, Ice.Current __current);
 
@@ -61,19 +107,43 @@ public interface _MetadataStoreOperations
 
     void setDimensionsWaveStart(int waveStart, int imageIndex, int pixelsIndex, Ice.Current __current);
 
+    void setDisplayOptionsDisplay(String display, int imageIndex, Ice.Current __current);
+
     void setDisplayOptionsID(String id, int imageIndex, Ice.Current __current);
 
     void setDisplayOptionsZoom(float zoom, int imageIndex, Ice.Current __current);
 
-    void setDisplayOptionsProjectionZStart(int zStart, int imageIndex, Ice.Current __current);
+    void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    void setDisplayOptionsProjectionZStop(int zStop, int imageIndex, Ice.Current __current);
+    void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    void setDisplayOptionsTimeTStart(int tStart, int imageIndex, Ice.Current __current);
+    void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    void setDisplayOptionsTimeTStop(int tStop, int imageIndex, Ice.Current __current);
+    void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setEmFilterModel(String model, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setEmFilterType(String type, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setExFilterModel(String model, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setExFilterType(String type, int instrumentIndex, int filterIndex, Ice.Current __current);
 
     void setExperimentDescription(String description, int experimentIndex, Ice.Current __current);
+
+    void setExperimentExperimenterRef(String experimenterRef, int experimentIndex, Ice.Current __current);
 
     void setExperimentID(String id, int experimentIndex, Ice.Current __current);
 
@@ -89,15 +159,55 @@ public interface _MetadataStoreOperations
 
     void setExperimenterLastName(String lastName, int experimenterIndex, Ice.Current __current);
 
+    void setExperimenterOMEName(String omeName, int experimenterIndex, Ice.Current __current);
+
     void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex, Ice.Current __current);
 
     void setFilamentType(String type, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+
+    void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setFilterID(String id, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setFilterModel(String model, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setFilterType(String type, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setFilterSetID(String id, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex, Ice.Current __current);
+
+    void setGroupID(String id, int groupIndex, Ice.Current __current);
+
+    void setGroupName(String name, int groupIndex, Ice.Current __current);
+
+    void setImageAcquiredPixels(String acquiredPixels, int imageIndex, Ice.Current __current);
 
     void setImageCreationDate(String creationDate, int imageIndex, Ice.Current __current);
 
     void setImageDefaultPixels(String defaultPixels, int imageIndex, Ice.Current __current);
 
     void setImageDescription(String description, int imageIndex, Ice.Current __current);
+
+    void setImageExperimentRef(String experimentRef, int imageIndex, Ice.Current __current);
+
+    void setImageExperimenterRef(String experimenterRef, int imageIndex, Ice.Current __current);
+
+    void setImageGroupRef(String groupRef, int imageIndex, Ice.Current __current);
 
     void setImageID(String id, int imageIndex, Ice.Current __current);
 
@@ -119,7 +229,11 @@ public interface _MetadataStoreOperations
 
     void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
+    void setLaserPockelCell(boolean pockelCell, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+
     void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+
+    void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
     void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
@@ -137,23 +251,47 @@ public interface _MetadataStoreOperations
 
     void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
+    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
+
+    void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
+
+    void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
+
     void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLightSourceSettingsWavelength(int wavelength, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
+    void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
     void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelEmWave(int emWave, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelExWave(int exWave, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelFluor(String fluor, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelID(String id, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelMode(String mode, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
@@ -170,6 +308,54 @@ public interface _MetadataStoreOperations
     void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+
+    void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex, Ice.Current __current);
+
+    void setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex, Ice.Current __current);
+
+    void setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex, Ice.Current __current);
+
+    void setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex, Ice.Current __current);
+
+    void setMicroscopeID(String id, int instrumentIndex, Ice.Current __current);
+
+    void setMicroscopeManufacturer(String manufacturer, int instrumentIndex, Ice.Current __current);
+
+    void setMicroscopeModel(String model, int instrumentIndex, Ice.Current __current);
+
+    void setMicroscopeSerialNumber(String serialNumber, int instrumentIndex, Ice.Current __current);
+
+    void setMicroscopeType(String type, int instrumentIndex, Ice.Current __current);
+
+    void setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex, Ice.Current __current);
 
     void setOTFID(String id, int instrumentIndex, int otfIndex, Ice.Current __current);
 
@@ -191,6 +377,8 @@ public interface _MetadataStoreOperations
 
     void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
+    void setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex, Ice.Current __current);
+
     void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
     void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex, Ice.Current __current);
@@ -202,6 +390,18 @@ public interface _MetadataStoreOperations
     void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
     void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, Ice.Current __current);
+
+    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, Ice.Current __current);
+
+    void setObjectiveSettingsMedium(String medium, int imageIndex, Ice.Current __current);
+
+    void setObjectiveSettingsObjective(String objective, int imageIndex, Ice.Current __current);
+
+    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, Ice.Current __current);
+
+    void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
     void setPixelsBigEndian(boolean bigEndian, int imageIndex, int pixelsIndex, Ice.Current __current);
 
@@ -221,6 +421,10 @@ public interface _MetadataStoreOperations
 
     void setPixelsSizeZ(int sizeZ, int imageIndex, int pixelsIndex, Ice.Current __current);
 
+    void setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+
+    void setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+
     void setPlaneTheC(int theC, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
     void setPlaneTheT(int theT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
@@ -231,6 +435,8 @@ public interface _MetadataStoreOperations
 
     void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
+    void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, Ice.Current __current);
+
     void setPlateDescription(String description, int plateIndex, Ice.Current __current);
 
     void setPlateExternalIdentifier(String externalIdentifier, int plateIndex, Ice.Current __current);
@@ -239,9 +445,55 @@ public interface _MetadataStoreOperations
 
     void setPlateName(String name, int plateIndex, Ice.Current __current);
 
+    void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex, Ice.Current __current);
+
     void setPlateStatus(String status, int plateIndex, Ice.Current __current);
 
+    void setPlateWellOriginX(double wellOriginX, int plateIndex, Ice.Current __current);
+
+    void setPlateWellOriginY(double wellOriginY, int plateIndex, Ice.Current __current);
+
     void setPlateRefID(String id, int screenIndex, int plateRefIndex, Ice.Current __current);
+
+    void setPlateRefSample(int sample, int screenIndex, int plateRefIndex, Ice.Current __current);
+
+    void setPlateRefWell(String well, int screenIndex, int plateRefIndex, Ice.Current __current);
+
+    void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setProjectDescription(String description, int projectIndex, Ice.Current __current);
+
+    void setProjectExperimenterRef(String experimenterRef, int projectIndex, Ice.Current __current);
+
+    void setProjectGroupRef(String groupRef, int projectIndex, Ice.Current __current);
+
+    void setProjectID(String id, int projectIndex, Ice.Current __current);
+
+    void setProjectName(String name, int projectIndex, Ice.Current __current);
+
+    void setProjectRefID(String id, int datasetIndex, int projectRefIndex, Ice.Current __current);
+
+    void setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
     void setROIID(String id, int imageIndex, int roiIndex, Ice.Current __current);
 
@@ -261,6 +513,8 @@ public interface _MetadataStoreOperations
 
     void setROIZ1(int z1, int imageIndex, int roiIndex, Ice.Current __current);
 
+    void setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex, Ice.Current __current);
+
     void setReagentDescription(String description, int screenIndex, int reagentIndex, Ice.Current __current);
 
     void setReagentID(String id, int screenIndex, int reagentIndex, Ice.Current __current);
@@ -268,6 +522,34 @@ public interface _MetadataStoreOperations
     void setReagentName(String name, int screenIndex, int reagentIndex, Ice.Current __current);
 
     void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex, Ice.Current __current);
+
+    void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setRegionID(String id, int imageIndex, int regionIndex, Ice.Current __current);
+
+    void setRegionName(String name, int imageIndex, int regionIndex, Ice.Current __current);
+
+    void setRegionTag(String tag, int imageIndex, int regionIndex, Ice.Current __current);
+
+    void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex, Ice.Current __current);
+
+    void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex, Ice.Current __current);
+
+    void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex, Ice.Current __current);
+
+    void setScreenDescription(String description, int screenIndex, Ice.Current __current);
+
+    void setScreenExtern(String extern, int screenIndex, Ice.Current __current);
 
     void setScreenID(String id, int screenIndex, Ice.Current __current);
 
@@ -279,6 +561,8 @@ public interface _MetadataStoreOperations
 
     void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex, Ice.Current __current);
 
+    void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex, Ice.Current __current);
+
     void setScreenType(String type, int screenIndex, Ice.Current __current);
 
     void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex, Ice.Current __current);
@@ -286,6 +570,74 @@ public interface _MetadataStoreOperations
     void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex, Ice.Current __current);
 
     void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex, Ice.Current __current);
+
+    void setScreenRefID(String id, int plateIndex, int screenRefIndex, Ice.Current __current);
+
+    void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeLocked(boolean locked, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeVisibility(boolean visibility, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+
+    void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
     void setStageLabelName(String name, int imageIndex, Ice.Current __current);
 
@@ -301,6 +653,12 @@ public interface _MetadataStoreOperations
 
     void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
+    void setThumbnailHref(String href, int imageIndex, Ice.Current __current);
+
+    void setThumbnailID(String id, int imageIndex, Ice.Current __current);
+
+    void setThumbnailMIMEtype(String mimEtype, int imageIndex, Ice.Current __current);
+
     void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current __current);
 
     void setTiffDataFirstC(int firstC, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current __current);
@@ -315,6 +673,16 @@ public interface _MetadataStoreOperations
 
     void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex, Ice.Current __current);
 
+    void setTransmittanceRangeCutIn(int cutIn, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setTransmittanceRangeCutInTolerance(int cutInTolerance, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setTransmittanceRangeCutOut(int cutOut, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setTransmittanceRangeCutOutTolerance(int cutOutTolerance, int instrumentIndex, int filterIndex, Ice.Current __current);
+
+    void setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex, Ice.Current __current);
+
     void setWellColumn(int column, int plateIndex, int wellIndex, Ice.Current __current);
 
     void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex, Ice.Current __current);
@@ -323,11 +691,15 @@ public interface _MetadataStoreOperations
 
     void setWellID(String id, int plateIndex, int wellIndex, Ice.Current __current);
 
+    void setWellReagent(String reagent, int plateIndex, int wellIndex, Ice.Current __current);
+
     void setWellRow(int row, int plateIndex, int wellIndex, Ice.Current __current);
 
     void setWellType(String type, int plateIndex, int wellIndex, Ice.Current __current);
 
     void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
+
+    void setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
     void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
@@ -336,4 +708,6 @@ public interface _MetadataStoreOperations
     void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
     void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
+
+    void setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex, Ice.Current __current);
 }

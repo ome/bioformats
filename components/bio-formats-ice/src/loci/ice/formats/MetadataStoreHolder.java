@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -35,10 +35,7 @@ public final class MetadataStoreHolder
             }
             catch(ClassCastException ex)
             {
-                Ice.UnexpectedObjectException _e = new Ice.UnexpectedObjectException();
-                _e.type = v.ice_id();
-                _e.expectedType = type();
-                throw _e;
+                IceInternal.Ex.throwUOE(type(), v.ice_id());
             }
         }
 

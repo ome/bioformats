@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -170,54 +170,62 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         setStoreAsRetrieve(store, null);
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___setId(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         String id;
         id = __is.readString();
+        __is.endReadEncaps();
         __obj.setId(id, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___setStoreAsRetrieve(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         MetadataStorePrx store;
         store = MetadataStorePrxHelper.__read(__is);
+        __is.endReadEncaps();
         __obj.setStoreAsRetrieve(store, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___close(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         __obj.close(__current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___saveBytes1(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         byte[] bytes;
         bytes = ByteSeqHelper.read(__is);
         boolean last;
         last = __is.readBool();
+        __is.endReadEncaps();
         __obj.saveBytes1(bytes, last, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___saveBytes2(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         byte[] bytes;
         bytes = ByteSeqHelper.read(__is);
         int series;
@@ -226,138 +234,156 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         lastInSeries = __is.readBool();
         boolean last;
         last = __is.readBool();
+        __is.endReadEncaps();
         __obj.saveBytes2(bytes, series, lastInSeries, last, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___canDoStacks(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         boolean __ret = __obj.canDoStacks(__current);
         __os.writeBool(__ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___setMetadataRetrieve(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         MetadataRetrievePrx r;
         r = MetadataRetrievePrxHelper.__read(__is);
+        __is.endReadEncaps();
         __obj.setMetadataRetrieve(r, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___getMetadataRetrieve(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         MetadataRetrieve __ret = __obj.getMetadataRetrieve(__current);
         __os.writeObject(__ret);
         __os.writePendingObjects();
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___setFramesPerSecond(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         int rate;
         rate = __is.readInt();
+        __is.endReadEncaps();
         __obj.setFramesPerSecond(rate, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___getFramesPerSecond(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         int __ret = __obj.getFramesPerSecond(__current);
         __os.writeInt(__ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___getCompressionTypes(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         String[] __ret = __obj.getCompressionTypes(__current);
         StringSeqHelper.write(__os, __ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___getPixelTypes(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         int[] __ret = __obj.getPixelTypes(__current);
         IntSeqHelper.write(__os, __ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___isSupportedType(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
-        IceInternal.BasicStream __os = __inS.os();
+        __is.startReadEncaps();
         int type;
         type = __is.readInt();
+        __is.endReadEncaps();
+        IceInternal.BasicStream __os = __inS.os();
         boolean __ret = __obj.isSupportedType(type, __current);
         __os.writeBool(__ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___setCompression(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
+        __is.startReadEncaps();
         String compress;
         compress = __is.readString();
+        __is.endReadEncaps();
         __obj.setCompression(compress, __current);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___isThisType(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
-        IceInternal.BasicStream __os = __inS.os();
+        __is.startReadEncaps();
         String name;
         name = __is.readString();
+        __is.endReadEncaps();
+        IceInternal.BasicStream __os = __inS.os();
         boolean __ret = __obj.isThisType(name, __current);
         __os.writeBool(__ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___getFormat(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         String __ret = __obj.getFormat(__current);
         __os.writeString(__ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
-    public static IceInternal.DispatchStatus
+    public static Ice.DispatchStatus
     ___getSuffixes(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
     {
         __checkMode(Ice.OperationMode.Normal, __current.mode);
+        __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
         String[] __ret = __obj.getSuffixes(__current);
         StringSeqHelper.write(__os, __ret);
-        return IceInternal.DispatchStatus.DispatchOK;
+        return Ice.DispatchStatus.DispatchOK;
     }
 
     private final static String[] __all =
@@ -385,13 +411,13 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         "setStoreAsRetrieve"
     };
 
-    public IceInternal.DispatchStatus
+    public Ice.DispatchStatus
     __dispatch(IceInternal.Incoming in, Ice.Current __current)
     {
         int pos = java.util.Arrays.binarySearch(__all, __current.operation);
         if(pos < 0)
         {
-            return IceInternal.DispatchStatus.DispatchOperationNotExist;
+            throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
         }
 
         switch(pos)
@@ -483,7 +509,7 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         }
 
         assert(false);
-        return IceInternal.DispatchStatus.DispatchOperationNotExist;
+        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
     }
 
     public void

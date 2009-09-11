@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -40,17 +40,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("canDoStacks");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.canDoStacks(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -81,18 +81,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.close(__ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -124,17 +124,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getCompressionTypes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.getCompressionTypes(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -166,17 +166,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getFormat");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.getFormat(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -208,17 +208,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getFramesPerSecond");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.getFramesPerSecond(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -250,17 +250,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getMetadataRetrieve");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.getMetadataRetrieve(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -292,17 +292,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getPixelTypes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.getPixelTypes(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -334,17 +334,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSuffixes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.getSuffixes(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -376,17 +376,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isSupportedType");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.isSupportedType(type, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -418,17 +418,17 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isThisType");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 return __del.isThisType(name, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -459,18 +459,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.saveBytes1(bytes, last, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -501,18 +501,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.saveBytes2(bytes, series, lastInSeries, last, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -543,18 +543,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.setCompression(compress, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -585,18 +585,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.setFramesPerSecond(rate, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -627,18 +627,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.setId(id, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -669,18 +669,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.setMetadataRetrieve(r, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -711,18 +711,18 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.setStoreAsRetrieve(store, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -825,9 +825,16 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
         IFormatWriterPrx __d = null;
         if(__obj != null)
         {
-            IFormatWriterPrxHelper __h = new IFormatWriterPrxHelper();
-            __h.__copyFrom(__obj);
-            __d = __h;
+            try
+            {
+                __d = (IFormatWriterPrx)__obj;
+            }
+            catch(ClassCastException ex)
+            {
+                IFormatWriterPrxHelper __h = new IFormatWriterPrxHelper();
+                __h.__copyFrom(__obj);
+                __d = __h;
+            }
         }
         return __d;
     }

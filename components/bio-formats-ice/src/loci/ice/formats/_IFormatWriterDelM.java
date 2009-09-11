@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -17,26 +17,28 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     canDoStacks(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "canDoStacks", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("canDoStacks", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 boolean __ret;
                 __ret = __is.readBool();
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -46,7 +48,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -54,33 +56,36 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     close(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "close", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("close", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -88,26 +93,28 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     getCompressionTypes(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getCompressionTypes", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("getCompressionTypes", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 String[] __ret;
                 __ret = StringSeqHelper.read(__is);
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -117,7 +124,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -125,26 +132,28 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     getFormat(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getFormat", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("getFormat", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 String __ret;
                 __ret = __is.readString();
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -154,7 +163,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -162,26 +171,28 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     getFramesPerSecond(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getFramesPerSecond", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("getFramesPerSecond", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 int __ret;
                 __ret = __is.readInt();
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -191,7 +202,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -199,27 +210,29 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     getMetadataRetrieve(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getMetadataRetrieve", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("getMetadataRetrieve", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 MetadataRetrieveHolder __ret = new MetadataRetrieveHolder();
                 __is.readObject(__ret.getPatcher());
                 __is.readPendingObjects();
+                __is.endReadEncaps();
                 return __ret.value;
             }
             catch(Ice.LocalException __ex)
@@ -229,7 +242,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -237,26 +250,28 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     getPixelTypes(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getPixelTypes", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("getPixelTypes", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 int[] __ret;
                 __ret = IntSeqHelper.read(__is);
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -266,7 +281,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -274,26 +289,28 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     getSuffixes(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "getSuffixes", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("getSuffixes", Ice.OperationMode.Normal, __ctx);
         try
         {
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 String[] __ret;
                 __ret = StringSeqHelper.read(__is);
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -303,7 +320,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -311,7 +328,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     isSupportedType(int type, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "isSupportedType", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("isSupportedType", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -326,20 +343,22 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 boolean __ret;
                 __ret = __is.readBool();
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -349,7 +368,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -357,7 +376,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     isThisType(String name, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "isThisType", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("isThisType", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -372,20 +391,22 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
             boolean __ok = __og.invoke();
             try
             {
-                IceInternal.BasicStream __is = __og.is();
                 if(!__ok)
                 {
                     try
                     {
-                        __is.throwException();
+                        __og.throwUserException();
                     }
                     catch(Ice.UserException __ex)
                     {
                         throw new Ice.UnknownUserException(__ex.ice_name());
                     }
                 }
+                IceInternal.BasicStream __is = __og.is();
+                __is.startReadEncaps();
                 boolean __ret;
                 __ret = __is.readBool();
+                __is.endReadEncaps();
                 return __ret;
             }
             catch(Ice.LocalException __ex)
@@ -395,7 +416,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -403,7 +424,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     saveBytes1(byte[] bytes, boolean last, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "saveBytes1", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("saveBytes1", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -417,29 +438,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -447,7 +471,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     saveBytes2(byte[] bytes, int series, boolean lastInSeries, boolean last, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "saveBytes2", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("saveBytes2", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -463,29 +487,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -493,7 +520,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     setCompression(String compress, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "setCompression", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("setCompression", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -506,29 +533,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -536,7 +566,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     setFramesPerSecond(int rate, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "setFramesPerSecond", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("setFramesPerSecond", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -549,29 +579,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -579,7 +612,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     setId(String id, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "setId", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("setId", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -592,29 +625,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -622,7 +658,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     setMetadataRetrieve(MetadataRetrievePrx r, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "setMetadataRetrieve", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("setMetadataRetrieve", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -635,29 +671,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 
@@ -665,7 +704,7 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
     setStoreAsRetrieve(MetadataStorePrx store, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
-        IceInternal.Outgoing __og = __connection.getOutgoing(__reference, "setStoreAsRetrieve", Ice.OperationMode.Normal, __ctx, __compress);
+        IceInternal.Outgoing __og = __handler.getOutgoing("setStoreAsRetrieve", Ice.OperationMode.Normal, __ctx);
         try
         {
             try
@@ -678,29 +717,32 @@ public final class _IFormatWriterDelM extends Ice._ObjectDelM implements _IForma
                 __og.abort(__ex);
             }
             boolean __ok = __og.invoke();
-            try
+            if(!__og.is().isEmpty())
             {
-                IceInternal.BasicStream __is = __og.is();
-                if(!__ok)
+                try
                 {
-                    try
+                    if(!__ok)
                     {
-                        __is.throwException();
+                        try
+                        {
+                            __og.throwUserException();
+                        }
+                        catch(Ice.UserException __ex)
+                        {
+                            throw new Ice.UnknownUserException(__ex.ice_name());
+                        }
                     }
-                    catch(Ice.UserException __ex)
-                    {
-                        throw new Ice.UnknownUserException(__ex.ice_name());
-                    }
+                    __og.is().skipEmptyEncaps();
                 }
-            }
-            catch(Ice.LocalException __ex)
-            {
-                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                catch(Ice.LocalException __ex)
+                {
+                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
+                }
             }
         }
         finally
         {
-            __connection.reclaimOutgoing(__og);
+            __handler.reclaimOutgoing(__og);
         }
     }
 }

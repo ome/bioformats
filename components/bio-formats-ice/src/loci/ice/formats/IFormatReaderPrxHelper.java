@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2007 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.2.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -39,18 +39,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.close(__ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -81,18 +81,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.closeFile(fileOnly, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -124,17 +124,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("fileGroupOption");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.fileGroupOption(id, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -166,17 +166,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("get16BitLookupTable");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.get16BitLookupTable(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -208,17 +208,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("get8BitLookupTable");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.get8BitLookupTable(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -250,17 +250,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getChannelDimLengths");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getChannelDimLengths(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -292,17 +292,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getChannelDimTypes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getChannelDimTypes(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -334,17 +334,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getCurrentFile");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getCurrentFile(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -376,17 +376,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getDimensionOrder");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getDimensionOrder(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -418,17 +418,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getEffectiveSizeC");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getEffectiveSizeC(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -460,17 +460,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getFormat");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getFormat(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -502,17 +502,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getImageCount");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getImageCount(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -544,17 +544,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getIndex");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getIndex(z, c, t, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -586,17 +586,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getPixelType");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getPixelType(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -628,17 +628,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getRGBChannelCount");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getRGBChannelCount(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -670,17 +670,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSeries");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSeries(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -712,17 +712,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSeriesCount");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSeriesCount(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -754,17 +754,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSizeC");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSizeC(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -796,17 +796,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSizeT");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSizeT(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -838,17 +838,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSizeX");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSizeX(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -880,17 +880,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSizeY");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSizeY(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -922,17 +922,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSizeZ");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSizeZ(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -964,17 +964,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getSuffixes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getSuffixes(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1006,17 +1006,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getThumbSizeX");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getThumbSizeX(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1048,17 +1048,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getThumbSizeY");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getThumbSizeY(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1090,17 +1090,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getUsedFiles");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getUsedFiles(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1132,17 +1132,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("getZCTCoords");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.getZCTCoords(index, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1174,17 +1174,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isFalseColor");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isFalseColor(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1216,17 +1216,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isGroupFiles");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isGroupFiles(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1258,17 +1258,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isIndexed");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isIndexed(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1300,17 +1300,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isInterleaved");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isInterleaved(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1342,17 +1342,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isInterleavedSubC");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isInterleavedSubC(subC, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1384,17 +1384,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isLittleEndian");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isLittleEndian(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1426,17 +1426,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isMetadataCollected");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isMetadataCollected(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1468,17 +1468,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isMetadataComplete");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isMetadataComplete(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1510,17 +1510,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isMetadataFiltered");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isMetadataFiltered(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1552,17 +1552,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isNormalized");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isNormalized(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1594,17 +1594,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isOrderCertain");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isOrderCertain(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1636,17 +1636,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isOriginalMetadataPopulated");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isOriginalMetadataPopulated(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1678,17 +1678,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isRGB");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isRGB(__ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1720,17 +1720,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("isThisType");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.isThisType(name, open, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1762,17 +1762,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("openBytes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.openBytes(no, x, y, width, height, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1804,17 +1804,17 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             try
             {
                 __checkTwowayOnly("openThumbBytes");
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 return __del.openThumbBytes(no, __ctx);
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1845,18 +1845,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setGroupFiles(group, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1887,18 +1887,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setId(id, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1929,18 +1929,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setMetadataCollected(collect, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -1971,18 +1971,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setMetadataFiltered(filter, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2013,18 +2013,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setMetadataStore(store, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2055,18 +2055,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setNormalized(normalize, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2097,18 +2097,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setOriginalMetadataPopulated(populate, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2139,18 +2139,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setRetrieveAsStore(retrieve, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2181,18 +2181,18 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
             Ice._ObjectDel __delBase = null;
             try
             {
-                __delBase = __getDelegate();
+                __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setSeries(no, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
             {
-                __handleExceptionWrapper(__delBase, __ex);
+                __handleExceptionWrapper(__delBase, __ex, null);
             }
             catch(Ice.LocalException __ex)
             {
-                __cnt = __handleException(__delBase, __ex, __cnt);
+                __cnt = __handleException(__delBase, __ex, null, __cnt);
             }
         }
     }
@@ -2295,9 +2295,16 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
         IFormatReaderPrx __d = null;
         if(__obj != null)
         {
-            IFormatReaderPrxHelper __h = new IFormatReaderPrxHelper();
-            __h.__copyFrom(__obj);
-            __d = __h;
+            try
+            {
+                __d = (IFormatReaderPrx)__obj;
+            }
+            catch(ClassCastException ex)
+            {
+                IFormatReaderPrxHelper __h = new IFormatReaderPrxHelper();
+                __h.__copyFrom(__obj);
+                __d = __h;
+            }
         }
         return __d;
     }
