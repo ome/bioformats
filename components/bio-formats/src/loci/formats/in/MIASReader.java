@@ -679,7 +679,7 @@ public class MIASReader extends FormatReader {
         int wellCol = (well % wellColumns) + 1;
 
         store.setWellRow(new Integer(row), plate, wellIndex);
-        store.setWellColumn(new Integer(wellCol), plate, wellIndex);
+        store.setWellColumn(new Integer(wellCol - 1), plate, wellIndex);
 
         int series = getSeriesNumber(plate, well);
         String imageID = MetadataTools.createLSID("Image", series);
