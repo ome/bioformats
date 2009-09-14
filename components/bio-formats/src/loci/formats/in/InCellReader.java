@@ -65,6 +65,7 @@ public class InCellReader extends FormatReader {
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
   private Vector<Integer> emWaves, exWaves;
+  private Vector<String> channelNames;
   private int totalImages;
   private int imageWidth, imageHeight;
   private String creationDate;
@@ -184,6 +185,7 @@ public class InCellReader extends FormatReader {
       tiffReader = null;
       totalImages = 0;
       emWaves = exWaves = null;
+      channelNames = null;
       wellCoordinates = null;
       posX = null;
       posY = null;
@@ -215,6 +217,7 @@ public class InCellReader extends FormatReader {
     firstCol = Integer.MAX_VALUE;
     lastCol = Integer.MIN_VALUE;
 
+    channelNames = new Vector<String>();
     emWaves = new Vector<Integer>();
     exWaves = new Vector<Integer>();
     channelsPerTimepoint = new Vector<Integer>();
@@ -412,6 +415,9 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       for (int q=0; q<getEffectiveSizeC(); q++) {
+        if (q < channelNames.size()) {
+          store.setLogicalChannelName(channelNames.get(q), i, q);
+        }
         if (q < emWaves.size()) {
           store.setLogicalChannelEmWave(emWaves.get(q), i, q);
         }
@@ -469,10 +475,7 @@ public class InCellReader extends FormatReader {
     if (metadataFiles == null) return;
     for (String file : metadataFiles) {
       if (file.toLowerCase().endsWith(".txt")) {
-        RandomAccessInputStream s = new RandomAccessInputStream(file);
-        String data = s.readString((int) s.length());
-        s.close();
-        String[] lines = data.split("\n");
+        String[] lines = DataTools.readFile(file).split("\n");
         String[] skipRow = null, columns = null, values = null;
         String well = null, prevWell = null;
         int xIndex = -1, yIndex = -1;
@@ -665,6 +668,7 @@ public class InCellReader extends FormatReader {
     private int currentField = 0;
     private int currentImage, currentPlane;
     private Float timestamp, exposure, zPosition;
+    private String channelName = null;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
@@ -689,6 +693,9 @@ public class InCellReader extends FormatReader {
           img.deltaT = timestamp;
           img.exposure = exposure;
         }
+      }
+      else if (qName.equals("Wavelength")) {
+        channelName = null;
       }
     }
 
@@ -762,10 +769,12 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");
         if (wave != null) exWaves.add(new Integer(wave));
+        channelName = attributes.getValue("name");
       }
       else if (qName.equals("EmissionFilter")) {
         String wave = attributes.getValue("wavelength");
         if (wave != null) emWaves.add(new Integer(wave));
+        channelNames.add(channelName + " " + attributes.getValue("name"));
       }
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
