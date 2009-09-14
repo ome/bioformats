@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
@@ -35,7 +36,16 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -66,6 +76,10 @@ public final class XMLTools {
   public static final SAXParserFactory SAX_FACTORY =
     SAXParserFactory.newInstance();
 
+  /** Factory for generating XSLT transformers. */
+  public static final TransformerFactory TRANSFORM_FACTORY =
+    TransformerFactory.newInstance();
+
   // -- Constructor --
 
   private XMLTools() { }
@@ -83,6 +97,7 @@ public final class XMLTools {
     return s;
   }
 
+  /** Parses the given XML string into a list of key/value pairs. */
   public static Hashtable<String, String> parseXML(String xml)
     throws IOException
   {
@@ -91,12 +106,20 @@ public final class XMLTools {
     return handler.getMetadata();
   }
 
+  /**
+   * Parses the given XML string into a list of key/value pairs
+   * using the specified XML handler.
+   */
   public static void parseXML(String xml, DefaultHandler handler)
     throws IOException
   {
     parseXML(xml.getBytes(), handler);
   }
 
+  /**
+   * Parses the XML string from the given input stream into
+   * a list of key/value pairs using the specified XML handler.
+   */
   public static void parseXML(RandomAccessInputStream stream,
     DefaultHandler handler) throws IOException
   {
@@ -106,6 +129,10 @@ public final class XMLTools {
     b = null;
   }
 
+  /**
+   * Parses the XML string from the given byte array into
+   * a list of key/value pairs using the specified XML handler.
+   */
   public static void parseXML(byte[] xml, DefaultHandler handler)
     throws IOException
   {
@@ -124,6 +151,52 @@ public final class XMLTools {
       throw e;
 
     }
+  }
+
+  /** Gets an XSLT template from the given resource location. */
+  public static Templates getStylesheet(String resourcePath,
+    Class sourceClass)
+  {
+    InputStream xsltStream = sourceClass.getResourceAsStream(resourcePath);
+    StreamSource xsltSource = new StreamSource(xsltStream);
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    try {
+      return transformerFactory.newTemplates(xsltSource);
+    }
+    catch (TransformerConfigurationException exc) {
+      LogTools.traceDebug(exc);
+    }
+    return null;
+  }
+
+  /**
+   * Transforms the given XMl string according to the specified XSLT stylesheet.
+   */
+  public static String transformXML(String xml, Templates xslt)
+    throws IOException
+  {
+    Transformer trans;
+    try {
+      trans = xslt.newTransformer();
+    }
+    catch (TransformerConfigurationException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+    }
+    StringReader xmlReader = new StringReader(xml);
+    Source xmlSource = new StreamSource(xmlReader);
+    StringWriter xmlWriter = new StringWriter();
+    StreamResult xmlResult = new StreamResult(xmlWriter);
+    try {
+      trans.transform(xmlSource, xmlResult);
+    }
+    catch (TransformerException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+    }
+    return xmlWriter.toString();
   }
 
   /**
@@ -229,6 +302,14 @@ public final class XMLTools {
   /** Indents XML by the given spacing to be more readable. */
   public static String indentXML(String xml, int spacing) {
     return indentXML(xml, spacing, false);
+  }
+
+  /**
+   * Indents XML to be more readable, avoiding any whitespace
+   * injection into CDATA if the preserveCData flag is set.
+   */
+  public static String indentXML(String xml, boolean preserveCData) {
+    return indentXML(xml, 3, preserveCData);
   }
 
   /**

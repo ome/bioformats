@@ -23,8 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+
+import javax.xml.transform.Templates;
 
 import loci.common.DateTools;
 import loci.common.Location;
@@ -49,6 +52,11 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/MetadataTools.java">SVN</a></dd></dl>
  */
 public final class MetadataTools {
+
+  // -- Static fields --
+
+  private static Templates reorderXSLT =
+    XMLTools.getStylesheet("meta/reorder-2008-09.xsl", MetadataTools.class);
 
   // -- Constructor --
 
@@ -232,13 +240,21 @@ public final class MetadataTools {
     IMetadata omexmlMeta = getOMEMetadata(src);
     ReflectedUniverse r = new ReflectedUniverse();
     r.setVar("omexmlMeta", omexmlMeta);
+    String xml = null;
     try {
-      return (String) r.exec("omexmlMeta.dumpXML()");
+      xml = (String) r.exec("omexmlMeta.dumpXML()");
     }
     catch (ReflectException exc) {
       LogTools.traceDebug(exc);
     }
-    return null;
+    String reordered = null;
+    try {
+      reordered = XMLTools.transformXML(xml, reorderXSLT);
+    }
+    catch (IOException exc) {
+      LogTools.traceDebug(exc);
+    }
+    return reordered == null ? xml : reordered;
   }
 
   /**

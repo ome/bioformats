@@ -759,7 +759,7 @@ public class ImageInfo {
     MetadataRetrieve mr = MetadataTools.asRetrieve(ms);
     if (mr != null) {
       String xml = MetadataTools.getOMEXML(mr);
-      LogTools.println(XMLTools.indentXML(xml));
+      LogTools.println(XMLTools.indentXML(xml, true));
       MetadataTools.validateOMEXML(xml);
     }
     else {
