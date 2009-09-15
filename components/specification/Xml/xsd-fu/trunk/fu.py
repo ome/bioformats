@@ -365,6 +365,14 @@ class OMEModelObject(object):
 		return base + "Node"
 	javaBase = property(_get_javaBase, 
 		doc="""The model object's Java base class.""")
+
+	def _get_baseObjectProperties(self):
+		base = self.model.getObjectByName(self.base)
+		if base:
+			return base.properties.values()
+		return list()
+	baseObjectProperties = property(_get_baseObjectProperties,
+		doc="""The model object's base object properties.""")
 		
 	def _get_refNodeName(self):
 		if self.base == "Reference":

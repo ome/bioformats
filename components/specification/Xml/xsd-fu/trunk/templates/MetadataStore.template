@@ -91,21 +91,66 @@ public interface MetadataStore
 	/** Sets the UUID associated with this collection of metadata. */
 	void setUUID(String uuid);
 
-{% for o in model.objects.values() %}\
+{% def index_string(name) %}\
 {% choose %}\
-{% when o.base == "Reference" or o.base == "Settings" %}\
-{% for prop in o.properties.values() %}\
-	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
+{% when name[:2].isupper()%}int ${name}Index{% end %}\
+{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
+{% end %}\
+{% end %}\
+
+{% for o in sorted_objects %}\
+{% if not parents[o.name] == "None" %}\
+
+	// ${o.name} property storage
+
+{% choose %}\
+{% when o.base == "Reference" %}\
+{% for prop in o.properties.values() + o.baseObjectProperties %}\
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	// Ignoring ${prop.name} property of reference ${o.name}
+{% end %}\
+{% end %}\
+{% when o.base == "Settings" %}\
+{% for prop in o.properties.values() + o.baseObjectProperties %}\
+{% if not prop.isReference %}\
+	// ${parents[o.name]}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
+
+{% end %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
-{% for prop in o.properties.values() %}\
+{% for prop in o.properties.values() + o.baseObjectProperties %}\
+{% if not prop.isReference %}\
 {% choose %}\
+{% when len(indexes[o.name]) > 0 and prop.maxOccurs > 1%}\
+	// ${parents[o.name]}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]}, ${index_string(prop.name)});
+
+{% end %}\
 {% when len(indexes[o.name]) > 0 %}\
-	${o.base} public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
+	// ${parents[o.name]}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
+
 {% end %}\
 {% otherwise %}\
-	${o.base} public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
+{% if not prop.isReference %}\
+	// ${parents[o.name]}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -113,3 +158,4 @@ public interface MetadataStore
 {% end %}\
 {% end %}\
 }
+

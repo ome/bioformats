@@ -98,26 +98,36 @@ def main():
 
 def index_string(name):
 	"""Makes a Java method signature string from an index name."""
-	return "int %s%sIndex" % (name[:1].lower(), name[1:])
+	if name[:2].isupper():
+		return "int %sIndex" % name
+	else:
+		return "int %s%sIndex" % (name[:1].lower(), name[1:])
 
 def resolve_indexes(indexes, names):
 	"""
 	Resolves a String index representation of the hierarchical structure of
-	element names.
+	element names. Updates indexes list and returns a boolean True if the
+	indexes are multi-path, a boolean False otherwise.
 	"""
+	is_multi_path = False
 	if names is None:
-		return
+		return is_multi_path
 	for name in names.keys():
 		if name == 'OME':
 			# Ignore the OME tag
-			return
+			return is_multi_path
+		if len(names.keys()) > 1:
+			is_multi_path = True
 		indexes.append(index_string(name))
-		resolve_indexes(indexes, names[name])
+		is_child_multi_path = resolve_indexes(indexes, names[name])
+		if is_child_multi_path:
+			is_multi_path = True
+	return is_multi_path
 
 def metadataStoreMain():
 	"""
 	Default main() that parses command line options and generates a
-        MetadataStore implementation.
+	MetadataStore implementation.
 	"""
 	try:
 		options, args = getopt(sys.argv[1:], "n:")
@@ -134,15 +144,25 @@ def metadataStoreMain():
 
 	model = parseXmlSchema(args[0], namespace)
 	indexes = dict()
+	parents = dict()
+	is_multi_path = dict()
 	for obj in model.objects.values():
 		name = obj.name
 		indexes[name] = list()
-		resolve_indexes(indexes[name], resolve_parents(model, name))
+		parents[name] = resolve_parents(model, name)
+		is_multi_path[name] = resolve_indexes(indexes[name], parents[name])
+		parents[name] = "%r" % parents[name]
+		indexes[name].reverse()
 		indexes[name].append(index_string(name))
 		indexes[name] = ", ".join(indexes[name])
 	fu = TemplateInfo(None, None)
 	template = NewTextTemplate(open(METADATA_STORE_TEMPLATE).read())
-	content = template.generate(fu=fu, model=model, indexes=indexes).render()
+	sorted_objects = model.objects.values()
+	sorted_objects.sort(lambda x, y: cmp(x.name, y.name))
+	content = template.generate(fu=fu, model=model, parents=parents,
+								is_multi_path=is_multi_path,
+								sorted_objects=sorted_objects,
+			                    indexes=indexes).render()
 	f = open("MetadataStore.java", "w")
 	f.write(content)
 	f.close()
@@ -156,11 +176,11 @@ def debugMain():
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
 
-	model = parseXmlSchema("tmp/schemas/2008-02/ome.xsd", namespace)
+	model = parseXmlSchema("../../Working/ome.xsd", namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
-		if obj.name in ["Experimenter"]:
+		if obj.name in ["Detector"]:
 			print " +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type)
 			for prop in obj.properties.values():
 				print " +---- %s(%s) [%d:%d]" % \
