@@ -68,30 +68,6 @@ Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
 	(error, cmd, DEFAULT_NAMESPACE, cmd, cmd, cmd)
 	sys.exit(2)
 	
-def resolve_parents(model, element_name):
-	"""
-	Resolves the parents of an element and returns them as an ordered list.
-	"""
-	parents = dict()
-	try:
-		my_parents = model.parents[element_name]
-	except KeyError:
-		return None
-	for parent in my_parents:
-		parents[parent] = resolve_parents(model, parent)
-	return parents
-	
-def resolve_paths(paths, level, names):
-	"""
-	Resolves a set of ASCII art graphics for a given hierarchical tree
-	structure of element names.
-	"""
-	if names is None:
-		return
-	for name in names.keys():
-		path = "+-- %s" % name
-		paths.insert(0, path)
-		resolve_paths(paths, level + 1, names[name])
 
 def dump(model):
 	"""Dumps enumerations to STDOUT."""

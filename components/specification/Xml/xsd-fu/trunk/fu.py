@@ -85,6 +85,7 @@ def updateTypeMaps(namespace):
 		namespace + 'float': 'Float',
 		namespace + 'anyURI': 'String',
 		# Hacks
+		'PixelType': 'String',
 		'PercentFraction': 'Float',
 		'MIMEtype': 'String',
 		'RedChannel': 'ChannelSpecTypeNode',
@@ -114,6 +115,34 @@ DEFAULT_PACKAGE = "ome.xml.r2008"
 
 # The default template for class processing.
 CLASS_TEMPLATE = "templates/Class.template"
+
+# The default template for MetadataStore processing.
+METADATA_STORE_TEMPLATE = "templates/MetadataStore.template"
+
+def resolve_parents(model, element_name):
+	"""
+	Resolves the parents of an element and returns them as an ordered list.
+	"""
+	parents = dict()
+	try:
+		my_parents = model.parents[element_name]
+	except KeyError:
+		return None
+	for parent in my_parents:
+		parents[parent] = resolve_parents(model, parent)
+	return parents
+	
+def resolve_paths(paths, level, names):
+	"""
+	Resolves a set of ASCII art graphics for a given hierarchical tree
+	structure of element names.
+	"""
+	if names is None:
+		return
+	for name in names.keys():
+		path = "+-- %s" % name
+		paths.insert(0, path)
+		resolve_paths(paths, level + 1, names[name])
 
 class ModelProcessingError(Exception):
 	"""

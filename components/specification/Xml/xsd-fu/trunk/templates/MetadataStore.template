@@ -1,0 +1,100 @@
+/*
+ * loci.formats.meta.MetadataStore
+ *
+ *-----------------------------------------------------------------------------
+ *
+ *  Copyright (C) 2009 Open Microscopy Environment
+ *      Massachusetts Institute of Technology,
+ *      National Institutes of Health,
+ *      University of Dundee,
+ *      University of Wisconsin-Madison
+ *
+ *
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by ${fu.user} via xsd-fu on ${fu.date}
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.formats.meta.MetadataStore;
+
+/**
+ * A proxy whose responsibility it is to marshal biological image data into a
+ * particular storage medium.
+ *
+ * <p>The <code>MetadataStore</code> interface encompasses the metadata that
+ * any specific storage medium (file, relational database, etc.) should be
+ * expected to store into its backing data model.
+ *
+ * <p>The <code>MetadataStore</code> interface goes hand in hand with the
+ * <code>MetadataRetrieve</code> interface. Essentially,
+ * <code>MetadataRetrieve</code> provides the "getter" methods for a storage
+ * medium, and <code>MetadataStore</code> provides the "setter" methods.
+ *
+ * <p>Since it often makes sense for a storage medium to implement both
+ * interfaces, there is also an {@link IMetadata} interface encompassing
+ * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
+ * reduces the need to cast between object types.
+ *
+ * <p>See {@link loci.formats.ome.OMEXMLMetadata} for an example
+ * implementation.
+ *
+ * <p><b>Important note:</b> It is strongly recommended that applications
+ * (e.g., file format readers) using <code>MetadataStore</code> populate
+ * information in a linear order. Specifically, iterating over entities
+ * from "leftmost" index to "rightmost" index is required for certain
+ * <code>MetadataStore</code> implementations such as OMERO's
+ * <code>OMEROMetadataStore</code>. For example, when populating Image, Pixels
+ * and Plane information, an outer loop should iterate across
+ * <code>imageIndex</code>, an inner loop should iterate across
+ * <code>pixelsIndex</code>, and an innermost loop should handle
+ * <code>planeIndex</code>. For an illustration of the ideal traversal order,
+ * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/MetadataStore.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/meta/MetadataStore.java">SVN</a></dd></dl>
+ *
+ * @author Chris Allan callan at blackcat.ca
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public interface MetadataStore
+{
+	void createRoot();
+
+   	Object getRoot();
+
+	void setRoot(Object root);
+
+	// - Entity storage -
+
+	/** Sets the UUID associated with this collection of metadata. */
+	void setUUID(String uuid);
+
+{% for o in model.objects.values() %}\
+{% for prop in o.properties.values() %}\
+	public void set${o.name}${prop.name}(${prop.javaType} ${prop.name}, ${indexes[o.name]});
+
+{% end %}\
+{% end %}\
+}
