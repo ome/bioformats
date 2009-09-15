@@ -105,14 +105,14 @@ public interface MetadataStore
 
 {% choose %}\
 {% when o.base == "Reference" %}\
-{% for prop in o.properties.values() + o.baseObjectProperties %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 {% end %}\
 {% end %}\
 {% when o.base == "Settings" %}\
-{% for prop in o.properties.values() + o.baseObjectProperties %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if not prop.isReference %}\
 	// ${parents[o.name]}
 	// ${prop.minOccurs}:${prop.maxOccurs}
@@ -123,7 +123,7 @@ public interface MetadataStore
 {% end %}\
 {% end %}\
 {% otherwise %}\
-{% for prop in o.properties.values() + o.baseObjectProperties %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if not prop.isReference %}\
 {% choose %}\
 {% when len(indexes[o.name]) > 0 and prop.maxOccurs > 1%}\
