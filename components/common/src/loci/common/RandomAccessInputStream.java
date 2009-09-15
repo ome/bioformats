@@ -262,17 +262,32 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       out.append(buf, 0, r);
 
       // check output
-      for (String term : terminators) {
-        int tagLen = term.length();
-        int index = out.indexOf(term, i == 0 ? 0 : i - tagLen);
-        if (index >= 0) {
-          match = true;
-          seek(startPos + index + tagLen); // reset stream to proper location
-          out.setLength(index + tagLen); // trim output
-          break;
+      int[] indices = new int[terminators.length];
+      for (int t=0; t<terminators.length; t++) {
+        int tagLen = terminators[t].length();
+        indices[t] = out.indexOf(terminators[t], i == 0 ? 0 : i - tagLen);
+        if (!match) {
+          match = indices[t] >= 0;
         }
       }
-      if (match) break;
+
+      // return smallest possible string
+
+      if (match) {
+        int min = Integer.MAX_VALUE;
+        int minIndex = Integer.MAX_VALUE;
+        for (int t=0; t<indices.length; t++) {
+          if (indices[t] >= 0 && indices[t] < min) {
+            min = indices[t];
+            minIndex = t;
+          }
+        }
+        int tagLen = terminators[minIndex].length();
+        seek(startPos + min + tagLen); // reset stream to proper location
+        out.setLength(min + tagLen); // trim output
+        break;
+      }
+
       i += r;
     }
 
@@ -493,85 +508,71 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   protected int checkEfficiency(int toRead) throws IOException {
     if (Boolean.FALSE.equals(fileCache.get(this))) reopen();
 
-    if (dis != null && raf != null &&
-      afp + toRead < MAX_OVERHEAD && afp + toRead < length() &&
-      afp + toRead < buf.length)
-    {
-      // this is a really special case that allows us to read directly from
-      // an array when working with the first MAX_OVERHEAD bytes of the file
-      // ** also note that it doesn't change the stream
+    // case 0:
+    //   ending file pointer is less than the starting buffer's length
+    if (buf != null && afp + toRead < buf.length) {
       return ARRAY;
     }
 
-    if (dis != null) {
-      if (fp < length()) {
-        while (fp > (length() - dis.available())) {
-          while (fp - length() + dis.available() > Integer.MAX_VALUE) {
-            dis.skipBytes(Integer.MAX_VALUE);
-          }
-          dis.skipBytes((int) (fp - (length() - dis.available())));
-        }
-      }
-      else {
-        fp = afp;
-        dis.close();
-        BufferedInputStream bis = new BufferedInputStream(
-          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
-        dis = new DataInputStream(bis);
-        while (fp > (length() - dis.available())) {
-          while (fp - length() + dis.available() > Integer.MAX_VALUE) {
-            dis.skipBytes(Integer.MAX_VALUE);
-          }
-          dis.skipBytes((int) (fp - length() + dis.available()));
-        }
-      }
-    }
+    // case 1:
+    //   current file pointer is greater than or equal to the previous
+    //   file pointer (seek forward)
 
-    if (afp >= fp && dis != null) {
-      while (fp < afp) {
-        while (afp - fp > Integer.MAX_VALUE) {
-          fp += dis.skipBytes(Integer.MAX_VALUE);
-        }
-        int skip = dis.skipBytes((int) (afp - fp));
-        if (skip == 0) break;
-        fp += skip;
+    if (dis != null && afp >= fp) {
+      long skipped = dis.skip(afp - fp);
+      while (skipped < afp - fp) {
+        skipped += dis.skip(afp - fp - skipped);
       }
-
-      resetMark();
+      fp = afp;
       return DIS;
     }
-    else {
-      if (dis != null && afp >= mark && fp < mark) {
-        boolean valid = true;
 
-        try {
-          dis.reset();
+    // case 2:
+    //   current file pointer is less than the previous file pointer
+    //   and the current file pointer is greater than or equal to the
+    //   DIS' mark offset
+
+    if (dis != null && afp < fp && afp >= mark) {
+      try {
+        dis.reset();
+        long skipped = dis.skip(afp - mark);
+        while (skipped < afp - mark) {
+          skipped += dis.skip(afp - mark - skipped);
         }
-        catch (IOException io) {
-          valid = false;
-        }
-
-        if (valid) {
-          dis.mark(MAX_OVERHEAD);
-
-          fp = length() - dis.available();
-          while (fp < afp) {
-            while (afp - fp > Integer.MAX_VALUE) {
-              fp += dis.skipBytes(Integer.MAX_VALUE);
-            }
-            int skip = dis.skipBytes((int) (afp - fp));
-            if (skip == 0) break;
-            fp += skip;
-          }
-
-          resetMark();
-          return DIS;
-        }
+        fp = afp;
+        resetMark();
+        return DIS;
       }
+      catch (IOException e) { }
     }
-    // we don't want this to happen very often
-    raf.seek(afp);
-    return RAF;
+
+    // case 3:
+    //   current file pointer is less than the previous file pointer
+    //   or the DIS was null in cases #1 and #2
+
+    if (raf != null) {
+      raf.seek(afp);
+      return RAF;
+    }
+
+    // case 4:
+    //   current file pointer is less than the previous file pointer
+    //   and the RAF is null
+
+    BufferedInputStream bis = new BufferedInputStream(
+      new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+
+    if (dis != null) dis.close();
+    dis = new DataInputStream(bis);
+    fp = 0;
+    nextMark = 0;
+    resetMark();
+    long skipped = dis.skip(afp);
+    while (skipped < afp) {
+      skipped += dis.skip(afp - skipped);
+    }
+    fp = afp;
+    return DIS;
   }
 
   private void resetMark() {
@@ -602,7 +603,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
         new FileInputStream(path), MAX_OVERHEAD);
 
       if (dis != null) dis.close();
-      dis = new DataInputStream(bis);
+      if (!compressed) dis = new DataInputStream(bis);
+      else dis = null;
       buf = new byte[(int) (length < MAX_OVERHEAD ? length : MAX_OVERHEAD)];
       raf.readFully(buf);
       raf.seek(0);
