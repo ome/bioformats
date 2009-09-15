@@ -92,9 +92,24 @@ public interface MetadataStore
 	void setUUID(String uuid);
 
 {% for o in model.objects.values() %}\
+{% choose %}\
+{% when o.base == "Reference" or o.base == "Settings" %}\
 {% for prop in o.properties.values() %}\
-	public void set${o.name}${prop.name}(${prop.javaType} ${prop.name}, ${indexes[o.name]});
-
+	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
+{% end %}\
+{% end %}\
+{% otherwise %}\
+{% for prop in o.properties.values() %}\
+{% choose %}\
+{% when len(indexes[o.name]) > 0 %}\
+	${o.base} public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
+{% end %}\
+{% otherwise %}\
+	${o.base} public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
 {% end %}\
 {% end %}\
 }

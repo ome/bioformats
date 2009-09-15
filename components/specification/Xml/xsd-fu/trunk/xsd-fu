@@ -96,6 +96,10 @@ def main():
 		f.write(classContent)
 		f.close()
 
+def index_string(name):
+	"""Makes a Java method signature string from an index name."""
+	return "int %s%sIndex" % (name[:1].lower(), name[1:])
+
 def resolve_indexes(indexes, names):
 	"""
 	Resolves a String index representation of the hierarchical structure of
@@ -107,7 +111,7 @@ def resolve_indexes(indexes, names):
 		if name == 'OME':
 			# Ignore the OME tag
 			return
-		indexes.append("int %s%sIndex" % (name[:1].lower(), name[1:]))
+		indexes.append(index_string(name))
 		resolve_indexes(indexes, names[name])
 
 def metadataStoreMain():
@@ -134,8 +138,8 @@ def metadataStoreMain():
 		name = obj.name
 		indexes[name] = list()
 		resolve_indexes(indexes[name], resolve_parents(model, name))
+		indexes[name].append(index_string(name))
 		indexes[name] = ", ".join(indexes[name])
-		print "%s indexes: %r" % (name, indexes[name])
 	fu = TemplateInfo(None, None)
 	template = NewTextTemplate(open(METADATA_STORE_TEMPLATE).read())
 	content = template.generate(fu=fu, model=model, indexes=indexes).render()

@@ -255,6 +255,14 @@ class OMEModelProperty(object):
 			raise ModelProcessingError, \
 				"Unable to find Java type for %s" % self.type
 	javaType = property(_get_javaType, doc="""The property's Java type.""")
+
+	def _get_metadataStoreType(self):
+		javaType = self.javaType
+		if javaType[-4:] == "Node":
+			return "String"
+		return javaType
+	metadataStoreType = property(_get_metadataStoreType,
+			                     doc="""The property's MetadataStore type.""")
 	
 	def _get_javaArgumentName(self):
 		m = re.search ('[a-z]', self.name)
