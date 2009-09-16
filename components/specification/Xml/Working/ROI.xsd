@@ -145,15 +145,15 @@
 	<xsd:element name="Mask"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The Mask ROI shape is a link to and OME Pixels object that is 
-				drawn on top of the image as an ROI. It is applied at the same 
-				scale, pixel to pixel, as the Image the ROI is applied to, 
-				unless a transform is applied at the shape level.
+				The Mask ROI shape is a link to a BIN:BinData object that is 
+				a BIT mask drawn on top of the image as an ROI. It is applied 
+				at the same scale, pixel to pixel, as the Image the ROI is 
+				applied to, unless a transform is applied at the shape level.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element ref="OME:Pixels" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
 					</xsd:sequence>
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
