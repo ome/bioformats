@@ -974,7 +974,7 @@ class XschemaHandler(handler.ContentHandler):
         global Targetnamespace, NamespacesDict
         logging.debug("Start element: %s %s" % (name, repr(attrs.items())))
 
-        if name == SchemaType:
+        if name == SchemaType and len(self.stack) == 0:
             self.inSchema = 1
             element = XschemaElement(attrs)
             if len(self.stack) == 1:
