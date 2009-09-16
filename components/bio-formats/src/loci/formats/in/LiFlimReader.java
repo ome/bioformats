@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.zip.GZIPInputStream;
 
 import loci.common.DataTools;
@@ -40,6 +41,7 @@ import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -70,6 +72,19 @@ public class LiFlimReader extends FormatReader {
   public static final String P_KEY = "FLIMIMAGE: LAYOUT - phases";
   public static final String F_KEY = "FLIMIMAGE: LAYOUT - frequencies";
   public static final String T_KEY = "FLIMIMAGE: LAYOUT - timestamps";
+
+  public static final String TIMESTAMP_KEY = "FLIMIMAGE: TIMESTAMPS - t";
+
+  // INI keys for the background image
+  public static final String BG_DATATYPE_KEY =
+    "FLIMIMAGE: BACKGROUND - datatype";
+  public static final String BG_C_KEY = "FLIMIMAGE: BACKGROUND - channels";
+  public static final String BG_X_KEY = "FLIMIMAGE: BACKGROUND - x";
+  public static final String BG_Y_KEY = "FLIMIMAGE: BACKGROUND - y";
+  public static final String BG_Z_KEY = "FLIMIMAGE: BACKGROUND - z";
+  public static final String BG_P_KEY = "FLIMIMAGE: BACKGROUND - phases";
+  public static final String BG_F_KEY = "FLIMIMAGE: BACKGROUND - frequencies";
+  public static final String BG_T_KEY = "FLIMIMAGE: BACKGROUND - timestamps";
 
   // supported versions
   public static final String[] KNOWN_VERSIONS = {"1.0"};
@@ -107,6 +122,20 @@ public class LiFlimReader extends FormatReader {
   private String frequencies;
   private String timestamps;
 
+  private String backgroundDatatype;
+  private String backgroundX;
+  private String backgroundY;
+  private String backgroundC;
+  private String backgroundZ;
+  private String backgroundT;
+  private String backgroundP;
+  private String backgroundF;
+
+  private int numRegions = 0;
+  private Hashtable<Integer, ROI> rois;
+  private Hashtable<Integer, String> stampValues;
+  private Float exposureTime;
+
   /** True if gzip compression was used to deflate the pixels. */
   private boolean gzip;
 
@@ -115,6 +144,9 @@ public class LiFlimReader extends FormatReader {
 
   /** Image number indicating position in gzip stream. */
   private int gzPos;
+
+  /** Series number indicating position in gzip stream. */
+  private int gzSeries;
 
   // -- Constructor --
 
@@ -133,11 +165,7 @@ public class LiFlimReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int sizeX = getSizeX();
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bytesPerPlane = getSizeX() * getSizeY() * bpp;
-
-    int size = bpp * w * h;
+    int bytesPerPlane = FormatTools.getPlaneSize(this);
 
     if (gzip) {
       prepareGZipStream(no);
@@ -146,35 +174,20 @@ public class LiFlimReader extends FormatReader {
       byte[] bytes = new byte[bytesPerPlane];
       gz.readFully(bytes);
 
-      // crop data
-      if (w == sizeX) {
-        // copy data directly, in one block
-        System.arraycopy(bytes, sizeX * y, buf, 0, buf.length);
-      }
-      else {
-        // copy data line by line
-        for (int r=0; r<h; r++) {
-          int bytesIndex = bpp * (sizeX * (r + y) + x);
-          int bufIndex = bpp * w * r;
-          System.arraycopy(bytes, bytesIndex, buf, bufIndex, bpp * w);
-        }
-      }
-    }
-    else if (w == sizeX) {
-      // read data directly, in one block
-      int scan = bpp * sizeX;
-      in.seek(dataOffset + bytesPerPlane * no + scan * y);
-      in.readFully(buf, 0, size);
+      RandomAccessInputStream s = new RandomAccessInputStream(bytes);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
     }
     else {
-      // read data line by line
-      int scan = bpp * sizeX;
-      in.seek(dataOffset + bytesPerPlane * no + scan * y + bpp * x);
-      int read = bpp * w;
-      for (int i=0; i<size; i+=read) {
-        in.readFully(buf, i, read);
-        in.skipBytes(scan - read);
+      in.seek(dataOffset + bytesPerPlane * no);
+      if (getSeries() == 1) {
+        setSeries(0);
+        int imageCount = getImageCount();
+        int planeSize = FormatTools.getPlaneSize(this);
+        setSeries(1);
+        in.skipBytes(imageCount * planeSize);
       }
+      readPlane(in, x, y, w, h, buf);
     }
 
     return buf;
@@ -190,6 +203,29 @@ public class LiFlimReader extends FormatReader {
       if (gz != null) gz.close();
       gz = null;
       gzPos = 0;
+      gzSeries = 0;
+      version = null;
+      compression = null;
+      datatype = null;
+      channels = null;
+      xLen = null;
+      yLen = null;
+      zLen = null;
+      phases = null;
+      frequencies = null;
+      timestamps = null;
+      backgroundDatatype = null;
+      backgroundX = null;
+      backgroundY = null;
+      backgroundC = null;
+      backgroundZ = null;
+      backgroundT = null;
+      backgroundP = null;
+      backgroundF = null;
+      numRegions = 0;
+      rois = null;
+      stampValues = null;
+      exposureTime = null;
     }
   }
 
@@ -220,6 +256,9 @@ public class LiFlimReader extends FormatReader {
   }
 
   private void initOriginalMetadata() {
+    rois = new Hashtable<Integer, ROI>();
+    stampValues = new Hashtable<Integer, String>();
+
     // add all INI entries to the global metadata list
     for (IniTable table : ini) {
       String name = table.get(IniTable.HEADER_KEY);
@@ -240,6 +279,47 @@ public class LiFlimReader extends FormatReader {
         else if (metaKey.equals(P_KEY)) phases = value;
         else if (metaKey.equals(F_KEY)) frequencies = value;
         else if (metaKey.equals(T_KEY)) timestamps = value;
+        else if (metaKey.equals(BG_DATATYPE_KEY)) backgroundDatatype = value;
+        else if (metaKey.equals(BG_C_KEY)) backgroundC = value;
+        else if (metaKey.equals(BG_X_KEY)) backgroundX = value;
+        else if (metaKey.equals(BG_Y_KEY)) backgroundY = value;
+        else if (metaKey.equals(BG_Z_KEY)) backgroundZ = value;
+        else if (metaKey.equals(BG_T_KEY)) backgroundT = value;
+        else if (metaKey.equals(BG_P_KEY)) backgroundP = value;
+        else if (metaKey.equals(BG_F_KEY)) backgroundF = value;
+        else if (metaKey.startsWith(TIMESTAMP_KEY)) {
+          int index = Integer.parseInt(metaKey.replaceAll(TIMESTAMP_KEY, ""));
+          stampValues.put(new Integer(index), value);
+        }
+        else if (metaKey.equals("ROI: INFO - numregions")) {
+          numRegions = Integer.parseInt(value);
+        }
+        else if (metaKey.startsWith("ROI: ROI")) {
+          int start = metaKey.lastIndexOf("ROI") + 3;
+          int end = metaKey.indexOf(" ", start);
+          Integer index = new Integer(metaKey.substring(start, end));
+          ROI roi = rois.get(index);
+          if (roi == null) roi = new ROI();
+
+          if (metaKey.endsWith("name")) {
+            roi.name = value;
+          }
+          else if (metaKey.indexOf(" - p") >= 0) {
+            String p = metaKey.substring(metaKey.indexOf(" - p") + 4);
+            Integer pointIndex = new Integer(p);
+            roi.points.put(pointIndex, value.replaceAll(" ", ","));
+          }
+          rois.put(index, roi);
+        }
+        else if (metaKey.endsWith("ExposureTime")) {
+          String exp = value;
+          float expTime = Float.parseFloat(exp.substring(0, exp.indexOf(" ")));
+          String units = exp.substring(exp.indexOf(" ") + 1).toLowerCase();
+          if (units.equals("ms")) {
+            expTime /= 1000;
+          }
+          exposureTime = new Float(expTime);
+        }
       }
     }
   }
@@ -255,46 +335,61 @@ public class LiFlimReader extends FormatReader {
     else if (COMPRESSION_GZIP.equals(compression)) gzip = true;
     else throw new FormatException("Unknown compression type: " + compression);
 
-    // check data type
-    int pixelType;
-    if (DATATYPE_UINT8.equals(datatype)) pixelType = FormatTools.UINT8;
-    else if (DATATYPE_INT8.equals(datatype)) pixelType = FormatTools.INT8;
-    else if (DATATYPE_UINT16.equals(datatype)) pixelType = FormatTools.UINT16;
-    else if (DATATYPE_INT16.equals(datatype)) pixelType = FormatTools.INT16;
-    else if (DATATYPE_UINT32.equals(datatype)) pixelType = FormatTools.UINT32;
-    else if (DATATYPE_INT32.equals(datatype)) pixelType = FormatTools.INT32;
-    else if (DATATYPE_REAL32.equals(datatype)) pixelType = FormatTools.FLOAT;
-    else if (DATATYPE_REAL64.equals(datatype)) pixelType = FormatTools.DOUBLE;
-    else throw new FormatException("Unknown data type: " + datatype);
-
     // check dimensional extents
-    int sizeC = Integer.parseInt(channels);
-    int sizeX = Integer.parseInt(xLen);
-    int sizeY = Integer.parseInt(yLen);
-    int sizeZ = Integer.parseInt(zLen);
-    int sizeT = Integer.parseInt(timestamps);
     int sizeP = Integer.parseInt(phases);
     if (sizeP > 1) {
       throw new FormatException("Sorry, multiple phases not supported");
     }
     int sizeF = Integer.parseInt(frequencies);
     if (sizeF > 1) {
-      throw new FormatException("Sorry, multiple frequences not supported");
+      throw new FormatException("Sorry, multiple frequencies not supported");
     }
-    int imageCount = sizeC * sizeZ * sizeP * sizeF * sizeT;
+
+    int p = backgroundP == null ? 1 : Integer.parseInt(backgroundP);
+    if (p > 1) {
+      throw new FormatException("Sorry, multiple phases not supported");
+    }
+    int f = backgroundF == null ? 1 : Integer.parseInt(backgroundF);
+    if (f > 1) {
+      throw new FormatException("Sorry, multiple frequencies not supported");
+    }
+
+    if (backgroundDatatype != null) {
+      core = new CoreMetadata[2];
+      core[0] = new CoreMetadata();
+      core[1] = new CoreMetadata();
+    }
 
     // populate core metadata
-    core[0].sizeX = sizeX;
-    core[0].sizeY = sizeY;
-    core[0].sizeZ = sizeZ;
-    core[0].sizeC = sizeC;
-    core[0].sizeT = sizeT;
-    core[0].imageCount = imageCount;
-    core[0].rgb = false;
+    core[0].sizeX = Integer.parseInt(xLen);
+    core[0].sizeY = Integer.parseInt(yLen);
+    core[0].sizeZ = Integer.parseInt(zLen);
+    core[0].sizeC = Integer.parseInt(channels);
+    core[0].sizeT = Integer.parseInt(timestamps);
+    core[0].imageCount = getSizeZ() * getSizeT() * sizeP * sizeF;
+    core[0].rgb = getSizeC() > 1;
     core[0].indexed = false;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].pixelType = pixelType;
+    core[0].dimensionOrder = "XYCZT";
+    core[0].pixelType = getPixelType(datatype);
     core[0].littleEndian = true;
+    core[0].interleaved = true;
+    core[0].falseColor = false;
+
+    if (core.length > 1) {
+      core[1].sizeX = Integer.parseInt(backgroundX);
+      core[1].sizeY = Integer.parseInt(backgroundY);
+      core[1].sizeZ = Integer.parseInt(backgroundZ);
+      core[1].sizeC = Integer.parseInt(backgroundC);
+      core[1].sizeT = Integer.parseInt(backgroundT);
+      core[1].imageCount = core[1].sizeZ * core[1].sizeT * p * f;
+      core[1].rgb = core[1].sizeC > 1;
+      core[1].indexed = false;
+      core[1].dimensionOrder = "XYCZT";
+      core[1].pixelType = getPixelType(backgroundDatatype);
+      core[1].littleEndian = true;
+      core[1].interleaved = true;
+      core[1].falseColor = false;
+    }
   }
 
   private void initOMEMetadata() {
@@ -304,13 +399,17 @@ public class LiFlimReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, times > 0);
 
+    // image data
+    store.setImageName(getCurrentFile() + " Primary Image", 0);
+    if (getSeriesCount() > 1) {
+      store.setImageName(getCurrentFile() + " Background Image", 1);
+    }
+
     // timestamps
     long firstStamp = 0;
     for (int t=0; t<times; t++) {
-      String stampValue = (String)
-        getGlobalMeta("FLIMIMAGE: TIMESTAMPS - t" + t);
-      if (stampValue == null) break;
-      String[] stampWords = stampValue.split(" ");
+      if (stampValues.get(t) == null) break;
+      String[] stampWords = stampValues.get(t).split(" ");
       long stampHi = Long.parseLong(stampWords[0]);
       long stampLo = Long.parseLong(stampWords[1]);
       long stamp = DateTools.getMillisFromTicks(stampHi, stampLo);
@@ -325,10 +424,11 @@ public class LiFlimReader extends FormatReader {
         long ms = stamp - firstStamp;
         deltaT = new Float(ms / 1000f);
       }
-      for (int c=0; c<core[0].sizeC; c++) {
-        for (int z=0; z<core[0].sizeZ; z++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        for (int z=0; z<getSizeZ(); z++) {
           int index = getIndex(z, c, t);
           store.setPlaneTimingDeltaT(deltaT, 0, 0, index);
+          store.setPlaneTimingExposureTime(exposureTime, 0, 0, index);
         }
       }
     }
@@ -339,31 +439,42 @@ public class LiFlimReader extends FormatReader {
 
     // regions of interest
     StringBuilder points = new StringBuilder();
-    String numRegionsValue = (String) getGlobalMeta("ROI: INFO - numregions");
-    int numRegions = numRegionsValue == null ?
-      0 : Integer.parseInt(numRegionsValue);
-    for (int roi=0; roi<numRegions; roi++) {
-      String roiPrefix = "ROI: ROI" + roi + " - ";
-      String roiName = (String) getGlobalMeta(roiPrefix + "name");
-      String numPointsValue = (String) getGlobalMeta(roiPrefix + "numpoints");
-      int numPoints = numPointsValue == null ?
-        0 : Integer.parseInt(numPointsValue);
+    Integer[] roiIndices = rois.keySet().toArray(new Integer[rois.size()]);
+    Arrays.sort(roiIndices);
+    for (int roi=0; roi<roiIndices.length; roi++) {
       points.setLength(0);
-      for (int p=0; p<numPoints; p++) {
-        String point = (String) getGlobalMeta(roiPrefix + "p" + p);
+      ROI r = rois.get(roiIndices[roi]);
+      Integer[] pointIndices = r.points.keySet().toArray(new Integer[0]);
+      Arrays.sort(pointIndices);
+      for (Integer point : pointIndices) {
         if (point == null) continue;
-        if (p > 0) points.append(" ");
-        points.append(point.replaceAll(" ", ","));
+        String p = r.points.get(point);
+        if (points.length() > 0) points.append(" ");
+        points.append(p);
       }
       store.setPolygonPoints(points.toString(), 0, roi, 0);
     }
   }
 
-  private void prepareGZipStream(int no) throws IOException {
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int bytesPerPlane = getSizeX() * getSizeY() * bpp;
+  private int getPixelType(String type) throws FormatException {
+    // check data type
+    if (DATATYPE_UINT8.equals(type)) return FormatTools.UINT8;
+    else if (DATATYPE_INT8.equals(type)) return FormatTools.INT8;
+    else if (DATATYPE_UINT16.equals(type)) return FormatTools.UINT16;
+    else if (DATATYPE_INT16.equals(type)) return FormatTools.INT16;
+    else if (DATATYPE_UINT32.equals(type)) return FormatTools.UINT32;
+    else if (DATATYPE_INT32.equals(type)) return FormatTools.INT32;
+    else if (DATATYPE_REAL32.equals(type)) return FormatTools.FLOAT;
+    else if (DATATYPE_REAL64.equals(type)) return FormatTools.DOUBLE;
+    throw new FormatException("Unknown data type: " + type);
+  }
 
-    if (gz == null || no < gzPos) {
+  private void prepareGZipStream(int no) throws IOException {
+    int bytesPerPlane = FormatTools.getPlaneSize(this);
+
+    if (gz == null || (no < gzPos && getSeries() == gzSeries) ||
+      gzSeries > getSeries())
+    {
       // reinitialize gzip stream
       if (gz != null) gz.close();
 
@@ -375,9 +486,19 @@ public class LiFlimReader extends FormatReader {
       // create gzip stream
       gz = new DataInputStream(new GZIPInputStream(fis));
       gzPos = 0;
+      gzSeries = 0;
     }
 
     // seek to correct image number
+    if (getSeries() == 1 && gzSeries == 0) {
+      setSeries(0);
+      int nPlanes = getImageCount() - gzPos;
+      int nBytes = FormatTools.getPlaneSize(this) * nPlanes;
+      setSeries(1);
+      skip(gz, nBytes);
+      gzSeries = 1;
+      gzPos = 0;
+    }
     skip(gz, bytesPerPlane * (no - gzPos));
     gzPos = no + 1;
   }
@@ -389,6 +510,13 @@ public class LiFlimReader extends FormatReader {
       if (skip <= 0) throw new IOException("Cannot skip bytes");
       skipLeft -= skip;
     }
+  }
+
+  // -- Helper class --
+
+  private class ROI {
+    public String name;
+    public Hashtable<Integer, String> points = new Hashtable<Integer, String>();
   }
 
 }
