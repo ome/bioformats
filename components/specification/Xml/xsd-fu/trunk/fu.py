@@ -86,6 +86,7 @@ def updateTypeMaps(namespace):
 		namespace + 'anyURI': 'String',
 		# Hacks
 		'PixelType': 'String',
+		'NamingConvention': 'String',
 		'PercentFraction': 'Float',
 		'MIMEtype': 'String',
 		'RedChannel': 'ChannelSpecTypeNode',
@@ -539,7 +540,7 @@ class TemplateInfo(object):
 		self.user = getpwuid(getuid())[0]
 		self.DO_NOT_PROCESS = DO_NOT_PROCESS
 
-def parseXmlSchema(filename, namespace=DEFAULT_NAMESPACE):
+def parseXmlSchema(filenames, namespace=DEFAULT_NAMESPACE):
 	"""
 	Entry point for XML Schema parsing into an OME Model.
 	"""
@@ -553,7 +554,8 @@ def parseXmlSchema(filename, namespace=DEFAULT_NAMESPACE):
 	parser = sax.make_parser()
 	ch = XschemaHandler()
 	parser.setContentHandler(ch)
-	parser.parse(filename)
+	for filename in filenames:
+		parser.parse(filename)
 
 	root = ch.getRoot()
 	if root is None:

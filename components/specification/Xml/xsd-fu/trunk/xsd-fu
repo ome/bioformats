@@ -87,7 +87,7 @@ def main():
 		print "Output directory '%s' does not exist!" % outputDirectory
 		sys.exit(1)
 
-	model = parseXmlSchema(args[0], namespace)
+	model = parseXmlSchema([args[0]], namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
@@ -134,15 +134,15 @@ def metadataStoreMain():
 	except GetoptError, (msg, opt):
 		usage(msg)
 
-	if len(args) != 1:
-		usage("Expecting single ome.xsd file path!")
+	if len(args) < 1:
+		usage("Expecting at least one ome.xsd file path!")
 
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-n":
 			namespace = argument
 
-	model = parseXmlSchema(args[0], namespace)
+	model = parseXmlSchema(args, namespace)
 	indexes = dict()
 	parents = dict()
 	is_multi_path = dict()
@@ -176,7 +176,7 @@ def debugMain():
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
 
-	model = parseXmlSchema("../../Working/ome.xsd", namespace)
+	model = parseXmlSchema(["../../Working/ome.xsd"], namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
@@ -213,7 +213,7 @@ def docGenMain():
 	["STD","../../Working/STD.xsd"]
 	]:
 		prefix = theSchemas[0] + ":"
-		model = parseXmlSchema(theSchemas[1], namespace)
+		model = parseXmlSchema([theSchemas[1]], namespace)
 		fu = TemplateInfo(outputDirectory, package)
 		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 		print " == `%s` ==" % (prefix)
@@ -250,7 +250,7 @@ def tabGenMain():
 	#["MLI","../../Working/MLI.xsd"],
 	]:
 		prefix = theSchemas[0] + ":"
-		model = parseXmlSchema(theSchemas[1], namespace)
+		model = parseXmlSchema([theSchemas[1]], namespace)
 		fu = TemplateInfo(outputDirectory, package)
 		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 		for theToplevelNode in theSchemas[2]:
