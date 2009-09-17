@@ -120,6 +120,9 @@ CLASS_TEMPLATE = "templates/Class.template"
 # The default template for MetadataStore processing.
 METADATA_STORE_TEMPLATE = "templates/MetadataStore.template"
 
+# The default template for MetadataRetrieve processing.
+METADATA_RETRIEVE_TEMPLATE = "templates/MetadataRetrieve.template"
+
 def resolve_parents(model, element_name):
 	"""
 	Resolves the parents of an element and returns them as an ordered list.

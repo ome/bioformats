@@ -38,6 +38,25 @@ from genshi.template import NewTextTemplate
 from getopt import getopt, GetoptError
 from xml import sax
 
+def baseUsage():
+	"""
+	Prints usage so that we don't have to. :)
+	"""
+	cmd = sys.argv[0]
+	print """Usage: %s <subcommand> ...
+Executes an OME-XML Schema definition parsing and code generation task.
+
+Available subcommands:
+  java_classes
+  metadata_store
+  metadata_retrieve
+  doc_gen
+  tab_gen
+  debug
+
+Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
+	(cmd)
+	sys.exit(2)
 
 def usage(error):
 	"""
@@ -54,7 +73,7 @@ Default namespace: "%s"
 Examples:
   %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
 
-Report bugs to Chris Allan <callan@blackcat.ca>""" % \
+Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
 	(error, cmd, DEFAULT_PACKAGE, DEFAULT_NAMESPACE, cmd)
 	sys.exit(2)
 
@@ -103,7 +122,18 @@ def index_string(name):
 	else:
 		return "int %s%sIndex" % (name[:1].lower(), name[1:])
 
-def resolve_indexes(indexes, names):
+def max_occurs_under_parent(model, parent, name):
+	"""
+	Returns the maximum occurrances of a given object under its current
+	parent.
+	"""
+	parent = model.getObjectByName(parent)
+	for prop in parent.properties.values():
+		if prop.name == name:
+			return prop.maxOccurs
+	
+
+def resolve_indexes(indexes, model, names):
 	"""
 	Resolves a String index representation of the hierarchical structure of
 	element names. Updates indexes list and returns a boolean True if the
@@ -118,19 +148,28 @@ def resolve_indexes(indexes, names):
 			return is_multi_path
 		if len(names.keys()) > 1:
 			is_multi_path = True
-		indexes.append(index_string(name))
-		is_child_multi_path = resolve_indexes(indexes, names[name])
+		# We only want to add the index if the object count at this level
+		# is greater than 1.
+		if names[name] is not None:
+			# We have a parent, use the first even if we're multi-path
+			parent = names[name].keys()[0]
+			if max_occurs_under_parent(model, parent, name) > 1:
+				indexes.append(index_string(name))
+		else:
+			# We don't have a parent, insert the index anyway
+			indexes.append(index_string(name))
+		is_child_multi_path = resolve_indexes(indexes, model, names[name])
 		if is_child_multi_path:
 			is_multi_path = True
 	return is_multi_path
 
-def metadataStoreMain():
+def metadataStoreMain(args):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataStore implementation.
 	"""
 	try:
-		options, args = getopt(sys.argv[1:], "n:")
+		options, args = getopt(args, "n:")
 	except GetoptError, (msg, opt):
 		usage(msg)
 
@@ -150,11 +189,15 @@ def metadataStoreMain():
 		name = obj.name
 		indexes[name] = list()
 		parents[name] = resolve_parents(model, name)
-		is_multi_path[name] = resolve_indexes(indexes[name], parents[name])
-		parents[name] = "%r" % parents[name]
+		is_multi_path[name] = resolve_indexes(indexes[name], model, parents[name])
 		indexes[name].reverse()
-		indexes[name].append(index_string(name))
+		if parents[name] is not None:
+			# We have a parent, use the first even if we're multi-path
+			parent = parents[name].keys()[0]
+			if max_occurs_under_parent(model, parent, name) > 1:
+				indexes[name].append(index_string(name))
 		indexes[name] = ", ".join(indexes[name])
+		parents[name] = "%r" % parents[name]
 	fu = TemplateInfo(None, None)
 	template = NewTextTemplate(open(METADATA_STORE_TEMPLATE).read())
 	sorted_objects = model.objects.values()
@@ -164,6 +207,49 @@ def metadataStoreMain():
 								sorted_objects=sorted_objects,
 			                    indexes=indexes).render()
 	f = open("MetadataStore.java", "w")
+	f.write(content)
+	f.close()
+	
+def metadataRetrieveMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataRetrieve implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		usage(msg)
+
+	if len(args) < 1:
+		usage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	model = parseXmlSchema(args, namespace)
+	indexes = dict()
+	parents = dict()
+	is_multi_path = dict()
+	for obj in model.objects.values():
+		name = obj.name
+		indexes[name] = list()
+		parents[name] = resolve_parents(model, name)
+		is_multi_path[name] = resolve_indexes(indexes[name], model, parents[name])
+		parents[name] = "%r" % parents[name]
+		indexes[name].reverse()
+		indexes[name].append(index_string(name))
+		indexes[name] = ", ".join(indexes[name])
+	fu = TemplateInfo(None, None)
+	template = NewTextTemplate(open(METADATA_RETRIEVE_TEMPLATE).read())
+	sorted_objects = model.objects.values()
+	sorted_objects.sort(lambda x, y: cmp(x.name, y.name))
+	content = template.generate(fu=fu, model=model, parents=parents,
+								is_multi_path=is_multi_path,
+								sorted_objects=sorted_objects,
+			                    indexes=indexes).render()
+	f = open("MetadataRetrieve.java", "w")
 	f.write(content)
 	f.close()
 
@@ -272,9 +358,26 @@ def parentlist(model, name, pre):
 						parentlist(model, prop.type, pre + prop.name + ":")
 
 if __name__ == '__main__':
+	if len(sys.argv) == 1:
+		baseUsage()
+	#  java_classes
+	#  metadata_store
+	#  metadata_retrieve
+	#  doc_gen
+	#  tab_gen
+	#  debug
+	a = sys.argv[1]
+	if a == "java_classes":
+		main(sys.argv[2:])
+	if a == "metadata_store":
+		metadataStoreMain(sys.argv[2:])
+	if a == "metadata_retrieve":
+		metadataRetrieveMain(sys.argv[2:])
+	if a == "debug":
+		debugMain(sys.argv[2:])
 #	debugMain()
 #	docGenMain()
 #	tabGenMain()
-	metadataStoreMain()
+#	metadataStoreMain()
 #	main()
 

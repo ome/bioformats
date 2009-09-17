@@ -3,7 +3,7 @@
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2009 Open Microscopy Environment
+ *  Copyright (C) 2005-@year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -36,7 +36,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta.MetadataStore;
+package loci.formats.meta;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
@@ -117,7 +117,7 @@ public interface MetadataStore
 	// ${parents[o.name]}
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
-	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
+	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
 
 {% end %}\
 {% end %}\
@@ -130,14 +130,14 @@ public interface MetadataStore
 	// ${parents[o.name]}
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
-	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]}, ${index_string(prop.name)});
+	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]}, ${index_string(prop.name)});
 
 {% end %}\
 {% when len(indexes[o.name]) > 0 %}\
 	// ${parents[o.name]}
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
-	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
+	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
 
 {% end %}\
 {% otherwise %}\
@@ -145,7 +145,7 @@ public interface MetadataStore
 	// ${parents[o.name]}
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
-	public void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
+	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
 
 {% end %}\
 {% end %}\
