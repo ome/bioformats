@@ -145,6 +145,11 @@ public class APLReader extends FormatReader {
     used = new Vector<String>();
     used.add(id);
     if (!id.equals(mtb)) used.add(mtb);
+    String tnb = id.substring(0, id.lastIndexOf("."));
+    if (tnb.lastIndexOf("_") > tnb.lastIndexOf(File.separator)) {
+      tnb = tnb.substring(0, tnb.lastIndexOf("_"));
+    }
+    used.add(tnb + "_1.tnb");
 
     // calculate indexes to relevant metadata
 

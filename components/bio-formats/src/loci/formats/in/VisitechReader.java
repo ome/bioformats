@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -59,9 +61,20 @@ public class VisitechReader extends FormatReader {
 
   public VisitechReader() {
     super("Visitech XYS", new String[] {"xys", "html"});
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "xys")) return true;
+
+    // verify that there is an .xys file in the same directory
+    String prefix = name.substring(0, name.lastIndexOf(" ") + 1);
+    Location xys = new Location(prefix + " 1.xys");
+    return xys.exists();
+  }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
@@ -136,8 +149,7 @@ public class VisitechReader extends FormatReader {
 
     // parse the HTML file
 
-    in = new RandomAccessInputStream(id);
-    String s = in.readString((int) in.length());
+    String s = DataTools.readFile(id);
 
     // strip out "style", "a", and "script" tags
 

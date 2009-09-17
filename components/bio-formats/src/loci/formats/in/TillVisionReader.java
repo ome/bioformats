@@ -339,9 +339,8 @@ public class TillVisionReader extends FormatReader {
 
         int dot = file.lastIndexOf(".");
         String infFile = file.substring(0, dot) + ".inf";
-        in = new RandomAccessInputStream(infFile);
 
-        String data = in.readString((int) in.length());
+        String data = DataTools.readFile(infFile);
         StringTokenizer lines = new StringTokenizer(data);
 
         while (lines.hasMoreTokens()) {
@@ -371,7 +370,6 @@ public class TillVisionReader extends FormatReader {
             core[i].pixelType = convertPixelType(Integer.parseInt(value));
           }
         }
-        in.close();
       }
 
       core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;

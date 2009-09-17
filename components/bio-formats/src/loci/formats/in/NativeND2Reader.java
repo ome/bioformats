@@ -627,7 +627,11 @@ public class NativeND2Reader extends FormatReader {
       while (in.getFilePointer() < in.length()) {
         blockLength = in.readShort();
         if (blockLength < 2) break;
-        s = in.readString(blockLength - 2);
+        blockLength -= 2;
+        if (blockLength + in.getFilePointer() >= in.length()) {
+          blockLength = (int) (in.length() - in.getFilePointer());
+        }
+        s = in.readString(blockLength);
         s = s.replaceAll("<!--.+?>", ""); // remove comments
         int openBracket = s.indexOf("<");
         if (openBracket == -1) continue;
@@ -686,6 +690,8 @@ public class NativeND2Reader extends FormatReader {
       core[i].rgb = numBands > 1;
       core[i].pixelType = type;
     }
+
+    if (getDimensionOrder() == null) core[0].dimensionOrder = "";
 
     if (isRGB() && getDimensionOrder().indexOf("C") == -1) {
       core[0].dimensionOrder = "C" + getDimensionOrder();

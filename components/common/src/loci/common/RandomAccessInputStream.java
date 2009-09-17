@@ -514,6 +514,19 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       return ARRAY;
     }
 
+    // ensure that the DIS' file pointer is actually equal to fp before
+    // we try to read from the DIS
+    if (dis != null) {
+      if (fp >= length()) {
+        fp = afp;
+        dis.close();
+        BufferedInputStream bis = new BufferedInputStream(
+          new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD);
+        dis = new DataInputStream(bis);
+      }
+      dis.skip(fp - length() + dis.available());
+    }
+
     // case 1:
     //   current file pointer is greater than or equal to the previous
     //   file pointer (seek forward)
@@ -524,6 +537,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
         skipped += dis.skip(afp - fp - skipped);
       }
       fp = afp;
+      resetMark();
       return DIS;
     }
 
@@ -535,11 +549,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     if (dis != null && afp < fp && afp >= mark) {
       try {
         dis.reset();
-        long skipped = dis.skip(afp - mark);
-        while (skipped < afp - mark) {
-          skipped += dis.skip(afp - mark - skipped);
+        dis.mark(MAX_OVERHEAD);
+        fp = length() - dis.available();
+
+        while (fp < afp) {
+          int skip = (int) dis.skip(afp - fp);
+          if (skip == 0) break;
+          fp += skip;
         }
-        fp = afp;
         resetMark();
         return DIS;
       }

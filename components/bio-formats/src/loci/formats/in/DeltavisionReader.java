@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -555,9 +556,7 @@ public class DeltavisionReader extends FormatReader {
 
     status("Parsing log file");
 
-    RandomAccessInputStream s = new RandomAccessInputStream(logFile);
-    String[] lines = s.readString((int) s.length()).split("[\r\n]");
-    s.close();
+    String[] lines = DataTools.readFile(logFile).split("[\r\n]");
 
     String key, value = "", prefix = "";
 

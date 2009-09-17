@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -371,10 +372,7 @@ public class TCSReader extends FormatReader {
     if (xmlFile != null) {
       // parse XML metadata
 
-      RandomAccessInputStream xmlStream = new RandomAccessInputStream(xmlFile);
-      String xml = xmlStream.readString((int) xmlStream.length());
-      xmlStream.close();
-
+      String xml = DataTools.readFile(xmlFile);
       xml = XMLTools.sanitizeXML(PREFIX + xml + SUFFIX);
 
       LeicaHandler handler = new LeicaHandler(store);

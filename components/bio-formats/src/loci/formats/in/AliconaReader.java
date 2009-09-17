@@ -240,8 +240,8 @@ public class AliconaReader extends FormatReader {
     // populate Dimensions data
 
     if (pntX != null && pntY != null) {
-      float pixelSizeX = Float.parseFloat(pntX) / 1000000;
-      float pixelSizeY = Float.parseFloat(pntY) / 1000000;
+      float pixelSizeX = Float.parseFloat(pntX) * 1000000;
+      float pixelSizeY = Float.parseFloat(pntY) * 1000000;
 
       store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
       store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);

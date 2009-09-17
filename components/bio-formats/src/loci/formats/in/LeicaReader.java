@@ -700,13 +700,6 @@ public class LeicaReader extends FormatReader {
               core[i].sizeY = size;
               physicalSizes[i][1] = physical;
             }
-            else if (dimType.indexOf("z") != -1) {
-              core[i].sizeZ = size;
-              if (getDimensionOrder().indexOf("Z") == -1) {
-                core[i].dimensionOrder += "Z";
-              }
-              physicalSizes[i][2] = physical;
-            }
             else if (dimType.equals("channel")) {
               if (getSizeC() == 0) core[i].sizeC = 1;
               core[i].sizeC *= size;
@@ -1041,8 +1034,7 @@ public class LeicaReader extends FormatReader {
           String[] objectiveData = data.split(" ");
           StringBuffer model = new StringBuffer();
           String mag = null, na = null;
-          StringBuffer correction = new StringBuffer();
-          String immersion = null;
+          String immersion = null, correction = null;
           for (int i=0; i<objectiveData.length; i++) {
             if (objectiveData[i].indexOf("x") != -1 && mag == null &&
               na == null)
@@ -1055,12 +1047,11 @@ public class LeicaReader extends FormatReader {
               model.append(objectiveData[i]);
               model.append(" ");
             }
+            else if (correction == null) {
+              correction = objectiveData[i];
+            }
             else if (immersion == null) {
               immersion = objectiveData[i];
-            }
-            else {
-              correction.append(objectiveData[i]);
-              correction.append(" ");
             }
           }
           if (immersion == null || immersion.trim().equals("")) {
@@ -1135,7 +1126,8 @@ public class LeicaReader extends FormatReader {
         physicalSizes[series][2] = Float.parseFloat(data);
       }
       else if (contentID.equals("dblPinhole")) {
-        pinhole[series] = Float.parseFloat(data);
+        // pinhole is stored in meters
+        pinhole[series] = Float.parseFloat(data) * 1000000;
       }
       else if (contentID.equals("dblZoom")) {
         store.setDisplayOptionsZoom(new Float(data), series);
@@ -1156,17 +1148,24 @@ public class LeicaReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       int nextChannel = 0;
       for (int channel=0; channel<getEffectiveSizeC(); channel++) {
-        if (channel >= channelNames[i].size()) break;
-        String name = (String) channelNames[i].get(channel);
-        if (name == null || name.trim().equals("")) continue;
-
-        store.setLogicalChannelName(name, i, nextChannel);
-        store.setLogicalChannelEmWave((Integer) emWaves[i].get(channel),
-          i, nextChannel);
-        store.setLogicalChannelExWave((Integer) exWaves[i].get(channel),
-          i, nextChannel);
-        store.setLogicalChannelPinholeSize(new Float(pinhole[i]), i,
-          nextChannel);
+        if (channel < channelNames[i].size()) {
+          String name = (String) channelNames[i].get(channel);
+          if (name != null && !name.trim().equals("")) {
+            store.setLogicalChannelName(name, i, nextChannel);
+          }
+        }
+        if (channel < emWaves[i].size()) {
+          store.setLogicalChannelEmWave((Integer) emWaves[i].get(channel),
+            i, nextChannel);
+        }
+        if (channel < exWaves[i].size()) {
+          store.setLogicalChannelExWave((Integer) exWaves[i].get(channel),
+            i, nextChannel);
+        }
+        if (i < pinhole.length) {
+          store.setLogicalChannelPinholeSize(new Float(pinhole[i]), i,
+            nextChannel);
+        }
 
         nextChannel++;
       }

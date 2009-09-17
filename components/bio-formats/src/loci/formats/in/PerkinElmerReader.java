@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -392,8 +393,6 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     core[0].imageCount = files.length;
-    RandomAccessInputStream read;
-    byte[] data;
 
     tiff = new MinimalTiffReader();
 
@@ -415,8 +414,7 @@ public class PerkinElmerReader extends FormatReader {
     if (htmFile != null) htmFile = allFiles.get(allFiles.size() - 1);
 
     if (timFile != null) {
-      read = new RandomAccessInputStream(timFile);
-      String[] tokens = read.readString((int) read.length()).split("\\s");
+      String[] tokens = DataTools.readFile(timFile).split("\\s");
       int tNum = 0;
       // can ignore "Zero x" and "Extra int"
       String[] hashKeys = {"Number of Wavelengths/Timepoints", "Zero 1",
@@ -445,19 +443,15 @@ public class PerkinElmerReader extends FormatReader {
         }
         parseKeyValue(hashKeys[tNum++], token);
       }
-
-      read.close();
     }
 
     if (csvFile != null) {
-      read = new RandomAccessInputStream(csvFile);
-      String[] tokens = read.readString((int) read.length()).split("\\s");
+      String[] tokens = DataTools.readFile(csvFile).split("\\s");
       Vector<String> tmp = new Vector<String>();
       for (String token : tokens) {
         if (token.trim().length() > 0) tmp.add(token.trim());
       }
       tokens = tmp.toArray(new String[0]);
-      read.close();
 
       int tNum = 0;
       String[] hashKeys = {"Calibration Unit", "Pixel Size X", "Pixel Size Y",
@@ -487,12 +481,10 @@ public class PerkinElmerReader extends FormatReader {
 
     if (zpoFile != null && csvFile == null) {
       // parse .zpo only if no .csv is available
-      read = new RandomAccessInputStream(zpoFile);
-      String[] tokens = read.readString((int) read.length()).split("\\s");
+      String[] tokens = DataTools.readFile(zpoFile).split("\\s");
       for (int t=0; t<tokens.length; t++) {
         addGlobalMeta("Z slice #" + t + " position", tokens[t]);
       }
-      read.close();
     }
 
     // be aggressive about parsing the HTML file, since it's the only one that
@@ -504,9 +496,7 @@ public class PerkinElmerReader extends FormatReader {
     Vector<Integer> exWaves = new Vector<Integer>();
 
     if (htmFile != null) {
-      read = new RandomAccessInputStream(htmFile);
-      String[] tokens = read.readString((int) read.length()).split(HTML_REGEX);
-      read.close();
+      String[] tokens = DataTools.readFile(htmFile).split(HTML_REGEX);
 
       for (int j=0; j<tokens.length; j++) {
         if (tokens[j].indexOf("<") != -1) tokens[j] = "";

@@ -242,10 +242,8 @@ public class FlexReader extends FormatReader {
     measurementFiles.add(file.getAbsolutePath());
 
     // parse the .mea file to get a list of .flex files
-    RandomAccessInputStream s = new RandomAccessInputStream(id);
     MeaHandler handler = new MeaHandler();
-    String xml = s.readString((int) s.length());
-    s.close();
+    String xml = DataTools.readFile(id);
     XMLTools.parseXML(xml, handler);
 
     Vector<String> flex = handler.getFlexFiles();
@@ -1242,8 +1240,7 @@ public class FlexReader extends FormatReader {
         "Configuration file " + configFile + " does not exist.");
     }
 
-    RandomAccessInputStream s = new RandomAccessInputStream(configFile);
-    String[] lines = s.readString((int) s.length()).split("[\r\n]");
+    String[] lines = DataTools.readFile(configFile).split("[\r\n]");
     for (String line : lines) {
       int eq = line.indexOf("=");
       if (eq == -1 || line.startsWith("#")) continue;
@@ -1251,7 +1248,6 @@ public class FlexReader extends FormatReader {
       String[] servers = line.substring(eq + 1).trim().split(";");
       mapServer(alias, servers);
     }
-    s.close();
   }
 
 }

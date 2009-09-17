@@ -232,17 +232,20 @@ public class FV1000Reader extends FormatReader {
     }
 
     Vector<String> files = new Vector<String>();
-    for (String file : usedFiles) {
-      String f = file.toLowerCase();
-      if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp")) {
-        files.add(file);
+    if (usedFiles != null) {
+      for (String file : usedFiles) {
+        String f = file.toLowerCase();
+        if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp"))
+        {
+          files.add(file);
+        }
       }
     }
     if (!noPixels) {
-      if (getSeries() == 0) {
+      if (getSeries() == 0 && tiffs != null) {
         files.addAll(tiffs);
       }
-      else if (getSeries() == 1) {
+      else if (getSeries() == 1 && previewNames != null) {
         files.addAll(previewNames);
       }
     }
@@ -290,7 +293,6 @@ public class FV1000Reader extends FormatReader {
 
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
-    in = new RandomAccessInputStream(id);
     if (isOIB) poi = new POITools(Location.getMappedId(id));
 
     // mappedOIF is used to distinguish between datasets that are being read
@@ -374,13 +376,19 @@ public class FV1000Reader extends FormatReader {
       if (!checkSuffix(id, OIF_SUFFIX)) {
         Location current = new Location(id).getAbsoluteFile();
         String parent = current.getParent();
-        Location tmp = new Location(parent);
-        parent = tmp.getParent();
+        Location tmp = new Location(parent).getParentFile();
+        parent = tmp.getAbsolutePath();
 
         id = current.getName();
-        String oifFile = parent + id.substring(0, id.lastIndexOf("_")) + ".oif";
+        id = id.substring(0, id.lastIndexOf("_"));
+        if (checkSuffix(current.getName(), "roi")) {
+          // ROI files have an extra underscore
+          id = id.substring(0, id.lastIndexOf("_"));
+        }
+        id += ".oif";
+        tmp = new Location(tmp, id);
+        String oifFile = tmp.getAbsolutePath();
 
-        tmp = new Location(oifFile);
         if (!tmp.exists()) {
           oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
           tmp = new Location(oifFile);
@@ -390,9 +398,9 @@ public class FV1000Reader extends FormatReader {
               parent = parent.substring(0, parent.length() - 1);
             }
             String dir = parent.substring(parent.lastIndexOf(File.separator));
+            dir = dir.substring(0, dir.lastIndexOf("."));
             tmp = new Location(parent);
-            parent = tmp.getParent();
-            oifFile = parent + dir.substring(0, dir.lastIndexOf("."));
+            oifFile = new Location(tmp, dir).getAbsolutePath();
             if (!new Location(oifFile).exists()) {
               throw new FormatException("OIF file not found");
             }
@@ -400,8 +408,7 @@ public class FV1000Reader extends FormatReader {
           currentId = oifFile;
         }
         else currentId = oifFile;
-        super.initFile(currentId);
-        in = new RandomAccessInputStream(currentId);
+        initFile(currentId);
       }
       oifName = currentId;
     }
@@ -722,7 +729,9 @@ public class FV1000Reader extends FormatReader {
                 value = first + last;
               }
               if (mappedOIF) tiffs.add(ii, value);
-              else tiffs.add(ii, tiffPath + File.separator + value);
+              else {
+                tiffs.add(ii, new Location(tiffPath, value).getAbsolutePath());
+              }
             }
           }
           else if (key.equals("Number")) {
@@ -881,9 +890,6 @@ public class FV1000Reader extends FormatReader {
       default:
         throw new RuntimeException("Unsupported pixel depth: " + imageDepth);
     }
-
-    in.close();
-    in = null;
 
     // set up thumbnail file mapping
 

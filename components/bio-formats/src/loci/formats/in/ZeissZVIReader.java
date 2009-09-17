@@ -120,7 +120,7 @@ public class ZeissZVIReader extends FormatReader {
     try {
       POITools p = new POITools(stream);
       Vector<String> files = p.getDocumentList();
-      String filename = "SummaryInformation";
+      String filename = "Tags";
       for (String f : files) {
         if (f.trim().endsWith(filename)) return true;
       }
