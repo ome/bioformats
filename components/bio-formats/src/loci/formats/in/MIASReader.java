@@ -369,18 +369,23 @@ public class MIASReader extends FormatReader {
       }
     }
 
-    debug("Found " + wellDirectories.size() + " wells.");
+    int nWells = wellDirectories.size();
 
-    readers = new MinimalTiffReader[wellDirectories.size()][];
-    tiffs = new String[wellDirectories.size()][];
-    int[] zCount = new int[wellDirectories.size()];
-    int[] cCount = new int[wellDirectories.size()];
-    int[] tCount = new int[wellDirectories.size()];
-    String[] order = new String[wellDirectories.size()];
-    wellNumber = new int[wellDirectories.size()];
+    debug("Found " + nWells + " wells.");
 
-    for (int j=0; j<wellDirectories.size(); j++) {
-      Location well = new Location(wellDirectories.get(j));
+    readers = new MinimalTiffReader[nWells][];
+    tiffs = new String[nWells][];
+    int[] zCount = new int[nWells];
+    int[] cCount = new int[nWells];
+    int[] tCount = new int[nWells];
+    String[] order = new String[nWells];
+    wellNumber = new int[nWells];
+
+    String[] wells = wellDirectories.toArray(new String[nWells]);
+    Arrays.sort(wells);
+
+    for (int j=0; j<nWells; j++) {
+      Location well = new Location(wells[j]);
       String wellName = well.getName().replaceAll("Well", "");
       wellNumber[j] = Integer.parseInt(wellName) - 1;
 
@@ -394,7 +399,7 @@ public class MIASReader extends FormatReader {
       }
 
       if (tmpFiles.size() == 0) {
-        debug("No TIFFs in well directory " + wellDirectories.get(j));
+        debug("No TIFFs in well directory " + wells[j]);
         // no TIFFs in the well directory, so there are probably channel
         // directories which contain the TIFFs
         for (String dir : tiffFiles) {
@@ -601,7 +606,6 @@ public class MIASReader extends FormatReader {
     store.setPlateName(plateName, 0);
     store.setPlateExternalIdentifier(plateName, 0);
 
-    int nWells = tiffs.length;
     // HACK: if we don't have the analysis file, we don't how many
     // rows/columns are in the plate
     //
