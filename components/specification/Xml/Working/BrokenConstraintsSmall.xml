@@ -2,6 +2,7 @@
 <ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
 	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2009-09"
 	xmlns:spw="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+	xmlns:roi="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 ome.xsd http://www.openmicroscopy.org/Schemas/SPW/2009-09 SPW.xsd">
 	<ome:Project ID="Project:1">
@@ -14,6 +15,12 @@
 		<ome:ProjectRef ID="Project:1"/>
 	</ome:Dataset>
 	<ome:Dataset ID="Dataset:2"></ome:Dataset>
+	<ome:Experiment ID="Experiment:1">
+		<ome:MicrobeamManipulation ID="MicrobeamManipulation:1">
+			<roi:ROIRef ID="ROI:1"/>
+			<ome:ExperimenterRef ID="Experimenter:1"/>
+		</ome:MicrobeamManipulation>
+	</ome:Experiment>
 	<spw:Plate ID="Plate:1">
 		<spw:ScreenRef ID="Screen:1"/>
 		<spw:ScreenRef ID="Screen:2"/>
@@ -57,14 +64,29 @@
 		<ome:Pixels ID="Pixels:1" DimensionOrder="XYZCT" Type="int8" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
 			<bf:BinData BigEndian="true" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
 		</ome:Pixels>
+		<roi:ROIRef ID="ROI:2"/>
 	</ome:Image>
 	<ome:Image ID="Image:2" Name="Name92">
 		<ome:AcquiredDate>2008-03-04T14:17:43.0Z</ome:AcquiredDate>
 		<ome:Pixels ID="Pixels:2" DimensionOrder="XYZCT" Type="int8" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
 			<ome:Channel ID="Channel:1"></ome:Channel>
-			<ome:Channel ID="Channel:1"></ome:Channel>
+			<ome:Channel ID="Channel:2"></ome:Channel>
 			<ome:Channel ID="Channel:3"></ome:Channel>
 			<bf:BinData BigEndian="true" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
 		</ome:Pixels>
 	</ome:Image>
+	<roi:ROI ID="ROI:1">
+		<roi:Union>
+			<roi:Shape ID="Shape:1">
+				<roi:Point X="1" Y="1"/>
+			</roi:Shape>
+		</roi:Union>
+	</roi:ROI>
+	<roi:ROI ID="ROI:2">
+		<roi:Union>
+			<roi:Shape ID="Shape:1">
+				<roi:Line X1="1" Y1="1" X2="2" Y2="2"/>
+			</roi:Shape>
+		</roi:Union>
+	</roi:ROI>
 </ome:OME>

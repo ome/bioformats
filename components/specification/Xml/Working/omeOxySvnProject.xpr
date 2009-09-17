@@ -19,6 +19,7 @@
             <file name="roi-sample.xml"/>
             <file name="sample-updated.ome.xml"/>
         </folder>
+        <folder path="../../Xslt/"/>
         <file name="AnalysisChain.xsd"/>
         <file name="AnalysisModule.xsd"/>
         <file name="BinaryFile.xsd"/>
