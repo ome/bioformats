@@ -51,7 +51,7 @@ public class CellomicsReader extends FormatReader {
 
   /** Constructs a new Cellomics reader. */
   public CellomicsReader() {
-    super("Cellomics C01", "c01");
+    super("Cellomics C01", new String[] {"c01", "dib"});
   }
 
   // -- IFormatReader API methods --
@@ -86,16 +86,16 @@ public class CellomicsReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Decompressing file");
+    if (checkSuffix(id, "c01")) {
+      status("Decompressing file");
+      in.seek(4);
+      ZlibCodec codec = new ZlibCodec();
+      byte[] file = codec.decompress(in, null);
+      in.close();
 
-    in.seek(4);
-    ZlibCodec codec = new ZlibCodec();
-    byte[] file = codec.decompress(in, null);
-    in.close();
-
+      in = new RandomAccessInputStream(file);
+    }
     status("Reading header data");
-
-    in = new RandomAccessInputStream(file);
 
     in.order(true);
     in.skipBytes(4);
@@ -106,7 +106,8 @@ public class CellomicsReader extends FormatReader {
     int nBits = in.readShort();
 
     int compression = in.readInt();
-    if (compression != 0) {
+
+    if (x * y * nPlanes * (nBits / 8) + 52 > in.length()) {
       throw new FormatException("Compressed pixel data is not yet supported.");
     }
 
