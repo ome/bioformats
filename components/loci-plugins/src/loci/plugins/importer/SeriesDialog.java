@@ -28,11 +28,13 @@ package loci.plugins.importer;
 import ij.IJ;
 import ij.gui.GenericDialog;
 
+import java.awt.AWTEvent;
 import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
@@ -60,6 +62,10 @@ import loci.plugins.util.WindowTools;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/SeriesDialog.java">SVN</a></dd></dl>
  */
 public class SeriesDialog extends OptionsDialog implements ActionListener {
+
+  // -- Constants --
+
+  public static final int MAX_COMPONENTS = 256;
 
   // -- Fields --
 
@@ -129,15 +135,15 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 2;
 
+    // set up the thumbnail panels
+
     Panel[] p = new Panel[seriesCount];
     for (int i=0; i<seriesCount; i++) {
-      gd.addCheckbox(seriesLabels[i], series[i]);
       r.setSeries(i);
       int sx = r.getThumbSizeX() + 10; // a little extra padding
       int sy = r.getThumbSizeY();
       p[i] = new Panel();
       p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
-      gbc.gridy = i;
       if (options.isForceThumbnails()) {
         IJ.showStatus("Reading thumbnail for series #" + (i + 1));
         int z = r.getSizeZ() / 2;
@@ -154,14 +160,56 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
         }
         catch (Exception e) { }
       }
-      gdl.setConstraints(p[i], gbc);
-      gd.add(p[i]);
     }
+
+    // add the checkboxes
+
+    // we need to add the checkboxes in groups, to prevent an
+    // exception from being thrown if there are more than 512 series
+    // see https://skyking.microscopy.wisc.edu/trac/java/ticket/408 and
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5107980
+
+    int nPanels = p.length / MAX_COMPONENTS;
+    if (nPanels * MAX_COMPONENTS < p.length) nPanels++;
+
+    int nextSeries = 0;
+    for (int i=0; i<nPanels; i++) {
+      int nRows = i == nPanels - 1 ? p.length % MAX_COMPONENTS : MAX_COMPONENTS;
+      String[] labels = new String[nRows];
+      boolean[] defaultValues = new boolean[nRows];
+      for (int row=0; row<nRows; row++) {
+        labels[row] = seriesLabels[nextSeries];
+        defaultValues[row] = series[nextSeries++];
+      }
+      gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
+    }
+
+    boxes = (Checkbox[]) gd.getCheckboxes().toArray(new Checkbox[0]);
+
+    // remove components and re-add everything so that the thumbnails and
+    // checkboxes line up correctly
+
+    gd.removeAll();
+
+    Panel masterPanel = new Panel() {
+      // ClassCastException is thrown if dispatchEventImpl is not overridden
+      protected void dispatchEventImpl(AWTEvent e) { }
+    };
+    masterPanel.setLayout(new GridLayout(seriesCount, 2));
+    int nextComponent = 0;
+
+    for (int i=0; i<seriesCount; i++) {
+      masterPanel.add(boxes[i]);
+      masterPanel.add(p[i]);
+    }
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gdl.setConstraints(masterPanel, gbc);
+    gd.add(masterPanel);
+
     WindowTools.addScrollBars(gd);
 
     // add Select All and Deselect All buttons
-
-    boxes = (Checkbox[]) gd.getCheckboxes().toArray(new Checkbox[0]);
 
     Panel buttons = new Panel();
 
@@ -176,7 +224,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     buttons.add(deselect);
 
     gbc.gridx = 2;
-    gbc.gridy = seriesCount;
+    gbc.gridy = nPanels;
     gbc.anchor = GridBagConstraints.EAST;
     gbc.insets = new Insets(15, 0, 0, 0);
     gdl.setConstraints(buttons, gbc);
