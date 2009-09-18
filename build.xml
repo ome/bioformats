@@ -57,8 +57,8 @@ Bio-Formats Ice framework
     Bindings for Bio-Formats client/server communication enabling
     cross-language interoperability
     -=-
-    JAR file:      bio-formats-ice.jar
-    Path:          components/bio-formats-ice
+    JAR file:      bf-ice.jar
+    Path:          components/bf-ice
     Project deps:  Bio-Formats
     Library deps:  Ice
     Optional:      (none)
@@ -448,7 +448,7 @@ Apache XML-RPC
   <target name="jars"
     depends="copy-jars, jar-common, jar-ome-xml,
       jar-jai, jar-poi-loci, jar-mdbtools,
-      jar-formats, jar-autogen, jar-formats-ice,
+      jar-formats, jar-autogen, jar-bf-ice,
       jar-loci-plugins, jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
       jar-checks, jar-tests,
@@ -459,7 +459,7 @@ Apache XML-RPC
   <target name="clean"
     depends="clean-common, clean-ome-xml,
       clean-jai, clean-poi-loci, clean-mdbtools,
-      clean-formats, clean-autogen, clean-formats-ice,
+      clean-formats, clean-autogen, clean-bf-ice,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
       clean-checks, clean-tests,
@@ -630,22 +630,22 @@ Apache XML-RPC
 
   <!-- Bio-Formats Ice framework -->
 
-  <target name="compile-formats-ice"
+  <target name="compile-bf-ice"
     depends="compile-formats"
     description="compile classes for Bio-Formats Ice framework">
-    <ant dir="components/bio-formats-ice" target="formats-ice.compile"/>
+    <ant dir="components/bf-ice" target="bf-ice.compile"/>
   </target>
 
-  <target name="jar-formats-ice"
+  <target name="jar-bf-ice"
     depends="jar-formats"
     description="generate JAR file for Bio-Formats Ice framework">
-    <ant dir="components/bio-formats-ice" target="formats-ice.jar"/>
+    <ant dir="components/bf-ice" target="bf-ice.jar"/>
   </target>
 
-  <target name="clean-formats-ice"
+  <target name="clean-bf-ice"
     depends="clean-formats"
     description="remove build files for Bio-Formats Ice framework">
-    <ant dir="components/bio-formats-ice" target="formats-ice.clean"/>
+    <ant dir="components/bf-ice" target="bf-ice.clean"/>
   </target>
 
   <!-- LOCI Plugins for ImageJ -->
