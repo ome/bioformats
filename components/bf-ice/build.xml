@@ -6,7 +6,7 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="formats-ice" default="jar" basedir=".">
+<project name="bf-ice" default="jar" basedir=".">
   <description>
     Build file for Bio-Formats Ice framework
   </description>
