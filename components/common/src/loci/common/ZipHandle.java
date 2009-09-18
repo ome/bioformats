@@ -68,9 +68,9 @@ public class ZipHandle extends CompressedRandomAccess {
 
     // look for Zip entry with same prefix as the original Zip file
     entry = null;
-    Enumeration e = zip.entries();
+    Enumeration<? extends ZipEntry> e = zip.entries();
     while (e.hasMoreElements()) {
-      ZipEntry ze = (ZipEntry) e.nextElement();
+      ZipEntry ze = e.nextElement();
       if (ze.getName().startsWith(innerFile)) {
         // found entry with matching name
         entry = ze;

@@ -36,7 +36,6 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -155,7 +154,7 @@ public final class XMLTools {
 
   /** Gets an XSLT template from the given resource location. */
   public static Templates getStylesheet(String resourcePath,
-    Class sourceClass)
+    Class<?> sourceClass)
   {
     InputStream xsltStream = sourceClass.getResourceAsStream(resourcePath);
     StreamSource xsltSource = new StreamSource(xsltStream);

@@ -85,7 +85,7 @@ public class ReflectedUniverse {
    * Returns whether the given object is compatible with the
    * specified class for the purposes of reflection.
    */
-  public static boolean isInstance(Class c, Object o) {
+  public static boolean isInstance(Class<?> c, Object o) {
     return (o == null || c.isInstance(o) ||
       (c == byte.class && o instanceof Byte) ||
       (c == short.class && o instanceof Short) ||
@@ -136,7 +136,7 @@ public class ReflectedUniverse {
       command = command.substring(7).trim();
       int dot = command.lastIndexOf(".");
       String varName = dot < 0 ? command : command.substring(dot + 1);
-      Class c;
+      Class<?> c;
       try {
         c = Class.forName(command, true, loader);
       }
@@ -201,21 +201,21 @@ public class ReflectedUniverse {
       if (var == null) {
         throw new ReflectException("Class not found: " + className);
       }
-      else if (!(var instanceof Class)) {
+      else if (!(var instanceof Class<?>)) {
         throw new ReflectException("Not a class: " + className);
       }
-      Class cl = (Class) var;
+      Class<?> cl = (Class<?>) var;
 
       // Search for a constructor that matches the arguments. Unfortunately,
       // calling cl.getConstructor(argClasses) does not work, because
       // getConstructor() is not flexible enough to detect when the arguments
       // are subclasses of the constructor argument classes, making a brute
       // force search through all public constructors necessary.
-      Constructor constructor = null;
-      Constructor[] c = cl.getConstructors();
+      Constructor<?> constructor = null;
+      Constructor<?>[] c = cl.getConstructors();
       for (int i=0; i<c.length; i++) {
         if (force) c[i].setAccessible(true);
-        Class[] params = c[i].getParameterTypes();
+        Class<?>[] params = c[i].getParameterTypes();
         if (params.length == args.length) {
           boolean match = true;
           for (int j=0; j<params.length; j++) {
@@ -261,7 +261,8 @@ public class ReflectedUniverse {
       if (var == null) {
         throw new ReflectException("No such variable: " + varName);
       }
-      Class varClass = var instanceof Class ? (Class) var : var.getClass();
+      Class<?> varClass = var instanceof Class<?> ?
+        (Class<?>) var : var.getClass();
 
       // Search for a method that matches the arguments. Unfortunately,
       // calling varClass.getMethod(methodName, argClasses) does not work,
@@ -273,7 +274,7 @@ public class ReflectedUniverse {
       for (int i=0; i<m.length; i++) {
         if (force) m[i].setAccessible(true);
         if (methodName.equals(m[i].getName())) {
-          Class[] params = m[i].getParameterTypes();
+          Class<?>[] params = m[i].getParameterTypes();
           if (params.length == args.length) {
             boolean match = true;
             for (int j=0; j<params.length; j++) {
@@ -401,7 +402,8 @@ public class ReflectedUniverse {
       if (var == null) {
         throw new ReflectException("No such class: " + className);
       }
-      Class varClass = var instanceof Class ? (Class) var : var.getClass();
+      Class<?> varClass = var instanceof Class<?> ?
+        (Class<?>) var : var.getClass();
       String fieldName = varName.substring(dot + 1).trim();
       Field field;
       try {

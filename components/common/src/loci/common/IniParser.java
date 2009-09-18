@@ -52,7 +52,7 @@ public class IniParser {
    * Parses the INI-style configuration data from the given resource,
    * using the given class to find the resource.
    */
-  public IniList parseINI(String path, Class c)
+  public IniList parseINI(String path, Class<?> c)
     throws IOException
   {
     return parseINI(openTextResource(path, c));
@@ -124,7 +124,7 @@ public class IniParser {
   }
 
   /** Opens a buffered reader for the given resource. */
-  public static BufferedReader openTextResource(String path, Class c)
+  public static BufferedReader openTextResource(String path, Class<?> c)
     throws IOException
   {
     return new BufferedReader(new InputStreamReader(

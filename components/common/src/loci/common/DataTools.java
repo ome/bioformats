@@ -56,8 +56,8 @@ public final class DataTools {
    * Persistent byte array for calling
    * {@link java.io.DataInput#readFully(byte[], int, int)} efficiently.
    */
-  private static ThreadLocal eightBytes = new ThreadLocal() {
-    protected synchronized Object initialValue() {
+  private static ThreadLocal<byte[]> eightBytes = new ThreadLocal<byte[]>() {
+    protected synchronized byte[] initialValue() {
       return new byte[8];
     }
   };
