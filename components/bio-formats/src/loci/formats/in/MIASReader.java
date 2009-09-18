@@ -99,9 +99,13 @@ public class MIASReader extends FormatReader {
 
     Location baseFile = new Location(filename).getAbsoluteFile();
     Location wellDir = baseFile.getParentFile();
-    Location experiment = wellDir.getParentFile().getParentFile();
+    Location experiment = null;
+    try {
+      experiment = wellDir.getParentFile().getParentFile();
+    }
+    catch (NullPointerException e) { }
 
-    if (wellDir == null || experiment == null) return false;
+    if (experiment == null) return false;
 
     String wellName = wellDir.getName();
     boolean validName = wellName.startsWith("Well") ||
