@@ -371,10 +371,8 @@ public class PerkinElmerReader extends FormatReader {
 
     if (isTiff) Arrays.sort(files);
     else {
-      Comparator c = new Comparator() {
-        public int compare(Object o1, Object o2) {
-          String s1 = (String) o1;
-          String s2 = (String) o2;
+      Comparator<String> c = new Comparator<String>() {
+        public int compare(String s1, String s2) {
           String prefix1 = s1, prefix2 = s2, suffix1 = s1, suffix2 = s2;
           if (s1.indexOf(".") != -1) {
             prefix1 = s1.substring(0, s1.lastIndexOf("."));
@@ -762,11 +760,8 @@ public class PerkinElmerReader extends FormatReader {
 
   // -- Helper class --
 
-  class PEComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
-      String s1 = o1.toString();
-      String s2 = o2.toString();
-
+  class PEComparator implements Comparator<String> {
+    public int compare(String s1, String s2) {
       if (s1.equals(s2)) return 0;
 
       int underscore1 = (int) Math.max(s1.lastIndexOf("_"), 0);
@@ -797,10 +792,6 @@ public class PerkinElmerReader extends FormatReader {
       }
       catch (NumberFormatException e) { }
       return 0;
-    }
-
-    public boolean equals(Object o) {
-      return compare(this, o) == 0;
     }
   }
 

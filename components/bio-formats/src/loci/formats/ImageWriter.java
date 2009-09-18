@@ -103,12 +103,12 @@ public class ImageWriter implements IFormatWriter {
   /** Constructs a new ImageWriter from the given list of writer classes. */
   public ImageWriter(ClassList classList) {
     // add writers to the list
-    Vector v = new Vector();
-    Class[] c = classList.getClasses();
+    Vector<IFormatWriter> v = new Vector<IFormatWriter>();
+    Class<IFormatWriter>[] c = classList.getClasses();
     for (int i=0; i<c.length; i++) {
       IFormatWriter writer = null;
       try {
-        writer = (IFormatWriter) c[i].newInstance();
+        writer = c[i].newInstance();
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
@@ -154,7 +154,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Gets the file format writer instance matching the given class. */
-  public IFormatWriter getWriter(Class c) {
+  public IFormatWriter getWriter(Class<IFormatWriter> c) {
     for (int i=0; i<writers.length; i++) {
       if (writers[i].getClass().equals(c)) return writers[i];
     }
@@ -243,7 +243,7 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatWriter#getCompressionTypes() */
   public String[] getCompressionTypes() {
     if (compressionTypes == null) {
-      HashSet set = new HashSet();
+      HashSet<String> set = new HashSet<String>();
       for (int i=0; i<writers.length; i++) {
         String[] s = writers[i].getCompressionTypes();
         if (s != null) {
@@ -305,7 +305,7 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     if (suffixes == null) {
-      HashSet suffixSet = new HashSet();
+      HashSet<String> suffixSet = new HashSet<String>();
       for (int i=0; i<writers.length; i++) {
         String[] suf = writers[i].getSuffixes();
         for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
