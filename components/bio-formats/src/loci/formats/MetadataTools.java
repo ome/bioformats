@@ -129,6 +129,7 @@ public final class MetadataTools {
     catch (ReflectException exc) {
       LogTools.traceDebug(exc);
     }
+    if (ome == null) meta.createRoot();
     return meta;
   }
 
