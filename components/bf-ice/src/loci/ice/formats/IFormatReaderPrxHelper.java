@@ -1988,20 +1988,20 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
     }
 
     public void
-    setMetadataStore(MetadataStorePrx store)
+    setMetadataStore(IMetadataPrx store)
     {
         setMetadataStore(store, null, false);
     }
 
     public void
-    setMetadataStore(MetadataStorePrx store, java.util.Map<String, String> __ctx)
+    setMetadataStore(IMetadataPrx store, java.util.Map<String, String> __ctx)
     {
         setMetadataStore(store, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setMetadataStore(MetadataStorePrx store, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setMetadataStore(IMetadataPrx store, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -2100,48 +2100,6 @@ public final class IFormatReaderPrxHelper extends Ice.ObjectPrxHelperBase implem
                 __delBase = __getDelegate(false);
                 _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
                 __del.setOriginalMetadataPopulated(populate, __ctx);
-                return;
-            }
-            catch(IceInternal.LocalExceptionWrapper __ex)
-            {
-                __handleExceptionWrapper(__delBase, __ex, null);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __cnt = __handleException(__delBase, __ex, null, __cnt);
-            }
-        }
-    }
-
-    public void
-    setRetrieveAsStore(MetadataRetrievePrx retrieve)
-    {
-        setRetrieveAsStore(retrieve, null, false);
-    }
-
-    public void
-    setRetrieveAsStore(MetadataRetrievePrx retrieve, java.util.Map<String, String> __ctx)
-    {
-        setRetrieveAsStore(retrieve, __ctx, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void
-    setRetrieveAsStore(MetadataRetrievePrx retrieve, java.util.Map<String, String> __ctx, boolean __explicitCtx)
-    {
-        if(__explicitCtx && __ctx == null)
-        {
-            __ctx = _emptyContext;
-        }
-        int __cnt = 0;
-        while(true)
-        {
-            Ice._ObjectDel __delBase = null;
-            try
-            {
-                __delBase = __getDelegate(false);
-                _IFormatReaderDel __del = (_IFormatReaderDel)__delBase;
-                __del.setRetrieveAsStore(retrieve, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)

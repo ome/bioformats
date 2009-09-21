@@ -15,8 +15,6 @@ public interface _IFormatReaderOperations
 {
     void setId(String id, Ice.Current __current);
 
-    void setRetrieveAsStore(MetadataRetrievePrx retrieve, Ice.Current __current);
-
     boolean isThisType(String name, boolean open, Ice.Current __current);
 
     int getImageCount(Ice.Current __current);
@@ -115,5 +113,5 @@ public interface _IFormatReaderOperations
 
     boolean isMetadataFiltered(Ice.Current __current);
 
-    void setMetadataStore(MetadataStorePrx store, Ice.Current __current);
+    void setMetadataStore(IMetadataPrx store, Ice.Current __current);
 }

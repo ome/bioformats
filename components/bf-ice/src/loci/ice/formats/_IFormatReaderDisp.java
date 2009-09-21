@@ -351,7 +351,7 @@ public abstract class _IFormatReaderDisp extends Ice.ObjectImpl implements IForm
     }
 
     public final void
-    setMetadataStore(MetadataStorePrx store)
+    setMetadataStore(IMetadataPrx store)
     {
         setMetadataStore(store, null);
     }
@@ -366,12 +366,6 @@ public abstract class _IFormatReaderDisp extends Ice.ObjectImpl implements IForm
     setOriginalMetadataPopulated(boolean populate)
     {
         setOriginalMetadataPopulated(populate, null);
-    }
-
-    public final void
-    setRetrieveAsStore(MetadataRetrievePrx retrieve)
-    {
-        setRetrieveAsStore(retrieve, null);
     }
 
     public final void
@@ -390,19 +384,6 @@ public abstract class _IFormatReaderDisp extends Ice.ObjectImpl implements IForm
         id = __is.readString();
         __is.endReadEncaps();
         __obj.setId(id, __current);
-        return Ice.DispatchStatus.DispatchOK;
-    }
-
-    public static Ice.DispatchStatus
-    ___setRetrieveAsStore(IFormatReader __obj, IceInternal.Incoming __inS, Ice.Current __current)
-    {
-        __checkMode(Ice.OperationMode.Normal, __current.mode);
-        IceInternal.BasicStream __is = __inS.is();
-        __is.startReadEncaps();
-        MetadataRetrievePrx retrieve;
-        retrieve = MetadataRetrievePrxHelper.__read(__is);
-        __is.endReadEncaps();
-        __obj.setRetrieveAsStore(retrieve, __current);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -1005,8 +986,8 @@ public abstract class _IFormatReaderDisp extends Ice.ObjectImpl implements IForm
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        MetadataStorePrx store;
-        store = MetadataStorePrxHelper.__read(__is);
+        IMetadataPrx store;
+        store = IMetadataPrxHelper.__read(__is);
         __is.endReadEncaps();
         __obj.setMetadataStore(store, __current);
         return Ice.DispatchStatus.DispatchOK;
@@ -1068,7 +1049,6 @@ public abstract class _IFormatReaderDisp extends Ice.ObjectImpl implements IForm
         "setMetadataStore",
         "setNormalized",
         "setOriginalMetadataPopulated",
-        "setRetrieveAsStore",
         "setSeries"
     };
 
@@ -1300,10 +1280,6 @@ public abstract class _IFormatReaderDisp extends Ice.ObjectImpl implements IForm
                 return ___setOriginalMetadataPopulated(this, in, __current);
             }
             case 54:
-            {
-                return ___setRetrieveAsStore(this, in, __current);
-            }
-            case 55:
             {
                 return ___setSeries(this, in, __current);
             }

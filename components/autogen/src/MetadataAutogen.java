@@ -84,9 +84,7 @@ public class MetadataAutogen {
 
       // generate server-side Ice implementations
       VelocityTools.processTemplate(ve, context,
-        "ice/MetadataStoreI.vm", "loci/ice/formats/MetadataStoreI.java");
-      VelocityTools.processTemplate(ve, context,
-        "ice/MetadataRetrieveI.vm", "loci/ice/formats/MetadataRetrieveI.java");
+        "ice/IMetadataI.vm", "loci/ice/formats/IMetadataI.java");
     }
     else {
       // generate base metadata classes

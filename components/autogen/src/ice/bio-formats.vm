@@ -40,13 +40,11 @@ module formats {
   sequence<int> IntSeq;
   sequence<string> StringSeq;
 
-  interface MetadataRetrieve;
-  interface MetadataStore;
+  interface IMetadata;
 
   interface IFormatReader {
     void setId(string id);
 
-    void setRetrieveAsStore(MetadataRetrieve* retrieve);
     //const int MUST_GROUP = 0;
     //const int CAN_GROUP = 1;
     //const int CANNOT_GROUP = 2;
@@ -108,21 +106,20 @@ module formats {
     //CoreMetadata getCoreMetadata();
     void setMetadataFiltered(bool filter);
     bool isMetadataFiltered();
-    void setMetadataStore(MetadataStore* store);
-    //MetadataStore* getMetadataStore();
+    void setMetadataStore(IMetadata* store);
+    //IMetadata* getMetadataStore();
     //Object getMetadataStoreRoot();
     //IFormatReader[] getUnderlyingReaders();
   };
 
   interface IFormatWriter {
     void setId(string id);
-    void setStoreAsRetrieve(MetadataStore* store);
     void close();
     void saveBytes1(ByteSeq bytes, bool last);
     void saveBytes2(ByteSeq bytes, int series, bool lastInSeries, bool last);
     bool canDoStacks();
-    void setMetadataRetrieve(MetadataRetrieve* r);
-    MetadataRetrieve getMetadataRetrieve();
+    void setMetadataRetrieve(IMetadata* r);
+    IMetadata getMetadataRetrieve();
     void setFramesPerSecond(int rate);
     int getFramesPerSecond();
     StringSeq getCompressionTypes();
@@ -134,30 +131,9 @@ module formats {
     StringSeq getSuffixes();
   };
 
-  interface MetadataStore {
-    MetadataStore getServant();
-    string getOMEXML();
+  interface IMetadata {
+    // -- MetadataRetrieve methods --
 
-    void createRoot();
-    //void setRoot(Object root);
-    //Object getRoot();
-
-    // - Entity storage -
-
-    void setUUID(string uuid);
-#foreach ($entity in $q.entities())
-#set ($dummy = $q.setEntity($entity))
-
-    // - $entity property storage -
-#foreach ($prop in $q.props())
-#set ($dummy = $q.setProperty($prop))
-    void set$entity$prop($q.ice($q.type()) $q.var($prop), $q.argsList());
-#end##foreach $prop
-#end##foreach $entity
-  };
-
-  interface MetadataRetrieve {
-    MetadataRetrieve getServant();
     string getOMEXML();
 
     // - Entity counting -
@@ -180,6 +156,25 @@ module formats {
 #foreach ($prop in $q.props())
 #set ($dummy = $q.setProperty($prop))
     $q.ice($q.type()) get$entity$prop($q.argsList());
+#end##foreach $prop
+#end##foreach $entity
+
+    // -- MetadataStore methods --
+
+    void createRoot();
+    //void setRoot(Object root);
+    //Object getRoot();
+
+    // - Entity storage -
+
+    void setUUID(string uuid);
+#foreach ($entity in $q.entities())
+#set ($dummy = $q.setEntity($entity))
+
+    // - $entity property storage -
+#foreach ($prop in $q.props())
+#set ($dummy = $q.setProperty($prop))
+    void set$entity$prop($q.ice($q.type()) $q.var($prop), $q.argsList());
 #end##foreach $prop
 #end##foreach $entity
   };

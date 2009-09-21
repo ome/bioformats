@@ -65,14 +65,6 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     }
   }
 
-  public void setRetrieveAsStore(MetadataRetrievePrx retrievePrx,
-    Current current)
-  {
-    loci.formats.meta.MetadataStore s = (loci.formats.meta.MetadataStore)
-      ((MetadataRetrieveI) retrievePrx.getServant()).getWrappedObject();
-    reader.setMetadataStore(s);
-  }
-
   public boolean isThisType(String name, boolean open, Current current) {
     return reader.isThisType(name, open);
   }
@@ -311,9 +303,16 @@ public class IFormatReaderI extends _IFormatReaderDisp {
     return reader.isMetadataFiltered();
   }
 
-  public void setMetadataStore(MetadataStorePrx store, Current current) {
-    reader.setMetadataStore(((MetadataStoreI)
-      store.getServant()).getWrappedObject());
+  public void setMetadataStore(IMetadataPrx store, Current current) {
+    // CTR TODO
+    //reader.setMetadataStore(store);
+  }
+
+  public IMetadata getMetadataStore(Current current)
+  {
+    // CTR TODO
+    //return reader.getMetadataStore();
+    return null;
   }
 
   public void close(Current current) {

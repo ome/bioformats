@@ -11,18 +11,18 @@
 
 package loci.ice.formats;
 
-public final class MetadataRetrievePrxHolder
+public final class IMetadataPrxHolder
 {
     public
-    MetadataRetrievePrxHolder()
+    IMetadataPrxHolder()
     {
     }
 
     public
-    MetadataRetrievePrxHolder(MetadataRetrievePrx value)
+    IMetadataPrxHolder(IMetadataPrx value)
     {
         this.value = value;
     }
 
-    public MetadataRetrievePrx value;
+    public IMetadataPrx value;
 }

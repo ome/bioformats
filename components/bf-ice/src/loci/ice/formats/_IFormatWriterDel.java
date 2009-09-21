@@ -16,9 +16,6 @@ public interface _IFormatWriterDel extends Ice._ObjectDel
     void setId(String id, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStoreAsRetrieve(MetadataStorePrx store, java.util.Map<String, String> __ctx)
-        throws IceInternal.LocalExceptionWrapper;
-
     void close(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
@@ -31,10 +28,10 @@ public interface _IFormatWriterDel extends Ice._ObjectDel
     boolean canDoStacks(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setMetadataRetrieve(MetadataRetrievePrx r, java.util.Map<String, String> __ctx)
+    void setMetadataRetrieve(IMetadataPrx r, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    MetadataRetrieve getMetadataRetrieve(java.util.Map<String, String> __ctx)
+    IMetadata getMetadataRetrieve(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setFramesPerSecond(int rate, java.util.Map<String, String> __ctx)

@@ -16,9 +16,6 @@ public interface IFormatReaderPrx extends Ice.ObjectPrx
     public void setId(String id);
     public void setId(String id, java.util.Map<String, String> __ctx);
 
-    public void setRetrieveAsStore(MetadataRetrievePrx retrieve);
-    public void setRetrieveAsStore(MetadataRetrievePrx retrieve, java.util.Map<String, String> __ctx);
-
     public boolean isThisType(String name, boolean open);
     public boolean isThisType(String name, boolean open, java.util.Map<String, String> __ctx);
 
@@ -166,6 +163,6 @@ public interface IFormatReaderPrx extends Ice.ObjectPrx
     public boolean isMetadataFiltered();
     public boolean isMetadataFiltered(java.util.Map<String, String> __ctx);
 
-    public void setMetadataStore(MetadataStorePrx store);
-    public void setMetadataStore(MetadataStorePrx store, java.util.Map<String, String> __ctx);
+    public void setMetadataStore(IMetadataPrx store);
+    public void setMetadataStore(IMetadataPrx store, java.util.Map<String, String> __ctx);
 }

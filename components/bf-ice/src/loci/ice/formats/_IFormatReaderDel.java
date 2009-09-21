@@ -16,9 +16,6 @@ public interface _IFormatReaderDel extends Ice._ObjectDel
     void setId(String id, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setRetrieveAsStore(MetadataRetrievePrx retrieve, java.util.Map<String, String> __ctx)
-        throws IceInternal.LocalExceptionWrapper;
-
     boolean isThisType(String name, boolean open, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
@@ -166,6 +163,6 @@ public interface _IFormatReaderDel extends Ice._ObjectDel
     boolean isMetadataFiltered(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setMetadataStore(MetadataStorePrx store, java.util.Map<String, String> __ctx)
+    void setMetadataStore(IMetadataPrx store, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 }

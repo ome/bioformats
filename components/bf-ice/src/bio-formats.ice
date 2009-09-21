@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Sep 10, 2009 7:46:33 PM CDT
+ * Created by curtis via MetadataAutogen on Sep 21, 2009 3:33:03 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,13 +40,11 @@ module formats {
   sequence<int> IntSeq;
   sequence<string> StringSeq;
 
-  interface MetadataRetrieve;
-  interface MetadataStore;
+  interface IMetadata;
 
   interface IFormatReader {
     void setId(string id);
 
-    void setRetrieveAsStore(MetadataRetrieve* retrieve);
     //const int MUST_GROUP = 0;
     //const int CAN_GROUP = 1;
     //const int CANNOT_GROUP = 2;
@@ -108,21 +106,20 @@ module formats {
     //CoreMetadata getCoreMetadata();
     void setMetadataFiltered(bool filter);
     bool isMetadataFiltered();
-    void setMetadataStore(MetadataStore* store);
-    //MetadataStore* getMetadataStore();
+    void setMetadataStore(IMetadata* store);
+    //IMetadata* getMetadataStore();
     //Object getMetadataStoreRoot();
     //IFormatReader[] getUnderlyingReaders();
   };
 
   interface IFormatWriter {
     void setId(string id);
-    void setStoreAsRetrieve(MetadataStore* store);
     void close();
     void saveBytes1(ByteSeq bytes, bool last);
     void saveBytes2(ByteSeq bytes, int series, bool lastInSeries, bool last);
     bool canDoStacks();
-    void setMetadataRetrieve(MetadataRetrieve* r);
-    MetadataRetrieve getMetadataRetrieve();
+    void setMetadataRetrieve(IMetadata* r);
+    IMetadata getMetadataRetrieve();
     void setFramesPerSecond(int rate);
     int getFramesPerSecond();
     StringSeq getCompressionTypes();
@@ -134,504 +131,9 @@ module formats {
     StringSeq getSuffixes();
   };
 
-  interface MetadataStore {
-    MetadataStore getServant();
-    string getOMEXML();
+  interface IMetadata {
+    // -- MetadataRetrieve methods --
 
-    void createRoot();
-    //void setRoot(Object root);
-    //Object getRoot();
-
-    // - Entity storage -
-
-    void setUUID(string uuid);
-
-    // - Arc property storage -
-    void setArcType(string type, int instrumentIndex, int lightSourceIndex);
-
-    // - ChannelComponent property storage -
-    void setChannelComponentColorDomain(string colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-    void setChannelComponentIndex(int index, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-    void setChannelComponentPixels(string pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-
-    // - Circle property storage -
-    void setCircleCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
-    void setCircleCy(string cy, int imageIndex, int roiIndex, int shapeIndex);
-    void setCircleID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setCircleR(string r, int imageIndex, int roiIndex, int shapeIndex);
-    void setCircleTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - Contact property storage -
-    void setContactExperimenter(string experimenter, int groupIndex);
-
-    // - Dataset property storage -
-    void setDatasetDescription(string description, int datasetIndex);
-    void setDatasetExperimenterRef(string experimenterRef, int datasetIndex);
-    void setDatasetGroupRef(string groupRef, int datasetIndex);
-    void setDatasetID(string id, int datasetIndex);
-    void setDatasetLocked(bool locked, int datasetIndex);
-    void setDatasetName(string name, int datasetIndex);
-
-    // - DatasetRef property storage -
-    void setDatasetRefID(string id, int imageIndex, int datasetRefIndex);
-
-    // - Detector property storage -
-    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex);
-    void setDetectorGain(float gain, int instrumentIndex, int detectorIndex);
-    void setDetectorID(string id, int instrumentIndex, int detectorIndex);
-    void setDetectorManufacturer(string manufacturer, int instrumentIndex, int detectorIndex);
-    void setDetectorModel(string model, int instrumentIndex, int detectorIndex);
-    void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex);
-    void setDetectorSerialNumber(string serialNumber, int instrumentIndex, int detectorIndex);
-    void setDetectorType(string type, int instrumentIndex, int detectorIndex);
-    void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex);
-    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex);
-
-    // - DetectorSettings property storage -
-    void setDetectorSettingsBinning(string binning, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsDetector(string detector, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex);
-
-    // - Dichroic property storage -
-    void setDichroicID(string id, int instrumentIndex, int dichroicIndex);
-    void setDichroicLotNumber(string lotNumber, int instrumentIndex, int dichroicIndex);
-    void setDichroicManufacturer(string manufacturer, int instrumentIndex, int dichroicIndex);
-    void setDichroicModel(string model, int instrumentIndex, int dichroicIndex);
-
-    // - Dimensions property storage -
-    void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex);
-    void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex);
-    void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex);
-    void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex);
-    void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex);
-    void setDimensionsWaveStart(int waveStart, int imageIndex, int pixelsIndex);
-
-    // - DisplayOptions property storage -
-    void setDisplayOptionsDisplay(string display, int imageIndex);
-    void setDisplayOptionsID(string id, int imageIndex);
-    void setDisplayOptionsZoom(float zoom, int imageIndex);
-
-    // - Ellipse property storage -
-    void setEllipseCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
-    void setEllipseCy(string cy, int imageIndex, int roiIndex, int shapeIndex);
-    void setEllipseID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setEllipseRx(string rx, int imageIndex, int roiIndex, int shapeIndex);
-    void setEllipseRy(string ry, int imageIndex, int roiIndex, int shapeIndex);
-    void setEllipseTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - EmFilter property storage -
-    void setEmFilterLotNumber(string lotNumber, int instrumentIndex, int filterIndex);
-    void setEmFilterManufacturer(string manufacturer, int instrumentIndex, int filterIndex);
-    void setEmFilterModel(string model, int instrumentIndex, int filterIndex);
-    void setEmFilterType(string type, int instrumentIndex, int filterIndex);
-
-    // - ExFilter property storage -
-    void setExFilterLotNumber(string lotNumber, int instrumentIndex, int filterIndex);
-    void setExFilterManufacturer(string manufacturer, int instrumentIndex, int filterIndex);
-    void setExFilterModel(string model, int instrumentIndex, int filterIndex);
-    void setExFilterType(string type, int instrumentIndex, int filterIndex);
-
-    // - Experiment property storage -
-    void setExperimentDescription(string description, int experimentIndex);
-    void setExperimentExperimenterRef(string experimenterRef, int experimentIndex);
-    void setExperimentID(string id, int experimentIndex);
-    void setExperimentType(string type, int experimentIndex);
-
-    // - Experimenter property storage -
-    void setExperimenterEmail(string email, int experimenterIndex);
-    void setExperimenterFirstName(string firstName, int experimenterIndex);
-    void setExperimenterID(string id, int experimenterIndex);
-    void setExperimenterInstitution(string institution, int experimenterIndex);
-    void setExperimenterLastName(string lastName, int experimenterIndex);
-    void setExperimenterOMEName(string omeName, int experimenterIndex);
-
-    // - ExperimenterMembership property storage -
-    void setExperimenterMembershipGroup(string group, int experimenterIndex, int groupRefIndex);
-
-    // - Filament property storage -
-    void setFilamentType(string type, int instrumentIndex, int lightSourceIndex);
-
-    // - Filter property storage -
-    void setFilterFilterWheel(string filterWheel, int instrumentIndex, int filterIndex);
-    void setFilterID(string id, int instrumentIndex, int filterIndex);
-    void setFilterLotNumber(string lotNumber, int instrumentIndex, int filterIndex);
-    void setFilterManufacturer(string manufacturer, int instrumentIndex, int filterIndex);
-    void setFilterModel(string model, int instrumentIndex, int filterIndex);
-    void setFilterType(string type, int instrumentIndex, int filterIndex);
-
-    // - FilterSet property storage -
-    void setFilterSetDichroic(string dichroic, int instrumentIndex, int filterSetIndex);
-    void setFilterSetEmFilter(string emFilter, int instrumentIndex, int filterSetIndex);
-    void setFilterSetExFilter(string exFilter, int instrumentIndex, int filterSetIndex);
-    void setFilterSetID(string id, int instrumentIndex, int filterSetIndex);
-    void setFilterSetLotNumber(string lotNumber, int instrumentIndex, int filterSetIndex);
-    void setFilterSetManufacturer(string manufacturer, int instrumentIndex, int filterSetIndex);
-    void setFilterSetModel(string model, int instrumentIndex, int filterSetIndex);
-
-    // - Group property storage -
-    void setGroupID(string id, int groupIndex);
-    void setGroupName(string name, int groupIndex);
-
-    // - GroupRef property storage -
-
-    // - Image property storage -
-    void setImageAcquiredPixels(string acquiredPixels, int imageIndex);
-    void setImageCreationDate(string creationDate, int imageIndex);
-    void setImageDefaultPixels(string defaultPixels, int imageIndex);
-    void setImageDescription(string description, int imageIndex);
-    void setImageExperimentRef(string experimentRef, int imageIndex);
-    void setImageExperimenterRef(string experimenterRef, int imageIndex);
-    void setImageGroupRef(string groupRef, int imageIndex);
-    void setImageID(string id, int imageIndex);
-    void setImageInstrumentRef(string instrumentRef, int imageIndex);
-    void setImageName(string name, int imageIndex);
-
-    // - ImagingEnvironment property storage -
-    void setImagingEnvironmentAirPressure(float airPressure, int imageIndex);
-    void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex);
-    void setImagingEnvironmentHumidity(float humidity, int imageIndex);
-    void setImagingEnvironmentTemperature(float temperature, int imageIndex);
-
-    // - Instrument property storage -
-    void setInstrumentID(string id, int instrumentIndex);
-
-    // - Laser property storage -
-    void setLaserFrequencyMultiplication(int frequencyMultiplication, int instrumentIndex, int lightSourceIndex);
-    void setLaserLaserMedium(string laserMedium, int instrumentIndex, int lightSourceIndex);
-    void setLaserPockelCell(bool pockelCell, int instrumentIndex, int lightSourceIndex);
-    void setLaserPulse(string pulse, int instrumentIndex, int lightSourceIndex);
-    void setLaserRepetitionRate(bool repetitionRate, int instrumentIndex, int lightSourceIndex);
-    void setLaserTuneable(bool tuneable, int instrumentIndex, int lightSourceIndex);
-    void setLaserType(string type, int instrumentIndex, int lightSourceIndex);
-    void setLaserWavelength(int wavelength, int instrumentIndex, int lightSourceIndex);
-
-    // - LightSource property storage -
-    void setLightSourceID(string id, int instrumentIndex, int lightSourceIndex);
-    void setLightSourceManufacturer(string manufacturer, int instrumentIndex, int lightSourceIndex);
-    void setLightSourceModel(string model, int instrumentIndex, int lightSourceIndex);
-    void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex);
-    void setLightSourceSerialNumber(string serialNumber, int instrumentIndex, int lightSourceIndex);
-
-    // - LightSourceRef property storage -
-    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-    void setLightSourceRefLightSource(string lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-    void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-
-    // - LightSourceSettings property storage -
-    void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex);
-    void setLightSourceSettingsLightSource(string lightSource, int imageIndex, int logicalChannelIndex);
-    void setLightSourceSettingsWavelength(int wavelength, int imageIndex, int logicalChannelIndex);
-
-    // - Line property storage -
-    void setLineID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setLineTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-    void setLineX1(string x1, int imageIndex, int roiIndex, int shapeIndex);
-    void setLineX2(string x2, int imageIndex, int roiIndex, int shapeIndex);
-    void setLineY1(string y1, int imageIndex, int roiIndex, int shapeIndex);
-    void setLineY2(string y2, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - LogicalChannel property storage -
-    void setLogicalChannelContrastMethod(string contrastMethod, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelDetector(string detector, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelEmWave(int emWave, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelExWave(int exWave, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelFilterSet(string filterSet, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelFluor(string fluor, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelID(string id, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelIlluminationType(string illuminationType, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelLightSource(string lightSource, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelMode(string mode, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelName(string name, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelOTF(string otf, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelPhotometricInterpretation(string photometricInterpretation, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelSecondaryEmissionFilter(string secondaryEmissionFilter, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelSecondaryExcitationFilter(string secondaryExcitationFilter, int imageIndex, int logicalChannelIndex);
-
-    // - Mask property storage -
-    void setMaskHeight(string height, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskWidth(string width, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskX(string x, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskY(string y, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - MaskPixels property storage -
-    void setMaskPixelsBigEndian(bool bigEndian, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskPixelsBinData(string binData, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskPixelsExtendedPixelType(string extendedPixelType, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskPixelsID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - MicrobeamManipulation property storage -
-    void setMicrobeamManipulationExperimenterRef(string experimenterRef, int imageIndex, int microbeamManipulationIndex);
-    void setMicrobeamManipulationID(string id, int imageIndex, int microbeamManipulationIndex);
-    void setMicrobeamManipulationType(string type, int imageIndex, int microbeamManipulationIndex);
-
-    // - MicrobeamManipulationRef property storage -
-    void setMicrobeamManipulationRefID(string id, int experimentIndex, int microbeamManipulationRefIndex);
-
-    // - Microscope property storage -
-    void setMicroscopeID(string id, int instrumentIndex);
-    void setMicroscopeManufacturer(string manufacturer, int instrumentIndex);
-    void setMicroscopeModel(string model, int instrumentIndex);
-    void setMicroscopeSerialNumber(string serialNumber, int instrumentIndex);
-    void setMicroscopeType(string type, int instrumentIndex);
-
-    // - OTF property storage -
-    void setOTFBinaryFile(string binaryFile, int instrumentIndex, int otfIndex);
-    void setOTFID(string id, int instrumentIndex, int otfIndex);
-    void setOTFObjective(string objective, int instrumentIndex, int otfIndex);
-    void setOTFOpticalAxisAveraged(bool opticalAxisAveraged, int instrumentIndex, int otfIndex);
-    void setOTFPixelType(string pixelType, int instrumentIndex, int otfIndex);
-    void setOTFSizeX(int sizeX, int instrumentIndex, int otfIndex);
-    void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex);
-
-    // - Objective property storage -
-    void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex);
-    void setObjectiveCorrection(string correction, int instrumentIndex, int objectiveIndex);
-    void setObjectiveID(string id, int instrumentIndex, int objectiveIndex);
-    void setObjectiveImmersion(string immersion, int instrumentIndex, int objectiveIndex);
-    void setObjectiveIris(bool iris, int instrumentIndex, int objectiveIndex);
-    void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex);
-    void setObjectiveManufacturer(string manufacturer, int instrumentIndex, int objectiveIndex);
-    void setObjectiveModel(string model, int instrumentIndex, int objectiveIndex);
-    void setObjectiveNominalMagnification(int nominalMagnification, int instrumentIndex, int objectiveIndex);
-    void setObjectiveSerialNumber(string serialNumber, int instrumentIndex, int objectiveIndex);
-    void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex);
-
-    // - ObjectiveSettings property storage -
-    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex);
-    void setObjectiveSettingsMedium(string medium, int imageIndex);
-    void setObjectiveSettingsObjective(string objective, int imageIndex);
-    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex);
-
-    // - Path property storage -
-    void setPathD(string d, int imageIndex, int roiIndex, int shapeIndex);
-    void setPathID(string id, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - Pixels property storage -
-    void setPixelsBigEndian(bool bigEndian, int imageIndex, int pixelsIndex);
-    void setPixelsDimensionOrder(string dimensionOrder, int imageIndex, int pixelsIndex);
-    void setPixelsID(string id, int imageIndex, int pixelsIndex);
-    void setPixelsPixelType(string pixelType, int imageIndex, int pixelsIndex);
-    void setPixelsSizeC(int sizeC, int imageIndex, int pixelsIndex);
-    void setPixelsSizeT(int sizeT, int imageIndex, int pixelsIndex);
-    void setPixelsSizeX(int sizeX, int imageIndex, int pixelsIndex);
-    void setPixelsSizeY(int sizeY, int imageIndex, int pixelsIndex);
-    void setPixelsSizeZ(int sizeZ, int imageIndex, int pixelsIndex);
-
-    // - Plane property storage -
-    void setPlaneHashSHA1(string hashSHA1, int imageIndex, int pixelsIndex, int planeIndex);
-    void setPlaneID(string id, int imageIndex, int pixelsIndex, int planeIndex);
-    void setPlaneTheC(int theC, int imageIndex, int pixelsIndex, int planeIndex);
-    void setPlaneTheT(int theT, int imageIndex, int pixelsIndex, int planeIndex);
-    void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex);
-
-    // - PlaneTiming property storage -
-    void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
-    void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
-
-    // - Plate property storage -
-    void setPlateColumnNamingConvention(string columnNamingConvention, int plateIndex);
-    void setPlateDescription(string description, int plateIndex);
-    void setPlateExternalIdentifier(string externalIdentifier, int plateIndex);
-    void setPlateID(string id, int plateIndex);
-    void setPlateName(string name, int plateIndex);
-    void setPlateRowNamingConvention(string rowNamingConvention, int plateIndex);
-    void setPlateStatus(string status, int plateIndex);
-    void setPlateWellOriginX(double wellOriginX, int plateIndex);
-    void setPlateWellOriginY(double wellOriginY, int plateIndex);
-
-    // - PlateRef property storage -
-    void setPlateRefID(string id, int screenIndex, int plateRefIndex);
-    void setPlateRefSample(int sample, int screenIndex, int plateRefIndex);
-    void setPlateRefWell(string well, int screenIndex, int plateRefIndex);
-
-    // - Point property storage -
-    void setPointCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
-    void setPointCy(string cy, int imageIndex, int roiIndex, int shapeIndex);
-    void setPointID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setPointR(string r, int imageIndex, int roiIndex, int shapeIndex);
-    void setPointTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - Polygon property storage -
-    void setPolygonID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setPolygonPoints(string points, int imageIndex, int roiIndex, int shapeIndex);
-    void setPolygonTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - Polyline property storage -
-    void setPolylineID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setPolylinePoints(string points, int imageIndex, int roiIndex, int shapeIndex);
-    void setPolylineTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - Project property storage -
-    void setProjectDescription(string description, int projectIndex);
-    void setProjectExperimenterRef(string experimenterRef, int projectIndex);
-    void setProjectGroupRef(string groupRef, int projectIndex);
-    void setProjectID(string id, int projectIndex);
-    void setProjectName(string name, int projectIndex);
-
-    // - ProjectRef property storage -
-    void setProjectRefID(string id, int datasetIndex, int projectRefIndex);
-
-    // - Pump property storage -
-    void setPumpLightSource(string lightSource, int instrumentIndex, int lightSourceIndex);
-
-    // - ROI property storage -
-    void setROIID(string id, int imageIndex, int roiIndex);
-    void setROIT0(int t0, int imageIndex, int roiIndex);
-    void setROIT1(int t1, int imageIndex, int roiIndex);
-    void setROIX0(int x0, int imageIndex, int roiIndex);
-    void setROIX1(int x1, int imageIndex, int roiIndex);
-    void setROIY0(int y0, int imageIndex, int roiIndex);
-    void setROIY1(int y1, int imageIndex, int roiIndex);
-    void setROIZ0(int z0, int imageIndex, int roiIndex);
-    void setROIZ1(int z1, int imageIndex, int roiIndex);
-
-    // - ROIRef property storage -
-    void setROIRefID(string id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex);
-
-    // - Reagent property storage -
-    void setReagentDescription(string description, int screenIndex, int reagentIndex);
-    void setReagentID(string id, int screenIndex, int reagentIndex);
-    void setReagentName(string name, int screenIndex, int reagentIndex);
-    void setReagentReagentIdentifier(string reagentIdentifier, int screenIndex, int reagentIndex);
-
-    // - Rect property storage -
-    void setRectHeight(string height, int imageIndex, int roiIndex, int shapeIndex);
-    void setRectID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setRectTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
-    void setRectWidth(string width, int imageIndex, int roiIndex, int shapeIndex);
-    void setRectX(string x, int imageIndex, int roiIndex, int shapeIndex);
-    void setRectY(string y, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - Region property storage -
-    void setRegionID(string id, int imageIndex, int regionIndex);
-    void setRegionName(string name, int imageIndex, int regionIndex);
-    void setRegionTag(string tag, int imageIndex, int regionIndex);
-
-    // - RoiLink property storage -
-    void setRoiLinkDirection(string direction, int imageIndex, int roiIndex, int roiLinkIndex);
-    void setRoiLinkName(string name, int imageIndex, int roiIndex, int roiLinkIndex);
-    void setRoiLinkRef(string ref, int imageIndex, int roiIndex, int roiLinkIndex);
-
-    // - Screen property storage -
-    void setScreenDescription(string description, int screenIndex);
-    void setScreenExtern(string extern, int screenIndex);
-    void setScreenID(string id, int screenIndex);
-    void setScreenName(string name, int screenIndex);
-    void setScreenProtocolDescription(string protocolDescription, int screenIndex);
-    void setScreenProtocolIdentifier(string protocolIdentifier, int screenIndex);
-    void setScreenReagentSetDescription(string reagentSetDescription, int screenIndex);
-    void setScreenReagentSetIdentifier(string reagentSetIdentifier, int screenIndex);
-    void setScreenType(string type, int screenIndex);
-
-    // - ScreenAcquisition property storage -
-    void setScreenAcquisitionEndTime(string endTime, int screenIndex, int screenAcquisitionIndex);
-    void setScreenAcquisitionID(string id, int screenIndex, int screenAcquisitionIndex);
-    void setScreenAcquisitionStartTime(string startTime, int screenIndex, int screenAcquisitionIndex);
-
-    // - ScreenRef property storage -
-    void setScreenRefID(string id, int plateIndex, int screenRefIndex);
-
-    // - Shape property storage -
-    void setShapeBaselineShift(string baselineShift, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeDirection(string direction, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFillColor(string fillColor, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFillOpacity(string fillOpacity, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFillRule(string fillRule, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFontFamily(string fontFamily, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFontStretch(string fontStretch, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFontStyle(string fontStyle, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFontVariant(string fontVariant, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeFontWeight(string fontWeight, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeG(string g, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeID(string id, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeLocked(bool locked, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeAttribute(string strokeAttribute, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeColor(string strokeColor, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeDashArray(string strokeDashArray, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeLineCap(string strokeLineCap, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeLineJoin(string strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeText(string text, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeTextAnchor(string textAnchor, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeTextDecoration(string textDecoration, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeTextFill(string textFill, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeTextStroke(string textStroke, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeVectorEffect(string vectorEffect, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeVisibility(bool visibility, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeWritingMode(string writingMode, int imageIndex, int roiIndex, int shapeIndex);
-
-    // - StageLabel property storage -
-    void setStageLabelName(string name, int imageIndex);
-    void setStageLabelX(float x, int imageIndex);
-    void setStageLabelY(float y, int imageIndex);
-    void setStageLabelZ(float z, int imageIndex);
-
-    // - StagePosition property storage -
-    void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex);
-    void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex);
-    void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
-
-    // - Thumbnail property storage -
-    void setThumbnailHref(string href, int imageIndex);
-    void setThumbnailID(string id, int imageIndex);
-    void setThumbnailMIMEtype(string mimEtype, int imageIndex);
-
-    // - TiffData property storage -
-    void setTiffDataFileName(string fileName, int imageIndex, int pixelsIndex, int tiffDataIndex);
-    void setTiffDataFirstC(int firstC, int imageIndex, int pixelsIndex, int tiffDataIndex);
-    void setTiffDataFirstT(int firstT, int imageIndex, int pixelsIndex, int tiffDataIndex);
-    void setTiffDataFirstZ(int firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex);
-    void setTiffDataIFD(int ifd, int imageIndex, int pixelsIndex, int tiffDataIndex);
-    void setTiffDataNumPlanes(int numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex);
-    void setTiffDataUUID(string uuid, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-    // - TransmittanceRange property storage -
-    void setTransmittanceRangeCutIn(int cutIn, int instrumentIndex, int filterIndex);
-    void setTransmittanceRangeCutInTolerance(int cutInTolerance, int instrumentIndex, int filterIndex);
-    void setTransmittanceRangeCutOut(int cutOut, int instrumentIndex, int filterIndex);
-    void setTransmittanceRangeCutOutTolerance(int cutOutTolerance, int instrumentIndex, int filterIndex);
-    void setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex);
-
-    // - Well property storage -
-    void setWellColumn(int column, int plateIndex, int wellIndex);
-    void setWellExternalDescription(string externalDescription, int plateIndex, int wellIndex);
-    void setWellExternalIdentifier(string externalIdentifier, int plateIndex, int wellIndex);
-    void setWellID(string id, int plateIndex, int wellIndex);
-    void setWellReagent(string reagent, int plateIndex, int wellIndex);
-    void setWellRow(int row, int plateIndex, int wellIndex);
-    void setWellType(string type, int plateIndex, int wellIndex);
-
-    // - WellSample property storage -
-    void setWellSampleID(string id, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSampleImageRef(string imageRef, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
-
-    // - WellSampleRef property storage -
-    void setWellSampleRefID(string id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex);
-  };
-
-  interface MetadataRetrieve {
-    MetadataRetrieve getServant();
     string getOMEXML();
 
     // - Entity counting -
@@ -1232,5 +734,498 @@ module formats {
     // - WellSampleRef property retrieval -
 
     string getWellSampleRefID(int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex);
+
+    // -- MetadataStore methods --
+
+    void createRoot();
+    //void setRoot(Object root);
+    //Object getRoot();
+
+    // - Entity storage -
+
+    void setUUID(string uuid);
+
+    // - Arc property storage -
+    void setArcType(string type, int instrumentIndex, int lightSourceIndex);
+
+    // - ChannelComponent property storage -
+    void setChannelComponentColorDomain(string colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+    void setChannelComponentIndex(int index, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+    void setChannelComponentPixels(string pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
+
+    // - Circle property storage -
+    void setCircleCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
+    void setCircleCy(string cy, int imageIndex, int roiIndex, int shapeIndex);
+    void setCircleID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setCircleR(string r, int imageIndex, int roiIndex, int shapeIndex);
+    void setCircleTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - Contact property storage -
+    void setContactExperimenter(string experimenter, int groupIndex);
+
+    // - Dataset property storage -
+    void setDatasetDescription(string description, int datasetIndex);
+    void setDatasetExperimenterRef(string experimenterRef, int datasetIndex);
+    void setDatasetGroupRef(string groupRef, int datasetIndex);
+    void setDatasetID(string id, int datasetIndex);
+    void setDatasetLocked(bool locked, int datasetIndex);
+    void setDatasetName(string name, int datasetIndex);
+
+    // - DatasetRef property storage -
+    void setDatasetRefID(string id, int imageIndex, int datasetRefIndex);
+
+    // - Detector property storage -
+    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex);
+    void setDetectorGain(float gain, int instrumentIndex, int detectorIndex);
+    void setDetectorID(string id, int instrumentIndex, int detectorIndex);
+    void setDetectorManufacturer(string manufacturer, int instrumentIndex, int detectorIndex);
+    void setDetectorModel(string model, int instrumentIndex, int detectorIndex);
+    void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex);
+    void setDetectorSerialNumber(string serialNumber, int instrumentIndex, int detectorIndex);
+    void setDetectorType(string type, int instrumentIndex, int detectorIndex);
+    void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex);
+    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex);
+
+    // - DetectorSettings property storage -
+    void setDetectorSettingsBinning(string binning, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsDetector(string detector, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex);
+
+    // - Dichroic property storage -
+    void setDichroicID(string id, int instrumentIndex, int dichroicIndex);
+    void setDichroicLotNumber(string lotNumber, int instrumentIndex, int dichroicIndex);
+    void setDichroicManufacturer(string manufacturer, int instrumentIndex, int dichroicIndex);
+    void setDichroicModel(string model, int instrumentIndex, int dichroicIndex);
+
+    // - Dimensions property storage -
+    void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex);
+    void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex);
+    void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex);
+    void setDimensionsWaveStart(int waveStart, int imageIndex, int pixelsIndex);
+
+    // - DisplayOptions property storage -
+    void setDisplayOptionsDisplay(string display, int imageIndex);
+    void setDisplayOptionsID(string id, int imageIndex);
+    void setDisplayOptionsZoom(float zoom, int imageIndex);
+
+    // - Ellipse property storage -
+    void setEllipseCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
+    void setEllipseCy(string cy, int imageIndex, int roiIndex, int shapeIndex);
+    void setEllipseID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setEllipseRx(string rx, int imageIndex, int roiIndex, int shapeIndex);
+    void setEllipseRy(string ry, int imageIndex, int roiIndex, int shapeIndex);
+    void setEllipseTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - EmFilter property storage -
+    void setEmFilterLotNumber(string lotNumber, int instrumentIndex, int filterIndex);
+    void setEmFilterManufacturer(string manufacturer, int instrumentIndex, int filterIndex);
+    void setEmFilterModel(string model, int instrumentIndex, int filterIndex);
+    void setEmFilterType(string type, int instrumentIndex, int filterIndex);
+
+    // - ExFilter property storage -
+    void setExFilterLotNumber(string lotNumber, int instrumentIndex, int filterIndex);
+    void setExFilterManufacturer(string manufacturer, int instrumentIndex, int filterIndex);
+    void setExFilterModel(string model, int instrumentIndex, int filterIndex);
+    void setExFilterType(string type, int instrumentIndex, int filterIndex);
+
+    // - Experiment property storage -
+    void setExperimentDescription(string description, int experimentIndex);
+    void setExperimentExperimenterRef(string experimenterRef, int experimentIndex);
+    void setExperimentID(string id, int experimentIndex);
+    void setExperimentType(string type, int experimentIndex);
+
+    // - Experimenter property storage -
+    void setExperimenterEmail(string email, int experimenterIndex);
+    void setExperimenterFirstName(string firstName, int experimenterIndex);
+    void setExperimenterID(string id, int experimenterIndex);
+    void setExperimenterInstitution(string institution, int experimenterIndex);
+    void setExperimenterLastName(string lastName, int experimenterIndex);
+    void setExperimenterOMEName(string omeName, int experimenterIndex);
+
+    // - ExperimenterMembership property storage -
+    void setExperimenterMembershipGroup(string group, int experimenterIndex, int groupRefIndex);
+
+    // - Filament property storage -
+    void setFilamentType(string type, int instrumentIndex, int lightSourceIndex);
+
+    // - Filter property storage -
+    void setFilterFilterWheel(string filterWheel, int instrumentIndex, int filterIndex);
+    void setFilterID(string id, int instrumentIndex, int filterIndex);
+    void setFilterLotNumber(string lotNumber, int instrumentIndex, int filterIndex);
+    void setFilterManufacturer(string manufacturer, int instrumentIndex, int filterIndex);
+    void setFilterModel(string model, int instrumentIndex, int filterIndex);
+    void setFilterType(string type, int instrumentIndex, int filterIndex);
+
+    // - FilterSet property storage -
+    void setFilterSetDichroic(string dichroic, int instrumentIndex, int filterSetIndex);
+    void setFilterSetEmFilter(string emFilter, int instrumentIndex, int filterSetIndex);
+    void setFilterSetExFilter(string exFilter, int instrumentIndex, int filterSetIndex);
+    void setFilterSetID(string id, int instrumentIndex, int filterSetIndex);
+    void setFilterSetLotNumber(string lotNumber, int instrumentIndex, int filterSetIndex);
+    void setFilterSetManufacturer(string manufacturer, int instrumentIndex, int filterSetIndex);
+    void setFilterSetModel(string model, int instrumentIndex, int filterSetIndex);
+
+    // - Group property storage -
+    void setGroupID(string id, int groupIndex);
+    void setGroupName(string name, int groupIndex);
+
+    // - GroupRef property storage -
+
+    // - Image property storage -
+    void setImageAcquiredPixels(string acquiredPixels, int imageIndex);
+    void setImageCreationDate(string creationDate, int imageIndex);
+    void setImageDefaultPixels(string defaultPixels, int imageIndex);
+    void setImageDescription(string description, int imageIndex);
+    void setImageExperimentRef(string experimentRef, int imageIndex);
+    void setImageExperimenterRef(string experimenterRef, int imageIndex);
+    void setImageGroupRef(string groupRef, int imageIndex);
+    void setImageID(string id, int imageIndex);
+    void setImageInstrumentRef(string instrumentRef, int imageIndex);
+    void setImageName(string name, int imageIndex);
+
+    // - ImagingEnvironment property storage -
+    void setImagingEnvironmentAirPressure(float airPressure, int imageIndex);
+    void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex);
+    void setImagingEnvironmentHumidity(float humidity, int imageIndex);
+    void setImagingEnvironmentTemperature(float temperature, int imageIndex);
+
+    // - Instrument property storage -
+    void setInstrumentID(string id, int instrumentIndex);
+
+    // - Laser property storage -
+    void setLaserFrequencyMultiplication(int frequencyMultiplication, int instrumentIndex, int lightSourceIndex);
+    void setLaserLaserMedium(string laserMedium, int instrumentIndex, int lightSourceIndex);
+    void setLaserPockelCell(bool pockelCell, int instrumentIndex, int lightSourceIndex);
+    void setLaserPulse(string pulse, int instrumentIndex, int lightSourceIndex);
+    void setLaserRepetitionRate(bool repetitionRate, int instrumentIndex, int lightSourceIndex);
+    void setLaserTuneable(bool tuneable, int instrumentIndex, int lightSourceIndex);
+    void setLaserType(string type, int instrumentIndex, int lightSourceIndex);
+    void setLaserWavelength(int wavelength, int instrumentIndex, int lightSourceIndex);
+
+    // - LightSource property storage -
+    void setLightSourceID(string id, int instrumentIndex, int lightSourceIndex);
+    void setLightSourceManufacturer(string manufacturer, int instrumentIndex, int lightSourceIndex);
+    void setLightSourceModel(string model, int instrumentIndex, int lightSourceIndex);
+    void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex);
+    void setLightSourceSerialNumber(string serialNumber, int instrumentIndex, int lightSourceIndex);
+
+    // - LightSourceRef property storage -
+    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    void setLightSourceRefLightSource(string lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+
+    // - LightSourceSettings property storage -
+    void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex);
+    void setLightSourceSettingsLightSource(string lightSource, int imageIndex, int logicalChannelIndex);
+    void setLightSourceSettingsWavelength(int wavelength, int imageIndex, int logicalChannelIndex);
+
+    // - Line property storage -
+    void setLineID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setLineTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+    void setLineX1(string x1, int imageIndex, int roiIndex, int shapeIndex);
+    void setLineX2(string x2, int imageIndex, int roiIndex, int shapeIndex);
+    void setLineY1(string y1, int imageIndex, int roiIndex, int shapeIndex);
+    void setLineY2(string y2, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - LogicalChannel property storage -
+    void setLogicalChannelContrastMethod(string contrastMethod, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelDetector(string detector, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelEmWave(int emWave, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelExWave(int exWave, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelFilterSet(string filterSet, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelFluor(string fluor, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelID(string id, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelIlluminationType(string illuminationType, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelLightSource(string lightSource, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelMode(string mode, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelName(string name, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelOTF(string otf, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelPhotometricInterpretation(string photometricInterpretation, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelSecondaryEmissionFilter(string secondaryEmissionFilter, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelSecondaryExcitationFilter(string secondaryExcitationFilter, int imageIndex, int logicalChannelIndex);
+
+    // - Mask property storage -
+    void setMaskHeight(string height, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskWidth(string width, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskX(string x, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskY(string y, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - MaskPixels property storage -
+    void setMaskPixelsBigEndian(bool bigEndian, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskPixelsBinData(string binData, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskPixelsExtendedPixelType(string extendedPixelType, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskPixelsID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - MicrobeamManipulation property storage -
+    void setMicrobeamManipulationExperimenterRef(string experimenterRef, int imageIndex, int microbeamManipulationIndex);
+    void setMicrobeamManipulationID(string id, int imageIndex, int microbeamManipulationIndex);
+    void setMicrobeamManipulationType(string type, int imageIndex, int microbeamManipulationIndex);
+
+    // - MicrobeamManipulationRef property storage -
+    void setMicrobeamManipulationRefID(string id, int experimentIndex, int microbeamManipulationRefIndex);
+
+    // - Microscope property storage -
+    void setMicroscopeID(string id, int instrumentIndex);
+    void setMicroscopeManufacturer(string manufacturer, int instrumentIndex);
+    void setMicroscopeModel(string model, int instrumentIndex);
+    void setMicroscopeSerialNumber(string serialNumber, int instrumentIndex);
+    void setMicroscopeType(string type, int instrumentIndex);
+
+    // - OTF property storage -
+    void setOTFBinaryFile(string binaryFile, int instrumentIndex, int otfIndex);
+    void setOTFID(string id, int instrumentIndex, int otfIndex);
+    void setOTFObjective(string objective, int instrumentIndex, int otfIndex);
+    void setOTFOpticalAxisAveraged(bool opticalAxisAveraged, int instrumentIndex, int otfIndex);
+    void setOTFPixelType(string pixelType, int instrumentIndex, int otfIndex);
+    void setOTFSizeX(int sizeX, int instrumentIndex, int otfIndex);
+    void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex);
+
+    // - Objective property storage -
+    void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex);
+    void setObjectiveCorrection(string correction, int instrumentIndex, int objectiveIndex);
+    void setObjectiveID(string id, int instrumentIndex, int objectiveIndex);
+    void setObjectiveImmersion(string immersion, int instrumentIndex, int objectiveIndex);
+    void setObjectiveIris(bool iris, int instrumentIndex, int objectiveIndex);
+    void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex);
+    void setObjectiveManufacturer(string manufacturer, int instrumentIndex, int objectiveIndex);
+    void setObjectiveModel(string model, int instrumentIndex, int objectiveIndex);
+    void setObjectiveNominalMagnification(int nominalMagnification, int instrumentIndex, int objectiveIndex);
+    void setObjectiveSerialNumber(string serialNumber, int instrumentIndex, int objectiveIndex);
+    void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex);
+
+    // - ObjectiveSettings property storage -
+    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex);
+    void setObjectiveSettingsMedium(string medium, int imageIndex);
+    void setObjectiveSettingsObjective(string objective, int imageIndex);
+    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex);
+
+    // - Path property storage -
+    void setPathD(string d, int imageIndex, int roiIndex, int shapeIndex);
+    void setPathID(string id, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - Pixels property storage -
+    void setPixelsBigEndian(bool bigEndian, int imageIndex, int pixelsIndex);
+    void setPixelsDimensionOrder(string dimensionOrder, int imageIndex, int pixelsIndex);
+    void setPixelsID(string id, int imageIndex, int pixelsIndex);
+    void setPixelsPixelType(string pixelType, int imageIndex, int pixelsIndex);
+    void setPixelsSizeC(int sizeC, int imageIndex, int pixelsIndex);
+    void setPixelsSizeT(int sizeT, int imageIndex, int pixelsIndex);
+    void setPixelsSizeX(int sizeX, int imageIndex, int pixelsIndex);
+    void setPixelsSizeY(int sizeY, int imageIndex, int pixelsIndex);
+    void setPixelsSizeZ(int sizeZ, int imageIndex, int pixelsIndex);
+
+    // - Plane property storage -
+    void setPlaneHashSHA1(string hashSHA1, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneID(string id, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTheC(int theC, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTheT(int theT, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex);
+
+    // - PlaneTiming property storage -
+    void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
+
+    // - Plate property storage -
+    void setPlateColumnNamingConvention(string columnNamingConvention, int plateIndex);
+    void setPlateDescription(string description, int plateIndex);
+    void setPlateExternalIdentifier(string externalIdentifier, int plateIndex);
+    void setPlateID(string id, int plateIndex);
+    void setPlateName(string name, int plateIndex);
+    void setPlateRowNamingConvention(string rowNamingConvention, int plateIndex);
+    void setPlateStatus(string status, int plateIndex);
+    void setPlateWellOriginX(double wellOriginX, int plateIndex);
+    void setPlateWellOriginY(double wellOriginY, int plateIndex);
+
+    // - PlateRef property storage -
+    void setPlateRefID(string id, int screenIndex, int plateRefIndex);
+    void setPlateRefSample(int sample, int screenIndex, int plateRefIndex);
+    void setPlateRefWell(string well, int screenIndex, int plateRefIndex);
+
+    // - Point property storage -
+    void setPointCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
+    void setPointCy(string cy, int imageIndex, int roiIndex, int shapeIndex);
+    void setPointID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setPointR(string r, int imageIndex, int roiIndex, int shapeIndex);
+    void setPointTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - Polygon property storage -
+    void setPolygonID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setPolygonPoints(string points, int imageIndex, int roiIndex, int shapeIndex);
+    void setPolygonTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - Polyline property storage -
+    void setPolylineID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setPolylinePoints(string points, int imageIndex, int roiIndex, int shapeIndex);
+    void setPolylineTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - Project property storage -
+    void setProjectDescription(string description, int projectIndex);
+    void setProjectExperimenterRef(string experimenterRef, int projectIndex);
+    void setProjectGroupRef(string groupRef, int projectIndex);
+    void setProjectID(string id, int projectIndex);
+    void setProjectName(string name, int projectIndex);
+
+    // - ProjectRef property storage -
+    void setProjectRefID(string id, int datasetIndex, int projectRefIndex);
+
+    // - Pump property storage -
+    void setPumpLightSource(string lightSource, int instrumentIndex, int lightSourceIndex);
+
+    // - ROI property storage -
+    void setROIID(string id, int imageIndex, int roiIndex);
+    void setROIT0(int t0, int imageIndex, int roiIndex);
+    void setROIT1(int t1, int imageIndex, int roiIndex);
+    void setROIX0(int x0, int imageIndex, int roiIndex);
+    void setROIX1(int x1, int imageIndex, int roiIndex);
+    void setROIY0(int y0, int imageIndex, int roiIndex);
+    void setROIY1(int y1, int imageIndex, int roiIndex);
+    void setROIZ0(int z0, int imageIndex, int roiIndex);
+    void setROIZ1(int z1, int imageIndex, int roiIndex);
+
+    // - ROIRef property storage -
+    void setROIRefID(string id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex);
+
+    // - Reagent property storage -
+    void setReagentDescription(string description, int screenIndex, int reagentIndex);
+    void setReagentID(string id, int screenIndex, int reagentIndex);
+    void setReagentName(string name, int screenIndex, int reagentIndex);
+    void setReagentReagentIdentifier(string reagentIdentifier, int screenIndex, int reagentIndex);
+
+    // - Rect property storage -
+    void setRectHeight(string height, int imageIndex, int roiIndex, int shapeIndex);
+    void setRectID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setRectTransform(string transform, int imageIndex, int roiIndex, int shapeIndex);
+    void setRectWidth(string width, int imageIndex, int roiIndex, int shapeIndex);
+    void setRectX(string x, int imageIndex, int roiIndex, int shapeIndex);
+    void setRectY(string y, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - Region property storage -
+    void setRegionID(string id, int imageIndex, int regionIndex);
+    void setRegionName(string name, int imageIndex, int regionIndex);
+    void setRegionTag(string tag, int imageIndex, int regionIndex);
+
+    // - RoiLink property storage -
+    void setRoiLinkDirection(string direction, int imageIndex, int roiIndex, int roiLinkIndex);
+    void setRoiLinkName(string name, int imageIndex, int roiIndex, int roiLinkIndex);
+    void setRoiLinkRef(string ref, int imageIndex, int roiIndex, int roiLinkIndex);
+
+    // - Screen property storage -
+    void setScreenDescription(string description, int screenIndex);
+    void setScreenExtern(string extern, int screenIndex);
+    void setScreenID(string id, int screenIndex);
+    void setScreenName(string name, int screenIndex);
+    void setScreenProtocolDescription(string protocolDescription, int screenIndex);
+    void setScreenProtocolIdentifier(string protocolIdentifier, int screenIndex);
+    void setScreenReagentSetDescription(string reagentSetDescription, int screenIndex);
+    void setScreenReagentSetIdentifier(string reagentSetIdentifier, int screenIndex);
+    void setScreenType(string type, int screenIndex);
+
+    // - ScreenAcquisition property storage -
+    void setScreenAcquisitionEndTime(string endTime, int screenIndex, int screenAcquisitionIndex);
+    void setScreenAcquisitionID(string id, int screenIndex, int screenAcquisitionIndex);
+    void setScreenAcquisitionStartTime(string startTime, int screenIndex, int screenAcquisitionIndex);
+
+    // - ScreenRef property storage -
+    void setScreenRefID(string id, int plateIndex, int screenRefIndex);
+
+    // - Shape property storage -
+    void setShapeBaselineShift(string baselineShift, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeDirection(string direction, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFillColor(string fillColor, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFillOpacity(string fillOpacity, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFillRule(string fillRule, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFontFamily(string fontFamily, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFontStretch(string fontStretch, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFontStyle(string fontStyle, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFontVariant(string fontVariant, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeFontWeight(string fontWeight, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeG(string g, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeID(string id, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeLocked(bool locked, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeAttribute(string strokeAttribute, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeColor(string strokeColor, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeDashArray(string strokeDashArray, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeLineCap(string strokeLineCap, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeLineJoin(string strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeText(string text, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeTextAnchor(string textAnchor, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeTextDecoration(string textDecoration, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeTextFill(string textFill, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeTextStroke(string textStroke, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeVectorEffect(string vectorEffect, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeVisibility(bool visibility, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeWritingMode(string writingMode, int imageIndex, int roiIndex, int shapeIndex);
+
+    // - StageLabel property storage -
+    void setStageLabelName(string name, int imageIndex);
+    void setStageLabelX(float x, int imageIndex);
+    void setStageLabelY(float y, int imageIndex);
+    void setStageLabelZ(float z, int imageIndex);
+
+    // - StagePosition property storage -
+    void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
+
+    // - Thumbnail property storage -
+    void setThumbnailHref(string href, int imageIndex);
+    void setThumbnailID(string id, int imageIndex);
+    void setThumbnailMIMEtype(string mimEtype, int imageIndex);
+
+    // - TiffData property storage -
+    void setTiffDataFileName(string fileName, int imageIndex, int pixelsIndex, int tiffDataIndex);
+    void setTiffDataFirstC(int firstC, int imageIndex, int pixelsIndex, int tiffDataIndex);
+    void setTiffDataFirstT(int firstT, int imageIndex, int pixelsIndex, int tiffDataIndex);
+    void setTiffDataFirstZ(int firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex);
+    void setTiffDataIFD(int ifd, int imageIndex, int pixelsIndex, int tiffDataIndex);
+    void setTiffDataNumPlanes(int numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex);
+    void setTiffDataUUID(string uuid, int imageIndex, int pixelsIndex, int tiffDataIndex);
+
+    // - TransmittanceRange property storage -
+    void setTransmittanceRangeCutIn(int cutIn, int instrumentIndex, int filterIndex);
+    void setTransmittanceRangeCutInTolerance(int cutInTolerance, int instrumentIndex, int filterIndex);
+    void setTransmittanceRangeCutOut(int cutOut, int instrumentIndex, int filterIndex);
+    void setTransmittanceRangeCutOutTolerance(int cutOutTolerance, int instrumentIndex, int filterIndex);
+    void setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex);
+
+    // - Well property storage -
+    void setWellColumn(int column, int plateIndex, int wellIndex);
+    void setWellExternalDescription(string externalDescription, int plateIndex, int wellIndex);
+    void setWellExternalIdentifier(string externalIdentifier, int plateIndex, int wellIndex);
+    void setWellID(string id, int plateIndex, int wellIndex);
+    void setWellReagent(string reagent, int plateIndex, int wellIndex);
+    void setWellRow(int row, int plateIndex, int wellIndex);
+    void setWellType(string type, int plateIndex, int wellIndex);
+
+    // - WellSample property storage -
+    void setWellSampleID(string id, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSampleImageRef(string imageRef, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
+
+    // - WellSampleRef property storage -
+    void setWellSampleRefID(string id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex);
   };
 };

@@ -1950,7 +1950,7 @@ public final class _IFormatReaderDelM extends Ice._ObjectDelM implements _IForma
     }
 
     public void
-    setMetadataStore(MetadataStorePrx store, java.util.Map<String, String> __ctx)
+    setMetadataStore(IMetadataPrx store, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         IceInternal.Outgoing __og = __handler.getOutgoing("setMetadataStore", Ice.OperationMode.Normal, __ctx);
@@ -1959,7 +1959,7 @@ public final class _IFormatReaderDelM extends Ice._ObjectDelM implements _IForma
             try
             {
                 IceInternal.BasicStream __os = __og.os();
-                MetadataStorePrxHelper.__write(__os, store);
+                IMetadataPrxHelper.__write(__os, store);
             }
             catch(Ice.LocalException __ex)
             {
@@ -2052,52 +2052,6 @@ public final class _IFormatReaderDelM extends Ice._ObjectDelM implements _IForma
             {
                 IceInternal.BasicStream __os = __og.os();
                 __os.writeBool(populate);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __og.abort(__ex);
-            }
-            boolean __ok = __og.invoke();
-            if(!__og.is().isEmpty())
-            {
-                try
-                {
-                    if(!__ok)
-                    {
-                        try
-                        {
-                            __og.throwUserException();
-                        }
-                        catch(Ice.UserException __ex)
-                        {
-                            throw new Ice.UnknownUserException(__ex.ice_name());
-                        }
-                    }
-                    __og.is().skipEmptyEncaps();
-                }
-                catch(Ice.LocalException __ex)
-                {
-                    throw new IceInternal.LocalExceptionWrapper(__ex, false);
-                }
-            }
-        }
-        finally
-        {
-            __handler.reclaimOutgoing(__og);
-        }
-    }
-
-    public void
-    setRetrieveAsStore(MetadataRetrievePrx retrieve, java.util.Map<String, String> __ctx)
-        throws IceInternal.LocalExceptionWrapper
-    {
-        IceInternal.Outgoing __og = __handler.getOutgoing("setRetrieveAsStore", Ice.OperationMode.Normal, __ctx);
-        try
-        {
-            try
-            {
-                IceInternal.BasicStream __os = __og.os();
-                MetadataRetrievePrxHelper.__write(__os, retrieve);
             }
             catch(Ice.LocalException __ex)
             {

@@ -11,7 +11,7 @@
 
 package loci.ice.formats;
 
-public interface MetadataRetrieve extends Ice.Object,
-                                          _MetadataRetrieveOperations, _MetadataRetrieveOperationsNC
+public interface IMetadata extends Ice.Object,
+                                   _IMetadataOperations, _IMetadataOperationsNC
 {
 }

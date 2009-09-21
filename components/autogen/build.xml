@@ -21,7 +21,7 @@ Type "ant -p" for a list of targets.
       fork="true" dir="${component.meta-dir}"/>
   </target>
 
-  <target name="gen-ice" depends="compile"
+  <target name="gen-bf-ice" depends="compile"
     description="generate code for Bio-Formats Ice framework">
     <java classname="${component.main-class}"
       classpath="${classes.dir}:${component.runtime-cp}"

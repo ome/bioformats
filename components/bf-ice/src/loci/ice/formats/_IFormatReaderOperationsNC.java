@@ -15,8 +15,6 @@ public interface _IFormatReaderOperationsNC
 {
     void setId(String id);
 
-    void setRetrieveAsStore(MetadataRetrievePrx retrieve);
-
     boolean isThisType(String name, boolean open);
 
     int getImageCount();
@@ -115,5 +113,5 @@ public interface _IFormatReaderOperationsNC
 
     boolean isMetadataFiltered();
 
-    void setMetadataStore(MetadataStorePrx store);
+    void setMetadataStore(IMetadataPrx store);
 }

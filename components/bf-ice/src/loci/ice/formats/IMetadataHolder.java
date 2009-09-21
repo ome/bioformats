@@ -11,15 +11,15 @@
 
 package loci.ice.formats;
 
-public final class MetadataRetrieveHolder
+public final class IMetadataHolder
 {
     public
-    MetadataRetrieveHolder()
+    IMetadataHolder()
     {
     }
 
     public
-    MetadataRetrieveHolder(MetadataRetrieve value)
+    IMetadataHolder(IMetadata value)
     {
         this.value = value;
     }
@@ -31,7 +31,7 @@ public final class MetadataRetrieveHolder
         {
             try
             {
-                value = (MetadataRetrieve)v;
+                value = (IMetadata)v;
             }
             catch(ClassCastException ex)
             {
@@ -42,7 +42,7 @@ public final class MetadataRetrieveHolder
         public String
         type()
         {
-            return "::formats::MetadataRetrieve";
+            return "::formats::IMetadata";
         }
     }
 
@@ -52,5 +52,5 @@ public final class MetadataRetrieveHolder
         return new Patcher();
     }
 
-    public MetadataRetrieve value;
+    public IMetadata value;
 }

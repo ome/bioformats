@@ -223,20 +223,20 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
         }
     }
 
-    public MetadataRetrieve
+    public IMetadata
     getMetadataRetrieve()
     {
         return getMetadataRetrieve(null, false);
     }
 
-    public MetadataRetrieve
+    public IMetadata
     getMetadataRetrieve(java.util.Map<String, String> __ctx)
     {
         return getMetadataRetrieve(__ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private MetadataRetrieve
+    private IMetadata
     getMetadataRetrieve(java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -644,20 +644,20 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
     }
 
     public void
-    setMetadataRetrieve(MetadataRetrievePrx r)
+    setMetadataRetrieve(IMetadataPrx r)
     {
         setMetadataRetrieve(r, null, false);
     }
 
     public void
-    setMetadataRetrieve(MetadataRetrievePrx r, java.util.Map<String, String> __ctx)
+    setMetadataRetrieve(IMetadataPrx r, java.util.Map<String, String> __ctx)
     {
         setMetadataRetrieve(r, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setMetadataRetrieve(MetadataRetrievePrx r, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setMetadataRetrieve(IMetadataPrx r, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -672,48 +672,6 @@ public final class IFormatWriterPrxHelper extends Ice.ObjectPrxHelperBase implem
                 __delBase = __getDelegate(false);
                 _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
                 __del.setMetadataRetrieve(r, __ctx);
-                return;
-            }
-            catch(IceInternal.LocalExceptionWrapper __ex)
-            {
-                __handleExceptionWrapper(__delBase, __ex, null);
-            }
-            catch(Ice.LocalException __ex)
-            {
-                __cnt = __handleException(__delBase, __ex, null, __cnt);
-            }
-        }
-    }
-
-    public void
-    setStoreAsRetrieve(MetadataStorePrx store)
-    {
-        setStoreAsRetrieve(store, null, false);
-    }
-
-    public void
-    setStoreAsRetrieve(MetadataStorePrx store, java.util.Map<String, String> __ctx)
-    {
-        setStoreAsRetrieve(store, __ctx, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void
-    setStoreAsRetrieve(MetadataStorePrx store, java.util.Map<String, String> __ctx, boolean __explicitCtx)
-    {
-        if(__explicitCtx && __ctx == null)
-        {
-            __ctx = _emptyContext;
-        }
-        int __cnt = 0;
-        while(true)
-        {
-            Ice._ObjectDel __delBase = null;
-            try
-            {
-                __delBase = __getDelegate(false);
-                _IFormatWriterDel __del = (_IFormatWriterDel)__delBase;
-                __del.setStoreAsRetrieve(store, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)

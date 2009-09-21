@@ -16,9 +16,6 @@ public interface IFormatWriterPrx extends Ice.ObjectPrx
     public void setId(String id);
     public void setId(String id, java.util.Map<String, String> __ctx);
 
-    public void setStoreAsRetrieve(MetadataStorePrx store);
-    public void setStoreAsRetrieve(MetadataStorePrx store, java.util.Map<String, String> __ctx);
-
     public void close();
     public void close(java.util.Map<String, String> __ctx);
 
@@ -31,11 +28,11 @@ public interface IFormatWriterPrx extends Ice.ObjectPrx
     public boolean canDoStacks();
     public boolean canDoStacks(java.util.Map<String, String> __ctx);
 
-    public void setMetadataRetrieve(MetadataRetrievePrx r);
-    public void setMetadataRetrieve(MetadataRetrievePrx r, java.util.Map<String, String> __ctx);
+    public void setMetadataRetrieve(IMetadataPrx r);
+    public void setMetadataRetrieve(IMetadataPrx r, java.util.Map<String, String> __ctx);
 
-    public MetadataRetrieve getMetadataRetrieve();
-    public MetadataRetrieve getMetadataRetrieve(java.util.Map<String, String> __ctx);
+    public IMetadata getMetadataRetrieve();
+    public IMetadata getMetadataRetrieve(java.util.Map<String, String> __ctx);
 
     public void setFramesPerSecond(int rate);
     public void setFramesPerSecond(int rate, java.util.Map<String, String> __ctx);

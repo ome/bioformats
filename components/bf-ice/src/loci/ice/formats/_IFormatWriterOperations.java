@@ -15,8 +15,6 @@ public interface _IFormatWriterOperations
 {
     void setId(String id, Ice.Current __current);
 
-    void setStoreAsRetrieve(MetadataStorePrx store, Ice.Current __current);
-
     void close(Ice.Current __current);
 
     void saveBytes1(byte[] bytes, boolean last, Ice.Current __current);
@@ -25,9 +23,9 @@ public interface _IFormatWriterOperations
 
     boolean canDoStacks(Ice.Current __current);
 
-    void setMetadataRetrieve(MetadataRetrievePrx r, Ice.Current __current);
+    void setMetadataRetrieve(IMetadataPrx r, Ice.Current __current);
 
-    MetadataRetrieve getMetadataRetrieve(Ice.Current __current);
+    IMetadata getMetadataRetrieve(Ice.Current __current);
 
     void setFramesPerSecond(int rate, Ice.Current __current);
 

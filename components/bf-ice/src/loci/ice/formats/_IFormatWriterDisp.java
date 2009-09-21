@@ -98,7 +98,7 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         return getFramesPerSecond(null);
     }
 
-    public final MetadataRetrieve
+    public final IMetadata
     getMetadataRetrieve()
     {
         return getMetadataRetrieve(null);
@@ -159,15 +159,9 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
     }
 
     public final void
-    setMetadataRetrieve(MetadataRetrievePrx r)
+    setMetadataRetrieve(IMetadataPrx r)
     {
         setMetadataRetrieve(r, null);
-    }
-
-    public final void
-    setStoreAsRetrieve(MetadataStorePrx store)
-    {
-        setStoreAsRetrieve(store, null);
     }
 
     public static Ice.DispatchStatus
@@ -180,19 +174,6 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         id = __is.readString();
         __is.endReadEncaps();
         __obj.setId(id, __current);
-        return Ice.DispatchStatus.DispatchOK;
-    }
-
-    public static Ice.DispatchStatus
-    ___setStoreAsRetrieve(IFormatWriter __obj, IceInternal.Incoming __inS, Ice.Current __current)
-    {
-        __checkMode(Ice.OperationMode.Normal, __current.mode);
-        IceInternal.BasicStream __is = __inS.is();
-        __is.startReadEncaps();
-        MetadataStorePrx store;
-        store = MetadataStorePrxHelper.__read(__is);
-        __is.endReadEncaps();
-        __obj.setStoreAsRetrieve(store, __current);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -256,8 +237,8 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        MetadataRetrievePrx r;
-        r = MetadataRetrievePrxHelper.__read(__is);
+        IMetadataPrx r;
+        r = IMetadataPrxHelper.__read(__is);
         __is.endReadEncaps();
         __obj.setMetadataRetrieve(r, __current);
         return Ice.DispatchStatus.DispatchOK;
@@ -269,7 +250,7 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         __inS.is().skipEmptyEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        MetadataRetrieve __ret = __obj.getMetadataRetrieve(__current);
+        IMetadata __ret = __obj.getMetadataRetrieve(__current);
         __os.writeObject(__ret);
         __os.writePendingObjects();
         return Ice.DispatchStatus.DispatchOK;
@@ -407,8 +388,7 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
         "setCompression",
         "setFramesPerSecond",
         "setId",
-        "setMetadataRetrieve",
-        "setStoreAsRetrieve"
+        "setMetadataRetrieve"
     };
 
     public Ice.DispatchStatus
@@ -501,10 +481,6 @@ public abstract class _IFormatWriterDisp extends Ice.ObjectImpl implements IForm
             case 19:
             {
                 return ___setMetadataRetrieve(this, in, __current);
-            }
-            case 20:
-            {
-                return ___setStoreAsRetrieve(this, in, __current);
             }
         }
 

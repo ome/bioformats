@@ -275,13 +275,13 @@ public final class _IFormatWriterDelD extends Ice._ObjectDelD implements _IForma
         return __result.value;
     }
 
-    public MetadataRetrieve
+    public IMetadata
     getMetadataRetrieve(java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getMetadataRetrieve", Ice.OperationMode.Normal, __ctx);
-        final MetadataRetrieveHolder __result = new MetadataRetrieveHolder();
+        final IMetadataHolder __result = new IMetadataHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -791,7 +791,7 @@ public final class _IFormatWriterDelD extends Ice._ObjectDelD implements _IForma
     }
 
     public void
-    setMetadataRetrieve(final MetadataRetrievePrx r, java.util.Map<String, String> __ctx)
+    setMetadataRetrieve(final IMetadataPrx r, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -813,56 +813,6 @@ public final class _IFormatWriterDelD extends Ice._ObjectDelD implements _IForma
                         throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
                     }
                     __servant.setMetadataRetrieve(r, __current);
-                    return Ice.DispatchStatus.DispatchOK;
-                }
-            };
-            try
-            {
-                Ice.DispatchStatus __status = __direct.servant().__collocDispatch(__direct);
-                if(__status == Ice.DispatchStatus.DispatchUserException)
-                {
-                    __direct.throwUserException();
-                }
-                assert __status == Ice.DispatchStatus.DispatchOK;
-            }
-            finally
-            {
-                __direct.destroy();
-            }
-        }
-        catch(Ice.SystemException __ex)
-        {
-            throw __ex;
-        }
-        catch(java.lang.Throwable __ex)
-        {
-            IceInternal.LocalExceptionWrapper.throwWrapper(__ex);
-        }
-    }
-
-    public void
-    setStoreAsRetrieve(final MetadataStorePrx store, java.util.Map<String, String> __ctx)
-        throws IceInternal.LocalExceptionWrapper
-    {
-        final Ice.Current __current = new Ice.Current();
-        __initCurrent(__current, "setStoreAsRetrieve", Ice.OperationMode.Normal, __ctx);
-        IceInternal.Direct __direct = null;
-        try
-        {
-            __direct = new IceInternal.Direct(__current)
-            {
-                public Ice.DispatchStatus run(Ice.Object __obj)
-                {
-                    IFormatWriter __servant = null;
-                    try
-                    {
-                        __servant = (IFormatWriter)__obj;
-                    }
-                    catch(ClassCastException __ex)
-                    {
-                        throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
-                    }
-                    __servant.setStoreAsRetrieve(store, __current);
                     return Ice.DispatchStatus.DispatchOK;
                 }
             };

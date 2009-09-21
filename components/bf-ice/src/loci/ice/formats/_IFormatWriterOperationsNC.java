@@ -15,8 +15,6 @@ public interface _IFormatWriterOperationsNC
 {
     void setId(String id);
 
-    void setStoreAsRetrieve(MetadataStorePrx store);
-
     void close();
 
     void saveBytes1(byte[] bytes, boolean last);
@@ -25,9 +23,9 @@ public interface _IFormatWriterOperationsNC
 
     boolean canDoStacks();
 
-    void setMetadataRetrieve(MetadataRetrievePrx r);
+    void setMetadataRetrieve(IMetadataPrx r);
 
-    MetadataRetrieve getMetadataRetrieve();
+    IMetadata getMetadataRetrieve();
 
     void setFramesPerSecond(int rate);
 

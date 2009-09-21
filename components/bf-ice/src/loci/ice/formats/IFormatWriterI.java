@@ -115,15 +115,16 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     return writer.canDoStacks();
   }
 
-  public void setMetadataRetrieve(MetadataRetrievePrx r, Current current) {
-    r.getServant();
-    writer.setMetadataRetrieve(((MetadataRetrieveI)
-      r.getServant()).getWrappedObject());
+  public void setMetadataRetrieve(IMetadataPrx r, Current current) {
+    // CTR TODO
+    //writer.setMetadataRetrieve(r);
   }
 
-  public MetadataRetrieve getMetadataRetrieve(Current current)
+  public IMetadata getMetadataRetrieve(Current current)
   {
-    return (MetadataRetrieve) writer.getMetadataRetrieve();
+    // CTR TODO
+    //return writer.getMetadataRetrieve();
+    return null;
   }
 
   public void setColorModel(ColorModel cm, Current current) {
@@ -161,14 +162,6 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     catch (FormatException e) {
       e.printStackTrace();
     }
-  }
-
-  public void setStoreAsRetrieve(MetadataStorePrx storePrx,
-    Current current)
-  {
-    loci.formats.meta.MetadataRetrieve r = (loci.formats.meta.MetadataRetrieve)
-      ((MetadataStoreI) storePrx.getServant()).getWrappedObject();
-    writer.setMetadataRetrieve(r);
   }
 
   public void close(Current current) {
