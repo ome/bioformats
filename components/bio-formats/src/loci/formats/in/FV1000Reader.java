@@ -112,11 +112,13 @@ public class FV1000Reader extends FormatReader {
   private Vector<String> previewNames;
 
   private String pixelSizeX, pixelSizeY;
-  private Vector<String> channelNames, illuminations, dyeNames;
-  private Vector<Integer> emWaves, exWaves, wavelengths;
-  private String gain, offset, voltage, pinholeSize;
+  private Vector<String> illuminations;
+  private Vector<Integer> wavelengths;
+  private String pinholeSize;
   private String magnification, lensNA, objectiveName, workingDistance;
   private String creationDate;
+
+  private Vector<ChannelData> channels;
 
   private POITools poi;
 
@@ -267,19 +269,17 @@ public class FV1000Reader extends FormatReader {
       if (poi != null) poi.close();
       poi = null;
       lastChannel = 0;
-      dyeNames = null;
       wavelengths = null;
       illuminations = null;
       oibMapping = null;
       code = size = pixelSize = null;
       imageDepth = 0;
       pixelSizeX = pixelSizeY = null;
-      channelNames = null;
-      emWaves = exWaves = null;
-      gain = offset = voltage = pinholeSize = null;
+      pinholeSize = null;
       magnification = lensNA = objectiveName = workingDistance = null;
       creationDate = null;
       lut = null;
+      channels = null;
     }
   }
 
@@ -303,12 +303,9 @@ public class FV1000Reader extends FormatReader {
     // list of associated files.
     boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
 
-    channelNames = new Vector<String>();
-    emWaves = new Vector<Integer>();
-    exWaves = new Vector<Integer>();
-    dyeNames = new Vector<String>();
     wavelengths = new Vector<Integer>();
     illuminations = new Vector<String>();
+    channels = new Vector<ChannelData>();
 
     String key = null, value = null, oifName = null;
 
@@ -530,18 +527,44 @@ public class FV1000Reader extends FormatReader {
         {
           pixelSizeY = value;
         }
+        else if (prefix.startsWith("[GUI Channel")) {
+          int lastSpace = prefix.lastIndexOf(" ", prefix.indexOf("]"));
+          int nextToLastSpace = prefix.lastIndexOf(" ", lastSpace - 1) + 1;
+          int index =
+            Integer.parseInt(prefix.substring(nextToLastSpace, lastSpace));
+          ChannelData channel = null;
+          if (index > channels.size()) {
+            channel = new ChannelData();
+          }
+          else channel = channels.get(index - 1);
+
+          if (key.equals("AnalogPMTGain")) channel.gain = new Float(value);
+          else if (key.equals("AnalogPMTVoltage")) {
+            channel.voltage = new Float(value);
+          }
+          else if (key.equals("CH Activate")) {
+            channel.active = Integer.parseInt(value) != 0;
+          }
+          else if (key.equals("CH Name")) channel.name = value;
+          else if (key.equals("DyeName")) channel.dyeName = value;
+          else if (key.equals("EmissionDM Name")) {
+            channel.emissionFilter = value;
+          }
+          else if (key.equals("EmissionWavelength")) {
+            channel.emWave = new Integer(value);
+          }
+          else if (key.equals("ExcitationDM Name")) {
+            channel.excitationFilter = value;
+          }
+          else if (key.equals("ExcitationWavelength")) {
+            channel.exWave = new Integer(value);
+          }
+          if (index > channels.size()) channels.add(channel);
+        }
         else if (prefix.indexOf("[Channel ") != -1 &&
           prefix.indexOf("Parameters] - ") != -1)
         {
-          if (key.equals("CH Name")) channelNames.add(value);
-          else if (key.equals("DyeName")) dyeNames.add(value);
-          else if (key.equals("EmissionWavelength")) {
-            emWaves.add(new Integer(value));
-          }
-          else if (key.equals("ExcitationWavelength")) {
-            exWaves.add(new Integer(value));
-          }
-          else if (key.equals("LightType")) {
+          if (key.equals("LightType")) {
             String illumination = value.toLowerCase();
             if (illumination.indexOf("fluorescence") != -1) {
               illumination = "Epifluorescence";
@@ -758,15 +781,7 @@ public class FV1000Reader extends FormatReader {
 
           addGlobalMeta("Image " + ii + " : " + key, value);
 
-          if (key.equals("AnalogPMTGain") || key.equals("CountingPMTGain")) {
-            gain = value;
-          }
-          else if (key.equals("AnalogPMTOffset") ||
-            key.equals("CountingPMTOffset"))
-          {
-            offset = value;
-          }
-          else if (key.equals("Magnification")) {
+          if (key.equals("Magnification")) {
             magnification = value;
           }
           else if (key.equals("ObjectiveLens NAValue")) {
@@ -777,9 +792,6 @@ public class FV1000Reader extends FormatReader {
           }
           else if (key.equals("ObjectiveLens WDValue")) {
             workingDistance = value;
-          }
-          else if (key.equals("PMTVoltage")) {
-            voltage = value;
           }
           else if (key.equals("PinholeDiameter")) {
             pinholeSize = value;
@@ -981,47 +993,86 @@ public class FV1000Reader extends FormatReader {
       // populate LogicalChannel data
 
       for (int c=0; c<core[i].sizeC; c++) {
-        if (c < channelNames.size()) {
-          store.setLogicalChannelName(channelNames.get(c), i, c);
-        }
-        if (c < emWaves.size()) {
-          store.setLogicalChannelEmWave(emWaves.get(c), i, c);
-        }
-        if (c < exWaves.size()) {
-          store.setLogicalChannelExWave(exWaves.get(c), i, c);
-        }
         if (c < illuminations.size()) {
           store.setLogicalChannelIlluminationType(illuminations.get(c), i, c);
         }
       }
     }
 
-    // populate Laser data
+    int channelIndex = 0;
+    for (int c=0; c<channels.size(); c++) {
+      ChannelData channel = channels.get(c);
+      if (!channel.active) continue;
+      if (channelIndex >= getEffectiveSizeC()) break;
 
-    int nLasers = (int) Math.min(dyeNames.size(), wavelengths.size());
-    for (int i=0; i<nLasers; i++) {
-      // link LightSource to Image
-      String lightSourceID = MetadataTools.createLSID("LightSource", 0, i);
-      store.setLightSourceID(lightSourceID, 0, i);
-      store.setLightSourceSettingsLightSource(lightSourceID, 0, i);
-      if (i < exWaves.size()) {
-        store.setLightSourceSettingsWavelength(exWaves.get(i), 0, i);
+      // populate Detector data
+      String detectorID = MetadataTools.createLSID("Detector", 0, channelIndex);
+      store.setDetectorID(detectorID, 0, channelIndex);
+      store.setDetectorSettingsDetector(detectorID, 0, channelIndex);
+
+      store.setDetectorGain(channel.gain, 0, channelIndex);
+      store.setDetectorVoltage(channel.voltage, 0, channelIndex);
+      store.setDetectorType("Unknown", 0, channelIndex);
+
+      // populate LogicalChannel data
+      String filterSet = MetadataTools.createLSID("FilterSet", 0, channelIndex);
+
+      store.setLogicalChannelName(channel.name, 0, channelIndex);
+      store.setLogicalChannelEmWave(channel.emWave, 0, channelIndex);
+      store.setLogicalChannelExWave(channel.exWave, 0, channelIndex);
+      store.setLogicalChannelFilterSet(filterSet, 0, channelIndex);
+
+      String lightSourceID =
+        MetadataTools.createLSID("LightSource", 0, channelIndex);
+      store.setLightSourceSettingsLightSource(lightSourceID, 0, channelIndex);
+      store.setLightSourceSettingsWavelength(channel.exWave, 0, channelIndex);
+
+      // populate FilterSet data
+      int emIndex = channelIndex * 2;
+      int exIndex = channelIndex * 2 + 1;
+      String emFilter = MetadataTools.createLSID("Filter", 0, emIndex);
+      String exFilter = MetadataTools.createLSID("Filter", 0, exIndex);
+
+      store.setFilterSetID(filterSet, 0, channelIndex);
+      store.setFilterSetEmFilter(emFilter, 0, channelIndex);
+      store.setFilterSetExFilter(exFilter, 0, channelIndex);
+
+      // populate Filter data
+      String[] emTokens = channel.emissionFilter.split("/");
+      String[] exTokens = channel.excitationFilter.split("/");
+
+      store.setFilterID(emFilter, 0, emIndex);
+      store.setFilterModel(emTokens[0], 0, emIndex);
+      store.setFilterType("Unknown", 0, emIndex);
+      if (emTokens.length >= 3) {
+        String[] range = emTokens[2].split("-");
+        store.setTransmittanceRangeCutIn(new Integer(range[0]), 0, emIndex);
+        if (range.length > 1) {
+          store.setTransmittanceRangeCutOut(new Integer(range[1]), 0, emIndex);
+        }
       }
-      store.setLaserLaserMedium(dyeNames.get(i), 0, i);
-      store.setLaserWavelength(wavelengths.get(i), 0, i);
+
+      store.setFilterID(exFilter, 0, exIndex);
+      store.setFilterModel(exTokens[0], 0, exIndex);
+      store.setFilterType("Unknown", 0, exIndex);
+      if (exTokens.length >= 3) {
+        String[] range = exTokens[2].split("-");
+        store.setTransmittanceRangeCutIn(new Integer(range[0]), 0, exIndex);
+        if (range.length > 1) {
+          store.setTransmittanceRangeCutOut(new Integer(range[1]), 0, exIndex);
+        }
+      }
+
+      // populate Laser data
+      store.setLightSourceID(lightSourceID, 0, channelIndex);
+      store.setLaserLaserMedium(channel.dyeName, 0, channelIndex);
+      if (channelIndex < wavelengths.size()) {
+        store.setLaserWavelength(
+          wavelengths.get(channelIndex), 0, channelIndex);
+      }
+
+      channelIndex++;
     }
-
-    // populate Detector data
-
-    if (gain != null) store.setDetectorGain(new Float(gain), 0, 0);
-    if (offset != null) store.setDetectorOffset(new Float(offset), 0, 0);
-    if (voltage != null) store.setDetectorVoltage(new Float(voltage), 0, 0);
-    store.setDetectorType("Unknown", 0, 0);
-
-    // link Detector to Image using DetectorSettings
-    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
-    store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorSettingsDetector(detectorID, 0, 0);
 
     // populate Objective data
 
@@ -1337,6 +1388,20 @@ public class FV1000Reader extends FormatReader {
     }
 
     return result;
+  }
+
+  // -- Helper classes --
+
+  class ChannelData {
+    public boolean active;
+    public Float gain;
+    public Float voltage;
+    public String name;
+    public String emissionFilter;
+    public String excitationFilter;
+    public Integer emWave;
+    public Integer exWave;
+    public String dyeName;
   }
 
 }
