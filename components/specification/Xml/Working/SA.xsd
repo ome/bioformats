@@ -32,25 +32,25 @@
 	-->
 	
 	<!-- Annotatable objects from the mapping files
-		Image
-		Pixels
-		OriginalFile
-		PlaneInfo
-		Channel
 		Annotation
-		Project
+		Channel
 		Dataset
-		ExperimenterGroup
 		Experimenter
-		Session
+		ExperimenterGroup
+		Image
 		Node
+		OriginalFile
+		Pixels
+		PlaneInfo
+		Plate
+		Project
+		Reagent
 		Roi
 		Screen
 		ScreenAcquisition
-		Plate
+		Session
 		Well
 		WellSample
-		Reagent
 	-->
 	
 	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->

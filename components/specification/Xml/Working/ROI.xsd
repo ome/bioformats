@@ -20,15 +20,18 @@
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/ROI/2009-09"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
 	<!-- Using the svn location for import -->
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
 	<!-- Using the local directory location for import 
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="ome.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="SA.xsd"/>
 	-->
 	
 	<xsd:element name="ROI"> <!-- top level definition -->
@@ -41,15 +44,18 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:choice minOccurs="1" maxOccurs="1">
-				<xsd:element name="Union" minOccurs="1" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
-			</xsd:choice>
+			<xsd:sequence>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element name="Union" minOccurs="1" maxOccurs="1">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ROIID"/>
 		</xsd:complexType>
 	</xsd:element>
