@@ -75,6 +75,7 @@ public final class AWTTiffTools {
   {
     if (buf == null) throw new FormatException("Byte array is null");
     LogTools.debug("writeImage (offset=" + offset + "; last=" + last + ")");
+    if (ifd == null) ifd = new IFD();
 
     boolean little = ifd.isLittleEndian();
 
@@ -89,7 +90,6 @@ public final class AWTTiffTools {
       colorModel != null && (colorModel instanceof IndexColorModel);
 
     // populate required IFD directory entries (except strip information)
-    if (ifd == null) ifd = new IFD();
     ifd.putIFDValue(IFD.IMAGE_WIDTH, width);
     ifd.putIFDValue(IFD.IMAGE_LENGTH, height);
     if (ifd.getIFDValue(IFD.BITS_PER_SAMPLE) == null) {

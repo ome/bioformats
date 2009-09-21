@@ -68,7 +68,7 @@ public class Region {
     tw += tx;
     th += ty;
     boolean rtn = ((rw < rx || rw > tx) && (rh < ry || rh > ty) &&
-      (tx < tx || tw > rx) && (th < ty || th > ry));
+      (tw < tx || tw > rx) && (th < ty || th > ry));
     return rtn;
   }
 

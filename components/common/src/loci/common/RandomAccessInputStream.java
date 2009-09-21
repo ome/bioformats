@@ -608,11 +608,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     File f = new File(path).getAbsoluteFile();
 
     raf = Location.getHandle(file);
-    length = raf.length();
 
     if (raf == null) {
       throw new IOException("File not found: " + file);
     }
+
+    length = raf.length();
 
     if (f.exists()) {
       compressed = raf instanceof CompressedRandomAccess;

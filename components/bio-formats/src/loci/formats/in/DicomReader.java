@@ -1031,8 +1031,8 @@ public class DicomReader extends FormatReader {
     elementLength = getLength(stream, tag);
     if (elementLength > stream.length()) {
       stream.seek(fp);
-      core[0].littleEndian = !isLittleEndian();
-      stream.order(isLittleEndian());
+      core[0].littleEndian = !stream.isLittleEndian();
+      stream.order(!stream.isLittleEndian());
 
       groupWord = stream.readShort() & 0xffff;
       elementWord = stream.readShort();

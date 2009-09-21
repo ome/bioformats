@@ -92,7 +92,10 @@ public class BZip2Handle extends CompressedRandomAccess {
   private void resetStream() throws IOException {
     BufferedInputStream bis = new BufferedInputStream(
       new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);
-    bis.skip(2);
+    int skipped = 0;
+    while (skipped < 2) {
+      skipped += bis.skip(2 - skipped);
+    }
     stream = new DataInputStream(new CBZip2InputStream(bis));
   }
 

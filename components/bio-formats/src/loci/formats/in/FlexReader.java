@@ -1174,7 +1174,7 @@ public class FlexReader extends FormatReader {
         }
 
         if (realName.endsWith(File.separator)) {
-          realName.substring(0, realName.length() - 1);
+          realName = realName.substring(0, realName.length() - 1);
         }
         String baseName = realName;
         if (baseName.endsWith(SCREENING)) {

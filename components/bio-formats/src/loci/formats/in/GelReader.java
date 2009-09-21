@@ -138,8 +138,8 @@ public class GelReader extends BaseTiffReader {
 
     TiffRational scale =
       (TiffRational) firstIFD.getIFDValue(MD_SCALE_PIXEL);
-    addGlobalMeta("Scale factor", scale == null ?
-      new TiffRational(1, 1) : scale);
+    if (scale == null) scale = new TiffRational(1, 1);
+    addGlobalMeta("Scale factor", scale);
 
     // ignore MD_COLOR_TABLE
 
