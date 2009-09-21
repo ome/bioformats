@@ -46,24 +46,24 @@ ZZ
   LICENSE => "GPL",
 );
 
-my %bioFormatsAuto = (
-  NAME    => "bio-formats-auto",
-  TITLE   => "Bio-Formats code generator",
-  PATH    => "components/bio-formats-auto",
-  JAR     => "bio-formats-auto.jar",
+my %autogen = (
+  NAME    => "autogen",
+  TITLE   => "LOCI code generator",
+  PATH    => "components/autogen",
+  JAR     => "loci-autogen.jar",
   PACKAGE => "(none)",
   DESC    => <<ZZ,
-Code that generates the Bio-Formats metadata API, related documentation and Ice
-bindings
+Package for generating other code, including the Bio-Formats metadata API,
+related documentation, Ice bindings, and Bio-Formats C++ bindings headers
 ZZ
   LICENSE => "GPL",
 );
 
-my %bioFormatsIce = (
-  NAME    => "bio-formats-ice",
+my %bfIce = (
+  NAME    => "bf-ice",
   TITLE   => "Bio-Formats Ice framework",
-  PATH    => "components/bio-formats-ice",
-  JAR     => "bio-formats-ice.jar",
+  PATH    => "components/bf-ice",
+  JAR     => "bf-ice.jar",
   PACKAGE => "loci.ice.formats",
   DESC    => <<ZZ,
 Bindings for Bio-Formats client/server communication enabling cross-language
@@ -394,7 +394,7 @@ ZZ
 my %ice = (
   NAME    => "ice",
   TITLE   => "Ice",
-  JAR     => "Ice-3.2.1.jar",
+  JAR     => "Ice-3.3.1.jar",
   PACKAGE => "Ice",
   LICENSE => "GPL",
   URL     => "http://www.zeroc.com/ice.html",
@@ -681,8 +681,8 @@ my @active = (
   \%lociCommon,
   \%omeXML,
   \%bioFormats,
-  \%bioFormatsAuto,
-  \%bioFormatsIce,
+  \%autogen,
+  \%bfIce,
   \%lociPlugins,
   \%omeIO,
   \%omePlugins,
@@ -936,9 +936,8 @@ foreach my $c (@components) {
   foreach my $dep (@projDeps) {
     push(@deps, "/$$dep{NAME}");
   }
-  # CTR TODO - fix Eclipse dependency checking
-  foreach my $dep (@libDeps) {
-    push(@deps, "LOCI_JARS/$$dep{JAR}");
+  if (@libDeps > 0) {
+    push(@deps, "/External libraries");
   }
   push(@deps, "build/classes");
   push(@deps, "org.eclipse.jdt.launching.JRE_CONTAINER");

@@ -1,5 +1,5 @@
 //
-// IFormatReaderI.java
+// IFormatWriterI.java
 //
 
 /*
@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ice.formats;
 
 import Ice.Current;
-//import loci.ice.formats._IFormatWriterDisp;
-//import loci.ice.formats.MetadataRetrievePrx;
-//import loci.ice.formats.MetadataStorePrx;
 import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;

@@ -32,9 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ice.formats;
 
 import Ice.Current;
-//import loci.ice.formats._MetadataRetrieveDisp;
-//import loci.formats.*;
-//import loci.formats.meta.*;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 

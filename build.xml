@@ -42,7 +42,7 @@ Bio-Formats
                    MDB Tools (Java port), JAI Image I/O Tools, NetCDF
     License:       GPL
 
-LOCI autogen
+LOCI code generator
     Package for generating other code, including the Bio-Formats metadata API,
     related documentation, Ice bindings, and Bio-Formats C++ bindings headers
     -=-
@@ -82,9 +82,8 @@ OME I/O
     JAR file:      ome-io.jar
     Path:          components/ome-io
     Project deps:  LOCI Common, Bio-Formats
-    Library deps:  OMERO Client, OMERO Common, OMERO Importer,
-                   OMERO Model PostgreSQL
-    Optional:      OME-Java
+    Library deps:  OMERO Client, OMERO Common, OMERO Importer
+    Optional:      OME-Java, OMERO Model PostgreSQL
     License:       GPL
 
 OME Plugins for ImageJ
@@ -282,7 +281,7 @@ JGoodies Forms
     License:   BSD
 
 Ice
-    JAR file:  Ice-3.2.1.jar
+    JAR file:  Ice-3.3.1.jar
     URL:       http://www.zeroc.com/ice.html
     Notes:     used by Bio-Formats Ice framework
     License:   GPL
@@ -510,7 +509,7 @@ Apache XML-RPC
     <!-- copy third party JARs into artifacts folder -->
     <!-- necessary for runtime classpath dependencies to function properly -->
     <copy todir="${shared-artifact.dir}" preservelastmodified="true">
-      <fileset dir="${shared-lib.dir}"/>
+      <fileset dir="${shared-lib.dir}" includes="*.jar"/>
     </copy>
   </target>
 
