@@ -79,17 +79,10 @@ public class Base64Codec extends BaseCodec {
     int dataBits = input.length * 8;
     int fewerThan24 = dataBits % 24;
     int numTriples = dataBits / 24;
-    byte[] encoded = null;
-    int encodedLength = 0;
-
-    if (fewerThan24 != 0) encodedLength = (numTriples + 1) * 4;
-    else encodedLength = numTriples * 4;
-
-    encoded = new byte[encodedLength];
+    ByteVector encoded = new ByteVector();
 
     byte k, l, b1, b2, b3;
 
-    int encodedIndex = 0;
     int dataIndex = 0;
 
     for (int i=0; i<numTriples; i++) {
@@ -108,11 +101,10 @@ public class Base64Codec extends BaseCodec {
       byte v3 = ((b3 & -128) == 0) ? (byte) (b3 >> 6) :
         (byte) ((b3) >> 6 ^ 0xfc);
 
-      encoded[encodedIndex] = lookupBase64Alphabet[v1];
-      encoded[encodedIndex + 1] = lookupBase64Alphabet[v2 | (k << 4)];
-      encoded[encodedIndex + 2] = lookupBase64Alphabet[(l << 2) | v3];
-      encoded[encodedIndex + 3] = lookupBase64Alphabet[b3 & 0x3f];
-      encodedIndex += 4;
+      encoded.add(lookupBase64Alphabet[v1]);
+      encoded.add(lookupBase64Alphabet[v2 | (k << 4)]);
+      encoded.add(lookupBase64Alphabet[(l << 2) | v3]);
+      encoded.add(lookupBase64Alphabet[b3 & 0x3f]);
     }
 
     dataIndex = numTriples * 3;
@@ -122,10 +114,10 @@ public class Base64Codec extends BaseCodec {
       k = (byte) (b1 & 0x03);
       byte v = ((b1 & -128) == 0) ? (byte) (b1 >> 2) :
         (byte) ((b1) >> 2 ^ 0xc0);
-      encoded[encodedIndex] = lookupBase64Alphabet[v];
-      encoded[encodedIndex + 1] = lookupBase64Alphabet[k << 4];
-      encoded[encodedIndex + 2] = (byte) '=';
-      encoded[encodedIndex + 3] = (byte) '=';
+      encoded.add(lookupBase64Alphabet[v]);
+      encoded.add(lookupBase64Alphabet[k << 4]);
+      encoded.add(PAD);
+      encoded.add(PAD);
     }
     else if (fewerThan24 == 16) {
       b1 = input[dataIndex];
@@ -138,13 +130,13 @@ public class Base64Codec extends BaseCodec {
       byte v2 = ((b2 & -128) == 0) ? (byte) (b2 >> 4) :
         (byte) ((b2) >> 4 ^ 0xf0);
 
-      encoded[encodedIndex] = lookupBase64Alphabet[v1];
-      encoded[encodedIndex + 1] = lookupBase64Alphabet[v2 | (k << 4)];
-      encoded[encodedIndex + 2] = lookupBase64Alphabet[l << 2];
-      encoded[encodedIndex + 3] = (byte) '=';
+      encoded.add(lookupBase64Alphabet[v1]);
+      encoded.add(lookupBase64Alphabet[v2 | (k << 4)]);
+      encoded.add(lookupBase64Alphabet[l << 2]);
+      encoded.add(PAD);
     }
 
-    return encoded;
+    return encoded.toByteArray();
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
@@ -159,21 +151,24 @@ public class Base64Codec extends BaseCodec {
     ByteVector decodedData = new ByteVector();
 
     byte[] block = new byte[8192];
-    in.read(block);
+    int nRead = in.read(block);
     int p = 0;
     byte b1 = base64Alphabet[block[p++]];
     byte b2 = base64Alphabet[block[p++]];
 
-    while (b1 != -1 && b2 != -1) {
+    while (b1 != -1 && b2 != -1 &&
+      (in.getFilePointer() - nRead + p < in.length()))
+    {
       marker0 = block[p++];
       marker1 = block[p++];
 
       if (p == block.length) {
-        in.read(block);
+        nRead = in.read(block);
         p = 0;
       }
 
       decodedData.add((byte) (b1 << 2 | b2 >> 4));
+      if (p >= nRead && in.getFilePointer() >= in.length()) break;
       if (marker0 != PAD && marker1 != PAD) {
         b3 = base64Alphabet[marker0];
         b4 = base64Alphabet[marker1];

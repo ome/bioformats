@@ -35,12 +35,15 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.ImageReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.Base64Codec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -656,6 +659,7 @@ public class MIASReader extends FormatReader {
 
     // populate image-level ROIs
     String[] colors = new String[getSizeC()];
+    int nextROI = 0;
     for (AnalysisFile af : analysisFiles) {
       String file = af.filename;
       String name = new Location(file).getName();
@@ -678,7 +682,7 @@ public class MIASReader extends FormatReader {
 
         for (int j=start+1; j<lines.length; j++) {
           populateROI(columnNames, lines[j].split("\t"), well,
-            j - start - 1, position[1], position[2], store);
+            nextROI++, position[1], position[2], store);
         }
       }
       else if (name.endsWith("AllModesOverlay.tif")) {
@@ -694,6 +698,9 @@ public class MIASReader extends FormatReader {
         for (int s=0; s<getSeriesCount(); s++) {
           store.setChannelComponentColorDomain(
             colors[position[3]], s, position[3], 0);
+        }
+        if (position[3] == 0) {
+          nextROI += parseMasks(store, well, nextROI, file);
         }
       }
     }
@@ -887,6 +894,81 @@ public class MIASReader extends FormatReader {
         store.setPlaneTimingExposureTime(exposure, well, 0, i);
       }
     }
+  }
+
+  /**
+   * Parse Mask ROIs from the given TIFF and place them in the given
+   * MetadataStore.
+   * @return the number of masks parsed
+   */
+  private int parseMasks(MetadataStore store, int series, int roi,
+    String overlayTiff) throws FormatException, IOException
+  {
+    ImageReader r = new ImageReader();
+    r.setId(overlayTiff);
+    byte[] plane = r.openBytes(0);
+    byte[][] planes = null;
+    if (r.isIndexed()) {
+      planes = ImageTools.indexedToRGB(r.get8BitLookupTable(), plane);
+    }
+    else {
+      planes = new byte[r.getRGBChannelCount()][];
+      int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
+      for (int c=0; c<planes.length; c++) {
+        planes[c] = ImageTools.splitChannels(
+          plane, c, planes.length, bpp, false, r.isInterleaved());
+      }
+    }
+
+    for (int i=0; i<planes[0].length; i++) {
+      boolean channelsEqual = true;
+      for (int c=1; c<planes.length; c++) {
+        if (planes[c][i] != planes[0][i]) {
+          channelsEqual = false;
+          break;
+        }
+      }
+      if (channelsEqual) {
+        for (int c=0; c<planes.length; c++) {
+          planes[c][i] = 0;
+        }
+      }
+    }
+
+    String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
+    Base64Codec compressor = new Base64Codec();
+
+    int nMasks = 0;
+
+    for (int i=0; i<planes.length; i++) {
+      // threshold the pixel data
+
+      boolean validMask = false;
+      for (int p=0; p<planes[i].length; p++) {
+        if (planes[i][p] != 0) {
+          validMask = true;
+          planes[i][p] = (byte) 255;
+        }
+      }
+      if (validMask) {
+        store.setMaskX("0", series, roi + i, 0);
+        store.setMaskY("0", series, roi + i, 0);
+        store.setMaskWidth(String.valueOf(r.getSizeX()), series, roi + i, 0);
+        store.setMaskHeight(String.valueOf(r.getSizeY()), series, roi + i, 0);
+        store.setMaskPixelsBigEndian(
+          new Boolean(!r.isLittleEndian()), series, roi + i, 0);
+        store.setMaskPixelsSizeX(new Integer(r.getSizeX()), series, roi + i, 0);
+        store.setMaskPixelsSizeY(new Integer(r.getSizeY()), series, roi + i, 0);
+        store.setMaskPixelsExtendedPixelType(pixelType, series, roi + i, 0);
+
+        String mask = new String(compressor.compress(planes[i], null));
+        store.setMaskPixelsBinData(mask, series, roi + i, 0);
+        nMasks++;
+      }
+    }
+    r.close();
+    planes = null;
+    return nMasks;
   }
 
   // -- Helper class --
