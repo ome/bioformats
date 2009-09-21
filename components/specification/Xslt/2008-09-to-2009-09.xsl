@@ -555,6 +555,7 @@ Convert the Pixels element
 Rename PixelType attribute to Type 
 Remove BigEndian attribute from Pixels and move it to Bin:BinData 
 Add channel elements.
+Remove WaveStart and WaveIncrement
 Due to the sequence constraints, we have to transform it that way.
 -->
 <xsl:template name="convertPixels">
@@ -563,7 +564,7 @@ Due to the sequence constraints, we have to transform it that way.
   
   <!-- transform attribute -->
   <xsl:variable name="bg" select="$pixels/@BigEndian"/>
-  <xsl:for-each select="@* [not(local-name(.) ='BigEndian')]">
+	<xsl:for-each select="@* [not((local-name(.) ='BigEndian') or (local-name(.) ='WaveStart') or (local-name(.) ='WaveIncrement'))]">
     <xsl:choose>
       <xsl:when test="local-name(.) = 'PixelType'">
         <xsl:attribute name="Type"><xsl:value-of select="."/></xsl:attribute>

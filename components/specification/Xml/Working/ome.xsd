@@ -323,22 +323,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="WaveStart" use="optional" type="xsd:positiveInteger">
-				<xsd:annotation>
-					<xsd:documentation>
-						WaveStart is used in spectral images like FTIR. Units are nanometres[nm].
-						TODO - can this be a float?
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="WaveIncrement" use="optional" type="xsd:positiveInteger">
-				<xsd:annotation>
-					<xsd:documentation>
-						WaveIncrement is used in spectral images like FTIR. Units are nanometres[nm].
-						TODO - can this be a float?
-					</xsd:documentation>
-			</xsd:annotation>
-			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Plane"> <!-- top level definition -->
