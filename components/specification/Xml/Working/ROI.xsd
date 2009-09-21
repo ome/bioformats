@@ -54,7 +54,7 @@
 						</xsd:complexType>
 					</xsd:element>
 				</xsd:choice>
-				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ROIID"/>
 		</xsd:complexType>

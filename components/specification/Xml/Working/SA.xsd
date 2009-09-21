@@ -72,6 +72,21 @@
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:element name="AnnotationRef"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				The AnnotationRef element is a reference to an element derived 
+				from the SA:CommonAnnotation element.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:Reference">
+					<xsd:attribute name="ID" use="required" type="AnnotationID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 	<xsd:complexType name="CommonAnnotation" abstract="true">
 		<xsd:annotation>
 			<xsd:documentation>
