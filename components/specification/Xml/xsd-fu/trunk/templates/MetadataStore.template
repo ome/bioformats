@@ -1,3 +1,30 @@
+{% def indexes_string(indexes) %}${}", ".join(indexes)}{% end %}\
+\
+{% def index_string(name) %}\
+{% choose %}\
+{% when name[:2].isupper()%}int ${name}Index{% end %}\
+{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
+{% end %}\
+{% end %}\
+\
+{% def setter(obj, prop, indexes) %}\
+	// ${repr(parents[obj.name])}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[obj.name]}
+{% choose %}\
+{% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes_string(indexes)}, ${index_string(prop.name)}));\
+{% end %}\
+{% when len(indexes) > 0 %}\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes_string(indexes)}));\
+{% end %}\
+{% otherwise %}\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name});\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+\
 /*
  * loci.formats.meta.MetadataStore
  *
@@ -91,15 +118,8 @@ public interface MetadataStore
 	/** Sets the UUID associated with this collection of metadata. */
 	void setUUID(String uuid);
 
-{% def index_string(name) %}\
-{% choose %}\
-{% when name[:2].isupper()%}int ${name}Index{% end %}\
-{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
-{% end %}\
-{% end %}\
-
-{% for o in sorted_objects %}\
-{% if not parents[o.name] == "None" %}\
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if parents[o.name] is not None %}\
 
 	// ${o.name} property storage
 
@@ -111,46 +131,11 @@ public interface MetadataStore
 	// Ignoring ${prop.name} property of reference ${o.name}
 {% end %}\
 {% end %}\
-{% when o.base == "Settings" %}\
-{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
-{% if not prop.isReference %}\
-	// ${parents[o.name]}
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
-
-{% end %}\
-{% end %}\
-{% end %}\
 {% otherwise %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if not prop.isReference %}\
-{% choose %}\
-{% when len(indexes[o.name]) > 0 and prop.maxOccurs > 1%}\
-	// ${parents[o.name]}
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]}, ${index_string(prop.name)});
+${setter(o, prop, indexes[o.name])}
 
-{% end %}\
-{% when len(indexes[o.name]) > 0 %}\
-	// ${parents[o.name]}
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes[o.name]});
-
-{% end %}\
-{% otherwise %}\
-{% if not prop.isReference %}\
-	// ${parents[o.name]}
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	void set${o.name}${prop.name}(${prop.metadataStoreType} ${prop.name});
-
-{% end %}\
-{% end %}\
-{% end %}\
-{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -158,4 +143,3 @@ public interface MetadataStore
 {% end %}\
 {% end %}\
 }
-

@@ -4,29 +4,24 @@
 Generate Java classes from an OME XML (http://www.ome-xml.org) XSD document.
 """
 
+#
+#  Copyright (C) 2007 University of Dundee. All rights reserved.
+#
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #  
-#  Copyright (c) 2007 Chris Allan
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#  Redistribution and use in source and binary forms, with or without
-#  modification, are permitted provided that the following conditions
-#  are met:
-#  1. Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer.
-#  2. Redistributions in binary form must reproduce the above copyright
-#     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution.
-#
-#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
-#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-#  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-#  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-#  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-#  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-#  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-#  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-#  SUCH DAMAGE.
+
 
 import logging
 import sys
@@ -38,27 +33,29 @@ from genshi.template import NewTextTemplate
 from getopt import getopt, GetoptError
 from xml import sax
 
-def baseUsage():
+def baseUsage(error):
 	"""
 	Prints usage so that we don't have to. :)
 	"""
 	cmd = sys.argv[0]
-	print """Usage: %s <subcommand> ...
-Executes an OME-XML Schema definition parsing and code generation task.
+	print """%s
+Usage: %s <subcommand> ...
+Executes an OME-XML Schema definition parsing and code generation subcommand.
 
 Available subcommands:
   java_classes
   metadata_store
   metadata_retrieve
+  metadata_aggregate
   doc_gen
   tab_gen
   debug
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-	(cmd)
+	(error, cmd)
 	sys.exit(2)
 
-def usage(error):
+def mainUsage(error):
 	"""
 	Prints usage so that we don't have to. :)
 	"""
@@ -77,18 +74,36 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
 	(error, cmd, DEFAULT_PACKAGE, DEFAULT_NAMESPACE, cmd)
 	sys.exit(2)
 
-def main():
+def metadataUsage(error):
+	"""
+	Prints usage so that we don't have to. :)
+	"""
+	cmd = sys.argv[0]
+	print """%s
+Usage: %s [-n xsd_namespace] <path/to/ome.xsd...>
+Generates a metadata interface from one or multiple OME schema definitions.
+
+Default namespace: "%s"
+
+Examples:
+  %s -n 'xs:' ome.xsd ROI.xsd SPW.xsd
+
+Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
+	(error, cmd, DEFAULT_NAMESPACE, cmd)
+	sys.exit(2)
+
+def main(args):
 	"""
 	Default main() that parses command line options and generates Java 
 	classes in the output directory.
 	"""
 	try:
-		options, args = getopt(sys.argv[1:], "o:p:n:")
+		options, args = getopt(args, "o:p:n:")
 	except GetoptError, (msg, opt):
-		usage(msg)
+		mainUsage(msg)
 
 	if len(args) != 1:
-		usage("Expecting single ome.xsd file path!")
+		mainUsage("Expecting single ome.xsd file path!")
 
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
@@ -163,24 +178,12 @@ def resolve_indexes(indexes, model, names):
 			is_multi_path = True
 	return is_multi_path
 
-def metadataStoreMain(args):
+def processMetadataTemplate(template, outputFilename, namespace, args):
 	"""
-	Default main() that parses command line options and generates a
-	MetadataStore implementation.
+	Actually does the work of processing the model and providing the model
+	to a given "Metadata" template for interface or concrete class code
+	generation.
 	"""
-	try:
-		options, args = getopt(args, "n:")
-	except GetoptError, (msg, opt):
-		usage(msg)
-
-	if len(args) < 1:
-		usage("Expecting at least one ome.xsd file path!")
-
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-n":
-			namespace = argument
-
 	model = parseXmlSchema(args, namespace)
 	indexes = dict()
 	parents = dict()
@@ -189,26 +192,38 @@ def metadataStoreMain(args):
 		name = obj.name
 		indexes[name] = list()
 		parents[name] = resolve_parents(model, name)
-		is_multi_path[name] = resolve_indexes(indexes[name], model, parents[name])
+		is_multi_path[name] = resolve_indexes(indexes[name], model,
+		                                      {name: parents[name]})
 		indexes[name].reverse()
-		if parents[name] is not None:
-			# We have a parent, use the first even if we're multi-path
-			parent = parents[name].keys()[0]
-			if max_occurs_under_parent(model, parent, name) > 1:
-				indexes[name].append(index_string(name))
-		indexes[name] = ", ".join(indexes[name])
-		parents[name] = "%r" % parents[name]
 	fu = TemplateInfo(None, None)
-	template = NewTextTemplate(open(METADATA_STORE_TEMPLATE).read())
-	sorted_objects = model.objects.values()
-	sorted_objects.sort(lambda x, y: cmp(x.name, y.name))
+	template = NewTextTemplate(open(template).read())
 	content = template.generate(fu=fu, model=model, parents=parents,
-								is_multi_path=is_multi_path,
-								sorted_objects=sorted_objects,
-			                    indexes=indexes).render()
-	f = open("MetadataStore.java", "w")
+	                            is_multi_path=is_multi_path,
+	                            indexes=indexes).render()
+	f = open(outputFilename, "w")
 	f.write(content)
 	f.close()
+
+def metadataStoreMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataStore implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore.java",
+	                        namespace, args)
 	
 def metadataRetrieveMain(args):
 	"""
@@ -218,42 +233,41 @@ def metadataRetrieveMain(args):
 	try:
 		options, args = getopt(args, "n:")
 	except GetoptError, (msg, opt):
-		usage(msg)
+		metadataUsage(msg)
 
 	if len(args) < 1:
-		usage("Expecting at least one ome.xsd file path!")
+		metadataUsage("Expecting at least one ome.xsd file path!")
 
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-n":
 			namespace = argument
 
-	model = parseXmlSchema(args, namespace)
-	indexes = dict()
-	parents = dict()
-	is_multi_path = dict()
-	for obj in model.objects.values():
-		name = obj.name
-		indexes[name] = list()
-		parents[name] = resolve_parents(model, name)
-		is_multi_path[name] = resolve_indexes(indexes[name], model, parents[name])
-		parents[name] = "%r" % parents[name]
-		indexes[name].reverse()
-		indexes[name].append(index_string(name))
-		indexes[name] = ", ".join(indexes[name])
-	fu = TemplateInfo(None, None)
-	template = NewTextTemplate(open(METADATA_RETRIEVE_TEMPLATE).read())
-	sorted_objects = model.objects.values()
-	sorted_objects.sort(lambda x, y: cmp(x.name, y.name))
-	content = template.generate(fu=fu, model=model, parents=parents,
-								is_multi_path=is_multi_path,
-								sorted_objects=sorted_objects,
-			                    indexes=indexes).render()
-	f = open("MetadataRetrieve.java", "w")
-	f.write(content)
-	f.close()
+	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE,
+	                        "MetadataRetrieve.java", namespace, args)
 
-def debugMain():
+def metadataAggregateMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataRetrieve implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE,
+	                        "AggregateMetadata.java", namespace, args)
+
+def debugMain(args):
 	"""
 	Debugging main() that does not parse the command line and spits
 	generated data to STDOUT.
@@ -274,7 +288,7 @@ def debugMain():
 			print "\n"
 			print template.generate(fu=fu, klass=obj).render()
 
-def docGenMain():
+def docGenMain(args):
 	"""
 	Documentation main() that does not parse the command line and spits
 	generated wiki formatted docs to STDOUT.
@@ -311,7 +325,7 @@ def docGenMain():
 				    (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
 			print "\n"
 
-def tabGenMain():
+def tabGenMain(args):
 	"""
 	Documentation main() that does not parse the command line and puts
 	tab sperated format to STDOUT.
@@ -359,25 +373,22 @@ def parentlist(model, name, pre):
 
 if __name__ == '__main__':
 	if len(sys.argv) == 1:
-		baseUsage()
-	#  java_classes
-	#  metadata_store
-	#  metadata_retrieve
-	#  doc_gen
-	#  tab_gen
-	#  debug
+		baseUsage('Missing subcommand!')
+
 	a = sys.argv[1]
 	if a == "java_classes":
 		main(sys.argv[2:])
-	if a == "metadata_store":
+	elif a == "metadata_store":
 		metadataStoreMain(sys.argv[2:])
-	if a == "metadata_retrieve":
+	elif a == "metadata_retrieve":
 		metadataRetrieveMain(sys.argv[2:])
-	if a == "debug":
+	elif a == "metadata_aggregate":
+		metadataAggregateMain(sys.argv[2:])
+	elif a == "doc_gen":
+		docGenMain(sys.argv[2:])
+	elif a == "tab_gen":
+		tabGenMain(sys.argv[2:])
+	elif a == "debug":
 		debugMain(sys.argv[2:])
-#	debugMain()
-#	docGenMain()
-#	tabGenMain()
-#	metadataStoreMain()
-#	main()
-
+	else:
+		baseUsage('Unrecognized subcommand: %s' % a)

@@ -1,3 +1,30 @@
+{% def indexes_string(indexes) %}${}", ".join(indexes)}{% end %}\
+\
+{% def index_string(name) %}\
+{% choose %}\
+{% when name[:2].isupper()%}int ${name}Index{% end %}\
+{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
+{% end %}\
+{% end %}\
+\
+{% def getter(obj, prop, indexes) %}\
+	// ${repr(parents[obj.name])}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[obj.name]}
+{% choose %}\
+{% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+	${prop.metadataStoreType} get${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}));\
+{% end %}\
+{% when len(indexes) > 0 %}\
+	${prop.metadataStoreType} get${obj.name}${prop.name}(${indexes_string(indexes)}));\
+{% end %}\
+{% otherwise %}\
+	${prop.metadataStoreType} get${obj.name}${prop.name}(${prop.metadataStoreType});\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+\
 /*
  * loci.formats.meta.MetadataRetrieve
  *
@@ -70,14 +97,31 @@ public interface MetadataRetrieve {
 
 	// - Entity counting -
 
-{% for o in sorted_objects %}\
-	int get${o.name}Count(${indexes[o.name]})
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if parents[o.name] is not None %}\
+{% if o.base != "Reference" %}\
+	int get${o.name}Count(${indexes_string(indexes[o.name])});
 
-{% end %}
+{% end %}\
+{% end %}\
+{% end %}\
 
 	// - Entity retrieval -
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
-	
+
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if parents[o.name] is not None %}\
+
+	// ${o.name} property retrieval
+
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if not prop.isReference %}\
+${getter(o, prop, indexes[o.name])}
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
 }

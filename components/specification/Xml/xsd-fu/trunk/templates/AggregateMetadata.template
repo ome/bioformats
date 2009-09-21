@@ -1,0 +1,249 @@
+{% def indexes_string(indexes) %}${}", ".join(indexes)}{% end %}\
+\
+{% def index_string(name) %}\
+{% choose %}\
+{% when name[:2].isupper()%}int ${name}Index{% end %}\
+{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
+{% end %}\
+{% end %}\
+\
+{% def index_variables(indexes) %}\
+${", ".join([index.split()[1] for index in indexes])}\
+{% end %}\
+\
+{% def setter(obj, prop, indexes) %}\
+	// ${repr(parents[obj.name])}
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[obj.name]}
+{% choose %}\
+{% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${", ".join(indexes)}, ${index_string(prop.name)}));\
+{% end %}\
+{% when len(indexes) > 0 %}\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${", ".join(indexes)}));\
+{% end %}\
+{% otherwise %}\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name});\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+/*
+ * loci.formats.meta.AggregateMetadata
+ *
+ *-----------------------------------------------------------------------------
+ *
+ *  Copyright (C) 2005-@year@ Open Microscopy Environment
+ *      Massachusetts Institute of Technology,
+ *      National Institutes of Health,
+ *      University of Dundee,
+ *      University of Wisconsin-Madison
+ *
+ *
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by ${fu.user} via xsd-fu on ${fu.date}
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package loci.formats.meta;
+
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * A metadata store which delegates the actual storage to one or more <i>sub</i>
+ * metadata stores.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/AggregateMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/meta/AggregateMetadata.java">SVN</a></dd></dl>
+ *
+ * @author Chris Allan callan at blackcat.ca
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public class AggregateMetadata implements IMetadata {
+
+  // -- Fields --
+
+  /** The active metadata store delegates. */
+  private List<IMetadata> delegates;
+
+  // -- Constructor --
+
+  /**
+   * Creates a new instance.
+   * @param delegates of type {@link MetadataRetrieve}
+   *   and/or {@link MetadataStore}.
+   */
+  public AggregateMetadata(List delegates) {
+    this.delegates = delegates;
+  }
+
+  // -- AggregateMetadata API methods --
+
+  /**
+   * Adds a delegate to the metadata store.
+   * @param delegate a <code>MetadataStore</code>
+   */
+  public void addDelegate(MetadataStore delegate) {
+    delegates.add(delegate);
+  }
+
+  /**
+   * Removes a delegate from the metadata store.
+   * @param delegate a <code>MetadataStore</code>
+   */
+  public void removeDelegate(MetadataStore delegate) {
+    delegates.remove(delegate);
+  }
+
+  /**
+   * Retrieves the current list of metadata store delegates.
+   * @return list of {@link MetadataStore} delegates.
+   */
+  public List getDelegates() {
+    return delegates;
+  }
+
+  // -- MetadataRetrieve API methods --
+
+  // - Entity counting -
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if parents[o.name] is not None %}\
+{% if o.base != "Reference" %}\
+  /* @see MetadataRetrieve#get${o.name}Count(${indexes_string(indexes[o.name])}) */
+  public int get${o.name}Count(${indexes_string(indexes[o.name])} {
+    for (IMetadata delegate : delegates) {
+      if (delegate instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) delegate;
+        int result = retrieve.get${o.name}Count(${index_variables(indexes[o.name])});
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+{% end %}\
+{% end %}\
+{% end %}\
+
+  // - Entity retrieval -
+
+  /* @see MetadataRetrieve#getUUID() */
+  public String getUUID() {
+    for (IMetadata delegate : delegates) {
+      if (delegate instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) delegate;
+        String result = retrieve.getUUID();
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if parents[o.name] is not None %}\
+
+  // - ${o.name} property retrieval -
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if not prop.isReference %}\
+  /* @see MetadataRetrieve#get${o.name}${prop.name}${indexes_string(indexes[o.name])}) */
+  public prop.metadataStoreType get${o.name}${prop.name}(${index_variables(indexes[o.name])}) {
+    for (IMetadata delegate : delegates) {
+      if (delegate instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) delegate;
+        ${prop.metadataStoreType} result = retrieve.get${o.name}{prop.name}(${index_variables(indexes[o.name])});
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+{% end %}\
+{% end %}\
+
+  // -- MetadataStore API methods --
+
+  /* @see MetadataStore#createRoot() */
+  public void createRoot() {
+    for (IMetadata delegate : delegates) {
+      if (delegate instanceof MetadataStore) {
+        ((MetadataStore) o).createRoot();
+      }
+    }
+  }
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+
+  /**
+   * Unsupported with an AggregateMetadata.
+   * @throws RuntimeException Always.
+   */
+  public Object getRoot() {
+    throw new RuntimeException("Unsupported with AggregateMetadata. " +
+      "Use getDelegates() and getRoot().");
+  }
+
+  /**
+   * Unsupported with an AggregateMetadata.
+   * @throws RuntimeException Always.
+   */
+  public void setRoot(Object root) {
+    throw new RuntimeException("Unsupported with AggregateMetadata. " +
+      "Use getDelegates() and setRoot().");
+  }
+
+  /* @see MetadataStore#setUUID(String) */
+  public void setUUID(String uuid) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        ((MetadataStore) o).setUUID(uuid);
+      }
+    }
+  }
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if parents[o.name] is not None %}\
+
+  // - ${o.name} property storage -
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if not prop.isReference %}\
+
+  /* @see MetadataStore#set${o.name}${prop.name}(${indexes_string(indexes[o.name])}) */
+  public void set${o.name}${prop.name}(${indexes_string(indexes[o.name])}) {
+    for (IMetadata delegate : delegates) {
+      if (delegate instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) delegate;
+        store.set${o.name}${prop.name}(${index_variables(indexes[o.name])});
+      }
+    }
+  }
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+
+}
