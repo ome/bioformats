@@ -456,6 +456,20 @@ Apache XML-RPC
       jar-ome-notes, jar-ome-editor"
     description="generate JAR files for LOCI software packages"/>
 
+  <target name="findbugs"
+    depends="findbugs-common, findbugs-ome-xml,
+      findbugs-jai, findbugs-poi-loci, findbugs-mdbtools,
+      findbugs-formats, findbugs-autogen, findbugs-bf-ice,
+      findbugs-loci-plugins, findbugs-ome-io, findbugs-ome-plugins,
+      findbugs-visbio, findbugs-slim, findbugs-flow,
+      findbugs-checks, findbugs-tests,
+      findbugs-jvmlink, findbugs-multi-lut,
+      findbugs-ome-notes, findbugs-ome-editor"
+    description="run findbugs on all componenets">
+    <delete dir="${shared-artifact.dir}"/>
+    <delete dir="build"/>
+  </target>
+
   <target name="clean"
     depends="clean-common, clean-ome-xml,
       clean-jai, clean-poi-loci, clean-mdbtools,
@@ -512,6 +526,11 @@ Apache XML-RPC
     <ant dir="components/common" target="common.jar"/>
   </target>
 
+  <target name="findbugs-common"
+    description="run findbugs on LOCI common library">
+    <ant dir="components/common" target="common.findbugs"/>
+  </target>
+
   <target name="clean-common"
     description="remove build files for LOCI common library">
     <ant dir="components/common" target="common.clean"/>
@@ -527,6 +546,11 @@ Apache XML-RPC
   <target name="jar-jai"
     description="generate JAR file for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.jar"/>
+  </target>
+
+  <target name="findbugs-jai"
+    description="run findbugs on JAI Image I/O Tools library">
+    <ant dir="components/forks/jai" target="jai.findbugs"/>
   </target>
 
   <target name="clean-jai"
@@ -548,6 +572,11 @@ Apache XML-RPC
     <ant dir="components/forks/poi" target="poi-loci.jar"/>
   </target>
 
+  <target name="findbugs-poi-loci"
+    description="run findbugs on Apache POI library">
+    <ant dir="components/forks/poi" target="poi-loci.findbugs"/>
+  </target>
+
   <target name="clean-poi-loci"
     depends="clean-common"
     description="remove build files for Apache POI library">
@@ -564,6 +593,11 @@ Apache XML-RPC
   <target name="jar-mdbtools"
     description="generate JAR file for MDB Tools Java library">
     <ant dir="components/forks/mdbtools" target="mdbtools.jar"/>
+  </target>
+
+  <target name="findbugs-mdbtools"
+    description="run findbugs on MDB Tools Java library">
+    <ant dir="components/forks/mdbtools" target="mdbtools.findbugs"/>
   </target>
 
   <target name="clean-mdbtools"
@@ -583,6 +617,11 @@ Apache XML-RPC
     <ant dir="components/ome-xml" target="ome-xml.jar"/>
   </target>
 
+  <target name="findbugs-ome-xml"
+    description="run findbugs on OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.findbugs"/>
+  </target>
+
   <target name="clean-ome-xml"
     description="remove build files for OME-XML Java library">
     <ant dir="components/ome-xml" target="ome-xml.clean"/>
@@ -600,6 +639,11 @@ Apache XML-RPC
     depends="jar-common, jar-ome-xml"
     description="generate JAR file for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.jar"/>
+  </target>
+
+  <target name="findbugs-formats"
+    description="run findbugs on Bio-Formats">
+    <ant dir="components/bio-formats" target="formats.findbugs"/>
   </target>
 
   <target name="clean-formats"
@@ -622,6 +666,11 @@ Apache XML-RPC
     <ant dir="components/autogen" target="autogen.jar"/>
   </target>
 
+  <target name="findbugs-autogen"
+    description="run findbugs on LOCI autogen">
+    <ant dir="components/autogen" target="autogen.findbugs"/>
+  </target>
+
   <target name="clean-autogen"
     depends="clean-common, clean-formats"
     description="remove build files for LOCI autogen">
@@ -640,6 +689,11 @@ Apache XML-RPC
     depends="jar-formats"
     description="generate JAR file for Bio-Formats Ice framework">
     <ant dir="components/bf-ice" target="bf-ice.jar"/>
+  </target>
+
+  <target name="findbugs-bf-ice"
+    description="run findbugs on Bio-Formats Ice framework">
+    <ant dir="components/bf-ice" target="bf-ice.findbugs"/>
   </target>
 
   <target name="clean-bf-ice"
@@ -662,6 +716,11 @@ Apache XML-RPC
     <ant dir="components/loci-plugins" target="loci-plugins.jar"/>
   </target>
 
+  <target name="findbugs-loci-plugins"
+    description="run findbugs on LOCI Plugins for ImageJ">
+    <ant dir="components/loci-plugins" target="loci-plugins.findbugs"/>
+  </target>
+
   <target name="clean-loci-plugins"
     depends="clean-common, clean-formats"
     description="remove build files for LOCI Plugins for ImageJ">
@@ -680,6 +739,11 @@ Apache XML-RPC
     depends="jar-common, jar-formats"
     description="generate JAR file for OME I/O">
     <ant dir="components/ome-io" target="ome-io.jar"/>
+  </target>
+
+  <target name="findbugs-ome-io"
+    description="run findbugs on OME I/O">
+    <ant dir="components/ome-io" target="ome-io.findbugs"/>
   </target>
 
   <target name="clean-ome-io"
@@ -703,6 +767,11 @@ Apache XML-RPC
     <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
   </target>
 
+  <target name="findbugs-ome-plugins"
+    description="run findbugs on OME Plugins for ImageJ">
+    <ant dir="components/ome-plugins" target="ome-plugins.findbugs"/>
+  </target>
+
   <target name="clean-ome-plugins"
     depends="clean-common, clean-formats, clean-loci-plugins, clean-ome-io"
     description="remove build files for OME Plugins for ImageJ">
@@ -723,6 +792,11 @@ Apache XML-RPC
     depends="jar-common, jar-ome-xml, jar-formats, jar-ome-io, jar-poi-loci"
     description="generate JAR file for VisBio">
     <ant dir="components/visbio" target="visbio.jar"/>
+  </target>
+
+  <target name="findbugs-visbio"
+    description="run findbugs on VisBio">
+    <ant dir="components/visbio" target="visbio.findbugs"/>
   </target>
 
   <target name="clean-visbio"
@@ -776,6 +850,11 @@ Apache XML-RPC
     <ant dir="components/slim-plotter" target="slim.jar"/>
   </target>
 
+  <target name="findbugs-slim"
+    description="run findbugs on SLIM Plotter">
+    <ant dir="components/slim-plotter" target="slim.findbugs"/>
+  </target>
+
   <target name="clean-slim"
     depends="clean-common, clean-formats, clean-visbio"
     description="remove build files for SLIM Plotter">
@@ -801,6 +880,11 @@ Apache XML-RPC
     <ant dir="components/flow-cytometry" target="flow.jar"/>
   </target>
 
+  <target name="findbugs-flow"
+    description="run findbugs on WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.findbugs"/>
+  </target>
+
   <target name="clean-flow"
     depends="clean-formats"
     description="remove build files for WiscScan Flow Cytometry">
@@ -824,6 +908,11 @@ Apache XML-RPC
     <ant dir="components/checkstyle" target="checks.jar"/>
   </target>
 
+  <target name="findbugs-checks"
+    description="run findbugs on LOCI Checkstyle checks">
+    <ant dir="components/checkstyle" target="checks.findbugs"/>
+  </target>
+
   <target name="clean-checks"
     description="remove build files for LOCI Checkstyle checks">
     <ant dir="components/checkstyle" target="checks.clean"/>
@@ -841,6 +930,11 @@ Apache XML-RPC
     depends="jar-common, jar-formats"
     description="generate JAR file for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.jar"/>
+  </target>
+
+  <target name="findbugs-tests"
+    description="run findbugs on LOCI testing framework">
+    <ant dir="components/test-suite" target="tests.findbugs"/>
   </target>
 
   <target name="clean-tests"
@@ -863,6 +957,11 @@ Apache XML-RPC
     <ant dir="components/legacy/jvmlink" target="jvmlink.jar"/>
   </target>
 
+  <target name="findbugs-jvmlink"
+    description="run findbugs on JVMLink">
+    <ant dir="components/legacy/jvmlink" target="jvmlink.findbugs"/>
+  </target>
+
   <target name="clean-jvmlink"
     depends="clean-common"
     description="remove build files for JVMLink">
@@ -879,6 +978,11 @@ Apache XML-RPC
   <target name="jar-multi-lut"
     description="generate JAR file for Multi LUT app">
     <ant dir="components/legacy/multi-lut" target="multi-lut.jar"/>
+  </target>
+
+  <target name="findbugs-multi-lut"
+    description="run findbugs on Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.findbugs"/>
   </target>
 
   <target name="clean-multi-lut"
@@ -900,6 +1004,11 @@ Apache XML-RPC
     <ant dir="components/legacy/ome-notes" target="ome-notes.jar"/>
   </target>
 
+  <target name="findbugs-ome-notes"
+    description="run findbugs for OME Notes">
+    <ant dir="components/legacy/ome-notes" target="ome-notes.findbugs"/>
+  </target>
+
   <target name="clean-ome-notes"
     depends="clean-common, clean-formats"
     description="remove build files for OME Notes">
@@ -918,6 +1027,11 @@ Apache XML-RPC
     depends="jar-common, jar-ome-xml, jar-formats"
     description="generate JAR file for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.jar"/>
+  </target>
+
+  <target name="findbugs-ome-editor"
+    description="run findbugs on OME Metadata Editor">
+    <ant dir="components/legacy/ome-editor" target="ome-editor.findbugs"/>
   </target>
 
   <target name="clean-ome-editor"

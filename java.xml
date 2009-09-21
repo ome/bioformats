@@ -42,20 +42,18 @@ Type "ant -p" for a list of targets.
       classpath="${classes.dir}:${component.runtime-cp}"/>
   </target>
 
-  <target name="findbugs" depends="compile"
+  <target name="findbugs" depends="jar"
     description="check source code for bugs">
     <if>
       <isset property="findbugs.home"/>
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
-          output="xml" outputFile="${build.dir}/findbugs.xml">
+          output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
+          excludeFilter="${root.dir}/excludebugs.xml">
           <auxClasspath path="${component.classpath}"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
-        <java jar="${findbugs.home}/findbugs.jar" fork="true">
-          <arg value="${build.dir}/findbugs.xml"/>
-        </java>
       </then>
       <else>
 <echo>
