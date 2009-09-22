@@ -837,8 +837,8 @@ foreach my $c (@components) {
       my $end = $line !~ /\\$/;
       # append the entry to the classpath list
       $line =~ s/[ :\\]*$//;
-      $line =~ s/.* //;
-      if ($line ne '(none)') {
+      $line =~ s/.*[ =]+//;
+      if ($line ne '(none)' && $line ne '') {
         if ($inCompile) {
           push(@compile, $line);
         }
