@@ -51,6 +51,13 @@
 		Session
 		Well
 		WellSample
+		
+		Annotation
+		ExperimenterGroup ?
+		Node ?
+		OriginalFile ?
+		Session ?
+		PlaneInfo (as Plane)
 	-->
 	
 	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
@@ -93,22 +100,9 @@
 				MISSING
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
-		</xsd:sequence>
 		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
 		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 	</xsd:complexType>
-	<xsd:element name="Link"> <!-- top level definition --> 
-		<xsd:annotation>
-			<xsd:documentation>
-				MISSING
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:simpleType>
-			<xsd:restriction base="OME:LSID"/>
-		</xsd:simpleType>
-	</xsd:element>
 	<xsd:simpleType name="AnnotationID">
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Annotation:\S+)|(Annotation:\S+)"/>
@@ -162,13 +156,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
-						<xsd:element name="List" minOccurs="1" maxOccurs="1">
-							<xsd:complexType>
-								<xsd:sequence>
-									<xsd:element ref="Link" minOccurs="1" maxOccurs="unbounded"/>
-								</xsd:sequence>
-							</xsd:complexType>
-						</xsd:element>
+						<xsd:element ref="AnnotationRef" minOccurs="1" maxOccurs="unbounded"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
