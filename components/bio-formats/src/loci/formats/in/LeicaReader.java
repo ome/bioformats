@@ -129,8 +129,6 @@ public class LeicaReader extends FormatReader {
   private float[][] physicalSizes;
   private float[] pinhole, exposureTime;
 
-  private int[][] channelMap;
-
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -211,14 +209,6 @@ public class LeicaReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (!isRGB()) {
-      int[] pos = getZCTCoords(no);
-      pos[1] = DataTools.indexOf(channelMap[series], pos[1]);
-      if (pos[1] >= 0 && pos[1] < getSizeC()) {
-        no = getIndex(pos[0], pos[1], pos[2]);
-      }
-    }
-
     lastPlane = no;
     tiff.setId((String) files[series].get(no));
     return tiff.openBytes(0, buf, x, y, w, h);
@@ -247,7 +237,6 @@ public class LeicaReader extends FormatReader {
       seriesNames = null;
       numSeries = 0;
       lastPlane = 0;
-      channelMap = null;
       physicalSizes = null;
       seriesDescriptions = null;
       pinhole = exposureTime = null;
@@ -378,7 +367,6 @@ public class LeicaReader extends FormatReader {
     for (int i=0; i<numSeries; i++) {
       core[i] = new CoreMetadata();
     }
-    channelMap = new int[numSeries][];
 
     files = new Vector[numSeries];
 
@@ -787,46 +775,15 @@ public class LeicaReader extends FormatReader {
           addSeriesMeta("Number of LUT channels", nChannels);
           addSeriesMeta("ID of colored dimension", stream.readInt());
 
-          channelMap[i] = new int[nChannels];
-          String[] luts = new String[nChannels];
-
           for (int j=0; j<nChannels; j++) {
             String p = "LUT Channel " + j;
             addSeriesMeta(p + " version", stream.readInt());
             addSeriesMeta(p + " inverted?", stream.read() == 1);
             addSeriesMeta(p + " description", getString(stream, false));
             addSeriesMeta(p + " filename", getString(stream, false));
-            luts[j] = getString(stream, false);
-            addSeriesMeta(p + " name", luts[j]);
-            luts[j] = luts[j].toLowerCase();
+            String lut = getString(stream, false);
+            addSeriesMeta(p + " name", lut);
             stream.skipBytes(8);
-          }
-
-          // finish setting up channel mapping
-          for (int p=0; p<channelMap[i].length; p++) {
-            if (!CHANNEL_PRIORITIES.containsKey(luts[p])) luts[p] = "";
-            channelMap[i][p] = CHANNEL_PRIORITIES.get(luts[p]).intValue();
-          }
-
-          int[] sorted = new int[channelMap[i].length];
-          Arrays.fill(sorted, -1);
-
-          for (int p=0; p<sorted.length; p++) {
-            int min = Integer.MAX_VALUE;
-            int minIndex = -1;
-            for (int n=0; n<channelMap[i].length; n++) {
-              if (channelMap[i][n] < min &&
-                !DataTools.containsValue(sorted, n))
-              {
-                min = channelMap[i][n];
-                minIndex = n;
-              }
-            }
-            sorted[p] = minIndex;
-          }
-
-          for (int p=0; p<channelMap[i].length; p++) {
-            channelMap[i][sorted[p]] = p;
           }
         }
         stream.close();
@@ -1002,12 +959,6 @@ public class LeicaReader extends FormatReader {
       if (tokens[0].startsWith("CDetectionUnit")) {
         // detector information
 
-        String index = tokens[1].substring(tokens[1].lastIndexOf(" ") + 1);
-        try {
-          activeChannelIndices.add(new Integer(index));
-        }
-        catch (NumberFormatException e) { }
-
         if (tokens[1].startsWith("PMT")) {
           try {
             if (tokens[2].equals("VideoOffset")) {
@@ -1020,6 +971,14 @@ public class LeicaReader extends FormatReader {
             else if (tokens[2].equals("State")) {
               // link Detector to Image, if the detector was actually used
               if (data.equals("Active")) {
+                String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
+                int channelIndex = nextDetector;
+                try {
+                  channelIndex = Integer.parseInt(index) - 1;
+                }
+                catch (NumberFormatException e) { }
+                activeChannelIndices.add(new Integer(channelIndex));
+
                 String detectorID =
                   MetadataTools.createLSID("Detector", series, nextDetector);
                 store.setDetectorID(detectorID, series, nextDetector);
@@ -1110,14 +1069,19 @@ public class LeicaReader extends FormatReader {
 
         if (tokens[2].equals("Wavelength")) {
           Integer wavelength = new Integer((int) Float.parseFloat(data));
-          store.setFilterType("Other", series, channel);
-          store.setFilterModel(tokens[1].substring(0, ndx), series, channel);
+          store.setDichroicModel(tokens[1], series, channel);
 
-          if (tokens[3].equals("0")) {
-            store.setTransmittanceRangeCutIn(wavelength, series, channel);
-          }
-          else if (tokens[3].equals("1")) {
-            store.setTransmittanceRangeCutOut(wavelength, series, channel);
+          String filterID =
+            MetadataTools.createLSID("Dichroic", series, channel);
+          String filterSetID =
+            MetadataTools.createLSID("FilterSet", series, channel);
+          store.setDichroicID(filterID, series, channel);
+          store.setFilterSetID(filterSetID, series, channel);
+
+          store.setFilterSetDichroic(filterID, series, channel);
+          if (activeChannelIndices.contains(new Integer(channel))) {
+            store.setLogicalChannelFilterSet(filterSetID, series,
+              activeChannelIndices.indexOf(new Integer(channel)));
           }
         }
         else if (tokens[2].equals("Stain")) {
