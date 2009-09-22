@@ -1069,19 +1069,26 @@ public class LeicaReader extends FormatReader {
 
         if (tokens[2].equals("Wavelength")) {
           Integer wavelength = new Integer((int) Float.parseFloat(data));
-          store.setDichroicModel(tokens[1], series, channel);
+          store.setFilterModel(tokens[1], series, channel);
 
           String filterID =
-            MetadataTools.createLSID("Dichroic", series, channel);
+            MetadataTools.createLSID("Filter", series, channel);
           String filterSetID =
             MetadataTools.createLSID("FilterSet", series, channel);
-          store.setDichroicID(filterID, series, channel);
+          store.setFilterID(filterID, series, channel);
           store.setFilterSetID(filterSetID, series, channel);
 
           store.setFilterSetDichroic(filterID, series, channel);
           if (activeChannelIndices.contains(new Integer(channel))) {
             store.setLogicalChannelFilterSet(filterSetID, series,
               activeChannelIndices.indexOf(new Integer(channel)));
+          }
+
+          if (tokens[3].equals("0")) {
+            store.setTransmittanceRangeCutIn(wavelength, series, channel);
+          }
+          else if (tokens[3].equals("1")) {
+            store.setTransmittanceRangeCutOut(wavelength, series, channel);
           }
         }
         else if (tokens[2].equals("Stain")) {

@@ -945,27 +945,6 @@ public class ZeissLSMReader extends FormatReader {
       nextDetectChannel++;
       nextDetector++;
     }
-    else if (block instanceof IlluminationChannel) {
-      IlluminationChannel channel = (IlluminationChannel) block;
-      boolean mustIncrement = false;
-      if (nextIllumChannel < getSizeC()) {
-        if (channel.wavelength != null && channel.acquire) {
-          store.setLogicalChannelExWave(channel.wavelength, series,
-            nextIllumChannel);
-          mustIncrement = true;
-        }
-        /*
-        if (channel.attenuation != null && channel.acquire) {
-          store.setLightSourceSettingsAttenuation(channel.attenuation, series,
-            nextIllumChannel);
-          mustIncrement = true;
-        }
-        */
-        if (mustIncrement || nextIllumChannel < getSizeC() - 1) {
-          nextIllumChannel++;
-        }
-      }
-    }
     else if (block instanceof BeamSplitter) {
       BeamSplitter beamSplitter = (BeamSplitter) block;
       if (beamSplitter.filterSet != null) {

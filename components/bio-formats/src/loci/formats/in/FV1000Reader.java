@@ -1030,38 +1030,21 @@ public class FV1000Reader extends FormatReader {
       // populate FilterSet data
       int emIndex = channelIndex * 2;
       int exIndex = channelIndex * 2 + 1;
-      String emFilter = MetadataTools.createLSID("Filter", 0, emIndex);
-      String exFilter = MetadataTools.createLSID("Filter", 0, exIndex);
+      String emFilter = MetadataTools.createLSID("Dichroic", 0, emIndex);
+      String exFilter = MetadataTools.createLSID("Dichroic", 0, exIndex);
 
       store.setFilterSetID(filterSet, 0, channelIndex);
-      store.setFilterSetEmFilter(emFilter, 0, channelIndex);
-      store.setFilterSetExFilter(exFilter, 0, channelIndex);
+      store.setFilterSetDichroic(exFilter, 0, channelIndex);
 
       // populate Filter data
       String[] emTokens = channel.emissionFilter.split("/");
       String[] exTokens = channel.excitationFilter.split("/");
 
-      store.setFilterID(emFilter, 0, emIndex);
-      store.setFilterModel(emTokens[0], 0, emIndex);
-      store.setFilterType("Unknown", 0, emIndex);
-      if (emTokens.length >= 3) {
-        String[] range = emTokens[2].split("-");
-        store.setTransmittanceRangeCutIn(new Integer(range[0]), 0, emIndex);
-        if (range.length > 1) {
-          store.setTransmittanceRangeCutOut(new Integer(range[1]), 0, emIndex);
-        }
-      }
+      store.setDichroicID(emFilter, 0, emIndex);
+      store.setDichroicModel(emTokens[0], 0, emIndex);
 
-      store.setFilterID(exFilter, 0, exIndex);
-      store.setFilterModel(exTokens[0], 0, exIndex);
-      store.setFilterType("Unknown", 0, exIndex);
-      if (exTokens.length >= 3) {
-        String[] range = exTokens[2].split("-");
-        store.setTransmittanceRangeCutIn(new Integer(range[0]), 0, exIndex);
-        if (range.length > 1) {
-          store.setTransmittanceRangeCutOut(new Integer(range[1]), 0, exIndex);
-        }
-      }
+      store.setDichroicID(exFilter, 0, exIndex);
+      store.setDichroicModel(exTokens[0], 0, exIndex);
 
       // populate Laser data
       store.setLightSourceID(lightSourceID, 0, channelIndex);
