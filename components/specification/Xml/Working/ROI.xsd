@@ -81,6 +81,7 @@
 					<xsd:element ref="Path" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Text" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
+				<xsd:element ref="ShapeDisplayOptions" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ShapeID"/>
 			<xsd:attribute name="TheZ" use="optional" type="xsd:integer">
@@ -398,7 +399,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:simpleType name="ROIID"> <!-- top level definition -->
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
@@ -407,7 +408,102 @@
 	
 	<xsd:simpleType name="ShapeID"> <!-- top level definition -->
 		<xsd:restriction base="OME:LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(Shape:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Shape:\S+)|(Shape:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:element name="ShapeDisplayOptions"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:attribute name="Fill" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FillRule" use="optional" type="xsd:string"/>
+			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string"/>
+			<xsd:attribute name="LineCap" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							The shape of the end of the line.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Butt"/>
+						<xsd:enumeration value="Line"/>
+						<xsd:enumeration value="Square"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
+			<xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
+			<xsd:attribute name="Text" use="optional" type="xsd:string"/>
+			<xsd:attribute name="FontFamily" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							The font family used to draw the text.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Arial"/>
+						<xsd:enumeration value="Courier"/>
+						<xsd:enumeration value="Helvetica"/>
+						<xsd:enumeration value="TimesNewRoman"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="FontSize" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FontStyle" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							The style applied to the text.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Bold"/>
+						<xsd:enumeration value="BoldItalic"/>
+						<xsd:enumeration value="Italic"/>
+						<xsd:enumeration value="Regular"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:simpleType name="Marker"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				Shape of marker on the end of a line.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Arrow"/>
+			<xsd:enumeration value="Circle"/>
+			<xsd:enumeration value="Square"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
