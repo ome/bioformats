@@ -473,10 +473,7 @@ Apache XML-RPC
       findbugs-loci-plugins, findbugs-ome-io, findbugs-ome-plugins,
       findbugs-visbio, findbugs-slim, findbugs-flow,
       findbugs-checks, findbugs-tests"
-    description="run findbugs on most components">
-    <delete dir="${shared-artifact.dir}"/>
-    <delete dir="build"/>
-  </target>
+    description="run findbugs on most components"/>
 
   <target name="clean"
     depends="clean-common, clean-ome-xml,
