@@ -157,9 +157,12 @@
   </xsl:template>
 
   <xsl:template match="AML:*">
-  	<xsl:element name="{name()}" namespace="{$newAMLNS}">
+  	<xsl:comment> AnalysisModule Removed </xsl:comment>
+<!-- 
+	<xsl:element name="{name()}" namespace="{$newAMLNS}">
       <xsl:apply-templates select="@*|node()"/>
     </xsl:element>
+-->
   </xsl:template>
   
   <xsl:template match="MLI:*">
