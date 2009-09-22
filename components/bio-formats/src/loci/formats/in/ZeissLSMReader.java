@@ -371,7 +371,6 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       initMetadata(series);
-      core[series].littleEndian = !isLittleEndian();
       store.setPixelsBigEndian(new Boolean(!isLittleEndian()), series, 0);
     }
     for (int series=0; series<ifdsList.size(); series++) {
