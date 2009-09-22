@@ -148,28 +148,18 @@
 	<xsd:simpleType name="NamingConvention">
 		<xsd:annotation>
 			<xsd:documentation>
-				Predefined list of values for the number of pixels that can be combined to form larger pixels.
+				Predefined list of values for the well labels
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="A-ZZZ">
+			<xsd:enumeration value="letter">
 				<xsd:annotation>
 					<xsd:documentation>
 						A, B, C, ... X, Y, Z, AA, BB, CC, ... YY, ZZ, AAA, BBB, ...
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:enumeration>
-			<xsd:enumeration value="a-zzz"/>
-			<xsd:enumeration value="Z-A"/>
-			<xsd:enumeration value="z-a"/>
-			<xsd:enumeration value="0-*">
-				<xsd:annotation>
-					<xsd:documentation>
-						0, 1, 2, 3, ...
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:enumeration>
-			<xsd:enumeration value="1-*">
+			<xsd:enumeration value="number">
 				<xsd:annotation>
 					<xsd:documentation>
 						1, 2, 3, ...
@@ -422,7 +412,7 @@
 					</xsd:documentation>
 				</xsd:annotation>			
 			</xsd:attribute>
-			<xsd:attribute name="Type" use="optional" type="xsd:string">
+			<xsd:attribute name="Status" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						A human readable identifier for the screening status. 
