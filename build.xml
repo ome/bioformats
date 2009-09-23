@@ -82,8 +82,8 @@ OME I/O
     JAR file:      ome-io.jar
     Path:          components/ome-io
     Project deps:  LOCI Common, Bio-Formats
-    Library deps:  OMERO Client, OMERO Common, OMERO Importer
-    Optional:      OME-Java, OMERO Model PostgreSQL
+    Library deps:  OMERO Client, OMERO Common
+    Optional:      OME-Java
     License:       GPL
 
 OME Plugins for ImageJ
@@ -145,7 +145,7 @@ LOCI testing framework
     -=-
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
-    Project deps:  LOCI Common, Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats, OME I/O
     Library deps:  TestNG
     Optional:      (none)
     License:       BSD
@@ -356,25 +356,13 @@ OME-Java deprecated classes
     License:   LGPL
 
 OMERO Client
-    JAR file:  omero-client-3.0-Beta3.jar
+    JAR file:  omero-client-4.0.3.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
 
 OMERO Common
-    JAR file:  omero-common-3.0-Beta3.jar
-    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
-    Notes:     used by OME I/O to connect to OMERO servers
-    License:   GPL
-
-OMERO Importer
-    JAR file:  omero-importer-3.0-Beta3.jar
-    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
-    Notes:     used by OME I/O to connect to OMERO servers
-    License:   GPL
-
-OMERO Model PostgreSQL
-    JAR file:  omero-model-psql-3.0-Beta3.jar
+    JAR file:  omero-common-4.0.3.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL

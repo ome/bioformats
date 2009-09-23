@@ -543,8 +543,8 @@ ZZ
 my %omeroClient = (
   NAME    => "omero-client",
   TITLE   => "OMERO Client",
-  JAR     => "omero-client-3.0-Beta3.jar",
-  PACKAGE => "pojos",
+  JAR     => "omero-client-4.0.3.jar",
+  PACKAGE => "ome.system",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
@@ -555,7 +555,7 @@ ZZ
 my %omeroCommon = (
   NAME    => "omero-common",
   TITLE   => "OMERO Common",
-  JAR     => "omero-common-3.0-Beta3.jar",
+  JAR     => "omero-common-4.0.3.jar",
   PACKAGE => "ome.api",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
@@ -564,29 +564,29 @@ used by OME I/O to connect to OMERO servers
 ZZ
 );
 
-my %omeroImporter = (
-  NAME    => "omero-importer",
-  TITLE   => "OMERO Importer",
-  JAR     => "omero-importer-3.0-Beta3.jar",
-  PACKAGE => "ome.formats",
-  LICENSE => "GPL",
-  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-  NOTES   => <<ZZ,
-used by OME I/O to connect to OMERO servers
-ZZ
-);
+#my %omeroImporter = (
+#  NAME    => "omero-importer",
+#  TITLE   => "OMERO Importer",
+#  JAR     => "omero-importer-3.0-Beta3.jar",
+#  PACKAGE => "ome.formats",
+#  LICENSE => "GPL",
+#  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+#  NOTES   => <<ZZ,
+#used by OME I/O to connect to OMERO servers
+#ZZ
+#);
 
-my %omeroModelPSQL = (
-  NAME    => "omero-model-psql",
-  TITLE   => "OMERO Model PostgreSQL",
-  JAR     => "omero-model-psql-3.0-Beta3.jar",
-  PACKAGE => "ome.model",
-  LICENSE => "GPL",
-  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-  NOTES   => <<ZZ,
-used by OME I/O to connect to OMERO servers
-ZZ
-);
+#my %omeroModelPSQL = (
+#  NAME    => "omero-model-psql",
+#  TITLE   => "OMERO Model PostgreSQL",
+#  JAR     => "omero-model-psql-3.0-Beta3.jar",
+#  PACKAGE => "ome.model",
+#  LICENSE => "GPL",
+#  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+#  NOTES   => <<ZZ,
+#used by OME I/O to connect to OMERO servers
+#ZZ
+#);
 
 my %skinlf = (
   NAME    => "skinlf",
@@ -734,8 +734,8 @@ my @libs = (
   \%omeJavaDeprecated,
   \%omeroClient,
   \%omeroCommon,
-  \%omeroImporter,
-  \%omeroModelPSQL,
+#  \%omeroImporter,
+#  \%omeroModelPSQL,
   \%spring,
   \%jboss,
   \%skinlf,
