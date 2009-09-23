@@ -51,7 +51,7 @@ import loci.formats.FormatTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.ome.io.OMECredentials;
-import loci.ome.io.OMEROReader;
+import loci.ome.io.OmeroReader;
 import loci.ome.io.OMEUtils;
 import loci.plugins.util.LibraryChecker;
 import loci.plugins.util.WindowTools;
@@ -442,7 +442,7 @@ public class OMEPlugin implements PlugIn {
 
     public void run() {
       try {
-        OMEROReader r = new OMEROReader();
+        OmeroReader r = new OmeroReader();
         BufferedImageReader bir = new BufferedImageReader(r);
         for (int i=0; i<ids.length; i++) {
           bir.setId("server=" + cred.server + "\nusername=" + cred.username +
