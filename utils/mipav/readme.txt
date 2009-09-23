@@ -16,8 +16,8 @@ Steps to try out the plugin:
    mipav/plugins folder.
 
 4) Add loci_tools.jar to MIPAV's class path:
-     * How to do so depends on your platform.
-     * E.g., in Mac OS X, edit the mipav.app/Contents/Info.plist file.
+     * On Mac OS X, edit the mipav.app/Contents/Info.plist file.
+     * On Windows, edit the C:\Program Files\mipav\mipav.lax file.
 
 5) Run MIPAV and a new "BioFormatsImporter - read image" menu item will appear
    in the Plugins > File submenu.
