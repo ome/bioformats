@@ -93,4 +93,21 @@ Type "ant -p" for a list of targets.
     </if>
   </target>
 
+  <target name="init-release">
+    <exec executable="svn" outputproperty="release.version"
+      failifexecutionfails="false">
+      <arg line="info ${base.dir}"/>
+    </exec>
+    <propertyregex property="svn.root" input="${release.version}" select="\1">
+      <regexp pattern="Repository Root: (.*)"/>
+    </propertyregex>
+    <propertyregex property="release.version" override="true"
+      input="${release.version}" select="\1">
+      <regexp pattern="URL: ${svn.root}/(.*)/components/(.*)"/>
+    </propertyregex>
+    <propertyregex property="release.version" override="true"
+      input="${release.version}" regexp="branches/(.*)" replace="stable \1"
+      defaultValue="trunk"/>
+  </target>
+
 </project>

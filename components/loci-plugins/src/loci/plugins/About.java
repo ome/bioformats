@@ -52,6 +52,7 @@ public final class About implements PlugIn {
   public static void about() {
     String msg = "<html>" +
       "LOCI Plugins for ImageJ, revision @svn.revision@, built @date@" +
+      "<br>Release: @release.version@" +
       "<br>Copyright 2005-@year@ UW-Madison LOCI" +
       "<br><i>http://www.loci.wisc.edu/software</i>" +
       "<br>" +

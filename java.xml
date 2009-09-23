@@ -49,7 +49,7 @@ Type "ant -p" for a list of targets.
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
           output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
-          excludeFilter="${root.dir}/excludebugs.xml">
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high">
           <auxClasspath path="${component.classpath}"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
@@ -129,7 +129,7 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-timestamp, init-revision, init-manifest-cp"/>
+    depends="init-timestamp, init-revision, init-release, init-manifest-cp"/>
 
   <target name="init-manifest-cp">
     <!-- construct manifest classpath -->
