@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import loci.common.DateTools;
@@ -43,6 +44,9 @@ import loci.formats.meta.MetadataStore;
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
  * files. More information on ICS can be found at http://libics.sourceforge.net
+ *
+ * TODO : remove sub-C logic once N-dimensional support is in place
+ *        see https://skyking.microscopy.wisc.edu/trac/java/ticket/398
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ICSReader.java">Trac</a>,
@@ -128,6 +132,12 @@ public class ICSReader extends FormatReader {
   /** Whether or not the channels represent lifetime histogram bins. */
   private boolean lifetime;
 
+  /** The length of each channel axis. */
+  private Vector<Integer> channelLengths;
+
+  /** The type of each channel axis. */
+  private Vector<String> channelTypes;
+
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
@@ -136,6 +146,28 @@ public class ICSReader extends FormatReader {
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getChannelDimLengths() */
+  public int[] getChannelDimLengths() {
+    FormatTools.assertId(currentId, true, 1);
+    int[] len = new int[channelLengths.size()];
+    for (int i=0; i<len.length; i++) {
+      len[i] = channelLengths.get(i).intValue();
+    }
+    return len;
+  }
+
+  /* @see loci.formats.IFormatReader#getChannelDimTypes() */
+  public String[] getChannelDimTypes() {
+    FormatTools.assertId(currentId, true, 1);
+    return channelTypes.toArray(new String[channelTypes.size()]);
+  }
+
+  /* @see loci.formats.IFormatReader#isInterleaved(int) */
+  public boolean isInterleaved(int subC) {
+    FormatTools.assertId(currentId, true, 1);
+    return subC == 0 && isRGB();
+  }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
@@ -159,7 +191,7 @@ public class ICSReader extends FormatReader {
 
     int sizeC = lifetime ? 1 : getSizeC();
 
-    if (!isRGB() && sizeC > 4) {
+    if (!isRGB() && sizeC > 4 && channelLengths.size() == 1) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       if (!gzip && data == null) {
@@ -536,6 +568,9 @@ public class ICSReader extends FormatReader {
 
     // find axis sizes
 
+    channelLengths = new Vector<Integer>();
+    channelTypes = new Vector<String>();
+
     int bitsPerPixel = 0;
     for (int i=0; i<axes.length; i++) {
       if (i >= axisLengths.length) break;
@@ -552,16 +587,36 @@ public class ICSReader extends FormatReader {
       }
       else if (axes[i].equals("z")) {
         core[0].sizeZ = axisLengths[i];
-        core[0].dimensionOrder += "Z";
+        if (getDimensionOrder().indexOf("Z") == -1) {
+          core[0].dimensionOrder += "Z";
+        }
       }
-      else if (axes[i].startsWith("c")) {
-        core[0].sizeC = axisLengths[i];
-        core[0].rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
-        core[0].dimensionOrder += "C";
+      else if (axes[i].equals("t")) {
+        if (getSizeT() == 0) core[0].sizeT = axisLengths[i];
+        else core[0].sizeT *= axisLengths[i];
+        if (getDimensionOrder().indexOf("T") == -1) {
+          core[0].dimensionOrder += "T";
+        }
       }
       else {
-        core[0].sizeT = axisLengths[i];
-        core[0].dimensionOrder += "T";
+        if (core[0].sizeC == 0) core[0].sizeC = axisLengths[i];
+        else core[0].sizeC *= axisLengths[i];
+        channelLengths.add(new Integer(axisLengths[i]));
+        core[0].rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
+        if (getDimensionOrder().indexOf("C") == -1) {
+          core[0].dimensionOrder += "C";
+        }
+
+        if (axes[i].startsWith("c")) {
+          channelTypes.add(FormatTools.CHANNEL);
+        }
+        else if (axes[i].equals("p")) {
+          channelTypes.add(FormatTools.PHASE);
+        }
+        else if (axes[i].equals("f")) {
+          channelTypes.add(FormatTools.FREQUENCY);
+        }
+        else channelTypes.add("");
       }
     }
 

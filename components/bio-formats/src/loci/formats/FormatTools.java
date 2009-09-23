@@ -106,6 +106,18 @@ public final class FormatTools {
    */
   public static final String POLARIZATION = "Polarization";
 
+  /**
+   * Identifies the <i>Phase</i> dimensional type,
+   * representing a dimension consisting of phases.
+   */
+  public static final String PHASE = "Phase";
+
+  /**
+   * Identifies the <i>Frequency</i> dimensional type,
+   * representing a dimension consisting of frequencies.
+   */
+  public static final String FREQUENCY = "Frequency";
+
   /** File grouping options. */
   public static final int MUST_GROUP = 0;
   public static final int CAN_GROUP = 1;
