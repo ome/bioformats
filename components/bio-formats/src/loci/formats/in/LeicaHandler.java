@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -55,17 +56,21 @@ public class LeicaHandler extends DefaultHandler {
 
   private Vector<String> lutNames;
   private Vector<Float> xPos, yPos, zPos;
+  private float physicalSizeX, physicalSizeY;
 
   private int numDatasets = -1;
   private Hashtable globalMetadata;
 
   private MetadataStore store;
 
-  private int nextLaser, channel, nextDetector = -1;
+  private int nextLaser, nextChannel, channel, nextDetector = -1;
   private Float zoom, pinhole, readOutRate;
   private Vector<Integer> detectorIndices;
   private String filterWheelName;
   private int nextFilter = 0, filterIndex;
+  private int nextROI = 0;
+  private ROI roi;
+  private boolean alternateCenter = false;
 
   private Vector<CoreMetadata> core;
 
@@ -193,6 +198,7 @@ public class LeicaHandler extends DefaultHandler {
       nextLaser = 0;
       nextFilter = 0;
       nextDetector = -1;
+      nextROI = 0;
 
       int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
 
@@ -206,8 +212,17 @@ public class LeicaHandler extends DefaultHandler {
         store.setLogicalChannelPinholeSize(pinhole, numDatasets, c);
       }
     }
+    else if (qName.equals("ScannerSetting")) {
+      nextChannel = 0;
+    }
+    else if (qName.equals("FilterSetting")) {
+      nextChannel = 0;
+    }
     else if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = true;
+    }
+    else if (qName.equals("Annotation")) {
+      roi.storeROI(store, numDatasets, nextROI++);
     }
   }
 
@@ -220,6 +235,16 @@ public class LeicaHandler extends DefaultHandler {
     }
 
     if (!canParse) return;
+
+    String k = attributes.getValue("Identifier");
+    String value = attributes.getValue("Variant");
+    if (k == null) {
+      k = attributes.getValue("Description") + "|" +
+        attributes.getValue("Attribute");
+    }
+    if (value != null) {
+      h.put(k, value);
+    }
 
     if (qName.equals("Element")) {
       elementName = attributes.getValue("Name");
@@ -289,6 +314,7 @@ public class LeicaHandler extends DefaultHandler {
               coreMeta.pixelType = FormatTools.FLOAT;
               break;
           }
+          physicalSizeX = physicalSize.floatValue();
           store.setDimensionsPhysicalSizeX(physicalSize, numDatasets, 0);
           break;
         case 2: // Y axis
@@ -302,6 +328,7 @@ public class LeicaHandler extends DefaultHandler {
           }
           else {
             coreMeta.sizeY = len;
+            physicalSizeY = physicalSize.floatValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
           }
           break;
@@ -310,6 +337,7 @@ public class LeicaHandler extends DefaultHandler {
             // XZ scan - swap Y and Z
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
+            physicalSizeY = physicalSize.floatValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
           }
           else {
@@ -322,6 +350,7 @@ public class LeicaHandler extends DefaultHandler {
             // XT scan - swap Y and T
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
+            physicalSizeY = physicalSize.floatValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
           }
           else {
@@ -336,7 +365,6 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("ScannerSettingRecord")) {
       String id = attributes.getValue("Identifier");
-      String value = attributes.getValue("Variant");
 
       if (id.equals("SystemType")) {
         store.setMicroscopeModel(value, numDatasets);
@@ -379,6 +407,7 @@ public class LeicaHandler extends DefaultHandler {
         else if (id.endsWith("WaveLength")) {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
         }
+        // this is not a typo
         else if (id.endsWith("UesrDefName")) {
           store.setLogicalChannelName(value, numDatasets, c);
         }
@@ -412,8 +441,13 @@ public class LeicaHandler extends DefaultHandler {
           nextLaser++;
         }
         else if (attribute.equals("Output Power")) {
+          String id =
+            MetadataTools.createLSID("LightSource", numDatasets, nextLaser - 1);
           store.setLightSourcePower(
             new Float(variant), numDatasets, nextLaser - 1);
+          if (nextChannel >= coreMeta.sizeC) nextChannel = 0;
+          store.setLightSourceSettingsLightSource(id, numDatasets, nextChannel);
+          nextChannel++;
         }
       }
       else if (objectClass.equals("CDetectionUnit")) {
@@ -425,6 +459,10 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorModel(object, numDatasets, nextDetector);
           store.setDetectorType("Unknown", numDatasets, nextDetector);
           store.setDetectorZoom(zoom, numDatasets, nextDetector);
+          if (variant.equals("Active")) {
+            if (nextChannel >= coreMeta.sizeC) nextChannel = 0;
+            store.setDetectorSettingsDetector(id, numDatasets, nextChannel++);
+          }
         }
         else if (attribute.equals("HighVoltage")) {
           store.setDetectorVoltage(
@@ -518,18 +556,40 @@ public class LeicaHandler extends DefaultHandler {
       else if (attribute.equals("Speed")) {
         readOutRate = new Float(Float.parseFloat(variant) / 1000000);
       }
+      else if (objectClass.equals("CSpectrophotometerUnit")) {
+        Integer v = null;
+        try {
+          v = new Integer((int) Float.parseFloat(variant));
+        }
+        catch (NumberFormatException e) { }
+        if (attribute.endsWith("(left)")) {
+          store.setFilterModel(object, numDatasets, nextFilter);
+          if (v != null) {
+            store.setTransmittanceRangeCutIn(v, numDatasets, nextFilter);
+          }
+        }
+        else if (attribute.endsWith("(right)")) {
+          if (v != null) {
+            store.setTransmittanceRangeCutOut(v, numDatasets, nextFilter);
+          }
+        }
+      }
     }
     else if (qName.equals("MultiBand")) {
       if (channel >= core.get(numDatasets).sizeC) return;
-      String em = attributes.getValue("LeftWorld");
-      String ex = attributes.getValue("RightWorld");
-      Integer emWave = new Integer((int) Float.parseFloat(em));
-      Integer exWave = new Integer((int) Float.parseFloat(ex));
       String name = attributes.getValue("DyeName");
 
-      store.setLogicalChannelEmWave(emWave, numDatasets, channel);
-      store.setLogicalChannelExWave(exWave, numDatasets, channel);
       store.setLogicalChannelName(name, numDatasets, channel);
+
+      float in = Float.parseFloat(attributes.getValue("LeftWorld"));
+      float out = Float.parseFloat(attributes.getValue("RightWorld"));
+
+      Integer cutIn = new Integer((int) in);
+      Integer cutOut = new Integer((int) out);
+
+      store.setTransmittanceRangeCutIn(cutIn, numDatasets, nextFilter - 1);
+      store.setTransmittanceRangeCutOut(cutOut, numDatasets, nextFilter - 1);
+
       channel++;
     }
     else if (qName.equals("Detector")) {
@@ -623,6 +683,28 @@ public class LeicaHandler extends DefaultHandler {
       }
       nextFilter++;
     }
+    else if (qName.equals("Annotation")) {
+      roi = new ROI();
+      roi.type = Integer.parseInt(attributes.getValue("type"));
+      roi.color = Integer.parseInt(attributes.getValue("color"));
+      roi.name = attributes.getValue("name");
+      roi.fontName = attributes.getValue("fontName");
+      roi.fontSize = attributes.getValue("fontSize");
+      roi.transX = Float.parseFloat(attributes.getValue("transTransX"));
+      roi.transY = Float.parseFloat(attributes.getValue("transTransY"));
+      roi.scaleX = Float.parseFloat(attributes.getValue("transScalingX"));
+      roi.scaleY = Float.parseFloat(attributes.getValue("transScalingY"));
+      roi.rotation = Float.parseFloat(attributes.getValue("transRotation"));
+      roi.linewidth = Integer.parseInt(attributes.getValue("linewidth"));
+      roi.text = attributes.getValue("text");
+    }
+    else if (qName.equals("Vertex")) {
+      roi.x.add(new Float(attributes.getValue("x")));
+      roi.y.add(new Float(attributes.getValue("y")));
+    }
+    else if (qName.equals("ROI")) {
+      alternateCenter = true;
+    }
     else count = 0;
     storeSeriesHashtable(numDatasets, h);
   }
@@ -639,6 +721,141 @@ public class LeicaHandler extends DefaultHandler {
     CoreMetadata coreMeta = core.get(series);
     coreMeta.seriesMetadata = h;
     core.setElementAt(coreMeta, series);
+  }
+
+  // -- Helper class --
+
+  class ROI {
+    // -- Constants --
+
+    public static final int TEXT = 512;
+    public static final int SCALE_BAR = 8192;
+    public static final int POLYGON = 32;
+    public static final int RECTANGLE = 16;
+    public static final int LINE = 256;
+    public static final int ARROW = 2;
+
+    // -- Fields --
+    public int type;
+
+    public Vector<Float> x = new Vector<Float>();
+    public Vector<Float> y = new Vector<Float>();
+
+    // center point of the ROI
+    public float transX, transY;
+
+    // transformation parameters
+    public float scaleX, scaleY;
+    public float rotation;
+
+    public int color;
+    public int linewidth;
+
+    public String text;
+    public String fontName;
+    public String fontSize;
+    public String name;
+
+    private boolean normalized = false;
+
+    // -- ROI API methods --
+
+    public void storeROI(MetadataStore store, int series, int roi) {
+      // keep in mind that vertices are given relative to the center
+      // point of the ROI and the transX/transY values are relative to
+      // the center point of the image
+
+      store.setShapeText(text, series, roi, 0);
+      store.setShapeFontFamily(fontName, series, roi, 0);
+      store.setShapeFontSize(
+        new Integer((int) Float.parseFloat(fontSize)), series, roi, 0);
+      store.setShapeStrokeColor(String.valueOf(color), series, roi, 0);
+      store.setShapeStrokeWidth(new Integer(linewidth), series, roi, 0);
+
+      if (!normalized) normalize();
+
+      float cornerX = x.get(0).floatValue();
+      float cornerY = y.get(0).floatValue();
+
+      int centerX = (core.get(series).sizeX / 2) - 1;
+      int centerY = (core.get(series).sizeY / 2) - 1;
+
+      float roiX = centerX + transX;
+      float roiY = centerY + transY;
+
+      if (alternateCenter) {
+        roiX = transX - 2 * cornerX;
+        roiY = transY - 2 * cornerY;
+      }
+
+      // TODO : rotation/scaling not populated
+
+      switch (type) {
+        case POLYGON:
+          StringBuffer points = new StringBuffer();
+          for (int i=0; i<x.size(); i++) {
+            points.append(x.get(i).floatValue() + roiX);
+            points.append(",");
+            points.append(y.get(i).floatValue() + roiY);
+            if (i < x.size() - 1) points.append(" ");
+          }
+          store.setPolygonPoints(points.toString(), series, roi, 0);
+
+          break;
+        case TEXT:
+        case RECTANGLE:
+          store.setRectX(
+            String.valueOf(roiX - Math.abs(cornerX)), series, roi, 0);
+          store.setRectY(
+            String.valueOf(roiY - Math.abs(cornerY)), series, roi, 0);
+          float width = (float) (2 * Math.abs(cornerX));
+          float height = (float) (2 * Math.abs(cornerY));
+          store.setRectWidth(String.valueOf(width), series, roi, 0);
+          store.setRectHeight(String.valueOf(height), series, roi, 0);
+
+          break;
+        case SCALE_BAR:
+        case ARROW:
+        case LINE:
+          store.setLineX1(String.valueOf(roiX + x.get(0)), series, roi, 0);
+          store.setLineY1(String.valueOf(roiY + y.get(0)), series, roi, 0);
+          store.setLineX2(String.valueOf(roiX + x.get(1)), series, roi, 0);
+          store.setLineY2(String.valueOf(roiY + y.get(1)), series, roi, 0);
+          break;
+      }
+    }
+
+    // -- Helper methods --
+
+    /**
+     * Vertices and transformation values are not stored in pixel coordinates.
+     * We need to convert them from physical coordinates to pixel coordinates
+     * so that they can be stored in a MetadataStore.
+     */
+    private void normalize() {
+      if (normalized) return;
+
+      // coordinates are in meters
+
+      transX *= 1000000;
+      transY *= 1000000;
+      transX *= (1 / physicalSizeX);
+      transY *= (1 / physicalSizeY);
+
+      for (int i=0; i<x.size(); i++) {
+        float coordinate = x.get(i).floatValue() * 1000000;
+        coordinate *= (1 / physicalSizeX);
+        x.setElementAt(new Float(coordinate), i);
+      }
+
+      for (int i=0; i<y.size(); i++) {
+        float coordinate = y.get(i).floatValue() * 1000000;
+        coordinate *= (1 / physicalSizeY);
+        y.setElementAt(new Float(coordinate), i);
+      }
+
+      normalized = true;
+    }
   }
 
 }
