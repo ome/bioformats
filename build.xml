@@ -914,13 +914,13 @@ Apache XML-RPC
   <!-- LOCI testing framework -->
 
   <target name="compile-tests"
-    depends="compile-common, compile-formats"
+    depends="compile-common, compile-formats, compile-ome-io"
     description="compile classes for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.compile"/>
   </target>
 
   <target name="jar-tests"
-    depends="jar-common, jar-formats"
+    depends="jar-common, jar-formats, jar-ome-io"
     description="generate JAR file for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.jar"/>
   </target>
@@ -931,7 +931,7 @@ Apache XML-RPC
   </target>
 
   <target name="clean-tests"
-    depends="clean-common, clean-formats"
+    depends="clean-common, clean-formats, clean-ome-io"
     description="remove build files for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.clean"/>
   </target>
