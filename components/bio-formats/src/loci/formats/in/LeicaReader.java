@@ -1071,16 +1071,11 @@ public class LeicaReader extends FormatReader {
           Integer wavelength = new Integer((int) Float.parseFloat(data));
           store.setFilterModel(tokens[1], series, channel);
 
-          String filterID =
-            MetadataTools.createLSID("Filter", series, channel);
-          String filterSetID =
-            MetadataTools.createLSID("FilterSet", series, channel);
+          String filterID = MetadataTools.createLSID("Filter", series, channel);
           store.setFilterID(filterID, series, channel);
-          store.setFilterSetID(filterSetID, series, channel);
 
-          store.setFilterSetDichroic(filterID, series, channel);
           if (activeChannelIndices.contains(new Integer(channel))) {
-            store.setLogicalChannelFilterSet(filterSetID, series,
+            store.setLogicalChannelSecondaryEmissionFilter(filterID, series,
               activeChannelIndices.indexOf(new Integer(channel)));
           }
 
@@ -1121,13 +1116,6 @@ public class LeicaReader extends FormatReader {
         float pos = Float.parseFloat(data) * 1000000;
         for (int q=0; q<core[series].imageCount; q++) {
           store.setStagePositionPositionZ(new Float(pos), series, 0, q);
-        }
-      }
-      else if (contentID.startsWith("CScanCtrlUnit|Scan Head|Speed")) {
-        // speed is stored in Hz
-        float speed = Float.parseFloat(data) / 1000;
-        for (int c=0; c<getEffectiveSizeC(); c++) {
-          store.setDetectorSettingsReadOutRate(new Float(speed), series, c);
         }
       }
 
