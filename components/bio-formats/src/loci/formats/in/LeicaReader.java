@@ -210,8 +210,16 @@ public class LeicaReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
-    tiff.setId((String) files[series].get(no));
-    return tiff.openBytes(0, buf, x, y, w, h);
+    if (no < files[series].size()) {
+      String filename = (String) files[series].get(no);
+      if (new Location(filename).exists()) {
+        tiff.setId(filename);
+        return tiff.openBytes(0, buf, x, y, w, h);
+      }
+    }
+    // imitate Leica's software and return a blank plane if the
+    // appropriate TIFF file is missing
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -429,7 +437,7 @@ public class LeicaReader extends FormatReader {
         }
       }
 
-      boolean tiffsExist = true;
+      boolean tiffsExist = false;
 
       String prefix = "";
       for (int j=0; j<tempImages; j++) {
@@ -439,12 +447,12 @@ public class LeicaReader extends FormatReader {
         // test to make sure the path is valid
         Location test = new Location(f.get(f.size() - 1));
         if (test.exists()) list.remove(prefix);
-        if (tiffsExist) tiffsExist = test.exists();
+        if (!tiffsExist) tiffsExist = test.exists();
       }
       data.close();
       tempData = null;
 
-      // at least one of the TIFF files was renamed
+      // all of the TIFF files were renamed
 
       if (!tiffsExist) {
         // Strategy for handling renamed files:
