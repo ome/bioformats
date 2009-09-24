@@ -416,18 +416,6 @@ to achieve ImageJ interconnectivity
 ZZ
 );
 
-my %jboss = (
-  NAME    => "jboss",
-  TITLE   => "JBoss",
-  JAR     => "jbossall-client-4.2.1.GA.jar",
-  PACKAGE => "org.jboss",
-  LICENSE => "LGPL",
-  URL     => "http://www.jboss.org/",
-  NOTES   => <<ZZ,
-used by the OMERO libraries
-ZZ
-);
-
 my %jiio = (
   NAME    => "jiio",
   TITLE   => "JAI ImageIO wrapper",
@@ -612,18 +600,6 @@ used by NetCDF library
 ZZ
 );
 
-my %spring = (
-  NAME    => "spring",
-  TITLE   => "Spring",
-  JAR     => "spring-2.5.jar",
-  PACKAGE => "org.spring",
-  LICENSE => "Apache",
-  URL     => "http://springframework.org",
-  NOTES   => <<ZZ,
-used by the OMERO libraries
-ZZ
-);
-
 my %testng = (
   NAME    => "testng",
   TITLE   => "TestNG",
@@ -736,8 +712,6 @@ my @libs = (
   \%omeroCommon,
 #  \%omeroImporter,
 #  \%omeroModelPSQL,
-  \%spring,
-  \%jboss,
   \%skinlf,
   \%testng,
   \%velocity,

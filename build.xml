@@ -367,18 +367,6 @@ OMERO Common
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
 
-Spring
-    JAR file:  spring-2.5.jar
-    URL:       http://springframework.org
-    Notes:     used by the OMERO libraries
-    License:   Apache
-
-JBoss
-    JAR file:  jbossall-client-4.2.1.GA.jar
-    URL:       http://www.jboss.org/
-    Notes:     used by the OMERO libraries
-    License:   LGPL
-
 Skin Look and Feel
     JAR file:  skinlf.jar
     URL:       http://skinlf.l2fprod.com/
