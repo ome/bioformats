@@ -63,8 +63,9 @@ public class LeicaHandler extends DefaultHandler {
 
   private MetadataStore store;
 
-  private int nextLaser, nextChannel, channel, nextDetector = -1;
-  private Float zoom, pinhole, readOutRate;
+  private int channel = 0;
+  private int nextLaser, nextChannel, nextDetector = -1;
+  private Float zoom, pinhole;
   private Vector<Integer> detectorIndices;
   private String filterWheelName;
   private int nextFilter = 0, filterIndex;
@@ -152,20 +153,6 @@ public class LeicaHandler extends DefaultHandler {
       }
 
       int nChannels = coreMeta.rgb ? 0 : numChannels;
-
-      if (readOutRate != null) {
-        for (int c=0; c<nChannels; c++) {
-          if (c < detectorIndices.size()) {
-            int index = detectorIndices.get(c).intValue();
-            if (index < nChannels && index <= nextDetector) {
-              store.setDetectorSettingsReadOutRate(readOutRate, numDatasets, c);
-              String id =
-                MetadataTools.createLSID("Detector", numDatasets, index);
-              store.setDetectorSettingsDetector(id, numDatasets, c);
-            }
-          }
-        }
-      }
 
       for (int c=0; c<nChannels; c++) {
         store.setLogicalChannelPinholeSize(pinhole, numDatasets, c);
@@ -408,7 +395,7 @@ public class LeicaHandler extends DefaultHandler {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
         }
         // this is not a typo
-        else if (id.endsWith("UesrDefName")) {
+        else if (id.endsWith("UesrDefName") && !value.equals("None")) {
           store.setLogicalChannelName(value, numDatasets, c);
         }
       }
@@ -553,61 +540,55 @@ public class LeicaHandler extends DefaultHandler {
         }
         if (numChannels == 0) zPos.add(posZ);
       }
-      else if (attribute.equals("Speed")) {
-        readOutRate = new Float(Float.parseFloat(variant) / 1000000);
-      }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;
         try {
           v = new Integer((int) Float.parseFloat(variant));
         }
         catch (NumberFormatException e) { }
-        if (attribute.endsWith("(left)")) {
+        if (attributes.getValue("Description").endsWith("(left)")) {
+          String id =
+            MetadataTools.createLSID("Filter", numDatasets, nextFilter);
+          store.setFilterID(id, numDatasets, nextFilter);
           store.setFilterModel(object, numDatasets, nextFilter);
           if (v != null) {
             store.setTransmittanceRangeCutIn(v, numDatasets, nextFilter);
           }
         }
-        else if (attribute.endsWith("(right)")) {
+        else if (attributes.getValue("Description").endsWith("(right)")) {
           if (v != null) {
             store.setTransmittanceRangeCutOut(v, numDatasets, nextFilter);
+            nextFilter++;
           }
         }
+        else if (attributes.getValue("Description").endsWith("(stain)")) {
+          if (nextChannel >= coreMeta.sizeC || nextChannel == nextFilter) {
+            nextChannel = 0;
+          }
+          if (!variant.equals("None")) {
+            store.setLogicalChannelName(variant, numDatasets, nextChannel);
+          }
+          String id =
+            MetadataTools.createLSID("Filter", numDatasets, nextFilter - 1);
+          store.setLogicalChannelSecondaryEmissionFilter(
+            id, numDatasets, nextChannel);
+          nextChannel++;
+        }
       }
-    }
-    else if (qName.equals("MultiBand")) {
-      if (channel >= core.get(numDatasets).sizeC) return;
-      String name = attributes.getValue("DyeName");
-
-      store.setLogicalChannelName(name, numDatasets, channel);
-
-      float in = Float.parseFloat(attributes.getValue("LeftWorld"));
-      float out = Float.parseFloat(attributes.getValue("RightWorld"));
-
-      Integer cutIn = new Integer((int) in);
-      Integer cutOut = new Integer((int) out);
-
-      store.setTransmittanceRangeCutIn(cutIn, numDatasets, nextFilter - 1);
-      store.setTransmittanceRangeCutOut(cutOut, numDatasets, nextFilter - 1);
-
-      channel++;
     }
     else if (qName.equals("Detector")) {
       Float gain = new Float(attributes.getValue("Gain"));
       Float offset = new Float(attributes.getValue("Offset"));
       int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
 
-      int c = channel - 1;
-
-      if (c >= 0) {
-        store.setDetectorSettingsGain(gain, numDatasets, c);
-        store.setDetectorSettingsOffset(offset, numDatasets, c);
-        store.setDetectorSettingsReadOutRate(readOutRate, numDatasets, c);
+      if (channel > 0) {
+        store.setDetectorSettingsGain(gain, numDatasets, channel - 1);
+        store.setDetectorSettingsOffset(offset, numDatasets, channel - 1);
 
         int detectorIndex = nextDetector < 0 ? 0 : nextDetector;
         String detectorID =
           MetadataTools.createLSID("Detector", numDatasets, detectorIndex);
-        store.setDetectorSettingsDetector(detectorID, numDatasets, c);
+        store.setDetectorSettingsDetector(detectorID, numDatasets, channel - 1);
 
         detectorIndices.add(new Integer(index));
       }
@@ -622,10 +603,11 @@ public class LeicaHandler extends DefaultHandler {
       store.setLaserLaserMedium("Unknown", numDatasets, index);
 
       float intensity = Float.parseFloat(attributes.getValue("IntensityDev"));
-      if (intensity > 0f && channel > 0) {
-        store.setLightSourceSettingsLightSource(id, numDatasets, channel - 1);
+      if (intensity > 0f && channel >= 0) {
+        store.setLightSourceSettingsLightSource(id, numDatasets, channel);
         store.setLightSourceSettingsAttenuation(
-          new Float(intensity / 100f), numDatasets, channel - 1);
+          new Float(intensity / 100f), numDatasets, channel);
+        channel++;
       }
     }
     else if (qName.equals("TimeStamp")) {
@@ -662,26 +644,6 @@ public class LeicaHandler extends DefaultHandler {
         Float time = new Float(attributes.getValue("Time"));
         store.setPlaneTimingDeltaT(time, numDatasets, 0, count++);
       }
-    }
-    else if (qName.equals("Wheel")) {
-      filterIndex = Integer.parseInt(attributes.getValue("FilterIndex"));
-    }
-    else if (qName.equals("WheelName")) {
-      String id = MetadataTools.createLSID("Dichroic", numDatasets, nextFilter);
-      store.setDichroicID(id, numDatasets, nextFilter);
-      store.setDichroicModel(
-        attributes.getValue("FilterName").trim(), numDatasets, nextFilter);
-
-      if (nextFilter == filterIndex) {
-        String filterSet =
-          MetadataTools.createLSID("FilterSet", numDatasets, channel);
-        store.setFilterSetID(filterSet, numDatasets, channel);
-        store.setFilterSetDichroic(id, numDatasets, channel);
-        if (channel < core.get(numDatasets).sizeC) {
-          store.setLogicalChannelFilterSet(filterSet, numDatasets, channel);
-        }
-      }
-      nextFilter++;
     }
     else if (qName.equals("Annotation")) {
       roi = new ROI();
