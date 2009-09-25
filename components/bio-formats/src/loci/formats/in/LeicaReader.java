@@ -78,6 +78,10 @@ public class LeicaReader extends FormatReader {
   private static final Integer SCANNERSET = new Integer(50);
   private static final Integer EXPERIMENT = new Integer(60);
   private static final Integer LUTDESC = new Integer(70);
+  private static final Integer CHANDESC = new Integer(80);
+  private static final Integer SEQUENTIALSET = new Integer(90);
+  private static final Integer SEQ_SCANNERSET = new Integer(200);
+  private static final Integer SEQ_FILTERSET = new Integer(700);
 
   private static final Hashtable<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
@@ -794,6 +798,19 @@ public class LeicaReader extends FormatReader {
             stream.skipBytes(8);
           }
         }
+        else if (keys[q].equals(CHANDESC)) {
+          int nBands = stream.readInt();
+          for (int band=0; band<nBands; band++) {
+            String p = "Band #" + (band + 1) + " ";
+            addSeriesMeta(p + "Lower wavelength", stream.readDouble());
+            stream.skipBytes(4);
+            addSeriesMeta(p + "Higher wavelength", stream.readDouble());
+            stream.skipBytes(4);
+            addSeriesMeta(p + "Gain", stream.readDouble());
+            addSeriesMeta(p + "Offset", stream.readDouble());
+          }
+        }
+
         stream.close();
       }
 
@@ -867,7 +884,9 @@ public class LeicaReader extends FormatReader {
 
       Object[] keys = ifd.keySet().toArray();
       for (int q=0; q<keys.length; q++) {
-        if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET)) {
+        if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET) ||
+          keys[q].equals(SEQ_SCANNERSET) || keys[q].equals(SEQ_FILTERSET))
+        {
           byte[] tmp = (byte[]) ifd.get(keys[q]);
           if (tmp == null) continue;
           RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
@@ -980,12 +999,14 @@ public class LeicaReader extends FormatReader {
               // link Detector to Image, if the detector was actually used
               if (data.equals("Active")) {
                 String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
-                int channelIndex = nextDetector;
+                int channelIndex = -1;
                 try {
                   channelIndex = Integer.parseInt(index) - 1;
                 }
                 catch (NumberFormatException e) { }
-                activeChannelIndices.add(new Integer(channelIndex));
+                if (channelIndex >= 0) {
+                  activeChannelIndices.add(new Integer(channelIndex));
+                }
 
                 String detectorID =
                   MetadataTools.createLSID("Detector", series, nextDetector);
