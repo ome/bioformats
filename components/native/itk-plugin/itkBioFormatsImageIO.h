@@ -34,6 +34,8 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #ifndef H_ITK_IMAGE_IO_H
 #define H_ITK_IMAGE_IO_H
 
+#include "bio-formats.h"
+
 // STL includes
 
 // ITK includes
@@ -43,8 +45,6 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include <itk_zlib.h>
 
 //#include "itkBioFormatsIOWin32Header.h"
-
-#include "bioformats.h"
 
 namespace itk
 {
