@@ -51,6 +51,8 @@ public class LeicaHandler extends DefaultHandler {
 
   // -- Fields --
 
+  private Stack<String> nameStack = new Stack<String>();
+
   private String elementName, collection;
   private int count = 0, numChannels, extras;
 
@@ -68,7 +70,7 @@ public class LeicaHandler extends DefaultHandler {
   private Float zoom, pinhole;
   private Vector<Integer> detectorIndices;
   private String filterWheelName;
-  private int nextFilter = 0, filterIndex;
+  private int nextFilter = 0;
   private int nextROI = 0;
   private ROI roi;
   private boolean alternateCenter = false;
@@ -106,6 +108,8 @@ public class LeicaHandler extends DefaultHandler {
   // -- DefaultHandler API methods --
 
   public void endElement(String uri, String localName, String qName) {
+    if (!nameStack.empty() && nameStack.peek().equals(qName)) nameStack.pop();
+
     if (qName.equals("ImageDescription")) {
       CoreMetadata coreMeta = core.get(numDatasets);
       if (numChannels == 0) numChannels = 1;
@@ -183,7 +187,6 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Element")) {
       nextLaser = 0;
-      nextFilter = 0;
       nextDetector = -1;
       nextROI = 0;
 
@@ -216,6 +219,12 @@ public class LeicaHandler extends DefaultHandler {
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
+    if (attributes.getLength() > 0 && !qName.equals("Element") &&
+      !qName.equals("Attachment") && !qName.equals("LMSDataContainerHeader"))
+    {
+      nameStack.push(qName);
+    }
+
     Hashtable h = getSeriesHashtable(numDatasets);
     if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = false;
@@ -223,14 +232,30 @@ public class LeicaHandler extends DefaultHandler {
 
     if (!canParse) return;
 
-    String k = attributes.getValue("Identifier");
-    String value = attributes.getValue("Variant");
-    if (k == null) {
-      k = attributes.getValue("Description") + "|" +
-        attributes.getValue("Attribute");
+    StringBuffer key = new StringBuffer();
+    for (String k : nameStack) {
+      key.append(k);
+      key.append("|");
     }
-    if (value != null) {
-      h.put(k, value);
+    String suffix = attributes.getValue("Identifier");
+    String value = attributes.getValue("Variant");
+    if (suffix == null) suffix = attributes.getValue("Description");
+    if (suffix != null && value != null) {
+      int index = 1;
+      while (h.get(key.toString() + suffix + " " + index) != null) index++;
+      h.put(key.toString() + suffix + " " + index, value);
+    }
+    else {
+      for (int i=0; i<attributes.getLength(); i++) {
+        int index = 1;
+        while (
+          h.get(key.toString() + attributes.getQName(i) + " " + index) != null)
+        {
+          index++;
+        }
+        h.put(key.toString() + attributes.getQName(i) + " " + index,
+          attributes.getValue(i));
+      }
     }
 
     if (qName.equals("Element")) {
@@ -242,6 +267,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("Image")) {
       core.add(new CoreMetadata());
       numDatasets++;
+      nextFilter = 0;
       String name = elementName;
       if (collection != null) name = collection + "/" + name;
       store.setImageName(name, numDatasets);
@@ -561,19 +587,6 @@ public class LeicaHandler extends DefaultHandler {
             nextFilter++;
           }
         }
-        else if (attributes.getValue("Description").endsWith("(stain)")) {
-          if (nextChannel >= coreMeta.sizeC || nextChannel == nextFilter) {
-            nextChannel = 0;
-          }
-          if (!variant.equals("None")) {
-            store.setLogicalChannelName(variant, numDatasets, nextChannel);
-          }
-          String id =
-            MetadataTools.createLSID("Filter", numDatasets, nextFilter - 1);
-          store.setLogicalChannelSecondaryEmissionFilter(
-            id, numDatasets, nextChannel);
-          nextChannel++;
-        }
       }
     }
     else if (qName.equals("Detector")) {
@@ -666,6 +679,32 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("ROI")) {
       alternateCenter = true;
+    }
+    else if (qName.equals("MultiBand")) {
+      if (nextChannel >= core.get(numDatasets).sizeC) nextChannel = 0;
+
+      String channelName = attributes.getValue("DyeName");
+      int left = (int) Float.parseFloat(attributes.getValue("LeftWorld"));
+      int right = (int) Float.parseFloat(attributes.getValue("RightWorld"));
+
+      if (!channelName.equals("None")) {
+        store.setLogicalChannelName(channelName, numDatasets, nextChannel);
+      }
+
+      String filter =
+        MetadataTools.createLSID("Filter", numDatasets, nextFilter);
+      store.setFilterID(filter, numDatasets, nextFilter);
+      store.setFilterType("Other", numDatasets, nextFilter);
+      store.setTransmittanceRangeCutIn(
+        new Integer(left), numDatasets, nextFilter);
+      store.setTransmittanceRangeCutOut(
+        new Integer(right), numDatasets, nextFilter);
+
+      store.setLogicalChannelSecondaryEmissionFilter(
+        filter, numDatasets, nextChannel);
+
+      nextChannel++;
+      nextFilter++;
     }
     else count = 0;
     storeSeriesHashtable(numDatasets, h);
