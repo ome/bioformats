@@ -138,6 +138,8 @@ public class ICSReader extends FormatReader {
   /** The type of each channel axis. */
   private Vector<String> channelTypes;
 
+  private int prevImage;
+
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
@@ -187,6 +189,9 @@ public class ICSReader extends FormatReader {
     int pixel = bpp * getRGBChannelCount();
     int rowLen = FormatTools.getPlaneSize(this, w, 1);
 
+    int[] coordinates = getZCTCoords(no);
+    int[] prevCoordinates = getZCTCoords(prevImage);
+
     in.seek(offset + no * len);
 
     int sizeC = lifetime ? 1 : getSizeC();
@@ -194,11 +199,14 @@ public class ICSReader extends FormatReader {
     if (!isRGB() && sizeC > 4 && channelLengths.size() == 1) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
+      in.seek(offset + len * getIndex(coordinates[0], 0, coordinates[2]));
       if (!gzip && data == null) {
         data = new byte[len * getSizeC()];
         in.read(data);
       }
-      else if (!gzip && (no % getSizeC()) == 0) {
+      else if (!gzip && (coordinates[0] != prevCoordinates[0] ||
+        coordinates[2] != prevCoordinates[2]))
+      {
         in.read(data);
       }
 
@@ -234,6 +242,8 @@ public class ICSReader extends FormatReader {
         System.arraycopy(row, 0, buf, bottomOffset, rowLen);
       }
     }
+
+    prevImage = no;
 
     return buf;
   }
