@@ -261,9 +261,10 @@ namespace itk
     ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
     for (int no=pIndex; no<pIndex+pCount; no++)
     {
+      int imageCount = reader->getImageCount();
       itkDebugMacro(<<"Reading image plane " << no <<
         " (" << (no - pIndex + 1) << "/" << pCount <<
-        " of " << reader->getImageCount() << " available planes)");
+        " of " << imageCount << " available planes)");
       reader->openBytes(no, buf, xIndex, yIndex, xCount, yCount);
       for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
     }
