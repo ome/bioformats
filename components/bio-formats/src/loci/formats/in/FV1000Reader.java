@@ -542,6 +542,9 @@ public class FV1000Reader extends FormatReader {
           else if (key.equals("AnalogPMTVoltage")) {
             channel.voltage = new Float(value);
           }
+          else if (key.equals("BF Name")) {
+            channel.barrierFilter = value;
+          }
           else if (key.equals("CH Activate")) {
             channel.active = Integer.parseInt(value) != 0;
           }
@@ -1027,6 +1030,29 @@ public class FV1000Reader extends FormatReader {
       store.setLightSourceSettingsLightSource(lightSourceID, 0, channelIndex);
       store.setLightSourceSettingsWavelength(channel.exWave, 0, channelIndex);
 
+      // populate Filter data
+      if (channel.barrierFilter != null) {
+        String filterID = MetadataTools.createLSID("Filter", 0, channelIndex);
+        store.setFilterID(filterID, 0, channelIndex);
+        store.setFilterModel(channel.barrierFilter, 0, channelIndex);
+
+        if (channel.barrierFilter.indexOf("-") != -1) {
+          String[] emValues = channel.barrierFilter.split("-");
+          for (int i=0; i<emValues.length; i++) {
+            emValues[i].replaceAll("\\D", "");
+          }
+          try {
+            store.setTransmittanceRangeCutIn(
+              new Integer(emValues[0]), 0, channelIndex);
+            store.setTransmittanceRangeCutOut(
+              new Integer(emValues[1]), 0, channelIndex);
+          }
+          catch (NumberFormatException e) { }
+        }
+        store.setLogicalChannelSecondaryEmissionFilter(
+          filterID, 0, channelIndex);
+      }
+
       // populate FilterSet data
       int emIndex = channelIndex * 2;
       int exIndex = channelIndex * 2 + 1;
@@ -1036,15 +1062,12 @@ public class FV1000Reader extends FormatReader {
       store.setFilterSetID(filterSet, 0, channelIndex);
       store.setFilterSetDichroic(exFilter, 0, channelIndex);
 
-      // populate Filter data
-      String[] emTokens = channel.emissionFilter.split("/");
-      String[] exTokens = channel.excitationFilter.split("/");
-
+      // populate Dichroic data
       store.setDichroicID(emFilter, 0, emIndex);
-      store.setDichroicModel(emTokens[0], 0, emIndex);
+      store.setDichroicModel(channel.emissionFilter, 0, emIndex);
 
       store.setDichroicID(exFilter, 0, exIndex);
-      store.setDichroicModel(exTokens[0], 0, exIndex);
+      store.setDichroicModel(channel.excitationFilter, 0, exIndex);
 
       // populate Laser data
       store.setLightSourceID(lightSourceID, 0, channelIndex);
@@ -1385,6 +1408,7 @@ public class FV1000Reader extends FormatReader {
     public Integer emWave;
     public Integer exWave;
     public String dyeName;
+    public String barrierFilter;
   }
 
 }
