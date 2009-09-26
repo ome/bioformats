@@ -211,6 +211,7 @@ public class OMETiffReader extends FormatReader {
           }
           else {
             filename = meta.getTiffDataFileName(i, p, td);
+            if (!new Location(dir, filename).exists()) filename = null;
             if (filename == null) {
               if (uuid.equals(currentUUID)) {
                 // UUID references this file
@@ -346,6 +347,10 @@ public class OMETiffReader extends FormatReader {
             filename =
               filename.substring(filename.lastIndexOf(File.separator) + 1);
             filename = dir + File.separator + filename;
+
+            if (!new Location(filename).exists()) {
+              filename = currentId;
+            }
           }
 
           // populate plane index -> IFD mapping
