@@ -554,6 +554,8 @@ public class TiffParser {
     long numTileCols = ifd.getTilesPerRow();
 
     int planarConfig = ifd.getPlanarConfiguration();
+    int pixel = ifd.getBytesPerSample()[0];
+    int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
     ifd.printIFD();
 
@@ -562,14 +564,21 @@ public class TiffParser {
         Integer.MAX_VALUE + " is not supported (" +
         width + " x " + height + ")");
     }
+    if (width * height * effectiveChannels * pixel > Integer.MAX_VALUE) {
+      throw new FormatException("Sorry, ImageWidth x ImageLength x " +
+        "SamplesPerPixel x BitsPerSample > " + Integer.MAX_VALUE +
+        " is not supported (" + width + " x " + height + " x " +
+        samplesPerPixel + " x " + (pixel * 8) + ")");
+    }
+
+    // casting to int is safe because we have already determined that
+    // width * height is less than Integer.MAX_VALUE
     int numSamples = (int) (width * height);
 
     // read in image strips
     LogTools.debug("reading image data (samplesPerPixel=" +
       samplesPerPixel + "; numSamples=" + numSamples + ")");
 
-    int pixel = ifd.getBytesPerSample()[0];
-    int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
     long nrows = numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
