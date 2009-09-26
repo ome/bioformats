@@ -65,6 +65,7 @@ public class SlidebookReader extends FormatReader {
   /** Constructs a new Slidebook reader. */
   public SlidebookReader() {
     super("Olympus Slidebook", "sld");
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

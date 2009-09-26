@@ -41,6 +41,7 @@ import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
@@ -72,9 +73,44 @@ public class OMETiffReader extends FormatReader {
     super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
     suffixNecessary = false;
     suffixSufficient = false;
+    domains = FormatTools.ALL_DOMAINS;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    // parse and populate OME-XML metadata
+    String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
+    RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
+    TiffParser tp = new TiffParser(ras);
+    IFDList ifds = tp.getIFDs();
+    ras.close();
+    String xml = ifds.get(0).getComment();
+    IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
+
+    if (meta == null) {
+      throw new FormatException("ome-xml.jar is required to read OME-TIFF " +
+        "files.  Please download it from " +
+        "http://loci.wisc.edu/ome/formats-library.html");
+    }
+
+    if (meta.getRoot() == null) {
+      throw new FormatException("Could not parse OME-XML from TIFF comment");
+    }
+
+    int nImages = 0;
+    for (int i=0; i<meta.getImageCount(); i++) {
+      int nChannels = meta.getLogicalChannelCount(i);
+      if (nChannels == 0) nChannels = 1;
+      for (int p=0; p<meta.getPixelsCount(i); p++) {
+        int z = meta.getPixelsSizeZ(i, p).intValue();
+        int t = meta.getPixelsSizeT(i, p).intValue();
+        nImages += z * t * nChannels;
+      }
+    }
+    return nImages <= ifds.size();
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

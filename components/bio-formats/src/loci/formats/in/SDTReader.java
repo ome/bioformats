@@ -68,6 +68,7 @@ public class SDTReader extends FormatReader {
   /** Constructs a new SDT reader. */
   public SDTReader() {
     super("SPCImage Data", "sdt");
+    domains = new String[] {FormatTools.FLIM_DOMAIN};
   }
 
   // -- SDTReader API methods --

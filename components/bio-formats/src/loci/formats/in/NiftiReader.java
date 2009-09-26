@@ -76,9 +76,16 @@ public class NiftiReader extends FormatReader {
   public NiftiReader() {
     super("NIfTI", new String[] {"nii", "img", "hdr"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.MEDICAL_DOMAIN, FormatTools.LM_DOMAIN,
+      FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return checkSuffix(id, "nii");
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {

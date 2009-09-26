@@ -107,6 +107,7 @@ public class ZeissZVIReader extends FormatReader {
   public ZeissZVIReader() {
     super("Zeiss Vision Image (ZVI)", "zvi");
     suffixNecessary = false;
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

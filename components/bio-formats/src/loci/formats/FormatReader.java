@@ -94,6 +94,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to group multi-file formats. */
   protected boolean group = true;
 
+  /** List of domains in which this format is used. */
+  protected String[] domains = new String[0];
+
   /**
    * Current metadata store. Should never be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
@@ -876,6 +879,16 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUnderlyingReaders() */
   public IFormatReader[] getUnderlyingReaders() {
     return null;
+  }
+
+  /* @see IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return true;
+  }
+
+  /* @see IFormatReader#getDomains(String) */
+  public String[] getDomains(String id) throws FormatException, IOException {
+    return domains;
   }
 
   // -- IFormatHandler API methods --

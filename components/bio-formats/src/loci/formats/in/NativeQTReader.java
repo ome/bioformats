@@ -122,6 +122,7 @@ public class NativeQTReader extends FormatReader {
   public NativeQTReader() {
     super("QuickTime", "mov");
     suffixNecessary = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

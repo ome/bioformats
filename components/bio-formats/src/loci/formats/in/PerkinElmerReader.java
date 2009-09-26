@@ -94,9 +94,15 @@ public class PerkinElmerReader extends FormatReader {
   public PerkinElmerReader() {
     super("PerkinElmer", new String[] {
       "ano", "cfg", "csv", "htm", "rec", "tim", "zpo"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {

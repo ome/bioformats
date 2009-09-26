@@ -153,6 +153,7 @@ public class LiFlimReader extends FormatReader {
   /** Constructs a new LI-FLIM reader. */
   public LiFlimReader() {
     super("LI-FLIM", "fli");
+    domains = new String[] {FormatTools.FLIM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

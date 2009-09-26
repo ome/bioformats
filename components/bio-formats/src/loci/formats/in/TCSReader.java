@@ -85,9 +85,23 @@ public class TCSReader extends FormatReader {
 
   public TCSReader() {
     super("Leica TCS TIFF", new String[] {"tif", "tiff", "xml"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    if (checkSuffix(id, "xml")) return false;
+    Location file = new Location(id);
+    String[] list = file.getParentFile().list();
+    for (String f : list) {
+      if (checkSuffix(f, "xml") && DataTools.samePrefix(file.getName(), f)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {

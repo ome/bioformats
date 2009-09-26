@@ -57,7 +57,10 @@ public class NAFReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new NAF reader. */
-  public NAFReader() { super("Hamamatsu Aquacosmos", "naf"); }
+  public NAFReader() {
+    super("Hamamatsu Aquacosmos", "naf");
+    domains = new String[] {FormatTools.LM_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

@@ -52,6 +52,7 @@ public class CellomicsReader extends FormatReader {
   /** Constructs a new Cellomics reader. */
   public CellomicsReader() {
     super("Cellomics C01", new String[] {"c01", "dib"});
+    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

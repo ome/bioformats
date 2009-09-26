@@ -130,9 +130,15 @@ public class FV1000Reader extends FormatReader {
   /** Constructs a new FV1000 reader. */
   public FV1000Reader() {
     super("Olympus FV1000", new String[] {"oib", "oif", "pty", "lut"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return checkSuffix(id, "oib");
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {

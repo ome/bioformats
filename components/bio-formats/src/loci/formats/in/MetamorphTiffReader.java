@@ -30,6 +30,7 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -54,6 +55,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   public MetamorphTiffReader() {
     super("Metamorph TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

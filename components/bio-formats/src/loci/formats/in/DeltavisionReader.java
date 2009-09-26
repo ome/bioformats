@@ -99,9 +99,15 @@ public class DeltavisionReader extends FormatReader {
   public DeltavisionReader() {
     super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

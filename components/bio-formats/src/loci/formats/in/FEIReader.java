@@ -56,6 +56,7 @@ public class FEIReader extends FormatReader {
   public FEIReader() {
     super("FEI", "img");
     suffixSufficient = false;
+    domains = new String[] {FormatTools.SEM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

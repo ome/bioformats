@@ -62,6 +62,7 @@ public class PGMReader extends FormatReader {
   /** Constructs a new PGMReader. */
   public PGMReader() {
     super("Portable Gray Map", "pgm");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

@@ -420,6 +420,14 @@ public abstract class ReaderWrapper implements IFormatReader {
     return new IFormatReader[] {reader};
   }
 
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return reader.isSingleFile(id);
+  }
+
+  public String[] getDomains(String id) throws FormatException, IOException {
+    return reader.getDomains(id);
+  }
+
   // -- IFormatHandler API methods --
 
   public boolean isThisType(String name) {

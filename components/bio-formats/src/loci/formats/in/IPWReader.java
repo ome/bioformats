@@ -77,7 +77,10 @@ public class IPWReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new IPW reader. */
-  public IPWReader() { super("Image-Pro Workspace", "ipw"); }
+  public IPWReader() {
+    super("Image-Pro Workspace", "ipw");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

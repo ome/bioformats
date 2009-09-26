@@ -140,6 +140,7 @@ public class DicomReader extends FormatReader {
       new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
     suffixNecessary = false;
     suffixSufficient = false;
+    domains = new String[] {FormatTools.MEDICAL_DOMAIN};
   }
 
   // -- IFormatReader API methods --

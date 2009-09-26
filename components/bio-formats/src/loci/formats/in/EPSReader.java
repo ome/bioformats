@@ -68,6 +68,7 @@ public class EPSReader extends FormatReader {
   /** Constructs a new EPS reader. */
   public EPSReader() {
     super("Encapsulated PostScript", new String[] {"eps", "epsi", "ps"});
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

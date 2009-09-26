@@ -92,9 +92,15 @@ public class MIASReader extends FormatReader {
   public MIASReader() {
     super("MIAS", new String[] {"tif", "tiff"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.HCS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String filename, boolean open) {

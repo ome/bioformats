@@ -70,9 +70,15 @@ public class NRRDReader extends FormatReader {
   /** Constructs a new NRRD reader. */
   public NRRDReader() {
     super("NRRD", new String[] {"nrrd", "nhdr"});
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return checkSuffix(id, "nrrd");
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

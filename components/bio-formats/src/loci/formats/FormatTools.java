@@ -140,6 +140,49 @@ public final class FormatTools {
   /** Version number of this release. */
   public static final String VERSION = "4.0.1";
 
+  /** Identifies the high content screening domain. */
+  public static final String HCS_DOMAIN = "High-Content Screening (HCS)";
+
+  /** Identifies the light microscopy domain. */
+  public static final String LM_DOMAIN = "Light Microscopy";
+
+  /** Identifies the electron microscopy domain. */
+  public static final String EM_DOMAIN = "Electron Microscopy (EM)";
+
+  /** Identifies the scanning probe microscopy domain. */
+  public static final String SPM_DOMAIN = "Scanning Probe Microscopy (SPM)";
+
+  /** Identifies the scanning electron microscopy domain. */
+  public static final String SEM_DOMAIN = "Scanning Electron Microscopy (SEM)";
+
+  /** Identifies the fluorescence-lifetime domain. */
+  public static final String FLIM_DOMAIN = "Fluorescence-Lifetime Imaging";
+
+  /** Identifies the medical imaging domain. */
+  public static final String MEDICAL_DOMAIN = "Medical Imaging";
+
+  /** Identifies the histology domain. */
+  public static final String HISTOLOGY_DOMAIN = "Histology";
+
+  /** Identifies the gel and blot imaging domain. */
+  public static final String GEL_DOMAIN = "Gel/Blot Imaging";
+
+  /** Identifies the astronomy domain. */
+  public static final String ASTRONOMY_DOMAIN = "Astronomy";
+
+  /**
+   * Identifies the graphics domain.
+   * This includes formats used exclusively by analysis software.
+   */
+  public static final String GRAPHICS_DOMAIN = "Graphics";
+
+  /** List of all supported domains. */
+  public static final String[] ALL_DOMAINS = new String[] {
+    HCS_DOMAIN, LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN,
+    MEDICAL_DOMAIN, HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN,
+    GRAPHICS_DOMAIN
+  };
+
   // -- Constructor --
 
   private FormatTools() { }

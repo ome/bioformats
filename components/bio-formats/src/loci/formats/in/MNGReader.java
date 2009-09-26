@@ -67,7 +67,10 @@ public class MNGReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new MNG reader. */
-  public MNGReader() { super("Multiple Network Graphics", "mng"); }
+  public MNGReader() {
+    super("Multiple Network Graphics", "mng");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

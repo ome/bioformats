@@ -51,7 +51,10 @@ public class SVSReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new SVS reader. */
-  public SVSReader() { super("Aperio SVS", new String[] {"svs"}); }
+  public SVSReader() {
+    super("Aperio SVS", new String[] {"svs"});
+    domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

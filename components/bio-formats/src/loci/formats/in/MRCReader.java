@@ -65,6 +65,7 @@ public class MRCReader extends FormatReader {
   /** Constructs a new MRC reader. */
   public MRCReader() {
     super("Medical Research Council", "mrc");
+    domains = new String[] {FormatTools.MEDICAL_DOMAIN, FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

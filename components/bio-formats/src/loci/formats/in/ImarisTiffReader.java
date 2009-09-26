@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -52,6 +53,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   public ImarisTiffReader() {
     super("Bitplane Imaris 3 (TIFF)", "ims");
     suffixSufficient = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- Internal FormatReader API methods --

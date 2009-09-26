@@ -116,9 +116,15 @@ public class MetamorphReader extends BaseTiffReader {
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
     super("Metamorph STK", new String[] {"stk", "nd"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return !checkSuffix(id, ND_SUFFIX);
+  }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {

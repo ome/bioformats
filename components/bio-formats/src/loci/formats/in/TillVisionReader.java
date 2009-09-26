@@ -73,6 +73,7 @@ public class TillVisionReader extends FormatReader {
   /** Constructs a new TillVision reader. */
   public TillVisionReader() {
     super("TillVision", "vws");
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

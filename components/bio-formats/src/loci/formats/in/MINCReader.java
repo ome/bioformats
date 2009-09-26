@@ -55,6 +55,7 @@ public class MINCReader extends FormatReader {
   /** Constructs a new MINC reader. */
   public MINCReader() {
     super("MINC MRI", "mnc");
+    domains = new String[] {FormatTools.MEDICAL_DOMAIN};
   }
 
   // -- IFormatReader API methods --

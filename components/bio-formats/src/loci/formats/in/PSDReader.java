@@ -63,6 +63,7 @@ public class PSDReader extends FormatReader {
   /** Constructs a new PSD reader. */
   public PSDReader() {
     super("Adobe Photoshop", "psd");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

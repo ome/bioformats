@@ -53,7 +53,11 @@ public class FitsReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new FitsReader. */
-  public FitsReader() { super("Flexible Image Transport System", "fits"); }
+  public FitsReader() {
+    super("Flexible Image Transport System", "fits");
+    domains =
+      new String[] {FormatTools.ASTRONOMY_DOMAIN, FormatTools.GRAPHICS_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

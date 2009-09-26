@@ -66,9 +66,15 @@ public class L2DReader extends FormatReader {
   /** Construct a new L2D reader. */
   public L2DReader() {
     super("Li-Cor L2D", new String[] {"l2d", "scn"});
+    domains = new String[] {FormatTools.GEL_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)

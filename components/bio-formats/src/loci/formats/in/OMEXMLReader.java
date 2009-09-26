@@ -93,6 +93,7 @@ public class OMEXMLReader extends FormatReader {
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() {
     super("OME-XML", "ome");
+    domains = FormatTools.ALL_DOMAINS;
   }
 
   // -- IFormatReader API methods --

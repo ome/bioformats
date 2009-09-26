@@ -63,6 +63,7 @@ public class MinimalTiffReader extends FormatReader {
   /** Constructs a new MinimalTiffReader. */
   public MinimalTiffReader() {
     super("Minimal TIFF", new String[] {"tif", "tiff"});
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   /** Constructs a new MinimalTiffReader. */

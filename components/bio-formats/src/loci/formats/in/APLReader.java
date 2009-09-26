@@ -58,9 +58,15 @@ public class APLReader extends FormatReader {
   /** Constructs a new APL reader. */
   public APLReader() {
     super("Olympus APL", new String[] {"apl", "tnb", "mtb"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {

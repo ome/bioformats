@@ -80,6 +80,7 @@ public class APNGReader extends FormatReader {
   /** Constructs a new APNGReader. */
   public APNGReader() {
     super("Animated PNG", "png");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

@@ -70,6 +70,7 @@ public class PCIReader extends FormatReader {
   /** Constructs a new SimplePCI reader. */
   public PCIReader() {
     super("Compix Simple-PCI", "cxd");
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

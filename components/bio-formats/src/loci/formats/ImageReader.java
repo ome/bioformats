@@ -537,6 +537,16 @@ public class ImageReader implements IFormatReader {
     return getReaders();
   }
 
+  /* @see IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return getReader(id).isSingleFile(id);
+  }
+
+  /* @see IFormatReader#getDomains(String) */
+  public String[] getDomains(String id) throws FormatException, IOException {
+    return getReader(id).getDomains(id);
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

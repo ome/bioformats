@@ -163,7 +163,10 @@ public class LIFReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
-  public LIFReader() { super("Leica Image File Format", "lif"); }
+  public LIFReader() {
+    super("Leica Image File Format", "lif");
+    domains = new String[] {FormatTools.LM_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

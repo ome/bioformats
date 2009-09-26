@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import loci.formats.DelegateReader;
+import loci.formats.FormatTools;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.
@@ -48,6 +49,7 @@ public class QTReader extends DelegateReader {
     legacyReader = new LegacyQTReader();
     nativeReaderInitialized = false;
     legacyReaderInitialized = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
 }

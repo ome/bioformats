@@ -59,6 +59,7 @@ public class AliconaReader extends FormatReader {
   /** Constructs a new Alicona reader. */
   public AliconaReader() {
     super("Alicona AL3D", "al3d");
+    domains = new String[] {FormatTools.SEM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

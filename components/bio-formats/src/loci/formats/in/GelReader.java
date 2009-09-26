@@ -75,6 +75,7 @@ public class GelReader extends BaseTiffReader {
   /** Constructs a new GEL reader. */
   public GelReader() {
     super("Amersham Biosciences GEL", new String[] {"gel"});
+    domains = new String[] {FormatTools.GEL_DOMAIN};
   }
 
   // -- IFormatReader API methods --

@@ -138,9 +138,15 @@ public class LeicaReader extends FormatReader {
   /** Constructs a new Leica reader. */
   public LeicaReader() {
     super("Leica", new String[] {"lei", "tif", "tiff"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import loci.formats.DelegateReader;
+import loci.formats.FormatTools;
 
 /**
  * ND2Reader is the file format reader for Nikon ND2 files.
@@ -48,6 +49,7 @@ public class ND2Reader extends DelegateReader {
     legacyReader = new LegacyND2Reader();
     nativeReaderInitialized = false;
     legacyReaderInitialized = false;
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
 }

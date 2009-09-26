@@ -166,9 +166,36 @@ public class ZeissLSMReader extends FormatReader {
   /** Constructs a new Zeiss LSM reader. */
   public ZeissLSMReader() {
     super("Zeiss Laser-Scanning Microscopy", new String[] {"lsm", "mdb"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    if (checkSuffix(id, MDB_SUFFIX)) return false;
+    if (isGroupFiles()) {
+      // look for an .mdb file
+      Location parentFile = new Location(id).getAbsoluteFile().getParentFile();
+      String[] fileList = parentFile.list();
+      for (int i=0; i<fileList.length; i++) {
+        if (fileList[i].startsWith(".")) continue;
+        if (checkSuffix(fileList[i], MDB_SUFFIX)) {
+          Location file =
+            new Location(parentFile, fileList[i]).getAbsoluteFile();
+          if (file.isDirectory()) continue;
+          // make sure that the .mdb references this .lsm
+          String[] lsms = parseMDB(file.getAbsolutePath());
+          for (String lsm : lsms) {
+            if (id.endsWith(lsm) || lsm.endsWith(id)) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
@@ -1244,7 +1271,9 @@ public class ZeissLSMReader extends FormatReader {
         String[] tableRow = (String[]) tables[table].get(row);
         for (int col=0; col<tableRow.length; col++) {
           String key = tableName + " " + columnNames[col + 1] + " " + row;
-          addGlobalMeta(key, tableRow[col]);
+          if (currentId != null) {
+            addGlobalMeta(key, tableRow[col]);
+          }
 
           if (tableName.equals("Recordings") && columnNames[col + 1] != null &&
             columnNames[col + 1].equals("SampleData"))

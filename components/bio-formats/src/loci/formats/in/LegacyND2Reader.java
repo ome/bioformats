@@ -76,6 +76,7 @@ public class LegacyND2Reader extends FormatReader {
 
   public LegacyND2Reader() {
     super("Nikon ND2 (Legacy)", new String[] {"jp2", "nd2"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

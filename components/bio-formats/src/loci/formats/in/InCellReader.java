@@ -94,9 +94,15 @@ public class InCellReader extends FormatReader {
   public InCellReader() {
     super("InCell 1000", new String[] {"xdce", "xml"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.HCS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

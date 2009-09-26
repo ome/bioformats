@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.tiff.IFD;
 
 /**
@@ -54,7 +55,10 @@ public class SEQReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
-  public SEQReader() { super("Image-Pro Sequence", "seq"); }
+  public SEQReader() {
+    super("Image-Pro Sequence", "seq");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
 
   // -- Internal BaseTiffReader API methods --
 

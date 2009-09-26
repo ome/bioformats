@@ -126,9 +126,18 @@ public class FlexReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Flex reader. */
-  public FlexReader() { super("Evotec Flex", SUFFIXES); }
+  public FlexReader() {
+    super("Evotec Flex", SUFFIXES);
+    domains = new String[] {FormatTools.HCS_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, FLEX_SUFFIX)) return false;
+    return serverMap.size() == 0 || !isGroupFiles();
+  }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {

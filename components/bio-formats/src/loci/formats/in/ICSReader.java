@@ -145,9 +145,20 @@ public class ICSReader extends FormatReader {
   /** Constructs a new ICSReader. */
   public ICSReader() {
     super("Image Cytometry Standard", new String[] {"ics", "ids"});
+    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.FLIM_DOMAIN,
+      FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    // check if we have a v2 ICS file - means there is no companion IDS file
+    RandomAccessInputStream f = new RandomAccessInputStream(id);
+    boolean singleFile = f.readString(17).trim().equals("ics_version\t2.0");
+    f.close();
+    return singleFile;
+  }
 
   /* @see loci.formats.IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {

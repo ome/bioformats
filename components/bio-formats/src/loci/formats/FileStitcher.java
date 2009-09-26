@@ -839,6 +839,18 @@ public class FileStitcher implements IFormatReader {
     return (IFormatReader[]) v.toArray(new IFormatReader[0]);
   }
 
+  /* @see IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return reader.isSingleFile(id);
+  }
+
+  /* @see IFormatReader#getDomains(String) */
+  public String[] getDomains(String id) throws FormatException, IOException {
+    return reader.getDomains(id);
+  }
+
+  /* @see IFormatReader#
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

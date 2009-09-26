@@ -90,6 +90,7 @@ public class AVIReader extends FormatReader {
   public AVIReader() {
     super("Audio Video Interleave", "avi");
     suffixNecessary = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

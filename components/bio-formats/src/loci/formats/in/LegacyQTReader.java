@@ -73,7 +73,10 @@ public class LegacyQTReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new QT reader. */
-  public LegacyQTReader() { super("QuickTime", "mov"); }
+  public LegacyQTReader() {
+    super("QuickTime", "mov");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 

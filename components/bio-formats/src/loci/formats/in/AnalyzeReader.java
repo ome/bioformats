@@ -60,9 +60,15 @@ public class AnalyzeReader extends FormatReader {
   /** Constructs a new Analyze reader. */
   public AnalyzeReader() {
     super("Analyze 7.5", new String[] {"img", "hdr"});
+    domains = new String[] {FormatTools.MEDICAL_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)

@@ -54,11 +54,15 @@ public abstract class ImageIOReader extends FormatReader {
   // -- Constructors --
 
   /** Constructs a new ImageIOReader. */
-  public ImageIOReader(String name, String suffix) { super(name, suffix); }
+  public ImageIOReader(String name, String suffix) {
+    super(name, suffix);
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
 
   /** Constructs a new ImageIOReader. */
   public ImageIOReader(String name, String[] suffixes) {
     super(name, suffixes);
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

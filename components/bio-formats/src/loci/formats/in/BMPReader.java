@@ -80,6 +80,7 @@ public class BMPReader extends FormatReader {
   /** Constructs a new BMP reader. */
   public BMPReader() {
     super("Windows Bitmap", "bmp");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

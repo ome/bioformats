@@ -113,9 +113,15 @@ public class BioRadReader extends FormatReader {
   /** Constructs a new BioRadReader. */
   public BioRadReader() {
     super("Bio-Rad PIC", new String[] {"pic", "xml", "raw"});
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {

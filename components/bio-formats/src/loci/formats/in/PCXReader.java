@@ -63,6 +63,7 @@ public class PCXReader extends FormatReader {
   /** Constructs a new PCX reader. */
   public PCXReader() {
     super("PCX", "pcx");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

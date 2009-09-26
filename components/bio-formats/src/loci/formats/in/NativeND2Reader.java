@@ -101,6 +101,7 @@ public class NativeND2Reader extends FormatReader {
   public NativeND2Reader() {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --

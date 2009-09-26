@@ -446,4 +446,12 @@ public interface IFormatReader extends IFormatHandler {
    */
   IFormatReader[] getUnderlyingReaders();
 
+  /**
+   * Returns true if this is a single-file format.
+   */
+  boolean isSingleFile(String id) throws FormatException, IOException;
+
+  /** Returns a list of scientific domains in which this format is used. */
+  String[] getDomains(String id) throws FormatException, IOException;
+
 }

@@ -65,6 +65,7 @@ public class OpenlabRawReader extends FormatReader {
   public OpenlabRawReader() {
     super("Openlab RAW", "raw");
     suffixSufficient = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

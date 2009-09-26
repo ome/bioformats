@@ -73,6 +73,7 @@ public class IvisionReader extends FormatReader {
   /** Constructs a new Ivision reader. */
   public IvisionReader() {
     super("IVision", "ipm");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

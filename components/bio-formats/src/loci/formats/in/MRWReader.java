@@ -68,6 +68,7 @@ public class MRWReader extends FormatReader {
   /** Constructs a new MRW reader. */
   public MRWReader() {
     super("Minolta MRW", "mrw");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

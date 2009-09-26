@@ -99,6 +99,7 @@ public class PictReader extends FormatReader {
   /** Constructs a new PICT reader. */
   public PictReader() {
     super("PICT", new String[] {"pict", "pct"});
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- PictReader API methods --

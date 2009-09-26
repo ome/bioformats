@@ -111,6 +111,7 @@ public class GIFReader extends FormatReader {
   /** Constructs a new GIF reader. */
   public GIFReader() {
     super("Graphics Interchange Format", "gif");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

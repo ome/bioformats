@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -58,6 +59,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   public ImprovisionTiffReader() {
     super("Improvision TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --

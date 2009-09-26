@@ -57,7 +57,10 @@ public class KhorosReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Khoros reader. */
-  public KhorosReader() { super("Khoros XV", "xv"); }
+  public KhorosReader() {
+    super("Khoros XV", "xv");
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
 
   // -- IFormatReader API methods --
 
