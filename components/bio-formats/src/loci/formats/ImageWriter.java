@@ -143,7 +143,9 @@ public class ImageWriter implements IFormatWriter {
           break;
         }
       }
-      if (!success) throw new UnknownFormatException(id);
+      if (!success) {
+        throw new UnknownFormatException("Unknown file format: " + id);
+      }
     }
     return writers[current];
   }
