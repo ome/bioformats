@@ -617,6 +617,7 @@ public class LeicaHandler extends DefaultHandler {
 
       float intensity = Float.parseFloat(attributes.getValue("IntensityDev"));
       if (intensity > 0f && channel >= 0) {
+        if (channel >= core.get(numDatasets).sizeC) channel = 0;
         store.setLightSourceSettingsLightSource(id, numDatasets, channel);
         store.setLightSourceSettingsAttenuation(
           new Float(intensity / 100f), numDatasets, channel);
@@ -660,22 +661,27 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Annotation")) {
       roi = new ROI();
-      roi.type = Integer.parseInt(attributes.getValue("type"));
-      roi.color = Integer.parseInt(attributes.getValue("color"));
+      String type = attributes.getValue("type");
+      if (type != null) roi.type = Integer.parseInt(type);
+      String color = attributes.getValue("color");
+      if (color != null) roi.color = Integer.parseInt(color);
       roi.name = attributes.getValue("name");
       roi.fontName = attributes.getValue("fontName");
       roi.fontSize = attributes.getValue("fontSize");
-      roi.transX = Float.parseFloat(attributes.getValue("transTransX"));
-      roi.transY = Float.parseFloat(attributes.getValue("transTransY"));
-      roi.scaleX = Float.parseFloat(attributes.getValue("transScalingX"));
-      roi.scaleY = Float.parseFloat(attributes.getValue("transScalingY"));
-      roi.rotation = Float.parseFloat(attributes.getValue("transRotation"));
-      roi.linewidth = Integer.parseInt(attributes.getValue("linewidth"));
+      roi.transX = parseFloat(attributes.getValue("transTransX"));
+      roi.transY = parseFloat(attributes.getValue("transTransY"));
+      roi.scaleX = parseFloat(attributes.getValue("transScalingX"));
+      roi.scaleY = parseFloat(attributes.getValue("transScalingY"));
+      roi.rotation = parseFloat(attributes.getValue("transRotation"));
+      String linewidth = attributes.getValue("linewidth");
+      if (linewidth != null) roi.linewidth = Integer.parseInt(linewidth);
       roi.text = attributes.getValue("text");
     }
     else if (qName.equals("Vertex")) {
-      roi.x.add(new Float(attributes.getValue("x")));
-      roi.y.add(new Float(attributes.getValue("y")));
+      String x = attributes.getValue("x").replaceAll(",", ".");
+      String y = attributes.getValue("y").replaceAll(",", ".");
+      roi.x.add(new Float(x));
+      roi.y.add(new Float(y));
     }
     else if (qName.equals("ROI")) {
       alternateCenter = true;
@@ -766,10 +772,12 @@ public class LeicaHandler extends DefaultHandler {
       // point of the ROI and the transX/transY values are relative to
       // the center point of the image
 
-      store.setShapeText(text, series, roi, 0);
-      store.setShapeFontFamily(fontName, series, roi, 0);
-      store.setShapeFontSize(
-        new Integer((int) Float.parseFloat(fontSize)), series, roi, 0);
+      if (text != null) store.setShapeText(text, series, roi, 0);
+      if (fontName != null) store.setShapeFontFamily(fontName, series, roi, 0);
+      if (fontSize != null) {
+        store.setShapeFontSize(
+          new Integer((int) Float.parseFloat(fontSize)), series, roi, 0);
+      }
       store.setShapeStrokeColor(String.valueOf(color), series, roi, 0);
       store.setShapeStrokeWidth(new Integer(linewidth), series, roi, 0);
 
@@ -857,6 +865,14 @@ public class LeicaHandler extends DefaultHandler {
 
       normalized = true;
     }
+  }
+
+  private float parseFloat(String number) {
+    if (number != null) {
+      number = number.replaceAll(",", ".");
+      return Float.parseFloat(number);
+    }
+    return 0f;
   }
 
 }

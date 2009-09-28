@@ -579,7 +579,7 @@ public class PictReader extends FormatReader {
 
   /** PackBits variant that outputs an int array. */
   private void unpackBits(byte[] ib, int[] ob) {
-    debug("unpackBits(" + ib + ", " + ob + ")");
+    debug("unpackBits(...)");
     int i = 0;
     int b;
     int rep;

@@ -1045,7 +1045,7 @@ public class FV1000Reader extends FormatReader {
         if (channel.barrierFilter.indexOf("-") != -1) {
           String[] emValues = channel.barrierFilter.split("-");
           for (int i=0; i<emValues.length; i++) {
-            emValues[i].replaceAll("\\D", "");
+            emValues[i] = emValues[i].replaceAll("\\D", "");
           }
           try {
             store.setTransmittanceRangeCutIn(
