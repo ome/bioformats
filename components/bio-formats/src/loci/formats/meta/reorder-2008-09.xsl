@@ -38,7 +38,8 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-09</xsl:variable>
@@ -92,7 +93,7 @@
 			<child name="MicrobeamManipulation"/>
 		</parentOrder>
 		<parentOrder name="Pixels">
-			<child name="BinData"/>	
+			<child name="BinData"/>
 			<child name="TiffData"/>
 			<child name="Plane"/>
 		</parentOrder>
@@ -192,7 +193,7 @@
 		<parentOrder name="Region">
 			<child name="Region"/>
 			<child name="CustomAttributes"/>
-		</parentOrder>	
+		</parentOrder>
 	</xsl:variable>
 
 	<!-- Rewriting all namespaces -->
@@ -208,7 +209,7 @@
 
 			<xsl:apply-templates select="@*"/>
 			<xsl:variable name="parentName"><xsl:value-of select="local-name(.)"/></xsl:variable>
-			<xsl:variable name="parentNode" select="exsl:node-set(.)"/>
+			<xsl:variable name="parentNode" select="."/>
 			<xsl:variable name="parentOrderNode"
 				select="exsl:node-set($fixedOrders)/parentOrder[@name=$parentName]"/>
 			<xsl:for-each select="$parentOrderNode">
@@ -216,12 +217,11 @@
 					<xsl:variable name="childName">
 						<xsl:value-of select="@name"/>
 					</xsl:variable>
-					<xsl:for-each select="exsl:node-set($parentNode)/*[local-name(.)=$childName]">
+					<xsl:for-each select="$parentNode/*[local-name(.)=$childName]">
 						<xsl:apply-templates select="."/>
 					</xsl:for-each>
 				</xsl:for-each>
 			</xsl:for-each>
-
 		</OME>
 	</xsl:template>
 
@@ -229,9 +229,9 @@
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:variable name="parentName"><xsl:value-of select="local-name(.)"/></xsl:variable>
-			<xsl:variable name="parentNode" select="exsl:node-set(.)"/>
+			<xsl:variable name="parentNode" select="."/>
 			<xsl:variable name="parentOrderNode"
-			select="exsl:node-set($fixedOrders)/parentOrder[@name=$parentName]"/>
+				select="exsl:node-set($fixedOrders)/parentOrder[@name=$parentName]"/>
 			<xsl:choose>
 				<xsl:when test="count($parentOrderNode) = 0">
 					<xsl:apply-templates select="node()"/>
@@ -242,7 +242,7 @@
 							<xsl:variable name="childName">
 								<xsl:value-of select="@name"/>
 							</xsl:variable>
-							<xsl:for-each select="exsl:node-set($parentNode)/*[local-name(.)=$childName]">
+							<xsl:for-each select="$parentNode/*[local-name(.)=$childName]">
 								<xsl:apply-templates select="."/>
 							</xsl:for-each>
 						</xsl:for-each>

@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.common;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -33,15 +35,19 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -49,6 +55,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -71,6 +78,10 @@ public final class XMLTools {
 
   // -- Constants --
 
+  /** Factory for generating document builders. */
+  public static final DocumentBuilderFactory DOC_FACTORY =
+    DocumentBuilderFactory.newInstance();
+
   /** Factory for generating SAX parsers. */
   public static final SAXParserFactory SAX_FACTORY =
     SAXParserFactory.newInstance();
@@ -84,6 +95,48 @@ public final class XMLTools {
   private XMLTools() { }
 
   // -- Utility methods --
+
+  /** Parses a DOM from the given XML file on disk. */
+  public static Document parseDOM(File file)
+    throws ParserConfigurationException, SAXException, IOException
+  {
+    InputStream is = new FileInputStream(file);
+    Document doc = parseDOM(is);
+    is.close();
+    return doc;
+  }
+
+  /** Parses a DOM from the given XML string. */
+  public static Document parseDOM(String xml)
+    throws ParserConfigurationException, SAXException, IOException
+  {
+    byte[] bytes = xml.getBytes();
+    InputStream is = new ByteArrayInputStream(bytes);
+    Document doc = parseDOM(is);
+    is.close();
+    return doc;
+  }
+
+  /** Parses a DOM from the given XML input stream. */
+  public static Document parseDOM(InputStream is)
+    throws ParserConfigurationException, SAXException, IOException
+  {
+    DocumentBuilder db = DOC_FACTORY.newDocumentBuilder();
+    return db.parse(is);
+  }
+
+  /** Converts the given DOM back to a string. */
+  public static String getXML(Document doc)
+    throws TransformerConfigurationException, TransformerException
+  {
+    Source source = new DOMSource(doc);
+    StringWriter stringWriter = new StringWriter();
+    Result result = new StreamResult(stringWriter);
+    TransformerFactory factory = TransformerFactory.newInstance();
+    Transformer transformer = factory.newTransformer();
+    transformer.transform(source, result);
+    return stringWriter.getBuffer().toString();
+  }
 
   /** Remove invalid characters from an XML string. */
   public static String sanitizeXML(String s) {
@@ -156,7 +209,19 @@ public final class XMLTools {
   public static Templates getStylesheet(String resourcePath,
     Class<?> sourceClass)
   {
-    InputStream xsltStream = sourceClass.getResourceAsStream(resourcePath);
+    InputStream xsltStream;
+    if (sourceClass == null) {
+      try {
+        xsltStream = new FileInputStream(resourcePath);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+        return null;
+      }
+    }
+    else {
+      xsltStream = sourceClass.getResourceAsStream(resourcePath);
+    }
     StreamSource xsltSource = new StreamSource(xsltStream);
     TransformerFactory transformerFactory = TransformerFactory.newInstance();
     try {
@@ -168,10 +233,15 @@ public final class XMLTools {
     return null;
   }
 
-  /**
-   * Transforms the given XMl string according to the specified XSLT stylesheet.
-   */
+  /** Transforms the given XML string using the specified XSLT stylesheet. */
   public static String transformXML(String xml, Templates xslt)
+    throws IOException
+  {
+    return transformXML(new StreamSource(new StringReader(xml)), xslt);
+  }
+
+  /** Transforms the given XML data using the specified XSLT stylesheet. */
+  public static String transformXML(Source xmlSource, Templates xslt)
     throws IOException
   {
     Transformer trans;
@@ -183,8 +253,6 @@ public final class XMLTools {
       e.initCause(exc);
       throw e;
     }
-    StringReader xmlReader = new StringReader(xml);
-    Source xmlSource = new StreamSource(xmlReader);
     StringWriter xmlWriter = new StringWriter();
     StreamResult xmlResult = new StreamResult(xmlWriter);
     try {
