@@ -83,6 +83,9 @@ public class LeicaReader extends FormatReader {
   private static final Integer SEQ_SCANNERSET = new Integer(200);
   private static final Integer SEQ_FILTERSET = new Integer(700);
 
+  private static final int SEQ_SCANNERSET_END = 300;
+  private static final int SEQ_FILTERSET_END = 800;
+
   private static final Hashtable<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
 
@@ -132,6 +135,8 @@ public class LeicaReader extends FormatReader {
 
   private float[][] physicalSizes;
   private float[] pinhole, exposureTime;
+
+  private int nextDetector = 0;
 
   // -- Constructor --
 
@@ -258,6 +263,7 @@ public class LeicaReader extends FormatReader {
       physicalSizes = null;
       seriesDescriptions = null;
       pinhole = exposureTime = null;
+      nextDetector = 0;
     }
   }
 
@@ -888,16 +894,24 @@ public class LeicaReader extends FormatReader {
 
       // parse instrument data
 
+      nextDetector = 0;
+
       Object[] keys = ifd.keySet().toArray();
+      Arrays.sort(keys);
+      int nextInstrumentBlock = 1;
       for (int q=0; q<keys.length; q++) {
         if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET) ||
-          keys[q].equals(SEQ_SCANNERSET) || keys[q].equals(SEQ_FILTERSET))
+          keys[q].equals(SEQ_SCANNERSET) || keys[q].equals(SEQ_FILTERSET) ||
+          (((Integer) keys[q]).intValue() > SEQ_SCANNERSET.intValue() &&
+          ((Integer) keys[q]).intValue() < SEQ_SCANNERSET_END) ||
+          (((Integer) keys[q]).intValue() > SEQ_FILTERSET.intValue() &&
+          ((Integer) keys[q]).intValue() < SEQ_FILTERSET_END))
         {
           byte[] tmp = (byte[]) ifd.get(keys[q]);
           if (tmp == null) continue;
           RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
           stream.order(isLittleEndian());
-          parseInstrumentData(stream, store, i);
+          parseInstrumentData(stream, store, i, nextInstrumentBlock++);
           stream.close();
         }
       }
@@ -931,7 +945,7 @@ public class LeicaReader extends FormatReader {
   // -- Helper methods --
 
   private void parseInstrumentData(RandomAccessInputStream stream,
-    MetadataStore store, int series) throws IOException
+    MetadataStore store, int series, int blockNum) throws IOException
   {
     setSeries(series);
 
@@ -953,8 +967,6 @@ public class LeicaReader extends FormatReader {
       emWaves[i] = new Vector();
       exWaves[i] = new Vector();
     }
-
-    int nextDetector = 0;
 
     for (int j=0; j<nElements; j++) {
       stream.seek(24 + j * cbElements);
@@ -1177,7 +1189,7 @@ public class LeicaReader extends FormatReader {
         }
       }
 
-      addSeriesMeta(contentID, data);
+      addSeriesMeta("Block " + blockNum + " " + contentID, data);
     }
     stream.close();
 
