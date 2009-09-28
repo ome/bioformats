@@ -139,7 +139,7 @@ public class ImageReader implements IFormatReader {
           break;
         }
       }
-      if (!success) throw new FormatException("Unknown file format: " + id);
+      if (!success) throw new UnknownFormatException(id);
     }
     return getReader();
   }
