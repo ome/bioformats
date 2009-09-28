@@ -69,12 +69,12 @@ public class BitBuffer {
    * @param bits Number of bits to skip
    */
   public void skipBits(long bits) {
-    if(bits < 0) {
+    if (bits < 0) {
       throw new IllegalArgumentException("Bits to skip may not be negative");
     }
 
     // handles skipping past eof
-    if((long) eofByte * 8 < (long) currentByte * 8 + currentBit + bits) {
+    if ((long) eofByte * 8 < (long) currentByte * 8 + currentBit + bits) {
       eofFlag = true;
       currentByte = eofByte;
       currentBit = 0;
@@ -85,7 +85,7 @@ public class BitBuffer {
     int skipBits = (int) (bits % 8);
     currentByte += skipBytes;
     currentBit += skipBits;
-    if(currentBit >= 8) {
+    while (currentBit >= 8) {
       currentByte++;
       currentBit -= 8;
     }
@@ -110,6 +110,9 @@ public class BitBuffer {
    */
 
   public int getBits(int bitsToRead) {
+    if (bitsToRead < 0) {
+      throw new IllegalArgumentException("Bits to read may not be negative");
+    }
     if (bitsToRead == 0) return 0;
     if (eofFlag) return -1; // Already at end of file
     int toStore = 0;
@@ -172,8 +175,8 @@ public class BitBuffer {
     // instead, we randomly choose from 0 to 2^(i % 32).
     // Except, 1 << 31 is a negative number in two's complement, so we make it
     // a random number in the entire range.
-    for(int i = 0; i < trials; i++) {
-      if(31 == i % 32) {
+    for (int i = 0; i < trials; i++) {
+      if (31 == i % 32) {
         nums[i] = r.nextInt();
       }
       else {
@@ -188,11 +191,11 @@ public class BitBuffer {
     int readint;
     LogTools.println("Reading from BitBuffer");
     // Randomly skip or read bytes
-    for(int i = 0; i < trials; i++) {
+    for (int i = 0; i < trials; i++) {
       int c = r.nextInt(100);
-      if(c > 50) {
+      if (c > 50) {
         readint = bb.getBits(len[i]);
-        if(readint != nums[i]) {
+        if (readint != nums[i]) {
           LogTools.println("Error at #" + i + ": " + readint + " received, " +
             nums[i] + " expected.");
         }
@@ -207,7 +210,7 @@ public class BitBuffer {
     // The total length could be mid byte. Add one byte to test.
     bb.skipBits(totallen + 8);
     int read = bb.getBits(1);
-    if(-1 != read) {
+    if (-1 != read) {
       LogTools.println("-1 expected at end of buffer, " +
                          read + " received.");
     }
