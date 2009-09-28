@@ -81,7 +81,7 @@ public class SourceList {
       if (!path.startsWith(rootDir)) continue;
       if (!path.toLowerCase().endsWith(".java")) continue;
       path = path.substring(rootDir.length() + 1); // relative to root path
-      path = path.replaceAll(File.separator, "/"); // Windows stupidity
+      path = path.replace(File.separatorChar, '/'); // Windows stupidity
       files.add(path);
     }
   }

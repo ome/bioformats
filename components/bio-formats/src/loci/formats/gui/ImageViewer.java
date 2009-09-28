@@ -459,7 +459,7 @@ public class ImageViewer extends JFrame implements ActionListener,
     if (filename != null || format != null) sb.append("- ");
     sb.append(TITLE);
     setTitle(sb.toString());
-    icon.setImage(images == null ? null : images[0]);
+    if (images != null) icon.setImage(images[0]);
     pack();
   }
 

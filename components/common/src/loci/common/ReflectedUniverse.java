@@ -328,7 +328,7 @@ public class ReflectedUniverse {
 
   /** Registers a variable of primitive type char in the universe. */
   public void setVar(String varName, char c) {
-    setVar(varName, new Character(c));
+    setVar(varName, Character.valueOf(c));
   }
 
   /** Registers a variable of primitive type double in the universe. */
@@ -343,17 +343,17 @@ public class ReflectedUniverse {
 
   /** Registers a variable of primitive type int in the universe. */
   public void setVar(String varName, int i) {
-    setVar(varName, new Integer(i));
+    setVar(varName, Integer.valueOf(i));
   }
 
   /** Registers a variable of primitive type long in the universe. */
   public void setVar(String varName, long l) {
-    setVar(varName, new Long(l));
+    setVar(varName, Long.valueOf(l));
   }
 
   /** Registers a variable of primitive type short in the universe. */
   public void setVar(String varName, short s) {
-    setVar(varName, new Short(s));
+    setVar(varName, Short.valueOf(s));
   }
 
   /**
@@ -367,11 +367,11 @@ public class ReflectedUniverse {
     }
     else if (varName.equals("true")) {
       // variable is a boolean literal
-      return new Boolean(true);
+      return Boolean.TRUE;
     }
     else if (varName.equals("false")) {
       // variable is a boolean literal
-      return new Boolean(false);
+      return Boolean.FALSE;
     }
     else if (varName.startsWith("\"") && varName.endsWith("\"")) {
       // variable is a string literal

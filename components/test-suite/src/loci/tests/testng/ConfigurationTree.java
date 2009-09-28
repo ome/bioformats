@@ -169,14 +169,23 @@ public class ConfigurationTree {
             LogTools.println("Warning: config file '" +
               configFile + "' has unmatched ] on line " + count);
           }
-          // save local context results
-          int index = toInt((String) local.get("series"));
-          if (index < 0) {
-            LogTools.println("Warning: config file '" + configFile +
-              "' has invalid series block on line " + count);
+          else {
+            // save local context results
+            String series = (String) local.get("series");
+            if (series == null) {
+              LogTools.println("Warning: config file '" + configFile +
+                "' is missing a series number on line " + count);
+            }
+            else {
+              int index = toInt(series);
+              if (index < 0) {
+                LogTools.println("Warning: config file '" + configFile +
+                  "' has invalid series block on line " + count);
+              }
+              else getChild(node, index).setUserObject(local);
+            }
+            local = null;
           }
-          else getChild(node, index).setUserObject(local);
-          local = null;
         }
       }
     }

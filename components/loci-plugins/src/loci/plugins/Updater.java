@@ -177,7 +177,16 @@ public class Updater implements PlugIn {
 
     // if an old version exists, remove it
     File plugin = new File(downloadPath);
-    if (plugin.exists()) plugin.delete();
+    if (plugin.exists()) {
+      if (!plugin.delete()) {
+        IJ.showStatus("");
+        IJ.showProgress(1);
+        WindowTools.reportException(
+          new IOException("Could not delete " + downloadPath), false,
+          "An error occurred while downloading the LOCI plugins");
+        return;
+      }
+    }
 
     // download new version to plugins directory
     IJ.showStatus("Connecting to download server...");

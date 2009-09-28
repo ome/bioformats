@@ -119,13 +119,19 @@ public class ZipHandle extends CompressedRandomAccess {
     fp = pos;
     if (fp > oldFP) {
       long diff = fp - oldFP;
-      stream.skipBytes((int) diff);
+      int skipped = stream.skipBytes((int) diff);
+      while (skipped < diff) {
+        skipped += stream.skipBytes((int) (diff - skipped));
+      }
     }
     else if (fp < oldFP) {
       stream.close();
       stream = new DataInputStream(new BufferedInputStream(
         zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
-      stream.skipBytes((int) fp);
+      int skipped = stream.skipBytes((int) fp);
+      while (skipped < fp) {
+        skipped += stream.skipBytes((int) (fp - skipped));
+      }
     }
   }
 

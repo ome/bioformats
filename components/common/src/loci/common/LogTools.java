@@ -114,7 +114,7 @@ public final class LogTools {
 
     // get calling class
     StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-    String className = null;
+    String className = "";
     for (StackTraceElement ste : trace) {
       String cn = ste.getClassName();
       String mn = ste.getMethodName();

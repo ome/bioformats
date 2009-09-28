@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -54,9 +55,19 @@ public class MetaSupportAutogen {
 
     // create needed directories
     File doc = new File("doc");
-    if (!doc.exists()) doc.mkdir();
+    if (!doc.exists()) {
+      boolean success = doc.mkdir();
+      if (!success) {
+        throw new IOException("Could not create " + doc.getAbsolutePath());
+      }
+    }
     File docMeta = new File(doc, "meta");
-    if (!docMeta.exists()) docMeta.mkdir();
+    if (!docMeta.exists()) {
+      boolean success = docMeta.mkdir();
+      if (!success) {
+        throw new IOException("Could not create " + docMeta.getAbsolutePath());
+      }
+    }
 
     // initialize Velocity
     VelocityEngine ve = VelocityTools.createEngine();

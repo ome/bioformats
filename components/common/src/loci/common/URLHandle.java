@@ -345,7 +345,10 @@ public class URLHandle implements IRandomAccess {
     while (bytes >= Integer.MAX_VALUE) {
       bytes -= skipBytes(Integer.MAX_VALUE);
     }
-    skipBytes((int) bytes);
+    int skipped = skipBytes((int) bytes);
+    while (skipped < bytes) {
+      skipped += skipBytes((int) (bytes - skipped));
+    }
   }
 
 }

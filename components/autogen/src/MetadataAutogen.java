@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -56,17 +57,45 @@ public class MetadataAutogen {
     // create needed directories
     if (ice) {
       File lociDir = new File("loci");
-      if (!lociDir.exists()) lociDir.mkdir();
+      if (!lociDir.exists()) {
+        boolean success = lociDir.mkdir();
+        if (!success) {
+          throw new IOException("Could not create " +
+            lociDir.getAbsolutePath());
+        }
+      }
       File iceDir = new File(lociDir, "ice");
-      if (!iceDir.exists()) iceDir.mkdir();
+      if (!iceDir.exists()) {
+        boolean success = iceDir.mkdir();
+        if (!success) {
+          throw new IOException("Could not create " + iceDir.getAbsolutePath());
+        }
+      }
       File formatsDir = new File(iceDir, "formats");
-      if (!formatsDir.exists()) formatsDir.mkdir();
+      if (!formatsDir.exists()) {
+        boolean success = formatsDir.mkdir();
+        if (!success) {
+          throw new IOException("Could not create " +
+            formatsDir.getAbsolutePath());
+        }
+      }
     }
     else {
       File omeDir = new File("ome");
-      if (!omeDir.exists()) omeDir.mkdir();
+      if (!omeDir.exists()) {
+        boolean success = omeDir.mkdir();
+        if (!success) {
+          throw new IOException("Could not create " + omeDir.getAbsolutePath());
+        }
+      }
       File metaDir = new File("meta");
-      if (!metaDir.exists()) metaDir.mkdir();
+      if (!metaDir.exists()) {
+        boolean success = metaDir.mkdir();
+        if (!success) {
+          throw new IOException("Could not create " +
+            metaDir.getAbsolutePath());
+        }
+      }
     }
 
     // get Velocity objects

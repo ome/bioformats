@@ -123,7 +123,7 @@ public final class XMLTools {
     DefaultHandler handler) throws IOException
   {
     byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
-    stream.read(b);
+    stream.readFully(b);
     parseXML(b, handler);
     b = null;
   }

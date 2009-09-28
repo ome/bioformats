@@ -86,7 +86,7 @@ public class FormatReaderTest {
   public static ConfigurationTree config;
 
   /** List of files to skip. */
-  public static List<String> skipFiles = new LinkedList<String>();
+  private static List<String> skipFiles = new LinkedList<String>();
 
   /** Global shared reader for use in all tests. */
   private static BufferedImageReader reader;

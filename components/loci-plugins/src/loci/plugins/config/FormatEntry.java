@@ -58,9 +58,9 @@ public class FormatEntry implements Comparable {
     readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
     try {
       Method getFormat = readerClass.getMethod("getFormat");
-      formatName = (String) getFormat.invoke(reader);
+      formatName = (String) getFormat.invoke(this.reader);
       Method getSuffixes = readerClass.getMethod("getSuffixes");
-      suffixes = (String[]) getSuffixes.invoke(reader);
+      suffixes = (String[]) getSuffixes.invoke(this.reader);
       log.println("Successfully queried " + readerName + " reader.");
     }
     catch (Throwable t) {
@@ -92,6 +92,15 @@ public class FormatEntry implements Comparable {
   }
 
   // -- Comparable API methods --
+
+  public int hashCode() {
+    return toString().hashCode();
+  }
+
+  public boolean equals(Object o) {
+    if (o == null) return false;
+    return compareTo(o) == 0;
+  }
 
   public int compareTo(Object o) {
     return toString().compareTo(o.toString());

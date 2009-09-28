@@ -75,7 +75,7 @@ public class LuraWaveCodec extends BaseCodec {
   protected static String licenseCode;
 
   /** Reflected universe for LuraWave decoding library calls. */
-  protected static ReflectedUniverse r;
+  private static ReflectedUniverse r;
 
   // -- Static initializer --
 

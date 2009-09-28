@@ -78,11 +78,21 @@ public class GZipHandle extends CompressedRandomAccess {
     long diff = fp - pos;
     fp = pos;
     if (diff >= 0) {
-      stream.skipBytes((int) diff);
+      int skipped = stream.skipBytes((int) diff);
+      while (skipped < diff) {
+        int n = stream.skipBytes((int) (diff - skipped));
+        if (n == 0) break;
+        skipped += n;
+      }
     }
     else {
       resetStream();
-      stream.skipBytes((int) fp);
+      int skipped = stream.skipBytes((int) fp);
+      while (skipped < fp) {
+        int n = stream.skipBytes((int) (fp - skipped));
+        if (n == 0) break;
+        skipped += n;
+      }
     }
   }
 

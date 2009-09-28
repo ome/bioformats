@@ -82,7 +82,6 @@ public class Colorizer implements PlugInFilter {
   private ImagePlus imp;
 
   private String stackOrder;
-  private boolean merge;
   private boolean color;
   private boolean hyperstack;
   private byte[][][] lut;
@@ -121,7 +120,6 @@ public class Colorizer implements PlugInFilter {
         return;
       }
 
-      merge = gd.getNextBoolean();
       color = gd.getNextBoolean();
       stackOrder = gd.getNextChoice();
       hyperstack = gd.getNextBoolean();
@@ -131,8 +129,6 @@ public class Colorizer implements PlugInFilter {
     else {
       series = Integer.parseInt(Macro.getValue(arg, "series", "0"));
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
-      merge =
-        Boolean.valueOf(Macro.getValue(arg, "merge", "true")).booleanValue();
       color = Boolean.valueOf(
         Macro.getValue(arg, "colorize", "false")).booleanValue();
       int colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "-1"));
@@ -221,13 +217,6 @@ public class Colorizer implements PlugInFilter {
       }
       else if (nChannels > 7) {
         // ask the user what they would like to do...
-
-        int planes1 = stack.getSize() / 2;
-        if (planes1 * 2 < stack.getSize()) planes1++;
-        int planes2 = stack.getSize() / 3;
-        if (planes2 * 3 < stack.getSize()) planes2++;
-        int planes3 = stack.getSize() / 4;
-        if (planes3 * 4 < stack.getSize()) planes3++;
 
         int[] num = new int[6];
         for (int i=0; i<num.length; i++) {
@@ -433,7 +422,7 @@ public class Colorizer implements PlugInFilter {
     }
   }
 
-  class ColorPanel extends Panel {
+  static class ColorPanel extends Panel {
     private static final int WIDTH = 100, HEIGHT = 50;
     private Color c;
 
