@@ -159,8 +159,8 @@ public class HuffmanCodec extends BaseCodec {
       Decoder d = this;
       while (d.branch[0] != null) {
         int v = bb.getBits(1);
-        if (v >= 0) d = d.branch[v];
-        else break;
+        if (v < 0) break; // eof
+        d = d.branch[v];
       }
       return d.leafValue;
     }

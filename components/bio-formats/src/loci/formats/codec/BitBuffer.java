@@ -37,25 +37,37 @@ import loci.common.LogTools;
  */
 public class BitBuffer {
 
-  // Various bitmasks for the 0000xxxx side of a byte
+  /** Various bitmasks for the 0000xxxx side of a byte. */
   private static final int[] BACK_MASK = {
-    0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F
+    0x00, // 00000000
+    0x01, // 00000001
+    0x03, // 00000011
+    0x07, // 00000111
+    0x0F, // 00001111
+    0x1F, // 00011111
+    0x3F, // 00111111
+    0x7F  // 01111111
   };
 
-  // Various bitmasks for the xxxx0000 side of a byte
+  /** Various bitmasks for the xxxx0000 side of a byte. */
   private static final int[] FRONT_MASK = {
-    0x0000, 0x0080, 0x00C0, 0x00E0, 0x00F0, 0x00F8, 0x00FC, 0x00FE
+    0x0000, // 00000000
+    0x0080, // 10000000
+    0x00C0, // 11000000
+    0x00E0, // 11100000
+    0x00F0, // 11110000
+    0x00F8, // 11111000
+    0x00FC, // 11111100
+    0x00FE  // 11111110
   };
 
+  private byte[] byteBuffer;
   private int currentByte;
   private int currentBit;
-  private byte[] byteBuffer;
   private int eofByte;
   private boolean eofFlag;
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public BitBuffer(byte[] byteBuffer) {
     this.byteBuffer = byteBuffer;
     currentByte = 0;
@@ -108,7 +120,6 @@ public class BitBuffer {
    * @param bitsToRead the number of bits to read from the bit buffer
    * @return the value of the bits read
    */
-
   public int getBits(int bitsToRead) {
     if (bitsToRead < 0) {
       throw new IllegalArgumentException("Bits to read may not be negative");
@@ -117,10 +128,16 @@ public class BitBuffer {
     if (eofFlag) return -1; // Already at end of file
     int toStore = 0;
     while (bitsToRead != 0 && !eofFlag) {
+      if (currentBit < 0 || currentBit > 7) {
+        throw new IllegalStateException("byte=" +
+          currentByte + ", bit = " + currentBit);
+      }
+
       // if we need to read from more than the current byte in the buffer...
-      if (bitsToRead >= 8 - currentBit) {
-        toStore <<= (8 - currentBit);
-        bitsToRead -= (8 - currentBit);
+      int bitsLeft = 8 - currentBit;
+      if (bitsToRead >= bitsLeft) {
+        toStore <<= bitsLeft;
+        bitsToRead -= bitsLeft;
         int cb = (int) byteBuffer[currentByte];
         if (currentBit == 0) {
           // we can read in a whole byte, so we'll do that.
@@ -130,7 +147,7 @@ public class BitBuffer {
           // otherwise, only read the appropriate number of bits off the back
           // side of the byte, in order to "finish" the current byte in the
           // buffer.
-          toStore += cb & BACK_MASK[8 - currentBit];
+          toStore += cb & BACK_MASK[bitsLeft];
           currentBit = 0;
         }
         currentByte++;
@@ -142,7 +159,7 @@ public class BitBuffer {
         toStore = toStore << bitsToRead;
         int cb = byteBuffer[currentByte] & 0xff;
         toStore += (cb & (0x00FF - FRONT_MASK[currentBit])) >>
-          (8 - (currentBit + bitsToRead));
+          (bitsLeft - bitsToRead);
         currentBit += bitsToRead;
         bitsToRead = 0;
       }
@@ -211,8 +228,7 @@ public class BitBuffer {
     bb.skipBits(totallen + 8);
     int read = bb.getBits(1);
     if (-1 != read) {
-      LogTools.println("-1 expected at end of buffer, " +
-                         read + " received.");
+      LogTools.println("-1 expected at end of buffer, " + read + " received.");
     }
   }
 }

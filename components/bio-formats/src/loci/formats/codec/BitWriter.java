@@ -83,10 +83,11 @@ public class BitWriter {
   }
 
   /**
-   *  Writes the bits represented by a bit string to the buffer.
-   *  All characters in the string must be 0 or 1, or this will
-   *  throw an IllegalArgumentException */
-
+   * Writes the bits represented by a bit string to the buffer.
+   *
+   * @throws IllegalArgumentException If any characters other than
+   *   '0' and '1' appear in the string.
+   */
   public void write(String bitString) {
     for (int i = 0; i < bitString.length(); i++) {
       if ('1' == bitString.charAt(i)) {
