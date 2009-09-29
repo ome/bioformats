@@ -143,8 +143,14 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return checkSuffix(id, PIC_SUFFIX) ? FormatTools.CAN_GROUP :
-      FormatTools.MUST_GROUP;
+    Location parent = new Location(id).getParentFile();
+    String[] list = parent.list();
+    for (String f : list) {
+      if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
+        return FormatTools.MUST_GROUP;
+      }
+    }
+    return FormatTools.CAN_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

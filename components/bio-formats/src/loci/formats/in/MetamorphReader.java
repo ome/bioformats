@@ -1054,6 +1054,9 @@ public class MetamorphReader extends BaseTiffReader {
         case 25:
           in.seek(valOrOffset);
           num = in.readInt();
+          if (num + in.getFilePointer() >= in.length()) {
+            num = (int) (in.length() - in.getFilePointer() - 1);
+          }
           value = in.readString(num);
           break;
         case 7:
