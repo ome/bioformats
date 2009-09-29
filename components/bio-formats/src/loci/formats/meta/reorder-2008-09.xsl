@@ -208,7 +208,9 @@
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd">
 
 			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="parentName"><xsl:value-of select="local-name(.)"/></xsl:variable>
+			<xsl:variable name="parentName">
+				<xsl:value-of select="local-name(.)"/>
+			</xsl:variable>
 			<xsl:variable name="parentNode" select="."/>
 			<xsl:variable name="parentOrderNode"
 				select="exsl:node-set($fixedOrders)/parentOrder[@name=$parentName]"/>
@@ -226,9 +228,11 @@
 	</xsl:template>
 
 	<xsl:template match="OME:*">
-		<xsl:element name="{name()}" namespace="{$newOMENS}">
+		<xsl:element name="{name()}">
 			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="parentName"><xsl:value-of select="local-name(.)"/></xsl:variable>
+			<xsl:variable name="parentName">
+				<xsl:value-of select="local-name(.)"/>
+			</xsl:variable>
 			<xsl:variable name="parentNode" select="."/>
 			<xsl:variable name="parentOrderNode"
 				select="exsl:node-set($fixedOrders)/parentOrder[@name=$parentName]"/>

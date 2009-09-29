@@ -105,26 +105,26 @@ public abstract class OMEXMLMetadata implements IMetadata {
         setImageName("", 0); // HACK - force creation of Image element
         image = DOMUtil.getChildElement("Image", ome);
       }
-      imageCA = DOMUtil.getChildElement("CustomAttributes", image);
+      imageCA = DOMUtil.getChildElement("CA:CustomAttributes", image);
       if (imageCA == null) {
-        imageCA = DOMUtil.createChild(image, "CustomAttributes", true);
+        imageCA = DOMUtil.createChild(image, "CA:CustomAttributes", true);
       }
     }
     if (!omCreated) {
       Element std = DOMUtil.createChild(root.getDOMElement(),
-        "SemanticTypeDefinitions");
+        "STD:SemanticTypeDefinitions");
       DOMUtil.setAttribute("xmlns",
         "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd", std);
-      Element st = DOMUtil.createChild(std, "SemanticType");
+      Element st = DOMUtil.createChild(std, "STD:SemanticType");
       DOMUtil.setAttribute("Name", ORIGINAL_METADATA, st);
       DOMUtil.setAttribute("AppliesTo", "I", st);
 
-      Element nameElement = DOMUtil.createChild(st, "Element");
+      Element nameElement = DOMUtil.createChild(st, "STD:Element");
       DOMUtil.setAttribute("Name", "Name", nameElement);
       DOMUtil.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME", nameElement);
       DOMUtil.setAttribute("DataType", "string", nameElement);
 
-      Element valueElement = DOMUtil.createChild(st, "Element");
+      Element valueElement = DOMUtil.createChild(st, "STD:Element");
       DOMUtil.setAttribute("Name", "Value", valueElement);
       DOMUtil.setAttribute("DBLocation",
         "ORIGINAL_METADATA.VALUE", valueElement);
@@ -146,7 +146,7 @@ public abstract class OMEXMLMetadata implements IMetadata {
       Element ome = root.getDOMElement();
       Element image = DOMUtil.getChildElement("Image", ome);
       if (image == null) return null;
-      imageCA = DOMUtil.getChildElement("CustomAttributes", image);
+      imageCA = DOMUtil.getChildElement("CA:CustomAttributes", image);
       if (imageCA == null) return null;
     }
 

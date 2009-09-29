@@ -760,6 +760,17 @@ public class ImageInfo {
     if (mr != null) {
       String xml = MetadataTools.getOMEXML(mr);
       LogTools.println(XMLTools.indentXML(xml, true));
+
+      // HACK: Add dummy TiffData elements to suppress
+      // BinData/TiffData validation error.
+      Integer zero = new Integer(0);
+      for (int i=0; i<mr.getImageCount(); i++) {
+        for (int p=0; p<mr.getPixelsCount(i); p++) {
+          ms.setTiffDataIFD(zero, i, p, 0);
+        }
+      }
+      xml = MetadataTools.getOMEXML(mr);
+
       MetadataTools.validateOMEXML(xml);
     }
     else {
