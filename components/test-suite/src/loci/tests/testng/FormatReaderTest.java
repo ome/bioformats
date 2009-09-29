@@ -672,7 +672,19 @@ public class FormatReaderTest {
     String testName = "testValidXML";
     boolean success = true;
     try {
-      MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
+      MetadataStore store = reader.getMetadataStore();
+      MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
+
+      // HACK: Add dummy TiffData elements to suppress BinData/TiffData
+      // validation error. Note that this test has a SIDE EFFECT of altering
+      // the metadata store, so it should follow any others that might be
+      // affected by such changes.
+      Integer zero = new Integer(0);
+      for (int i=0; i<retrieve.getImageCount(); i++) {
+        for (int p=0; p<retrieve.getPixelsCount(i); p++) {
+          store.setTiffDataIFD(zero, i, p, 0);
+        }
+      }
 
       String xml = MetadataTools.getOMEXML(retrieve);
       success = xml != null && XMLTools.validateXML(xml);
