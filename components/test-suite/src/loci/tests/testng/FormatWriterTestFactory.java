@@ -1,5 +1,5 @@
 //
-// FormatReaderTestFactory.java
+// FormatWriterTestFactory.java
 //
 
 /*
@@ -44,17 +44,17 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.LogTools;
-import loci.formats.ImageReader;
+import loci.formats.ImageWriter;
 
 /**
  * Factory for scanning a directory structure and generating instances of
- * {@link FormatReaderTest} based on the image files found.
+ * {@link FormatWriterTest} based on the image files found.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatReaderTestFactory.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatReaderTestFactory.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">SVN</a></dd></dl>
  */
-public class FormatReaderTestFactory {
+public class FormatWriterTestFactory {
 
   // -- TestNG factory methods --
 
@@ -91,7 +91,7 @@ public class FormatReaderTestFactory {
           "=\"/path/to/data\" test-all");
         return new Object[0];
       }
-      FormatReaderTest.config = new ConfigurationTree(baseDir);
+      FormatWriterTest.config = new ConfigurationTree(baseDir);
 
       // create log file
       TestTools.createLogFile();
@@ -120,7 +120,7 @@ public class FormatReaderTestFactory {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
-      TestTools.getFiles(baseDir, files, FormatReaderTest.config);
+      TestTools.getFiles(baseDir, files, FormatWriterTest.config);
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
       LogTools.println(TestTools.DIVIDER);
@@ -142,7 +142,8 @@ public class FormatReaderTestFactory {
     Object[] tests = new Object[files.size()];
     for (int i=0; i<tests.length; i++) {
       String id = (String) files.get(i);
-      tests[i] = new FormatReaderTest(id, multiplier);
+      tests[i] = new FormatWriterTest(id);
+      ((FormatWriterTest) tests[i]).setLog(LogTools.getLog());
     }
     if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
     else System.out.println("Ready to test " + tests.length + " files");

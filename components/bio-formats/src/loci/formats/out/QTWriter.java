@@ -125,7 +125,7 @@ public class QTWriter extends FormatWriter {
     compressionTypes = new String[] {
       "Uncompressed",
       // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
-      "Motion JPEG-B",
+      /*"Motion JPEG-B",*/
       "Cinepak", "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG 4"
     };
 
@@ -167,6 +167,7 @@ public class QTWriter extends FormatWriter {
     if (legacy == null) legacy = new LegacyQTWriter();
 
     if (needLegacy) {
+      legacy.close();
       legacy.setMetadataRetrieve(getMetadataRetrieve());
       legacy.setId(currentId);
       legacy.saveBytes(buf, last);

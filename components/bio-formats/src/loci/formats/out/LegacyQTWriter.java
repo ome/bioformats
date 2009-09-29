@@ -145,7 +145,7 @@ public class LegacyQTWriter extends FormatWriter {
   public void saveImage(Image image, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (tools == null) {
+    if (tools == null || r == null) {
       tools = new LegacyQTTools();
       r = tools.getUniverse();
     }

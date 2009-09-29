@@ -26,6 +26,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite">
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>

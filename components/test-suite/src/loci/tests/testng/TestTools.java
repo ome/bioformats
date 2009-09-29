@@ -31,10 +31,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package loci.tests.testng;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import loci.common.DateTools;
+import loci.common.Location;
+import loci.common.LogTools;
+import loci.formats.ImageReader;
 
 /**
  * Utility methods for use with TestNG tests.
@@ -79,6 +91,96 @@ public class TestTools {
     String name = o.getClass().getName();
     int dot = name.lastIndexOf(".");
     return dot < 0 ? name : name.substring(dot + 1);
+  }
+
+  /** Creates a new log file. */
+  public static void createLogFile() {
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    StringBuffer dateBuf = new StringBuffer();
+    fmt.format(new Date(), dateBuf, new FieldPosition(0));
+    String logFile = "loci-software-test-" + dateBuf + ".log";
+    LogTools.println("Output logged to " + logFile);
+    try {
+      LogTools.getLog().setStream(
+        new PrintStream(new FileOutputStream(logFile)));
+    }
+    catch (IOException e) { LogTools.println(e); }
+
+    // close log file on exit
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        LogTools.println(DIVIDER);
+        LogTools.println("Test suite complete.");
+        LogTools.getLog().getStream().close();
+      }
+    });
+  }
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, List files, ConfigurationTree config)
+  {
+    Location f = new Location(root);
+    String[] subs = f.list();
+    if (subs == null) subs = new String[0];
+    Arrays.sort(subs);
+
+    // make sure that if a config file exists, it is first on the list
+    for (int i=0; i<subs.length; i++) {
+      if (subs[i].endsWith(".bioformats")) {
+        String tmp = subs[0];
+        subs[0] = subs[i];
+        subs[i] = tmp;
+        break;
+      }
+    }
+
+    ImageReader typeTester = new ImageReader();
+
+    for (int i=0; i<subs.length; i++) {
+      Location file = new Location(root, subs[i]);
+      subs[i] = file.getAbsolutePath();
+      LogTools.print("Checking " + subs[i] + ": ");
+
+      if (file.getName().equals(".bioformats")) {
+        // special config file for the test suite
+        LogTools.println("config file");
+        try {
+          config.parseConfigFile(subs[i]);
+        }
+        catch (IOException exc) {
+          LogTools.trace(exc);
+        }
+      }
+      else if (isIgnoredFile(subs[i], config)) {
+        LogTools.println("ignored");
+        continue;
+      }
+      else if (file.isDirectory()) {
+        LogTools.println("directory");
+        getFiles(subs[i], files, config);
+      }
+      else {
+        if (typeTester.isThisType(subs[i])) {
+          LogTools.println("OK");
+          files.add(file.getAbsolutePath());
+        }
+        else LogTools.println("unknown type");
+      }
+      file = null;
+    }
+  }
+
+  /** Determines if the given file should be ignored by the test suite. */
+  public static boolean isIgnoredFile(String file, ConfigurationTree config) {
+    if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file
+
+    config.setId(file);
+    if (!config.isTestable()) return true;
+
+    // HACK - heuristics to speed things up
+    if (file.endsWith(".oif.files")) return true; // ignore .oif folders
+
+    return false;
   }
 
 }

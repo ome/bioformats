@@ -42,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import loci.common.Log;
 import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
@@ -89,13 +90,26 @@ public class FormatWriterTest {
   private String id;
   private boolean skip = false;
 
+  // -- Constructor --
+
+  public FormatWriterTest(String filename) {
+    id = filename;
+    reader = new BufferedImageReader();
+    reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+  }
+
+  // -- Setup methods --
+
+  public void setLog(Log log) {
+    LogTools.setLog(log);
+  }
+
   // -- Data provider --
 
   /**
    * @testng.data-provider name="getWriterList"
    */
   public Object[][] getWriterList() {
-    createLogFile();
     IFormatWriter[] writers = new ImageWriter().getWriters();
     Vector tmp = new Vector();
     for (int i=0; i<writers.length; i++) {
@@ -136,14 +150,12 @@ public class FormatWriterTest {
   public void testWriterConsistency(IFormatWriter writer) {
     String testName =
       TestTools.shortClassName(writer) + " testWriterConsistency";
-    if (!initFile()) {
-      result(testName, false, null);
-      return;
-    }
-    String file = reader.getCurrentFile();
     boolean success = true;
     String msg = null;
     try {
+      reader.setId(id);
+      config.setId(id);
+
       int type = reader.getPixelType();
       if (!writer.isSupportedType(type)) {
         success = true;
@@ -162,6 +174,7 @@ public class FormatWriterTest {
       String convertedFile = tmpFile.getAbsolutePath();
 
       IMetadata meta = (IMetadata) reader.getMetadataStore();
+      writer.close();
       writer.setMetadataRetrieve((MetadataRetrieve) meta);
 
       // convert the input file
@@ -245,35 +258,6 @@ public class FormatWriterTest {
 
   // -- Helper methods --
 
-  /** Initializes the reader and configuration tree. */
-  private boolean initFile() {
-    if (id == null) {
-      id = System.getProperty("testng.filename");
-      if (id == null) return false;
-    }
-    try {
-      if (reader == null) reader = new BufferedImageReader();
-      reader.close();
-      MetadataStore store = MetadataTools.createOMEXMLMetadata();
-      reader.setMetadataStore(store);
-      reader.setId(id);
-
-      File f = new File(id);
-      String parent = f.getParentFile().getAbsolutePath();
-      config = new ConfigurationTree(parent);
-      String configFile = parent + File.separator + ".bioformats";
-      if (new File(configFile).exists()) {
-        config.parseConfigFile(configFile);
-      }
-      config.setId(id);
-    }
-    catch (Throwable t) {
-      LogTools.trace(t);
-      return false;
-    }
-    return true;
-  }
-
   private static String checkMismatch(boolean i1, boolean i2, int series,
     String label)
   {
@@ -291,29 +275,6 @@ public class FormatWriterTest {
     if (s1.equals(s2)) return null;
     return label + " mismatch [got " + s1 + ", expected " + s2 +
       "] in series " + series;
-  }
-
-  /** Creates a new log file. */
-  public static void createLogFile() {
-    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-    StringBuffer dateBuf = new StringBuffer();
-    fmt.format(new Date(), dateBuf, new FieldPosition(0));
-    String logFile = "loci-software-test-" + dateBuf + ".log";
-    LogTools.println("Output logged to " + logFile);
-    try {
-      LogTools.getLog().setStream(
-        new PrintStream(new FileOutputStream(logFile)));
-    }
-    catch (IOException e) { LogTools.println(e); }
-
-    // close log file on exit
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
-        LogTools.println(TestTools.DIVIDER);
-        LogTools.println("Test suite complete.");
-        LogTools.getLog().getStream().close();
-      }
-    });
   }
 
   /**
