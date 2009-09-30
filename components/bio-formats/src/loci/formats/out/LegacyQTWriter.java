@@ -163,15 +163,14 @@ public class LegacyQTWriter extends FormatWriter {
         BufferedImage img = AWTImageTools.makeBuffered(image);
         width = img.getWidth();
         height = img.getHeight();
-        File f = new File(currentId);
-        r.setVar("f", f);
+        r.setVar("path", currentId);
         r.setVar("width", (float) width);
         r.setVar("height", (float) height);
 
-        r.exec("movFile = new QTFile(f)");
-        r.setVar("val", -2147483648 | 268435456);
-        r.setVar("kMoviePlayer", 1414942532);
-        r.exec("movie = Movie.createMovieFile(movFile, kMoviePlayer, val)");
+        r.exec("movFile = new QTFile(path)");
+        r.exec("kMoviePlayer = StdQTConstants.kMoviePlayer");
+        r.exec("resFlag = StdQTConstants.createMovieFileDontCreateResFile");
+        r.exec("movie = Movie.createMovieFile(movFile, kMoviePlayer, resFlag)");
         int timeScale = TIME_SCALE;
         r.setVar("timeScale", timeScale);
         r.setVar("zero", 0);

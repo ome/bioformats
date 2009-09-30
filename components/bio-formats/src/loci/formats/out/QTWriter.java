@@ -33,6 +33,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
+import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -122,13 +123,16 @@ public class QTWriter extends FormatWriter {
 
   public QTWriter() {
     super("QuickTime", "mov");
-    compressionTypes = new String[] {
-      "Uncompressed",
-      // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
-      /*"Motion JPEG-B",*/
-      "Cinepak", "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG 4"
-    };
-
+    LegacyQTTools tools = new LegacyQTTools();
+    if (tools.canDoQT()) {
+      compressionTypes = new String[] {
+        "Uncompressed",
+        // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
+        /*"Motion JPEG-B",*/
+        "Cinepak", "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG 4"
+      };
+    }
+    else compressionTypes = new String[] {"Uncompressed"};
   }
 
   // -- QTWriter API methods --

@@ -148,8 +148,8 @@ public class FormatWriterTest {
    *              dataProvider = "getWriterList"
    */
   public void testWriterConsistency(IFormatWriter writer) {
-    String testName =
-      TestTools.shortClassName(writer) + " testWriterConsistency";
+    String testName = TestTools.shortClassName(writer) + " " +
+      writer.getCompression() + " testWriterConsistency";
     boolean success = true;
     String msg = null;
     try {
@@ -215,6 +215,10 @@ public class FormatWriterTest {
           if (TestTools.shortClassName(writer).equals("OMEXMLWriter")) {
             expectRGB = false;
           }
+          else if (TestTools.shortClassName(writer).equals("JPEGWriter")) {
+            expectRGB = expectRGB || config.isIndexed();
+          }
+
           int expectedPixelType = config.getPixelType();
           int expectedCount =
             config.getZ() * config.getT() * (expectRGB ? 1 : config.getC());
@@ -227,6 +231,9 @@ public class FormatWriterTest {
           boolean rgb = reader.isRGB();
           int pixelType = reader.getPixelType();
 
+          boolean isQuicktime =
+            TestTools.shortClassName(writer).equals("QTWriter");
+
           String md5 = TestTools.md5(reader.openBytes(0));
 
           if (msg == null) msg = checkMismatch(x, expectedX, series, "X");
@@ -234,12 +241,16 @@ public class FormatWriterTest {
           if (msg == null && writer.canDoStacks()) {
             msg = checkMismatch(count, expectedCount, series, "Image count");
           }
-          if (msg == null) msg = checkMismatch(rgb, expectRGB, series, "RGB");
-          if (msg == null) {
+          if (msg == null && !isQuicktime) {
+            msg = checkMismatch(rgb, expectRGB, series, "RGB");
+          }
+          if (msg == null && !isQuicktime) {
             msg =
               checkMismatch(pixelType, expectedPixelType, series, "Pixel type");
           }
-          if (msg == null && isLosslessWriter(writer)) {
+          if (msg == null && isLosslessWriter(writer) &&
+            config.isRGB() == expectRGB)
+          {
             msg = checkMismatch(md5, expectedMD5, series, "Pixels hash");
           }
 
