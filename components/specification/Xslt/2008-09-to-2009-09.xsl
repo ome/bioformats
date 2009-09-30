@@ -77,8 +77,8 @@
    <xsl:param name="value"/>
    <!-- read the values from the mapping node -->
    <xsl:variable name="mappingNode" select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
-   <xsl:variable name="newValue" select="exsl:node-set($mappingNode)/map[@from=$value]/@to"/>
-   <xsl:variable name="isOptional" select="exsl:node-set($mappingNode)/@optional"/>
+   <xsl:variable name="newValue" select="($mappingNode)/map[@from=$value]/@to"/>
+   <xsl:variable name="isOptional" select="($mappingNode)/@optional"/>
    <xsl:choose>
      <xsl:when test="string-length($newValue) > 0">
        <xsl:value-of select="$newValue"/>
@@ -218,7 +218,7 @@ Rename attribute OMEName into UserName
                     <xsl:variable name="email">
                         <xsl:copy-of select="following-sibling::OME:Email"/>
                     </xsl:variable>  
-                     <xsl:if test="(count(exsl:node-set($omeName)/*)+count(exsl:node-set($email)/*))=0">
+                	<xsl:if test="(count(exsl:node-set($omeName)/*)+count(exsl:node-set($email)/*))=0">
                         <xsl:value-of select="."/>
                     </xsl:if>    
                 </xsl:otherwise>
@@ -1089,7 +1089,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
   <xsl:variable name="default" select="'1'"/>
   <xsl:variable name="order" select="'XYZCT'"/>
   <xsl:variable name="idText" select="'Pixels:Mask:'"/>
-  <xsl:for-each select="exsl:node-set($mask)/*">
+  <xsl:for-each select="($mask)/*">
     <xsl:choose>
       <xsl:when test="local-name(.)='MaskPixels'">
         <xsl:variable name="bg" select="current()/@BigEndian"/>
