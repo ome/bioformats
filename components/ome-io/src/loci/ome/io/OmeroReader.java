@@ -25,7 +25,6 @@ package loci.ome.io;
 
 import java.io.IOException;
 
-import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -39,7 +38,7 @@ import ome.system.ServiceFactory; // omero-common-4.0.3
 import omero.api.RawPixelsStorePrx; // omero-common-4.0.3
 import omero.model.Image; // omero-client-4.0.3
 import omero.model.Pixels; // omero-client-4.0.3
-import omero.sys.Parameters; // omero-client-4.0.3
+//import omero.sys.Parameters; // omero-client-4.0.3
 
 /**
  * Implementation of {@link loci.formats.IFormatReader}
