@@ -94,7 +94,7 @@ public final class XMLTools {
 
   private XMLTools() { }
 
-  // -- Utility methods --
+  // -- XML to/from DOM --
 
   /** Parses a DOM from the given XML file on disk. */
   public static Document parseDOM(File file)
@@ -132,11 +132,12 @@ public final class XMLTools {
     Source source = new DOMSource(doc);
     StringWriter stringWriter = new StringWriter();
     Result result = new StreamResult(stringWriter);
-    TransformerFactory factory = TransformerFactory.newInstance();
-    Transformer transformer = factory.newTransformer();
+    Transformer transformer = TRANSFORM_FACTORY.newTransformer();
     transformer.transform(source, result);
     return stringWriter.getBuffer().toString();
   }
+
+  // -- Filtering --
 
   /** Remove invalid characters from an XML string. */
   public static String sanitizeXML(String s) {
@@ -147,218 +148,6 @@ public final class XMLTools {
       }
     }
     return s;
-  }
-
-  /** Parses the given XML string into a list of key/value pairs. */
-  public static Hashtable<String, String> parseXML(String xml)
-    throws IOException
-  {
-    MetadataHandler handler = new MetadataHandler();
-    parseXML(xml, handler);
-    return handler.getMetadata();
-  }
-
-  /**
-   * Parses the given XML string into a list of key/value pairs
-   * using the specified XML handler.
-   */
-  public static void parseXML(String xml, DefaultHandler handler)
-    throws IOException
-  {
-    parseXML(xml.getBytes(), handler);
-  }
-
-  /**
-   * Parses the XML string from the given input stream into
-   * a list of key/value pairs using the specified XML handler.
-   */
-  public static void parseXML(RandomAccessInputStream stream,
-    DefaultHandler handler) throws IOException
-  {
-    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
-    stream.readFully(b);
-    parseXML(b, handler);
-    b = null;
-  }
-
-  /**
-   * Parses the XML string from the given byte array into
-   * a list of key/value pairs using the specified XML handler.
-   */
-  public static void parseXML(byte[] xml, DefaultHandler handler)
-    throws IOException
-  {
-    try {
-      SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(xml), handler);
-    }
-    catch (ParserConfigurationException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-    }
-    catch (SAXException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-
-    }
-  }
-
-  /** Gets an XSLT template from the given resource location. */
-  public static Templates getStylesheet(String resourcePath,
-    Class<?> sourceClass)
-  {
-    InputStream xsltStream;
-    if (sourceClass == null) {
-      try {
-        xsltStream = new FileInputStream(resourcePath);
-      }
-      catch (IOException exc) {
-        LogTools.traceDebug(exc);
-        return null;
-      }
-    }
-    else {
-      xsltStream = sourceClass.getResourceAsStream(resourcePath);
-    }
-    StreamSource xsltSource = new StreamSource(xsltStream);
-    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    try {
-      return transformerFactory.newTemplates(xsltSource);
-    }
-    catch (TransformerConfigurationException exc) {
-      LogTools.traceDebug(exc);
-    }
-    return null;
-  }
-
-  /** Transforms the given XML string using the specified XSLT stylesheet. */
-  public static String transformXML(String xml, Templates xslt)
-    throws IOException
-  {
-    return transformXML(new StreamSource(new StringReader(xml)), xslt);
-  }
-
-  /** Transforms the given XML data using the specified XSLT stylesheet. */
-  public static String transformXML(Source xmlSource, Templates xslt)
-    throws IOException
-  {
-    Transformer trans;
-    try {
-      trans = xslt.newTransformer();
-    }
-    catch (TransformerConfigurationException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-    }
-    StringWriter xmlWriter = new StringWriter();
-    StreamResult xmlResult = new StreamResult(xmlWriter);
-    try {
-      trans.transform(xmlSource, xmlResult);
-    }
-    catch (TransformerException exc) {
-      IOException e = new IOException();
-      e.initCause(exc);
-      throw e;
-    }
-    return xmlWriter.toString();
-  }
-
-  /**
-   * Attempts to validate the given XML string using
-   * Java's XML validation facility. Requires Java 1.5+.
-   * @param xml The XML string to validate.
-   * @return whether or not validation was successful.
-   */
-  public static boolean validateXML(String xml) {
-    return validateXML(xml, null);
-  }
-
-  /**
-   * Attempts to validate the given XML string using
-   * Java's XML validation facility. Requires Java 1.5+.
-   * @param xml The XML string to validate.
-   * @param label String describing the type of XML being validated.
-   * @return whether or not validation was successful.
-   */
-  public static boolean validateXML(String xml, String label) {
-    if (label == null) label = "XML";
-
-    // get path to schema from root element using SAX
-    LogTools.println("Parsing schema path");
-    ValidationSAXHandler saxHandler = new ValidationSAXHandler();
-    Exception exception = null;
-    try {
-      SAXParser saxParser = SAX_FACTORY.newSAXParser();
-      InputStream is = new ByteArrayInputStream(xml.getBytes());
-      saxParser.parse(is, saxHandler);
-    }
-    catch (ParserConfigurationException exc) { exception = exc; }
-    catch (SAXException exc) { exception = exc; }
-    catch (IOException exc) { exception = exc; }
-    if (exception != null) {
-      LogTools.println("Error parsing schema path from " + label + ":");
-      LogTools.trace(exception);
-      return false;
-    }
-    String schemaPath = saxHandler.getSchemaPath();
-    if (schemaPath == null) {
-      LogTools.println("No schema path found. Validation cannot continue.");
-      return false;
-    }
-    else LogTools.println(schemaPath);
-
-    LogTools.println("Validating " + label);
-
-    // look up a factory for the W3C XML Schema language
-    String xmlSchemaPath = "http://www.w3.org/2001/XMLSchema";
-    SchemaFactory factory = SchemaFactory.newInstance(xmlSchemaPath);
-
-    // compile the schema
-    URL schemaLocation = null;
-    try {
-      schemaLocation = new URL(schemaPath);
-    }
-    catch (MalformedURLException exc) {
-      LogTools.println("Error accessing schema at " + schemaPath + ":");
-      LogTools.trace(exc);
-      return false;
-    }
-    Schema schema = null;
-    try {
-      schema = factory.newSchema(schemaLocation);
-    }
-    catch (SAXException exc) {
-      LogTools.println("Error parsing schema at " + schemaPath + ":");
-      LogTools.trace(exc);
-      return false;
-    }
-
-    // get a validator from the schema
-    Validator validator = schema.newValidator();
-
-    // prepare the XML source
-    StringReader reader = new StringReader(xml);
-    InputSource is = new InputSource(reader);
-    SAXSource source = new SAXSource(is);
-
-    // validate the XML
-    ValidationErrorHandler errorHandler = new ValidationErrorHandler();
-    validator.setErrorHandler(errorHandler);
-    try {
-      validator.validate(source);
-    }
-    catch (IOException exc) { exception = exc; }
-    catch (SAXException exc) { exception = exc; }
-    if (exception != null) {
-      LogTools.println("Error validating document:");
-      LogTools.trace(exception);
-      return false;
-    }
-    if (errorHandler.ok()) LogTools.println("No validation errors found.");
-    return errorHandler.ok();
   }
 
   /** Indents XML to be more readable. */
@@ -440,6 +229,224 @@ public final class XMLTools {
     }
     sb.append("\n");
     return sb.toString();
+  }
+
+  // -- Parsing --
+
+  /** Parses the given XML string into a list of key/value pairs. */
+  public static Hashtable<String, String> parseXML(String xml)
+    throws IOException
+  {
+    MetadataHandler handler = new MetadataHandler();
+    parseXML(xml, handler);
+    return handler.getMetadata();
+  }
+
+  /**
+   * Parses the given XML string into a list of key/value pairs
+   * using the specified XML handler.
+   */
+  public static void parseXML(String xml, DefaultHandler handler)
+    throws IOException
+  {
+    parseXML(xml.getBytes(), handler);
+  }
+
+  /**
+   * Parses the XML string from the given input stream into
+   * a list of key/value pairs using the specified XML handler.
+   */
+  public static void parseXML(RandomAccessInputStream stream,
+    DefaultHandler handler) throws IOException
+  {
+    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
+    stream.readFully(b);
+    parseXML(b, handler);
+    b = null;
+  }
+
+  /**
+   * Parses the XML string from the given byte array into
+   * a list of key/value pairs using the specified XML handler.
+   */
+  public static void parseXML(byte[] xml, DefaultHandler handler)
+    throws IOException
+  {
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(new ByteArrayInputStream(xml), handler);
+    }
+    catch (ParserConfigurationException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+    }
+    catch (SAXException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+
+    }
+  }
+
+  // -- XSLT --
+
+  /** Gets an XSLT template from the given resource location. */
+  public static Templates getStylesheet(String resourcePath,
+    Class<?> sourceClass)
+  {
+    InputStream xsltStream;
+    if (sourceClass == null) {
+      try {
+        xsltStream = new FileInputStream(resourcePath);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+        return null;
+      }
+    }
+    else {
+      xsltStream = sourceClass.getResourceAsStream(resourcePath);
+    }
+    StreamSource xsltSource = new StreamSource(xsltStream);
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    try {
+      return transformerFactory.newTemplates(xsltSource);
+    }
+    catch (TransformerConfigurationException exc) {
+      LogTools.traceDebug(exc);
+    }
+    return null;
+  }
+
+  /** Transforms the given XML string using the specified XSLT stylesheet. */
+  public static String transformXML(String xml, Templates xslt)
+    throws IOException
+  {
+    return transformXML(new StreamSource(new StringReader(xml)), xslt);
+  }
+
+  /** Transforms the given XML data using the specified XSLT stylesheet. */
+  public static String transformXML(Source xmlSource, Templates xslt)
+    throws IOException
+  {
+    Transformer trans;
+    try {
+      trans = xslt.newTransformer();
+    }
+    catch (TransformerConfigurationException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+    }
+    StringWriter xmlWriter = new StringWriter();
+    StreamResult xmlResult = new StreamResult(xmlWriter);
+    try {
+      trans.transform(xmlSource, xmlResult);
+    }
+    catch (TransformerException exc) {
+      IOException e = new IOException();
+      e.initCause(exc);
+      throw e;
+    }
+    return xmlWriter.toString();
+  }
+
+  // -- Validation --
+
+  /**
+   * Attempts to validate the given XML string using
+   * Java's XML validation facility. Requires Java 1.5+.
+   * @param xml The XML string to validate.
+   * @return whether or not validation was successful.
+   */
+  public static boolean validateXML(String xml) {
+    return validateXML(xml, null);
+  }
+
+  /**
+   * Attempts to validate the given XML string using
+   * Java's XML validation facility. Requires Java 1.5+.
+   * @param xml The XML string to validate.
+   * @param label String describing the type of XML being validated.
+   * @return whether or not validation was successful.
+   */
+  public static boolean validateXML(String xml, String label) {
+    if (label == null) label = "XML";
+    Exception exception = null;
+
+    // get path to schema from root element using SAX
+    LogTools.println("Parsing schema path");
+    ValidationSAXHandler saxHandler = new ValidationSAXHandler();
+    try {
+      SAXParser saxParser = SAX_FACTORY.newSAXParser();
+      InputStream is = new ByteArrayInputStream(xml.getBytes());
+      saxParser.parse(is, saxHandler);
+    }
+    catch (ParserConfigurationException exc) { exception = exc; }
+    catch (SAXException exc) { exception = exc; }
+    catch (IOException exc) { exception = exc; }
+    if (exception != null) {
+      LogTools.println("Error parsing schema path from " + label + ":");
+      LogTools.trace(exception);
+      return false;
+    }
+    String schemaPath = saxHandler.getSchemaPath();
+    if (schemaPath == null) {
+      LogTools.println("No schema path found. Validation cannot continue.");
+      return false;
+    }
+    else LogTools.println(schemaPath);
+
+    LogTools.println("Validating " + label);
+
+    // look up a factory for the W3C XML Schema language
+    String xmlSchemaPath = "http://www.w3.org/2001/XMLSchema";
+    SchemaFactory factory = SchemaFactory.newInstance(xmlSchemaPath);
+
+    // compile the schema
+    URL schemaLocation = null;
+    try {
+      schemaLocation = new URL(schemaPath);
+    }
+    catch (MalformedURLException exc) {
+      LogTools.println("Error accessing schema at " + schemaPath + ":");
+      LogTools.trace(exc);
+      return false;
+    }
+    Schema schema = null;
+    try {
+      schema = factory.newSchema(schemaLocation);
+    }
+    catch (SAXException exc) {
+      LogTools.println("Error parsing schema at " + schemaPath + ":");
+      LogTools.trace(exc);
+      return false;
+    }
+
+    // get a validator from the schema
+    Validator validator = schema.newValidator();
+
+    // prepare the XML source
+    StringReader reader = new StringReader(xml);
+    InputSource is = new InputSource(reader);
+    SAXSource source = new SAXSource(is);
+
+    // validate the XML
+    ValidationErrorHandler errorHandler = new ValidationErrorHandler();
+    validator.setErrorHandler(errorHandler);
+    try {
+      validator.validate(source);
+    }
+    catch (IOException exc) { exception = exc; }
+    catch (SAXException exc) { exception = exc; }
+    if (exception != null) {
+      LogTools.println("Error validating document:");
+      LogTools.trace(exception);
+      return false;
+    }
+    if (errorHandler.ok()) LogTools.println("No validation errors found.");
+    return errorHandler.ok();
   }
 
   // -- Helper classes --

@@ -27,7 +27,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import loci.common.DateTools;
 import loci.common.Location;
@@ -39,6 +42,12 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 
 /**
  * A utility class for working with metadata objects,
@@ -261,9 +270,64 @@ public final class MetadataTools {
   /**
    * Attempts to validate the given OME-XML string using
    * Java's XML validation facility. Requires Java 1.5+.
+   *
+   * @param xml XML string to validate.
+   * @return true if the XML successfully validates.
    */
-  public static void validateOMEXML(String xml) {
-    XMLTools.validateXML(xml, "OME-XML");
+  public static boolean validateOMEXML(String xml) {
+    return validateOMEXML(xml, false);
+  }
+
+  /**
+   * Attempts to validate the given OME-XML string using
+   * Java's XML validation facility. Requires Java 1.5+.
+   *
+   * @param xml XML string to validate.
+   * @param pixelsHack Whether to ignore validation errors
+   *   due to childless Pixels elements
+   * @return true if the XML successfully validates.
+   */
+  public static boolean validateOMEXML(String xml, boolean pixelsHack) {
+    // HACK: Inject a TiffData element beneath any childless Pixels elements.
+    if (pixelsHack) {
+      // convert XML string to DOM
+      Document doc = null;
+      Exception exception = null;
+      try {
+        doc = XMLTools.parseDOM(xml);
+      }
+      catch (ParserConfigurationException exc) { exception = exc; }
+      catch (SAXException exc) { exception = exc; }
+      catch (IOException exc) { exception = exc; }
+      if (exception != null) {
+        LogTools.println("Malformed OME-XML:");
+        LogTools.trace(exception);
+        return false;
+      }
+
+      // inject TiffData elements as needed
+      NodeList list = doc.getElementsByTagName("Pixels");
+      for (int i=0; i<list.getLength(); i++) {
+        Node node = list.item(i);
+        if (!node.hasChildNodes()) {
+          // inject TiffData element
+          node.appendChild(doc.createElement("TiffData"));
+        }
+      }
+
+      // convert tweaked DOM back to XML string
+      try {
+        xml = XMLTools.getXML(doc);
+      }
+      catch (TransformerConfigurationException exc) { exception = exc; }
+      catch (TransformerException exc) { exception = exc; }
+      if (exception != null) {
+        LogTools.println("Internal XML conversion error:");
+        LogTools.trace(exception);
+        return false;
+      }
+    }
+    return XMLTools.validateXML(xml, "OME-XML");
   }
 
   /**
