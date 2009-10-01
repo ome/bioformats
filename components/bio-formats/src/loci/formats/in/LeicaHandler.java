@@ -439,30 +439,6 @@ public class LeicaHandler extends DefaultHandler {
       else if (attribute.equals("OrderNumber")) {
         store.setObjectiveSerialNumber(variant, numDatasets, 0);
       }
-      else if (objectClass.equals("CLaser")) {
-        if (attribute.equals("Wavelength")) {
-          String id =
-            MetadataTools.createLSID("LightSource", numDatasets, nextLaser);
-          store.setLightSourceID(id, numDatasets, nextLaser);
-          store.setLaserWavelength(
-            new Integer(variant), numDatasets, nextLaser);
-
-          String model =
-            object.substring(object.indexOf("(") + 1, object.indexOf(")"));
-          store.setLightSourceModel(model, numDatasets, nextLaser);
-
-          nextLaser++;
-        }
-        else if (attribute.equals("Output Power")) {
-          String id =
-            MetadataTools.createLSID("LightSource", numDatasets, nextLaser - 1);
-          store.setLightSourcePower(
-            new Float(variant), numDatasets, nextLaser - 1);
-          if (nextChannel >= coreMeta.sizeC) nextChannel = 0;
-          store.setLightSourceSettingsLightSource(id, numDatasets, nextChannel);
-          nextChannel++;
-        }
-      }
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
           nextDetector++;
@@ -470,7 +446,7 @@ public class LeicaHandler extends DefaultHandler {
             MetadataTools.createLSID("Detector", numDatasets, nextDetector);
           store.setDetectorID(id, numDatasets, nextDetector);
           store.setDetectorModel(object, numDatasets, nextDetector);
-          store.setDetectorType("Unknown", numDatasets, nextDetector);
+          store.setDetectorType("PMT", numDatasets, nextDetector);
           store.setDetectorZoom(zoom, numDatasets, nextDetector);
           if (variant.equals("Active")) {
             if (nextChannel >= coreMeta.sizeC) nextChannel = 0;
@@ -609,6 +585,8 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("LaserLineSetting")) {
       String wavelength = attributes.getValue("LaserLine");
       int index = Integer.parseInt(attributes.getValue("LineIndex"));
+      int qualifier = Integer.parseInt(attributes.getValue("Qualifier"));
+      index += (2 - (qualifier / 10));
       String id = MetadataTools.createLSID("LightSource", numDatasets, index);
       store.setLightSourceID(id, numDatasets, index);
       store.setLaserWavelength(new Integer(wavelength), numDatasets, index);
