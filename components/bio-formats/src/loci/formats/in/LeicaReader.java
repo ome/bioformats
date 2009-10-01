@@ -136,7 +136,10 @@ public class LeicaReader extends FormatReader {
   private float[][] physicalSizes;
   private float[] pinhole, exposureTime;
 
-  private int nextDetector = 0;
+  private int nextDetector = 0, nextChannel = 0;
+  private Vector<String> linkedPMTs = new Vector<String>();
+  private Vector<Integer> activeChannelIndices = new Vector<Integer>();
+  private boolean sequential = false;
 
   // -- Constructor --
 
@@ -264,6 +267,10 @@ public class LeicaReader extends FormatReader {
       seriesDescriptions = null;
       pinhole = exposureTime = null;
       nextDetector = 0;
+      nextChannel = 0;
+      linkedPMTs.clear();
+      sequential = false;
+      activeChannelIndices.clear();
     }
   }
 
@@ -895,10 +902,12 @@ public class LeicaReader extends FormatReader {
       // parse instrument data
 
       nextDetector = 0;
+      nextChannel = 0;
 
       Object[] keys = ifd.keySet().toArray();
       Arrays.sort(keys);
       int nextInstrumentBlock = 1;
+      sequential = DataTools.indexOf(keys, SEQ_SCANNERSET) != -1;
       for (int q=0; q<keys.length; q++) {
         if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET) ||
           keys[q].equals(SEQ_SCANNERSET) || keys[q].equals(SEQ_FILTERSET) ||
@@ -915,6 +924,8 @@ public class LeicaReader extends FormatReader {
           stream.close();
         }
       }
+      linkedPMTs.clear();
+      activeChannelIndices.clear();
 
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
@@ -949,8 +960,6 @@ public class LeicaReader extends FormatReader {
   {
     setSeries(series);
 
-    Vector<Integer> activeChannelIndices = new Vector<Integer>();
-
     // read 24 byte SAFEARRAY
     stream.skipBytes(4);
     int cbElements = stream.readInt();
@@ -967,6 +976,8 @@ public class LeicaReader extends FormatReader {
       emWaves[i] = new Vector();
       exWaves[i] = new Vector();
     }
+
+    boolean foundPMT = false;
 
     for (int j=0; j<nElements; j++) {
       stream.seek(24 + j * cbElements);
@@ -1015,7 +1026,11 @@ public class LeicaReader extends FormatReader {
             }
             else if (tokens[2].equals("State")) {
               // link Detector to Image, if the detector was actually used
-              if (data.equals("Active")) {
+              if (data.equals("Active") && !linkedPMTs.contains(tokens[1]) &&
+                !(sequential && foundPMT))
+              {
+                foundPMT = true;
+                linkedPMTs.add(tokens[1]);
                 String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
                 int channelIndex = -1;
                 try {
@@ -1039,9 +1054,10 @@ public class LeicaReader extends FormatReader {
                     store.setDetectorSettingsDetector(detectorID, series, c);
                   }
                 }
-                else if (nextDetector < getEffectiveSizeC()) {
+
+                if (nextChannel < getEffectiveSizeC()) {
                   store.setDetectorSettingsDetector(
-                    detectorID, series, nextDetector);
+                    detectorID, series, nextChannel++);
                 }
               }
             }
@@ -1178,9 +1194,6 @@ public class LeicaReader extends FormatReader {
       else if (contentID.equals("dblPinhole")) {
         // pinhole is stored in meters
         pinhole[series] = Float.parseFloat(data) * 1000000;
-      }
-      else if (contentID.equals("dblZoom")) {
-        store.setDisplayOptionsZoom(new Float(data), series);
       }
       else if (contentID.startsWith("nDelayTime")) {
         exposureTime[series] = Float.parseFloat(data);
