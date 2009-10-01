@@ -376,7 +376,6 @@ public final class MetadataTools {
         FormatTools.getPixelTypeString(r.getPixelType()), i, 0);
       store.setPixelsBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
       store.setPixelsDimensionOrder(r.getDimensionOrder(), i, 0);
-      store.setDisplayOptionsDisplay(r.isRGB() ? "RGB" : "Grey", i);
       if (r.getSizeC() > 0) {
         Integer sampleCount = new Integer(r.getRGBChannelCount());
         for (int c=0; c<r.getEffectiveSizeC(); c++) {

@@ -160,7 +160,10 @@ public class L2DReader extends FormatReader {
           }
         }
       }
-      line = in.readLine().trim();
+      if (in.getFilePointer() < in.length()) {
+        line = in.readLine().trim();
+      }
+      else line = null;
     }
     in.close();
 
@@ -222,7 +225,10 @@ public class L2DReader extends FormatReader {
             wavelengths.add(value);
           }
         }
-        line = scan.readLine().trim();
+        if (scan.getFilePointer() < scan.length()) {
+          line = scan.readLine().trim();
+        }
+        else line = null;
       }
       if (comments.size() == i) comments.add(null);
       if (dates.size() == i) dates.add(null);

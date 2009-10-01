@@ -1090,7 +1090,7 @@ public class FileStitcher implements IFormatReader {
     // populate metadata store
     store = reader.getMetadataStore();
     // don't overwrite pixel info if files aren't actually grouped
-    if (!seriesInFile || files.length > 1) {
+    if (!seriesInFile || files.length > 1 || files[0].length > 1) {
       MetadataTools.populatePixels(store, this);
     }
     for (int i=0; i<core.length; i++) {

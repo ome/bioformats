@@ -592,7 +592,6 @@ public class BioRadReader extends FormatReader {
 
                 store.setObjectiveNominalMagnification(
                   new Integer((int) Double.parseDouble(values[11])), 0, 0);
-                store.setDisplayOptionsZoom(new Float(values[12]), 0);
                 store.setDimensionsPhysicalSizeZ(new Float(values[14]), 0, 0);
                 break;
               case 2:
