@@ -82,8 +82,11 @@ public class FormatWriterTest {
   /** List of files to skip. */
   public static List skipFiles = new LinkedList();
 
-  /** Global shared reader for use in all tests. */
+  /** Reader for input file. */
   private static BufferedImageReader reader;
+
+  /** Reader for converted files. */
+  private static BufferedImageReader convertedReader;
 
   // -- Fields --
 
@@ -95,7 +98,13 @@ public class FormatWriterTest {
   public FormatWriterTest(String filename) {
     id = filename;
     reader = new BufferedImageReader();
+    convertedReader = new BufferedImageReader();
     reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+    try {
+      reader.setId(id);
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
   }
 
   // -- Setup methods --
@@ -153,7 +162,6 @@ public class FormatWriterTest {
     boolean success = true;
     String msg = null;
     try {
-      reader.setId(id);
       config.setId(id);
 
       int type = reader.getPixelType();
@@ -196,17 +204,19 @@ public class FormatWriterTest {
 
       // verify that the dimensions are accurate
 
-      reader.setId(convertedFile);
+      convertedReader.setId(convertedFile);
 
-      boolean seriesMatch = reader.getSeriesCount() == config.getNumSeries();
+      boolean seriesMatch =
+        convertedReader.getSeriesCount() == config.getNumSeries();
       if (!seriesMatch && writer.canDoStacks()) {
         success = false;
-        msg = "Series counts do not match (found " + reader.getSeriesCount() +
-          ", expected " + config.getNumSeries() + ")";
+        msg = "Series counts do not match (found " +
+          convertedReader.getSeriesCount() + ", expected " +
+          config.getNumSeries() + ")";
       }
       if (success) {
         for (int series=0; series<seriesCount; series++) {
-          reader.setSeries(series);
+          convertedReader.setSeries(series);
           config.setSeries(series);
 
           int expectedX = config.getX();
@@ -225,16 +235,16 @@ public class FormatWriterTest {
 
           String expectedMD5 = config.getMD5();
 
-          int x = reader.getSizeX();
-          int y = reader.getSizeY();
-          int count = reader.getImageCount();
-          boolean rgb = reader.isRGB();
-          int pixelType = reader.getPixelType();
+          int x = convertedReader.getSizeX();
+          int y = convertedReader.getSizeY();
+          int count = convertedReader.getImageCount();
+          boolean rgb = convertedReader.isRGB();
+          int pixelType = convertedReader.getPixelType();
 
           boolean isQuicktime =
             TestTools.shortClassName(writer).equals("QTWriter");
 
-          String md5 = TestTools.md5(reader.openBytes(0));
+          String md5 = TestTools.md5(convertedReader.openBytes(0));
 
           if (msg == null) msg = checkMismatch(x, expectedX, series, "X");
           if (msg == null) msg = checkMismatch(y, expectedY, series, "Y");
@@ -258,7 +268,7 @@ public class FormatWriterTest {
           if (!success) break;
         }
       }
-      reader.close();
+      convertedReader.close();
     }
     catch (Throwable t) {
       LogTools.trace(t);
