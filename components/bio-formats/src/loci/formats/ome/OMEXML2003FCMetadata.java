@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Sep 10, 2009 7:01:23 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 1, 2009 12:08:41 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -4914,8 +4914,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (datasetNodeDatasetIndex != datasetIndex) match = false;
     if (match) return datasetNode;
-    datasetNode = null;
-    datasetNodeDatasetIndex = datasetIndex;
 
     OMENode ome = (OMENode) root;
     // get Dataset+ node
@@ -4924,6 +4922,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=datasetIndex; i++) new DatasetNode(ome);
     List list = ome.getDatasetList();
     datasetNode = (DatasetNode) list.get(datasetIndex);
+    datasetNodeDatasetIndex = datasetIndex;
     return datasetNode;
   }
 
@@ -4937,9 +4936,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (datasetProjectRefNodeDatasetIndex != datasetIndex) match = false;
     if (datasetProjectRefNodeProjectRefIndex != projectRefIndex) match = false;
     if (match) return datasetProjectRefNode;
-    datasetProjectRefNode = null;
-    datasetProjectRefNodeDatasetIndex = datasetIndex;
-    datasetProjectRefNodeProjectRefIndex = projectRefIndex;
 
     // get Dataset+ node
     DatasetNode dataset = getDatasetNode(datasetIndex, create);
@@ -4950,6 +4946,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=projectRefIndex; i++) new ProjectRefNode(dataset);
     List list = dataset.getProjectRefList();
     datasetProjectRefNode = (ProjectRefNode) list.get(projectRefIndex);
+    datasetProjectRefNodeDatasetIndex = datasetIndex;
+    datasetProjectRefNodeProjectRefIndex = projectRefIndex;
     return datasetProjectRefNode;
   }
 
@@ -4961,8 +4959,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (experimentNodeExperimentIndex != experimentIndex) match = false;
     if (match) return experimentNode;
-    experimentNode = null;
-    experimentNodeExperimentIndex = experimentIndex;
 
     OMENode ome = (OMENode) root;
     // get Experiment+ node
@@ -4971,6 +4967,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=experimentIndex; i++) new ExperimentNode(ome);
     List list = ome.getExperimentList();
     experimentNode = (ExperimentNode) list.get(experimentIndex);
+    experimentNodeExperimentIndex = experimentIndex;
     return experimentNode;
   }
 
@@ -4982,8 +4979,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (experimenterNodeExperimenterIndex != experimenterIndex) match = false;
     if (match) return experimenterNode;
-    experimenterNode = null;
-    experimenterNodeExperimenterIndex = experimenterIndex;
 
     OMENode ome = (OMENode) root;
     // get Experimenter+ node
@@ -4992,6 +4987,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=experimenterIndex; i++) new ExperimenterNode(ome);
     List list = ome.getExperimenterList();
     experimenterNode = (ExperimenterNode) list.get(experimenterIndex);
+    experimenterNodeExperimenterIndex = experimenterIndex;
     return experimenterNode;
   }
 
@@ -5005,9 +5001,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (experimenterGroupRefNodeExperimenterIndex != experimenterIndex) match = false;
     if (experimenterGroupRefNodeGroupRefIndex != groupRefIndex) match = false;
     if (match) return experimenterGroupRefNode;
-    experimenterGroupRefNode = null;
-    experimenterGroupRefNodeExperimenterIndex = experimenterIndex;
-    experimenterGroupRefNodeGroupRefIndex = groupRefIndex;
 
     // get Experimenter+ node
     ExperimenterNode experimenter = getExperimenterNode(experimenterIndex, create);
@@ -5018,6 +5011,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=groupRefIndex; i++) new GroupRefNode(experimenter);
     List list = experimenter.getGroupRefList();
     experimenterGroupRefNode = (GroupRefNode) list.get(groupRefIndex);
+    experimenterGroupRefNodeExperimenterIndex = experimenterIndex;
+    experimenterGroupRefNodeGroupRefIndex = groupRefIndex;
     return experimenterGroupRefNode;
   }
 
@@ -5029,8 +5024,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (groupNodeGroupIndex != groupIndex) match = false;
     if (match) return groupNode;
-    groupNode = null;
-    groupNodeGroupIndex = groupIndex;
 
     OMENode ome = (OMENode) root;
     // get Group+ node
@@ -5039,6 +5032,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=groupIndex; i++) new GroupNode(ome);
     List list = ome.getGroupList();
     groupNode = (GroupNode) list.get(groupIndex);
+    groupNodeGroupIndex = groupIndex;
     return groupNode;
   }
 
@@ -5050,8 +5044,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (groupContactNodeGroupIndex != groupIndex) match = false;
     if (match) return groupContactNode;
-    groupContactNode = null;
-    groupContactNodeGroupIndex = groupIndex;
 
     // get Group+ node
     GroupNode group = getGroupNode(groupIndex, create);
@@ -5063,6 +5055,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     groupContactNode = contact;
+    groupContactNodeGroupIndex = groupIndex;
     return groupContactNode;
   }
 
@@ -5074,8 +5067,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imageNodeImageIndex != imageIndex) match = false;
     if (match) return imageNode;
-    imageNode = null;
-    imageNodeImageIndex = imageIndex;
 
     OMENode ome = (OMENode) root;
     // get Image+ node
@@ -5084,6 +5075,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=imageIndex; i++) new ImageNode(ome);
     List list = ome.getImageList();
     imageNode = (ImageNode) list.get(imageIndex);
+    imageNodeImageIndex = imageIndex;
     return imageNode;
   }
 
@@ -5097,9 +5089,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imageChannelInfoNodeImageIndex != imageIndex) match = false;
     if (imageChannelInfoNodeChannelInfoIndex != channelInfoIndex) match = false;
     if (match) return imageChannelInfoNode;
-    imageChannelInfoNode = null;
-    imageChannelInfoNodeImageIndex = imageIndex;
-    imageChannelInfoNodeChannelInfoIndex = channelInfoIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5110,6 +5099,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=channelInfoIndex; i++) new ChannelInfoNode(image);
     List list = image.getChannelInfoList();
     imageChannelInfoNode = (ChannelInfoNode) list.get(channelInfoIndex);
+    imageChannelInfoNodeImageIndex = imageIndex;
+    imageChannelInfoNodeChannelInfoIndex = channelInfoIndex;
     return imageChannelInfoNode;
   }
 
@@ -5125,10 +5116,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imageChannelInfoChannelComponentNodeChannelInfoIndex != channelInfoIndex) match = false;
     if (imageChannelInfoChannelComponentNodeChannelComponentIndex != channelComponentIndex) match = false;
     if (match) return imageChannelInfoChannelComponentNode;
-    imageChannelInfoChannelComponentNode = null;
-    imageChannelInfoChannelComponentNodeImageIndex = imageIndex;
-    imageChannelInfoChannelComponentNodeChannelInfoIndex = channelInfoIndex;
-    imageChannelInfoChannelComponentNodeChannelComponentIndex = channelComponentIndex;
 
     // get Image+/ChannelInfo+ node
     ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
@@ -5139,6 +5126,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=channelComponentIndex; i++) new ChannelComponentNode(channelInfo);
     List list = channelInfo.getChannelComponentList();
     imageChannelInfoChannelComponentNode = (ChannelComponentNode) list.get(channelComponentIndex);
+    imageChannelInfoChannelComponentNodeImageIndex = imageIndex;
+    imageChannelInfoChannelComponentNodeChannelInfoIndex = channelInfoIndex;
+    imageChannelInfoChannelComponentNodeChannelComponentIndex = channelComponentIndex;
     return imageChannelInfoChannelComponentNode;
   }
 
@@ -5152,9 +5142,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imageChannelInfoDetectorRefNodeImageIndex != imageIndex) match = false;
     if (imageChannelInfoDetectorRefNodeChannelInfoIndex != channelInfoIndex) match = false;
     if (match) return imageChannelInfoDetectorRefNode;
-    imageChannelInfoDetectorRefNode = null;
-    imageChannelInfoDetectorRefNodeImageIndex = imageIndex;
-    imageChannelInfoDetectorRefNodeChannelInfoIndex = channelInfoIndex;
 
     // get Image+/ChannelInfo+ node
     ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
@@ -5166,6 +5153,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageChannelInfoDetectorRefNode = detectorRef;
+    imageChannelInfoDetectorRefNodeImageIndex = imageIndex;
+    imageChannelInfoDetectorRefNodeChannelInfoIndex = channelInfoIndex;
     return imageChannelInfoDetectorRefNode;
   }
 
@@ -5179,9 +5168,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imageChannelInfoLightSourceRefNodeImageIndex != imageIndex) match = false;
     if (imageChannelInfoLightSourceRefNodeChannelInfoIndex != channelInfoIndex) match = false;
     if (match) return imageChannelInfoLightSourceRefNode;
-    imageChannelInfoLightSourceRefNode = null;
-    imageChannelInfoLightSourceRefNodeImageIndex = imageIndex;
-    imageChannelInfoLightSourceRefNodeChannelInfoIndex = channelInfoIndex;
 
     // get Image+/ChannelInfo+ node
     ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
@@ -5193,6 +5179,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageChannelInfoLightSourceRefNode = lightSourceRef;
+    imageChannelInfoLightSourceRefNodeImageIndex = imageIndex;
+    imageChannelInfoLightSourceRefNodeChannelInfoIndex = channelInfoIndex;
     return imageChannelInfoLightSourceRefNode;
   }
 
@@ -5206,9 +5194,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imageChannelInfoOTFRefNodeImageIndex != imageIndex) match = false;
     if (imageChannelInfoOTFRefNodeChannelInfoIndex != channelInfoIndex) match = false;
     if (match) return imageChannelInfoOTFRefNode;
-    imageChannelInfoOTFRefNode = null;
-    imageChannelInfoOTFRefNodeImageIndex = imageIndex;
-    imageChannelInfoOTFRefNodeChannelInfoIndex = channelInfoIndex;
 
     // get Image+/ChannelInfo+ node
     ChannelInfoNode channelInfo = getChannelInfoNode(imageIndex, channelInfoIndex, create);
@@ -5220,6 +5205,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageChannelInfoOTFRefNode = otfRef;
+    imageChannelInfoOTFRefNodeImageIndex = imageIndex;
+    imageChannelInfoOTFRefNodeChannelInfoIndex = channelInfoIndex;
     return imageChannelInfoOTFRefNode;
   }
 
@@ -5231,8 +5218,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imageDisplayOptionsNodeImageIndex != imageIndex) match = false;
     if (match) return imageDisplayOptionsNode;
-    imageDisplayOptionsNode = null;
-    imageDisplayOptionsNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5244,6 +5229,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageDisplayOptionsNode = displayOptions;
+    imageDisplayOptionsNodeImageIndex = imageIndex;
     return imageDisplayOptionsNode;
   }
 
@@ -5257,9 +5243,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imageDisplayOptionsROINodeImageIndex != imageIndex) match = false;
     if (imageDisplayOptionsROINodeROIIndex != roiIndex) match = false;
     if (match) return imageDisplayOptionsROINode;
-    imageDisplayOptionsROINode = null;
-    imageDisplayOptionsROINodeImageIndex = imageIndex;
-    imageDisplayOptionsROINodeROIIndex = roiIndex;
 
     // get Image+/DisplayOptions node
     DisplayOptionsNode displayOptions = getDisplayOptionsNode(imageIndex, create);
@@ -5270,6 +5253,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=roiIndex; i++) new ROINode(displayOptions);
     List list = displayOptions.getROIList();
     imageDisplayOptionsROINode = (ROINode) list.get(roiIndex);
+    imageDisplayOptionsROINodeImageIndex = imageIndex;
+    imageDisplayOptionsROINodeROIIndex = roiIndex;
     return imageDisplayOptionsROINode;
   }
 
@@ -5281,8 +5266,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imageImagingEnvironmentNodeImageIndex != imageIndex) match = false;
     if (match) return imageImagingEnvironmentNode;
-    imageImagingEnvironmentNode = null;
-    imageImagingEnvironmentNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5294,6 +5277,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageImagingEnvironmentNode = imagingEnvironment;
+    imageImagingEnvironmentNodeImageIndex = imageIndex;
     return imageImagingEnvironmentNode;
   }
 
@@ -5305,8 +5289,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imageObjectiveRefNodeImageIndex != imageIndex) match = false;
     if (match) return imageObjectiveRefNode;
-    imageObjectiveRefNode = null;
-    imageObjectiveRefNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5318,6 +5300,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageObjectiveRefNode = objectiveRef;
+    imageObjectiveRefNodeImageIndex = imageIndex;
     return imageObjectiveRefNode;
   }
 
@@ -5331,9 +5314,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imagePixelsNodeImageIndex != imageIndex) match = false;
     if (imagePixelsNodePixelsIndex != pixelsIndex) match = false;
     if (match) return imagePixelsNode;
-    imagePixelsNode = null;
-    imagePixelsNodeImageIndex = imageIndex;
-    imagePixelsNodePixelsIndex = pixelsIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5344,6 +5324,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=pixelsIndex; i++) new PixelsNode(image);
     List list = image.getPixelsList();
     imagePixelsNode = (PixelsNode) list.get(pixelsIndex);
+    imagePixelsNodeImageIndex = imageIndex;
+    imagePixelsNodePixelsIndex = pixelsIndex;
     return imagePixelsNode;
   }
 
@@ -5359,10 +5341,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (imagePixelsTiffDataNodePixelsIndex != pixelsIndex) match = false;
     if (imagePixelsTiffDataNodeTiffDataIndex != tiffDataIndex) match = false;
     if (match) return imagePixelsTiffDataNode;
-    imagePixelsTiffDataNode = null;
-    imagePixelsTiffDataNodeImageIndex = imageIndex;
-    imagePixelsTiffDataNodePixelsIndex = pixelsIndex;
-    imagePixelsTiffDataNodeTiffDataIndex = tiffDataIndex;
 
     // get Image+/Pixels+ node
     PixelsNode pixels = getPixelsNode(imageIndex, pixelsIndex, create);
@@ -5373,6 +5351,9 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=tiffDataIndex; i++) new TiffDataNode(pixels);
     List list = pixels.getTiffDataList();
     imagePixelsTiffDataNode = (TiffDataNode) list.get(tiffDataIndex);
+    imagePixelsTiffDataNodeImageIndex = imageIndex;
+    imagePixelsTiffDataNodePixelsIndex = pixelsIndex;
+    imagePixelsTiffDataNodeTiffDataIndex = tiffDataIndex;
     return imagePixelsTiffDataNode;
   }
 
@@ -5384,8 +5365,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imagePlateRefNodeImageIndex != imageIndex) match = false;
     if (match) return imagePlateRefNode;
-    imagePlateRefNode = null;
-    imagePlateRefNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5397,6 +5376,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imagePlateRefNode = plateRef;
+    imagePlateRefNodeImageIndex = imageIndex;
     return imagePlateRefNode;
   }
 
@@ -5408,8 +5388,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imageStageLabelNodeImageIndex != imageIndex) match = false;
     if (match) return imageStageLabelNode;
-    imageStageLabelNode = null;
-    imageStageLabelNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5421,6 +5399,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageStageLabelNode = stageLabel;
+    imageStageLabelNodeImageIndex = imageIndex;
     return imageStageLabelNode;
   }
 
@@ -5432,8 +5411,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (imageThumbnailNodeImageIndex != imageIndex) match = false;
     if (match) return imageThumbnailNode;
-    imageThumbnailNode = null;
-    imageThumbnailNodeImageIndex = imageIndex;
 
     // get Image+ node
     ImageNode image = getImageNode(imageIndex, create);
@@ -5445,6 +5422,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     imageThumbnailNode = thumbnail;
+    imageThumbnailNodeImageIndex = imageIndex;
     return imageThumbnailNode;
   }
 
@@ -5456,8 +5434,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (instrumentNodeInstrumentIndex != instrumentIndex) match = false;
     if (match) return instrumentNode;
-    instrumentNode = null;
-    instrumentNodeInstrumentIndex = instrumentIndex;
 
     OMENode ome = (OMENode) root;
     // get Instrument+ node
@@ -5466,6 +5442,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=instrumentIndex; i++) new InstrumentNode(ome);
     List list = ome.getInstrumentList();
     instrumentNode = (InstrumentNode) list.get(instrumentIndex);
+    instrumentNodeInstrumentIndex = instrumentIndex;
     return instrumentNode;
   }
 
@@ -5479,9 +5456,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentDetectorNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentDetectorNodeDetectorIndex != detectorIndex) match = false;
     if (match) return instrumentDetectorNode;
-    instrumentDetectorNode = null;
-    instrumentDetectorNodeInstrumentIndex = instrumentIndex;
-    instrumentDetectorNodeDetectorIndex = detectorIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -5492,6 +5466,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=detectorIndex; i++) new DetectorNode(instrument);
     List list = instrument.getDetectorList();
     instrumentDetectorNode = (DetectorNode) list.get(detectorIndex);
+    instrumentDetectorNodeInstrumentIndex = instrumentIndex;
+    instrumentDetectorNodeDetectorIndex = detectorIndex;
     return instrumentDetectorNode;
   }
 
@@ -5505,9 +5481,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentFilterNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentFilterNodeFilterIndex != filterIndex) match = false;
     if (match) return instrumentFilterNode;
-    instrumentFilterNode = null;
-    instrumentFilterNodeInstrumentIndex = instrumentIndex;
-    instrumentFilterNodeFilterIndex = filterIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -5518,6 +5491,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=filterIndex; i++) new FilterNode(instrument);
     List list = instrument.getFilterList();
     instrumentFilterNode = (FilterNode) list.get(filterIndex);
+    instrumentFilterNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterNodeFilterIndex = filterIndex;
     return instrumentFilterNode;
   }
 
@@ -5531,9 +5506,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentFilterDichroicNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentFilterDichroicNodeFilterIndex != filterIndex) match = false;
     if (match) return instrumentFilterDichroicNode;
-    instrumentFilterDichroicNode = null;
-    instrumentFilterDichroicNodeInstrumentIndex = instrumentIndex;
-    instrumentFilterDichroicNodeFilterIndex = filterIndex;
 
     // get Instrument+/Filter+ node
     FilterNode filter = getFilterNode(instrumentIndex, filterIndex, create);
@@ -5545,6 +5517,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentFilterDichroicNode = dichroic;
+    instrumentFilterDichroicNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterDichroicNodeFilterIndex = filterIndex;
     return instrumentFilterDichroicNode;
   }
 
@@ -5558,9 +5532,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentFilterEmFilterNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentFilterEmFilterNodeFilterIndex != filterIndex) match = false;
     if (match) return instrumentFilterEmFilterNode;
-    instrumentFilterEmFilterNode = null;
-    instrumentFilterEmFilterNodeInstrumentIndex = instrumentIndex;
-    instrumentFilterEmFilterNodeFilterIndex = filterIndex;
 
     // get Instrument+/Filter+ node
     FilterNode filter = getFilterNode(instrumentIndex, filterIndex, create);
@@ -5572,6 +5543,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentFilterEmFilterNode = emFilter;
+    instrumentFilterEmFilterNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterEmFilterNodeFilterIndex = filterIndex;
     return instrumentFilterEmFilterNode;
   }
 
@@ -5585,9 +5558,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentFilterExFilterNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentFilterExFilterNodeFilterIndex != filterIndex) match = false;
     if (match) return instrumentFilterExFilterNode;
-    instrumentFilterExFilterNode = null;
-    instrumentFilterExFilterNodeInstrumentIndex = instrumentIndex;
-    instrumentFilterExFilterNodeFilterIndex = filterIndex;
 
     // get Instrument+/Filter+ node
     FilterNode filter = getFilterNode(instrumentIndex, filterIndex, create);
@@ -5599,6 +5569,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentFilterExFilterNode = exFilter;
+    instrumentFilterExFilterNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterExFilterNodeFilterIndex = filterIndex;
     return instrumentFilterExFilterNode;
   }
 
@@ -5612,9 +5584,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentFilterFilterSetNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentFilterFilterSetNodeFilterIndex != filterIndex) match = false;
     if (match) return instrumentFilterFilterSetNode;
-    instrumentFilterFilterSetNode = null;
-    instrumentFilterFilterSetNodeInstrumentIndex = instrumentIndex;
-    instrumentFilterFilterSetNodeFilterIndex = filterIndex;
 
     // get Instrument+/Filter+ node
     FilterNode filter = getFilterNode(instrumentIndex, filterIndex, create);
@@ -5626,6 +5595,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentFilterFilterSetNode = filterSet;
+    instrumentFilterFilterSetNodeInstrumentIndex = instrumentIndex;
+    instrumentFilterFilterSetNodeFilterIndex = filterIndex;
     return instrumentFilterFilterSetNode;
   }
 
@@ -5639,9 +5610,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentLightSourceNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentLightSourceNodeLightSourceIndex != lightSourceIndex) match = false;
     if (match) return instrumentLightSourceNode;
-    instrumentLightSourceNode = null;
-    instrumentLightSourceNodeInstrumentIndex = instrumentIndex;
-    instrumentLightSourceNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -5652,6 +5620,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=lightSourceIndex; i++) new LightSourceNode(instrument);
     List list = instrument.getLightSourceList();
     instrumentLightSourceNode = (LightSourceNode) list.get(lightSourceIndex);
+    instrumentLightSourceNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceNodeLightSourceIndex = lightSourceIndex;
     return instrumentLightSourceNode;
   }
 
@@ -5665,9 +5635,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentLightSourceArcNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentLightSourceArcNodeLightSourceIndex != lightSourceIndex) match = false;
     if (match) return instrumentLightSourceArcNode;
-    instrumentLightSourceArcNode = null;
-    instrumentLightSourceArcNodeInstrumentIndex = instrumentIndex;
-    instrumentLightSourceArcNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+ node
     LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, create);
@@ -5679,6 +5646,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentLightSourceArcNode = arc;
+    instrumentLightSourceArcNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceArcNodeLightSourceIndex = lightSourceIndex;
     return instrumentLightSourceArcNode;
   }
 
@@ -5692,9 +5661,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentLightSourceFilamentNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentLightSourceFilamentNodeLightSourceIndex != lightSourceIndex) match = false;
     if (match) return instrumentLightSourceFilamentNode;
-    instrumentLightSourceFilamentNode = null;
-    instrumentLightSourceFilamentNodeInstrumentIndex = instrumentIndex;
-    instrumentLightSourceFilamentNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+ node
     LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, create);
@@ -5706,6 +5672,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentLightSourceFilamentNode = filament;
+    instrumentLightSourceFilamentNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceFilamentNodeLightSourceIndex = lightSourceIndex;
     return instrumentLightSourceFilamentNode;
   }
 
@@ -5719,9 +5687,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentLightSourceLaserNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentLightSourceLaserNodeLightSourceIndex != lightSourceIndex) match = false;
     if (match) return instrumentLightSourceLaserNode;
-    instrumentLightSourceLaserNode = null;
-    instrumentLightSourceLaserNodeInstrumentIndex = instrumentIndex;
-    instrumentLightSourceLaserNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+ node
     LightSourceNode lightSource = getLightSourceNode(instrumentIndex, lightSourceIndex, create);
@@ -5733,6 +5698,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentLightSourceLaserNode = laser;
+    instrumentLightSourceLaserNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceLaserNodeLightSourceIndex = lightSourceIndex;
     return instrumentLightSourceLaserNode;
   }
 
@@ -5746,9 +5713,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentLightSourceLaserPumpNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentLightSourceLaserPumpNodeLightSourceIndex != lightSourceIndex) match = false;
     if (match) return instrumentLightSourceLaserPumpNode;
-    instrumentLightSourceLaserPumpNode = null;
-    instrumentLightSourceLaserPumpNodeInstrumentIndex = instrumentIndex;
-    instrumentLightSourceLaserPumpNodeLightSourceIndex = lightSourceIndex;
 
     // get Instrument+/LightSource+/Laser node
     LaserNode laser = getLaserNode(instrumentIndex, lightSourceIndex, create);
@@ -5760,6 +5724,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentLightSourceLaserPumpNode = pump;
+    instrumentLightSourceLaserPumpNodeInstrumentIndex = instrumentIndex;
+    instrumentLightSourceLaserPumpNodeLightSourceIndex = lightSourceIndex;
     return instrumentLightSourceLaserPumpNode;
   }
 
@@ -5771,8 +5737,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (instrumentMicroscopeNodeInstrumentIndex != instrumentIndex) match = false;
     if (match) return instrumentMicroscopeNode;
-    instrumentMicroscopeNode = null;
-    instrumentMicroscopeNodeInstrumentIndex = instrumentIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -5784,6 +5748,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentMicroscopeNode = microscope;
+    instrumentMicroscopeNodeInstrumentIndex = instrumentIndex;
     return instrumentMicroscopeNode;
   }
 
@@ -5797,9 +5762,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentOTFNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentOTFNodeOTFIndex != otfIndex) match = false;
     if (match) return instrumentOTFNode;
-    instrumentOTFNode = null;
-    instrumentOTFNodeInstrumentIndex = instrumentIndex;
-    instrumentOTFNodeOTFIndex = otfIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -5810,6 +5772,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=otfIndex; i++) new OTFNode(instrument);
     List list = instrument.getOTFList();
     instrumentOTFNode = (OTFNode) list.get(otfIndex);
+    instrumentOTFNodeInstrumentIndex = instrumentIndex;
+    instrumentOTFNodeOTFIndex = otfIndex;
     return instrumentOTFNode;
   }
 
@@ -5823,9 +5787,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentOTFObjectiveRefNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentOTFObjectiveRefNodeOTFIndex != otfIndex) match = false;
     if (match) return instrumentOTFObjectiveRefNode;
-    instrumentOTFObjectiveRefNode = null;
-    instrumentOTFObjectiveRefNodeInstrumentIndex = instrumentIndex;
-    instrumentOTFObjectiveRefNodeOTFIndex = otfIndex;
 
     // get Instrument+/OTF+ node
     OTFNode otf = getOTFNode(instrumentIndex, otfIndex, create);
@@ -5837,6 +5798,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
       else return null;
     }
     instrumentOTFObjectiveRefNode = objectiveRef;
+    instrumentOTFObjectiveRefNodeInstrumentIndex = instrumentIndex;
+    instrumentOTFObjectiveRefNodeOTFIndex = otfIndex;
     return instrumentOTFObjectiveRefNode;
   }
 
@@ -5850,9 +5813,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (instrumentObjectiveNodeInstrumentIndex != instrumentIndex) match = false;
     if (instrumentObjectiveNodeObjectiveIndex != objectiveIndex) match = false;
     if (match) return instrumentObjectiveNode;
-    instrumentObjectiveNode = null;
-    instrumentObjectiveNodeInstrumentIndex = instrumentIndex;
-    instrumentObjectiveNodeObjectiveIndex = objectiveIndex;
 
     // get Instrument+ node
     InstrumentNode instrument = getInstrumentNode(instrumentIndex, create);
@@ -5863,6 +5823,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=objectiveIndex; i++) new ObjectiveNode(instrument);
     List list = instrument.getObjectiveList();
     instrumentObjectiveNode = (ObjectiveNode) list.get(objectiveIndex);
+    instrumentObjectiveNodeInstrumentIndex = instrumentIndex;
+    instrumentObjectiveNodeObjectiveIndex = objectiveIndex;
     return instrumentObjectiveNode;
   }
 
@@ -5874,8 +5836,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (plateNodePlateIndex != plateIndex) match = false;
     if (match) return plateNode;
-    plateNode = null;
-    plateNodePlateIndex = plateIndex;
 
     OMENode ome = (OMENode) root;
     // get Plate+ node
@@ -5884,6 +5844,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=plateIndex; i++) new PlateNode(ome);
     List list = ome.getPlateList();
     plateNode = (PlateNode) list.get(plateIndex);
+    plateNodePlateIndex = plateIndex;
     return plateNode;
   }
 
@@ -5897,9 +5858,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     if (plateScreenRefNodePlateIndex != plateIndex) match = false;
     if (plateScreenRefNodeScreenRefIndex != screenRefIndex) match = false;
     if (match) return plateScreenRefNode;
-    plateScreenRefNode = null;
-    plateScreenRefNodePlateIndex = plateIndex;
-    plateScreenRefNodeScreenRefIndex = screenRefIndex;
 
     // get Plate+ node
     PlateNode plate = getPlateNode(plateIndex, create);
@@ -5910,6 +5868,8 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=screenRefIndex; i++) new ScreenRefNode(plate);
     List list = plate.getScreenRefList();
     plateScreenRefNode = (ScreenRefNode) list.get(screenRefIndex);
+    plateScreenRefNodePlateIndex = plateIndex;
+    plateScreenRefNodeScreenRefIndex = screenRefIndex;
     return plateScreenRefNode;
   }
 
@@ -5921,8 +5881,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (projectNodeProjectIndex != projectIndex) match = false;
     if (match) return projectNode;
-    projectNode = null;
-    projectNodeProjectIndex = projectIndex;
 
     OMENode ome = (OMENode) root;
     // get Project+ node
@@ -5931,6 +5889,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=projectIndex; i++) new ProjectNode(ome);
     List list = ome.getProjectList();
     projectNode = (ProjectNode) list.get(projectIndex);
+    projectNodeProjectIndex = projectIndex;
     return projectNode;
   }
 
@@ -5942,8 +5901,6 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     boolean match = true;
     if (screenNodeScreenIndex != screenIndex) match = false;
     if (match) return screenNode;
-    screenNode = null;
-    screenNodeScreenIndex = screenIndex;
 
     OMENode ome = (OMENode) root;
     // get Screen+ node
@@ -5952,6 +5909,7 @@ public class OMEXML2003FCMetadata extends OMEXMLMetadata {
     for (int i=count; i<=screenIndex; i++) new ScreenNode(ome);
     List list = ome.getScreenList();
     screenNode = (ScreenNode) list.get(screenIndex);
+    screenNodeScreenIndex = screenIndex;
     return screenNode;
   }
 

@@ -192,11 +192,6 @@ public class $q.className() extends OMEXMLMetadata {
     if (${pathVar}Node${index}Index != ${indexVar}Index) match = false;
 #end##foreach $index
     if (match) return ${pathVar}Node;
-    ${pathVar}Node = null;
-#foreach ($index in $indices)
-#set ($indexVar = $q.var($index))
-    ${pathVar}Node${index}Index = ${indexVar}Index;
-#end##foreach $index
 
 #set ($slash = $path.lastIndexOf("/"))
 #if ($slash < 0)
@@ -233,6 +228,10 @@ public class $q.className() extends OMEXMLMetadata {
     }
     ${pathVar}Node = $lastVar;
 #end##if $multi
+#foreach ($index in $indices)
+#set ($indexVar = $q.var($index))
+    ${pathVar}Node${index}Index = ${indexVar}Index;
+#end##foreach $index
     return ${pathVar}Node;
   }
 #end##foreach $path
