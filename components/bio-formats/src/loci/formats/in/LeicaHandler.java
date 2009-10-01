@@ -670,9 +670,10 @@ public class LeicaHandler extends DefaultHandler {
       String channelName = attributes.getValue("DyeName");
       int left = (int) Float.parseFloat(attributes.getValue("LeftWorld"));
       int right = (int) Float.parseFloat(attributes.getValue("RightWorld"));
+      int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
 
       if (!channelName.equals("None")) {
-        store.setLogicalChannelName(channelName, numDatasets, nextChannel);
+        store.setLogicalChannelName(channelName, numDatasets, index);
       }
 
       String filter =
@@ -685,7 +686,7 @@ public class LeicaHandler extends DefaultHandler {
         new Integer(right), numDatasets, nextFilter);
 
       store.setLogicalChannelSecondaryEmissionFilter(
-        filter, numDatasets, nextChannel);
+        filter, numDatasets, index);
 
       nextChannel++;
       nextFilter++;
