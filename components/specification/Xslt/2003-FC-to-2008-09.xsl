@@ -148,8 +148,8 @@
 		<!-- read the values from the mapping node -->
 		<xsl:variable name="mappingNode"
 			select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
-		<xsl:variable name="newValue" select="exsl:node-set($mappingNode)/map[@from=$value]/@to"/>
-		<xsl:variable name="isOptional" select="exsl:node-set($mappingNode)/@optional"/>
+		<xsl:variable name="newValue" select="($mappingNode)/map[@from=$value]/@to"/>
+		<xsl:variable name="isOptional" select="($mappingNode)/@optional"/>
 		<xsl:choose>
 			<xsl:when test="string-length($newValue) > 0">
 				<xsl:value-of select="$newValue"/>
@@ -307,8 +307,8 @@
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:apply-templates select="@*"/>
-				<xsl:attribute name="Power">
-					<xsl:value-of select="$power"/>
+			<xsl:attribute name="Power">
+				<xsl:value-of select="$power"/>
 			</xsl:attribute>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
