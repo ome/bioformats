@@ -138,6 +138,7 @@ public class LeicaReader extends FormatReader {
 
   private int nextDetector = 0, nextChannel = 0;
   private Vector<String> linkedPMTs = new Vector<String>();
+  private Vector<String> linkedMirrors = new Vector<String>();
   private Vector<Integer> activeChannelIndices = new Vector<Integer>();
   private boolean sequential = false;
 
@@ -269,6 +270,7 @@ public class LeicaReader extends FormatReader {
       nextDetector = 0;
       nextChannel = 0;
       linkedPMTs.clear();
+      linkedMirrors.clear();
       sequential = false;
       activeChannelIndices.clear();
     }
@@ -925,6 +927,7 @@ public class LeicaReader extends FormatReader {
         }
       }
       linkedPMTs.clear();
+      linkedMirrors.clear();
       activeChannelIndices.clear();
 
       // link Instrument and Image
@@ -978,6 +981,7 @@ public class LeicaReader extends FormatReader {
     }
 
     boolean foundPMT = false;
+    boolean foundMirror = false;
 
     for (int j=0; j<nElements; j++) {
       stream.seek(24 + j * cbElements);
@@ -1130,7 +1134,9 @@ public class LeicaReader extends FormatReader {
         int ndx = tokens[1].lastIndexOf(" ");
         int channel = Integer.parseInt(tokens[1].substring(ndx + 1)) - 1;
 
-        if (tokens[2].equals("Wavelength")) {
+        if (tokens[2].equals("Wavelength") && !(sequential && foundMirror) &&
+          !(sequential && linkedMirrors.contains(tokens[1])))
+        {
           Integer wavelength = new Integer((int) Float.parseFloat(data));
           store.setFilterModel(tokens[1], series, channel);
 
@@ -1147,6 +1153,10 @@ public class LeicaReader extends FormatReader {
           }
           else if (tokens[3].equals("1")) {
             store.setTransmittanceRangeCutOut(wavelength, series, channel);
+            if (activeChannelIndices.contains(new Integer(channel))) {
+              foundMirror = true;
+              linkedMirrors.add(tokens[1]);
+            }
           }
         }
         else if (tokens[2].equals("Stain")) {
