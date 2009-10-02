@@ -1757,7 +1757,7 @@ type = Boolean
 description = TODO
 
 [MaskPixels BinData]
-type = String
+type = byte[]
 description = TODO
 
 ### Entities for Instrument settings for a particular Image ###

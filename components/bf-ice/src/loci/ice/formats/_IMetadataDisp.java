@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.0
+// Ice version 3.3.1
 
 package loci.ice.formats;
 
@@ -1070,7 +1070,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getMaskPixelsBigEndian(imageIndex, roiIndex, shapeIndex, null);
     }
 
-    public final String
+    public final byte[]
     getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex)
     {
         return getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex, null);
@@ -3291,7 +3291,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex)
+    setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex)
     {
         setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex, null);
     }
@@ -7677,8 +7677,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         shapeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        String __ret = __obj.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex, __current);
-        __os.writeString(__ret);
+        byte[] __ret = __obj.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex, __current);
+        ByteSeqHelper.write(__os, __ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -13634,8 +13634,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        String binData;
-        binData = __is.readString();
+        byte[] binData;
+        binData = ByteSeqHelper.read(__is);
         int imageIndex;
         imageIndex = __is.readInt();
         int roiIndex;

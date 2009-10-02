@@ -43,7 +43,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.Base64Codec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -942,7 +941,6 @@ public class MIASReader extends FormatReader {
     }
 
     String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
-    Base64Codec compressor = new Base64Codec();
 
     int nMasks = 0;
 
@@ -953,7 +951,7 @@ public class MIASReader extends FormatReader {
       for (int p=0; p<planes[i].length; p++) {
         if (planes[i][p] != 0) {
           validMask = true;
-          planes[i][p] = (byte) 255;
+          planes[i][p] = (byte) 1;
         }
       }
       if (validMask) {
@@ -965,10 +963,9 @@ public class MIASReader extends FormatReader {
           new Boolean(!r.isLittleEndian()), series, roi + i, 0);
         store.setMaskPixelsSizeX(new Integer(r.getSizeX()), series, roi + i, 0);
         store.setMaskPixelsSizeY(new Integer(r.getSizeY()), series, roi + i, 0);
-        store.setMaskPixelsExtendedPixelType(pixelType, series, roi + i, 0);
+        store.setMaskPixelsExtendedPixelType("bit", series, roi + i, 0);
 
-        String mask = new String(compressor.compress(planes[i], null));
-        store.setMaskPixelsBinData(mask, series, roi + i, 0);
+        store.setMaskPixelsBinData(planes[i], series, roi + i, 0);
         nMasks++;
       }
     }

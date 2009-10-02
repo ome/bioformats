@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.0
+// Ice version 3.3.1
 
 package loci.ice.formats;
 
@@ -598,7 +598,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -1639,7 +1639,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)

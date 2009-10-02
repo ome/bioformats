@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.0
+// Ice version 3.3.1
 
 package loci.ice.formats;
 
@@ -598,8 +598,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex);
     public boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
-    public String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex);
-    public String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
+    public byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex);
+    public byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
     public String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex);
     public String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -1639,8 +1639,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex);
     public void setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
-    public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex);
-    public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
+    public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex);
+    public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
     public void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex);
     public void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);

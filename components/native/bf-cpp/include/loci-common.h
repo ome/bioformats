@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Aug 17, 2009 1:34:50 PM CDT
+ * Created by melissa via JaceHeaderAutogen on Oct 2, 2009 8:39:17 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -43,8 +43,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/common/DateTools.h"
 #include "jace/proxy/loci/common/FileHandle.h"
 #include "jace/proxy/loci/common/GZipHandle.h"
+#include "jace/proxy/loci/common/HandleException.h"
 #include "jace/proxy/loci/common/IRandomAccess.h"
+#include "jace/proxy/loci/common/IniList.h"
 #include "jace/proxy/loci/common/IniParser.h"
+#include "jace/proxy/loci/common/IniTable.h"
 #include "jace/proxy/loci/common/Location.h"
 #include "jace/proxy/loci/common/Log.h"
 #include "jace/proxy/loci/common/LogTools.h"

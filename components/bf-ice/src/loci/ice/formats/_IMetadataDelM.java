@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.0
+// Ice version 3.3.1
 
 package loci.ice.formats;
 
@@ -8104,7 +8104,7 @@ public final class _IMetadataDelM extends Ice._ObjectDelM implements _IMetadataD
         }
     }
 
-    public String
+    public byte[]
     getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
@@ -8138,8 +8138,8 @@ public final class _IMetadataDelM extends Ice._ObjectDelM implements _IMetadataD
                 }
                 IceInternal.BasicStream __is = __og.is();
                 __is.startReadEncaps();
-                String __ret;
-                __ret = __is.readString();
+                byte[] __ret;
+                __ret = ByteSeqHelper.read(__is);
                 __is.endReadEncaps();
                 return __ret;
             }
@@ -26062,7 +26062,7 @@ public final class _IMetadataDelM extends Ice._ObjectDelM implements _IMetadataD
     }
 
     public void
-    setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         IceInternal.Outgoing __og = __handler.getOutgoing("setMaskPixelsBinData", Ice.OperationMode.Normal, __ctx);
@@ -26071,7 +26071,7 @@ public final class _IMetadataDelM extends Ice._ObjectDelM implements _IMetadataD
             try
             {
                 IceInternal.BasicStream __os = __og.os();
-                __os.writeString(binData);
+                ByteSeqHelper.write(__os, binData);
                 __os.writeInt(imageIndex);
                 __os.writeInt(roiIndex);
                 __os.writeInt(shapeIndex);

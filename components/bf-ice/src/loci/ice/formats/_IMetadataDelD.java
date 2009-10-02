@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.0
+// Ice version 3.3.1
 
 package loci.ice.formats;
 
@@ -8861,13 +8861,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public String
+    public byte[]
     getMaskPixelsBinData(final int imageIndex, final int roiIndex, final int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getMaskPixelsBinData", Ice.OperationMode.Normal, __ctx);
-        final Ice.StringHolder __result = new Ice.StringHolder();
+        final ByteSeqHolder __result = new ByteSeqHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -28025,7 +28025,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setMaskPixelsBinData(final String binData, final int imageIndex, final int roiIndex, final int shapeIndex, java.util.Map<String, String> __ctx)
+    setMaskPixelsBinData(final byte[] binData, final int imageIndex, final int roiIndex, final int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();

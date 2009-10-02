@@ -38,6 +38,8 @@ import ${q.basePackage()}.spw.*;
 #end##if spwImport
 import java.util.List;
 import loci.common.LogTools;
+import loci.formats.FormatException;
+import loci.formats.codec.Base64Codec;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -99,7 +101,18 @@ public class $q.className() extends OMEXMLMetadata {
     if (node == null) return null;
     return node.getNodeID();
 #else
-    return $lastVar == null ? null : $q.getter($lastVar);
+    #if ($entity.equals("MaskPixels") && $prop.equals("BinData"))
+      if ($lastVar == null) return null;
+      Base64Codec codec = new Base64Codec();
+      String binData = $q.getter($lastVar);
+      try {
+        return codec.decompress(binData.getBytes());
+      }
+      catch (FormatException e) { }
+      return null;
+    #else
+      return $lastVar == null ? null : $q.getter($lastVar);
+    #end##if ($entity.equals("MaskPixels") && $prop.equals("BinData"))
 #end##if $prop.endsWith("Ref")
 #end##if "-"
   }
@@ -165,7 +178,17 @@ public class $q.className() extends OMEXMLMetadata {
     ${prop}Node ref = new ${prop}Node(${lastVar}Node);
     ref.set${refName}Node(node);
 #else
+    #if ($entity.equals("MaskPixels") && $prop.equals("BinData"))
+      Base64Codec codec = new Base64Codec();
+      String data = null;
+      try {
+        data = new String(codec.compress($varName, null));
+      }
+      catch (FormatException e) { }
+      ${lastVar}Node.setBinData(data);
+    #else
     $q.setter("${lastVar}Node", $varName);
+    #end##if
 #end##if $prop.endsWith("Ref")
 #end##if "-"
   }

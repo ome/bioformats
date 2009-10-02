@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 1, 2009 12:08:41 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:30:29 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -967,7 +967,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getMaskPixelsBinData(int, int, int) */
-  public String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex) {
+  public byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getMaskPixelsExtendedPixelType(int, int, int) */
@@ -2540,8 +2540,8 @@ public class DummyMetadata implements IMetadata {
   public void setMaskPixelsBigEndian(Boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setMaskPixelsBinData(String, int, int, int) */
-  public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskPixelsBinData(byte[], int, int, int) */
+  public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   /* @see MetadataStore#setMaskPixelsExtendedPixelType(String, int, int, int) */

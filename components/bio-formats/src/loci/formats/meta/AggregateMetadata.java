@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 1, 2009 12:08:41 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:30:29 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -2684,12 +2684,12 @@ public class AggregateMetadata implements IMetadata {
   }
 
   /* @see MetadataRetrieve#getMaskPixelsBinData(int, int, int) */
-  public String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex) {
+  public byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
+        byte[] result = retrieve.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
         if (result != null) return result;
       }
     }
@@ -7040,8 +7040,8 @@ public class AggregateMetadata implements IMetadata {
     }
   }
 
-  /* @see MetadataStore#setMaskPixelsBinData(String, int, int, int) */
-  public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setMaskPixelsBinData(byte[], int, int, int) */
+  public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
       if (o instanceof MetadataStore) {

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 1, 2009 12:08:41 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:30:29 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1026,10 +1026,9 @@ public class FilterMetadata implements MetadataStore {
     store.setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setMaskPixelsBinData(String, int, int, int) */
-  public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex) {
-    String value = filter ? DataTools.sanitize(binData) : binData;
-    store.setMaskPixelsBinData(value, imageIndex, roiIndex, shapeIndex);
+  /* @see MetadataStore#setMaskPixelsBinData(byte[], int, int, int) */
+  public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex) {
+    store.setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex);
   }
 
   /* @see MetadataStore#setMaskPixelsExtendedPixelType(String, int, int, int) */

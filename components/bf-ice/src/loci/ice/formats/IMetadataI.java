@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Sep 21, 2009 3:33:03 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:39:12 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -920,7 +920,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getMaskPixelsBigEndian(imageIndex, roiIndex, shapeIndex);
   }
 
-  public String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, Current current) {
+  public byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, Current current) {
     return metadataObject.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
   }
 
@@ -2450,7 +2450,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex);
   }
 
-  public void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, Current current) {
+  public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex, Current current) {
     metadataObject.setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex);
   }
 

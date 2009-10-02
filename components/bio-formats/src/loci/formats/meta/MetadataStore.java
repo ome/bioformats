@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 1, 2009 12:08:41 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:30:29 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -1374,7 +1374,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex);
+  void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular MaskPixels, sets TODO.

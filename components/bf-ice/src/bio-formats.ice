@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Sep 21, 2009 3:33:03 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:39:12 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -434,7 +434,7 @@ module formats {
     // - MaskPixels property retrieval -
 
     bool getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex);
-    string getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex);
+    ByteSeq getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex);
     string getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex);
     string getMaskPixelsID(int imageIndex, int roiIndex, int shapeIndex);
     int getMaskPixelsSizeX(int imageIndex, int roiIndex, int shapeIndex);
@@ -963,7 +963,7 @@ module formats {
 
     // - MaskPixels property storage -
     void setMaskPixelsBigEndian(bool bigEndian, int imageIndex, int roiIndex, int shapeIndex);
-    void setMaskPixelsBinData(string binData, int imageIndex, int roiIndex, int shapeIndex);
+    void setMaskPixelsBinData(ByteSeq binData, int imageIndex, int roiIndex, int shapeIndex);
     void setMaskPixelsExtendedPixelType(string extendedPixelType, int imageIndex, int roiIndex, int shapeIndex);
     void setMaskPixelsID(string id, int imageIndex, int roiIndex, int shapeIndex);
     void setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex);

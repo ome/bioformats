@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Aug 17, 2009 1:34:49 PM CDT
+ * Created by melissa via JaceHeaderAutogen on Oct 2, 2009 8:39:17 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/formats/CoreMetadata.h"
 #include "jace/proxy/loci/formats/DelegateReader.h"
 #include "jace/proxy/loci/formats/DimensionSwapper.h"
+#include "jace/proxy/loci/formats/FileInfo.h"
 #include "jace/proxy/loci/formats/FilePattern.h"
 #include "jace/proxy/loci/formats/FileStitcher.h"
 #include "jace/proxy/loci/formats/FormatException.h"
@@ -64,6 +65,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/formats/StatusEvent.h"
 #include "jace/proxy/loci/formats/StatusListener.h"
 #include "jace/proxy/loci/formats/StatusReporter.h"
+#include "jace/proxy/loci/formats/UnknownFormatException.h"
 using namespace jace::proxy::loci::formats;
 
 #include "jace/proxy/loci/formats/cache/ByteArraySource.h"
@@ -140,6 +142,7 @@ using namespace jace::proxy::loci::formats::gui;
 #include "jace/proxy/loci/formats/in/ARFReader.h"
 #include "jace/proxy/loci/formats/in/AVIReader.h"
 #include "jace/proxy/loci/formats/in/AliconaReader.h"
+#include "jace/proxy/loci/formats/in/AmiraReader.h"
 #include "jace/proxy/loci/formats/in/AnalyzeReader.h"
 #include "jace/proxy/loci/formats/in/BMPReader.h"
 #include "jace/proxy/loci/formats/in/BaseTiffReader.h"
@@ -177,6 +180,7 @@ using namespace jace::proxy::loci::formats::gui;
 #include "jace/proxy/loci/formats/in/LegacyQTReader.h"
 #include "jace/proxy/loci/formats/in/LeicaHandler.h"
 #include "jace/proxy/loci/formats/in/LeicaReader.h"
+#include "jace/proxy/loci/formats/in/LiFlimReader.h"
 #include "jace/proxy/loci/formats/in/MDBParser.h"
 #include "jace/proxy/loci/formats/in/MIASReader.h"
 #include "jace/proxy/loci/formats/in/MINCReader.h"
@@ -267,10 +271,12 @@ using namespace jace::proxy::loci::formats::out;
 #include "jace/proxy/loci/formats/tiff/TiffTools.h"
 using namespace jace::proxy::loci::formats::tiff;
 
+#include "jace/proxy/loci/formats/tools/AmiraParameters.h"
 #include "jace/proxy/loci/formats/tools/CacheConsole.h"
 #include "jace/proxy/loci/formats/tools/EditTiffG.h"
 #include "jace/proxy/loci/formats/tools/ImageConverter.h"
 #include "jace/proxy/loci/formats/tools/ImageInfo.h"
+#include "jace/proxy/loci/formats/tools/PrintDomains.h"
 #include "jace/proxy/loci/formats/tools/PrintFormatTable.h"
 #include "jace/proxy/loci/formats/tools/StatusEchoer.h"
 #include "jace/proxy/loci/formats/tools/TiffComment.h"

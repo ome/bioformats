@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 1, 2009 12:08:41 PM CDT
+ * Created by melissa via MetadataAutogen on Oct 2, 2009 8:30:29 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -483,7 +483,7 @@ public final class MetadataConverter {
           if (maskYValue != null) dest.setMaskY(maskYValue, imageIndex, roiIndex, shapeIndex);
           Boolean maskPixelsBigEndianValue = src.getMaskPixelsBigEndian(imageIndex, roiIndex, shapeIndex);
           if (maskPixelsBigEndianValue != null) dest.setMaskPixelsBigEndian(maskPixelsBigEndianValue, imageIndex, roiIndex, shapeIndex);
-          String maskPixelsBinDataValue = src.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
+          byte[] maskPixelsBinDataValue = src.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
           if (maskPixelsBinDataValue != null) dest.setMaskPixelsBinData(maskPixelsBinDataValue, imageIndex, roiIndex, shapeIndex);
           String maskPixelsExtendedPixelTypeValue = src.getMaskPixelsExtendedPixelType(imageIndex, roiIndex, shapeIndex);
           if (maskPixelsExtendedPixelTypeValue != null) dest.setMaskPixelsExtendedPixelType(maskPixelsExtendedPixelTypeValue, imageIndex, roiIndex, shapeIndex);

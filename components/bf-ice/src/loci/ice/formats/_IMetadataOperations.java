@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.0
+// Ice version 3.3.1
 
 package loci.ice.formats;
 
@@ -403,7 +403,7 @@ public interface _IMetadataOperations
 
     boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    String getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+    byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
     String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -1097,7 +1097,7 @@ public interface _IMetadataOperations
 
     void setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    void setMaskPixelsBinData(String binData, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+    void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
     void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
