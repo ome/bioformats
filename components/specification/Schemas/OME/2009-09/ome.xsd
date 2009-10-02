@@ -1044,7 +1044,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						A term to describe the type of experiment. 
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -1137,34 +1137,36 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:complexType name="ManufacturerSpec">
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				This is the base from which many microscope components are extended. E.g Objective, Filter etc. 
+				Provides attributes for recording common properties of these components such as Manufacturer name, Model etc, 
+				all of which are optional. 
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					MISSING
+					The manufacturer of the component. 
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="Model" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					MISSING
+					The Model of the component. 
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="SerialNumber" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					MISSING
+					The serial number of the component.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="LotNumber" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					MISSING
+					The lot number of the component.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
@@ -1182,7 +1184,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:simpleType name="PercentFraction">
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				A simple type that restricts the value to a float between 0 and 1 (inclusive).
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:float">
@@ -1325,7 +1327,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Iris" use="optional" type="xsd:boolean">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								Records whether or not the objective was fitted with an Iris. 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1346,35 +1348,36 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Detector Gain for this detector, as a float. 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Voltage of the detector (e.g. PMT voltage) as a float.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Detector Offset. 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING - same as Confocal Zoom?
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="AmplificationGain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								Gain applied to the detector signal. 
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1382,7 +1385,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Type" use="optional">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The Type of detector. E.g. CCD, PMT, EMCCD etc. 
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
@@ -1599,7 +1602,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Power" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								MISSING
+								The light-source power.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
