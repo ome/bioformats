@@ -25,9 +25,9 @@
 		<html>
 			<head>
 				<title>OME Schema Files</title>
-				<link rel="stylesheet" type="text/css" href="displayStyles.css"/>
-				<script src="jquery.js" type="text/javascript"/>
-				<script src="displayScript.js" type="text/javascript"/>
+				<link rel="stylesheet" type="text/css" href="http://www.openmicroscopy.org/Schemas/Styling/2009-09/displayStyles.css"/>
+				<script src="http://www.openmicroscopy.org/Schemas/Styling/2009-09/jquery.js" type="text/javascript"/>
+				<script src="http://www.openmicroscopy.org/Schemas/Styling/2009-09/displayScript.js" type="text/javascript"/>
 			</head>
 			<body>
 				<div id="header"/>
