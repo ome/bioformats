@@ -1021,7 +1021,7 @@ public class FV1000Reader extends FormatReader {
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
       store.setDetectorVoltage(channel.voltage, 0, channelIndex);
-      store.setDetectorType("Unknown", 0, channelIndex);
+      store.setDetectorType("PMT", 0, channelIndex);
 
       // populate LogicalChannel data
       String filterSet = MetadataTools.createLSID("FilterSet", 0, channelIndex);

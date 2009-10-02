@@ -966,7 +966,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.gain != null) {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
-      store.setDetectorType("Unknown", series, nextDetector);
+      store.setDetectorType("PMT", series, nextDetector);
       store.setDetectorZoom(new Float(zoom), series, nextDetector);
       nextDetectChannel++;
       nextDetector++;

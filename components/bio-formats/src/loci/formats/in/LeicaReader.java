@@ -1048,7 +1048,7 @@ public class LeicaReader extends FormatReader {
                 String detectorID =
                   MetadataTools.createLSID("Detector", series, nextDetector);
                 store.setDetectorID(detectorID, series, nextDetector);
-                store.setDetectorType("Unknown", series, nextDetector);
+                store.setDetectorType("PMT", series, nextDetector);
 
                 if (nextDetector == 0) {
                   // link every channel to the first detector in the beginning
