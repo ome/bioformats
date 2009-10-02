@@ -106,7 +106,9 @@ public class PrairieReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
 
-    String prefix = name;
+    Location file = new Location(name);
+
+    String prefix = file.getName();
     if (prefix.indexOf(".") != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
@@ -121,8 +123,8 @@ public class PrairieReader extends FormatReader {
 
     // check for appropriately named XML and CFG files
 
-    Location xml = new Location(prefix + ".xml");
-    Location cfg = new Location(prefix + "Config.cfg");
+    Location xml = new Location(file.getParentFile(), prefix + ".xml");
+    Location cfg = new Location(file.getParentFile(), prefix + "Config.cfg");
 
     boolean hasMetadataFiles = xml.exists() && cfg.exists();
 
