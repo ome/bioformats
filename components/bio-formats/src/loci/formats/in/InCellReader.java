@@ -174,6 +174,7 @@ public class InCellReader extends FormatReader {
         for (Image plane : timepoints) {
           if (plane != null && plane.filename != null) {
             files.add(plane.filename);
+            files.add(plane.thumbnailFile);
           }
         }
       }
@@ -549,6 +550,7 @@ public class InCellReader extends FormatReader {
 
   class MinimalInCellHandler extends DefaultHandler {
     private String currentImageFile;
+    private String currentThumbnail;
     private int wellRow, wellCol;
     private int nChannels = 0;
 
@@ -604,6 +606,8 @@ public class InCellReader extends FormatReader {
 
         Location imageFile = new Location(current.getParentFile(), file);
         currentImageFile = imageFile.getAbsolutePath();
+        currentThumbnail =
+          new Location(current.getParentFile(), thumb).getAbsolutePath();
       }
       else if (qName.equals("Identifier")) {
         int field = Integer.parseInt(attributes.getValue("field_index"));
@@ -616,6 +620,7 @@ public class InCellReader extends FormatReader {
           channels, 1, getSizeZ() * channels, z, c, 0);
 
         Image img = new Image();
+        img.thumbnailFile = currentThumbnail;
         Location file = new Location(currentImageFile);
         img.filename = file.exists() ? currentImageFile : null;
         if (img.filename == null) {
@@ -869,6 +874,7 @@ public class InCellReader extends FormatReader {
 
   class Image {
     public String filename;
+    public String thumbnailFile;
     public boolean isTiff;
     public Float deltaT, exposure;
     public Float zPosition;
