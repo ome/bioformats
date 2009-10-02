@@ -31,7 +31,7 @@
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation = "BinaryFile.xsd"/>
 	-->
 	
-	<!-- Annotatable objects from the mapping files
+	<!-- Annotatable objects
 		Annotation
 		Channel
 		Dataset
@@ -52,7 +52,6 @@
 		Well
 		WellSample
 		
-		Annotation
 		ExperimenterGroup ?
 		Node ?
 		OriginalFile ?
