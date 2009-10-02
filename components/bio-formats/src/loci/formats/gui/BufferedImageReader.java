@@ -78,8 +78,8 @@ public class BufferedImageReader extends ReaderWrapper {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    return AWTImageTools.scale(openImage(no), getThumbSizeX(),
-      getThumbSizeY(), false);
+    BufferedImage img = AWTImageTools.makeUnsigned(openImage(no));
+    return AWTImageTools.scale(img, getThumbSizeX(), getThumbSizeY(), false);
   }
 
 }

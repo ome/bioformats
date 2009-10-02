@@ -1078,6 +1078,17 @@ public final class AWTImageTools {
    */
   public static int getPixelType(BufferedImage image) {
     DataBuffer buffer = image.getRaster().getDataBuffer();
+
+    if (buffer instanceof SignedByteBuffer) {
+      return FormatTools.INT8;
+    }
+    else if (buffer instanceof SignedShortBuffer) {
+      return FormatTools.INT16;
+    }
+    else if (buffer instanceof UnsignedIntBuffer) {
+      return FormatTools.UINT32;
+    }
+
     int type = buffer.getDataType();
     int imageType = image.getType();
     switch (type) {
@@ -1157,6 +1168,19 @@ public final class AWTImageTools {
       }
       return rtn;
     }
+  }
+
+  /**
+   * Converts the given BufferedImage into an image with unsigned pixel data.
+   */
+  public static BufferedImage makeUnsigned(BufferedImage img) {
+    int pixelType = getPixelType(img);
+    if (!FormatTools.isSigned(pixelType)) return img;
+
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+
+    byte[][] pix = getPixelBytes(img, false);
+    return makeImage(pix, img.getWidth(), img.getHeight(), bpp, false);
   }
 
   // -- Image manipulation --

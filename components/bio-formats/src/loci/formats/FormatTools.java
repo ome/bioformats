@@ -791,6 +791,7 @@ public final class FormatTools {
       r.setVar("thumbSizeY", reader.getThumbSizeY());
       r.setVar("little", reader.isLittleEndian());
       r.exec("img = AWTImageTools.openImage(plane, reader, sizeX, sizeY)");
+      r.exec("img = AWTImageTools.makeUnsigned(img)");
       r.exec("thumb = AWTImageTools.scale(img, thumbSizeX, thumbSizeY, false)");
       bytes = (byte[][]) r.exec("AWTImageTools.getPixelBytes(thumb, little)");
     }
