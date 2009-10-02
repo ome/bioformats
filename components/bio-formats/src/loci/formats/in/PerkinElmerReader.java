@@ -106,9 +106,16 @@ public class PerkinElmerReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true; // check extensions
-
     if (!open) return false; // not allowed to touch the file system
+
+    if (checkSuffix(name, "cfg")) {
+      // must contain the word "Ultraview"
+      try {
+        String check = DataTools.readFile(name);
+        if (check.indexOf("Ultraview") == -1) return false;
+      }
+      catch (IOException e) { }
+    }
 
     String ext = name;
     if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
