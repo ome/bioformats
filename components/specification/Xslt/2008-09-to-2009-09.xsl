@@ -114,9 +114,24 @@
     xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
     xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
+    xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
       <xsl:apply-templates/>
+	<xsl:comment>Append all ROI nodes</xsl:comment>
+	<xsl:for-each select="exsl:node-set(OME:Image/OME:ROI)">
+		<xsl:comment>ROI node from Image</xsl:comment>
+		<xsl:element name="ROI:ROI" namespace="{$newROINS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:for-each>
+	<xsl:for-each select="exsl:node-set(OME:Image/OME:DisplayOptions/OME:ROI)">
+		<xsl:comment>ROI node from DisplayOptions</xsl:comment>
+		<xsl:element name="ROI:ROI" namespace="{$newROINS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:for-each>
+	
    </OME>
   </xsl:template>
 
@@ -509,17 +524,17 @@ Copy all the other attributes.
     <xsl:for-each select="@* [name() = 'EmFilterRef' or name() = 'ExFilterRef' or name() = 'DichroicRef']">
       <xsl:choose>
         <xsl:when test="local-name(.) = 'EmFilterRef'">
-          <xsl:element name="EmissionFilterRef">
+        	<xsl:element name="EmissionFilterRef" namespace="{$newOMENS}">
             <xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
           </xsl:element>
         </xsl:when>
         <xsl:when test="local-name(.) = 'ExFilterRef'">
-          <xsl:element name="ExcitationFilterRef">
+        	<xsl:element name="ExcitationFilterRef" namespace="{$newOMENS}">
             <xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
           </xsl:element>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:element name="{local-name(.)}">
+        	<xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
             <xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
           </xsl:element>
         </xsl:otherwise>
@@ -815,7 +830,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <!-- ROI -->
 <!-- Rename all the attributes -->
 <xsl:template match="OME:Ellipse">
-  <xsl:element name="Ellipse" namespace="{$newROINS}">
+  <xsl:element name="ROI:Ellipse" namespace="{$newROINS}">
   <xsl:for-each select="@*">
     <xsl:variable name="converted">
       <xsl:call-template name="formatNumber">
@@ -842,7 +857,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 <!-- Rename all the attributes -->
 <xsl:template match="OME:Rect">
-  <xsl:element name="Rectangle" namespace="{$newROINS}">
+  <xsl:element name="ROI:Rectangle" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:variable name="converted">
       <xsl:call-template name="formatNumber">
@@ -869,7 +884,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 <!-- Rename attributes cx and cy -->
 <xsl:template match="OME:Point">
-  <xsl:element name="Point" namespace="{$newROINS}">
+  <xsl:element name="ROI:Point" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform' or name() ='r')]">
     <xsl:variable name="converted">
       <xsl:call-template name="formatNumber">
@@ -890,7 +905,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 <!-- Rename attributes cx and cy -->
 <xsl:template match="OME:Line">
-  <xsl:element name="Line" namespace="{$newROINS}">
+  <xsl:element name="ROI:Line" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:variable name="converted">
       <xsl:call-template name="formatNumber">
@@ -918,7 +933,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <!-- Rename attributes points -->
 <xsl:template match="OME:Polyline">
   <xsl:variable name="default" select="'false'"/>
-  <xsl:element name="Polyline" namespace="{$newROINS}">
+  <xsl:element name="ROI:Polyline" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
       <xsl:when test="name()='points'">
@@ -937,7 +952,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <!-- Rename attributes points -->
 <xsl:template match="OME:Polygon">
   <xsl:variable name="default" select="'true'"/>
-  <xsl:element name="Polyline" namespace="{$newROINS}">
+  <xsl:element name="ROI:Polyline" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:choose>
       <xsl:when test="name()='points'">
@@ -969,7 +984,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 <!-- Transform a Circle into an Ellipse -->
 <xsl:template match="OME:Circle">
-  <xsl:element name="Ellipse" namespace="{$newROINS}">
+  <xsl:element name="ROI:Ellipse" namespace="{$newROINS}">
   <xsl:for-each select="@* [not(name() ='transform')]">
     <xsl:variable name="converted">
       <xsl:call-template name="formatNumber">
@@ -994,21 +1009,21 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 
 <!-- Move the ROI to its new name space -->
  <xsl:template match="OME:ROI">
-  <xsl:element name="ROI" namespace="{$newROINS}">
-    <xsl:apply-templates select="@*|node()"/>
+  <xsl:element name="ROI:ROIRef" namespace="{$newROINS}">
+    <xsl:apply-templates select="@*"/>
   </xsl:element>
  </xsl:template>
  
  <!-- Move the ROI to its new name space -->
  <xsl:template match="OME:Union">
-  <xsl:element name="Union" namespace="{$newROINS}">
+  <xsl:element name="ROI:Union" namespace="{$newROINS}">
     <xsl:apply-templates select="@*|node()"/>
   </xsl:element>
  </xsl:template>
  
 <!-- Transform attributes and move the transform attribute from a "real" shape to Shape -->
 <xsl:template match="OME:Shape">
-  <xsl:element name="Shape" namespace="{$newROINS}">
+  <xsl:element name="ROI:Shape" namespace="{$newROINS}">
   <xsl:variable name="shape" select="'Shape:'"/>
   <xsl:variable name="id" select="@ID"/>
   <xsl:variable name="convertedID">
@@ -1074,7 +1089,7 @@ The Channel nodes are then linked to Pixels and no longer to Image.
 <xsl:template name="maskTansformation">
   <xsl:param name="mask"/>
   <xsl:param name="id"/>
-  <xsl:element name="Mask" namespace="{$newROINS}">
+  <xsl:element name="ROI:Mask" namespace="{$newROINS}">
   <xsl:for-each select="$mask/@* [not(name() ='transform' or name() ='width' or name() ='height')]">
     <xsl:choose>
       <xsl:when test="name()='x'">
@@ -1189,10 +1204,13 @@ Remove Index, Rename PosX to PositionX & PosY to PositionY
             </xsl:call-template>
           </xsl:attribute>
         </xsl:when>
-        <xsl:otherwise>
-          <xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
-        </xsl:otherwise>
-        </xsl:choose>
+      	<xsl:when test="name() = 'Type'">
+      		<xsl:attribute name="Status"><xsl:value-of select="."/></xsl:attribute>
+      	</xsl:when>
+      	<xsl:otherwise>
+      		<xsl:attribute name="{local-name(.)}"><xsl:value-of select="."/></xsl:attribute>
+      	</xsl:otherwise>
+      </xsl:choose>
     </xsl:for-each>
     <xsl:apply-templates select="node()"/>
   </xsl:element>
