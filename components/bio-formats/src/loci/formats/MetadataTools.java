@@ -309,9 +309,20 @@ public final class MetadataTools {
       NodeList list = doc.getElementsByTagName("Pixels");
       for (int i=0; i<list.getLength(); i++) {
         Node node = list.item(i);
-        if (!node.hasChildNodes()) {
+        NodeList children = node.getChildNodes();
+        boolean needsTiffData = true;
+        for (int j=0; j<children.getLength(); j++) {
+          Node child = children.item(j);
+          String name = child.getLocalName();
+          if ("TiffData".equals(name) || "BinData".equals(name)) {
+            needsTiffData = false;
+            break;
+          }
+        }
+        if (needsTiffData) {
           // inject TiffData element
-          node.appendChild(doc.createElement("TiffData"));
+          Node tiffData = doc.createElement("TiffData");
+          node.insertBefore(tiffData, node.getFirstChild());
         }
       }
 

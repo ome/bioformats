@@ -1029,6 +1029,7 @@ public class LeicaReader extends FormatReader {
               nextDetector++;
             }
             else if (tokens[2].equals("State")) {
+              store.setDetectorType("PMT", series, nextDetector);
               // link Detector to Image, if the detector was actually used
               if (data.equals("Active") && !linkedPMTs.contains(tokens[1]) &&
                 !(sequential && foundPMT))
@@ -1048,7 +1049,6 @@ public class LeicaReader extends FormatReader {
                 String detectorID =
                   MetadataTools.createLSID("Detector", series, nextDetector);
                 store.setDetectorID(detectorID, series, nextDetector);
-                store.setDetectorType("PMT", series, nextDetector);
 
                 if (nextDetector == 0) {
                   // link every channel to the first detector in the beginning

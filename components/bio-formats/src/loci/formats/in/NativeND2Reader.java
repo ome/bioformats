@@ -886,7 +886,7 @@ public class NativeND2Reader extends FormatReader {
     store.setDetectorType("Unknown", 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
-      for (int c=0; c<getSizeC(); c++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
         int index = i * getSizeC() + c;
         if (index < channelNames.size()) {
           store.setLogicalChannelName(channelNames.get(index), i, c);
@@ -1126,6 +1126,7 @@ public class NativeND2Reader extends FormatReader {
         else {
           String[] v = t.split(":");
           if (v.length == 2) {
+            v[1] = v[1].trim();
             if (v[0].equals("Name")) {
               channelNames.add(v[1]);
             }

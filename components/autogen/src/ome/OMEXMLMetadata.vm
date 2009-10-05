@@ -187,7 +187,23 @@ public class $q.className() extends OMEXMLMetadata {
       catch (FormatException e) { }
       ${lastVar}Node.setBinData(data);
     #else
-    $q.setter("${lastVar}Node", $varName);
+    #if ($q.enumeration())
+    $q.defaultType()[] enumeration = new $q.defaultType()[] $q.enumeration();
+    if (enumeration.length > 0) {
+      for ($q.defaultType() v : enumeration) {
+        if (v.equalsIgnoreCase($varName)) {
+          $varName = v;
+          $q.setter("${lastVar}Node", $varName);
+          return;
+        }
+      }
+      #if ($q.defaultValue())
+        $q.setter("${lastVar}Node", $q.defaultValue());
+      #end##if
+    }
+    else
+    #end##if
+      $q.setter("${lastVar}Node", $varName);
     #end##if
 #end##if $prop.endsWith("Ref")
 #end##if "-"

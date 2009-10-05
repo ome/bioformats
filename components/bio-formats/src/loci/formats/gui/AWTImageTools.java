@@ -1175,7 +1175,11 @@ public final class AWTImageTools {
    */
   public static BufferedImage makeUnsigned(BufferedImage img) {
     int pixelType = getPixelType(img);
-    if (!FormatTools.isSigned(pixelType)) return img;
+    if (!FormatTools.isSigned(pixelType) ||
+      FormatTools.isFloatingPoint(pixelType))
+    {
+      return img;
+    }
 
     int bpp = FormatTools.getBytesPerPixel(pixelType);
 

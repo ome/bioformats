@@ -70,7 +70,7 @@ public class FlexReader extends FormatReader {
   public static final String[] MEASUREMENT_SUFFIXES =
     new String[] {MEA_SUFFIX, RES_SUFFIX};
   public static final String[] SUFFIXES =
-    new String[] {FLEX_SUFFIX, MEA_SUFFIX};
+    new String[] {FLEX_SUFFIX, MEA_SUFFIX, RES_SUFFIX};
 
   public static final String SCREENING = "Screening";
   public static final String ARCHIVE = "Archive";
@@ -237,13 +237,29 @@ public class FlexReader extends FormatReader {
 
     measurementFiles = new Vector<String>();
 
-    if (id.toLowerCase().endsWith(".flex")) {
+    if (checkSuffix(id, FLEX_SUFFIX)) {
       initFlexFile(id);
+    }
+    else if (checkSuffix(id, RES_SUFFIX)) {
+      initResFile(id);
     }
     else initMeaFile(id);
   }
 
   // -- Helper methods --
+
+  /** Initialize the dataset from a .res file. */
+  private void initResFile(String id) throws FormatException, IOException {
+    Location parent = new Location(id).getParentFile();
+    String[] list = parent.list();
+    for (String file : list) {
+      if (checkSuffix(file, MEA_SUFFIX)) {
+        measurementFiles.add(new Location(id).getAbsolutePath());
+        initMeaFile(new Location(parent, file).getAbsolutePath());
+        return;
+      }
+    }
+  }
 
   /** Initialize the dataset from a .mea file. */
   private void initMeaFile(String id) throws FormatException, IOException {

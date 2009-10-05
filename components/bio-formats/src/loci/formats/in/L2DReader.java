@@ -291,12 +291,15 @@ public class L2DReader extends FormatReader {
           String lightSourceID = MetadataTools.createLSID("LightSource", 0, q);
           store.setLightSourceID(lightSourceID, 0, q);
           store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
+          store.setLaserType("Unknown", 0, q);
+          store.setLaserLaserMedium("Unknown", 0, q);
           store.setLogicalChannelLightSource(lightSourceID, i, q);
         }
       }
     }
 
     store.setMicroscopeModel(model, 0);
+    store.setMicroscopeType("Unknown", 0);
   }
 
   // -- Helper methods --
@@ -315,9 +318,7 @@ public class L2DReader extends FormatReader {
       }
       else {
         String check = files[i].toLowerCase();
-        if (check.endsWith(".data") || check.endsWith(".log") ||
-          check.endsWith(".scn"))
-        {
+        if (check.endsWith(".scn")) {
           metadataFiles[series].add(file.getAbsolutePath());
         }
       }

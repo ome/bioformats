@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -65,6 +66,8 @@ public class NRRDReader extends FormatReader {
 
   private String[] pixelSizes;
 
+  private boolean lookForCompanion = true;
+
   // -- Constructor --
 
   /** Constructs a new NRRD reader. */
@@ -78,6 +81,14 @@ public class NRRDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return checkSuffix(id, "nrrd");
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (super.isThisType(name, open)) return true;
+
+    // look for a matching .nhdr file
+    return new Location(name + ".nhdr").exists();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -141,6 +152,12 @@ public class NRRDReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    // make sure we actually have the .nrrd/.nhdr file
+    if (!checkSuffix(id, "nhdr") && !checkSuffix(id, "nrrd")) {
+      id += ".nhdr";
+    }
+
     in = new RandomAccessInputStream(id);
     helper = new ImageReader();
 
@@ -241,7 +258,9 @@ public class NRRDReader extends FormatReader {
         dataFile =
           f.getParentFile().getAbsolutePath() + File.separator + dataFile;
       }
-      helper.setId(dataFile);
+      String name = dataFile.substring(dataFile.lastIndexOf(File.separator));
+      Location.mapId(name, dataFile);
+      helper.setId(name);
     }
 
     core[0].rgb = getSizeC() > 1;

@@ -416,6 +416,7 @@ public class LeicaHandler extends DefaultHandler {
 
           store.setDetectorSettingsDetector(detectorID, numDatasets, c);
           store.setDetectorID(detectorID, numDatasets, 0);
+          store.setDetectorType("PMT", numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
@@ -587,6 +588,7 @@ public class LeicaHandler extends DefaultHandler {
       int index = Integer.parseInt(attributes.getValue("LineIndex"));
       int qualifier = Integer.parseInt(attributes.getValue("Qualifier"));
       index += (2 - (qualifier / 10));
+      if (index < 0) index = 0;
       String id = MetadataTools.createLSID("LightSource", numDatasets, index);
       store.setLightSourceID(id, numDatasets, index);
       store.setLaserWavelength(new Integer(wavelength), numDatasets, index);
@@ -665,14 +667,15 @@ public class LeicaHandler extends DefaultHandler {
       alternateCenter = true;
     }
     else if (qName.equals("MultiBand")) {
-      if (nextChannel >= core.get(numDatasets).sizeC) nextChannel = 0;
+      int sizeC = core.get(numDatasets).sizeC;
+      if (nextChannel >= sizeC) nextChannel = 0;
 
       String channelName = attributes.getValue("DyeName");
       int left = (int) Float.parseFloat(attributes.getValue("LeftWorld"));
       int right = (int) Float.parseFloat(attributes.getValue("RightWorld"));
       int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
 
-      if (!channelName.equals("None")) {
+      if (!channelName.equals("None") && index < sizeC) {
         store.setLogicalChannelName(channelName, numDatasets, index);
       }
 
@@ -685,8 +688,10 @@ public class LeicaHandler extends DefaultHandler {
       store.setTransmittanceRangeCutOut(
         new Integer(right), numDatasets, nextFilter);
 
-      store.setLogicalChannelSecondaryEmissionFilter(
-        filter, numDatasets, index);
+      if (index < sizeC) {
+        store.setLogicalChannelSecondaryEmissionFilter(
+          filter, numDatasets, index);
+      }
 
       nextChannel++;
       nextFilter++;

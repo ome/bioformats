@@ -222,6 +222,7 @@ public class ImarisReader extends FormatReader {
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
       store.setDetectorID(detectorID, 0, i);
+      store.setDetectorType("Unknown", 0, i);
       store.setDetectorSettingsDetector(detectorID, 0, i);
     }
 

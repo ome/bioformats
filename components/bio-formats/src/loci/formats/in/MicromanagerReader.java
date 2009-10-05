@@ -441,6 +441,10 @@ public class MicromanagerReader extends FormatReader {
     if (detectorID == null) {
       detectorID = MetadataTools.createLSID("Detector", 0, 0);
     }
+    else {
+      detectorID = detectorID.substring(detectorID.lastIndexOf(":") + 1);
+      detectorID = "Detector:" + detectorID.trim();
+    }
 
     for (int i=0; i<channels.length; i++) {
       store.setDetectorSettingsBinning(binning, 0, i);

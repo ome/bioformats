@@ -209,6 +209,10 @@ description = number of timepoints
 [Pixels PixelType]
 type = String
 description = the pixel type
+enumeration = {"int8", "uint8", "int16", "uint16", "int32", "uint32", "float"}
+
+[Pixels PixelType 2003FC]
+enumeration = {"int8", "int16", "int32", "Uint8", "Uint16", "Uint32", "float"}
 
 [Pixels BigEndian]
 type = Boolean
@@ -217,6 +221,7 @@ description = endianness of the pixels set
 [Pixels DimensionOrder]
 type = String
 description = the dimension order of the pixels set
+enumeration = {"XYZCT", "XYZTC", "XYCTZ", "XYCZT", "XYTCZ", "XYTZC"}
 
 ## Thumbnail ##
 
@@ -484,6 +489,8 @@ description = unique label identifying the microbeam manipulation
 type = String
 description = type of operation - FRAP, Photoablation, Photoactivation, \
               Uncaging, OpticalTrapping, or Other
+enumeration = {"FRAP", "Photoablation", "Photoactivation", "Uncaging", "OpticalTrapping", "Other"}
+defaultValue = "Other"
 
 [MicrobeamManipulation ExperimenterRef]
 type = String
@@ -535,6 +542,10 @@ description = number of channel components in the logical channel
 [LogicalChannel IlluminationType]
 type = String
 description = the illumination type
+enumeration = {"Transmitted", "Epifluorescence", "Oblique", "NonLinear"}
+
+[LogicalChannel IlluminationType 2003FC]
+enumeration = {"Transmitted", "Epifluorescence", "Oblique"}
 
 [LogicalChannel PinholeSize]
 type = Float
@@ -552,14 +563,27 @@ type = Integer
 [LogicalChannel PhotometricInterpretation]
 type = String
 description = the photometric interpretation type
+enumeration = {"Monochrome", "RGB", "ARGB", "CMYK", "HSV", "ColorMap"}
+
+[LogicalChannel PhotometricInterpretation 2003FC]
+enumeration = {"monochrome", "RGB", "ARGB", "CMYK", "HSV"}
 
 [LogicalChannel Mode]
 type = String
 description = the acquisition mode
+enumeration = {"WideField", "LaserScanningMicroscopy", "LaserScanningConfocal", "SpinningDiskConfocal", "SlitScanConfocal", "MultiPhotonMicroscopy", "StructuredIllumination", "SingleMoleculeImaging", "TotalInternalReflection", "FluorescenceLifetime", "SpectralImaging", "FluorescenceCorrelationSpectroscopy", "NearFieldScanningOpticalMicroscopy", "SecondHarmonicGenerationImaging", "Other"}
+defaultValue = "Other"
+
+[LogicalChannel Mode 2003FC]
+enumeration = {"Wide-field", "Laser Scanning Microscopy", "Laser Scanning Confocal", "Slit Scan Confocal", "Multi-Photon Microscopy", "Structured Illumination", "Single Molecule Imaging", "Total Internal Reflection", "Fluorescence-Lifetime", "Spectral Imaging", "Fluorescence Correlation Spectroscopy", "Near Field Scanning Optical Microscopy", "Second Harmonic Generation Imaging"}
 
 [LogicalChannel ContrastMethod]
 type = String
 description = the constrast method name
+enumeration = {"Brightfield", "Phase", "DIC", "HoffmanModulation", "ObliqueIllumination", "PolarizedLight", "Darkfield", "Fluorescence"}
+
+[LogicalChannel ContrastMethod 2003FC]
+enumeration = {"Brightfield", "Phase", "DIC", "Hoffman Modultion", "Oblique Illumination", "Polarized Light", "Darkfield", "Fluorescence"}
 
 [LogicalChannel ExWave]
 type = Integer
@@ -685,6 +709,7 @@ description = zoom factor for use in the display (NOT THE LENS ZOOM)
 [DisplayOptions Display]
 type = String
 description = specifies to display the image as grayscale or RGB
+enumeration = {"RGB", "Grey"}
 
 ## ROI ##
 
@@ -1743,6 +1768,7 @@ description = unique label identifying the mask's pixels
 [MaskPixels ExtendedPixelType]
 type = String
 description = TODO
+enumeration = {"bit", "double", "complex", "double-complex"}
 
 [MaskPixels SizeX]
 type = Integer
@@ -1794,6 +1820,7 @@ path = -
 [ObjectiveSettings Medium]
 type = String
 description = immersion medium for the lens
+enumeration = {"Air", "Oil", "Water", "Glycerol"}
 
 [ObjectiveSettings Medium 2003FC]
 path = -
@@ -1824,6 +1851,7 @@ description = the detector gain
 [DetectorSettings Binning]
 type = String
 description = the detector binning
+enumeration = {"1x1", "2x2", "4x4", "8x8"}
 
 [DetectorSettings Binning 2003FC]
 path = -
@@ -1944,6 +1972,11 @@ description = unique label identifying the microscope
 type = String
 description = microscope type - Upright, Inverted, Dissection, \
                                 Electrophysiology, or Unknown
+enumeration = {"Upright", "Inverted", "Dissection", "Electrophysiology"}
+
+[Microscope Type 200809]
+enumeration = {"Upright", "Inverted", "Dissection", "Electrophysiology", "Unknown"}
+defaultValue = "Unknown"
 
 [Microscope Model]
 type = String
@@ -2002,14 +2035,28 @@ description = a laser for a particular instrument
 type = String
 description = type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, \
               SemiConductor, FreeElectron, or Unknown
+enumeration = {"Excimer", "Gas", "MetalVapor", "SolidState", "Dye", "Semiconductor", "FreeElectron"}
+
+[Laser Type 200809]
+enumeration = {"Excimer", "Gas", "MetalVapor", "SolidState", "Dye", "Semiconductor", "FreeElectron", "Unknown"}
+defaultValue = "Unknown"
+
+[Laser Type 2003FC]
+enumeration = {"Excimer", "Gas", "Metal Vapor", "Solid State", "Dye", "Semiconductor", "Free Electron"}
 
 [Laser LaserMedium]
 type = String
 description = lasing medium for the laser
+enumeration = {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "N", "Ar", "Kr", "Xe", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "NdGlass", "NdYAG", "ErGlass", "ErYAG", "HoYLF", "HoYAG", "Ruby", "TiSapphire", "Alexandrite", "Rhodamine6G", "CoumarinC30", "GaAs", "GaAlAs", "EMinus"}
+
+[Laser LaserMedium 200802]
+enumeration = {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "N", "Ar", "Kr", "Xe", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "NdGlass", "NdYAG", "ErGlass", "ErYAG", "HoYLF", "HoYAG", "Ruby", "TiSapphire", "Alexandrite", "Rhodamine6G", "CoumarinC30", "GaAs", "GaAlAs", "EMinus", "Unknown"}
+defaultValue = "Unknown"
 
 [Laser LaserMedium 2003FC]
 getter = getMedium
 setter = setMedium
+enumeration = {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "Nitrogen", "Argon", "Krypton", "Xenon", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "Nd-Glass", "Nd-YAG", "Er-Glass", "Er-YAG", "Ho-YLF", "Ho-YAG", "Ruby", "Ti-Sapphire", "Alexandrite", "Rhodamine-6G", "Coumarin-C30", "GaAs", "GaAlAs", "e-"}
 
 [Laser Wavelength]
 type = Integer
@@ -2035,6 +2082,10 @@ setter = setTunable
 [Laser Pulse]
 type = String
 description = TODO
+enumeration = {"CW", "Single", "QSwitched", "Repetitive", "ModeLocked"}
+
+[Laser Pulse 2003FC]
+enumeration = {"CW", "Single", "Q-Switched", "Repetitive", "Mode-Locked"}
 
 [Laser PockelCell]
 type = Boolean
@@ -2071,6 +2122,11 @@ description = a filament for a particular instrument
 [Filament Type]
 type = String
 description = the type of filament
+enumeration = {"Incandescent", "Halogen"}
+
+[Filament Type 200809]
+enumeration = {"Incandescent", "Halogen", "Unknown"}
+defaultVaue = "Unknown"
 
 ## Arc ##
 
@@ -2081,6 +2137,14 @@ description = an arc for a particular instrument
 [Arc Type]
 type = String
 description = the type of arc
+enumeration = {"Hg", "Xe", "HgXe"}
+
+[Arc Type 200809]
+enumeration = {"Hg", "Xe", "HgXe", "Unknown"}
+defaultValue = "Unknown"
+
+[Arc Type 2003FC]
+enumeration = {"Hg", "Xe", "Hg-Xe"}
 
 ## Detector ##
 
@@ -2110,6 +2174,14 @@ description = serial number of the detector
 [Detector Type]
 type = String
 description = the detector type, e.g. CCD, PMT
+enumeration = {"CCD", "IntensifiedCCD", "AnalogVideo", "PMT", "Photodiode", "Spectroscopy", "LifetimeImaging", "CorrelationSpectroscopy", "FTIR", "EM-CCD", "APD", "CMOS"}
+
+[Detector Type 200809]
+enumeration = {"CCD", "IntensifiedCCD", "AnalogVideo", "PMT", "Photodiode", "Spectroscopy", "LifetimeImaging", "CorrelationSpectroscopy", "FTIR", "EM-CCD", "APD", "CMOS", "Unknown"}
+defaultValue = "Unknown"
+
+[Detector Type 2003FC]
+enumeration = {"CCD", "Intensified-CCD", "Analog-Video", "PMT", "Photodiode", "Spectroscopy", "Life-time-Imaging", "Correlation-Spectroscopy", "FTIR"}
 
 [Detector Gain]
 type = Float
@@ -2165,6 +2237,11 @@ description = serial number of the objective
 [Objective Correction]
 type = String
 description = type of correction coating applied to the objective lens
+enumeration = {"UV", "PlanApo", "PlanFluor", "SuperFluor", "VioletCorrected"}
+
+[Objective Correction 200809]
+enumeration = {"UV", "PlanApo", "PlanFluor", "SuperFluor", "VioletCorrected", "Unknown"}
+defaultValue = "Unknown"
 
 [Objective Correction 2003FC]
 path = -
@@ -2172,6 +2249,11 @@ path = -
 [Objective Immersion]
 type = String
 description = immersion medium used with the objective lens
+enumeration = {"Oil", "Water", "WaterDipping", "Air", "Multi", "Glycerol", "Other"}
+defaultValue = "Other"
+
+[Objective Immersion 200809]
+enumeration = {"Oil", "Water", "WaterDipping", "Air", "Multi", "Glycerol", "Other", "Unknown"}
 
 [Objective Immersion 2003FC]
 path = -
@@ -2243,6 +2325,7 @@ description = unique label identifying the filter
 [Filter Type]
 type = String
 description = TODO
+enumeration = {"LongPass", "ShortPass", "BandPass", "MultiPass"}
 
 [Filter Type 2003FC]
 path = -
@@ -2305,6 +2388,7 @@ description = TODO
 [ExFilter Type]
 type = String
 description = TODO
+enumeration = {"LongPass", "ShortPass", "BandPass", "MultiPass"}
 
 ## Dichroic ##
 
@@ -2364,6 +2448,7 @@ description = TODO
 [EmFilter Type]
 type = String
 description = TODO
+enumeration = {"LongPass", "ShortPass", "BandPass", "MultiPass"}
 
 ## FilterSet ##
 
@@ -2473,6 +2558,13 @@ description = height of the optical transfer function
 [OTF PixelType]
 type = String
 description = the pixel type of the optical transfer function
+enumeration = {"int8", "uint8", "int16", "uint16", "int32", "uint32", "float"}
+
+[OTF PixelType 200706]
+enumeration = {"bit", "int8", "int16", "int32", "uint8", "uint16", "uint32", "float", "double", "complex", "double-complex"}
+
+[OTF PixelType 2003FC]
+enumeration = {"bit", "int8", "int16", "int32", "Uint8", "Uint16", "Uint32", "float", "double", "complex", "double-complex"}
 
 [OTF OpticalAxisAveraged]
 type = Boolean
@@ -2526,6 +2618,11 @@ description = description of the experiment
 [Experiment Type]
 type = String
 description = type of experiment, e.g. FRET, TimeLapse
+enumeration = {"FP", "FRET", "TimeLapse", "FourDPlus", "Screen", "Immunocytochemistry", "Immunofluorescence", "FISH", "Electrophysiology", "IonImaging", "Colocalization", "PGIDocumentation", "FluorescenceLifetime", "SpectralImaging", "Photobleaching", "Other"}
+defaultValue = "Other"
+
+[Experiment Type 2003FC]
+enumeration = {"FP", "FRET", "Time-lapse", "4-D+", "Screen", "Immunocytochemistry", "Immunofluorescence", "FISH", "Electrophysiology", "Ion-Imaging", "Colocalization", "PGI/Documentation", "FRAP", "Photoablation", "Photoactivation", "Uncaging", "Optical-Trapping", "Fluorescence-Lifetime", "Spectral-Imaging", "Other"}
 
 [Experiment ExperimenterRef]
 type = String

@@ -152,6 +152,14 @@ public class MetaEntityList extends EntityList {
     return nodeVar + "." + s;
   }
 
+  public String enumeration() {
+    return value("enumeration");
+  }
+
+  public String defaultValue() {
+    return value("defaultValue");
+  }
+
   // -- MetaEntityList API methods - entities/properties --
 
   public String description() { return value("description"); }

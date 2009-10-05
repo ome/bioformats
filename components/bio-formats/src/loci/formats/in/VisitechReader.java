@@ -77,7 +77,8 @@ public class VisitechReader extends FormatReader {
     if (checkSuffix(name, "xys")) return true;
 
     // verify that there is an .xys file in the same directory
-    String prefix = name.substring(0, name.lastIndexOf(" ") + 1);
+    if (name.indexOf(" ") == -1) return false;
+    String prefix = name.substring(0, name.lastIndexOf(" "));
     Location xys = new Location(prefix + " 1.xys");
     return xys.exists();
   }

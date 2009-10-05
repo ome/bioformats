@@ -1027,7 +1027,9 @@ public class FV1000Reader extends FormatReader {
       String filterSet = MetadataTools.createLSID("FilterSet", 0, channelIndex);
 
       store.setLogicalChannelName(channel.name, 0, channelIndex);
-      store.setLogicalChannelEmWave(channel.emWave, 0, channelIndex);
+      if (channel.emWave.intValue() > 0) {
+        store.setLogicalChannelEmWave(channel.emWave, 0, channelIndex);
+      }
       store.setLogicalChannelExWave(channel.exWave, 0, channelIndex);
       store.setLogicalChannelFilterSet(filterSet, 0, channelIndex);
 
@@ -1082,6 +1084,7 @@ public class FV1000Reader extends FormatReader {
         store.setLaserWavelength(
           wavelengths.get(channelIndex), 0, channelIndex);
       }
+      store.setLaserType("Unknown", 0, channelIndex);
 
       channelIndex++;
     }

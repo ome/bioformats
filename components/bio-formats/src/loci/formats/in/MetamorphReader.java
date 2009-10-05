@@ -606,6 +606,7 @@ public class MetamorphReader extends BaseTiffReader {
           store.setLightSourceID(lightSourceID, i, c);
           store.setLightSourceSettingsLightSource(lightSourceID, i, c);
           store.setLaserType("Unknown", i, c);
+          store.setLaserLaserMedium("Unknown", i, c);
         }
         waveIndex++;
       }

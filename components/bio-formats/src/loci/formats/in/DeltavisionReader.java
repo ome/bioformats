@@ -491,7 +491,9 @@ public class DeltavisionReader extends FormatReader {
     for (int w=0; w<sizeC; w++) {
       DVExtHdrFields hdrC = extHdrFields[0][w][0];
       store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
-      store.setLogicalChannelExWave(new Integer((int) hdrC.exWavelen), 0, w);
+      if ((int) hdrC.exWavelen > 0) {
+        store.setLogicalChannelExWave(new Integer((int) hdrC.exWavelen), 0, w);
+      }
       if (ndFilters[w] == null) ndFilters[w] = new Float(hdrC.ndFilter);
       store.setLogicalChannelNdFilter(ndFilters[w], 0, w);
     }
