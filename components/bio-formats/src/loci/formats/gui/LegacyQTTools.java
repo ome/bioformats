@@ -38,6 +38,7 @@ import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
+import loci.formats.MissingLibraryException;
 
 /**
  * Utility class for working with QuickTime for Java.
@@ -218,8 +219,8 @@ public class LegacyQTTools {
   public Dimension getPictDimensions(byte[] bytes)
     throws FormatException, ReflectException
   {
-    if (isQTExpired()) throw new FormatException(EXPIRED_QT_MSG);
-    if (!canDoQT()) throw new FormatException(NO_QT_MSG);
+    if (isQTExpired()) throw new MissingLibraryException(EXPIRED_QT_MSG);
+    if (!canDoQT()) throw new MissingLibraryException(NO_QT_MSG);
 
     try {
       r.exec("QTSession.open()");
@@ -241,8 +242,8 @@ public class LegacyQTTools {
   public synchronized Image pictToImage(byte[] bytes)
     throws FormatException
   {
-    if (isQTExpired()) throw new FormatException(EXPIRED_QT_MSG);
-    if (!canDoQT()) throw new FormatException(NO_QT_MSG);
+    if (isQTExpired()) throw new MissingLibraryException(EXPIRED_QT_MSG);
+    if (!canDoQT()) throw new MissingLibraryException(NO_QT_MSG);
 
     try {
       r.exec("QTSession.open()");

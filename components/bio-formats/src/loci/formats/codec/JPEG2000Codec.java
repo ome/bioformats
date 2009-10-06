@@ -45,6 +45,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
+import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 
 /**
@@ -131,8 +132,8 @@ public class JPEG2000Codec extends BaseCodec {
       registerClass(J2K_READER);
 
       if (noJ2k) {
-        throw new FormatException("Could not compress JPEG-2000 data.\n" +
-          NO_J2K_MSG);
+        throw new MissingLibraryException(
+          "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
       }
 
       IIORegistry registry = IIORegistry.getDefaultInstance();

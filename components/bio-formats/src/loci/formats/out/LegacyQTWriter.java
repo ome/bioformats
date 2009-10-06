@@ -35,6 +35,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -151,9 +152,11 @@ public class LegacyQTWriter extends FormatWriter {
     }
 
     if (tools.isQTExpired()) {
-      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
+      throw new MissingLibraryException(LegacyQTTools.EXPIRED_QT_MSG);
     }
-    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
+    if (!tools.canDoQT()) {
+      throw new MissingLibraryException(LegacyQTTools.NO_QT_MSG);
+    }
 
     if (!initialized) {
       initialized = true;

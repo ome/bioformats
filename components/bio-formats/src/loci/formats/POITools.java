@@ -157,7 +157,7 @@ public class POITools {
       r.exec("import java.util.Iterator");
     }
     catch (ReflectException exc) {
-      throw new FormatException(NO_POI_MSG, exc);
+      throw new MissingLibraryException(NO_POI_MSG, exc);
     }
 
     s.order(true);

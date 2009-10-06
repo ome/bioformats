@@ -31,6 +31,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -173,7 +174,7 @@ public class LegacyND2Reader extends FormatReader {
       }
     }
     catch (Exception e) {
-      throw new FormatException(NO_NIKON_MSG, e);
+      throw new MissingLibraryException(NO_NIKON_MSG, e);
     }
 
     MetadataStore store =

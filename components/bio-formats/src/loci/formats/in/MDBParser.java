@@ -30,6 +30,7 @@ import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
+import loci.formats.MissingLibraryException;
 
 /**
  * Utility class for parsing MDB database files.
@@ -86,7 +87,7 @@ public final class MDBParser {
   public static Vector<String[]>[] parseDatabase(String filename)
     throws FormatException
   {
-    if (noMDB) throw new FormatException(NO_MDB_MSG);
+    if (noMDB) throw new MissingLibraryException(NO_MDB_MSG);
 
     try {
       // initialize

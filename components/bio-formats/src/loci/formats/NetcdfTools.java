@@ -198,11 +198,11 @@ public class NetcdfTools {
     }
     catch (ReflectException exc) {
       noNetCDF = true;
-      throw new FormatException(NO_NETCDF_MSG, exc);
+      throw new MissingLibraryException(NO_NETCDF_MSG, exc);
     }
     catch (UnsupportedClassVersionError exc) {
       noNetCDF = true;
-      throw new FormatException(NO_NETCDF_MSG, exc);
+      throw new MissingLibraryException(NO_NETCDF_MSG, exc);
     }
 
     // HACK - NetCDF prints a fair number of warning messages to stdout

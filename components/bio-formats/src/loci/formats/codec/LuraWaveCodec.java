@@ -32,6 +32,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
+import loci.formats.MissingLibraryException;
 
 /**
  * This class provides LuraWave decompression, using LuraWave's Java decoding
@@ -120,7 +121,7 @@ public class LuraWaveCodec extends BaseCodec {
   public byte[] decompress(byte[] buf, CodecOptions options)
     throws FormatException
   {
-    if (noLuraWave) throw new FormatException(NO_LURAWAVE_MSG);
+    if (noLuraWave) throw new MissingLibraryException(NO_LURAWAVE_MSG);
     licenseCode = System.getProperty(LICENSE_PROPERTY);
     if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
     r.setVar("stream",
