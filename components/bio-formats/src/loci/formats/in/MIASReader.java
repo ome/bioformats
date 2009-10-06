@@ -35,7 +35,6 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
-import loci.formats.ImageReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
@@ -43,6 +42,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.in.MinimalTiffReader;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -116,7 +116,8 @@ public class MIASReader extends FormatReader {
     if (experiment == null) return false;
 
     String wellName = wellDir.getName();
-    boolean validName = wellName.startsWith("Well") ||
+    boolean validName =
+      wellName.startsWith("Well") || wellName.equals("results") ||
       (wellName.length() == 1 && wellName.replaceAll("\\d", "").length() == 0);
     return validName && super.isThisType(filename, open);
   }
@@ -133,7 +134,8 @@ public class MIASReader extends FormatReader {
     if (s instanceof String[]) software = ((String[]) s)[0];
     else software = s.toString();
 
-    return software.startsWith("eaZYX") || software.startsWith("SCIL_Image");
+    return software.startsWith("eaZYX") || software.startsWith("SCIL_Image") ||
+      software.startsWith("IDL");
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -222,7 +224,9 @@ public class MIASReader extends FormatReader {
     }
 
     for (AnalysisFile file : analysisFiles) {
-      if (file.plate <= 0 && (file.well == getSeries() || file.well < 0)) {
+      if (file.plate <= 0 && (file.well == getSeries() || file.well < 0 ||
+        wellNumber[getSeries()] == file.well))
+      {
         files.add(file.filename);
       }
     }
@@ -708,6 +712,9 @@ public class MIASReader extends FormatReader {
           nextROI += parseMasks(store, well, nextROI, file);
         }
       }
+      else if (name.endsWith("overlay.tif")) {
+        nextROI += parseMasks(store, well, nextROI, file);
+      }
     }
   }
 
@@ -909,7 +916,7 @@ public class MIASReader extends FormatReader {
   private int parseMasks(MetadataStore store, int series, int roi,
     String overlayTiff) throws FormatException, IOException
   {
-    ImageReader r = new ImageReader();
+    MinimalTiffReader r = new MinimalTiffReader();
     r.setId(overlayTiff);
     byte[] plane = r.openBytes(0);
     byte[][] planes = null;
