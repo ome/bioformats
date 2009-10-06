@@ -1,30 +1,15 @@
 <!--
 java.xml
 
-Ant build file for logic common to Java components.
+Ant build file for logic common to Java-based components.
+All Java-based component build files inherit from this build file.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
 <project>
-  <import file="common.xml"/>
-
-  <!-- Non-core ant tasks -->
-
-  <!-- NB - We do not reference ${artifact.dir}/loci-checks.jar directly,
-    as doing so causes loci-checks.jar to be locked by some file systems
-    (Windows in particular), which causes the clean and clean-jars targets
-    to fail. -->
-  <taskdef resource="checkstyletask.properties"
-    classpath="${lib.dir}/checkstyle-all-4.2.jar:${lib.dir}/loci-checks.jar"/>
-
-  <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties"
-    classpath="${lib.dir}/findbugs-ant.jar"/>
-
-  <!--
-  <taskdef resource="proguard/ant/task.properties"
-    classpath="${lib.dir}/proguard.jar"/>
-  -->
+  <property file="${root.dir}/components/java.properties"/>
+  <import file="${root.dir}/components/common.xml"/>
 
   <!-- Main build targets -->
 
@@ -78,11 +63,27 @@ your FindBugs installation's lib directory. E.g.:
     description="generate JAR file">
     <mkdir dir="${artifact.dir}"/>
     <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
+<!--
       <manifest>
         <attribute name="Main-Class" value="${component.main-class}"/>
         <attribute name="Class-Path" value="${component.manifest-cp}"/>
       </manifest>
+-->
     </jar>
+    <!-- NB: Add OSGi bundle metadata. -->
+    <echo>Injecting OSGi bundle information...</echo>
+    <bundle outputDir="${artifact.dir}"
+      bundleName="${component.name}"
+      bundleSymbolicName="${domain.prefix}.${component.name}"
+      bundleVersion="${component.version}.${svn.revision}"
+      classpath="${classes.dir}"
+      exportPackage="*;version=&quot;${component.version}&quot;"
+      filename="${component.name}">
+      <manifest>
+        <attribute name="Main-Class" value="${component.main-class}"/>
+        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+      </manifest>
+    </bundle>
   </target>
 
   <target name="docs" depends="compile"

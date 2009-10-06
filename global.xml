@@ -1,0 +1,126 @@
+<!--
+global.xml
+
+Ant build file for logic common to all build scripts.
+All other build files inherit from this build file.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project>
+  <property file="${user.home}/.ant-global.properties"/>
+  <property file="${root.dir}/global.properties"/>
+
+  <!-- Convenient platform properties -->
+
+  <condition property="isUnix">
+    <os family="unix"/>
+  </condition>
+  <condition property="isMac">
+    <and>
+      <os family="mac"/>
+      <os family="unix"/>
+    </and>
+  </condition>
+  <condition property="isWindows">
+    <os family="windows"/>
+  </condition>
+
+  <!--
+  Guess location of the Java runtime classes, saving to jre.runtime property.
+  Stolen and adapted from:
+    http://forums.gamegardens.com/discussion/mvnforum/viewthread?thread=324
+  -->
+  <!-- if Mac OS X -->
+  <property name="jre.macosx.classes"
+    value="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar"/>
+  <property name="jre.macosx.ui"
+    value="/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar"/>
+  <condition property="jre.runtime"
+    value="${jre.macosx.classes}:${jre.macosx.ui}">
+    <isset property="isMac"/>
+  </condition>
+  <!-- Default for Unix -->
+  <property name="jre.runtime" value="${java.home}/lib/rt.jar"/>
+
+  <!-- Non-core ant tasks -->
+
+  <!-- Ant-Contrib Tasks: http://ant-contrib.sourceforge.net/ -->
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+  <!-- HACK - some environments do not install the antcontrib tasks properly
+    from antcontrib.properties above; also load them from antlib.xml -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"
+    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+
+  <!-- Checkstyle: http://checkstyle.sourceforge.net/ -->
+  <!-- NB - We do not reference ${artifact.dir}/loci-checks.jar directly,
+    as doing so causes loci-checks.jar to be locked by some file systems
+    (Windows in particular), which causes the clean and clean-jars targets
+    to fail. -->
+  <taskdef resource="checkstyletask.properties"
+    classpath="${lib.dir}/checkstyle-all-4.2.jar:${lib.dir}/loci-checks.jar"/>
+
+  <!-- FindBugs: http://findbugs.sourceforge.net/ -->
+  <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties"
+    classpath="${lib.dir}/findbugs-ant.jar"/>
+
+  <!-- ProGuard: http://proguard.sourceforge.net/ -->
+  <!--<taskdef resource="proguard/ant/task.properties"
+    classpath="${lib.dir}/proguard.jar"/>-->
+
+  <!--
+  OSGi Bundle Ant Task:
+  https://opensource.luminis.net/wiki/display/SITE/OSGi+Bundle+Ant+Task
+  https://opensource.luminis.net/wiki/display/SITE/Documentation
+  -->
+  <taskdef name="bundle" classname="net.luminis.build.plugin.bnd.BuildTask"
+    classpath="${lib.dir}/net.luminis.build.plugin-0.2.0.jar"/>
+
+  <!-- Internal build targets -->
+
+  <target name="info">
+    <echo>
+============= GLOBAL PROPERTIES =============
+         jre.runtime = ${jre.runtime}
+            root.dir = ${root.dir}
+             lib.dir = ${lib.dir}
+        artifact.dir = ${artifact.dir}</echo>
+    <if>
+      <isset property="isUnix"/>
+      <then>
+        <echo>              isUnix = ${isUnix}</echo>
+      </then>
+    </if>
+    <if>
+      <isset property="isMac"/>
+      <then>
+        <echo>               isMac = ${isMac}</echo>
+      </then>
+    </if>
+    <if>
+      <isset property="isWindows"/>
+      <then>
+        <echo>           isWindows = ${isWindows}</echo>
+      </then>
+    </if>
+    <echo>
+============= COMMON PROPERTIES =============
+                DATE = ${DATE}
+                YEAR = ${YEAR}
+             src.dir = ${src.dir}
+           build.dir = ${build.dir}
+            dest.dir = ${dest.dir}
+         classes.dir = ${classes.dir}
+            docs.dir = ${docs.dir}
+            dist.dir = ${dist.dir}
+
+============== JAVA PROPERTIES ==============
+      component.name = ${component.name}
+       component.jar = ${component.jar}
+   component.version = ${component.version}
+component.main-class = ${component.main-class}
+    </echo>
+  </target>
+
+</project>

@@ -4,17 +4,14 @@ build.xml
 Ant build file for the Bio-Formats C++ bindings.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
-
-Note that this build file extends common.xml rather than java.xml,
-because this component does not consist of Java source files.
 -->
 
 <project name="bfcpp" default="compile-proxies" basedir=".">
   <description>
     Build file for Bio-Formats C++ bindings
   </description>
-  <property file="base.properties"/>
-  <import file="${root.dir}/java.xml"/>
+  <property name="root.dir" location="../../.."/>
+  <import file="${root.dir}/components/java.xml"/>
   <property file="build.properties"/>
 
   <target name="check-jace">
@@ -200,5 +197,4 @@ In Visual Studio, press F7, or select
   <target name="clean-proxies" description="remove generated C++ proxies">
     <delete dir="${proxies.dir}"/>
   </target>
-
 </project>

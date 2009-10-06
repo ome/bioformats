@@ -7,11 +7,9 @@ Type "ant -p" for a list of targets.
 -->
 
 <project name="visbio" default="jar" basedir=".">
-  <description>
-    Build file for VisBio project
-  </description>
-  <property file="base.properties"/>
-  <import file="${root.dir}/java.xml"/>
+  <description>Build file for VisBio project</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/components/java.xml"/>
   <property file="build.properties"/>
 
   <target name="dist"

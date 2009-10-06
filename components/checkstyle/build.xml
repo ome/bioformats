@@ -7,10 +7,8 @@ Type "ant -p" for a list of targets.
 -->
 
 <project name="checks" default="jar" basedir=".">
-  <description>
-    Build file for LOCI Checkstyle checks project
-  </description>
-  <property file="base.properties"/>
-  <import file="${root.dir}/java.xml"/>
+  <description>Build file for LOCI Checkstyle checks project</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/components/java.xml"/>
   <property file="build.properties"/>
 </project>

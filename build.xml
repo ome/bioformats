@@ -290,7 +290,7 @@ ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
     Notes:     used by LOCI plugins for ImageJ and OME plugins for ImageJ;
-               bundled with VisBio to achieve ImageJ interconnectivity
+               included with VisBio to achieve ImageJ interconnectivity
     License:   Public domain
 
 JAI ImageIO wrapper
@@ -405,18 +405,9 @@ Apache XML-RPC
     Master build file for all Java software projects at LOCI
   </description>
 
-  <property file="${user.home}/.ant-global.properties"/>
-  <property file="global.properties"/>
+  <property name="root.dir" location="${basedir}"/>
+  <import file="global.xml"/>
   <property file="build.properties"/>
-
-  <!-- Non-core ant tasks -->
-
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-    classpath="${shared-lib.dir}/ant-contrib-1.0b1.jar"/>
-  <!-- HACK - some environments do not install the antcontrib tasks properly
-  from antcontrib.properties above; also load them from antlib.xml -->
-  <taskdef resource="net/sf/antcontrib/antlib.xml"
-    classpath="${shared-lib.dir}/ant-contrib-1.0b1.jar"/>
 
   <!-- Global build targets -->
 
@@ -461,7 +452,7 @@ Apache XML-RPC
       clean-jvmlink, clean-multi-lut,
       clean-ome-notes, clean-ome-editor"
     description="remove all build files">
-    <delete dir="${shared-artifact.dir}"/>
+    <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
   </target>
 
@@ -490,8 +481,8 @@ Apache XML-RPC
   <target name="copy-jars">
     <!-- copy third party JARs into artifacts folder -->
     <!-- necessary for runtime classpath dependencies to function properly -->
-    <copy todir="${shared-artifact.dir}" preservelastmodified="true">
-      <fileset dir="${shared-lib.dir}" includes="*.jar"/>
+    <copy todir="${artifact.dir}" preservelastmodified="true">
+      <fileset dir="${lib.dir}" includes="*.jar"/>
     </copy>
   </target>
 
@@ -788,32 +779,32 @@ Apache XML-RPC
   </target>
 
   <target name="dist-visbio"
-    description="create distribution bundles for VisBio">
+    description="create distribution archives for VisBio">
     <ant dir="components/visbio" target="dist"/>
   </target>
 
   <target name="dist-visbio-win32"
-    description="create distribution bundle for VisBio: Windows w/ JRE">
+    description="create distribution archive for VisBio: Windows w/ JRE">
     <ant dir="components/visbio" target="dist-win32"/>
   </target>
 
   <target name="dist-visbio-win32-nojre"
-    description="create distribution bundle for VisBio: Windows no JRE">
+    description="create distribution archive for VisBio: Windows no JRE">
     <ant dir="components/visbio" target="dist-win32-nojre"/>
   </target>
 
   <target name="dist-visbio-macosx"
-    description="create distribution bundle for VisBio: Mac OS X">
+    description="create distribution archive for VisBio: Mac OS X">
     <ant dir="components/visbio" target="dist-macosx"/>
   </target>
 
   <target name="dist-visbio-linux"
-    description="create distribution bundle for VisBio: Linux w/ JRE">
+    description="create distribution archive for VisBio: Linux w/ JRE">
     <ant dir="components/visbio" target="dist-linux"/>
   </target>
 
   <target name="dist-visbio-nojre"
-    description="create distribution bundle for VisBio: cross-platform">
+    description="create distribution archive for VisBio: cross-platform">
     <ant dir="components/visbio" target="dist-nojre"/>
   </target>
 
@@ -843,7 +834,7 @@ Apache XML-RPC
   </target>
 
   <target name="dist-slim"
-    description="create distribution bundle for SLIM Plotter">
+    description="create distribution archive for SLIM Plotter">
     <ant dir="components/slim-plotter" target="dist"/>
   </target>
 
@@ -873,7 +864,7 @@ Apache XML-RPC
   </target>
 
   <target name="dist-flow"
-    description="create distribution bundle for WiscScan Flow Cytometry">
+    description="create distribution archive for WiscScan Flow Cytometry">
     <ant dir="components/flow-cytometry" target="dist"/>
   </target>
 
@@ -1021,7 +1012,7 @@ Apache XML-RPC
     <ant dir="components/legacy/ome-editor" target="ome-editor.clean"/>
   </target>
 
-  <!-- Tool bundles -->
+  <!-- Tool collections -->
 
   <target name="tools" depends="copy-jars, jar-common,
     jar-jai, jar-poi-loci, jar-mdbtools,
@@ -1029,7 +1020,7 @@ Apache XML-RPC
     description="create JAR file encompassing several LOCI tools">
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <unjar src="${shared-artifact.dir}/@{jar}" dest="${loci-tools.dir}">
+        <unjar src="${artifact.dir}/@{jar}" dest="${loci-tools.dir}">
           <patternset>
             <exclude name="META-INF/**"/>
           </patternset>
@@ -1048,7 +1039,7 @@ Apache XML-RPC
     description="create JAR file encompassing several OME tools">
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <unjar src="${shared-artifact.dir}/@{jar}" dest="${ome-tools.dir}">
+        <unjar src="${artifact.dir}/@{jar}" dest="${ome-tools.dir}">
           <patternset>
             <exclude name="META-INF/**"/>
           </patternset>
