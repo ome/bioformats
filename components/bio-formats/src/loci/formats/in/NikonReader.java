@@ -185,22 +185,27 @@ public class NikonReader extends BaseTiffReader {
 
     ByteArrayOutputStream src = new ByteArrayOutputStream();
 
+    NikonCodec codec = new NikonCodec();
+    NikonCodecOptions options = new NikonCodecOptions();
+    options.width = getSizeX();
+    options.height = getSizeY();
+    options.bitsPerSample = dataSize;
+    options.curve = curve;
+    options.vPredictor = new int[vPredictor.length];
+    options.lossy = lossyCompression;
+    options.split = split;
+
     for (int i=0; i<byteCounts.length; i++) {
       byte[] t = new byte[(int) byteCounts[i]];
 
       in.seek(offsets[i]);
       in.read(t);
+
       if (compressed) {
-        NikonCodecOptions options = new NikonCodecOptions();
-        options.width = getSizeX();
-        options.height = getSizeY();
-        options.bitsPerSample = dataSize;
-        options.curve = curve;
-        options.vPredictor = vPredictor;
-        options.lossy = lossyCompression;
-        options.split = split;
         options.maxBytes = (int) byteCounts[i];
-        t = new NikonCodec().decompress(t, options);
+        System.arraycopy(vPredictor, 0, options.vPredictor, 0,
+          vPredictor.length);
+        t = codec.decompress(t, options);
       }
       src.write(t);
     }
@@ -238,22 +243,13 @@ public class NikonReader extends BaseTiffReader {
         int blueOffset = (2 * getSizeY() + realRow) * getSizeX() + col;
 
         if (colorMap[mapIndex] == 0) {
-          if (whiteBalance != null && whiteBalance.length == 3) {
-            val = (short) (val * whiteBalance[0].doubleValue());
-          }
-          pix[redOffset] = val;
+          pix[redOffset] = adjustForWhiteBalance(val, 0);
         }
         else if (colorMap[mapIndex] == 1) {
-          if (whiteBalance != null && whiteBalance.length == 3) {
-            val = (short) (val * whiteBalance[1].doubleValue());
-          }
-          pix[greenOffset] = val;
+          pix[greenOffset] = adjustForWhiteBalance(val, 1);
         }
         else if (colorMap[mapIndex] == 2) {
-          if (whiteBalance != null && whiteBalance.length == 3) {
-            val = (short) (val * whiteBalance[2].doubleValue());
-          }
-          pix[blueOffset] = val;
+          pix[blueOffset] = adjustForWhiteBalance(val, 2);
         }
 
         if (maybeCompressed && !compressed) {
@@ -448,6 +444,13 @@ public class NikonReader extends BaseTiffReader {
   }
 
   // -- Helper methods --
+
+  private short adjustForWhiteBalance(short val, int index) {
+    if (whiteBalance != null && whiteBalance.length == 3) {
+      return (short) (val * whiteBalance[index].doubleValue());
+    }
+    return val;
+  }
 
   /** Gets the name of the IFD tag encoded by the given number. */
   private String getTagName(int tag) {

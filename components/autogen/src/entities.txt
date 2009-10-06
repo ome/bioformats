@@ -2049,7 +2049,7 @@ type = String
 description = lasing medium for the laser
 enumeration = {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "N", "Ar", "Kr", "Xe", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "NdGlass", "NdYAG", "ErGlass", "ErYAG", "HoYLF", "HoYAG", "Ruby", "TiSapphire", "Alexandrite", "Rhodamine6G", "CoumarinC30", "GaAs", "GaAlAs", "EMinus"}
 
-[Laser LaserMedium 200802]
+[Laser LaserMedium 200809]
 enumeration = {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "N", "Ar", "Kr", "Xe", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "NdGlass", "NdYAG", "ErGlass", "ErYAG", "HoYLF", "HoYAG", "Ruby", "TiSapphire", "Alexandrite", "Rhodamine6G", "CoumarinC30", "GaAs", "GaAlAs", "EMinus", "Unknown"}
 defaultValue = "Unknown"
 

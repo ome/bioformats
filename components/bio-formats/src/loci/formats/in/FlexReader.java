@@ -145,11 +145,17 @@ public class FlexReader extends FormatReader {
     Vector<String> files = new Vector<String>();
     files.addAll(measurementFiles);
     if (!noPixels) {
-      int[] lengths = new int[] {fieldCount, wellCount, plateCount};
-      int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
-      int row = wellCount == 1 ? 0 : wellNumber[pos[1]][0];
-      int col = wellCount == 1 ? 0 : wellNumber[pos[1]][1];
-      files.add(flexFiles[row][col]);
+      if (fieldCount > 0 && wellCount > 0 && plateCount > 0) {
+        int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+        int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
+        if (pos[1] >= 0 && pos[1] < wellNumber.length) {
+          int row = wellCount == 1 ? 0 : wellNumber[pos[1]][0];
+          int col = wellCount == 1 ? 0 : wellNumber[pos[1]][1];
+          if (row < flexFiles.length && col < flexFiles[row].length) {
+            files.add(flexFiles[row][col]);
+          }
+        }
+      }
     }
     return files.toArray(new String[files.size()]);
   }

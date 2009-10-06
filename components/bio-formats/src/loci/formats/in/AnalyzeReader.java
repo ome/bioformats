@@ -65,6 +65,19 @@ public class AnalyzeReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false;
+    String extension = name.substring(name.lastIndexOf(".") + 1);
+    name = name.substring(0, name.lastIndexOf("."));
+    if (extension.equals("img")) extension = "hdr";
+    else if (extension.equals("IMG")) extension = "HDR";
+    else if (extension.equals("hdr")) extension = "img";
+    else if (extension.equals("HDR")) extension = "IMG";
+
+    return new Location(name + "." + extension).exists();
+  }
+
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;

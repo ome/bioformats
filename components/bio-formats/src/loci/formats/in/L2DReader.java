@@ -65,11 +65,25 @@ public class L2DReader extends FormatReader {
 
   /** Construct a new L2D reader. */
   public L2DReader() {
-    super("Li-Cor L2D", new String[] {"l2d", "scn"});
+    super("Li-Cor L2D", new String[] {"l2d", "scn", "tif"});
     domains = new String[] {FormatTools.GEL_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "l2d") || checkSuffix(name, "scn")) return true;
+    if (!open) return false;
+
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    String[] list = parent.list();
+
+    for (String file : list) {
+      if (checkSuffix(file, "scn")) return true;
+    }
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
@@ -123,18 +137,18 @@ public class L2DReader extends FormatReader {
     // NB: This format cannot be imported using omebf.
     // See Trac ticket #266 for details.
 
-    if (id.toLowerCase().endsWith(".scn")) {
+    if (!checkSuffix(id, "l2d")) {
       // find the corresponding .l2d file
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      parent = parent.getParentFile();
       String[] list = parent.list();
-      for (int i=0; i<list.length; i++) {
-        if (list[i].toLowerCase().endsWith(".l2d")) {
-          initFile(new Location(parent.getAbsolutePath(),
-            list[i]).getAbsolutePath());
-          break;
+      for (String file : list) {
+        if (checkSuffix(file, "l2d")) {
+          initFile(new Location(parent, file).getAbsolutePath());
+          return;
         }
       }
-      return;
+      throw new FormatException("Could not find .l2d file");
     }
 
     super.initFile(id);

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 5, 2009 9:04:09 AM CDT
+ * Created by melissa via MetadataAutogen on Oct 5, 2009 9:38:21 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -3566,7 +3566,7 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
   public void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex) {
     if (laserMedium == null) return;
     LaserNode laserNode = getLaserNode(instrumentIndex, lightSourceIndex, true);
-            String[] enumeration = new String[] {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "N", "Ar", "Kr", "Xe", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "NdGlass", "NdYAG", "ErGlass", "ErYAG", "HoYLF", "HoYAG", "Ruby", "TiSapphire", "Alexandrite", "Rhodamine6G", "CoumarinC30", "GaAs", "GaAlAs", "EMinus"};
+            String[] enumeration = new String[] {"Cu", "Ag", "ArFl", "ArCl", "KrFl", "KrCl", "XeFl", "XeCl", "XeBr", "N", "Ar", "Kr", "Xe", "HeNe", "HeCd", "CO", "CO2", "H2O", "HFl", "NdGlass", "NdYAG", "ErGlass", "ErYAG", "HoYLF", "HoYAG", "Ruby", "TiSapphire", "Alexandrite", "Rhodamine6G", "CoumarinC30", "GaAs", "GaAlAs", "EMinus", "Unknown"};
     if (enumeration.length > 0) {
       for (String v : enumeration) {
         if (v.equalsIgnoreCase(laserMedium)) {
@@ -3575,6 +3575,7 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
           return;
         }
       }
+              laserNode.setLaserMedium("Unknown");
           }
     else
           laserNode.setLaserMedium(laserMedium);

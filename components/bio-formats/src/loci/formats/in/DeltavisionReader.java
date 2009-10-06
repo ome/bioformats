@@ -97,7 +97,7 @@ public class DeltavisionReader extends FormatReader {
 
   /** Constructs a new Deltavision reader. */
   public DeltavisionReader() {
-    super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d"});
+    super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d", "dv.log"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
@@ -107,6 +107,12 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "dv.log") || name.endsWith("_log.txt")) return true;
+    return super.isThisType(name, open);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -161,6 +167,14 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     debug("DeltavisionReader.initFile(" + id + ")");
+
+    if (checkSuffix(id, "dv.log")) {
+      id = id.substring(0, id.lastIndexOf("."));
+    }
+    else if (id.endsWith("_log.txt")) {
+      id = id.substring(0, id.lastIndexOf("_")) + ".dv";
+    }
+
     super.initFile(id);
 
     MetadataStore store =
