@@ -92,6 +92,9 @@ public class FormatFileFilter extends FileFilter
     return reader.isThisType(f.getPath(), allowOpen);
   }
 
+  /** Returns the filter's reader. */
+  public IFormatReader getReader() { return reader; }
+
   /** Gets the filter's description. */
   public String getDescription() { return desc; }
 
