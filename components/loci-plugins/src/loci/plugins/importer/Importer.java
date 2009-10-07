@@ -959,6 +959,7 @@ public class Importer {
             r.getChannelDimTypes(), r.getChannelDimLengths());
           if (options.isShowOMEXML()) dataBrowser.showMetadataWindow();
         }
+        else if (!imp.isVisible()) imp.show();
 
         boolean colorize = options.isColorize();
         boolean customColorize = options.isCustomColorize();

@@ -416,7 +416,7 @@ public class LeicaHandler extends DefaultHandler {
 
           store.setDetectorSettingsDetector(detectorID, numDatasets, c);
           store.setDetectorID(detectorID, numDatasets, 0);
-          store.setDetectorType("PMT", numDatasets, 0);
+          store.setDetectorType("CCD", numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
