@@ -121,12 +121,22 @@
 				<xsl:comment>ROI node from Image</xsl:comment>
 				<xsl:element name="ROI:ROI" namespace="{$newROINS}">
 					<xsl:apply-templates select="@*|node()"/>
+					<xsl:call-template name="possibleSALink">
+						<xsl:with-param name="theID">
+							<xsl:value-of select="@ID"/>
+						</xsl:with-param>
+					</xsl:call-template>
 				</xsl:element>
 			</xsl:for-each>
 			<xsl:for-each select="exsl:node-set(OME:Image/OME:DisplayOptions/OME:ROI)">
 				<xsl:comment>ROI node from DisplayOptions</xsl:comment>
 				<xsl:element name="ROI:ROI" namespace="{$newROINS}">
 					<xsl:apply-templates select="@*|node()"/>
+					<xsl:call-template name="possibleSALink">
+						<xsl:with-param name="theID">
+							<xsl:value-of select="@ID"/>
+						</xsl:with-param>
+					</xsl:call-template>
 				</xsl:element>
 			</xsl:for-each>
 
@@ -169,14 +179,12 @@
 				</xsl:element>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:comment>Link to <xsl:value-of select="node()"/> removed as only annotation
-					links now supported.</xsl:comment>
+				<xsl:comment>Link to <xsl:value-of select="node()"/> removed as only annotation links now supported.</xsl:comment>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="SA:Link">
-		<xsl:comment>Link to <xsl:value-of select="node()"/> reversed (if possible) or removed (if
-			not).</xsl:comment>
+		<xsl:comment>Link to <xsl:value-of select="node()"/> reversed (if possible) or removed (if not).</xsl:comment>
 	</xsl:template>
 
 	<xsl:template match="SPW:*">
@@ -213,6 +221,11 @@
 		<xsl:element name="Dataset" namespace="{$newOMENS}">
 			<xsl:copy-of select="@* [not(name() = 'Locked')]"/>
 			<xsl:apply-templates select="node()"/>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -284,6 +297,11 @@
 					<xsl:value-of select="."/>
 				</xsl:element>
 			</xsl:for-each>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -601,6 +619,11 @@
 					<xsl:value-of select="."/>
 				</xsl:element>
 			</xsl:for-each>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -838,6 +861,11 @@
 									</xsl:with-param>
 
 								</xsl:call-template>
+								<xsl:call-template name="possibleSALink">
+									<xsl:with-param name="theID">
+										<xsl:value-of select="@ID"/>
+									</xsl:with-param>
+								</xsl:call-template>
 							</xsl:element>
 						</xsl:if>
 					</xsl:when>
@@ -863,6 +891,11 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -1283,6 +1316,31 @@
 	</xsl:template>
 
 	<!-- Screen Plate Well -->
+	
+	<!-- Add any SA links to Screen -->
+	<xsl:template match="SA:Screen">
+		<xsl:element name="{name()}" namespace="{$newSANS}">
+			<xsl:apply-templates select="@*|node()"/>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:element>
+	</xsl:template>
+	
+	<!-- Screen Plate Well -->
+	<xsl:template match="SA:ScreenAcquisition">
+		<xsl:element name="{name()}" namespace="{$newSANS}">
+			<xsl:apply-templates select="@*|node()"/>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:element>
+	</xsl:template>
+	
 	<!-- 
 	Remove or rename attributes in WellSample.
 	Remove Index, Rename PosX to PositionX & PosY to PositionY
@@ -1309,6 +1367,11 @@
 				</xsl:choose>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -1341,6 +1404,11 @@
 				</xsl:choose>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -1361,6 +1429,11 @@
 				<xsl:value-of select="$des"/>
 			</xsl:element>
 			<xsl:apply-templates select="node()"/>
+			<xsl:call-template name="possibleSALink">
+				<xsl:with-param name="theID">
+					<xsl:value-of select="@ID"/>
+				</xsl:with-param>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
 
@@ -1382,6 +1455,11 @@
 			</xsl:element>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
+		<xsl:call-template name="possibleSALink">
+			<xsl:with-param name="theID">
+				<xsl:value-of select="@ID"/>
+			</xsl:with-param>
+		</xsl:call-template>
 	</xsl:template>
 
 	<!-- General -->
@@ -1443,6 +1521,21 @@
 		<xsl:element name="XMLAnnotation" namespace="{$newSANS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
+	</xsl:template>
+
+	<!-- Locate the SA link  -->
+	<xsl:template name="possibleSALink">
+		<xsl:param name="theID"/>
+		<!-- <xsl:comment>Possible Link: <xsl:value-of select="$theID"/></xsl:comment>-->
+
+		<xsl:for-each select="/OME:OME/SA:StructuredAnnotations/*/SA:Link">
+			<!-- <xsl:comment>Found Node</xsl:comment> -->
+			<xsl:if test=".=$theID">
+				<xsl:element name="SA:AnnotationRef" namespace="{$newSANS}">
+					<xsl:attribute name="ID"><xsl:value-of select="../@ID"/></xsl:attribute>
+				</xsl:element>
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 
 	<!-- Default processing -->
