@@ -81,6 +81,8 @@ public class LeicaHandler extends DefaultHandler {
   private long firstStamp = 0;
 
   private Hashtable<Integer, String> bytesPerAxis;
+  private int multiBandIndex = 0;
+  private int nMultiBands = 0;
 
   // -- Constructor --
 
@@ -267,6 +269,8 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("Image")) {
       core.add(new CoreMetadata());
       numDatasets++;
+      if (nMultiBands == 0) nMultiBands = multiBandIndex;
+      multiBandIndex = 0;
       nextFilter = 0;
       String name = elementName;
       if (collection != null) name = collection + "/" + name;
@@ -570,28 +574,34 @@ public class LeicaHandler extends DefaultHandler {
       Float gain = new Float(attributes.getValue("Gain"));
       Float offset = new Float(attributes.getValue("Offset"));
       int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
+      boolean active = attributes.getValue("IsActive").equals("1");
 
-      if (channel > 0) {
-        store.setDetectorSettingsGain(gain, numDatasets, channel - 1);
-        store.setDetectorSettingsOffset(offset, numDatasets, channel - 1);
+      if (channel > 0 && active) {
+        int d = channel - 1;
+        int sizeC = core.get(numDatasets).sizeC;
+        if (index >= sizeC) d = sizeC - 1;
+
+        store.setDetectorSettingsGain(gain, numDatasets, d);
+        store.setDetectorSettingsOffset(offset, numDatasets, d);
 
         int detectorIndex = nextDetector < 0 ? 0 : nextDetector;
         String detectorID =
-          MetadataTools.createLSID("Detector", numDatasets, detectorIndex);
-        store.setDetectorSettingsDetector(detectorID, numDatasets, channel - 1);
+          MetadataTools.createLSID("Detector", numDatasets, d);
+        store.setDetectorSettingsDetector(detectorID, numDatasets, d);
 
         detectorIndices.add(new Integer(index));
+        nextDetector++;
       }
     }
     else if (qName.equals("LaserLineSetting")) {
-      String wavelength = attributes.getValue("LaserLine");
+      Integer wavelength = new Integer(attributes.getValue("LaserLine"));
       int index = Integer.parseInt(attributes.getValue("LineIndex"));
       int qualifier = Integer.parseInt(attributes.getValue("Qualifier"));
       index += (2 - (qualifier / 10));
       if (index < 0) index = 0;
       String id = MetadataTools.createLSID("LightSource", numDatasets, index);
       store.setLightSourceID(id, numDatasets, index);
-      store.setLaserWavelength(new Integer(wavelength), numDatasets, index);
+      store.setLaserWavelength(wavelength, numDatasets, index);
       store.setLaserType("Unknown", numDatasets, index);
       store.setLaserLaserMedium("Unknown", numDatasets, index);
 
@@ -601,6 +611,7 @@ public class LeicaHandler extends DefaultHandler {
         store.setLightSourceSettingsLightSource(id, numDatasets, channel);
         store.setLightSourceSettingsAttenuation(
           new Float(intensity / 100f), numDatasets, channel);
+        store.setLogicalChannelExWave(wavelength, numDatasets, channel);
         channel++;
       }
     }
@@ -671,13 +682,10 @@ public class LeicaHandler extends DefaultHandler {
       if (nextChannel >= sizeC) nextChannel = 0;
 
       String channelName = attributes.getValue("DyeName");
-      int left = (int) Float.parseFloat(attributes.getValue("LeftWorld"));
-      int right = (int) Float.parseFloat(attributes.getValue("RightWorld"));
+      int left = Math.round(Float.parseFloat(attributes.getValue("LeftWorld")));
+      int right =
+        Math.round(Float.parseFloat(attributes.getValue("RightWorld")));
       int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
-
-      if (!channelName.equals("None") && index < sizeC) {
-        store.setLogicalChannelName(channelName, numDatasets, index);
-      }
 
       String filter =
         MetadataTools.createLSID("Filter", numDatasets, nextFilter);
@@ -688,13 +696,17 @@ public class LeicaHandler extends DefaultHandler {
       store.setTransmittanceRangeCutOut(
         new Integer(right), numDatasets, nextFilter);
 
-      if (index < sizeC) {
+      if (!channelName.equals("None") && index < sizeC &&
+        multiBandIndex == (nMultiBands + 1) * index)
+      {
+        store.setLogicalChannelName(channelName, numDatasets, index);
         store.setLogicalChannelSecondaryEmissionFilter(
           filter, numDatasets, index);
       }
 
       nextChannel++;
       nextFilter++;
+      multiBandIndex++;
     }
     else count = 0;
     storeSeriesHashtable(numDatasets, h);
