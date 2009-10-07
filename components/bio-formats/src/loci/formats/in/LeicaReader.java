@@ -137,8 +137,6 @@ public class LeicaReader extends FormatReader {
   private float[] pinhole, exposureTime;
 
   private int nextDetector = 0, nextChannel = 0;
-  private Vector<String> linkedPMTs = new Vector<String>();
-  private Vector<String> linkedMirrors = new Vector<String>();
   private Vector<Integer> activeChannelIndices = new Vector<Integer>();
   private boolean sequential = false;
 
@@ -269,8 +267,6 @@ public class LeicaReader extends FormatReader {
       pinhole = exposureTime = null;
       nextDetector = 0;
       nextChannel = 0;
-      linkedPMTs.clear();
-      linkedMirrors.clear();
       sequential = false;
       activeChannelIndices.clear();
     }
@@ -918,6 +914,11 @@ public class LeicaReader extends FormatReader {
           (((Integer) keys[q]).intValue() > SEQ_FILTERSET.intValue() &&
           ((Integer) keys[q]).intValue() < SEQ_FILTERSET_END))
         {
+          if (sequential && (keys[q].equals(FILTERSET) ||
+            keys[q].equals(SCANNERSET)))
+          {
+            continue;
+          }
           byte[] tmp = (byte[]) ifd.get(keys[q]);
           if (tmp == null) continue;
           RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
@@ -926,8 +927,6 @@ public class LeicaReader extends FormatReader {
           stream.close();
         }
       }
-      linkedPMTs.clear();
-      linkedMirrors.clear();
       activeChannelIndices.clear();
 
       // link Instrument and Image
@@ -980,9 +979,6 @@ public class LeicaReader extends FormatReader {
       exWaves[i] = new Vector();
     }
 
-    boolean foundPMT = false;
-    boolean foundMirror = false;
-
     for (int j=0; j<nElements; j++) {
       stream.seek(24 + j * cbElements);
       String contentID = getString(stream, 128);
@@ -1031,11 +1027,7 @@ public class LeicaReader extends FormatReader {
             else if (tokens[2].equals("State")) {
               store.setDetectorType("PMT", series, nextDetector);
               // link Detector to Image, if the detector was actually used
-              if (data.equals("Active") && !linkedPMTs.contains(tokens[1]) &&
-                !(sequential && foundPMT))
-              {
-                foundPMT = true;
-                linkedPMTs.add(tokens[1]);
+              if (data.equals("Active")) {
                 String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
                 int channelIndex = -1;
                 try {
@@ -1134,9 +1126,7 @@ public class LeicaReader extends FormatReader {
         int ndx = tokens[1].lastIndexOf(" ");
         int channel = Integer.parseInt(tokens[1].substring(ndx + 1)) - 1;
 
-        if (tokens[2].equals("Wavelength") && !(sequential && foundMirror) &&
-          !(sequential && linkedMirrors.contains(tokens[1])))
-        {
+        if (tokens[2].equals("Wavelength")) {
           Integer wavelength = new Integer((int) Float.parseFloat(data));
           store.setFilterModel(tokens[1], series, channel);
 
@@ -1153,10 +1143,6 @@ public class LeicaReader extends FormatReader {
           }
           else if (tokens[3].equals("1")) {
             store.setTransmittanceRangeCutOut(wavelength, series, channel);
-            if (activeChannelIndices.contains(new Integer(channel))) {
-              foundMirror = true;
-              linkedMirrors.add(tokens[1]);
-            }
           }
         }
         else if (tokens[2].equals("Stain")) {
