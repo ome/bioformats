@@ -466,10 +466,17 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         s.skipBytes(4);
-        core[0].sizeX = s.readInt();
-        core[0].sizeY = s.readInt();
+        if (getSizeX() == 0) {
+          core[0].sizeX = s.readInt();
+          core[0].sizeY = s.readInt();
+        }
+        else s.skipBytes(8);
         s.skipBytes(4);
-        bpp = s.readInt();
+
+        if (bpp == 0) {
+          bpp = s.readInt();
+        }
+        else s.skipBytes(4);
         s.skipBytes(4);
 
         int valid = s.readInt();
@@ -539,6 +546,7 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     core[0].dimensionOrder = "XY";
+    if (isRGB()) core[0].dimensionOrder += "C";
     for (int i=0; i<coordinates.length-1; i++) {
       int[] zct1 = coordinates[i];
       int[] zct2 = coordinates[i + 1];
@@ -712,7 +720,9 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.equals("ImageWidth")) {
           int v = Integer.parseInt(value);
-          if (getSizeX() == 0) core[0].sizeX = v;
+          if (getSizeX() == 0) {
+            core[0].sizeX = v;
+          }
           if (realWidth == 0 && v > realWidth) realWidth = v;
         }
         else if (key.equals("ImageHeight")) {
