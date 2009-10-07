@@ -282,9 +282,13 @@ public class Importer {
       else debug("no need to prompt for file pattern");
 
       if (groupFiles) base = new FileStitcher(base, true);
+      if (options.isVirtual() || !options.isMergeChannels() ||
+        FormatTools.getBytesPerPixel(base.getPixelType()) != 1)
+      {
+        base = new ChannelSeparator(base);
+      }
       // NB: VirtualReader extends DimensionSwapper
-      VirtualReader virtualReader =
-        new VirtualReader(new ChannelSeparator(base));
+      VirtualReader virtualReader = new VirtualReader(base);
       ImagePlusReader r = new ImagePlusReader(virtualReader);
       r.setId(id);
 
@@ -640,7 +644,7 @@ public class Importer {
             if (clock - time >= 100) {
               IJ.showStatus("Reading " +
                 (seriesCount > 1 ? ("series " + (i + 1) + ", ") : "") +
-                "plane " + (j + 1) + "/" + num[i]);
+                "plane " + (j + 1) + "/" + total);
               time = clock;
             }
             IJ.showProgress((double) q++ / total);
@@ -651,14 +655,18 @@ public class Importer {
               omexmlMeta, i, zCount, cCount, tCount);
 
             // get image processor for jth plane
-            ImageProcessor ip = r.openProcessors(ndx, cropOptions[i])[0];
+            ImageProcessor[] p = r.openProcessors(ndx, cropOptions[i]);
+            ImageProcessor ip = p[0];
+            if (p.length > 1) {
+              ip = ImagePlusTools.makeRGB(p).getProcessor();
+            }
             if (ip == null) {
               plugin.canceled = true;
               return;
             }
 
             int channel = r.getZCTCoords(ndx)[1];
-            if (colorModels != null) {
+            if (colorModels != null && p.length == 1) {
               colorModels[channel] = (IndexColorModel) ip.getColorModel();
             }
 
@@ -860,6 +868,8 @@ public class Importer {
   private void displayStack(ImagePlus imp, IFormatReader r,
     ImporterOptions options, boolean windowless)
   {
+    boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
+    imp.setOpenAsHyperStack(hyper);
     boolean mergeChannels = options.isMergeChannels();
     boolean concatenate = options.isConcatenate();
     int nSlices = imp.getNSlices();
@@ -867,7 +877,7 @@ public class Importer {
     if (options.isAutoscale() && !options.isVirtual()) {
       ImagePlusTools.adjustColorRange(imp);
     }
-    else {
+    else if (!(imp.getProcessor() instanceof ColorProcessor)) {
       // ImageJ may autoscale the images anyway, so we need to manually
       // set the display range to the min/max values allowed for
       // this pixel type
@@ -890,6 +900,9 @@ public class Importer {
       if (windowless) arg += " merge_option=[" + options.getMergeOption() + "]";
       arg += " ";
       IJ.runPlugIn("loci.plugins.Colorizer", arg);
+      if (WindowManager.getCurrentImage().getID() != imp.getID()) {
+        imp.close();
+      }
     }
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
@@ -939,8 +952,6 @@ public class Importer {
     }
     else {
       // NB: ImageJ 1.39+ is required for hyperstacks
-      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-      imp.setOpenAsHyperStack(hyper);
 
       if (!concatenate) {
         if (options.isViewBrowser()) {
@@ -948,7 +959,6 @@ public class Importer {
             r.getChannelDimTypes(), r.getChannelDimLengths());
           if (options.isShowOMEXML()) dataBrowser.showMetadataWindow();
         }
-        else imp.show();
 
         boolean colorize = options.isColorize();
         boolean customColorize = options.isCustomColorize();

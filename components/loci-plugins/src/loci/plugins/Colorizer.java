@@ -163,6 +163,8 @@ public class Colorizer implements PlugInFilter {
     int nTimes = imp.getNFrames();
     int nSlices = imp.getNSlices();
 
+    IJ.showStatus("Running colorizer on " + (nTimes * nSlices) + " images");
+
     if (imp.isComposite() || stack.isRGB() || (nChannels == 1 && !color)) {
       return;
     }
@@ -321,6 +323,7 @@ public class Colorizer implements PlugInFilter {
     for (int i=0; i<indices[0].length; i++) {
       newStack.addSlice(s.getSliceLabel(indices[indices.length - 1][i]),
         ImagePlusTools.makeRGB(processors[i]).getProcessor());
+      IJ.showProgress((double) ((i + 1) / indices[0].length) * 100);
     }
 
     ip.setStack(ip.getTitle(), newStack);
