@@ -1150,20 +1150,18 @@ public class LeicaReader extends FormatReader {
           String filterID = MetadataTools.createLSID("Filter", series, channel);
           store.setFilterID(filterID, series, channel);
 
-          if (activeChannelIndices.contains(new Integer(channel)) &&
-            channel < core[series].sizeC)
-          {
+          int index = activeChannelIndices.indexOf(new Integer(channel));
+          if (index >= 0 && index < core[series].sizeC) {
             store.setLogicalChannelSecondaryEmissionFilter(filterID, series,
-              activeChannelIndices.indexOf(new Integer(channel)));
+              index);
 
-            if (tokens[3].equals("0") && !cutInPopulated[series][channel]) {
+            if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
               store.setTransmittanceRangeCutIn(wavelength, series, channel);
-              cutInPopulated[series][channel] = true;
+              cutInPopulated[series][index] = true;
             }
-            else if (tokens[3].equals("1") && !cutOutPopulated[series][channel])
-            {
+            else if (tokens[3].equals("1") && !cutOutPopulated[series][index]) {
               store.setTransmittanceRangeCutOut(wavelength, series, channel);
-              cutOutPopulated[series][channel] = true;
+              cutOutPopulated[series][index] = true;
             }
           }
         }
