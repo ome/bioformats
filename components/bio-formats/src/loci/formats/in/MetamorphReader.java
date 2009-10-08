@@ -147,7 +147,8 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (stks == null) return new String[] {currentId};
+    if (!noPixels && stks == null) return new String[] {currentId};
+    else if (stks == null) return new String[0];
 
     Vector<String> v = new Vector<String>();
     if (ndFilename != null) v.add(ndFilename);
