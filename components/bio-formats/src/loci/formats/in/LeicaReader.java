@@ -140,6 +140,13 @@ public class LeicaReader extends FormatReader {
   private Vector<Integer> activeChannelIndices = new Vector<Integer>();
   private boolean sequential = false;
 
+  private Vector[] channelNames;
+  private Vector[] emWaves;
+  private Vector[] exWaves;
+
+  private boolean[][] cutInPopulated;
+  private boolean[][] cutOutPopulated;
+
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -269,6 +276,11 @@ public class LeicaReader extends FormatReader {
       nextChannel = 0;
       sequential = false;
       activeChannelIndices.clear();
+      channelNames = null;
+      emWaves = null;
+      exWaves = null;
+      cutInPopulated = null;
+      cutOutPopulated = null;
     }
   }
 
@@ -398,6 +410,18 @@ public class LeicaReader extends FormatReader {
     }
 
     files = new Vector[numSeries];
+
+    channelNames = new Vector[getSeriesCount()];
+    emWaves = new Vector[getSeriesCount()];
+    exWaves = new Vector[getSeriesCount()];
+    cutInPopulated = new boolean[getSeriesCount()][];
+    cutOutPopulated = new boolean[getSeriesCount()][];
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      channelNames[i] = new Vector();
+      emWaves[i] = new Vector();
+      exWaves[i] = new Vector();
+    }
 
     // determine the length of a filename
 
@@ -902,6 +926,9 @@ public class LeicaReader extends FormatReader {
       nextDetector = 0;
       nextChannel = 0;
 
+      cutInPopulated[i] = new boolean[core[i].sizeC];
+      cutOutPopulated[i] = new boolean[core[i].sizeC];
+
       Object[] keys = ifd.keySet().toArray();
       Arrays.sort(keys);
       int nextInstrumentBlock = 1;
@@ -968,16 +995,6 @@ public class LeicaReader extends FormatReader {
     stream.skipBytes(8);
     int nElements = stream.readInt();
     stream.skipBytes(4);
-
-    Vector[] channelNames = new Vector[getSeriesCount()];
-    Vector[] emWaves = new Vector[getSeriesCount()];
-    Vector[] exWaves = new Vector[getSeriesCount()];
-
-    for (int i=0; i<getSeriesCount(); i++) {
-      channelNames[i] = new Vector();
-      emWaves[i] = new Vector();
-      exWaves[i] = new Vector();
-    }
 
     for (int j=0; j<nElements; j++) {
       stream.seek(24 + j * cbElements);
@@ -1133,16 +1150,21 @@ public class LeicaReader extends FormatReader {
           String filterID = MetadataTools.createLSID("Filter", series, channel);
           store.setFilterID(filterID, series, channel);
 
-          if (activeChannelIndices.contains(new Integer(channel))) {
+          if (activeChannelIndices.contains(new Integer(channel)) &&
+            channel < core[series].sizeC)
+          {
             store.setLogicalChannelSecondaryEmissionFilter(filterID, series,
               activeChannelIndices.indexOf(new Integer(channel)));
-          }
 
-          if (tokens[3].equals("0")) {
-            store.setTransmittanceRangeCutIn(wavelength, series, channel);
-          }
-          else if (tokens[3].equals("1")) {
-            store.setTransmittanceRangeCutOut(wavelength, series, channel);
+            if (tokens[3].equals("0") && !cutInPopulated[series][channel]) {
+              store.setTransmittanceRangeCutIn(wavelength, series, channel);
+              cutInPopulated[series][channel] = true;
+            }
+            else if (tokens[3].equals("1") && !cutOutPopulated[series][channel])
+            {
+              store.setTransmittanceRangeCutOut(wavelength, series, channel);
+              cutOutPopulated[series][channel] = true;
+            }
           }
         }
         else if (tokens[2].equals("Stain")) {
