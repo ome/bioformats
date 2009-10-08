@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
@@ -256,19 +257,25 @@ public class FlexReader extends FormatReader {
 
   /** Initialize the dataset from a .res file. */
   private void initResFile(String id) throws FormatException, IOException {
+    debug("initResFile(" + id + ")");
     Location parent = new Location(id).getParentFile();
+    debug("  Looking for an .mea file in " + parent.getAbsolutePath());
     String[] list = parent.list();
     for (String file : list) {
       if (checkSuffix(file, MEA_SUFFIX)) {
         measurementFiles.add(new Location(id).getAbsolutePath());
-        initMeaFile(new Location(parent, file).getAbsolutePath());
+        String mea = new Location(parent, file).getAbsolutePath();
+        debug("  Found .mea file " + mea);
+        initMeaFile(mea);
         return;
       }
     }
+    throw new FormatException("Could not find an .mea file.");
   }
 
   /** Initialize the dataset from a .mea file. */
   private void initMeaFile(String id) throws FormatException, IOException {
+    debug("initMeaFile(" + id + ")");
     Location file = new Location(id).getAbsoluteFile();
     measurementFiles.add(file.getAbsolutePath());
 
@@ -300,6 +307,7 @@ public class FlexReader extends FormatReader {
   }
 
   private void initFlexFile(String id) throws FormatException, IOException {
+    debug("initFlexFile(" + id + ")");
     boolean doGrouping = true;
 
     Location currentFile = new Location(id).getAbsoluteFile();
@@ -316,7 +324,9 @@ public class FlexReader extends FormatReader {
     }
 
     if (!isGroupFiles()) doGrouping = false;
+
     if (isGroupFiles()) {
+      debug("Attempting to find files in the same dataset.");
       try {
         findFiles(currentFile);
       }
@@ -327,7 +337,7 @@ public class FlexReader extends FormatReader {
         traceDebug(e);
       }
       if (measurementFiles.size() == 0) {
-        warn("Measurement files not found.");
+        warnDebug("Measurement files not found.");
       }
     }
 
@@ -343,8 +353,10 @@ public class FlexReader extends FormatReader {
 
       for (String file : files) {
         // file names should be nnnnnnnnn.flex, where 'n' is 0-9
+        debug("Checking if " + file + " belongs in the same dataset.");
         if (file.endsWith(".flex") && file.length() == 14) {
           flex.add(new Location(dir, file).getAbsolutePath());
+          debug("Added " + flex.get(flex.size() - 1) + " to dataset.");
         }
         else {
           doGrouping = false;
@@ -355,6 +367,7 @@ public class FlexReader extends FormatReader {
 
     String[] files = doGrouping ? flex.toArray(new String[flex.size()]) :
       new String[] {currentFile.getAbsolutePath()};
+    debug("Determined that " + files.length + " .flex files belong together.");
 
     groupFiles(files, store);
     populateMetadataStore(store);
@@ -490,6 +503,8 @@ public class FlexReader extends FormatReader {
     boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
+    debug("Parsing .flex file associated with well row " + wellRow +
+      ", column " + wellCol);
     if (flexFiles[wellRow][wellCol] == null) return;
 
     if (channelNames == null) channelNames = new Vector<String>();
@@ -513,6 +528,7 @@ public class FlexReader extends FormatReader {
     if (filterSetMap == null) filterSetMap = new HashMap<String, String>();
 
     // parse factors from XML
+    debug("Parsing XML from " + flexFiles[wellRow][wellCol]);
     IFD ifd = ifds[wellRow][wellCol].get(0);
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX, true));
 
@@ -576,6 +592,8 @@ public class FlexReader extends FormatReader {
     Vector<String> imageNames)
     throws FormatException
   {
+    debug("Populating core metadata for well row " + wellRow + ", column " +
+      wellCol);
     if (getSizeC() == 0 && getSizeT() == 0) {
       Vector<String> uniqueChannels = new Vector<String>();
       for (int i=0; i<imageNames.size(); i++) {
@@ -663,30 +681,39 @@ public class FlexReader extends FormatReader {
     //
     // or that the .mea and .res are in the same directory as the .flex files
 
+    debug("findFiles(" + baseFile.getAbsolutePath() + ")");
+
     Vector<String> fileList = new Vector<String>();
 
-    String[] suffixes = null;
+    String[] suffixes = new String[0];
     if (checkSuffix(baseFile.getName(), FLEX_SUFFIX)) {
       suffixes = new String[] {MEA_SUFFIX, RES_SUFFIX};
+      debug("Looking for files with the suffix '" + MEA_SUFFIX + "' or '" +
+        RES_SUFFIX + "'.");
     }
     else if (checkSuffix(baseFile.getName(), MEA_SUFFIX)) {
       suffixes = new String[] {FLEX_SUFFIX, RES_SUFFIX};
+      debug("Looking for files with the suffix '" + FLEX_SUFFIX + "' or '" +
+        RES_SUFFIX + "'.");
     }
 
     Location plateDir = baseFile.getParentFile();
     String[] files = plateDir.list(true);
 
     // check if the measurement files are in the same directory
+    debug("Looking for files in " + plateDir.getAbsolutePath());
     for (String file : files) {
       String lfile = file.toLowerCase();
       String path = new Location(plateDir, file).getAbsolutePath();
       if (checkSuffix(file, suffixes)) {
         fileList.add(path);
+        debug("Found file " + path);
       }
     }
 
     // file list is valid (i.e. can be returned) if there is at least
     // one file with each of the desired suffixes
+    debug("Checking to see if at least one file with each suffix was found...");
     boolean validList = true;
     for (String suffix : suffixes) {
       boolean foundSuffix = false;
@@ -701,9 +728,12 @@ public class FlexReader extends FormatReader {
         break;
       }
     }
+    debug((validList ? "Found" : "Did not find") + " required files.");
 
     if (validList) {
+      debug("Returning file list:");
       for (String file : fileList) {
+        debug("  " + file);
         if (checkSuffix(file, MEASUREMENT_SUFFIXES)) {
           measurementFiles.add(file);
         }
@@ -716,6 +746,7 @@ public class FlexReader extends FormatReader {
       flexDir = plateDir.getParentFile();
     }
     catch (NullPointerException e) { }
+    debug("Looking for files in " + flexDir);
     if (flexDir == null) return null;
 
     // check if the measurement directory and the Flex directory
@@ -730,6 +761,8 @@ public class FlexReader extends FormatReader {
           (plateName.startsWith(file) || file.startsWith(plateName)))
         {
           measurementDir = new Location(flexDir, file);
+          debug("Expect measurement files to be in " +
+            measurementDir.getAbsolutePath());
           break;
         }
       }
@@ -740,41 +773,60 @@ public class FlexReader extends FormatReader {
 
     if (measurementDir == null) {
       Location topDir = flexDir.getParentFile();
+      debug("First attempt at finding measurement file directory failed. " +
+        "Looking for an appropriate measurement directory in " +
+        topDir.getAbsolutePath() + ".");
 
       String[] topDirList = topDir.list(true);
       for (String file : topDirList) {
         if (!flexDir.getAbsolutePath().endsWith(file)) {
           measurementDir = new Location(topDir, file);
+          debug("Expect measurement files to be in " +
+            measurementDir.getAbsolutePath());
           break;
         }
       }
 
-      if (measurementDir == null) return null;
+      if (measurementDir == null) {
+        debug("Failed to find measurement file directory.");
+        return null;
+      }
     }
     else plateDir = measurementDir;
 
     if (!plateDir.getAbsolutePath().equals(measurementDir.getAbsolutePath())) {
+      debug("Measurement files are in a subdirectory of " +
+        measurementDir.getAbsolutePath());
       String[] measurementPlates = measurementDir.list(true);
       String plate = plateDir.getName();
+      debug("Determining which subdirectory contains the measurements for" +
+        " plate " + plate);
       plateDir = null;
       if (measurementPlates != null) {
         for (String file : measurementPlates) {
+          debug("Checking " + file);
           if (file.indexOf(plate) != -1 || plate.indexOf(file) != -1) {
             plateDir = new Location(measurementDir, file);
+            debug("Measurement files are in " + plateDir.getAbsolutePath());
             break;
           }
         }
       }
     }
 
-    if (plateDir == null) return null;
+    if (plateDir == null) {
+      debug("Could not find appropriate subdirectory.");
+      return null;
+    }
 
     files = plateDir.list(true);
     for (String file : files) {
       fileList.add(new Location(plateDir, file).getAbsolutePath());
     }
 
+    debug("Returning file list:");
     for (String file : fileList) {
+      debug("  " + file);
       if (checkSuffix(file, MEASUREMENT_SUFFIXES)) {
         measurementFiles.add(file);
       }
@@ -804,6 +856,9 @@ public class FlexReader extends FormatReader {
       nRows = 1;
       nCols = 1;
     }
+
+    debug("Determined that there are " + nRows + " rows and " + nCols +
+      " columns of wells.");
 
     flexFiles = new String[nRows][nCols];
     ifds = new IFDList[nRows][nCols];
@@ -911,7 +966,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Immersion")) {
         if (value.equals("1.33")) value = "Water";
         else if (value.equals("1.00")) value = "Air";
-        else warn("Unknown immersion medium: " + value);
+        else warnDebug("Unknown immersion medium: " + value);
         store.setObjectiveImmersion(value, 0, nextObjective);
       }
       else if (qName.equals("OffsetX") || qName.equals("OffsetY")) {
@@ -1154,11 +1209,16 @@ public class FlexReader extends FormatReader {
     {
       if (qName.equals("Host")) {
         String hostname = attributes.getValue("name");
+        debug("FlexHandler: found hostname '" + hostname + "'");
         hostnames = serverMap.get(hostname);
         if (hostnames != null) {
+          debug("Sanitizing hostnames...");
           for (int i=0; i<hostnames.length; i++) {
+            String host = hostnames[i];
             hostnames[i] = hostnames[i].replace('/', File.separatorChar);
             hostnames[i] = hostnames[i].replace('\\', File.separatorChar);
+            debug("Hostname #" + i + " was " + host + ", is now " +
+              hostnames[i]);
           }
         }
       }
@@ -1177,7 +1237,7 @@ public class FlexReader extends FormatReader {
             }
           }
           if (flex.size() == numberOfFlexFiles) {
-            warn(path + " was in .mea, but does not actually exist.");
+            warnDebug(path + " was in .mea, but does not actually exist.");
           }
         }
       }
@@ -1193,8 +1253,10 @@ public class FlexReader extends FormatReader {
   public static void mapServer(String alias, String realName)
     throws FormatException
   {
+    LogTools.debug("mapSever(" + alias + ", " + realName + ")");
     if (alias != null) {
       if (realName == null) {
+        LogTools.debug("removing mapping for " + alias);
         serverMap.remove(alias);
       }
       else {
@@ -1204,6 +1266,7 @@ public class FlexReader extends FormatReader {
           throw new FormatException("Server " + realName + " was not found.");
         }
 
+        LogTools.debug("Finding base server name...");
         if (realName.endsWith(File.separator)) {
           realName = realName.substring(0, realName.length() - 1);
         }
@@ -1214,6 +1277,7 @@ public class FlexReader extends FormatReader {
         else if (baseName.endsWith(ARCHIVE)) {
           baseName = baseName.substring(0, baseName.lastIndexOf(ARCHIVE));
         }
+        LogTools.debug("Base server name is " + baseName);
 
         Vector<String> names = new Vector<String>();
         names.add(baseName);
@@ -1223,6 +1287,11 @@ public class FlexReader extends FormatReader {
 
         if (screening.exists()) names.add(screening.getAbsolutePath());
         if (archive.exists()) names.add(archive.getAbsolutePath());
+
+        LogTools.debug("Server names for " + alias + ":");
+        for (String name : names) {
+          LogTools.debug("  " + name);
+        }
 
         mapServer(alias, names.toArray(new String[names.size()]));
       }
@@ -1236,8 +1305,22 @@ public class FlexReader extends FormatReader {
   public static void mapServer(String alias, String[] realNames)
     throws FormatException
   {
+    StringBuffer msg = new StringBuffer("mapServer(");
+    msg.append(alias);
+    if (realNames != null) {
+      msg.append(", [");
+      for (String name : realNames) {
+        msg.append(name);
+        msg.append(", ");
+      }
+      msg.append("])");
+    }
+    else msg.append(", null)");
+    LogTools.debug(msg.toString());
+
     if (alias != null) {
       if (realNames == null) {
+        LogTools.debug("Removing mapping for " + alias);
         serverMap.remove(alias);
       }
       else {
@@ -1265,6 +1348,7 @@ public class FlexReader extends FormatReader {
   public static void mapServersFromConfigurationFile(String configFile)
     throws FormatException, IOException
   {
+    LogTools.debug("mapServersFromConfigurationFile(" + configFile + ")");
     Location file = new Location(configFile);
     if (!file.exists()) {
       throw new FormatException(
@@ -1273,6 +1357,7 @@ public class FlexReader extends FormatReader {
 
     String[] lines = DataTools.readFile(configFile).split("[\r\n]");
     for (String line : lines) {
+      LogTools.debug(line, 3);
       int eq = line.indexOf("=");
       if (eq == -1 || line.startsWith("#")) continue;
       String alias = line.substring(0, eq).trim();
