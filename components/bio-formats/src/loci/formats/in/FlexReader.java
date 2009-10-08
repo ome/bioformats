@@ -232,6 +232,9 @@ public class FlexReader extends FormatReader {
       filterSetMap = null;
       plateName = plateBarcode = null;
       nRows = nCols = 0;
+      flexFiles = null;
+      ifds = null;
+      wellNumber = null;
     }
   }
 
