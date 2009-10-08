@@ -844,12 +844,17 @@ public class FileStitcher implements IFormatReader {
     return reader.isSingleFile(id);
   }
 
-  /* @see IFormatReader#getDomains(String) */
-  public String[] getDomains(String id) throws FormatException, IOException {
-    return reader.getDomains(id);
+  /* @see IFormatReader#getPossibleDomains(String) */
+  public String[] getPossibleDomains(String id)
+    throws FormatException, IOException
+  {
+    return reader.getPossibleDomains(id);
   }
 
-  /* @see IFormatReader#
+  /* @see IFormatReader#getDomains(String) */
+  public String[] getDomains() {
+    return reader.getDomains();
+  }
 
   // -- IFormatHandler API methods --
 

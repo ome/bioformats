@@ -361,6 +361,9 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns the current file. */
   String getCurrentFile();
 
+  /** Returns the list of domains represented by the current file. */
+  String[] getDomains();
+
   /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
@@ -452,6 +455,6 @@ public interface IFormatReader extends IFormatHandler {
   boolean isSingleFile(String id) throws FormatException, IOException;
 
   /** Returns a list of scientific domains in which this format is used. */
-  String[] getDomains(String id) throws FormatException, IOException;
+  String[] getPossibleDomains(String id) throws FormatException, IOException;
 
 }

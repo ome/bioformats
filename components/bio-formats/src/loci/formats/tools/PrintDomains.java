@@ -57,7 +57,7 @@ public class PrintDomains {
 
     for (IFormatReader reader : readers) {
       try {
-        String[] readerDomains = reader.getDomains("");
+        String[] readerDomains = reader.getPossibleDomains("");
         for (String domain : readerDomains) {
           domains.get(domain).add(reader);
         }

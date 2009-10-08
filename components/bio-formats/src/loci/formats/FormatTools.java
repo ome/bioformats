@@ -176,6 +176,12 @@ public final class FormatTools {
    */
   public static final String GRAPHICS_DOMAIN = "Graphics";
 
+  /** List of non-HCS domains. */
+  public static final String[] NON_HCS_DOMAINS = new String[] {
+    LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, GRAPHICS_DOMAIN
+  };
+
   /** List of all supported domains. */
   public static final String[] ALL_DOMAINS = new String[] {
     HCS_DOMAIN, LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN,

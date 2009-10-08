@@ -65,6 +65,7 @@ public class OMETiffReader extends FormatReader {
   protected String[] used;
 
   private int lastPlane;
+  private boolean hasSPW;
 
   // -- Constructor --
 
@@ -123,6 +124,13 @@ public class OMETiffReader extends FormatReader {
     String comment = ifd.getComment();
     if (comment == null) return false;
     return comment.trim().endsWith("</OME>");
+  }
+
+  /* @see loci.formats.IFormatReader#getDomains() */
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
+      FormatTools.NON_HCS_DOMAINS;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -201,6 +209,8 @@ public class OMETiffReader extends FormatReader {
     ras.close();
     String xml = firstIFD.getComment();
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
+
+    hasSPW = meta.getPlateCount() > 0;
 
     Hashtable originalMetadata = MetadataTools.getOriginalMetadata(meta);
     if (originalMetadata != null) metadata = originalMetadata;

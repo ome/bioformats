@@ -88,6 +88,7 @@ public class OMEXMLReader extends FormatReader {
   private Vector<String> compression;
 
   private String omexml;
+  private boolean hasSPW = false;
 
   // -- Constructor --
 
@@ -104,6 +105,13 @@ public class OMEXMLReader extends FormatReader {
     final int blockLen = 64;
     String xml = stream.readString(blockLen);
     return xml.startsWith("<?xml") && xml.indexOf("<OME") >= 0;
+  }
+
+  /* @see loci.formats.IFormatReader#getDomains() */
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
+      FormatTools.NON_HCS_DOMAINS;
   }
 
   /**
@@ -217,6 +225,7 @@ public class OMEXMLReader extends FormatReader {
       binDataOffsets = null;
       binDataLengths = null;
       omexml = null;
+      hasSPW = false;
     }
   }
 
@@ -250,6 +259,8 @@ public class OMEXMLReader extends FormatReader {
         "OME-XML files. Please download it from " +
         "http://loci.wisc.edu/ome/formats-library.html");
     }
+
+    hasSPW = omexmlMeta.getPlateCount() > 0;
 
     Hashtable originalMetadata = MetadataTools.getOriginalMetadata(omexmlMeta);
     if (originalMetadata != null) metadata = originalMetadata;

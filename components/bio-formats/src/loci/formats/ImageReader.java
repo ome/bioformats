@@ -544,9 +544,16 @@ public class ImageReader implements IFormatReader {
     return getReader(id).isSingleFile(id);
   }
 
-  /* @see IFormatReader#getDomains(String) */
-  public String[] getDomains(String id) throws FormatException, IOException {
-    return getReader(id).getDomains(id);
+  /* @see IFormatReader#getPossibleDomains(String) */
+  public String[] getPossibleDomains(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).getPossibleDomains(id);
+  }
+
+  /* @see IFormatReader#getDomains() */
+  public String[] getDomains() {
+    return getReader().getDomains();
   }
 
   // -- IFormatHandler API methods --

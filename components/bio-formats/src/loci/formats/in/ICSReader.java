@@ -139,6 +139,7 @@ public class ICSReader extends FormatReader {
   private Vector<String> channelTypes;
 
   private int prevImage;
+  private boolean hasInstrumentData = false;
 
   // -- Constructor --
 
@@ -158,6 +159,20 @@ public class ICSReader extends FormatReader {
     boolean singleFile = f.readString(17).trim().equals("ics_version\t2.0");
     f.close();
     return singleFile;
+  }
+
+  /* @see loci.formats.IFormatReader#getDomains() */
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    String[] domain = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    if (getChannelDimLengths().length > 1) {
+      domain[0] = FormatTools.FLIM_DOMAIN;
+    }
+    else if (hasInstrumentData) {
+      domain[0] = FormatTools.LM_DOMAIN;
+    }
+
+    return domain;
   }
 
   /* @see loci.formats.IFormatReader#getChannelDimLengths() */
@@ -280,6 +295,8 @@ public class ICSReader extends FormatReader {
       gzip = false;
       invertY = false;
       lifetime = false;
+      prevImage = -1;
+      hasInstrumentData = false;
     }
   }
 
@@ -579,6 +596,10 @@ public class ICSReader extends FormatReader {
       line = reader.readString(NL);
     }
     reader.close();
+
+    hasInstrumentData = emWaves != null || exWaves != null || lensNA != null ||
+      stagePos != null || magnification != null || workingDistance != null ||
+      objectiveModel != null || immersion != null;
 
     addGlobalMeta("history text", textBlock.toString());
 

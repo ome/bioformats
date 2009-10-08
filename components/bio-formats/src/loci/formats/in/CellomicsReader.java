@@ -64,6 +64,12 @@ public class CellomicsReader extends FormatReader {
     return stream.readInt() == C01_MAGIC_BYTES;
   }
 
+  /* @see loci.formats.IFormatReader#getDomains() */
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    return new String[] {FormatTools.LM_DOMAIN};
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

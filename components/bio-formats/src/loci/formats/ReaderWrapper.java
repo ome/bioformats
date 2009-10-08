@@ -424,8 +424,14 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isSingleFile(id);
   }
 
-  public String[] getDomains(String id) throws FormatException, IOException {
-    return reader.getDomains(id);
+  public String[] getPossibleDomains(String id)
+    throws FormatException, IOException
+  {
+    return reader.getPossibleDomains(id);
+  }
+
+  public String[] getDomains() {
+    return reader.getDomains();
   }
 
   // -- IFormatHandler API methods --

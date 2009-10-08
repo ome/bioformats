@@ -886,8 +886,16 @@ public abstract class FormatReader extends FormatHandler
     return true;
   }
 
-  /* @see IFormatReader#getDomains(String) */
-  public String[] getDomains(String id) throws FormatException, IOException {
+  /* @see IFormatReader#getPossibleDomains(String) */
+  public String[] getPossibleDomains(String id)
+    throws FormatException, IOException
+  {
+    return domains;
+  }
+
+  /* @see IFormatReader#getDomains() */
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
     return domains;
   }
 

@@ -69,6 +69,7 @@ public class NiftiReader extends FormatReader {
   private RandomAccessInputStream pixelFile;
 
   private String pixelsFilename;
+  private short nDimensions;
 
   // -- Constructor --
 
@@ -76,7 +77,7 @@ public class NiftiReader extends FormatReader {
   public NiftiReader() {
     super("NIfTI", new String[] {"nii", "img", "hdr"});
     suffixSufficient = false;
-    domains = new String[] {FormatTools.MEDICAL_DOMAIN, FormatTools.LM_DOMAIN,
+    domains = new String[] {FormatTools.MEDICAL_DOMAIN,
       FormatTools.GRAPHICS_DOMAIN};
   }
 
@@ -112,6 +113,15 @@ public class NiftiReader extends FormatReader {
     stream.seek(344);
     String magic = stream.readString(3);
     return magic.equals("ni1") || magic.equals("n+1");
+  }
+
+  /* @see loci.formats.IFormatReader#getDomains() */
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    String[] domain = new String[1];
+    domain[0] = nDimensions <= 3 ?
+      FormatTools.GRAPHICS_DOMAIN : FormatTools.MEDICAL_DOMAIN;
+    return domain;
   }
 
   /**
@@ -152,6 +162,7 @@ public class NiftiReader extends FormatReader {
       pixelOffset = 0;
       pixelFile = null;
       pixelsFilename = null;
+      nDimensions = 0;
     }
   }
 
@@ -200,7 +211,7 @@ public class NiftiReader extends FormatReader {
 
     char sliceOrdering = in.readChar();
 
-    short nDimensions = in.readShort();
+    nDimensions = in.readShort();
     short x = in.readShort();
     short y = in.readShort();
     short z = in.readShort();
