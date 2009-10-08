@@ -84,7 +84,7 @@ public final class MDBParser {
   // -- Utility methods --
 
   /** Parses table structure for a specified MDB file. */
-  public static Vector<String[]>[] parseDatabase(String filename)
+  public synchronized static Vector<String[]>[] parseDatabase(String filename)
     throws FormatException
   {
     if (noMDB) throw new MissingLibraryException(NO_MDB_MSG);
