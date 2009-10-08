@@ -560,7 +560,7 @@ public class MIASReader extends FormatReader {
 
     status("Populating metadata hashtable");
 
-    if (resultFile != null) {
+    if (resultFile != null && isMetadataCollected()) {
       String[] cols = null;
       Vector<String> rows = new Vector<String>();
 
@@ -603,117 +603,119 @@ public class MIASReader extends FormatReader {
 
     // Populate MetadataStore
 
-    status("Populating MetadataStore");
+    if (isMetadataCollected()) {
+      status("Populating MetadataStore");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this, true);
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      MetadataTools.populatePixels(store, this, true);
 
-    store.setExperimentID("Experiment:" + experiment.getName(), 0);
-    store.setExperimentType("Other", 0);
+      store.setExperimentID("Experiment:" + experiment.getName(), 0);
+      store.setExperimentType("Other", 0);
 
-    // populate SPW metadata
-    store.setPlateColumnNamingConvention("1", 0);
-    store.setPlateRowNamingConvention("A", 0);
+      // populate SPW metadata
+      store.setPlateColumnNamingConvention("1", 0);
+      store.setPlateRowNamingConvention("A", 0);
 
-    parseTemplateFile(store);
+      parseTemplateFile(store);
 
-    plateName = plateName.substring(plateName.indexOf("-") + 1);
-    store.setPlateName(plateName, 0);
-    store.setPlateExternalIdentifier(plateName, 0);
+      plateName = plateName.substring(plateName.indexOf("-") + 1);
+      store.setPlateName(plateName, 0);
+      store.setPlateExternalIdentifier(plateName, 0);
 
-    // HACK: if we don't have the analysis file, we don't how many
-    // rows/columns are in the plate
-    //
-    // assume that a 96 well plate is 8x12, and a 384 well plate is 16x24
-    if (wellColumns == 0) {
-      if (nWells == 96) {
-        wellColumns = 12;
-      }
-      else if (nWells == 384) {
-        wellColumns = 24;
-      }
-      else {
-        warn("Could not determine the plate dimensions.");
-        wellColumns = 24;
-      }
-    }
-
-    for (int well=0; well<nWells; well++) {
-      int wellIndex = wellNumber[well];
-
-      int row = wellIndex / wellColumns;
-      int wellCol = (wellIndex % wellColumns) + 1;
-
-      store.setWellRow(new Integer(row), 0, well);
-      store.setWellColumn(new Integer(wellCol - 1), 0, well);
-
-      String imageID = MetadataTools.createLSID("Image", well);
-      store.setWellSampleImageRef(imageID, 0, well, 0);
-      store.setWellSampleIndex(new Integer(well), 0, well, 0);
-
-      // populate Image/Pixels metadata
-      store.setImageExperimentRef("Experiment:" + experiment.getName(), well);
-      char wellRow = (char) ('A' + row);
-
-      store.setImageID(imageID, well);
-      store.setImageName("Well " + wellRow + wellCol, well);
-
-      String instrumentID = MetadataTools.createLSID("Instrument", 0);
-      store.setInstrumentID(instrumentID, 0);
-      store.setImageInstrumentRef(instrumentID, well);
-
-      MetadataTools.setDefaultCreationDate(store, id, well);
-    }
-
-    // populate image-level ROIs
-    String[] colors = new String[getSizeC()];
-    int nextROI = 0;
-    for (AnalysisFile af : analysisFiles) {
-      String file = af.filename;
-      String name = new Location(file).getName();
-      if (!name.startsWith("Well")) continue;
-
-      int[] position = getPositionFromFile(file);
-      int well = position[0];
-
-      if (name.endsWith("detail.txt")) {
-        String data = DataTools.readFile(file);
-        String[] lines = data.split("\n");
-        int start = 0;
-        while (start < lines.length && !lines[start].startsWith("Label")) {
-          start++;
+      // HACK: if we don't have the analysis file, we don't how many
+      // rows/columns are in the plate
+      //
+      // assume that a 96 well plate is 8x12, and a 384 well plate is 16x24
+      if (wellColumns == 0) {
+        if (nWells == 96) {
+          wellColumns = 12;
         }
-        if (start >= lines.length) continue;
-
-        String[] columns = lines[start].split("\t");
-        List<String> columnNames = Arrays.asList(columns);
-
-        for (int j=start+1; j<lines.length; j++) {
-          populateROI(columnNames, lines[j].split("\t"), well,
-            nextROI++, position[1], position[2], store);
+        else if (nWells == 384) {
+          wellColumns = 24;
+        }
+        else {
+          warn("Could not determine the plate dimensions.");
+          wellColumns = 24;
         }
       }
-      else if (name.endsWith("AllModesOverlay.tif")) {
-        // original color for each channel is stored in
-        // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
-        if (colors[position[3]] != null) continue;
-        try {
-          colors[position[3]] = getChannelColorFromFile(file);
-        }
-        catch (IOException e) { }
-        if (colors[position[3]] == null) continue;
 
-        for (int s=0; s<getSeriesCount(); s++) {
-          store.setChannelComponentColorDomain(
-            colors[position[3]], s, position[3], 0);
+      for (int well=0; well<nWells; well++) {
+        int wellIndex = wellNumber[well];
+
+        int row = wellIndex / wellColumns;
+        int wellCol = (wellIndex % wellColumns) + 1;
+
+        store.setWellRow(new Integer(row), 0, well);
+        store.setWellColumn(new Integer(wellCol - 1), 0, well);
+
+        String imageID = MetadataTools.createLSID("Image", well);
+        store.setWellSampleImageRef(imageID, 0, well, 0);
+        store.setWellSampleIndex(new Integer(well), 0, well, 0);
+
+        // populate Image/Pixels metadata
+        store.setImageExperimentRef("Experiment:" + experiment.getName(), well);
+        char wellRow = (char) ('A' + row);
+
+        store.setImageID(imageID, well);
+        store.setImageName("Well " + wellRow + wellCol, well);
+
+        String instrumentID = MetadataTools.createLSID("Instrument", 0);
+        store.setInstrumentID(instrumentID, 0);
+        store.setImageInstrumentRef(instrumentID, well);
+
+        MetadataTools.setDefaultCreationDate(store, id, well);
+      }
+
+      // populate image-level ROIs
+      String[] colors = new String[getSizeC()];
+      int nextROI = 0;
+      for (AnalysisFile af : analysisFiles) {
+        String file = af.filename;
+        String name = new Location(file).getName();
+        if (!name.startsWith("Well")) continue;
+
+        int[] position = getPositionFromFile(file);
+        int well = position[0];
+
+        if (name.endsWith("detail.txt")) {
+          String data = DataTools.readFile(file);
+          String[] lines = data.split("\n");
+          int start = 0;
+          while (start < lines.length && !lines[start].startsWith("Label")) {
+            start++;
+          }
+          if (start >= lines.length) continue;
+
+          String[] columns = lines[start].split("\t");
+          List<String> columnNames = Arrays.asList(columns);
+
+          for (int j=start+1; j<lines.length; j++) {
+            populateROI(columnNames, lines[j].split("\t"), well,
+              nextROI++, position[1], position[2], store);
+          }
         }
-        if (position[3] == 0) {
+        else if (name.endsWith("AllModesOverlay.tif")) {
+          // original color for each channel is stored in
+          // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
+          if (colors[position[3]] != null) continue;
+          try {
+            colors[position[3]] = getChannelColorFromFile(file);
+          }
+          catch (IOException e) { }
+          if (colors[position[3]] == null) continue;
+
+          for (int s=0; s<getSeriesCount(); s++) {
+            store.setChannelComponentColorDomain(
+              colors[position[3]], s, position[3], 0);
+          }
+          if (position[3] == 0) {
+            nextROI += parseMasks(store, well, nextROI, file);
+          }
+        }
+        else if (name.endsWith("overlay.tif")) {
           nextROI += parseMasks(store, well, nextROI, file);
         }
-      }
-      else if (name.endsWith("overlay.tif")) {
-        nextROI += parseMasks(store, well, nextROI, file);
       }
     }
   }
