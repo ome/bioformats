@@ -1169,7 +1169,12 @@ public class LeicaReader extends FormatReader {
         }
         else if (tokens[2].equals("Stain")) {
           if (activeChannelIndices.contains(new Integer(channel))) {
-            channelNames[series].add(data);
+            int nNames = channelNames[series].size();
+            String prevValue = nNames == 0 ? "" :
+              (String) channelNames[series].get(nNames - 1);
+            if (!prevValue.equals(data)) {
+              channelNames[series].add(data);
+            }
           }
         }
       }
