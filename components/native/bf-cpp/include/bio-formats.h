@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via JaceHeaderAutogen on Oct 2, 2009 8:39:17 AM CDT
+ * Created by curtis via JaceHeaderAutogen on Oct 8, 2009 11:52:54 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,6 +58,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/formats/ImageWriter.h"
 #include "jace/proxy/loci/formats/MetadataTools.h"
 #include "jace/proxy/loci/formats/MinMaxCalculator.h"
+#include "jace/proxy/loci/formats/MissingLibraryException.h"
 #include "jace/proxy/loci/formats/NetcdfTools.h"
 #include "jace/proxy/loci/formats/NumberFilter.h"
 #include "jace/proxy/loci/formats/POITools.h"
