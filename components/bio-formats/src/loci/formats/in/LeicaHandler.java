@@ -81,8 +81,8 @@ public class LeicaHandler extends DefaultHandler {
   private long firstStamp = 0;
 
   private Hashtable<Integer, String> bytesPerAxis;
-  private int multiBandIndex = 0;
-  private int nMultiBands = 0;
+  private Vector<MultiBand> multiBands = new Vector<MultiBand>();
+  private Vector<Detector> detectors = new Vector<Detector>();
 
   // -- Constructor --
 
@@ -188,6 +188,7 @@ public class LeicaHandler extends DefaultHandler {
       detectorIndices.clear();
     }
     else if (qName.equals("Element")) {
+      multiBands.clear();
       nextLaser = 0;
       nextDetector = -1;
       nextROI = 0;
@@ -209,6 +210,7 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("FilterSetting")) {
       nextChannel = 0;
+      nextFilter = 0;
     }
     else if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = true;
@@ -269,8 +271,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("Image")) {
       core.add(new CoreMetadata());
       numDatasets++;
-      if (nMultiBands == 0) nMultiBands = multiBandIndex;
-      multiBandIndex = 0;
+      detectors.clear();
       nextFilter = 0;
       String name = elementName;
       if (collection != null) name = collection + "/" + name;
@@ -446,25 +447,21 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
-          nextDetector++;
-          String id =
-            MetadataTools.createLSID("Detector", numDatasets, nextDetector);
-          store.setDetectorID(id, numDatasets, nextDetector);
-          store.setDetectorModel(object, numDatasets, nextDetector);
-          store.setDetectorType("PMT", numDatasets, nextDetector);
-          store.setDetectorZoom(zoom, numDatasets, nextDetector);
-          if (variant.equals("Active")) {
-            if (nextChannel >= coreMeta.sizeC) nextChannel = 0;
-            store.setDetectorSettingsDetector(id, numDatasets, nextChannel++);
-          }
+          Detector d = new Detector();
+          d.channel = Integer.parseInt(attributes.getValue("Data"));
+          d.type = "PMT";
+          d.model = object;
+          d.active = variant.equals("Active");
+          d.zoom = zoom;
+          detectors.add(d);
         }
         else if (attribute.equals("HighVoltage")) {
-          store.setDetectorVoltage(
-            new Float(variant), numDatasets, nextDetector);
+          Detector d = detectors.get(detectors.size() - 1);
+          d.voltage = new Float(variant);
         }
         else if (attribute.equals("VideoOffset")) {
-          store.setDetectorOffset(
-            new Float(variant), numDatasets, nextDetector);
+          Detector d = detectors.get(detectors.size() - 1);
+          d.offset = new Float(variant);
         }
       }
       else if (attribute.equals("Objective")) {
@@ -573,24 +570,59 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("Detector")) {
       Float gain = new Float(attributes.getValue("Gain"));
       Float offset = new Float(attributes.getValue("Offset"));
-      int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
       boolean active = attributes.getValue("IsActive").equals("1");
 
-      if (channel > 0 && active) {
-        int d = channel - 1;
-        int sizeC = core.get(numDatasets).sizeC;
-        if (index >= sizeC) d = sizeC - 1;
+      if (active) {
+        // find the corresponding MultiBand and Detector
+        MultiBand m = null;
+        Detector detector = null;
+        int channel = Integer.parseInt(attributes.getValue("Channel"));
 
-        store.setDetectorSettingsGain(gain, numDatasets, d);
-        store.setDetectorSettingsOffset(offset, numDatasets, d);
+        for (MultiBand mb : multiBands) {
+          if (mb.channel == channel) {
+            m = mb;
+            break;
+          }
+        }
 
-        int detectorIndex = nextDetector < 0 ? 0 : nextDetector;
-        String detectorID =
-          MetadataTools.createLSID("Detector", numDatasets, d);
-        store.setDetectorSettingsDetector(detectorID, numDatasets, d);
+        for (Detector d : detectors) {
+          if (d.channel == channel) {
+            detector = d;
+            break;
+          }
+        }
 
-        detectorIndices.add(new Integer(index));
-        nextDetector++;
+        if (m != null) {
+          store.setLogicalChannelName(m.dyeName, numDatasets, nextChannel);
+
+          String filter =
+            MetadataTools.createLSID("Filter", numDatasets, nextFilter);
+          store.setFilterID(filter, numDatasets, nextFilter);
+          store.setTransmittanceRangeCutIn(new Integer(m.cutIn), numDatasets,
+            nextFilter);
+          store.setTransmittanceRangeCutOut(new Integer(m.cutOut), numDatasets,
+            nextFilter);
+          store.setLogicalChannelSecondaryEmissionFilter(filter, numDatasets,
+            nextChannel);
+          nextFilter++;
+
+          String id =
+            MetadataTools.createLSID("Detector", numDatasets, nextChannel);
+          store.setDetectorID(id, numDatasets, nextChannel);
+          store.setDetectorSettingsGain(gain, numDatasets, nextChannel);
+          store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
+          store.setDetectorSettingsDetector(id, numDatasets, nextChannel);
+          if (detector != null) {
+            store.setDetectorType(detector.type, numDatasets, nextChannel);
+            store.setDetectorModel(detector.model, numDatasets, nextChannel);
+            store.setDetectorZoom(detector.zoom, numDatasets, nextChannel);
+            store.setDetectorOffset(detector.offset, numDatasets, nextChannel);
+            store.setDetectorVoltage(detector.voltage, numDatasets,
+              nextChannel);
+          }
+        }
+
+        nextChannel++;
       }
     }
     else if (qName.equals("LaserLineSetting")) {
@@ -678,35 +710,14 @@ public class LeicaHandler extends DefaultHandler {
       alternateCenter = true;
     }
     else if (qName.equals("MultiBand")) {
-      int sizeC = core.get(numDatasets).sizeC;
-      if (nextChannel >= sizeC) nextChannel = 0;
-
-      String channelName = attributes.getValue("DyeName");
-      int left = Math.round(Float.parseFloat(attributes.getValue("LeftWorld")));
-      int right =
+      MultiBand m = new MultiBand();
+      m.dyeName = attributes.getValue("DyeName");
+      m.channel = Integer.parseInt(attributes.getValue("Channel"));
+      m.cutIn = Math.round(Float.parseFloat(attributes.getValue("LeftWorld")));
+      m.cutOut =
         Math.round(Float.parseFloat(attributes.getValue("RightWorld")));
-      int index = Integer.parseInt(attributes.getValue("Channel")) - 1;
 
-      String filter =
-        MetadataTools.createLSID("Filter", numDatasets, nextFilter);
-      store.setFilterID(filter, numDatasets, nextFilter);
-      store.setFilterType("Other", numDatasets, nextFilter);
-      store.setTransmittanceRangeCutIn(
-        new Integer(left), numDatasets, nextFilter);
-      store.setTransmittanceRangeCutOut(
-        new Integer(right), numDatasets, nextFilter);
-
-      if (!channelName.equals("None") && index < sizeC &&
-        multiBandIndex == (nMultiBands + 1) * index)
-      {
-        store.setLogicalChannelName(channelName, numDatasets, index);
-        store.setLogicalChannelSecondaryEmissionFilter(
-          filter, numDatasets, index);
-      }
-
-      nextChannel++;
-      nextFilter++;
-      multiBandIndex++;
+      multiBands.add(m);
     }
     else count = 0;
     storeSeriesHashtable(numDatasets, h);
@@ -869,6 +880,25 @@ public class LeicaHandler extends DefaultHandler {
       return Float.parseFloat(number);
     }
     return 0f;
+  }
+
+  // -- Helper classes --
+
+  class MultiBand {
+    public int channel;
+    public int cutIn;
+    public int cutOut;
+    public String dyeName;
+  }
+
+  class Detector {
+    public int channel;
+    public Float zoom;
+    public String type;
+    public String model;
+    public boolean active;
+    public Float voltage;
+    public Float offset;
   }
 
 }
