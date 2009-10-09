@@ -83,6 +83,7 @@ public class LeicaHandler extends DefaultHandler {
   private Hashtable<Integer, String> bytesPerAxis;
   private Vector<MultiBand> multiBands = new Vector<MultiBand>();
   private Vector<Detector> detectors = new Vector<Detector>();
+  private Vector<Laser> lasers = new Vector<Laser>();
 
   // -- Constructor --
 
@@ -272,6 +273,7 @@ public class LeicaHandler extends DefaultHandler {
       core.add(new CoreMetadata());
       numDatasets++;
       detectors.clear();
+      lasers.clear();
       nextFilter = 0;
       String name = elementName;
       if (collection != null) name = collection + "/" + name;
@@ -576,6 +578,7 @@ public class LeicaHandler extends DefaultHandler {
         // find the corresponding MultiBand and Detector
         MultiBand m = null;
         Detector detector = null;
+        Laser laser = lasers.size() == 0 ? null : lasers.get(lasers.size() - 1);
         int channel = Integer.parseInt(attributes.getValue("Channel"));
 
         for (MultiBand mb : multiBands) {
@@ -622,30 +625,34 @@ public class LeicaHandler extends DefaultHandler {
           }
         }
 
+        if (laser != null && laser.intensity > 0f) {
+          store.setLightSourceSettingsLightSource(laser.id, numDatasets,
+            nextChannel);
+          store.setLightSourceSettingsAttenuation(
+            new Float(laser.intensity / 100f), numDatasets, nextChannel);
+          store.setLogicalChannelExWave(laser.wavelength, numDatasets,
+            nextChannel);
+        }
+
         nextChannel++;
       }
     }
     else if (qName.equals("LaserLineSetting")) {
-      Integer wavelength = new Integer(attributes.getValue("LaserLine"));
-      int index = Integer.parseInt(attributes.getValue("LineIndex"));
+      Laser l = new Laser();
+      l.index = Integer.parseInt(attributes.getValue("LineIndex"));
       int qualifier = Integer.parseInt(attributes.getValue("Qualifier"));
-      index += (2 - (qualifier / 10));
-      if (index < 0) index = 0;
-      String id = MetadataTools.createLSID("LightSource", numDatasets, index);
-      store.setLightSourceID(id, numDatasets, index);
-      store.setLaserWavelength(wavelength, numDatasets, index);
-      store.setLaserType("Unknown", numDatasets, index);
-      store.setLaserLaserMedium("Unknown", numDatasets, index);
+      l.index += (2 - (qualifier / 10));
+      if (l.index < 0) l.index = 0;
+      l.id = MetadataTools.createLSID("LightSource", numDatasets, l.index);
+      l.wavelength = new Integer(attributes.getValue("LaserLine"));
+      store.setLightSourceID(l.id, numDatasets, l.index);
+      store.setLaserWavelength(l.wavelength, numDatasets, l.index);
+      store.setLaserType("Unknown", numDatasets, l.index);
+      store.setLaserLaserMedium("Unknown", numDatasets, l.index);
 
-      float intensity = Float.parseFloat(attributes.getValue("IntensityDev"));
-      if (intensity > 0f && channel >= 0) {
-        if (channel >= core.get(numDatasets).sizeC) channel = 0;
-        store.setLightSourceSettingsLightSource(id, numDatasets, channel);
-        store.setLightSourceSettingsAttenuation(
-          new Float(intensity / 100f), numDatasets, channel);
-        store.setLogicalChannelExWave(wavelength, numDatasets, channel);
-        channel++;
-      }
+      l.intensity = Float.parseFloat(attributes.getValue("IntensityDev"));
+
+      if (l.intensity > 0) lasers.add(l);
     }
     else if (qName.equals("TimeStamp")) {
       long high = Long.parseLong(attributes.getValue("HighInteger"));
@@ -899,6 +906,13 @@ public class LeicaHandler extends DefaultHandler {
     public boolean active;
     public Float voltage;
     public Float offset;
+  }
+
+  class Laser {
+    public Integer wavelength;
+    public float intensity;
+    public String id;
+    public int index;
   }
 
 }
