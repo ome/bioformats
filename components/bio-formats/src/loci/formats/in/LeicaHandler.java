@@ -595,6 +595,9 @@ public class LeicaHandler extends DefaultHandler {
           }
         }
 
+        String id =
+          MetadataTools.createLSID("Detector", numDatasets, nextChannel);
+
         if (m != null) {
           store.setLogicalChannelName(m.dyeName, numDatasets, nextChannel);
 
@@ -609,20 +612,23 @@ public class LeicaHandler extends DefaultHandler {
             nextChannel);
           nextFilter++;
 
-          String id =
-            MetadataTools.createLSID("Detector", numDatasets, nextChannel);
           store.setDetectorID(id, numDatasets, nextChannel);
           store.setDetectorSettingsGain(gain, numDatasets, nextChannel);
           store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
           store.setDetectorSettingsDetector(id, numDatasets, nextChannel);
-          if (detector != null) {
-            store.setDetectorType(detector.type, numDatasets, nextChannel);
-            store.setDetectorModel(detector.model, numDatasets, nextChannel);
-            store.setDetectorZoom(detector.zoom, numDatasets, nextChannel);
-            store.setDetectorOffset(detector.offset, numDatasets, nextChannel);
-            store.setDetectorVoltage(detector.voltage, numDatasets,
-              nextChannel);
-          }
+        }
+
+        if (detector != null) {
+          store.setDetectorID(id, numDatasets, nextChannel);
+          store.setDetectorSettingsGain(gain, numDatasets, nextChannel);
+          store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
+          store.setDetectorSettingsDetector(id, numDatasets, nextChannel);
+          store.setDetectorType(detector.type, numDatasets, nextChannel);
+          store.setDetectorModel(detector.model, numDatasets, nextChannel);
+          store.setDetectorZoom(detector.zoom, numDatasets, nextChannel);
+          store.setDetectorOffset(detector.offset, numDatasets, nextChannel);
+          store.setDetectorVoltage(detector.voltage, numDatasets,
+            nextChannel);
         }
 
         if (laser != null && laser.intensity > 0f) {
