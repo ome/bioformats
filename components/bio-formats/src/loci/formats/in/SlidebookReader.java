@@ -463,7 +463,7 @@ public class SlidebookReader extends FormatReader {
     // populate Image data
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(imageNames[i], i);
+      if (imageNames[i] != null) store.setImageName(imageNames[i], i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
@@ -477,7 +477,7 @@ public class SlidebookReader extends FormatReader {
         idx += core[q].sizeC;
       }
 
-      if (idx < pixelSizeZ.size()) {
+      if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
         store.setDimensionsPhysicalSizeZ(pixelSizeZ.get(idx), i, 0);
       }
     }
@@ -487,11 +487,11 @@ public class SlidebookReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       for (int c=0; c<getSizeC(); c++) {
-        if (index < channelNames.size()) {
+        if (index < channelNames.size() && channelNames.get(index) != null) {
           store.setLogicalChannelName(channelNames.get(index), i, c);
           addSeriesMeta("channel " + c, channelNames.get(index));
         }
-        if (index < ndFilters.size()) {
+        if (index < ndFilters.size() && ndFilters.get(index) != null) {
           store.setLogicalChannelNdFilter(ndFilters.get(index), i, c);
           addSeriesMeta("channel " + c + " Neutral density",
             ndFilters.get(index));
