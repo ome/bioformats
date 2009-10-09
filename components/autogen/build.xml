@@ -55,13 +55,13 @@ the latest release of the OME-XML schema. E.g.:
       classpath="${classes.dir}:${component.runtime-cp}"
       fork="true" dir="${component.jace-header-dir}">
       <arg value="bio-formats"/>
-      <arg value="../../../bio-formats/src"/>
+      <arg value="${root.dir}/components/bio-formats/src"/>
     </java>
     <java classname="${component.jace-header-class}"
       classpath="${classes.dir}:${component.runtime-cp}"
       fork="true" dir="${component.jace-header-dir}">
       <arg value="loci-common"/>
-      <arg value="../../../common/src"/>
+      <arg value="${root.dir}/components/common/src"/>
     </java>
   </target>
 

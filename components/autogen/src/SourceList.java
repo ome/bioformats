@@ -58,6 +58,7 @@ public class SourceList {
 
   /** Changes the list to correspond to the given root directory. */
   public void setRoot(String rootDir) {
+    rootDir = rootDir.replace(File.separatorChar, '/'); // Windows stupidity
     this.rootDir = rootDir;
     files.removeAllElements();
     listFiles(new File(rootDir));
@@ -78,10 +79,10 @@ public class SourceList {
     for (File f : list) {
       if (f.isDirectory()) listFiles(f);
       String path = f.getPath();
+      path = path.replace(File.separatorChar, '/'); // Windows stupidity
       if (!path.startsWith(rootDir)) continue;
       if (!path.toLowerCase().endsWith(".java")) continue;
       path = path.substring(rootDir.length() + 1); // relative to root path
-      path = path.replace(File.separatorChar, '/'); // Windows stupidity
       files.add(path);
     }
   }
