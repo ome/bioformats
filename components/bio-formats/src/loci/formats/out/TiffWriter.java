@@ -32,6 +32,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTTiffTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -157,10 +158,26 @@ public class TiffWriter extends FormatWriter {
       FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
+    int plane = width * height * c * bytesPerPixel;
+    if (plane > buf.length) {
+      c = buf.length / (width * height * bytesPerPixel);
+      plane = width * height * c * bytesPerPixel;
+    }
+
+    if (bytesPerPixel > 1 && c != 1 && c != 3) {
+      // split channels
+      for (int i=0; i<c; i++) {
+        byte[] b = ImageTools.splitChannels(buf, i, c, bytesPerPixel,
+          false, interleaved);
+
+        saveBytes(b, ifd, series, lastInSeries && i == c - 1,
+          last && i == c - 1);
+      }
+      return;
+    }
+
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
-
-    int plane = width * height * c * bytesPerPixel;
 
     if (!isBigTiff) {
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
