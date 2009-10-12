@@ -160,6 +160,8 @@ public class JPEG2000Codec extends BaseCodec {
     catch (Throwable t) {
       noJ2k = true;
       LogTools.trace(t);
+      throw new MissingLibraryException(
+        "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
     }
     return ru;
   }
