@@ -103,7 +103,14 @@
 			<xsd:attribute name="Transform" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING - definition
+						This is a matrix used to transform the the shape.
+						It is a string of 6 numbers "a, b, c, d, e, f" that
+						represent the 3 by 3 matrix.
+						--       --
+						| a, c, e |
+						| b, c, f |
+						| 0, 0, 1 |
+						--       --
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -417,7 +424,7 @@
 			<xsd:attribute name="Fill" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The colour of the fill.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -425,14 +432,14 @@
 			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The colour of the stroke.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						The width of the stroke in pixels
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -472,7 +479,7 @@
 			<xsd:attribute name="FontSize" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						Size of the font in points
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
