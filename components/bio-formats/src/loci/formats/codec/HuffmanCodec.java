@@ -107,6 +107,7 @@ public class HuffmanCodec extends BaseCodec {
     Decoder decoder = new Decoder(huffman.table);
 
     int bitCount = decoder.decode(bb);
+    if (bitCount < 0) bitCount = 0;
     int v = bb.getBits(bitCount) & ((int) Math.pow(2, bitCount) - 1);
     if ((v & (1 << (bitCount - 1))) == 0) {
       v -= (1 << bitCount) - 1;
