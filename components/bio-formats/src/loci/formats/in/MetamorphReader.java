@@ -499,6 +499,15 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
+    if (getSizeZ() * getSizeT() * (isRGB() ? 1 : getSizeC()) != getImageCount())
+    {
+      for (int i=0; i<getSeriesCount(); i++) {
+        core[i].sizeZ = getImageCount();
+        core[i].sizeT = 1;
+        if (!isRGB()) core[i].sizeC = 1;
+      }
+    }
+
     Vector<String> timestamps = null;
     MetamorphHandler handler = null;
 
