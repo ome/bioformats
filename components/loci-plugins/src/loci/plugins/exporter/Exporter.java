@@ -62,6 +62,7 @@ import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
 import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
+import loci.plugins.util.WindowTools;
 
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
@@ -185,16 +186,6 @@ public class Exporter {
     }
 
     try {
-      IFormatWriter w = new ImageWriter().getWriter(outfile);
-      FileInfo fi = imp.getOriginalFileInfo();
-      String xml = fi == null ? null : fi.description == null ? null :
-        fi.description.indexOf("xml") == -1 ? null : fi.description;
-      IMetadata store = MetadataTools.createOMEXMLMetadata(xml);
-      if (store == null) IJ.error("OME-XML Java library not found.");
-      if (xml == null) {
-        store.createRoot();
-      }
-
       int ptype = 0;
       int channels = 1;
       switch (imp.getType()) {
@@ -213,22 +204,57 @@ public class Exporter {
           ptype = FormatTools.FLOAT;
           break;
       }
+      String title = imp.getTitle();
 
-      if (store.getPixelsSizeX(0, 0) == null) {
-        store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
+      IFormatWriter w = new ImageWriter().getWriter(outfile);
+      FileInfo fi = imp.getOriginalFileInfo();
+      String xml = fi == null ? null : fi.description == null ? null :
+        fi.description.indexOf("xml") == -1 ? null : fi.description;
+      IMetadata store = MetadataTools.createOMEXMLMetadata(xml);
+      if (store == null) IJ.error("OME-XML Java library not found.");
+      if (xml == null) {
+        store.createRoot();
       }
-      if (store.getPixelsSizeY(0, 0) == null) {
-        store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
+      else if (store.getImageCount() > 1) {
+        // the original dataset had multiple series
+        // we need to modify the IMetadata to represent the correct series
+        for (int series=0; series<store.getImageCount(); series++) {
+          String type = store.getPixelsPixelType(series, 0);
+          int pixelType = FormatTools.pixelTypeFromString(type);
+          if (pixelType == ptype) {
+            String imageName = store.getImageName(series);
+            if (title.indexOf(imageName) != -1) {
+              // found the correct series
+
+              int start = 0, end = 0;
+              StringBuffer newXML = new StringBuffer();
+
+              for (int i=0; i<store.getImageCount(); i++) {
+                start = xml.indexOf("<Image", i == 0 ? 0 : end);
+                String prefix = xml.substring(end, start);
+                end = xml.indexOf("</Image>", start) + 9;
+
+                newXML.append(prefix);
+                if (i == series) {
+                  newXML.append(xml.substring(start, end));
+                }
+              }
+              newXML.append(xml.substring(end));
+
+              store = MetadataTools.createOMEXMLMetadata(newXML.toString());
+
+              break;
+            }
+          }
+        }
       }
-      if (store.getPixelsSizeZ(0, 0) == null) {
-        store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
-      }
-      if (store.getPixelsSizeC(0, 0) == null) {
-        store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
-      }
-      if (store.getPixelsSizeT(0, 0) == null) {
-        store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
-      }
+
+      store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
+      store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
+      store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
+      store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
+      store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
+
       if (store.getPixelsPixelType(0, 0) == null) {
         store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
       }
@@ -384,16 +410,10 @@ public class Exporter {
       w.close();
     }
     catch (FormatException e) {
-      e.printStackTrace();
-      ByteArrayOutputStream buf = new ByteArrayOutputStream();
-      e.printStackTrace(new PrintStream(buf));
-      IJ.error(e.getMessage() + ":\n" + buf.toString());
+      WindowTools.reportException(e);
     }
     catch (IOException e) {
-      e.printStackTrace();
-      ByteArrayOutputStream buf = new ByteArrayOutputStream();
-      e.printStackTrace(new PrintStream(buf));
-      IJ.error(e.getMessage() + ":\n" + buf.toString());
+      WindowTools.reportException(e);
     }
   }
 
