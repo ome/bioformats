@@ -172,25 +172,21 @@ public class LegacyQTWriter extends FormatWriter {
 
         r.exec("movFile = new QTFile(path)");
         r.exec("kMoviePlayer = StdQTConstants.kMoviePlayer");
-        r.exec("resFlag = StdQTConstants.createMovieFileDontCreateResFile");
-        r.exec("movie = Movie.createMovieFile(movFile, kMoviePlayer, resFlag)");
-        int timeScale = TIME_SCALE;
-        r.setVar("timeScale", timeScale);
+        int resFlag = ((Integer)
+          r.exec("StdQTConstants.createMovieFileDontCreateResFile")).intValue();
+        r.setVar("flags", resFlag);
+        r.exec("movie = Movie.createMovieFile(movFile, kMoviePlayer, flags)");
+        r.setVar("timeScale", TIME_SCALE);
         r.setVar("zero", 0);
         r.setVar("zeroFloat", (float) 0);
         r.exec("videoTrack = movie.addTrack(width, height, zeroFloat)");
         r.exec("videoMedia = new VideoMedia(videoTrack, timeScale)");
         r.exec("videoMedia.beginEdits()");
 
-        r.setVar("pixelFormat", 32);
-        r.exec("imgDesc2 = new ImageDescription(pixelFormat)");
         r.setVar("width", width);
         r.setVar("height", height);
-        r.exec("imgDesc2.setWidth(width)");
-        r.exec("imgDesc2.setHeight(height)");
-
-        r.exec("gw = new QDGraphics(imgDesc2, zero)");
         r.exec("bounds = new QDRect(zero, zero, width, height)");
+        r.exec("gw = new QDGraphics(bounds)");
 
         r.exec("pixMap = gw.getPixMap()");
         r.exec("pixSize = pixMap.getPixelSize()");
@@ -222,7 +218,6 @@ public class LegacyQTWriter extends FormatWriter {
     numWritten++;
 
     try {
-      r.exec("pixMap = gw.getPixMap()");
       r.exec("pixelData = pixMap.getPixelData()");
 
       r.exec("intsPerRow = pixelData.getRowBytes()");
@@ -268,21 +263,22 @@ public class LegacyQTWriter extends FormatWriter {
       r.setVar("len", intsPerRow * height);
 
       r.exec("pixelData.copyFromArray(zero, pixels2, zero, len)");
-      r.setVar("four", 4);
-      r.exec("cfInfo = seq.compressFrame(gw, bounds, four, compressedImage)");
+      r.exec("flags = StdQTConstants.codecFlagUpdatePrevious");
+      r.exec("cfInfo = seq.compressFrame(gw, bounds, flags, compressedImage)");
 
       // see developer.apple.com/qa/qtmcc/qtmcc20.html
       r.exec("similarity = cfInfo.getSimilarity()");
       int sim = ((Integer) r.getVar("similarity")).intValue();
-      r.setVar("syncSample", sim == 0);
+      boolean sync = sim == 0;
       r.exec("dataSize = cfInfo.getDataSize()");
       r.setVar("fps", fps);
-      r.setVar("frameRate", 600);
-      r.setVar("rate", 600 / fps);
-      boolean sync = ((Boolean) r.getVar("syncSample")).booleanValue();
-      int syncSample = sync ? 0 : 1;
+      r.setVar("frameRate", TIME_SCALE);
+      r.setVar("rate", TIME_SCALE / fps);
 
-      r.setVar("sync", syncSample);
+      if (sync) {
+        r.setVar("sync", 0);
+      }
+      else r.exec("sync = StdQTConstants.mediaSampleNotSync");
       r.setVar("one", 1);
       r.exec("videoMedia.addSample(imageHandle, zero, dataSize, " +
         "rate, imgDesc, one, sync)");
@@ -299,14 +295,15 @@ public class LegacyQTWriter extends FormatWriter {
         r.exec("videoTrack.insertMedia(zero, zero, duration, floatOne)");
         r.exec("omf = OpenMovieFile.asWrite(movFile)");
         r.exec("name = movFile.getName()");
-        r.setVar("minusOne", -1);
-        r.exec("movie.addResource(omf, minusOne, name)");
+        r.exec("flags = StdQTConstants.movieInDataForkResID");
+        r.exec("movie.addResource(omf, flags, name)");
         r.exec("QTSession.close()");
       }
       catch (ReflectException e) {
         trace(e);
         throw new FormatException("Legacy QuickTime writer failed", e);
       }
+      close();
     }
   }
 

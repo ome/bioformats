@@ -295,7 +295,7 @@ public class ICSReader extends FormatReader {
       gzip = false;
       invertY = false;
       lifetime = false;
-      prevImage = -1;
+      prevImage = 0;
       hasInstrumentData = false;
     }
   }
@@ -660,6 +660,11 @@ public class ICSReader extends FormatReader {
         }
         else channelTypes.add("");
       }
+    }
+
+    if (channelLengths.size() == 0) {
+      channelLengths.add(new Integer(1));
+      channelTypes.add(FormatTools.CHANNEL);
     }
 
     if (getDimensionOrder().indexOf("Z") == -1) {

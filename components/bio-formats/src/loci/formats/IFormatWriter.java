@@ -116,6 +116,9 @@ public interface IFormatWriter extends IFormatHandler {
   /** Gets the supported pixel types. */
   int[] getPixelTypes();
 
+  /** Gets the supported pixel types for the given codec. */
+  int[] getPixelTypes(String codec);
+
   /** Checks if the given pixel type is supported. */
   boolean isSupportedType(int type);
 

@@ -42,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Log;
 import loci.common.LogTools;
 import loci.formats.FormatException;
@@ -135,8 +136,12 @@ public class FormatWriterTest {
       for (int q=0; q<compressionTypes.length; q++) {
         try {
           IFormatWriter w = (IFormatWriter) writers[i].getClass().newInstance();
-          w.setCompression(compressionTypes[q]);
-          tmp.add(w);
+          if (DataTools.containsValue(w.getPixelTypes(compressionTypes[q]),
+            reader.getPixelType()))
+          {
+            w.setCompression(compressionTypes[q]);
+            tmp.add(w);
+          }
         }
         catch (FormatException fe) { }
         catch (InstantiationException ie) { }

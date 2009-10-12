@@ -192,6 +192,11 @@ public abstract class FormatWriter extends FormatHandler
       FormatTools.FLOAT};
   }
 
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
+    return getPixelTypes();
+  }
+
   /* @see IFormatWriter#isSupportedType(int) */
   public boolean isSupportedType(int type) {
     int[] types = getPixelTypes();

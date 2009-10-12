@@ -207,6 +207,14 @@ public class TiffWriter extends FormatWriter {
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
   public boolean canDoStacks() { return true; }
 
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
+    if (codec.startsWith("J2K") || codec.equals("JPEG")) {
+      return new int[] {FormatTools.INT8, FormatTools.UINT8};
+    }
+    return super.getPixelTypes(codec);
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */

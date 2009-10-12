@@ -230,6 +230,7 @@ public final class ImageConverter {
 
   public static void main(String[] args) throws FormatException, IOException {
     if (!testConvert(new ImageWriter(), args)) System.exit(1);
+    System.exit(0);
   }
 
 }

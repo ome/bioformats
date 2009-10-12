@@ -264,6 +264,11 @@ public class ImageWriter implements IFormatWriter {
     return getWriter().getPixelTypes();
   }
 
+  /* @see IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
+    return getWriter().getPixelTypes(codec);
+  }
+
   /* @see IFormatWriter#isSupportedType(int) */
   public boolean isSupportedType(int type) {
     return getWriter().isSupportedType(type);

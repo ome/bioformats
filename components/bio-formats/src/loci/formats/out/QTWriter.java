@@ -171,9 +171,6 @@ public class QTWriter extends FormatWriter {
     if (legacy == null) legacy = new LegacyQTWriter();
 
     if (needLegacy) {
-      legacy.close();
-      legacy.setMetadataRetrieve(getMetadataRetrieve());
-      legacy.setId(currentId);
       legacy.saveBytes(buf, last);
       return;
     }
@@ -197,27 +194,6 @@ public class QTWriter extends FormatWriter {
       warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = samples == null ? 1 : samples.intValue();
-
-    // invert each pixel
-    // this will makes the colors look right in other readers (e.g. xine),
-    // but needs to be reversed in QTReader
-
-    if (nChannels == 1 && bytesPerPixel == 1) {
-      for (int i=0; i<buf.length; i++) {
-        buf[i] = (byte) (255 - buf[i]);
-      }
-    }
-
-    if (!interleaved) {
-      // need to write interleaved data
-      byte[] tmp = new byte[buf.length];
-      System.arraycopy(buf, 0, tmp, 0, buf.length);
-      for (int i=0; i<buf.length; i++) {
-        int c = i / (width * height);
-        int index = i % (width * height);
-        buf[index * nChannels + c] = tmp[i];
-      }
-    }
 
     if (!initialized) {
       initialized = true;
@@ -273,10 +249,6 @@ public class QTWriter extends FormatWriter {
       // -- write the first plane of pixel data (mdat) --
 
       offsets.add(new Integer((int) out.length()));
-
-      numWritten++;
-
-      out.write(buf);
     }
     else {
       // update the number of pixel bytes written
@@ -288,11 +260,32 @@ public class QTWriter extends FormatWriter {
       // write this plane's pixel data
       out.seek(out.length());
 
-      out.write(buf);
-
       offsets.add(new Integer(planeOffset + 16));
-      numWritten++;
     }
+
+    // invert each pixel
+    // this will makes the colors look right in other readers (e.g. xine),
+    // but needs to be reversed in QTReader
+
+    if (nChannels == 1 && bytesPerPixel == 1 && !needLegacy) {
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) (255 - buf[i]);
+      }
+    }
+
+    if (!interleaved) {
+      // need to write interleaved data
+      byte[] tmp = new byte[buf.length];
+      System.arraycopy(buf, 0, tmp, 0, buf.length);
+      for (int i=0; i<buf.length; i++) {
+        int c = i / (width * height);
+        int index = i % (width * height);
+        buf[index * nChannels + c] = tmp[i];
+      }
+    }
+
+    out.write(buf);
+    numWritten++;
 
     if (last) {
       int timeScale = 100;

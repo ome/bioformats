@@ -613,6 +613,7 @@ public class LeicaHandler extends DefaultHandler {
           nextFilter++;
 
           store.setDetectorID(id, numDatasets, nextChannel);
+          store.setDetectorType("PMT", numDatasets, nextChannel);
           store.setDetectorSettingsGain(gain, numDatasets, nextChannel);
           store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
           store.setDetectorSettingsDetector(id, numDatasets, nextChannel);

@@ -160,6 +160,14 @@ public class OMEXMLWriter extends FormatWriter {
   /* @see loci.formats.IFormatWriter#canDoStacks() */
   public boolean canDoStacks() { return true; }
 
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
+    if (codec.equals("J2K") || codec.equals("JPEG")) {
+      return new int[] {FormatTools.INT8, FormatTools.UINT8};
+    }
+    return getPixelTypes();
+  }
+
   // -- Helper class --
 
   class OMEHandler extends DefaultHandler {
