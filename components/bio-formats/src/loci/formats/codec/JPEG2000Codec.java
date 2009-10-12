@@ -160,8 +160,6 @@ public class JPEG2000Codec extends BaseCodec {
     catch (Throwable t) {
       noJ2k = true;
       LogTools.trace(t);
-      throw new MissingLibraryException(
-        "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
     }
     return ru;
   }
@@ -183,6 +181,11 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
+    if (r == null) {
+      throw new MissingLibraryException(
+        "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
+    }
+
     JPEG2000CodecOptions j2kOptions =
       JPEG2000CodecOptions.getDefaultOptions(options);
 
@@ -288,6 +291,11 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (r == null) {
+      throw new MissingLibraryException(
+        "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
+    }
+
     if (options == null) {
       options = CodecOptions.getDefaultOptions();
     }
