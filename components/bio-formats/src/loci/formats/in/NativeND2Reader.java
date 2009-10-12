@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
 import loci.formats.CoreMetadata;
@@ -846,8 +847,9 @@ public class NativeND2Reader extends FormatReader {
     store.setInstrumentID(instrumentID, 0);
 
     // populate Image data
+    String filename = new Location(getCurrentFile()).getName();
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName("Series " + (i + 1), i);
+      store.setImageName(filename + " (series " + (i + 1) + ")", i);
       MetadataTools.setDefaultCreationDate(store, currentId, i);
 
       // link Instrument and Image
