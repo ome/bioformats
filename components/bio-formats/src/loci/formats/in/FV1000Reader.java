@@ -361,10 +361,14 @@ public class FV1000Reader extends FormatReader {
           if (key.startsWith("Stream")) {
             if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
             if (directoryKey != null && value.startsWith(directoryValue)) {
+              value = sanitizeFile(value, "");
               oibMapping.put(value, "Root Entry" + File.separator +
                 directoryKey + File.separator + key);
             }
-            else oibMapping.put(value, "Root Entry" + File.separator + key);
+            else {
+              value = sanitizeFile(value, "");
+              oibMapping.put(value, "Root Entry" + File.separator + key);
+            }
           }
           else if (key.startsWith("Storage")) {
             directoryKey = key;
@@ -701,7 +705,7 @@ public class FV1000Reader extends FormatReader {
 
     thumbReader = new BMPReader();
     thumbId = replaceExtension(thumbId, "pty", "bmp");
-    thumbId = sanitizeFile(thumbId, (isOIB || mappedOIF) ? "" : path);
+    thumbId = sanitizeFile(thumbId, path);
 
     status("Reading additional metadata");
 
@@ -714,7 +718,7 @@ public class FV1000Reader extends FormatReader {
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
       String file = filenames.get(new Integer(i));
       while (file == null) file = filenames.get(new Integer(++i));
-      file = sanitizeFile(file, (isOIB || mappedOIF) ? "" : path);
+      file = sanitizeFile(file, path);
 
       if (file.indexOf(File.separator) != -1) {
         tiffPath = file.substring(0, file.lastIndexOf(File.separator));
@@ -762,7 +766,11 @@ public class FV1000Reader extends FormatReader {
               }
               if (mappedOIF) tiffs.add(ii, value);
               else {
-                tiffs.add(ii, new Location(tiffPath, value).getAbsolutePath());
+                String tiff = new Location(tiffPath, value).getAbsolutePath();
+                if (isOIB) {
+                  tiff = tiff.substring(tiff.indexOf(File.separator));
+                }
+                tiffs.add(ii, tiff);
               }
             }
           }
@@ -1115,7 +1123,7 @@ public class FV1000Reader extends FormatReader {
       if (i >= getImageCount()) break;
       int[] coordinates = getZCTCoords(i);
       String filename = roiFilenames.get(new Integer(i));
-      filename = sanitizeFile(filename, (isOIB || mappedOIF) ? "" : path);
+      filename = sanitizeFile(filename, path);
 
       RandomAccessInputStream stream = getFile(filename);
       String data = stream.readString((int) stream.length());
@@ -1323,10 +1331,11 @@ public class FV1000Reader extends FormatReader {
     throws FormatException, IOException
   {
     if (isOIB) {
-      if (name.startsWith("/") || name.startsWith("\\")) {
-        name = name.substring(1);
+      if (!name.startsWith(File.separator)) {
+        name = File.separator + name;
       }
-      name = name.replace('\\', '/');
+      name = name.replace('\\', File.separatorChar);
+      name = name.replace('/', File.separatorChar);
       return poi.getDocumentStream(oibMapping.get(name));
     }
     else return new RandomAccessInputStream(name);
