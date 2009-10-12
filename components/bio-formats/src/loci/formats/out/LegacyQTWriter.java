@@ -150,13 +150,7 @@ public class LegacyQTWriter extends FormatWriter {
       tools = new LegacyQTTools();
       r = tools.getUniverse();
     }
-
-    if (tools.isQTExpired()) {
-      throw new MissingLibraryException(LegacyQTTools.EXPIRED_QT_MSG);
-    }
-    if (!tools.canDoQT()) {
-      throw new MissingLibraryException(LegacyQTTools.NO_QT_MSG);
-    }
+    tools.checkQTLibrary();
 
     if (!initialized) {
       initialized = true;

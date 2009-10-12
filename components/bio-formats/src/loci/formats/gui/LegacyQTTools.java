@@ -55,6 +55,10 @@ public class LegacyQTTools {
     "QuickTime for Java is required to read some QuickTime files. " +
     "Please install QuickTime for Java from http://www.apple.com/quicktime/";
 
+  public static final String MAC_64BIT_JVM_MSG =
+    "QuickTime for Java is not supported on Mac OS X with a 64-bit JVM. " +
+    "Please invoke the 32-bit JVM to utilize QTJava functionality.";
+
   public static final String EXPIRED_QT_MSG =
     "Your version of QuickTime for Java has expired. " +
     "Please reinstall QuickTime for Java from http://www.apple.com/quicktime/";
@@ -115,6 +119,9 @@ public class LegacyQTTools {
   /** Flag indicating QuickTime for Java is not installed. */
   protected boolean noQT = false;
 
+  /** Flag indicating Mac OS X 64-bit JVM (does not support QTJava). */
+  protected boolean mac64BitJVM = false;
+
   /** Flag indicating QuickTime for Java has expired. */
   protected boolean expiredQT = false;
 
@@ -126,6 +133,17 @@ public class LegacyQTTools {
   /** Initializes the class. */
   protected void initClass() {
     if (initialized) return;
+
+    String os = System.getProperty("os.name");
+    String arch = System.getProperty("os.arch");
+    if ("Mac OS X".equals(os) && "x86_64".equals(arch)) {
+      // QTJava is not supported on Mac OS X 64-bit Java; don't even try
+      noQT = true;
+      mac64BitJVM = true;
+      initialized = true;
+      return;
+    }
+
     boolean needClose = false;
     r = new ReflectedUniverse(LOADER);
     try {
@@ -186,6 +204,12 @@ public class LegacyQTTools {
     return !noQT;
   }
 
+  /** Whether this JVM is 64-bit running on Mac OS X. */
+  public boolean isMac64BitJVM() {
+    if (!initialized) initClass();
+    return mac64BitJVM;
+  }
+
   /** Whether QuickTime for Java has expired. */
   public boolean isQTExpired() {
     if (!initialized) initClass();
@@ -194,7 +218,8 @@ public class LegacyQTTools {
 
   /** Gets the QuickTime for Java version number. */
   public String getQTVersion() {
-    if (isQTExpired()) return "Expired";
+    if (isMac64BitJVM()) return "Not available";
+    else if (isQTExpired()) return "Expired";
     else if (!canDoQT()) return "Missing";
     else {
       try {
@@ -219,9 +244,7 @@ public class LegacyQTTools {
   public Dimension getPictDimensions(byte[] bytes)
     throws FormatException, ReflectException
   {
-    if (isQTExpired()) throw new MissingLibraryException(EXPIRED_QT_MSG);
-    if (!canDoQT()) throw new MissingLibraryException(NO_QT_MSG);
-
+    checkQTLibrary();
     try {
       r.exec("QTSession.open()");
       r.setVar("bytes", bytes);
@@ -242,9 +265,7 @@ public class LegacyQTTools {
   public synchronized Image pictToImage(byte[] bytes)
     throws FormatException
   {
-    if (isQTExpired()) throw new MissingLibraryException(EXPIRED_QT_MSG);
-    if (!canDoQT()) throw new MissingLibraryException(NO_QT_MSG);
-
+    checkQTLibrary();
     try {
       r.exec("QTSession.open()");
 
@@ -291,6 +312,13 @@ public class LegacyQTTools {
       catch (ReflectException exc) { LogTools.trace(exc); }
       throw new FormatException("PICT extraction failed", e);
     }
+  }
+
+  /** Checks whether QTJava is available, throwing an exception if not. */
+  public void checkQTLibrary() throws MissingLibraryException {
+    if (isMac64BitJVM()) throw new MissingLibraryException(MAC_64BIT_JVM_MSG);
+    if (isQTExpired()) throw new MissingLibraryException(EXPIRED_QT_MSG);
+    if (!canDoQT()) throw new MissingLibraryException(NO_QT_MSG);
   }
 
 }
