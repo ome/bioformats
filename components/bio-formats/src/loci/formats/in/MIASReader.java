@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -81,6 +82,14 @@ public class MIASReader extends FormatReader {
   private int[] bpp;
 
   private String templateFile;
+
+  private Hashtable<String, String> overlayFiles =
+    new Hashtable<String, String>();
+  private Hashtable<String, Integer> overlayPlanes =
+    new Hashtable<String, Integer>();
+
+  /** Whether or not mask pixel data should be parsed in setId. */
+  private boolean parseMasks = false;
 
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
@@ -257,6 +266,8 @@ public class MIASReader extends FormatReader {
       bpp = null;
       cachedTileBuffer = null;
       templateFile = null;
+      overlayFiles.clear();
+      overlayPlanes.clear();
     }
   }
 
@@ -918,19 +929,63 @@ public class MIASReader extends FormatReader {
   private int parseMasks(MetadataStore store, int series, int roi,
     String overlayTiff) throws FormatException, IOException
   {
+    int nOverlays = 3;
+    for (int i=0; i<nOverlays; i++) {
+      store.setMaskX("0", series, roi + i, 0);
+      store.setMaskY("0", series, roi + i, 0);
+      store.setMaskWidth(String.valueOf(getSizeX()), series, roi + i, 0);
+      store.setMaskHeight(String.valueOf(getSizeY()), series, roi + i, 0);
+      store.setMaskPixelsBigEndian(
+        new Boolean(!isLittleEndian()), series, roi + i, 0);
+      store.setMaskPixelsSizeX(new Integer(getSizeX()), series, roi + i, 0);
+      store.setMaskPixelsSizeY(new Integer(getSizeY()), series, roi + i, 0);
+      store.setMaskPixelsExtendedPixelType("bit", series, roi + i, 0);
+
+      String id = MetadataTools.createLSID("Mask", series, roi, 0);
+      overlayFiles.put(id, overlayTiff);
+      overlayPlanes.put(id, new Integer(i));
+      if (parseMasks) {
+        populateMaskPixels(series, roi, 0);
+      }
+    }
+    return nOverlays;
+  }
+
+  // -- MIASReader API methods --
+
+  /**
+   * Populate the MaskPixels.BinData attribute for the Mask identified by the
+   * given Image index, ROI index, and Shape index.
+   */
+  public void populateMaskPixels(int imageIndex, int roiIndex, int shapeIndex)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, true, 1);
+
+    String id =
+      MetadataTools.createLSID("Mask", imageIndex, roiIndex, shapeIndex);
+    String maskFile = overlayFiles.get(id);
+    if (maskFile == null) {
+      warnDebug("Could not find an overlay file matching " + id);
+      return;
+    }
+
     MinimalTiffReader r = new MinimalTiffReader();
-    r.setId(overlayTiff);
+    r.setId(maskFile);
+
+    int index = overlayPlanes.get(id).intValue();
     byte[] plane = r.openBytes(0);
     byte[][] planes = null;
+
     if (r.isIndexed()) {
       planes = ImageTools.indexedToRGB(r.get8BitLookupTable(), plane);
     }
     else {
-      planes = new byte[r.getRGBChannelCount()][];
       int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
+      planes = new byte[r.getRGBChannelCount()][];
       for (int c=0; c<planes.length; c++) {
-        planes[c] = ImageTools.splitChannels(
-          plane, c, planes.length, bpp, false, r.isInterleaved());
+        planes[c] = ImageTools.splitChannels(plane, c, r.getRGBChannelCount(),
+          bpp, false, r.isInterleaved());
       }
     }
 
@@ -949,38 +1004,32 @@ public class MIASReader extends FormatReader {
       }
     }
 
-    String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
+    // threshold the pixel data
 
-    int nMasks = 0;
-
-    for (int i=0; i<planes.length; i++) {
-      // threshold the pixel data
-
-      boolean validMask = false;
-      for (int p=0; p<planes[i].length; p++) {
-        if (planes[i][p] != 0) {
-          validMask = true;
-          planes[i][p] = (byte) 1;
-        }
-      }
-      if (validMask) {
-        store.setMaskX("0", series, roi + i, 0);
-        store.setMaskY("0", series, roi + i, 0);
-        store.setMaskWidth(String.valueOf(r.getSizeX()), series, roi + i, 0);
-        store.setMaskHeight(String.valueOf(r.getSizeY()), series, roi + i, 0);
-        store.setMaskPixelsBigEndian(
-          new Boolean(!r.isLittleEndian()), series, roi + i, 0);
-        store.setMaskPixelsSizeX(new Integer(r.getSizeX()), series, roi + i, 0);
-        store.setMaskPixelsSizeY(new Integer(r.getSizeY()), series, roi + i, 0);
-        store.setMaskPixelsExtendedPixelType("bit", series, roi + i, 0);
-
-        store.setMaskPixelsBinData(planes[i], series, roi + i, 0);
-        nMasks++;
+    boolean validMask = false;
+    for (int p=0; p<planes[index].length; p++) {
+      if (planes[index][p] != 0) {
+        validMask = true;
+        planes[index][p] = (byte) 1;
       }
     }
-    r.close();
-    planes = null;
-    return nMasks;
+
+    if (validMask) {
+      MetadataStore store =
+        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      store.setMaskPixelsBinData(planes[index], imageIndex, roiIndex,
+        shapeIndex);
+    }
+    else debug("Did not populate MaskPixels.BinData for " + id);
+  }
+
+  /**
+   * Toggle whether or not Mask pixel data should be parsed in setId.
+   * By default, it is not parsed.
+   */
+  public void setAutomaticallyParseMasks(boolean parse) throws FormatException {
+    FormatTools.assertId(currentId, false, 1);
+    this.parseMasks = parse;
   }
 
   // -- Helper class --
