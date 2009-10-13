@@ -87,13 +87,19 @@ public class MNGReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] tmp = AWTImageTools.getBytes(openImage(no, x, y, w, h), true);
+    BufferedImage data = (BufferedImage) openData(no, x, y, w, h);
+    byte[] tmp = AWTImageTools.getBytes(data, true);
     System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int, int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
+  /* @see loci.formats.IFormatReader#getNativeDataType() */
+  public Class getNativeDataType() {
+    return BufferedImage.class;
+  }
+
+  /* @see loci.formats.IFormatReader#openData(int, int, int, int, int int) */
+  public Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);

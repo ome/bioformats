@@ -203,7 +203,7 @@ public interface IFormatReader extends IFormatHandler {
    * Obtains a sub-image of the specified image plane,
    * whose upper-left corner is given by (x, y).
    */
-  byte[] openBytes(int no, int x, int y, int width, int height)
+  byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException;
 
   /**
@@ -236,7 +236,7 @@ public interface IFormatReader extends IFormatHandler {
    *   file.
    * @throws IOException if there was a problem reading the file.
    */
-  byte[] openBytes(int no, byte[] buf, int x, int y, int width, int height)
+  byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException;
 
   /**
@@ -258,7 +258,7 @@ public interface IFormatReader extends IFormatHandler {
    * @see loci.formats.FormatReader
    * @see loci.formats.gui.BufferedImageReader
    */
-  Object openData(int no, int x, int y, int width, int height)
+  Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException;
 
   /**

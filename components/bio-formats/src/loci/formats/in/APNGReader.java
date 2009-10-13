@@ -99,7 +99,8 @@ public class APNGReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    byte[][] t = AWTImageTools.getPixelBytes(openImage(no, x, y, w, h), false);
+    BufferedImage data = (BufferedImage) openData(no, x, y, w, h);
+    byte[][] t = AWTImageTools.getPixelBytes(data, false);
 
     for (int c=0; c<t.length; c++) {
       System.arraycopy(t[c], 0, buf, c * t[c].length, t[c].length);
@@ -108,8 +109,13 @@ public class APNGReader extends FormatReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#openImage(int, int, int, int) */
-  public BufferedImage openImage(int no, int x, int y, int w, int h)
+  /* @see loci.formats.IFormatReader#getNativeDataType() */
+  public Class getNativeDataType() {
+    return BufferedImage.class;
+  }
+
+  /* @see loci.formats.IFormatReader#openData(int, int, int, int, int int) */
+  public Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
@@ -175,7 +181,8 @@ public class APNGReader extends FormatReader {
     DataInputStream dis = new DataInputStream(new BufferedInputStream(s, 4096));
     BufferedImage b = ImageIO.read(dis);
     dis.close();
-    BufferedImage first = openImage(0, 0, 0, getSizeX(), getSizeY());
+    BufferedImage first = (BufferedImage)
+      openData(0, 0, 0, getSizeX(), getSizeY());
 
     // paste current image onto first image
 

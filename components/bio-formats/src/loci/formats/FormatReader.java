@@ -595,18 +595,18 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
-  public byte[] openBytes(int no, int x, int y, int width, int height)
+  public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int ch = getRGBChannelCount();
-    byte[] newBuffer = new byte[width * height * ch * bpp];
-    return openBytes(no, newBuffer, x, y, width, height);
+    byte[] newBuffer = new byte[w * h * ch * bpp];
+    return openBytes(no, newBuffer, x, y, w, h);
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
   public abstract byte[] openBytes(int no, byte[] buf, int x, int y,
-    int width, int heigeht) throws FormatException, IOException;
+    int w, int h) throws FormatException, IOException;
 
   /* @see IFormatReader#getNativeDataType() */
   public Class getNativeDataType() {
@@ -615,11 +615,11 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#openData(int, int, int, int, int int) */
-  public Object openData(int no, int x, int y, int width, int height)
+  public Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     // NB: Readers use byte arrays by default as the native type.
-    return openBytes(no, x, y, width, height);
+    return openBytes(no, x, y, w, h);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */

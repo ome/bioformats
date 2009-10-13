@@ -473,14 +473,14 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#openData(int, int, int, int, int) */
-  public Object openData(int no, int x, int y, int width, int height)
+  public Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
 
     IFormatReader r = getReader(no);
     int ino = getAdjustedIndex(no);
-    if (ino < r.getImageCount()) return r.openData(ino, x, y, width, height);
+    if (ino < r.getImageCount()) return r.openData(ino, x, y, w, h);
 
     return null;
   }

@@ -345,10 +345,10 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#openData(int, int, int, int, int) */
-  public Object openData(int no, int x, int y, int width, int height)
+  public Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return getReader().openData(no, x, y, width, height);
+    return getReader().openData(no, x, y, w, h);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */

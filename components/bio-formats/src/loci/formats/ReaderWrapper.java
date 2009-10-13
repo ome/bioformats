@@ -277,10 +277,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getNativeDataType();
   }
 
-  public Object openData(int no, int x, int y, int width, int height)
+  public Object openData(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return reader.openData(no, x, y, width, height);
+    return reader.openData(no, x, y, w, h);
   }
 
   public byte[] openThumbBytes(int no) throws FormatException, IOException {

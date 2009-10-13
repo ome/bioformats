@@ -233,10 +233,10 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, int, int, int, int) */
-  public byte[] openBytes(int no, int x, int y, int width, int height)
+  public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return super.openBytes(reorder(no), x, y, width, height);
+    return super.openBytes(reorder(no), x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
@@ -249,10 +249,10 @@ public class DimensionSwapper extends ReaderWrapper {
   /*
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
-  public byte[] openBytes(int no, byte[] buf, int x, int y,
-    int width, int height) throws FormatException, IOException
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    return super.openBytes(reorder(no), buf, x, y, width, height);
+    return super.openBytes(reorder(no), buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#openThumbImage(int) */

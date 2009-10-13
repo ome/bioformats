@@ -71,7 +71,15 @@ public class BufferedImageReader extends ReaderWrapper {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
+    Class dataType = getNativeDataType();
+    if (BufferedImage.class.isAssignableFrom(dataType)) {
+      // native data type is compatible with BufferedImage
+      return (BufferedImage) openData(no, x, y, w, h);
+    }
+    else {
+      // must construct BufferedImage from byte array
+      return AWTImageTools.openImage(openBytes(no, x, y, w, h), this, w, h);
+    }
   }
 
   /** Obtains a thumbnail for the specified image from the current file. */
