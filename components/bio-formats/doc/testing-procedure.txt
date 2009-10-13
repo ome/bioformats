@@ -57,8 +57,7 @@ repository.
    Results of this test will be written to
    $LOCI_CHECKOUT/components/test-suite/test-output/ and a .log file in
    $LOCI_CHECKOUT/components/test-suite.
-   Note that it is expected that testValidXML will fail.  All other failures
-   should be examined and corrected as necessary.
+   All of the tests should pass.
 
 2) Verify that files can be converted.
 
