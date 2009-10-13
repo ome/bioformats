@@ -175,6 +175,10 @@ In Visual Studio, press F7, or select
       </then>
       <else>
         <exec executable="make" dir="${build.dir}" failonerror="true"/>
+        <copy todir="${build.dir}" preservelastmodified="true">
+          <fileset dir="${build.dir}/jace" includes="*jace*"/>
+        </copy>
+        <chmod file="${build.dir}/libjace.jnilib" perm="ugo+x"/>
         <if>
           <isset property="isMac"/>
           <then>

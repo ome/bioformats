@@ -29,114 +29,12 @@ endif(WIN32)
 
 project(bfcpp)
 
-### search for prerequisite libraries ###
-
-message(STATUS "")
-
-#message("-- Java Runtime:")
-#find_package(Java REQUIRED)
-#message("java          : ${JAVA_RUNTIME}")
-#message("javac         : ${JAVA_COMPILE}")
-#message("jar           : ${JAVA_ARCHIVE}")
-#message("")
-
-message(STATUS "-- Java Native Interface:")
-find_package(JNI REQUIRED)
-message(STATUS "jawt lib      : ${JAVA_AWT_LIBRARY}")
-message(STATUS "jvm lib       : ${JAVA_JVM_LIBRARY}")
-message(STATUS "jni.h         : ${JAVA_INCLUDE_PATH}")
-message(STATUS "jni_md.h      : ${JAVA_INCLUDE_PATH2}")
-message(STATUS "jawt.h        : ${JAVA_AWT_INCLUDE_PATH}")
-message(STATUS "")
-
-# HACK - CMake on Windows refuses to find the thread library unless BOOST_ROOT
-#        is set, even though it can locate the Boost directory tree.
-#        So we first look for base Boost, then set BOOST_ROOT and look again
-#        for Boost Thread specifically.
-
-message(STATUS "-- Boost:")
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_ADDITIONAL_VERSIONS "1.37" "1.37.0" "1.37.1" "1.38" "1.38.0" "1.38.1"
-  "1.39" "1.39.0" "1.39.1" "1.40" "1.40.0" "1.40.1" "1.41" "1.41.0" "1.41.1"
-  "1.42" "1.42.0" "1.42.1" "1.43" "1.43.0" "1.43.1" "1.44" "1.44.0" "1.44.1")
-#set(Boost_FIND_QUIETLY ON)
-find_package(Boost)
-if(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
-  message(STATUS "boost headers : ${Boost_INCLUDE_DIR}")
-else(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
-  if(UNIX)
-    message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
-  else(UNIX)
-    message(FATAL_ERROR "Cannot build without Boost Thread library. Please install Boost from www.boost.org.")
-  endif(UNIX)
-endif(IS_DIRECTORY "${Boost_INCLUDE_DIR}")
-#set(Boost_FIND_QUIETLY OFF)
-if(WIN32)
-  set(BOOST_ROOT ${Boost_INCLUDE_DIR})
-endif(WIN32)
-find_package(Boost COMPONENTS thread REQUIRED)
-
-# HACK: Make linking to Boost work on Windows systems.
-string(REGEX REPLACE "/[^/]*$" ""
-  Boost_STRIPPED_LIB_DIR "${Boost_THREAD_LIBRARY_DEBUG}")
-
-if(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
-  message(STATUS "boost lib dir : ${Boost_STRIPPED_LIB_DIR}")
-  message(STATUS "thread lib    : ${Boost_THREAD_LIBRARY_DEBUG}")
-else(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
-  message(FATAL_ERROR "Cannot build without Boost Thread library. Please install libboost-thread-dev package or visit www.boost.org.")
-endif(EXISTS "${Boost_THREAD_LIBRARY_DEBUG}")
-message(STATUS "")
-
-message(STATUS "-- Jace:")
-set(JACE_DIR NOTFOUND CACHE PATH "The path to toplevel directory of your Jace checkout")
-if(IS_DIRECTORY "${JACE_DIR}")
-  message(STATUS "jace root     : ${JACE_DIR}")
-else(IS_DIRECTORY "${JACE_DIR}")
-  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
-endif(IS_DIRECTORY "${JACE_DIR}")
-
-include_directories(include
-  "${JACE_DIR}/source/c++/include" "proxies/include"
-  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}"
-  "${Boost_INCLUDE_DIR}")
-
-# HACK: Make linking to Boost work on Windows systems.
-if(WIN32)
-  link_directories(${Boost_STRIPPED_LIB_DIR})
-endif(WIN32)
-
-### build Jace C++ library ###
-
-file(GLOB_RECURSE JACE_SRC "${JACE_DIR}/source/c++/source/*.cpp")
-#message("jace source   : ${JACE_SRC}")
-message(STATUS "")
-
-add_library(jace SHARED ${JACE_SRC})
-
-# HACK: Make linking to Boost work on Windows systems.
-if(WIN32)
-  target_link_libraries(jace "${JAVA_JVM_LIBRARY}")
-else(WIN32)
-  target_link_libraries(jace "${JAVA_JVM_LIBRARY}" ${Boost_THREAD_LIBRARY_DEBUG})
-endif(WIN32)
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set_target_properties(jace PROPERTIES
-    COMPILE_FLAGS "-fpermissive")
-else(CMAKE_COMPILER_IS_GNUCXX)
-  set_target_properties(jace PROPERTIES
-    DEFINE_SYMBOL JACE_EXPORTS)
-endif(CMAKE_COMPILER_IS_GNUCXX)
-
-# NB: Mac OS X 10.4 and earlier requires .jnilib extension rather than
-#     .dylib when loading native code with System.loadLibrary(String).
-if(APPLE)
-  set_target_properties(jace PROPERTIES SUFFIX ".jnilib")
-endif(APPLE)
+add_subdirectory(jace)
 
 ### build Bio-Formats C++ bindings ###
+
+include_directories(include
+  "proxies/include" "${JACE_DIR}/source/c++/include" "${Boost_INCLUDE_DIR}")
 
 #message("-- Bio-Formats C++ bindings:")
 file(GLOB_RECURSE BFJACE_SRC "proxies/source/*.cpp")
@@ -157,18 +55,12 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 target_link_libraries(bfcpp jace)
 
-### build showinf example for testing bfcpp ###
+### build some examples for testing bfcpp ###
 
 add_executable(showinf source/showinf.cpp)
 
 target_link_libraries(showinf bfcpp jace "${JAVA_JVM_LIBRARY}")
 
-### TEMP - build some examples for testing ###
+#add_executable(minimum_writer source/minimum_writer.cpp)
 
-add_executable(example1 source/example1.cpp)
-
-target_link_libraries(example1 bfcpp jace "${JAVA_JVM_LIBRARY}")
-
-add_executable(array_example source/array_example.cpp)
-
-target_link_libraries(array_example bfcpp jace "${JAVA_JVM_LIBRARY}")
+#target_link_libraries(minimum_writer bfcpp jace "${JAVA_JVM_LIBRARY}")
