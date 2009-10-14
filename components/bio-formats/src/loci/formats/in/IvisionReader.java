@@ -73,10 +73,20 @@ public class IvisionReader extends FormatReader {
   /** Constructs a new Ivision reader. */
   public IvisionReader() {
     super("IVision", "ipm");
+    suffixSufficient = false;
+    suffixNecessary = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockCheckLen = 8;
+    if (!FormatTools.validStream(stream, blockCheckLen, true)) return false;
+    stream.seek(4);
+    return stream.readInt() == 0x600;
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
