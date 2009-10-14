@@ -405,25 +405,30 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (int s=0; s<stks.length; s++) {
         for (int f=0; f<stks[s].length; f++) {
+          String original = stks[s][f];
           Location l = new Location(ndfile.getParent(), stks[s][f]);
+          debug("Looking for file: " + stks[s][f]);
           if (!l.exists()) {
             // '%' can be converted to '-'
             if (stks[s][f].indexOf("%") != -1) {
               stks[s][f] = stks[s][f].replaceAll("%", "-");
               l = new Location(ndfile.getParent(), stks[s][f]);
+              debug("Looking for file: " + stks[s][f]);
               if (!l.exists()) {
                 // try replacing extension
                 stks[s][f] = stks[s][f].substring(0,
                   stks[s][f].lastIndexOf(".")) + ".TIF";
                 l = new Location(ndfile.getParent(), stks[s][f]);
+                debug("Looking for file: " + stks[s][f]);
                 if (!l.exists()) {
                   stks[s][f] = stks[s][f].substring(0,
                     stks[s][f].lastIndexOf(".")) + ".tif";
                   l = new Location(ndfile.getParent(), stks[s][f]);
+                  debug("Looking for file: " + stks[s][f]);
                   if (!l.exists()) {
-                    String filename = stks[s][f];
                     stks = null;
-                    throw new FormatException("Missing STK file: " + filename);
+                    throw new FormatException("Missing pixels file: " +
+                      original);
                   }
                 }
               }
@@ -434,14 +439,16 @@ public class MetamorphReader extends BaseTiffReader {
               stks[s][f] = stks[s][f].substring(0,
                 stks[s][f].lastIndexOf(".")) + ".TIF";
               l = new Location(ndfile.getParent(), stks[s][f]);
+              debug("Looking for file: " + stks[s][f]);
               if (!l.exists()) {
                 stks[s][f] = stks[s][f].substring(0,
                   stks[s][f].lastIndexOf(".")) + ".tif";
                 l = new Location(ndfile.getParent(), stks[s][f]);
+                debug("Looking for file: " + stks[s][f]);
                 if (!l.exists()) {
-                  String filename = stks[s][f];
                   stks = null;
-                  throw new FormatException("Missing STK file: " + filename);
+                  throw new FormatException("Missing pixels file: " +
+                    original);
                 }
               }
             }
