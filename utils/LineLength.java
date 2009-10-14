@@ -9,6 +9,10 @@ import java.util.Arrays;
 /**
  * Scans text files for lines longer than a specified length.
  * Also checks for tabs and end-of-line spaces.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/LineLength.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/LineLength.java">SVN</a></dd></dl>
  */
 public class LineLength implements FileFilter {
 

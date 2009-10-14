@@ -2,7 +2,13 @@
 // RandomPass.java
 //
 
-/** Generates a random 8-character password. */
+/**
+ * Generates random passwords.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/RandomPass.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/RandomPass.java">SVN</a></dd></dl>
+ */
 public class RandomPass {
 
   private static final int PASS_LEN = 8;

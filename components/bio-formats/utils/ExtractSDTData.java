@@ -5,7 +5,13 @@
 import java.io.*;
 import loci.formats.in.SDTReader;
 
-/** Reads SDT files and creates text files containing histogram data. */
+/**
+ * Reads SDT files and creates text files containing histogram data.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/ExtractSDTData.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/ExtractSDTData.java">SVN</a></dd></dl>
+ */
 public class ExtractSDTData {
 
   public static void main(String[] args) throws Exception {

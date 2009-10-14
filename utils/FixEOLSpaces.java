@@ -7,6 +7,10 @@ import java.io.*;
 /**
  * Scans text files for end-of-line spaces or tabs, and
  * multiple consecutive blank lines, and removes them.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/FixEOLSpaces.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/FixEOLSpaces.java">SVN</a></dd></dl>
  */
 public class FixEOLSpaces {
 

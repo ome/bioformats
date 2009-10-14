@@ -1,5 +1,5 @@
 //
-// EditTiff.java
+// EditTiffComment.java
 //
 
 import java.io.*;
@@ -7,12 +7,18 @@ import java.util.Hashtable;
 import loci.common.RandomAccessInputStream;
 import loci.formats.tiff.*;
 
-/** Allows raw user TIFF comment editing for the given TIFF files. */
-public class EditTiff {
+/**
+ * Allows raw user TIFF comment editing for the given TIFF files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/EditTiffComment.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/EditTiffComment.java">SVN</a></dd></dl>
+ */
+public class EditTiffComment {
 
   public static void main(String[] args) throws Exception {
     if (args.length == 0) {
-      System.out.println("Usage: java EditTiff file1 file2 ...");
+      System.out.println("Usage: java EditTiffComment file1 file2 ...");
       return;
     }
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));

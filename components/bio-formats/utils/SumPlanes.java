@@ -5,10 +5,15 @@
 import java.awt.image.*;
 import loci.formats.*;
 import loci.formats.gui.BufferedImageReader;
+import loci.formats.gui.BufferedImageWriter;
 
 /**
  * Sums together the image planes from the given file,
  * and saves the result to a 16-bit TIFF.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/SumPlanes.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/SumPlanes.java">SVN</a></dd></dl>
  */
 public class SumPlanes {
 
@@ -27,7 +32,7 @@ public class SumPlanes {
     System.out.println(" [done]");
 
     String outId = id + ".tif";
-    ImageWriter w = new ImageWriter();
+    BufferedImageWriter w = new BufferedImageWriter();
     System.out.print("Writing " + outId);
     w.setId(outId);
     w.saveImage(sum(images), true);

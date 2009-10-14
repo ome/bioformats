@@ -8,7 +8,13 @@ import java.lang.reflect.Method;
 
 import loci.common.ReflectedUniverse;
 
-/** A benchmark for Java reflection performance. */
+/**
+ * A benchmark for Java reflection performance.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/ReflectionPerformance.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/ReflectionPerformance.java">SVN</a></dd></dl>
+ */
 public class ReflectionPerformance {
 
   private static int val = 0;

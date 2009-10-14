@@ -10,6 +10,10 @@ import loci.formats.tiff.TiffTools;
  * OME-XML comment found in OME-TIFF files. Note that this code must be
  * tailored to a specific need by editing the commented out code below to
  * make desired alterations to the comment.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/CommentSurgery.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/CommentSurgery.java">SVN</a></dd></dl>
  */
 public class CommentSurgery {
   public static void main(String[] args) throws Exception {

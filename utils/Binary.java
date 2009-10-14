@@ -7,6 +7,10 @@ import java.io.*;
 /**
  * Attempts to convert a string of zeroes and ones into readable text.
  * Try 'java Binary bits.txt' for an example.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/Binary.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/Binary.java">SVN</a></dd></dl>
  */
 public class Binary {
 
