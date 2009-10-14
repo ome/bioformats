@@ -639,6 +639,9 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equals("Lens ID")) {
+          if (value.indexOf(",") != -1) {
+            value = value.substring(0, value.indexOf(","));
+          }
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
           store.setObjectiveSettingsObjective(objectiveID, 0);
