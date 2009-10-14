@@ -484,11 +484,11 @@ public class MIASReader extends FormatReader {
         else if (blocks[block].replaceAll("\\d", "").length() == 0) {
           if (block == 3) tileRows = count;
           else if (block == 2) tileCols = count;
-          else if (block == 1) {
+          else if (block == 0) {
             zCount[j] = count;
             order[j] += "Z";
           }
-          else if (block == 0) {
+          else if (block == 1) {
             tCount[j] = count;
             order[j] += "T";
           }

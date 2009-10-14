@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -321,8 +322,9 @@ public class ImarisHDFReader extends FormatReader {
     }
 
     int cIndex = 0;
+    String imageName = new Location(getCurrentFile()).getName();
     for (int s=0; s<getSeriesCount(); s++) {
-      store.setImageName("Resolution Level " + (s + 1), s);
+      store.setImageName(imageName + " Resolution Level " + (s + 1), s);
       MetadataTools.setDefaultCreationDate(store, id, s);
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;
