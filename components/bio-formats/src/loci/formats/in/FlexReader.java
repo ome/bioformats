@@ -261,12 +261,13 @@ public class FlexReader extends FormatReader {
   /** Initialize the dataset from a .res file. */
   private void initResFile(String id) throws FormatException, IOException {
     debug("initResFile(" + id + ")");
-    Location parent = new Location(id).getParentFile();
+    Location thisFile = new Location(id).getAbsoluteFile();
+    Location parent = thisFile.getParentFile();
     debug("  Looking for an .mea file in " + parent.getAbsolutePath());
     String[] list = parent.list();
     for (String file : list) {
       if (checkSuffix(file, MEA_SUFFIX)) {
-        measurementFiles.add(new Location(id).getAbsolutePath());
+        measurementFiles.add(thisFile.getAbsolutePath());
         String mea = new Location(parent, file).getAbsolutePath();
         debug("  Found .mea file " + mea);
         initMeaFile(mea);
@@ -1283,7 +1284,7 @@ public class FlexReader extends FormatReader {
         LogTools.debug("Base server name is " + baseName);
 
         Vector<String> names = new Vector<String>();
-        names.add(baseName);
+        names.add(realName);
         Location screening =
           new Location(baseName + File.separator + SCREENING);
         Location archive = new Location(baseName + File.separator + ARCHIVE);
@@ -1328,7 +1329,7 @@ public class FlexReader extends FormatReader {
       }
       else {
         for (String server : realNames) {
-          if (!new Location(server).exists()) {
+          if (!new Location(server).getAbsoluteFile().exists()) {
             throw new FormatException("Server " + server + " does not exist.");
           }
         }
