@@ -131,6 +131,9 @@ public class FitsReader extends FormatReader {
           case -32:
             core[0].pixelType = FormatTools.FLOAT;
             break;
+          case -64:
+            core[0].pixelType = FormatTools.DOUBLE;
+            break;
           default: throw new FormatException("Unsupported pixel type: " + bits);
         }
       }
