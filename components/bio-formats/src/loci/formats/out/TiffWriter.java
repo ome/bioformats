@@ -86,16 +86,6 @@ public class TiffWriter extends FormatWriter {
    * depth, compression and units.  If this image is the last one in the file,
    * the last flag must be set.
    */
-  public void saveImage(Image image, IFD ifd, boolean last) {
-    // TODO
-  }
-
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.  If this image is the last one in the file,
-   * the last flag must be set.
-   */
   public void saveBytes(byte[] buf, IFD ifd, boolean last)
     throws IOException, FormatException
   {

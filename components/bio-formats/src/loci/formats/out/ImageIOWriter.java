@@ -80,30 +80,21 @@ public abstract class ImageIOWriter extends FormatWriter {
     boolean last) throws FormatException, IOException
   {
     MetadataRetrieve meta = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(meta, series);
-    int width = meta.getPixelsSizeX(series, 0).intValue();
-    int height = meta.getPixelsSizeY(series, 0).intValue();
-    int type =
-      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
-    Integer nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0);
-    if (nChannels == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int channels = nChannels == null ? 1 : nChannels.intValue();
-    boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
-
-    BufferedImage image = AWTImageTools.makeImage(buf, width, height, channels,
-      interleaved, FormatTools.getBytesPerPixel(type),
-      FormatTools.isFloatingPoint(type), littleEndian,
-      FormatTools.isSigned(type));
-    saveImage(image, series, lastInSeries, last);
+    BufferedImage image = AWTImageTools.makeImage(buf,
+      interleaved, meta, series);
+    savePlane(image, series, lastInSeries, last);
   }
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#savePlane(Object, int, boolean, boolean) */
+  public void savePlane(Object plane, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    BufferedImage img = AWTImageTools.makeBuffered(image, cm);
+    if (!(plane instanceof Image)) {
+      throw new IllegalArgumentException(
+        "Object to save must be a java.awt.Image");
+    }
+
+    BufferedImage img = AWTImageTools.makeBuffered((Image) plane, cm);
     int type = AWTImageTools.getPixelType(img);
     int[] types = getPixelTypes();
     for (int i=0; i<types.length; i++) {
@@ -122,6 +113,11 @@ public abstract class ImageIOWriter extends FormatWriter {
   }
 
   // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    return Image.class;
+  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

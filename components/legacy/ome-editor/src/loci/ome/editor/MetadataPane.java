@@ -478,7 +478,8 @@ public class MetadataPane extends JPanel
 
         try {
           writer.setId(outId);
-          writer.saveImage(plane, ifd, i == imageCount - 1);
+          // CTR FIXME
+          //writer.saveImage(plane, ifd, i == imageCount - 1);
         }
         catch (Exception exc) {
           if (exc instanceof RuntimeException) throw (RuntimeException) exc;
@@ -535,7 +536,8 @@ public class MetadataPane extends JPanel
 
       try {
         writer.setId(outId);
-        writer.saveImage(plane, ifd, i == imageCount - 1);
+        // CTR FIXME
+        //writer.saveImage(plane, ifd, i == imageCount - 1);
       }
       catch (Exception exc) {
         if (exc instanceof RuntimeException) throw (RuntimeException) exc;

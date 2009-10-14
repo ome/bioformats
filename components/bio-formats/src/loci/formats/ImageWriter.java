@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.util.Arrays;
@@ -186,23 +185,29 @@ public class ImageWriter implements IFormatWriter {
     getWriter().saveBytes(bytes, series, lastInSeries, last);
   }
 
-  /* @see IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(Image image, boolean last)
+  /* @see IFormatWriter#savePlane(Object, boolean) */
+  public void savePlane(Object plane, boolean last)
     throws FormatException, IOException
   {
-    getWriter().saveImage(image, last);
+    getWriter().savePlane(plane, last);
   }
 
-  /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see IFormatWriter#savePlane(Object, int, boolean, boolean) */
+  public void savePlane(Object plane, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    getWriter().saveImage(image, series, lastInSeries, last);
+    getWriter().savePlane(plane, series, lastInSeries, last);
   }
 
   /* @see IFormatWriter#setInterleaved(boolean) */
   public void setInterleaved(boolean interleaved) {
     for (int i=0; i<writers.length; i++) writers[i].setInterleaved(interleaved);
+  }
+
+  /* @see IFormatWriter#isInterleaved() */
+  public boolean isInterleaved() {
+    // NB: all writers should have the same interleaved status
+    return writers[0].isInterleaved();
   }
 
   /* @see IFormatWriter#canDoStacks() */
@@ -322,6 +327,11 @@ public class ImageWriter implements IFormatWriter {
       Arrays.sort(suffixes);
     }
     return suffixes;
+  }
+
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    return getWriter().getNativeDataType();
   }
 
   /* @see IFormatHandler#setId(String) */

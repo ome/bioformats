@@ -96,20 +96,6 @@ public class ChannelSeparator extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#setId(String) */
-  public void setId(String id) throws FormatException, IOException {
-    super.setId(id);
-
-    // clear last image cache
-    lastImage = null;
-    lastImageIndex = -1;
-    lastImageSeries = -1;
-    lastImageX = -1;
-    lastImageY = -1;
-    lastImageWidth = -1;
-    lastImageHeight = -1;
-  }
-
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -211,6 +197,22 @@ public class ChannelSeparator extends ReaderWrapper {
 
   public int[] getZCTCoords(int index) {
     return FormatTools.getZCTCoords(this, index);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+
+    // clear last image cache
+    lastImage = null;
+    lastImageIndex = -1;
+    lastImageSeries = -1;
+    lastImageX = -1;
+    lastImageY = -1;
+    lastImageWidth = -1;
+    lastImageHeight = -1;
   }
 
 }

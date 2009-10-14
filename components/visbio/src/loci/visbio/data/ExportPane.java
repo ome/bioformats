@@ -41,7 +41,8 @@ import javax.swing.JTextField;
 
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.ImageWriter;
+import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.BufferedImageWriter;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
@@ -115,7 +116,7 @@ public class ExportPane extends WizardPane {
   private VisBioFrame bio;
 
   /** Writer for saving images to disk. */
-  private ImageWriter saver;
+  private BufferedImageWriter saver;
 
   /** Data object from which exportable data will be derived. */
   private ImageTransform trans;
@@ -141,7 +142,7 @@ public class ExportPane extends WizardPane {
   public ExportPane(VisBioFrame bio) {
     super("Export data");
     this.bio = bio;
-    saver = new ImageWriter();
+    saver = new BufferedImageWriter();
 
     // -- Page 1 --
 
@@ -227,10 +228,6 @@ public class ExportPane extends WizardPane {
     new Thread() {
       public void run() {
         try {
-          TiffWriter tiffSaver = null;
-          if (format.equals("TIFF")) {
-            tiffSaver = (TiffWriter) saver.getWriter(TiffWriter.class);
-          }
           int count = 0;
           int max = 2 * numTotal;
           task.setStatus(0, max, "Exporting data");
@@ -269,23 +266,9 @@ public class ExportPane extends WizardPane {
                 DataUtility.extractImage(ff, false);
               task.setStatus(count++, max,
                 "Writing #" + (i + 1) + "/" + numTotal);
-              if (tiffSaver == null) {
-                saver.setId(filename);
-                saver.saveImage(image, true);
-              }
-              else {
-                // save image to TIFF file
-                IFD ifd = new IFD();
-                ifd.putIFDValue(IFD.SOFTWARE,
-                  VisBio.TITLE + " " + VisBio.VERSION);
-                if (doLZW) {
-                  ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.LZW);
-                  // do horizontal differencing
-                  ifd.putIFDValue(IFD.PREDICTOR, 2);
-                }
-                tiffSaver.setId(filename);
-                tiffSaver.saveImage(image, ifd, true);
-              }
+              saver.setId(filename);
+              if (doLZW) saver.setCompression("LZW");
+              saver.saveImage(AWTImageTools.makeBuffered(image), true);
             }
             else {
               for (int j=0; j<lengths[excl]; j++) {
@@ -300,23 +283,9 @@ public class ExportPane extends WizardPane {
                 task.setStatus(count++, max,
                   "Writing #" + img + "/" + numTotal);
                 boolean last = j == lengths[excl] - 1;
-                if (tiffSaver == null) {
-                  saver.setId(filename);
-                  saver.saveImage(image, last);
-                }
-                else {
-                  // save image to TIFF file
-                  IFD ifd = new IFD();
-                  ifd.putIFDValue(IFD.SOFTWARE,
-                    VisBio.TITLE + " " + VisBio.VERSION);
-                  if (doLZW) {
-                    ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.LZW);
-                    // do horizontal differencing
-                    ifd.putIFDValue(IFD.PREDICTOR, 2);
-                  }
-                  tiffSaver.setId(filename);
-                  tiffSaver.saveImage(image, ifd, last);
-                }
+                saver.setId(filename);
+                if (doLZW) saver.setCompression("LZW");
+                saver.saveImage(AWTImageTools.makeBuffered(image), last);
               }
             }
           }

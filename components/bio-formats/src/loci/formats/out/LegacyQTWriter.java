@@ -123,41 +123,34 @@ public class LegacyQTWriter extends FormatWriter {
   public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    MetadataRetrieve r = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(r, series);
-    int width = r.getPixelsSizeX(series, 0).intValue();
-    int height = r.getPixelsSizeY(series, 0).intValue();
-    Integer channels = r.getLogicalChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int c = channels == null ? 1 : channels.intValue();
-    int type = FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
-    int bpp = FormatTools.getBytesPerPixel(type);
-    boolean little = !r.getPixelsBigEndian(series, 0).booleanValue();
-
-    BufferedImage img = AWTImageTools.makeImage(buf, width, height, c,
-      interleaved, bpp, FormatTools.isFloatingPoint(type), little,
-      FormatTools.isSigned(type));
-    saveImage(img, series, lastInSeries, last);
+    MetadataRetrieve meta = getMetadataRetrieve();
+    BufferedImage image = AWTImageTools.makeImage(buf,
+      interleaved, meta, series);
+    savePlane(image, series, lastInSeries, last);
   }
 
-  /* @see loci.formats.IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see loci.formats.IFormatWriter#savePlane(Image, int, boolean, boolean) */
+  public void savePlane(Object plane, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
+    if (!(plane instanceof Image)) {
+      throw new IllegalArgumentException(
+        "Object to save must be a java.awt.Image");
+    }
+
     if (tools == null || r == null) {
       tools = new LegacyQTTools();
       r = tools.getUniverse();
     }
     tools.checkQTLibrary();
 
+    BufferedImage img = AWTImageTools.makeBuffered((Image) plane);
+
     if (!initialized) {
       initialized = true;
 
       try {
         r.exec("QTSession.open()");
-        BufferedImage img = AWTImageTools.makeBuffered(image);
         width = img.getWidth();
         height = img.getHeight();
         r.setVar("path", currentId);
@@ -217,7 +210,7 @@ public class LegacyQTWriter extends FormatWriter {
       r.exec("intsPerRow = pixelData.getRowBytes()");
       int intsPerRow = ((Integer) r.getVar("intsPerRow")).intValue() / 4;
 
-      byte[][] px = AWTImageTools.getBytes(AWTImageTools.makeBuffered(image));
+      byte[][] px = AWTImageTools.getBytes(img);
 
       int[] pixels = new int[px[0].length];
       for (int i=0; i<pixels.length; i++) {
@@ -305,6 +298,11 @@ public class LegacyQTWriter extends FormatWriter {
   public boolean canDoStacks() { return true; }
 
   // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    return Image.class;
+  }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {

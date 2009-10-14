@@ -466,21 +466,15 @@ public class FileStitcher implements IFormatReader {
     return buf;
   }
 
-  /* @see IFormatReader#getNativeDataType() */
-  public Class getNativeDataType() {
-    FormatTools.assertId(currentId, true, 2);
-    return reader.getNativeDataType();
-  }
-
-  /* @see IFormatReader#openData(int, int, int, int, int) */
-  public Object openData(int no, int x, int y, int w, int h)
+  /* @see IFormatReader#openPlane(int, int, int, int, int) */
+  public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 2);
 
     IFormatReader r = getReader(no);
     int ino = getAdjustedIndex(no);
-    if (ino < r.getImageCount()) return r.openData(ino, x, y, w, h);
+    if (ino < r.getImageCount()) return r.openPlane(ino, x, y, w, h);
 
     return null;
   }
@@ -872,6 +866,12 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     return reader.getSuffixes();
+  }
+
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.getNativeDataType();
   }
 
   /* @see IFormatHandler#setId(String) */

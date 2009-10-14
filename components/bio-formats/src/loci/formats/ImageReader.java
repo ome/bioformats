@@ -339,16 +339,11 @@ public class ImageReader implements IFormatReader {
     return getReader().openBytes(no, buf, x, y, w, h);
   }
 
-  /* @see IFormatReader#getNativeDataType() */
-  public Class getNativeDataType() {
-    return getReader().getNativeDataType();
-  }
-
-  /* @see IFormatReader#openData(int, int, int, int, int) */
-  public Object openData(int no, int x, int y, int w, int h)
+  /* @see IFormatReader#openPlane(int, int, int, int, int) */
+  public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return getReader().openData(no, x, y, w, h);
+    return getReader().openPlane(no, x, y, w, h);
   }
 
   /* @see IFormatReader#openThumbBytes(int) */
@@ -581,6 +576,11 @@ public class ImageReader implements IFormatReader {
       Arrays.sort(suffixes);
     }
     return suffixes;
+  }
+
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    return getReader().getNativeDataType();
   }
 
   /* @see IFormatHandler#setId(String) */

@@ -421,26 +421,29 @@ public class MakeTestOmeTiff {
     String creationDate = sb.toString();
 
     sb.setLength(0);
+    String schemaVersion = "2008-09";
+    String schemaPrefix = "http://www.openmicroscopy.org/Schemas/OME/";
+    String schemaPath = schemaPrefix + schemaVersion;
     sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
       "<!-- Warning: this comment is an OME-XML metadata block, which " +
       "contains crucial dimensional parameters and other important metadata. " +
       "Please edit cautiously (if at all), and back up the original data " +
       "before doing so. For more information, see the OME-TIFF web site: " +
-      "http://loci.wisc.edu/ome/ome-tiff.html. --><OME " +
-      "xmlns=\"http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\" " +
+      "http://loci.wisc.edu/ome/ome-tiff.html. -->\n" +
+      "<OME xmlns=\"" + schemaPath + "\" " +
+      "xmlns:bf=\"http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09\" " +
       "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
       "xsi:schemaLocation=\"" +
-      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd " +
-      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\">");
+      schemaPath + " " + schemaPath + "/ome.xsd\">");
     for (int i=0; i<numImages; i++) {
       sb.append("<Image " +
-        "ID=\"openmicroscopy.org:Image:" + (i + 1) + "\" " +
+        "ID=\"Image:" + (i + 1) + "\" " +
         "Name=\"" + name + "\" " +
-        "DefaultPixels=\"openmicroscopy.org:Pixels:" + (i + 1) + "-1\">" +
+        "DefaultPixels=\"Pixels:" + (i + 1) + "\">" +
         "<CreationDate>" + creationDate + "</CreationDate>");
       for (int p=0; p<numPixels[i]; p++) {
         sb.append("<Pixels " +
-          "ID=\"openmicroscopy.org:Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
+          "ID=\"Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
           "DimensionOrder=\"" + dimOrder[i][p] + "\" " +
           "PixelType=\"Uint8\" " +
           "BigEndian=\"true\" " +

@@ -85,7 +85,7 @@ public class OMETiffWriter extends TiffWriter {
       //
       // if programmer indicates which TiffData blocks map to which files using
       // UUID with FileName, we have all the information we need to write each
-      // plane to the correct file... assuming planes are fed to saveImage
+      // plane to the correct file... assuming planes are fed to saveBytes
       // according to the given dimension order
       //
       // finish thinking this through

@@ -89,51 +89,32 @@ public abstract class FormatWriter extends FormatHandler
     saveBytes(bytes, 0, last, last);
   }
 
-  /* @see IFormatWriter#saveImage(Image, boolean) */
-  public void saveImage(Image image, boolean last)
+  /* @see IFormatWriter#savePlane(Object, boolean) */
+  public void savePlane(Object plane, boolean last)
     throws FormatException, IOException
   {
-    saveImage(image, 0, last, last);
+    savePlane(plane, 0, last, last);
   }
 
-  /* @see IFormatWriter#saveImage(Image, int, boolean, boolean) */
-  public void saveImage(Image image, int series, boolean lastInSeries,
+  /* @see IFormatWriter#savePlane(Image, int, boolean, boolean) */
+  public void savePlane(Object plane, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    BufferedImage img = AWTImageTools.makeBuffered(image);
-    boolean littleEndian = false;
-    int bpp = FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(img));
-
-    MetadataRetrieve r = getMetadataRetrieve();
-    if (r != null) {
-      Boolean bigEndian = r.getPixelsBigEndian(series, 0);
-      if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
+    // NB: Writers use byte arrays by default as the native type.
+    if (!(plane instanceof byte[])) {
+      throw new IllegalArgumentException("Object to save must be a byte[]");
     }
-
-    byte[][] pixelBytes = AWTImageTools.getPixelBytes(img, littleEndian);
-    byte[] buf = new byte[pixelBytes.length * pixelBytes[0].length];
-    if (interleaved) {
-      for (int i=0; i<pixelBytes[0].length; i+=bpp) {
-        for (int j=0; j<pixelBytes.length; j++) {
-          System.arraycopy(pixelBytes[j], i, buf, i*pixelBytes.length + j*bpp,
-            bpp);
-        }
-      }
-    }
-    else {
-      for (int i=0; i<pixelBytes.length; i++) {
-        System.arraycopy(pixelBytes[i], 0, buf, i * pixelBytes[0].length,
-          pixelBytes[i].length);
-      }
-    }
-    pixelBytes = null;
-
-    saveBytes(buf, series, lastInSeries, last);
+    saveBytes((byte[]) plane, series, lastInSeries, last);
   }
 
   /* @see IFormatWriter#setInterleaved(boolean) */
   public void setInterleaved(boolean interleaved) {
     this.interleaved = interleaved;
+  }
+
+  /* @see IFormatWriter#isInterleaved() */
+  public boolean isInterleaved() {
+    return interleaved;
   }
 
   /* @see IFormatWriter#canDoStacks() */

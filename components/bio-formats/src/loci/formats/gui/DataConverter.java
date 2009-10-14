@@ -78,10 +78,12 @@ public class DataConverter extends JFrame implements
 
   // -- Fields --
 
+  // TODO - Use byte[] instead of BufferedImage for conversion pipeline.
   private FileStitcher reader = new FileStitcher(true);
   private DimensionSwapper swap = new DimensionSwapper(reader);
   private BufferedImageReader biReader = new BufferedImageReader(swap);
   private ImageWriter writer = new ImageWriter();
+  private BufferedImageWriter biWriter = new BufferedImageWriter(writer);
   private JFileChooser rc, wc;
   private boolean shutdown, force = true;
 
@@ -630,7 +632,8 @@ public class DataConverter extends JFrame implements
                   }
 
                   writer.setId(outFile);
-                  writer.saveImage(img, shutdown || filePlane == planesPerFile);
+                  biWriter.saveImage(img,
+                    shutdown || filePlane == planesPerFile);
                   if (shutdown) break;
                 }
               }

@@ -148,6 +148,12 @@ public abstract class FormatHandler implements IFormatHandler {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() { return suffixes; }
 
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    // NB: Handlers use byte arrays by default as the native type.
+    return byte[].class;
+  }
+
   // -- StatusReporter API methods --
 
   /* @see StatusReporter#addStatusListener(StatusListener) */

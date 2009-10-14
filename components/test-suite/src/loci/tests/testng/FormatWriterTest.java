@@ -201,7 +201,7 @@ public class FormatWriterTest {
         int imageCount = writer.canDoStacks() ? reader.getImageCount() : 1;
         for (int image=0; image<imageCount; image++) {
           boolean lastImage = image == imageCount - 1;
-          writer.saveImage(reader.openImage(image), series,
+          writer.saveBytes(reader.openBytes(image), series,
             lastImage, lastImage && lastSeries);
         }
       }
