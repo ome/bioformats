@@ -171,6 +171,7 @@ public class MetamorphReader extends BaseTiffReader {
     int ndx = no / getSizeZ();
     if (stks[series].length == 1) ndx = 0;
     String file = stks[series][ndx];
+    if (file == null) return buf;
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
@@ -421,9 +422,7 @@ public class MetamorphReader extends BaseTiffReader {
                     stks[s][f].lastIndexOf(".")) + ".tif";
                   l = new Location(ndfile.getParent(), stks[s][f]);
                   if (!l.exists()) {
-                    String filename = stks[s][f];
-                    stks = null;
-                    throw new FormatException("Missing STK file: " + filename);
+                    stks[s][f] = null;
                   }
                 }
               }
@@ -439,20 +438,30 @@ public class MetamorphReader extends BaseTiffReader {
                   stks[s][f].lastIndexOf(".")) + ".tif";
                 l = new Location(ndfile.getParent(), stks[s][f]);
                 if (!l.exists()) {
-                  String filename = stks[s][f];
-                  stks = null;
-                  throw new FormatException("Missing STK file: " + filename);
+                  stks[s][f] = null;
                 }
               }
             }
           }
-          if (stks != null) stks[s][f] = l.getAbsolutePath();
-          else break;
+          if (stks != null && l.exists()) stks[s][f] = l.getAbsolutePath();
+          else if (stks == null) break;
         }
         if (stks == null) break;
       }
 
-      RandomAccessInputStream s = new RandomAccessInputStream(stks[0][0]);
+      int q = 0;
+      int f = 0;
+      String file = stks[q][f];
+      while (file == null) {
+        if (f < stks[q].length - 1) f++;
+        else if (q < stks.length - 1) {
+          q++;
+          f = 0;
+        }
+        file = stks[q][f];
+      }
+
+      RandomAccessInputStream s = new RandomAccessInputStream(file);
       TiffParser tp = new TiffParser(s);
       IFD ifd = tp.getFirstIFD();
       s.close();
@@ -526,7 +535,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       String comment = null;
 
-      if (stks != null) {
+      if (stks != null && stks[i][0] != null) {
         RandomAccessInputStream stream =
           new RandomAccessInputStream(stks[i][0]);
         TiffParser tp = new TiffParser(stream);
@@ -650,7 +659,9 @@ public class MetamorphReader extends BaseTiffReader {
         Float deltaT = 0f;
         Float exposureTime = 0f;
 
-        if (coords[2] > 0 && stks != null) {
+        if (coords[2] > 0 && stks != null && lastFile >= 0 &&
+          stks[i][lastFile] != null)
+        {
           int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
           if (fileIndex != lastFile) {
             lastFile = fileIndex;
