@@ -228,12 +228,15 @@ public class NikonTiffReader extends BaseTiffReader {
     store.setObjectiveImmersion(immersion, 0, 0);
 
     for (int i=0; i<wavelength.size(); i++) {
-      store.setLightSourceID("Laser:" + laserIDs.get(i), 0, i);
+      store.setLightSourceID("LightSource:" + laserIDs.get(i), 0, i);
       store.setLaserWavelength(wavelength.get(i), 0, i);
+      store.setLaserType("Unknown", 0, i);
+      store.setLaserLaserMedium("Unknown", 0, i);
     }
 
     for (int i=0; i<gain.size(); i++) {
       store.setDetectorGain(gain.get(i), 0, i);
+      store.setDetectorType("Unknown", 0, i);
     }
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -247,12 +250,14 @@ public class NikonTiffReader extends BaseTiffReader {
     }
 
     for (int i=0; i<filterModels.size(); i++) {
-      store.setFilterID("Filter:" + filterModels.get(i), 0, i);
+      String filter = MetadataTools.createLSID("Filter", 0, i);
+      store.setFilterID(filter, 0, i);
       store.setFilterModel(filterModels.get(i), 0, i);
     }
 
     for (int i=0; i<dichroicModels.size(); i++) {
-      store.setDichroicID("Dichroic:" + dichroicModels.get(i), 0, i);
+      String dichroic = MetadataTools.createLSID("Dichroic", 0, i);
+      store.setDichroicID(dichroic, 0, i);
       store.setDichroicModel(dichroicModels.get(i), 0, i);
     }
   }
