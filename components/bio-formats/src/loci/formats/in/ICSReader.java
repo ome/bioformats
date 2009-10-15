@@ -830,10 +830,10 @@ public class ICSReader extends FormatReader {
       if (pinholes.containsKey(channel)) {
         store.setLogicalChannelPinholeSize(pinholes.get(channel), 0, i);
       }
-      if (emWaves != null && i < emWaves.length) {
+      if (emWaves != null && i < emWaves.length && emWaves[i].intValue() > 0) {
         store.setLogicalChannelEmWave(emWaves[i], 0, i);
       }
-      if (exWaves != null && i < exWaves.length) {
+      if (exWaves != null && i < exWaves.length && exWaves[i].intValue() > 0) {
         store.setLogicalChannelExWave(exWaves[i], 0, i);
       }
     }
@@ -844,6 +844,8 @@ public class ICSReader extends FormatReader {
     for (int i=0; i<lasers.length; i++) {
       store.setLaserWavelength(wavelengths.get(lasers[i]), 0,
         lasers[i].intValue());
+      store.setLaserType("Unknown", 0, lasers[i].intValue());
+      store.setLaserLaserMedium("Unknown", 0, lasers[i].intValue());
     }
 
     // populate Objective data
