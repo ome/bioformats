@@ -211,6 +211,10 @@ public final class MetadataTools {
     return null;
   }
 
+  /**
+   * Returns a {@link loci.formats.ome.OMEXMLMetadata} object with the same
+   * contents as the given MetadataRetrieve, converting it if necessary.
+   */
   public static IMetadata getOMEMetadata(MetadataRetrieve src) {
     // check if the metadata is already an OME-XML metadata object
     if (isOMEXMLMetadata(src)) return (IMetadata) src;
@@ -225,7 +229,7 @@ public final class MetadataTools {
   /**
    * If the given IMetadata is an instance of
    * {@link loci.formats.ome.OMEXMLMetadata}, the OriginalMetadata hashtable
-   * is returned.  Otherwise, returns null;
+   * is returned. Otherwise, returns null.
    */
   public static Hashtable<String, String> getOriginalMetadata(IMetadata src) {
     if (isOMEXMLMetadata(src)) {
