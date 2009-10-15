@@ -69,7 +69,6 @@ bool separate = false;
 bool expand = false;
 bool omexml = false;
 bool normalize = false;
-bool preload = false;
 String* omexmlVersion = NULL;
 int start = 0;
 int end = INT_MAX;
@@ -123,7 +122,6 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-expand") == 0) expand = true;
       else if (arg.compare("-omexml") == 0) omexml = true;
       else if (arg.compare("-normalize") == 0) normalize = true;
-      else if (arg.compare("-preload") == 0) preload = true;
       else if (arg.compare("-xmlversion") == 0) {
         omexmlVersion = new String(argv[++i]);
       }
@@ -162,7 +160,7 @@ void printUsage() {
     "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] " << endl <<
     "    [-merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
     "    [-normalize] [-range start end] [-series num]" << endl <<
-    "    [-swap inputOrder] [-shuffle outputOrder] [-preload]" << endl <<
+    "    [-swap inputOrder] [-shuffle outputOrder]" << endl <<
     "    [-xmlversion v] [-crop x,y,w,h]" << endl <<
     "" << endl <<
     "  -version: print the library version and exit" << endl <<
@@ -182,9 +180,6 @@ void printUsage() {
     "   -series: specify which image series to read" << endl <<
     "     -swap: override the default input dimension order" << endl <<
     "  -shuffle: override the default output dimension order" << endl <<
-    "  -preload: pre-read entire file into a buffer; significantly" << endl <<
-    "            reduces the time required to read the images, but" << endl <<
-    "            requires more memory" << endl <<
     "  -xmlversion: specify which OME-XML version to generate" << endl <<
   //  "     -crop: crop images before displaying; argument is 'x,y,w,h'" << endl <<
     "" << endl <<
@@ -194,8 +189,13 @@ void printUsage() {
 
 void configureReaderPreInit() {
   if (omexml) {
+    jobject null = NULL;
+    String xml(null);
+    if (omexmlVersion == NULL) omexmlVersion = new String(null);
+    MetadataStore store =
+      MetadataTools::createOMEXMLMetadata(xml, *omexmlVersion);
+
     reader->setOriginalMetadataPopulated(true);
-    MetadataStore store = MetadataTools::createOMEXMLMetadata();
     if (!store.isNull()) reader->setMetadataStore(store);
   }
 
