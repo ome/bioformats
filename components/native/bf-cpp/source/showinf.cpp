@@ -576,5 +576,4 @@ int main(int argc, const char *argv[]) {
     cout << "An unexpected C++ error occurred. " << e.what() << endl;
     return -5;
   }
-
 }
