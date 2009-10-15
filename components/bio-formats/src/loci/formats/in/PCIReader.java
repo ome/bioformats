@@ -296,6 +296,7 @@ public class PCIReader extends FormatReader {
       String detectorID = MetadataTools.createLSID("Detector", 0);
       store.setInstrumentID(instrumentID, 0);
       store.setDetectorID(detectorID, 0, 0);
+      store.setDetectorType("Unknown", 0, 0);
       store.setImageInstrumentRef(instrumentID, 0);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
