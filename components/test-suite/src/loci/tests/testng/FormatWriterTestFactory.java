@@ -32,19 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package loci.tests.testng;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.Vector;
 
-import loci.common.Location;
 import loci.common.LogTools;
-import loci.formats.ImageWriter;
 
 /**
  * Factory for scanning a directory structure and generating instances of

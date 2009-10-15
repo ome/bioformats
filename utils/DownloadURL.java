@@ -2,7 +2,8 @@
 // DownloadURL.java
 //
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 
 /**

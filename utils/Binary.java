@@ -2,7 +2,9 @@
 // Binary.java
 //
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * Attempts to convert a string of zeroes and ones into readable text.

@@ -33,7 +33,6 @@ import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
-import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
 

@@ -23,12 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
-import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -96,7 +93,7 @@ public abstract class FormatWriter extends FormatHandler
     savePlane(plane, 0, last, last);
   }
 
-  /* @see IFormatWriter#savePlane(Image, int, boolean, boolean) */
+  /* @see IFormatWriter#savePlane(Object, int, boolean, boolean) */
   public void savePlane(Object plane, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {

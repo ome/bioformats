@@ -25,17 +25,13 @@ package loci.formats.out;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
-import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataRetrieve;

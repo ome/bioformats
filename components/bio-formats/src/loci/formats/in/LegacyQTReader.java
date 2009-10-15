@@ -38,7 +38,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.FilterMetadata;

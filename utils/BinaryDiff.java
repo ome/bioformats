@@ -2,7 +2,10 @@
 // BinaryDiff.java
 //
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Compares two binary files, outputting their differences in human-readable
