@@ -1250,13 +1250,8 @@ public class FlexReader extends FormatReader {
 
   // -- FlexReader API methods --
 
-  /**
-   * Map the server named 'alias' to the path 'realName'.
-   * @throw FormatException if 'realName' does not exist.
-   */
-  public static void mapServer(String alias, String realName)
-    throws FormatException
-  {
+  /** Map the server named 'alias' to the path 'realName'.  */
+  public static void mapServer(String alias, String realName) {
     LogTools.debug("mapSever(" + alias + ", " + realName + ")");
     if (alias != null) {
       if (realName == null) {
@@ -1267,7 +1262,8 @@ public class FlexReader extends FormatReader {
         // verify that 'realName' exists
         Location server = new Location(realName);
         if (!server.exists()) {
-          throw new FormatException("Server " + realName + " was not found.");
+          LogTools.debug("Server " + realName + " was not found.");
+          return;
         }
 
         LogTools.debug("Finding base server name...");
@@ -1302,13 +1298,8 @@ public class FlexReader extends FormatReader {
     }
   }
 
-  /**
-   * Map the server named 'alias' to the path 'realName'.
-   * @throw FormatException if 'realName' does not exist.
-   */
-  public static void mapServer(String alias, String[] realNames)
-    throws FormatException
-  {
+  /** Map the server named 'alias' to the path 'realName'.  */
+  public static void mapServer(String alias, String[] realNames) {
     StringBuffer msg = new StringBuffer("mapServer(");
     msg.append(alias);
     if (realNames != null) {
@@ -1328,13 +1319,15 @@ public class FlexReader extends FormatReader {
         serverMap.remove(alias);
       }
       else {
+        Vector<String> names = new Vector<String>();
         for (String server : realNames) {
           if (!new Location(server).getAbsoluteFile().exists()) {
-            throw new FormatException("Server " + server + " does not exist.");
+            LogTools.debug("Server " + server + " does not exist.");
           }
+          else names.add(server);
         }
 
-        serverMap.put(alias, realNames);
+        serverMap.put(alias, names.toArray(new String[names.size()]));
       }
     }
   }
