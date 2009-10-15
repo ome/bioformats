@@ -32,6 +32,7 @@ public class MinimumWriter {
     for (int i=0; i<img.length; i++) img[i] = (byte) (256 * Math.random());
 
     // create metadata object with minimum required metadata fields
+    System.out.println("Populating metadata...");
     IMetadata meta = MetadataTools.createOMEXMLMetadata();
     meta.createRoot();
     meta.setPixelsBigEndian(Boolean.TRUE, 0, 0);
