@@ -260,6 +260,13 @@ public class BioRadReader extends FormatReader {
       in.readShort() == 0 ? FormatTools.UINT16 : FormatTools.UINT8;
     int imageNumber = in.readShort();
     String name = in.readString(32);
+    for (int i=0; i<name.length(); i++) {
+      if (name.charAt(i) == 0) {
+        name = name.substring(0, i);
+        break;
+      }
+    }
+
     int merged = in.readShort();
     int color1 = in.readShort();
     int fileId = in.readShort();
@@ -453,6 +460,8 @@ public class BioRadReader extends FormatReader {
 
     core[0].dimensionOrder = "XYCTZ";
 
+    int nextDetector = 0;
+
     boolean multipleFiles = false;
     for (Note n : noteStrings) {
       switch (n.type) {
@@ -498,36 +507,34 @@ public class BioRadReader extends FormatReader {
               if (key.indexOf("_DET_") != -1) {
                 int index = key.indexOf("_DET_") + 5;
                 if (key.lastIndexOf("_") > index) {
-                  String idx = key.substring(index, key.indexOf("_", index));
-                  int detector = Integer.parseInt(idx) - 1;
-
                   String detectorID =
-                    MetadataTools.createLSID("Detector", 0, detector);
-                  store.setDetectorID(detectorID, 0, detector);
-                  store.setDetectorType("Unknown", 0, detector);
+                    MetadataTools.createLSID("Detector", 0, nextDetector);
+                  store.setDetectorID(detectorID, 0, nextDetector);
+                  store.setDetectorType("Unknown", 0, nextDetector);
 
                   if (key.endsWith("OFFSET")) {
-                    if (detector < offset.size()) {
-                      offset.setElementAt(new Float(value), detector);
+                    if (nextDetector < offset.size()) {
+                      offset.setElementAt(new Float(value), nextDetector);
                     }
                     else {
-                      while (detector > offset.size()) {
+                      while (nextDetector > offset.size()) {
                         offset.add(null);
                       }
                       offset.add(new Float(value));
                     }
                   }
                   else if (key.endsWith("GAIN")) {
-                    if (detector < gain.size()) {
-                      gain.setElementAt(new Float(value), detector);
+                    if (nextDetector < gain.size()) {
+                      gain.setElementAt(new Float(value), nextDetector);
                     }
                     else {
-                      while (detector > gain.size()) {
+                      while (nextDetector > gain.size()) {
                         gain.add(null);
                       }
                       gain.add(new Float(value));
                     }
                   }
+                  nextDetector++;
                 }
               }
             }
@@ -899,11 +906,15 @@ public class BioRadReader extends FormatReader {
     if (multipleFiles && isGroupFiles() && pics.size() == 0) {
       // do file grouping
       used.remove(currentId);
+      long length = new Location(currentId).length();
       FilePattern pattern = new FilePattern(new Location(id).getAbsoluteFile());
       String[] patternFiles = pattern.getFiles();
       for (String file : patternFiles) {
-        pics.add(file);
-        used.add(file);
+        Location f = new Location(file);
+        if (f.length() == length) {
+          pics.add(file);
+          used.add(file);
+        }
       }
       if (pics.size() == 1) core[0].sizeC = 1;
     }
@@ -947,6 +958,8 @@ public class BioRadReader extends FormatReader {
       if (detectorOffset != null || detectorGain != null) {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorSettingsDetector(detectorID, 0, i);
+        store.setDetectorID(detectorID, 0, i);
+        store.setDetectorType("Unknown", 0, i);
       }
       if (detectorOffset != null) {
         store.setDetectorSettingsOffset(detectorOffset, 0, i);
