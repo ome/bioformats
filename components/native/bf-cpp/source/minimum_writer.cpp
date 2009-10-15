@@ -59,6 +59,7 @@ void createJVM() {
     "loci_tools.jar"));
   list.push_back(jace::CustomOption("-Xcheck:jni"));
   list.push_back(jace::CustomOption("-Xmx256m"));
+  list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
   //list.push_back(jace::CustomOption("-verbose:jni"));
   jace::helper::createVm(loader, list, false);
   cout << "JVM created." << endl;
