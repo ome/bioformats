@@ -117,19 +117,22 @@ public final class ImageConverter {
         "If any of the following patterns are present in out_file, they will",
         "be replaced with the indicated metadata value from the input file.",
         "",
-        "   Pattern:    Metadata value:",
+        "   Pattern:\tMetadata value:",
         "   ---------------------------",
-        "   " + FormatTools.SERIES_NUM + "          series index",
-        "   " + FormatTools.SERIES_NAME + "          series name",
-        "   " + FormatTools.CHANNEL_NUM + "          channel index",
-        "   " + FormatTools.CHANNEL_NAME +"          channel name",
-        "   " + FormatTools.Z_NUM + "          Z index",
-        "   " + FormatTools.T_NUM + "          T index",
+        "   " + FormatTools.SERIES_NUM + "\t\tseries index",
+        "   " + FormatTools.SERIES_NAME + "\t\tseries name",
+        "   " + FormatTools.CHANNEL_NUM + "\t\tchannel index",
+        "   " + FormatTools.CHANNEL_NAME +"\t\tchannel name",
+        "   " + FormatTools.Z_NUM + "\t\tZ index",
+        "   " + FormatTools.T_NUM + "\t\tT index",
         "",
         "If any of these patterns are present, then the images to be saved",
         "will be split into multiple files.  For example, if the input file",
         "contains 5 Z sections and 3 timepoints, and out_file is",
-        "'converted_Z%z_T%t.tiff'",
+        "",
+        "  converted_Z" + FormatTools.Z_NUM + "_T" +
+        FormatTools.T_NUM + ".tiff",
+        "",
         "then 15 files will be created, with the names",
         "",
         "  converted_Z0_T0.tiff",
@@ -179,9 +182,26 @@ public final class ImageConverter {
       }
     }
 
-    LogTools.print("[" + writer.getFormat() + "] ");
+    String format = writer.getFormat();
+    LogTools.print("[" + format + "] ");
     long mid = System.currentTimeMillis();
 
+    if (format.equals("OME-TIFF") &&
+      (out.indexOf(FormatTools.SERIES_NUM) > 0 ||
+      out.indexOf(FormatTools.SERIES_NAME) > 0 ||
+      out.indexOf(FormatTools.CHANNEL_NUM) > 0 ||
+      out.indexOf(FormatTools.CHANNEL_NAME) > 0 ||
+      out.indexOf(FormatTools.Z_NUM) > 0 ||
+      out.indexOf(FormatTools.T_NUM) > 0))
+    {
+      // FIXME
+      LogTools.println();
+      LogTools.println(
+        "Sorry, conversion to multiple OME-TIFF files is not yet supported.");
+      return false;
+    }
+
+    int total = 0;
     int num = writer.canDoStacks() ? reader.getSeriesCount() : 1;
     long read = 0, write = 0;
     int first = series == -1 ? 0 : series;
@@ -190,6 +210,7 @@ public final class ImageConverter {
       reader.setSeries(q);
       writer.setInterleaved(reader.isInterleaved());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
+      total += numImages;
       for (int i=0; i<numImages; i++) {
         writer.setId(FormatTools.getFilename(q, i, reader, out));
         if (compression != null) writer.setCompression(compression);
@@ -218,10 +239,10 @@ public final class ImageConverter {
     // output timing results
     float sec = (end - start) / 1000f;
     long initial = mid - start;
-    float readAvg = (float) read / num;
-    float writeAvg = (float) write / num;
+    float readAvg = (float) read / total;
+    float writeAvg = (float) write / total;
     LogTools.println(sec + "s elapsed (" +
-      readAvg + "+" + writeAvg + "ms per image, " + initial + "ms overhead)");
+      readAvg + "+" + writeAvg + "ms per plane, " + initial + "ms overhead)");
 
     return true;
   }

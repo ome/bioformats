@@ -49,6 +49,14 @@ import loci.formats.tiff.TiffSaver;
  */
 public class TiffWriter extends FormatWriter {
 
+  // -- Constants --
+
+  public static final String COMPRESSION_UNCOMPRESSED = "Uncompressed";
+  public static final String COMPRESSION_LZW = "LZW";
+  public static final String COMPRESSION_J2K = "J2K";
+  public static final String COMPRESSION_J2K_LOSSY = "J2K-Lossy";
+  public static final String COMPRESSION_JPEG = "JPEG";
+
   // -- Fields --
 
   /** The last offset written to. */
@@ -72,8 +80,13 @@ public class TiffWriter extends FormatWriter {
   public TiffWriter(String format, String[] exts) {
     super(format, exts);
     lastOffset = 0;
-    compressionTypes =
-      new String[] {"Uncompressed", "LZW", "J2K", "J2K-Lossy", "JPEG"};
+    compressionTypes = new String[] {
+      COMPRESSION_UNCOMPRESSED,
+      COMPRESSION_LZW,
+      COMPRESSION_J2K,
+      COMPRESSION_J2K_LOSSY,
+      COMPRESSION_JPEG
+    };
     isBigTiff = false;
   }
 
@@ -194,16 +207,16 @@ public class TiffWriter extends FormatWriter {
     IFD h = new IFD();
     if (compression == null) compression = "";
     Integer compressType = new Integer(TiffCompression.UNCOMPRESSED);
-    if (compression.equals("LZW")) {
+    if (compression.equals(COMPRESSION_LZW)) {
       compressType = new Integer(TiffCompression.LZW);
     }
-    else if (compression.equals("J2K")) {
+    else if (compression.equals(COMPRESSION_J2K)) {
       compressType = new Integer(TiffCompression.JPEG_2000);
     }
-    else if (compression.equals("J2K-Lossy")) {
+    else if (compression.equals(COMPRESSION_J2K_LOSSY)) {
       compressType = new Integer(TiffCompression.JPEG_2000_LOSSY);
     }
-    else if (compression.equals("JPEG")) {
+    else if (compression.equals(COMPRESSION_JPEG)) {
       compressType = new Integer(TiffCompression.JPEG);
     }
     h.put(new Integer(IFD.COMPRESSION), compressType);
@@ -215,7 +228,7 @@ public class TiffWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String codec) {
-    if (codec.startsWith("J2K") || codec.equals("JPEG")) {
+    if (codec.startsWith(COMPRESSION_J2K) || codec.equals(COMPRESSION_JPEG)) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
     }
     return super.getPixelTypes(codec);

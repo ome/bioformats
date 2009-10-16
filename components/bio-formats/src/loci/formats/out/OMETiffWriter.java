@@ -25,8 +25,11 @@ package loci.formats.out;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
+import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -52,9 +55,14 @@ public class OMETiffWriter extends TiffWriter {
     "before doing so. For more information, see the OME-TIFF web site: " +
     "http://loci.wisc.edu/ome/ome-tiff.html. -->";
 
+  // -- Static fields --
+
+  private static HashMap<String, String> uuids = new HashMap<String, String>();
+
   // -- Fields --
 
-  private Vector seriesMap;
+  private ArrayList<Integer> seriesMap;
+  private boolean wroteLast;
 
   // -- Constructor --
 
@@ -69,26 +77,20 @@ public class OMETiffWriter extends TiffWriter {
     if (out != null) out.close();
     out = null;
     if (currentId != null) {
+      if (!wroteLast) {
+        // FIXME
+        throw new IOException(
+          "Sorry, closing OME-TIFF files early is not yet supported.");
+      }
+
       // extract OME-XML string from metadata object
       MetadataRetrieve retrieve = getMetadataRetrieve();
       IMetadata omeMeta = MetadataTools.getOMEMetadata(retrieve);
 
       // generate UUID and add to OME element
-      // Use Java 1.5 method java.util.UUID.randomUUID() via reflection?
-      // but need a separate UUID for each file's OME element
-      // now all TiffData elements are identical across all files
-      // the ONLY change is the UUID of the root OME element
-
-      // main challenge is that programmer must still provide TiffData tag
-      // list indicating which IFDs of which files correspond to which planes;
-      // TiffData properties are part of MetadataStore now for this purpose
-      //
-      // if programmer indicates which TiffData blocks map to which files using
-      // UUID with FileName, we have all the information we need to write each
-      // plane to the correct file... assuming planes are fed to saveBytes
-      // according to the given dimension order
-      //
-      // finish thinking this through
+      String filename = new Location(currentId).getName();
+      String uuid = getUUID(filename);
+      omeMeta.setUUID(uuid);
 
       for (int series=0; series<omeMeta.getImageCount(); series++) {
         String dimensionOrder = omeMeta.getPixelsDimensionOrder(series, 0);
@@ -97,8 +99,9 @@ public class OMETiffWriter extends TiffWriter {
         int sizeT = omeMeta.getPixelsSizeT(series, 0).intValue();
 
         int imageCount = 0;
-        for (int q=0; q<seriesMap.size(); q++) {
-          if ((((Integer) seriesMap.get(q))).intValue() == series) imageCount++;
+        int ifdCount = seriesMap.size();
+        for (int q=0; q<ifdCount; q++) {
+          if (seriesMap.get(q).intValue() == series) imageCount++;
         }
 
         if (imageCount == 0) {
@@ -117,25 +120,42 @@ public class OMETiffWriter extends TiffWriter {
           omeMeta.setLogicalChannelSamplesPerPixel(samplesPerPixel, series, c);
         }
 
-        int num = 0;
-        for (int plane=0; plane<imageCount; plane++) {
-          while (((Integer) seriesMap.get(num)).intValue() != series) {
-            num++;
+        int ifd = 0, plane = 0;
+        while (plane < imageCount) {
+          // skip past IFDs from other series
+          while (seriesMap.get(ifd).intValue() != series) {
+            ifd++;
           }
+          // determine number of sequential IFDs
+          int end = ifd;
+          while (end < ifdCount && seriesMap.get(end).intValue() == series) {
+            end++;
+          }
+          int num = end - ifd;
+
+          // fill in filename and UUID values
           int[] zct = FormatTools.getZCTCoords(dimensionOrder,
             sizeZ, sizeC, sizeT, imageCount, plane);
-
-          // use the relative file path
-          String filename =
-            currentId.substring(currentId.lastIndexOf(File.separator) + 1);
-
           omeMeta.setTiffDataFileName(filename, series, 0, plane);
-          omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, 0, plane);
-          omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, 0, plane);
-          omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, 0, plane);
-          omeMeta.setTiffDataIFD(new Integer(num), series, 0, plane);
-          omeMeta.setTiffDataNumPlanes(new Integer(1), series, 0, plane);
-          num++;
+          omeMeta.setTiffDataUUID(uuid, series, 0, plane);
+          // fill in any non-default TiffData attributes
+          if (zct[0] > 0) {
+            omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, 0, plane);
+          }
+          if (zct[1] > 0) {
+            omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, 0, plane);
+          }
+          if (zct[2] > 0) {
+            omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, 0, plane);
+          }
+          if (ifd > 0) {
+            omeMeta.setTiffDataIFD(new Integer(ifd), series, 0, plane);
+          }
+          if (num != ifdCount) {
+            omeMeta.setTiffDataNumPlanes(new Integer(num), series, 0, plane);
+          }
+          plane += num;
+          ifd = end;
         }
       }
 
@@ -158,6 +178,7 @@ public class OMETiffWriter extends TiffWriter {
     }
     super.close();
     seriesMap = null;
+    wroteLast = false;
   }
 
   // -- IFormatWriter API methods --
@@ -166,9 +187,38 @@ public class OMETiffWriter extends TiffWriter {
   public void saveBytes(byte[] buf, int series, boolean lastInSeries,
     boolean last) throws FormatException, IOException
   {
-    if (seriesMap == null) seriesMap = new Vector();
+    if (seriesMap == null) seriesMap = new ArrayList<Integer>();
     seriesMap.add(new Integer(series));
+    if (last) wroteLast = true;
     super.saveBytes(buf, series, lastInSeries, last);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    if (id.equals(currentId)) return;
+    if (new Location(id).exists()) {
+      // FIXME
+      throw new FormatException(
+        "Sorry, appending to existing OME-TIFF files is not yet supported.");
+    }
+    super.setId(id);
+  }
+
+  // -- Helper methods --
+
+  /** Gets the UUID corresponding to the given filename. */
+  private static String getUUID(String filename) {
+    String uuid;
+    synchronized (uuids) {
+      uuid = uuids.get(filename);
+      if (uuid == null) {
+        uuid = UUID.randomUUID().toString();
+        uuids.put(filename, uuid);
+      }
+    }
+    return uuid;
   }
 
 }
