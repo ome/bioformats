@@ -1250,9 +1250,15 @@ public class FlexReader extends FormatReader {
 
   // -- FlexReader API methods --
 
-  /** Map the server named 'alias' to the path 'realName'.  */
-  public static void mapServer(String alias, String realName) {
-    LogTools.debug("mapSever(" + alias + ", " + realName + ")");
+  /**
+   * Add the path 'realName' to the mapping for the server named 'alias'.
+   * @throws FormatException if 'realName' does not exist
+   */
+  public static void appendServerMap(String alias, String realName)
+    throws FormatException
+  {
+    LogTools.debug("appendServerMap(" + alias + ", " + realName + ")");
+
     if (alias != null) {
       if (realName == null) {
         LogTools.debug("removing mapping for " + alias);
@@ -1262,9 +1268,35 @@ public class FlexReader extends FormatReader {
         // verify that 'realName' exists
         Location server = new Location(realName);
         if (!server.exists()) {
-          LogTools.debug("Server " + realName + " was not found.");
-          return;
+          throw new FormatException("Server " + realName + " was not found.");
         }
+        String[] names = serverMap.get(alias);
+        if (names == null) {
+          serverMap.put(alias, new String[] {realName});
+        }
+        else {
+          String[] tmpNames = new String[names.length + 1];
+          System.arraycopy(names, 0, tmpNames, 0, names.length);
+          tmpNames[tmpNames.length - 1] = realName;
+          serverMap.put(alias, tmpNames);
+        }
+      }
+    }
+  }
+
+  /**
+   * Map the server named 'alias' to the path 'realName'.
+   * If other paths were mapped to 'alias', they will be overwritten.
+   */
+  public static void mapServer(String alias, String realName) {
+    LogTools.debug("mapSever(" + alias + ", " + realName + ")");
+    if (alias != null) {
+      if (realName == null) {
+        LogTools.debug("removing mapping for " + alias);
+        serverMap.remove(alias);
+      }
+      else {
+        Location server = new Location(realName);
 
         LogTools.debug("Finding base server name...");
         if (realName.endsWith(File.separator)) {
@@ -1298,7 +1330,10 @@ public class FlexReader extends FormatReader {
     }
   }
 
-  /** Map the server named 'alias' to the path 'realName'.  */
+  /**
+   * Map the server named 'alias' to the paths in 'realNames'.
+   * If other paths were mapped to 'alias', they will be overwritten.
+   */
   public static void mapServer(String alias, String[] realNames) {
     StringBuffer msg = new StringBuffer("mapServer(");
     msg.append(alias);
@@ -1319,15 +1354,14 @@ public class FlexReader extends FormatReader {
         serverMap.remove(alias);
       }
       else {
-        Vector<String> names = new Vector<String>();
         for (String server : realNames) {
-          if (!new Location(server).getAbsoluteFile().exists()) {
-            LogTools.debug("Server " + server + " does not exist.");
+          try {
+            appendServerMap(alias, server);
           }
-          else names.add(server);
+          catch (FormatException e) {
+            LogTools.traceDebug(e);
+          }
         }
-
-        serverMap.put(alias, names.toArray(new String[names.size()]));
       }
     }
   }
