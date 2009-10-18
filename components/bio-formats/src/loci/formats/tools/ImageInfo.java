@@ -713,7 +713,7 @@ public class ImageInfo {
     // output timing results
     float sec2 = (e2 - s2) / 1000f;
     float avg = (float) (e2 - s2) / images.length;
-    LogTools.println(sec2 + "s elapsed (" + avg + "ms per image)");
+    LogTools.println(sec2 + "s elapsed (" + avg + "ms per plane)");
 
     if (minmax) printMinMaxValues();
 
