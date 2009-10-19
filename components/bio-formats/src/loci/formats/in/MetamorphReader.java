@@ -321,6 +321,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (c != null) cc = Integer.parseInt(c);
       if (t != null) tc = Integer.parseInt(t);
 
+      if (cc == 0) cc = 1;
+
       int numFiles = cc * tc;
       if (nstages > 0) numFiles *= nstages;
 
@@ -331,8 +333,9 @@ public class MetamorphReader extends BaseTiffReader {
       Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
       for (int i=0; i<cc; i++) {
-        boolean hasZ1 = hasZ.get(i).booleanValue();
-        boolean hasZ2 = i != 0 && hasZ.get(i - 1).booleanValue();
+        boolean hasZ1 = i < hasZ.size() && hasZ.get(i).booleanValue();
+        boolean hasZ2 = i != 0 && (i - 1 < hasZ.size()) &&
+          hasZ.get(i - 1).booleanValue();
         if (i > 0 && hasZ1 != hasZ2) {
           if (!differentZs) seriesCount *= 2;
           differentZs = true;
@@ -368,7 +371,7 @@ public class MetamorphReader extends BaseTiffReader {
         prefix.lastIndexOf("."));
 
       for (int i=0; i<cc; i++) {
-        if (waveNames.get(i) != null) {
+        if (i < waveNames.size() && waveNames.get(i) != null) {
           String name = waveNames.get(i);
           waveNames.setElementAt(name.substring(1, name.length() - 1), i);
         }
@@ -381,11 +384,11 @@ public class MetamorphReader extends BaseTiffReader {
         int ns = nstages == 0 ? 1 : nstages;
         for (int s=0; s<ns; s++) {
           for (int j=0; j<cc; j++) {
-            boolean validZ = hasZ.get(j).booleanValue();
+            boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
             int seriesNdx = s * (seriesCount / ns);
             seriesNdx += (seriesCount == 1 || validZ) ? 0 : 1;
             stks[seriesNdx][pt[seriesNdx]] = prefix;
-            if (waveNames.get(j) != null) {
+            if (j < waveNames.size() && waveNames.get(j) != null) {
               stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
               if (useWaveNames) {
                 stks[seriesNdx][pt[seriesNdx]] += waveNames.get(j);
@@ -394,7 +397,10 @@ public class MetamorphReader extends BaseTiffReader {
             if (nstages > 0) {
               stks[seriesNdx][pt[seriesNdx]] += "_s" + (s + 1);
             }
-            stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
+            if (tc > 1) {
+              stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
+            }
+            else stks[seriesNdx][pt[seriesNdx]] += ".STK";
             pt[seriesNdx]++;
           }
         }
@@ -555,11 +561,14 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (firstSeriesChannels != null) {
         for (int c=0; c<firstSeriesChannels.length; c++) {
-          if (firstSeriesChannels[c] == ((i % 2) == 0)) {
+          if (firstSeriesChannels[c] == ((i % 2) == 0) && c < waveNames.size())
+          {
             name += waveNames.get(c) + "/";
           }
         }
-        name = name.substring(0, name.length() - 1);
+        if (name.length() > 0) {
+          name = name.substring(0, name.length() - 1);
+        }
       }
 
       store.setImageName(name, i);
