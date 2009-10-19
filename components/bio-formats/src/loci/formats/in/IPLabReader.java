@@ -72,8 +72,8 @@ public class IPLabReader extends FormatReader {
     final int blockLen = 12;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(4);
-    boolean big = s.equals("iiii");
-    boolean little = s.equals("mmmm");
+    boolean little = s.equals("iiii");
+    boolean big = s.equals("mmmm");
     if (!big && !little) return false;
     stream.order(little);
     int size = stream.readInt();

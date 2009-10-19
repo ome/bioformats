@@ -1038,13 +1038,17 @@ public class FV1000Reader extends FormatReader {
       if (channel.emWave.intValue() > 0) {
         store.setLogicalChannelEmWave(channel.emWave, 0, channelIndex);
       }
-      store.setLogicalChannelExWave(channel.exWave, 0, channelIndex);
+      if (channel.exWave.intValue() > 0) {
+        store.setLogicalChannelExWave(channel.exWave, 0, channelIndex);
+      }
       store.setLogicalChannelFilterSet(filterSet, 0, channelIndex);
 
       String lightSourceID =
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setLightSourceSettingsLightSource(lightSourceID, 0, channelIndex);
-      store.setLightSourceSettingsWavelength(channel.exWave, 0, channelIndex);
+      if (channel.exWave.intValue() > 0) {
+        store.setLightSourceSettingsWavelength(channel.exWave, 0, channelIndex);
+      }
 
       // populate Filter data
       if (channel.barrierFilter != null) {

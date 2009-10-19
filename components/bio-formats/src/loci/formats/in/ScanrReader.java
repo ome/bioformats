@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -113,13 +112,15 @@ public class ScanrReader extends FormatReader {
 
     Vector<String> files = new Vector<String>();
     for (String file : metadataFiles) {
-      files.add(file);
+      if (file != null) files.add(file);
     }
 
     if (!noPixels && tiffs != null) {
       int offset = getSeries() * getImageCount();
       for (int i=0; i<getImageCount(); i++) {
-        files.add(tiffs[offset + i]);
+        if (tiffs[offset + i] != null) {
+          files.add(tiffs[offset + i]);
+        }
       }
     }
 
@@ -216,7 +217,7 @@ public class ScanrReader extends FormatReader {
     list = dir.list(true);
 
     int next = 0;
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<nSeries; i++) {
       int well = i / (fieldRows * fieldColumns);
       String wellPos = String.valueOf(well + 1);
       while (wellPos.length() < 5) wellPos = "0" + wellPos;
