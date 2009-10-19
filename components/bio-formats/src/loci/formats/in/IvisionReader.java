@@ -82,10 +82,10 @@ public class IvisionReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockCheckLen = 8;
+    final int blockCheckLen = 4;
     if (!FormatTools.validStream(stream, blockCheckLen, true)) return false;
-    stream.seek(4);
-    return stream.readInt() == 0x600;
+    String version = stream.readString(4);
+    return version.equals("3.9a");
   }
 
   /**

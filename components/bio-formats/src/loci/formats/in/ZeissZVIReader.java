@@ -632,6 +632,8 @@ public class ZeissZVIReader extends FormatReader {
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {
@@ -814,6 +816,7 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.equals("User company")) {
           store.setExperimenterInstitution(value, 0);
+          store.setExperimenterOMEName("Unknown", 0);
         }
         else if (key.startsWith("Objective Magnification")) {
           float mag = Float.parseFloat(value);
