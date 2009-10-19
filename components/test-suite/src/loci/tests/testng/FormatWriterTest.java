@@ -104,8 +104,9 @@ public class FormatWriterTest {
     try {
       reader.setId(id);
     }
-    catch (FormatException e) { }
-    catch (IOException e) { }
+    catch (FormatException e) { LogTools.trace(e); }
+    catch (IOException e) { LogTools.trace(e); }
+    config.setId(id);
   }
 
   // -- Setup methods --
@@ -167,14 +168,14 @@ public class FormatWriterTest {
     boolean success = true;
     String msg = null;
     try {
-      config.setId(id);
-
       int type = reader.getPixelType();
       if (!writer.isSupportedType(type)) {
         success = true;
         result(testName, success, msg);
         return;
       }
+
+      /* debug */ System.out.println("id = " + id);
 
       String prefix = id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf("."));
@@ -189,6 +190,7 @@ public class FormatWriterTest {
       IMetadata meta = (IMetadata) reader.getMetadataStore();
       writer.close();
       writer.setMetadataRetrieve((MetadataRetrieve) meta);
+      /* debug */ System.out.println("metadata says there are " + meta.getImageCount() + " series");
 
       // convert the input file
       writer.setId(convertedFile);

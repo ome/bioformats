@@ -198,7 +198,8 @@ public class OMETiffWriter extends TiffWriter {
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
-    if (new Location(id).exists()) {
+    Location file = new Location(id);
+    if (file.exists() && file.length() > 0) {
       // FIXME
       throw new FormatException(
         "Sorry, appending to existing OME-TIFF files is not yet supported.");

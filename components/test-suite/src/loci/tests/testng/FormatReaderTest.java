@@ -35,6 +35,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -427,7 +428,7 @@ public class FormatReaderTest {
 
         // if CreationDate is before 1995, it's probably invalid
         String date = retrieve.getImageCreationDate(i);
-        if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
+        if (date != null && DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
           DateTools.getTime("1995-01-01T00:00:00", DateTools.ISO8601_FORMAT))
         {
           msg = "CreationDate";
@@ -833,7 +834,12 @@ public class FormatReaderTest {
         reader.setSeries(i);
         int imageCount = reader.getImageCount();
         totalPlanes += imageCount;
-        for (int j=0; j<imageCount; j++) reader.openImage(j);
+        try {
+          for (int j=0; j<imageCount; j++) reader.openImage(j);
+        }
+        catch (IOException e) {
+          LogTools.trace(e);
+        }
       }
       long t2 = System.currentTimeMillis();
       long m2 = r.totalMemory() - r.freeMemory();
@@ -853,9 +859,10 @@ public class FormatReaderTest {
     }
     catch (Throwable t) {
       try {
+        LogTools.trace(t);
         File f = new File(new Location(file).getParent(), ".bioformats");
         BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
-        w.write("\"" + file + "\" test=false\n");
+        w.write("\"" + new Location(file).getName() + "\" test=false\n");
         w.close();
       }
       catch (Throwable t2) {

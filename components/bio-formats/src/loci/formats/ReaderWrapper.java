@@ -143,16 +143,16 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   // -- IFormatReader API methods --
 
+  public boolean isThisType(String name, boolean open) {
+    return reader.isThisType(name, open);
+  }
+
   public boolean isThisType(byte[] block) {
     return reader.isThisType(block);
   }
 
   public boolean isThisType(RandomAccessInputStream stream) throws IOException{
     return reader.isThisType(stream);
-  }
-
-  public void setId(String id) throws FormatException, IOException {
-    reader.setId(id);
   }
 
   public int getImageCount() {
@@ -273,14 +273,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
-  public Class getNativeDataType() {
-    return reader.getNativeDataType();
-  }
-
-  public Object openData(int no, int x, int y, int w, int h)
+  public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return reader.openData(no, x, y, w, h);
+    return reader.openPlane(no, x, y, w, h);
   }
 
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
@@ -289,10 +285,6 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public void close(boolean fileOnly) throws IOException {
     reader.close(fileOnly);
-  }
-
-  public void close() throws IOException {
-    reader.close();
   }
 
   public int getSeriesCount() {
@@ -440,16 +432,24 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isThisType(name);
   }
 
-  public boolean isThisType(String name, boolean open) {
-    return reader.isThisType(name, open);
-  }
-
   public String getFormat() {
     return reader.getFormat();
   }
 
   public String[] getSuffixes() {
     return reader.getSuffixes();
+  }
+
+  public Class getNativeDataType() {
+    return reader.getNativeDataType();
+  }
+
+  public void setId(String id) throws FormatException, IOException {
+    reader.setId(id);
+  }
+
+  public void close() throws IOException {
+    reader.close();
   }
 
   // -- StatusReporter API methods --

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
@@ -37,25 +36,6 @@ import loci.formats.meta.MetadataRetrieve;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/IFormatWriter.java">SVN</a></dd></dl>
  */
 public interface IFormatWriter extends IFormatHandler {
-
-  /**
-   * Saves the given image to the current file.
-   * Note that this method will append the image to the file; it will not
-   * overwrite previously saved images.
-   * If this image is the last one in the file, the last flag must be set.
-   */
-  void saveImage(Image image, boolean last) throws FormatException, IOException;
-
-  /**
-   * Saves the given image to the given series in the current file.
-   * Note that this method will append the image to the file; it will not
-   * overwrite previously saved images.
-   * If this image is the last one in the series, the lastInSeries flag
-   * must be set.
-   * If this image is the last one in the file, the last flag must be set.
-   */
-  void saveImage(Image image, int series, boolean lastInSeries, boolean last)
-    throws FormatException, IOException;
 
   /**
    * Saves the given byte array to the current file.
@@ -77,9 +57,30 @@ public interface IFormatWriter extends IFormatHandler {
     throws FormatException, IOException;
 
   /**
-   * Sets whether or not the channels in an image are interleaved.
+   * Saves the given image plane to the current file.
+   * Note that this method will append the image plane to the file; it will not
+   * overwrite previously saved image planes.
+   * If this image plane is the last one in the file, the last flag must be set.
    */
+  void savePlane(Object plane, boolean last)
+    throws FormatException, IOException;
+
+  /**
+   * Saves the given image plane to the given series in the current file.
+   * Note that this method will append the image plane to the file; it will not
+   * overwrite previously saved image planes.
+   * If this image plane is the last one in the series, the lastInSeries flag
+   * must be set.
+   * If this image plane is the last one in the file, the last flag must be set.
+   */
+  void savePlane(Object plane, int series, boolean lastInSeries, boolean last)
+    throws FormatException, IOException;
+
+  /** Sets whether or not the channels in an image are interleaved. */
   void setInterleaved(boolean interleaved);
+
+  /** Gets whether or not the channels in an image are interleaved. */
+  boolean isInterleaved();
 
   /** Reports whether the writer can save multiple images to a single file. */
   boolean canDoStacks();

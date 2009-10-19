@@ -206,7 +206,7 @@ public class IvisionReader extends FormatReader {
     // look for block of XML data
     status("Looking for XML metadata");
     boolean xmlFound = false;
-    while (!xmlFound && in.getFilePointer() < in.length()) {
+    while (!xmlFound && in.getFilePointer() < in.length() - 6) {
       int len = (int) Math.min(8192, in.length() - in.getFilePointer());
       String check = in.readString(len);
       int xmlIndex = check.indexOf("<?xml");

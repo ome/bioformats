@@ -26,9 +26,9 @@ package loci.formats.in;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.zip.GZIPInputStream;
@@ -46,7 +46,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 

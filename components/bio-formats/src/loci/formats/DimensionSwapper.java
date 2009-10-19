@@ -167,7 +167,101 @@ public class DimensionSwapper extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#setId(String) */
+  /* @see IFormatReader#getSizeX() */
+  public int getSizeX() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].sizeX;
+  }
+
+  /* @see IFormatReader#getSizeY() */
+  public int getSizeY() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].sizeY;
+  }
+
+  /* @see IFormatReader#getSizeZ() */
+  public int getSizeZ() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].sizeZ;
+  }
+
+  /* @see IFormatReader#getSizeC() */
+  public int getSizeC() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].sizeC;
+  }
+
+  /* @see IFormatReader#getSizeT() */
+  public int getSizeT() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return getCoreMetadata()[getSeries()].sizeT;
+  }
+
+  /* @see IFormatReader#getChannelDimLengths() */
+  public int[] getChannelDimLengths() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int[] cLengths = getCoreMetadata()[getSeries()].cLengths;
+    return cLengths == null ? super.getChannelDimLengths() : cLengths;
+  }
+
+  /* @see IFormatReader#getChannelDimTypes() */
+  public String[] getChannelDimTypes() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    String[] cTypes = getCoreMetadata()[getSeries()].cTypes;
+    return cTypes == null ? super.getChannelDimTypes() : cTypes;
+  }
+
+  /* @see IFormatReader#getDimensionOrder() */
+  public String getDimensionOrder() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    if (outputOrder[getSeries()] != null) return outputOrder[getSeries()];
+    return getInputOrder();
+  }
+
+  /* @see IFormatReader#openBytes(int) */
+  public byte[] openBytes(int no) throws FormatException, IOException {
+    return super.openBytes(reorder(no));
+  }
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return super.openBytes(reorder(no), x, y, w, h);
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[]) */
+  public byte[] openBytes(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return super.openBytes(reorder(no), buf);
+  }
+
+  /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    return super.openBytes(reorder(no), buf, x, y, w, h);
+  }
+
+  /* @see IFormatReader#openThumbImage(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    return super.openThumbBytes(reorder(no));
+  }
+
+  /* @see IFormatReader#getZCTCoords(int) */
+  public int[] getZCTCoords(int no) {
+    return FormatTools.getZCTCoords(this, no);
+  }
+
+  /* @see IFormatReader#getIndex(int, int, int) */
+  public int getIndex(int z, int c, int t) {
+    return FormatTools.getIndex(this, z, c, t);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     String oldFile = getCurrentFile();
     super.setId(id);
@@ -175,101 +269,6 @@ public class DimensionSwapper extends ReaderWrapper {
       outputOrder = new String[getSeriesCount()];
     }
   }
-
-  /* @see loci.formats.IFormatReader#getSizeX() */
-  public int getSizeX() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].sizeX;
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeY() */
-  public int getSizeY() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].sizeY;
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeZ() */
-  public int getSizeZ() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].sizeZ;
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeC() */
-  public int getSizeC() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].sizeC;
-  }
-
-  /* @see loci.formats.IFormatReader#getSizeT() */
-  public int getSizeT() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return getCoreMetadata()[getSeries()].sizeT;
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    int[] cLengths = getCoreMetadata()[getSeries()].cLengths;
-    return cLengths == null ? super.getChannelDimLengths() : cLengths;
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    String[] cTypes = getCoreMetadata()[getSeries()].cTypes;
-    return cTypes == null ? super.getChannelDimTypes() : cTypes;
-  }
-
-  /* @see loci.formats.IFormatReader#getDimensionOrder() */
-  public String getDimensionOrder() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    if (outputOrder[getSeries()] != null) return outputOrder[getSeries()];
-    return getInputOrder();
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int) */
-  public byte[] openBytes(int no) throws FormatException, IOException {
-    return super.openBytes(reorder(no));
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int, int, int, int, int) */
-  public byte[] openBytes(int no, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return super.openBytes(reorder(no), x, y, w, h);
-  }
-
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[]) */
-  public byte[] openBytes(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    return super.openBytes(reorder(no), buf);
-  }
-
-  /*
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    return super.openBytes(reorder(no), buf, x, y, w, h);
-  }
-
-  /* @see loci.formats.IFormatReader#openThumbImage(int) */
-  public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    return super.openThumbBytes(reorder(no));
-  }
-
-  /* @see loci.formats.IFormatReader#getZCTCoords(int) */
-  public int[] getZCTCoords(int no) {
-    return FormatTools.getZCTCoords(this, no);
-  }
-
-  /* @see loci.formats.IFormatReader#getIndex(int, int, int) */
-  public int getIndex(int z, int c, int t) {
-    return FormatTools.getIndex(this, z, c, t);
-  }
-
 
   // -- Helper methods --
 

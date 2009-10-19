@@ -43,7 +43,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.in.MinimalTiffReader;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;

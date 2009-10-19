@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
-import java.awt.Image;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -92,16 +91,6 @@ public class TiffWriter extends FormatWriter {
   }
 
   // -- TiffWriter API methods --
-
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.  If this image is the last one in the file,
-   * the last flag must be set.
-   */
-  public void saveImage(Image image, IFD ifd, boolean last) {
-    // TODO
-  }
 
   /**
    * Saves the given image to the specified (possibly already open) file.

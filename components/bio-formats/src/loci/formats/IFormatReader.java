@@ -240,25 +240,17 @@ public interface IFormatReader extends IFormatHandler {
     throws FormatException, IOException;
 
   /**
-   * Returns the native data type of image planes for this reader, as returned
-   * by {@link #openData}. For most readers this type will be a byte array;
-   * however, some readers call external APIs that work with other types such
-   * as {@link java.awt.image.BufferedImage}.
-   */
-  Class getNativeDataType();
-
-  /**
    * Obtains the specified image plane (or sub-image thereof) in the reader's
    * native data structure. For most readers this is a byte array; however,
    * some readers call external APIs that work with other types such as
-   * {@link java.awt.image.BufferedImage}. The openData method exists to
+   * {@link java.awt.image.BufferedImage}. The openPlane method exists to
    * maintain generality and efficiency while avoiding pollution of the API
    * with AWT-specific logic.
    *
    * @see loci.formats.FormatReader
    * @see loci.formats.gui.BufferedImageReader
    */
-  Object openData(int no, int x, int y, int w, int h)
+  Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException;
 
   /**

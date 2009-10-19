@@ -102,7 +102,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   protected BufferedImageReader myReader;
 
   /** Current format writer. */
-  protected IFormatWriter myWriter;
+  protected BufferedImageWriter myWriter;
 
   /** Reader for files on disk. */
   protected IFormatReader fileReader;
@@ -140,7 +140,8 @@ public class ImageViewer extends JFrame implements ActionListener,
     // image I/O engine
     fileReader = new ChannelMerger(new FileStitcher());
     myReader = new BufferedImageReader(fileReader);
-    myWriter = fileWriter = new ImageWriter();
+    fileWriter = new ImageWriter();
+    myWriter = new BufferedImageWriter(fileWriter);
 
     // NB: avoid dependencies on optional loci.ome.io package
     ReflectedUniverse r = new ReflectedUniverse();
@@ -742,7 +743,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   }
 
   /**
-   * Opens the given data source using the specified reader
+   * Opens from the given data source using the specified reader
    * in a separate thread.
    */
   protected void open(final String id, final IFormatReader r) {
@@ -759,7 +760,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   }
 
   /**
-   * Opens the given data source using the specified reader
+   * Saves to the given data destination using the specified writer
    * in a separate thread.
    */
   protected void save(final String id, final IFormatWriter w) {
@@ -769,7 +770,7 @@ public class ImageViewer extends JFrame implements ActionListener,
           myWriter.close();
         }
         catch (IOException exc) { LogTools.trace(exc); }
-        myWriter = w;
+        myWriter = BufferedImageWriter.makeBufferedImageWriter(w);
         save(id);
       }
     }.start();

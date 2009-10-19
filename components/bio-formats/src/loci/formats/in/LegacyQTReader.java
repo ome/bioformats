@@ -38,7 +38,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.FilterMetadata;
@@ -87,19 +86,14 @@ public class LegacyQTReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    BufferedImage data = (BufferedImage) openData(no, x, y, w, h);
+    BufferedImage data = (BufferedImage) openPlane(no, x, y, w, h);
     byte[] tmp = AWTImageTools.getBytes(data, false);
     System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getNativeDataType() */
-  public Class getNativeDataType() {
-    return BufferedImage.class;
-  }
-
-  /* @see loci.formats.IFormatReader#openData(int, int, int, int, int int) */
-  public Object openData(int no, int x, int y, int w, int h)
+  /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
+  public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
@@ -137,6 +131,13 @@ public class LegacyQTReader extends FormatReader {
       times = null;
       image = null;
     }
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    return BufferedImage.class;
   }
 
   // -- Internal FormatReader API methods --

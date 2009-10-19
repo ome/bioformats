@@ -24,27 +24,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import java.util.zip.InflaterInputStream;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-
 import loci.formats.tools.AmiraParameters;
 
 /**

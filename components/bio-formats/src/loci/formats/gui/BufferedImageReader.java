@@ -31,7 +31,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ReaderWrapper;
 
 /**
- * Utility methods for working with BufferedImage objects.
+ * A reader wrapper for reading image planes as BufferedImage objects.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/gui/BufferedImageReader.java">Trac</a>,
@@ -74,7 +74,7 @@ public class BufferedImageReader extends ReaderWrapper {
     Class dataType = getNativeDataType();
     if (BufferedImage.class.isAssignableFrom(dataType)) {
       // native data type is compatible with BufferedImage
-      return (BufferedImage) openData(no, x, y, w, h);
+      return (BufferedImage) openPlane(no, x, y, w, h);
     }
     else {
       // must construct BufferedImage from byte array

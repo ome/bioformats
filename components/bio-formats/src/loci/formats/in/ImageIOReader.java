@@ -73,19 +73,14 @@ public abstract class ImageIOReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    BufferedImage data = (BufferedImage) openData(no, x, y, w, h);
+    BufferedImage data = (BufferedImage) openPlane(no, x, y, w, h);
     byte[] t = AWTImageTools.getBytes(data, false);
     System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#getNativeDataType() */
-  public Class getNativeDataType() {
-    return BufferedImage.class;
-  }
-
-  /* @see loci.formats.IFormatReader#openData(int, int, int, int, int int) */
-  public Object openData(int no, int x, int y, int w, int h)
+  /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
+  public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
@@ -97,6 +92,13 @@ public abstract class ImageIOReader extends FormatReader {
     ras.close();
     dis.close();
     return b.getSubimage(x, y, w, h);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#getNativeDataType() */
+  public Class getNativeDataType() {
+    return BufferedImage.class;
   }
 
   // -- Internal FormatReader API methods --

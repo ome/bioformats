@@ -361,11 +361,6 @@ public abstract class FormatReader extends FormatHandler
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#setId(String) */
-  public void setId(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-  }
-
   /**
    * Checks if a file matches the type of this format reader.
    * Checks filename suffixes against those known for this format.
@@ -608,14 +603,8 @@ public abstract class FormatReader extends FormatHandler
   public abstract byte[] openBytes(int no, byte[] buf, int x, int y,
     int w, int h) throws FormatException, IOException;
 
-  /* @see IFormatReader#getNativeDataType() */
-  public Class getNativeDataType() {
-    // NB: Readers use byte arrays by default as the native type.
-    return byte[].class;
-  }
-
-  /* @see IFormatReader#openData(int, int, int, int, int int) */
-  public Object openData(int no, int x, int y, int w, int h)
+  /* @see IFormatReader#openPlane(int, int, int, int, int int) */
+  public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     // NB: Readers use byte arrays by default as the native type.
@@ -905,6 +894,11 @@ public abstract class FormatReader extends FormatHandler
   public boolean isThisType(String name) {
     // if necessary, open the file for further analysis
     return isThisType(name, true);
+  }
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
   }
 
   /* @see IFormatHandler#close() */
