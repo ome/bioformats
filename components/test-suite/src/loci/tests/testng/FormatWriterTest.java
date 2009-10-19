@@ -94,13 +94,11 @@ public class FormatWriterTest {
     id = filename;
     reader = new BufferedImageReader();
     convertedReader = new BufferedImageReader();
-    reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
     try {
       reader.setId(id);
     }
     catch (FormatException e) { LogTools.trace(e); }
     catch (IOException e) { LogTools.trace(e); }
-    config.setId(id);
   }
 
   // -- Setup methods --
@@ -162,6 +160,10 @@ public class FormatWriterTest {
     boolean success = true;
     String msg = null;
     try {
+      reader.close();
+      reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+      reader.setId(id);
+
       int type = reader.getPixelType();
       if (!writer.isSupportedType(type)) {
         success = true;
@@ -169,7 +171,7 @@ public class FormatWriterTest {
         return;
       }
 
-      /* debug */ System.out.println("id = " + id);
+      config.setId(id);
 
       String prefix = id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf("."));
@@ -184,7 +186,6 @@ public class FormatWriterTest {
       IMetadata meta = (IMetadata) reader.getMetadataStore();
       writer.close();
       writer.setMetadataRetrieve((MetadataRetrieve) meta);
-      /* debug */ System.out.println("metadata says there are " + meta.getImageCount() + " series");
 
       // convert the input file
       writer.setId(convertedFile);
@@ -209,20 +210,38 @@ public class FormatWriterTest {
 
       boolean seriesMatch =
         convertedReader.getSeriesCount() == config.getNumSeries();
+
+      boolean expectRGB = config.isRGB();
+      int expectedCount =
+        config.getZ() * config.getT() * (expectRGB ? 1 : config.getC());
+      boolean imageMatch = convertedReader.getImageCount() == expectedCount;
+
       if (!seriesMatch && writer.canDoStacks()) {
-        success = false;
-        msg = "Series counts do not match (found " +
-          convertedReader.getSeriesCount() + ", expected " +
-          config.getNumSeries() + ")";
+        int totalImages = 0;
+        for (int i=0; i<reader.getSeriesCount(); i++) {
+          reader.setSeries(i);
+          totalImages += reader.getImageCount();
+        }
+        reader.setSeries(0);
+        if (convertedReader.getImageCount() != totalImages) {
+          success = false;
+          msg = "Series counts do not match (found " +
+            convertedReader.getSeriesCount() + ", expected " +
+            config.getNumSeries() + ")";
+        }
+        else imageMatch = true;
       }
       if (success) {
         for (int series=0; series<seriesCount; series++) {
+          if (series >= convertedReader.getSeriesCount()) {
+            break;
+          }
           convertedReader.setSeries(series);
           config.setSeries(series);
 
           int expectedX = config.getX();
           int expectedY = config.getY();
-          boolean expectRGB = config.isRGB();
+          expectRGB = config.isRGB();
           if (TestTools.shortClassName(writer).equals("OMEXMLWriter")) {
             expectRGB = false;
           }
@@ -231,7 +250,7 @@ public class FormatWriterTest {
           }
 
           int expectedPixelType = config.getPixelType();
-          int expectedCount =
+          expectedCount =
             config.getZ() * config.getT() * (expectRGB ? 1 : config.getC());
 
           String expectedMD5 = config.getMD5();
@@ -249,7 +268,7 @@ public class FormatWriterTest {
 
           if (msg == null) msg = checkMismatch(x, expectedX, series, "X");
           if (msg == null) msg = checkMismatch(y, expectedY, series, "Y");
-          if (msg == null && writer.canDoStacks()) {
+          if (msg == null && writer.canDoStacks() && !imageMatch) {
             msg = checkMismatch(count, expectedCount, series, "Image count");
           }
           if (msg == null && !isQuicktime) {

@@ -824,6 +824,8 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
+          store.setObjectiveCorrection("Unknown", 0, 0);
+          store.setObjectiveImmersion("Unknown", 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
           store.setObjectiveLensNA(new Float(value), 0, 0);
