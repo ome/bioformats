@@ -352,14 +352,9 @@ public class ZeissLSMReader extends FormatReader {
       core[i].littleEndian = s.read() == TiffConstants.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
-      ifdsList.set(i, new TiffParser(s).getIFDs());
+      ifdsList.set(i, new TiffParser(s).getIFDs(true));
       s.close();
     }
-
-    // go through the IFD hashtable arrays and
-    // remove anything with NEW_SUBFILE_TYPE = 1
-    // NEW_SUBFILE_TYPE = 1 indicates that the IFD
-    // contains a thumbnail image
 
     status("Removing thumbnails");
 
@@ -368,32 +363,33 @@ public class ZeissLSMReader extends FormatReader {
 
     for (int series=0; series<ifdsList.size(); series++) {
       IFDList ifds = ifdsList.get(series);
-      IFDList newIFDs = new IFDList();
       for (int i=0; i<ifds.size(); i++) {
         IFD ifd = ifds.get(i);
-        long subFileType = ifd.getIFDLongValue(IFD.NEW_SUBFILE_TYPE, false, 0);
 
-        if (subFileType == 0) {
-          // check that predictor is set to 1 if anything other
-          // than LZW compression is used
-          if (ifd.getCompression() != TiffCompression.LZW) {
-            ifd.put(new Integer(IFD.PREDICTOR), new Integer(1));
-          }
-          newIFDs.add(ifd);
+        // check that predictor is set to 1 if anything other
+        // than LZW compression is used
+        if (ifd.getCompression() != TiffCompression.LZW) {
+          ifd.put(new Integer(IFD.PREDICTOR), new Integer(1));
         }
       }
-      ifdsList.set(series, newIFDs);
-      ifds = newIFDs;
 
       // fix the offsets for > 4 GB files
       for (int i=1; i<ifds.size(); i++) {
-        long thisOffset = ifds.get(i).getStripOffsets()[0] & 0xffffffffL;
-        long prevOffset = ifds.get(i - 1).getStripOffsets()[0];
-        if (prevOffset < 0) prevOffset &= 0xffffffffL;
-
-        if (prevOffset > thisOffset) {
-          thisOffset += 0xffffffffL;
-          ifds.get(i).put(new Integer(IFD.STRIP_OFFSETS), new Long(thisOffset));
+        long[] stripOffsets = ifds.get(i).getStripOffsets();
+        long[] previousStripOffsets = ifds.get(i - 1).getStripOffsets();
+        boolean neededAdjustment = false;
+        for (int j=0; j<stripOffsets.length; j++) {
+          if (stripOffsets[j] < previousStripOffsets[j]) {
+            stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
+              (stripOffsets[j] & 0xffffffffL);
+            if (stripOffsets[j] < previousStripOffsets[j]) {
+              stripOffsets[j] += 0x100000000L;
+            }
+            neededAdjustment = true;
+          }
+          if (neededAdjustment) {
+            ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+          }
         }
       }
 

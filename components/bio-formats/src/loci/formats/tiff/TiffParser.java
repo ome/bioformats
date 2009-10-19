@@ -118,6 +118,15 @@ public class TiffParser {
    * if the input source is not a valid TIFF file.
    */
   public IFDList getIFDs() throws IOException {
+    return getIFDs(false);
+  }
+
+  /**
+   * Gets all IFDs within the TIFF file, or null
+   * if the input source is not a valid TIFF file.
+   * If 'skipThumbnails' is set to true, thumbnail IFDs will not be returned.
+   */
+  public IFDList getIFDs(boolean skipThumbnails) throws IOException {
     // check TIFF header
     Boolean result = checkHeader();
     if (result == null) return null;
@@ -130,15 +139,20 @@ public class TiffParser {
     // compute maximum possible number of IFDs, for loop safety
     // each IFD must have at least one directory entry, which means that
     // each IFD must be at least 2 + 12 + 4 = 18 bytes in length
-    long ifdMax = (in.length() - 8) / 18;
+    long ifdMax = (in.length() - 8) / (bigTiff ? 22 : 18);
 
     // read in IFDs
     IFDList ifds = new IFDList();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
       IFD ifd = getIFD(ifdNum, offset, bigTiff);
-      if (ifd == null || ifd.size() <= 1) break;
-      ifds.add(ifd);
-      offset = bigTiff ? in.readLong() : (long) (in.readInt() & 0xffffffffL);
+      if (ifd == null || ifd.size() <= 2) break;
+      Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
+      int subfileType = subfile == null ? 0 : subfile.intValue();
+      if (!skipThumbnails || subfileType == 0) {
+        ifds.add(ifd);
+      }
+      else ifd = null;
+      offset = getNextOffset(bigTiff, offset);
       if (offset <= 0 || offset >= in.length()) {
         if (offset != 0) {
           LogTools.debug("getIFDs: invalid IFD offset: " + offset);
@@ -217,7 +231,7 @@ public class TiffParser {
       }
 
       // Parse the entry's "ValueOffset"
-      long valueOffset = bigTiff ? in.readLong() : in.readInt();
+      long valueOffset = getNextOffset(bigTiff, offset);
 
       return new TiffIFDEntry(entryTag, entryType, valueCount, valueOffset);
     }
@@ -286,8 +300,8 @@ public class TiffParser {
       if (bpe <= 0) return null; // invalid data
 
       if (count > threshhold / bpe) {
-        long pointer = bigTiff ? in.readLong() :
-          (long) (in.readInt() & 0xffffffffL);
+        long pointer = getNextOffset(bigTiff,
+          offset + baseOffset + bytesPerEntry * i);
         LogTools.debug("getIFDs: seeking to offset: " + pointer);
         in.seek(pointer);
       }
@@ -484,7 +498,7 @@ public class TiffParser {
 
     int tileNumber = (int) (row * numTileCols + col);
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
-    in.seek(stripOffsets[tileNumber] & 0xffffffffL);
+    in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
     int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
@@ -876,4 +890,20 @@ public class TiffParser {
     }
   }
 
+  /**
+   * Read a file offset.
+   * For bigTiff, a 64-bit number is read.  For other Tiffs, a 32-bit number
+   * is read and possibly adjusted for a possible carry-over from the previous
+   * offset.
+   */
+  long getNextOffset(boolean bigTiff, long previous) throws IOException {
+    if (bigTiff) {
+      return in.readLong();
+    }
+    long offset = (previous & ~0xffffffffL) | (in.readInt() & 0xffffffffL);
+    if (offset < previous) {
+      offset += 0x100000000L;
+    }
+    return offset;
+  }
 }
