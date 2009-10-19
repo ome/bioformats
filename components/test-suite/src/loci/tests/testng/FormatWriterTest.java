@@ -32,12 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package loci.tests.testng;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -52,7 +47,6 @@ import loci.formats.MetadataTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
 import loci.formats.out.JPEG2000Writer;
 import loci.formats.out.JPEGWriter;
 
@@ -203,7 +197,7 @@ public class FormatWriterTest {
         int imageCount = writer.canDoStacks() ? reader.getImageCount() : 1;
         for (int image=0; image<imageCount; image++) {
           boolean lastImage = image == imageCount - 1;
-          writer.saveImage(reader.openImage(image), series,
+          writer.saveBytes(reader.openBytes(image), series,
             lastImage, lastImage && lastSeries);
         }
       }

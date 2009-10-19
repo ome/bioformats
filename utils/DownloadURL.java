@@ -2,9 +2,17 @@
 // DownloadURL.java
 //
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 
+/**
+ * A poor, barebones impression of wget. :-)
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/DownloadURL.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/DownloadURL.java">SVN</a></dd></dl>
+ */
 public class DownloadURL {
 
   public static void main(String[] args) throws Exception {

@@ -8,7 +8,13 @@ import java.util.Arrays;
 import loci.common.RandomAccessInputStream;
 import loci.formats.tiff.*;
 
-/** Parses and outputs all IFDs for the given TIFF file(s). */
+/**
+ * Parses and outputs all IFDs for the given TIFF file(s).
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/TiffDumper.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/TiffDumper.java">SVN</a></dd></dl>
+ */
 public class TiffDumper {
 
   public static void main(String[] args) throws IOException {

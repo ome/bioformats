@@ -51,8 +51,8 @@ import loci.formats.FormatTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.ome.io.OMECredentials;
-import loci.ome.io.OmeroReader;
 import loci.ome.io.OMEUtils;
+import loci.ome.io.OmeroReader;
 import loci.plugins.util.LibraryChecker;
 import loci.plugins.util.WindowTools;
 

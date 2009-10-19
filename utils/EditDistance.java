@@ -2,9 +2,17 @@
 // EditDistance.java
 //
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
-/** Computes minimum edit distance between two strings. */
+/**
+ * Computes minimum edit distance between two strings.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/EditDistance.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/EditDistance.java">SVN</a></dd></dl>
+ */
 public class EditDistance {
 
   public static void main(String[] args) throws IOException {

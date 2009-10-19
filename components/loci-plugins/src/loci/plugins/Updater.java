@@ -40,7 +40,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import loci.common.RandomAccessInputStream;
 import loci.formats.FormatTools;
 import loci.plugins.util.WindowTools;
 

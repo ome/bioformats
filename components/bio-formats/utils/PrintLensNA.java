@@ -13,6 +13,10 @@ import loci.formats.meta.IMetadata;
 /**
  * Uses Bio-Formats to extract lens numerical aperture
  * in a format-independent manner from a dataset.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/PrintLensNA.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/PrintLensNA.java">SVN</a></dd></dl>
  */
 public class PrintLensNA {
 

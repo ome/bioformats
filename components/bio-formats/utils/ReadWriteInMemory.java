@@ -8,7 +8,13 @@ import loci.common.ByteArrayHandle;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
 
-/** Tests the Bio-Formats I/O logic to and from byte arrays in memory. */
+/**
+ * Tests the Bio-Formats I/O logic to and from byte arrays in memory.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/ReadWriteInMemory.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/ReadWriteInMemory.java">SVN</a></dd></dl>
+ */
 public class ReadWriteInMemory {
 
   public static void main(String[] args) throws FormatException, IOException {

@@ -1,13 +1,20 @@
 //
 // UnusedImports.java
+//
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Vector;
 
-/** Scans Java source files for unused and package imports. */
+/**
+ * Scans Java source files for unused and package imports.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/UnusedImports.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/UnusedImports.java">SVN</a></dd></dl>
+ */
 public class UnusedImports {
   public static void checkFile(String filename) throws IOException {
     BufferedReader file =

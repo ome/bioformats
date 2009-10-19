@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ice.formats;
 
 import Ice.Current;
-import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import loci.formats.FormatException;
@@ -71,18 +70,6 @@ public class IFormatWriterI extends _IFormatWriterDisp {
     catch (IOException exc) {
       exc.printStackTrace();
     }
-  }
-
-  public void saveImage(Image image, boolean last, Current current)
-    throws FormatException, IOException
-  {
-    writer.saveImage(image, last);
-  }
-
-  public void saveImage(Image image, int series, boolean lastInSeries,
-    boolean last, Current current) throws FormatException, IOException
-  {
-    writer.saveImage(image, series, lastInSeries, last);
   }
 
   public void saveBytes1(byte[] bytes, boolean last, Current current) {

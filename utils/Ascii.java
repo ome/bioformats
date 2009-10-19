@@ -2,7 +2,13 @@
 // Ascii.java
 //
 
-/** Outputs the readable ASCII table from 32 to 127. */
+/**
+ * Outputs the readable ASCII table from 32 to 127.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/Ascii.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/Ascii.java">SVN</a></dd></dl>
+ */
 public class Ascii {
 
   public static void main(String[] args) {

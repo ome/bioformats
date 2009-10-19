@@ -456,6 +456,22 @@ Apache XML-RPC
     <delete dir="build"/>
   </target>
 
+  <target name="utils"
+    depends="jars, utils-common, utils-formats, utils-loci-plugins"
+    description="compile all extra utilities">
+    <delete>
+      <fileset dir="${toplevel-utils.dir}" includes="*.class"/>
+    </delete>
+    <javac debug="true" deprecation="true" source="1.5" target="1.5"
+      srcdir="${toplevel-utils.dir}" includes="*.java">
+      <classpath>
+        <fileset dir="${artifact.dir}">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
   <target name="docs" depends="jars"
     description="generate javadocs for LOCI software packages">
     <tstamp>
@@ -506,6 +522,11 @@ Apache XML-RPC
   <target name="clean-common"
     description="remove build files for LOCI common library">
     <ant dir="components/common" target="common.clean"/>
+  </target>
+
+  <target name="utils-common" depends="jar-common"
+    description="compile extra utilities for LOCI common library">
+    <ant dir="components/common" target="common.utils"/>
   </target>
 
   <!-- JAI Image I/O Tools library -->
@@ -624,6 +645,11 @@ Apache XML-RPC
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>
 
+  <target name="utils-formats" depends="jar-formats"
+    description="compile extra utilities for LOCI Plugins for ImageJ">
+    <ant dir="components/bio-formats" target="formats.utils"/>
+  </target>
+
   <!-- LOCI autogen -->
 
   <target name="compile-autogen"
@@ -699,6 +725,11 @@ Apache XML-RPC
     <ant dir="components/loci-plugins" target="loci-plugins.clean"/>
   </target>
 
+  <target name="utils-loci-plugins" depends="jar-loci-plugins"
+    description="compile extra utilities for LOCI Plugins for ImageJ">
+    <ant dir="components/loci-plugins" target="loci-plugins.utils"/>
+  </target>
+
   <!-- OME I/O -->
 
   <target name="compile-ome-io"
@@ -751,7 +782,6 @@ Apache XML-RPC
   </target>
 
   <!-- VisBio -->
-
 
   <target name="compile-visbio"
     depends="compile-common, compile-ome-xml, compile-formats,

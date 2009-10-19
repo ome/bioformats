@@ -29,6 +29,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.StatusEvent;
 import loci.formats.StatusListener;
+import loci.formats.gui.BufferedImageWriter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.ome.io.OMEWriter;
@@ -64,6 +65,7 @@ public class ImageUploader {
   {
     try {
       OMEWriter writer = new OMEWriter();
+      BufferedImageWriter biWriter = new BufferedImageWriter(writer);
       MetadataStore store = MetadataTools.createOMEXMLMetadata();
       store.setRoot(data.getOMEXMLRoot());
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
@@ -90,7 +92,7 @@ public class ImageUploader {
         pos[0] = zct[2];
         pos[1] = zct[0];
         System.arraycopy(cPos, 0, pos, 2, cPos.length);
-        writer.saveImage(data.getImage(pos), i == total - 1);
+        biWriter.saveImage(data.getImage(pos), i == total - 1);
       }
 
       writer.close();

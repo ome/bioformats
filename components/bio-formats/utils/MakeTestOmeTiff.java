@@ -12,7 +12,13 @@ import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffSaver;
 
-/** Creates a sample OME-TIFF dataset according to the given parameters. */
+/**
+ * Creates a sample OME-TIFF dataset according to the given parameters.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/MakeTestOmeTiff.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/MakeTestOmeTiff.java">SVN</a></dd></dl>
+ */
 public class MakeTestOmeTiff {
 
   private static int gradient(int type, int num, int total) {
@@ -222,18 +228,18 @@ public class MakeTestOmeTiff {
     boolean allC = dist.indexOf("c") >= 0;
     boolean allT = dist.indexOf("t") >= 0;
 
-    BufferedImage[][][] images = new BufferedImage[numImages][][];
+    BufferedImage[][][] planes = new BufferedImage[numImages][][];
     int[][] globalOffsets = new int[numImages][]; // IFD offsets across Images
     int[][] localOffsets = new int[numImages][]; // IFD offsets per Image
     int globalOffset = 0, localOffset = 0;
     for (int i=0; i<numImages; i++) {
-      images[i] = new BufferedImage[numPixels[i]][];
+      planes[i] = new BufferedImage[numPixels[i]][];
       globalOffsets[i] = new int[numPixels[i]];
       localOffsets[i] = new int[numPixels[i]];
       localOffset = 0;
       for (int p=0; p<numPixels[i]; p++) {
         int len = sizeZ[i][p] * sizeC[i][p] * sizeT[i][p];
-        images[i][p] = new BufferedImage[len];
+        planes[i][p] = new BufferedImage[len];
         globalOffsets[i][p] = globalOffset;
         globalOffset += len;
         localOffsets[i][p] = localOffset;
@@ -248,15 +254,15 @@ public class MakeTestOmeTiff {
         System.out.print("    Pixels #" + (p + 1) + " - " +
           sizeX[i][p] + " x " + sizeY[i][p] + ", " +
           sizeZ[i][p] + "Z " + sizeC[i][p] + "C " + sizeT[i][p] + "T");
-        int len = images[i][p].length;
+        int len = planes[i][p].length;
         for (int j=0; j<len; j++) {
           int[] zct = FormatTools.getZCTCoords(dimOrder[i][p],
             sizeZ[i][p], sizeC[i][p], sizeT[i][p], len, j);
 
           System.out.print(".");
-          images[i][p][j] = new BufferedImage(
+          planes[i][p][j] = new BufferedImage(
             sizeX[i][p], sizeY[i][p], BufferedImage.TYPE_BYTE_GRAY);
-          Graphics2D g = images[i][p][j].createGraphics();
+          Graphics2D g = planes[i][p][j].createGraphics();
           // draw gradient
           boolean even = ipNum % 2 == 0;
           int type = ipNum / 2;
@@ -345,7 +351,7 @@ public class MakeTestOmeTiff {
       filenames[i] = new String[numPixels[i]][];
       last[i] = new boolean[numPixels[i]][];
       for (int p=0; p<numPixels[i]; p++) {
-        int len = images[i][p].length;
+        int len = planes[i][p].length;
         filenames[i][p] = new String[len];
         last[i][p] = new boolean[len];
         for (int j=0; j<len; j++) {
@@ -421,26 +427,29 @@ public class MakeTestOmeTiff {
     String creationDate = sb.toString();
 
     sb.setLength(0);
+    String schemaVersion = "2008-09";
+    String schemaPrefix = "http://www.openmicroscopy.org/Schemas/OME/";
+    String schemaPath = schemaPrefix + schemaVersion;
     sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
       "<!-- Warning: this comment is an OME-XML metadata block, which " +
       "contains crucial dimensional parameters and other important metadata. " +
       "Please edit cautiously (if at all), and back up the original data " +
       "before doing so. For more information, see the OME-TIFF web site: " +
-      "http://loci.wisc.edu/ome/ome-tiff.html. --><OME " +
-      "xmlns=\"http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\" " +
+      "http://loci.wisc.edu/ome/ome-tiff.html. -->\n" +
+      "<OME xmlns=\"" + schemaPath + "\" " +
+      "xmlns:bf=\"http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09\" " +
       "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
       "xsi:schemaLocation=\"" +
-      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd " +
-      "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd\">");
+      schemaPath + " " + schemaPath + "/ome.xsd\">");
     for (int i=0; i<numImages; i++) {
       sb.append("<Image " +
-        "ID=\"openmicroscopy.org:Image:" + (i + 1) + "\" " +
+        "ID=\"Image:" + (i + 1) + "\" " +
         "Name=\"" + name + "\" " +
-        "DefaultPixels=\"openmicroscopy.org:Pixels:" + (i + 1) + "-1\">" +
+        "DefaultPixels=\"Pixels:" + (i + 1) + "\">" +
         "<CreationDate>" + creationDate + "</CreationDate>");
       for (int p=0; p<numPixels[i]; p++) {
         sb.append("<Pixels " +
-          "ID=\"openmicroscopy.org:Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
+          "ID=\"Pixels:" + (i + 1) + "-" + (p + 1) + "\" " +
           "DimensionOrder=\"" + dimOrder[i][p] + "\" " +
           "PixelType=\"Uint8\" " +
           "BigEndian=\"true\" " +
@@ -464,7 +473,7 @@ public class MakeTestOmeTiff {
         System.out.println("    Pixels #" + (p + 1) + " - " +
           sizeX[i][p] + " x " + sizeY[i][p] + ", " +
           sizeZ[i][p] + "Z " + sizeC[i][p] + "C " + sizeT[i][p] + "T:");
-        int len = images[i][p].length;
+        int len = planes[i][p].length;
         for (int j=0; j<len; j++) {
           int[] zct = FormatTools.getZCTCoords(dimOrder[i][p],
             sizeZ[i][p], sizeC[i][p], sizeT[i][p], len, j);
@@ -475,7 +484,8 @@ public class MakeTestOmeTiff {
           // write comment stub, to be overwritten later
           IFD ifdHash = new IFD();
           ifdHash.putIFDValue(IFD.IMAGE_DESCRIPTION, "");
-          out.saveImage(images[i][p][j], ifdHash, last[i][p][j]);
+          // CTR FIXME NOW
+          //out.saveImage(planes[i][p][j], ifdHash, last[i][p][j]);
           if (last[i][p][j]) {
             // inject OME-XML block
             String xml = xmlTemplate;
@@ -508,7 +518,7 @@ public class MakeTestOmeTiff {
                     // one Image per file; use local offset
                     ifd = localOffsets[ii][pp];
                   }
-                  int num = images[ii][pp].length;
+                  int num = planes[ii][pp].length;
                   if ((!allI || numImages == 1) && numPixels[i] == 1) {
                     // only one Pixels in this file; don't need IFD/NumPlanes
                     ifd = 0;

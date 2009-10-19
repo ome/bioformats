@@ -13,6 +13,10 @@ import loci.formats.tiff.TiffParser;
 /**
  * Convenience method to extract the metadata from
  * all the Flex files present in a directory.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/ExtractFlexMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/ExtractFlexMetadata.java">SVN</a></dd></dl>
  */
 public class ExtractFlexMetadata {
 

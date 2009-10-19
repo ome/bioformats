@@ -4,7 +4,13 @@
 
 import java.io.File;
 
-/** Tests performance of File.exists() vs File.listFiles(). */
+/**
+ * Tests performance of File.exists() vs File.listFiles().
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/FileOpsTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/FileOpsTest.java">SVN</a></dd></dl>
+ */
 public class FileOpsTest {
   public static void main(String[] args) {
     int iter = 1000;

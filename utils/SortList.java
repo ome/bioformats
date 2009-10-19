@@ -2,11 +2,21 @@
 // SortList.java
 //
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/** Sorts a text file alphabetically, removing duplicates. */
+/**
+ * Sorts a text file alphabetically, removing duplicates.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/SortList.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/SortList.java">SVN</a></dd></dl>
+ */
 public class SortList {
 
   public static void main(String[] args) throws Exception {

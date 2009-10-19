@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import loci.formats.FormatException;
-import loci.formats.ImageWriter;
+import loci.formats.gui.BufferedImageWriter;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
@@ -161,7 +161,7 @@ public class CaptureHandler implements Saveable {
     final boolean isTiff = tiff, isJpeg = jpeg;
     new Thread("VisBio-SnapshotThread-" + window.getName()) {
       public void run() {
-        ImageWriter writer = new ImageWriter();
+        BufferedImageWriter writer = new BufferedImageWriter();
         try {
           writer.setId(id);
           writer.saveImage(getSnapshot(), true);
@@ -252,7 +252,7 @@ public class CaptureHandler implements Saveable {
 
         // step incrementally from position to position, grabbing images
         int count = 1;
-        ImageWriter writer = new ImageWriter();
+        BufferedImageWriter writer = new BufferedImageWriter();
         double[] mxStart = (double[]) pos.elementAt(0);
         for (int i=1; i<size; i++) {
           double[] mxEnd = (double[]) pos.elementAt(i);

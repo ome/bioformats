@@ -2,13 +2,21 @@
 // LineLength.java
 //
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Scans text files for lines longer than a specified length.
  * Also checks for tabs and end-of-line spaces.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/LineLength.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/LineLength.java">SVN</a></dd></dl>
  */
 public class LineLength implements FileFilter {
 

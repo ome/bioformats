@@ -61,6 +61,6 @@ add_executable(showinf source/showinf.cpp)
 
 target_link_libraries(showinf bfcpp jace "${JAVA_JVM_LIBRARY}")
 
-#add_executable(minimum_writer source/minimum_writer.cpp)
+add_executable(minimum_writer source/minimum_writer.cpp)
 
-#target_link_libraries(minimum_writer bfcpp jace "${JAVA_JVM_LIBRARY}")
+target_link_libraries(minimum_writer bfcpp jace "${JAVA_JVM_LIBRARY}")

@@ -2,18 +2,23 @@
 // SewTiffs.java
 //
 
-import java.awt.image.BufferedImage;
-import java.util.Hashtable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FilePattern;
-import loci.formats.gui.BufferedImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.in.TiffReader;
+import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-/** Stitches the first plane from a collection of TIFFs into a single file. */
+/**
+ * Stitches the first plane from a collection of TIFFs into a single file.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/SewTiffs.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/SewTiffs.java">SVN</a></dd></dl>
+ */
 public class SewTiffs {
 
   private static final int DOTS = 50;
@@ -35,7 +40,7 @@ public class SewTiffs {
     }
     else num = Integer.parseInt(args[2]);
     System.out.println("Fixing " + base + "_C" + c + "_TP<1-" + num + ">.tiff");
-    BufferedImageReader in = new BufferedImageReader(new TiffReader());
+    TiffReader in = new TiffReader();
     TiffWriter out = new TiffWriter();
     String outId = base + "_C" + c + ".tiff";
     System.out.println("Writing " + outId);
@@ -45,10 +50,13 @@ public class SewTiffs {
 
     for (int t=0; t<num; t++) {
       String inId = base + "_C" + c + "_TP" + (t + 1) + ".tiff";
+      IMetadata meta = MetadataTools.createOMEXMLMetadata();
+      in.setMetadataStore(meta);
       in.setId(inId);
+      out.setMetadataRetrieve(meta);
 
       // read first image plane
-      BufferedImage image = in.openImage(0);
+      byte[] image = in.openBytes(0);
       in.close();
 
       if (t == 0) {
@@ -62,18 +70,17 @@ public class SewTiffs {
         String desc = ifd.getComment();
 
         if (desc != null) {
-          //ifd = new Hashtable();
           ifd = new IFD();
           ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, desc);
           comment = true;
-          out.saveImage(image, ifd, t == num - 1);
+          out.saveBytes(image, ifd, t == num - 1);
           System.out.print(".");
           continue;
         }
       }
 
       // write image plane
-      out.saveImage(image, t == num - 1);
+      out.saveBytes(image, t == num - 1);
 
       // update status
       System.out.print(".");

@@ -2,9 +2,17 @@
 // DumpClass.java
 //
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-/** Uses reflection to print a bunch of information about a class. */
+/**
+ * Uses reflection to print a bunch of information about a class.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/DumpClass.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/DumpClass.java">SVN</a></dd></dl>
+ */
 public class DumpClass {
 
   @SuppressWarnings("unchecked")

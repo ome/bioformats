@@ -2,11 +2,25 @@
 // TestMem.java
 //
 
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
-/** A little GUI for testing Java memory behavior. */
+/**
+ * A little GUI for testing Java memory behavior.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/TestMem.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/TestMem.java">SVN</a></dd></dl>
+ */
 @SuppressWarnings("serial")
 public class TestMem extends JFrame implements ActionListener {
   private static final int MEM = 32 * 1024 * 1024; // 32 MB

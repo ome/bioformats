@@ -8,6 +8,10 @@ import loci.formats.meta.IMetadata;
 /**
  * Demonstrates the minimum amount of metadata
  * necessary to write out an image plane.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/MinimumWriter.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/MinimumWriter.java">SVN</a></dd></dl>
  */
 public class MinimumWriter {
 
@@ -28,6 +32,7 @@ public class MinimumWriter {
     for (int i=0; i<img.length; i++) img[i] = (byte) (256 * Math.random());
 
     // create metadata object with minimum required metadata fields
+    System.out.println("Populating metadata...");
     IMetadata meta = MetadataTools.createOMEXMLMetadata();
     meta.createRoot();
     meta.setPixelsBigEndian(Boolean.TRUE, 0, 0);

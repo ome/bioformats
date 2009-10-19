@@ -2,22 +2,23 @@
 // MakeLZW.java
 //
 
-import java.awt.image.BufferedImage;
-import java.util.Hashtable;
 import loci.formats.MetadataTools;
-import loci.formats.gui.BufferedImageReader;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
+import loci.formats.ImageReader;
+import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
-import loci.formats.tiff.IFD;
-import loci.formats.tiff.TiffCompression;
 
-/** Converts the given image file to an LZW-compressed TIFF. */
+/**
+ * Converts the given image file to an LZW-compressed TIFF.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/MakeLZW.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/MakeLZW.java">SVN</a></dd></dl>
+ */
 public class MakeLZW {
 
   public static void main(String[] args) throws Exception {
-    BufferedImageReader reader = new BufferedImageReader();
-    MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
+    ImageReader reader = new ImageReader();
+    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
     reader.setMetadataStore(omexmlMeta);
     TiffWriter writer = new TiffWriter();
     for (int i=0; i<args.length; i++) {
@@ -25,25 +26,14 @@ public class MakeLZW {
       String outFile = "lzw-" + inFile;
       System.out.print("Converting " + inFile + " to " + outFile);
       reader.setId(inFile);
+      writer.setMetadataRetrieve(omexmlMeta);
+      writer.setCompression("LZW");
       writer.setId(outFile);
-      int blocks = reader.getImageCount();
-      String xml = MetadataTools.getOMEXML((MetadataRetrieve) omexmlMeta);
-      for (int b=0; b<blocks; b++) {
+      int planeCount = reader.getImageCount();
+      for (int p=0; p<planeCount; p++) {
         System.out.print(".");
-        BufferedImage img = reader.openImage(b);
-
-        IFD ifd = new IFD();
-        if (b == 0) {
-          // preserve OME-XML block
-          ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, xml);
-        }
-
-        // save with LZW
-        ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.LZW);
-        ifd.putIFDValue(IFD.PREDICTOR, 2);
-
-        // write file to disk
-        writer.saveImage(img, ifd, b == blocks - 1);
+        byte[] plane = reader.openBytes(p);
+        writer.saveBytes(plane, p == planeCount - 1);
       }
       System.out.println(" [done]");
     }

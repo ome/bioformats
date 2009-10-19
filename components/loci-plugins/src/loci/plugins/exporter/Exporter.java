@@ -41,10 +41,8 @@ import ij.process.ShortProcessor;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;

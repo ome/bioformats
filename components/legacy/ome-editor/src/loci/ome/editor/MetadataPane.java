@@ -73,10 +73,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.OMEXMLReader;
 import loci.formats.in.TiffReader;
+import loci.formats.meta.IMetadata;
 import loci.formats.ome.OMEXML2003FCMetadata;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.out.TiffWriter;
@@ -457,11 +459,28 @@ public class MetadataPane extends JPanel
         else exc.printStackTrace();
       }
 
+      try {
+        IMetadata meta = MetadataTools.createOMEXMLMetadata();
+        writer.setMetadataRetrieve(meta);
+        meta.setPixelsBigEndian(new Boolean(!reader.isLittleEndian()), 0, 0);
+        meta.setPixelsDimensionOrder(reader.getDimensionOrder(), 0, 0);
+        meta.setPixelsSizeX(new Integer(reader.getSizeX()), 0, 0);
+        meta.setPixelsSizeY(new Integer(reader.getSizeY()), 0, 0);
+        meta.setPixelsSizeZ(new Integer(reader.getSizeZ()), 0, 0);
+        meta.setPixelsSizeC(new Integer(reader.getSizeC()), 0, 0);
+        meta.setPixelsSizeT(new Integer(reader.getSizeT()), 0, 0);
+        writer.setId(outId);
+      }
+      catch (Exception exc) {
+        if (exc instanceof RuntimeException) throw (RuntimeException) exc;
+        else exc.printStackTrace();
+      }
+
       for(int i = 0; i < imageCount; i++) {
-        BufferedImage plane = null;
+        byte[] plane = null;
 
         try {
-          plane = reader.openImage(i);
+          plane = reader.openBytes(i);
         }
         catch (Exception exc) {
           if (exc instanceof RuntimeException) throw (RuntimeException) exc;
@@ -475,10 +494,8 @@ public class MetadataPane extends JPanel
           ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, xml);
         }
         // write plane to output file
-
         try {
-          writer.setId(outId);
-          writer.saveImage(plane, ifd, i == imageCount - 1);
+          writer.saveBytes(plane, ifd, i == imageCount - 1);
         }
         catch (Exception exc) {
           if (exc instanceof RuntimeException) throw (RuntimeException) exc;
@@ -515,10 +532,10 @@ public class MetadataPane extends JPanel
     }
 
     for(int i = 0; i < imageCount; i++) {
-      BufferedImage plane = null;
+      byte[] plane = null;
 
       try {
-        plane = reader.openImage(i);
+        plane = reader.openBytes(i);
       }
       catch (Exception exc) {
         if (exc instanceof RuntimeException) throw (RuntimeException) exc;
@@ -535,7 +552,7 @@ public class MetadataPane extends JPanel
 
       try {
         writer.setId(outId);
-        writer.saveImage(plane, ifd, i == imageCount - 1);
+        writer.saveBytes(plane, ifd, i == imageCount - 1);
       }
       catch (Exception exc) {
         if (exc instanceof RuntimeException) throw (RuntimeException) exc;
@@ -560,7 +577,6 @@ public class MetadataPane extends JPanel
         //just to repopulate the metadatastore to original state
         read.setId(id);
         int imageCount = read.getImageCount();
-//        BufferedImage whatever = reader.openImage(id, imageCount/2);
       }
       catch (Exception exc) {
         if (exc instanceof RuntimeException) throw (RuntimeException) exc;

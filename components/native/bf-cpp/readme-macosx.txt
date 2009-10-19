@@ -3,7 +3,19 @@ INSTALLING COMPILE-TIME DEPENDENCIES -- MAC OS X
 Mac OS X users will need to visit the appropriate web sites and download and
 install the relevant binaries for Ant, CMake and Subversion.
 
-To install the Boost Thread library, follow these steps:
+To install the Boost Thread library, we advise using MacPorts (macports.org):
+
+  sudo port install boost
+
+This will install Boost into /opt/local; e.g.:
+
+  /opt/local/include/boost
+
+Depending on your version of Boost, you may need to edit bf-cpp's
+CMakeLists.txt to tweak the Boost_ADDITIONAL_VERSIONS variable to include
+your version.
+
+Alternately, you can compile Boost yourself:
 
 1) Visit www.boost.org in your web browser.
 2) Click the "Getting Started Guide" link.
@@ -19,14 +31,6 @@ To install the Boost Thread library, follow these steps:
   sudo ./configure
   sudo make install
 
-This will install Boost into a subdirectory of /usr/local; e.g.:
+This will install Boost into /usr/local; e.g.:
 
   /usr/local/include/boost-1_38
-
-7) Depending on your version of Boost, you may need to edit bf-cpp's
-   CMakeLists.txt to tweak the Boost_ADDITIONAL_VERSIONS variable to include
-   your version.
-
-Alternately, you can use MacPorts (http://www.macports.org/):
-
-  sudo port install boost

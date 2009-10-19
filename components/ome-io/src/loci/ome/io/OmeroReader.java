@@ -30,15 +30,13 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
-import ome.api.RawPixelsStore; // omero-common-4.0.3
-import ome.system.Login; // omero-common-4.0.3
-import ome.system.Server; // omero-common-4.0.3
-import ome.system.ServiceFactory; // omero-common-4.0.3
-import omero.api.RawPixelsStorePrx; // omero-common-4.0.3
-import omero.model.Image; // omero-client-4.0.3
-import omero.model.Pixels; // omero-client-4.0.3
-//import omero.sys.Parameters; // omero-client-4.0.3
+import ome.api.RawPixelsStore;
+import ome.system.Login;
+import ome.system.Server;
+import ome.system.ServiceFactory;
+import omero.api.RawPixelsStorePrx;
+import omero.model.Image;
+import omero.model.Pixels;
 
 /**
  * Implementation of {@link loci.formats.IFormatReader}

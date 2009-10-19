@@ -2,14 +2,18 @@
 // ConvertToOmeTiff.java
 //
 
-import java.awt.image.BufferedImage;
+import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.gui.BufferedImageReader;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
+import loci.formats.meta.IMetadata;
 import loci.formats.out.OMETiffWriter;
 
-/** Converts the given files to OME-TIFF format. */
+/**
+ * Converts the given files to OME-TIFF format.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/ConvertToOmeTiff.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/ConvertToOmeTiff.java">SVN</a></dd></dl>
+ */
 public class ConvertToOmeTiff {
 
   public static void main(String[] args) throws Exception {
@@ -17,7 +21,7 @@ public class ConvertToOmeTiff {
       System.out.println("Usage: java ConvertToOmeTiff file1 file2 ...");
       return;
     }
-    BufferedImageReader reader = new BufferedImageReader();
+    ImageReader reader = new ImageReader();
     OMETiffWriter writer = new OMETiffWriter();
     for (int i=0; i<args.length; i++) {
       String id = args[i];
@@ -26,25 +30,25 @@ public class ConvertToOmeTiff {
       System.out.print("Converting " + id + " to " + outId + " ");
 
       // record metadata to OME-XML format
-      MetadataStore omexmlMeta = MetadataTools.createOMEXMLMetadata();
+      IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
       reader.setMetadataStore(omexmlMeta);
       reader.setId(id);
 
       // configure OME-TIFF writer
-      writer.setMetadataRetrieve((MetadataRetrieve) omexmlMeta);
+      writer.setMetadataRetrieve(omexmlMeta);
       writer.setId(outId);
       //writer.setCompression("J2K");
 
       // write out image planes
       int seriesCount = reader.getSeriesCount();
-      for (int series=0; series<seriesCount; series++) {
-        reader.setSeries(series);
-        int imageCount = reader.getImageCount();
-        for (int image=0; image<imageCount; image++) {
-          BufferedImage plane = reader.openImage(image);
+      for (int s=0; s<seriesCount; s++) {
+        reader.setSeries(s);
+        int planeCount = reader.getImageCount();
+        for (int p=0; p<planeCount; p++) {
+          byte[] plane = reader.openBytes(p);
           // write plane to output file
-          writer.saveImage(plane, series, image == imageCount - 1,
-            (image == imageCount - 1) && (series == seriesCount - 1));
+          writer.saveBytes(plane, s, p == planeCount - 1,
+            (p == planeCount - 1) && (s == seriesCount - 1));
           System.out.print(".");
         }
       }
