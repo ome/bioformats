@@ -300,8 +300,7 @@ public class TiffParser {
       if (bpe <= 0) return null; // invalid data
 
       if (count > threshhold / bpe) {
-        long pointer = getNextOffset(bigTiff,
-          offset + baseOffset + bytesPerEntry * i);
+        long pointer = getNextOffset(bigTiff, 0);
         LogTools.debug("getIFDs: seeking to offset: " + pointer);
         in.seek(pointer);
       }
