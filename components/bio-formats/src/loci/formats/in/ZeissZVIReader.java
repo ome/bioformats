@@ -759,14 +759,20 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1 && nextEmWave < effectiveSizeC) {
-            store.setLogicalChannelEmWave(new Integer(value), 0, nextEmWave);
-            nextEmWave++;
+            Integer wave = new Integer(value);
+            if (wave.intValue() > 0) {
+              store.setLogicalChannelEmWave(wave, 0, nextEmWave);
+              nextEmWave++;
+            }
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1 && nextExWave < effectiveSizeC) {
-            store.setLogicalChannelExWave(new Integer(value), 0, nextExWave);
-            nextExWave++;
+            Integer wave = new Integer(value);
+            if (wave.intValue() > 0) {
+              store.setLogicalChannelExWave(wave, 0, nextExWave);
+              nextExWave++;
+            }
           }
         }
         else if (key.startsWith("Channel Name")) {

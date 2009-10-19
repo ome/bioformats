@@ -1102,7 +1102,7 @@ public final class AWTImageTools {
 
     byte[][] pix = getPixelBytes(img, false);
     return makeImage(pix, img.getWidth(), img.getHeight(),
-      bpp, fp, false, signed);
+      bpp, fp, false, false);
   }
 
   // -- Image manipulation --
@@ -1488,6 +1488,8 @@ public final class AWTImageTools {
       }
     }
 
+    int pixelType = getPixelType(source);
+
     BufferedImage result = null;
     ColorModel sourceModel = source.getColorModel();
     if ((sourceModel instanceof Index16ColorModel) ||
@@ -1513,6 +1515,10 @@ public final class AWTImageTools {
       result = new BufferedImage(sourceModel, raster, false, null);
     }
     else {
+      if (FormatTools.isSigned(pixelType)) {
+        source = makeUnsigned(source);
+        sourceModel = null;
+      }
       Image scaled =
         scaleAWT(source, width, height, Image.SCALE_AREA_AVERAGING);
       result = makeBuffered(scaled, sourceModel);

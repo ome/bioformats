@@ -222,13 +222,18 @@ public class NikonTiffReader extends BaseTiffReader {
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
     store.setObjectiveNominalMagnification(new Integer(magnification), 0, 0);
+
+    if (correction == null) correction = "Unknown";
     store.setObjectiveCorrection(correction, 0, 0);
     store.setObjectiveLensNA(new Float(lensNA), 0, 0);
     store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    if (immersion == null) immersion = "Unknown";
     store.setObjectiveImmersion(immersion, 0, 0);
 
     for (int i=0; i<wavelength.size(); i++) {
-      store.setLightSourceID("LightSource:" + laserIDs.get(i), 0, i);
+      String laser = MetadataTools.createLSID("LightSource", 0, i);
+      store.setLightSourceID(laser, 0, i);
+      store.setLightSourceModel(laserIDs.get(i), 0, i);
       store.setLaserWavelength(wavelength.get(i), 0, i);
       store.setLaserType("Unknown", 0, i);
       store.setLaserLaserMedium("Unknown", 0, i);

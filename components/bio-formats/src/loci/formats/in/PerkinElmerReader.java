@@ -137,6 +137,9 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     Location htmlFile = new Location(prefix + ".htm");
+    if (ext.toLowerCase().equals("htm")) {
+      htmlFile = new Location(name).getAbsoluteFile();
+    }
     if (!htmlFile.exists()) {
       htmlFile = new Location(prefix + ".HTM");
       while (!htmlFile.exists() && prefix.indexOf("_") != -1) {

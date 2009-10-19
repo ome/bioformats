@@ -378,6 +378,7 @@ public class TCSReader extends FormatReader {
     core[0].littleEndian = tiffReaders[0].isLittleEndian();
     core[0].interleaved = tiffReaders[0].isInterleaved();
     core[0].falseColor = true;
+    core[0].indexed = tiffReaders[0].isIndexed();
 
     if (isRGB()) core[0].imageCount /= (getSizeC() / channelCount);
 

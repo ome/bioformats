@@ -112,13 +112,15 @@ public class ScanrReader extends FormatReader {
 
     Vector<String> files = new Vector<String>();
     for (String file : metadataFiles) {
-      files.add(file);
+      if (file != null) files.add(file);
     }
 
     if (!noPixels && tiffs != null) {
       int offset = getSeries() * getImageCount();
       for (int i=0; i<getImageCount(); i++) {
-        files.add(tiffs[offset + i]);
+        if (tiffs[offset + i] != null) {
+          files.add(tiffs[offset + i]);
+        }
       }
     }
 
@@ -215,7 +217,7 @@ public class ScanrReader extends FormatReader {
     list = dir.list(true);
 
     int next = 0;
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<nSeries; i++) {
       int well = i / (fieldRows * fieldColumns);
       String wellPos = String.valueOf(well + 1);
       while (wellPos.length() < 5) wellPos = "0" + wellPos;

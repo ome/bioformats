@@ -191,7 +191,9 @@ public class NikonReader extends BaseTiffReader {
     options.height = getSizeY();
     options.bitsPerSample = dataSize;
     options.curve = curve;
-    options.vPredictor = new int[vPredictor.length];
+    if (vPredictor != null) {
+      options.vPredictor = new int[vPredictor.length];
+    }
     options.lossy = lossyCompression;
     options.split = split;
 
@@ -355,7 +357,13 @@ public class NikonReader extends BaseTiffReader {
               RandomAccessInputStream makerNote =
                 new RandomAccessInputStream(buf);
               TiffParser tp = new TiffParser(makerNote);
-              IFD note = tp.getFirstIFD();
+              IFD note = null;
+              try {
+                note = tp.getFirstIFD();
+              }
+              catch (Exception e) {
+                traceDebug(e);
+              }
               if (note != null) {
                 for (Integer nextKey : note.keySet()) {
                   int nextTag = nextKey.intValue();
