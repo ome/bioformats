@@ -1,3 +1,20 @@
+4.1 (2009 October 21):
+
+* Fixed many bugs in most file format readers
+* Significantly improved confocal and HCS metadata parsing
+* Improved C++ bindings
+* Eliminated references to Java AWT classes in core Bio-Formats packages
+* Added support for reading Flex datasets from multiple servers
+* Improved OME-XML generation; generated OME-XML is now valid
+* Added support for Olympus ScanR data
+* Added OSGi information to JARs
+* Added support for Amira Mesh files
+* Added support for LI-FLIM files
+* Added more informative exceptions
+* Added support for various types of ICS lifetime data
+* Added support for Nikon EZ-C1 TIFFs
+* Added support for Maia Scientific MIAS data
+
 4.0.1 (2009 June 1):
 
 * Lots of bug fixes in most format readers and writers

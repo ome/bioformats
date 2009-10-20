@@ -9,8 +9,8 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 345 fields documented below:
-  * The file format itself supports 37 of them (10%).
-  * Of those, Bio-Formats fully or partially converts 37 (100%).
+  * The file format itself supports 60 of them (17%).
+  * Of those, Bio-Formats fully or partially converts 60 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
@@ -21,8 +21,30 @@ Bio-Formats MIAS format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: R
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Transform
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: CreationDate
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimentRef
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: InstrumentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Name
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Instrument Instrument]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Height
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Transform
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Width
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: X
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Y
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: BigEndian
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: BinData
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: ExtendedPixelType
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: SizeX
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: SizeY
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: Model
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: NominalMagnification
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: BigEndian
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: DimensionOrder
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: ID
@@ -37,6 +59,7 @@ Bio-Formats MIAS format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheC
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheZ
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: ExposureTime
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ColumnNamingConvention
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ExternalIdentifier
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: Name
@@ -52,7 +75,7 @@ Bio-Formats MIAS format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Well Well]: Row
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: ImageRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: Index
-=== Total supported: 37 ===
+=== Total supported: 60 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the MIAS
@@ -89,8 +112,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dichroic Dichroic]: LotNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dichroic Dichroic]: Manufacturer
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dichroic Dichroic]: Model
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: TimeIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: WaveIncrement
@@ -140,19 +161,14 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: AcquiredPixels
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: CreationDate
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Description
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimenterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: GroupRef
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ID
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: InstrumentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: AirPressure
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: CO2Percent
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: Humidity
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: Temperature
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Instrument Instrument]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Laser Laser]: FrequencyMultiplication
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Laser Laser]: LaserMedium
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Laser Laser]: PockelCell
@@ -188,7 +204,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: IlluminationType
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: LightSource
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: Mode
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: NdFilter
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: OTF
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
@@ -196,18 +211,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: PockelCellSetting
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: SecondaryEmissionFilter
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: SecondaryExcitationFilter
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Height
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: ID
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Transform
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Width
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: X
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Mask Mask]: Y
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: BigEndian
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: BinData
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: ExtendedPixelType
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: ID
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: SizeX
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MaskPixels MaskPixels]: SizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MicrobeamManipulation MicrobeamManipulation]: ExperimenterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MicrobeamManipulation MicrobeamManipulation]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_MicrobeamManipulation MicrobeamManipulation]: Type
@@ -231,8 +234,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: Iris
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: LensNA
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: Manufacturer
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: Model
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: NominalMagnification
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: SerialNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: WorkingDistance
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: CorrectionCollar
@@ -242,7 +243,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: D
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: DeltaT
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: ExposureTime
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: Status
@@ -366,4 +366,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: PosY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: Timepoint
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSampleRef WellSampleRef]: ID
-=== Total unknown or missing: 308 ===
+=== Total unknown or missing: 285 ===

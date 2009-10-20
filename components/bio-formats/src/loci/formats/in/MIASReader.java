@@ -228,7 +228,10 @@ public class MIASReader extends FormatReader {
     Vector<String> files = new Vector<String>();
 
     if (!noPixels) {
-      files.addAll(Arrays.asList(tiffs[getSeries()]));
+      String[] f = new String[tiffs[getSeries()].length];
+      System.arraycopy(tiffs[getSeries()], 0, f, 0, f.length);
+      Arrays.sort(f);
+      files.addAll(Arrays.asList(f));
     }
 
     for (AnalysisFile file : analysisFiles) {

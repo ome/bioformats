@@ -239,7 +239,7 @@ public class ZeissLSMReader extends FormatReader {
     if (lsmFilenames.length == 1 && currentId.equals(lsmFilenames[0])) {
       return lsmFilenames;
     }
-    return new String[] {lsmFilenames[getSeries()], currentId};
+    return new String[] {currentId, lsmFilenames[getSeries()]};
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
