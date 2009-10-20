@@ -1,0 +1,18 @@
+<project default="runall">
+   <target name="runall" depends="run-3to8,run-7to8,run-8to8,run-8to9,run-3to9"/>
+   <target name="run-3to8">
+      <exec executable="./xslt-test2003FCTo200809"/>
+   </target>
+   <target name="run-7to8">
+      <exec executable="./xslt-test200706To200809"/>
+   </target>
+   <target name="run-8to8">
+      <exec executable="./xslt-test200802To200809"/>
+   </target>
+   <target name="run-8to9">
+      <exec executable="./xslt-test200809To200909"/>
+   </target>
+   <target name="run-3to9">
+      <exec executable="./xslt-test2003FCTo200809To200909"/>
+   </target>
+</project>
