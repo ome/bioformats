@@ -21,11 +21,7 @@
 
 # CMake build file for the Bio-Formats C++ bindings.
 
-if(WIN32)
 cmake_minimum_required(VERSION 2.6.4)
-else(WIN32)
-cmake_minimum_required(VERSION 2.6)
-endif(WIN32)
 
 project(bfcpp)
 
@@ -34,7 +30,8 @@ add_subdirectory(jace)
 ### build Bio-Formats C++ bindings ###
 
 include_directories(include
-  "proxies/include" "${JACE_DIR}/source/c++/include" "${Boost_INCLUDE_DIR}")
+  "proxies/include" "${JACE_DIR}/source/c++/include"
+  "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
 #message("-- Bio-Formats C++ bindings:")
 file(GLOB_RECURSE BFJACE_SRC "proxies/source/*.cpp")
