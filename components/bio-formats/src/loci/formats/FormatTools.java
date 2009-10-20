@@ -138,7 +138,7 @@ public final class FormatTools {
   public static final String DATE = "@date@";
 
   /** Version number of this release. */
-  public static final String VERSION = "4.0.1";
+  public static final String VERSION = "4.1";
 
   /** Identifies the high content screening domain. */
   public static final String HCS_DOMAIN = "High-Content Screening (HCS)";

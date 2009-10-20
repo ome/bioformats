@@ -128,9 +128,9 @@ public class DeltavisionReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
+    if (!noPixels) files.add(currentId);
     if (logFile != null) files.add(logFile);
     if (deconvolutionLogFile != null) files.add(deconvolutionLogFile);
-    if (!noPixels) files.add(currentId);
     return files.toArray(new String[files.size()]);
   }
 

@@ -267,10 +267,10 @@ public class FlexReader extends FormatReader {
     String[] list = parent.list();
     for (String file : list) {
       if (checkSuffix(file, MEA_SUFFIX)) {
-        measurementFiles.add(thisFile.getAbsolutePath());
         String mea = new Location(parent, file).getAbsolutePath();
         debug("  Found .mea file " + mea);
         initMeaFile(mea);
+        measurementFiles.add(thisFile.getAbsolutePath());
         return;
       }
     }
