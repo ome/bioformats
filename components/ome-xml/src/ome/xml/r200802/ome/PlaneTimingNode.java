@@ -78,23 +78,23 @@ public class PlaneTimingNode extends OMEXMLNode
 	// -- PlaneTiming API methods --
 
 	// Attribute
-	public Float getExposureTime()
+	public Double getExposureTime()
 	{
-		return getFloatAttribute("ExposureTime");
+		return getDoubleAttribute("ExposureTime");
 	}
 
-	public void setExposureTime(Float exposureTime)
+	public void setExposureTime(Double exposureTime)
 	{
 		setAttribute("ExposureTime", exposureTime);
 	}
 
 	// Attribute
-	public Float getDeltaT()
+	public Double getDeltaT()
 	{
-		return getFloatAttribute("DeltaT");
+		return getDoubleAttribute("DeltaT");
 	}
 
-	public void setDeltaT(Float deltaT)
+	public void setDeltaT(Double deltaT)
 	{
 		setAttribute("DeltaT", deltaT);
 	}

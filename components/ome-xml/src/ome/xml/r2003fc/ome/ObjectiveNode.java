@@ -77,23 +77,23 @@ public class ObjectiveNode extends ManufactSpecNode
 	// -- Objective API methods --
 
 	// Element which is not complex (has only a text node)
-	public Float getLensNA()
+	public Double getLensNA()
 	{
-		return getFloatCData("LensNA");
+		return getDoubleCData("LensNA");
 	}
 
-	public void setLensNA(Float lensNA)
+	public void setLensNA(Double lensNA)
 	{
 		setCData("LensNA", lensNA);
 	}
 
 	// Element which is not complex (has only a text node)
-	public Float getMagnification()
+	public Double getMagnification()
 	{
-		return getFloatCData("Magnification");
+		return getDoubleCData("Magnification");
 	}
 
-	public void setMagnification(Float magnification)
+	public void setMagnification(Double magnification)
 	{
 		setCData("Magnification", magnification);
 	}

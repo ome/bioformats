@@ -122,14 +122,14 @@ public final class ImagePlusTools {
     double xcal = Double.NaN, ycal = Double.NaN;
     double zcal = Double.NaN, tcal = Double.NaN;
 
-    Float xf = retrieve.getDimensionsPhysicalSizeX(series, 0);
-    if (xf != null) xcal = xf.floatValue();
-    Float yf = retrieve.getDimensionsPhysicalSizeY(series, 0);
-    if (yf != null) ycal = yf.floatValue();
-    Float zf = retrieve.getDimensionsPhysicalSizeZ(series, 0);
-    if (zf != null) zcal = zf.floatValue();
-    Float tf = retrieve.getDimensionsTimeIncrement(series, 0);
-    if (tf != null) tcal = tf.floatValue();
+    Double xd = retrieve.getDimensionsPhysicalSizeX(series, 0);
+    if (xd != null) xcal = xd.floatValue();
+    Double yd = retrieve.getDimensionsPhysicalSizeY(series, 0);
+    if (yd != null) ycal = yd.floatValue();
+    Double zd = retrieve.getDimensionsPhysicalSizeZ(series, 0);
+    if (zd != null) zcal = zd.floatValue();
+    Double td = retrieve.getDimensionsTimeIncrement(series, 0);
+    if (td != null) tcal = td.floatValue();
 
     if (xcal == xcal || ycal == ycal || zcal == zcal || tcal == tcal) {
       // if the physical width or physical height are missing, assume that

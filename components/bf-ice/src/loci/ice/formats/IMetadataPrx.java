@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -190,11 +190,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getDatasetRefID(int imageIndex, int datasetRefIndex);
     public String getDatasetRefID(int imageIndex, int datasetRefIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
-    public float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
+    public double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorGain(int instrumentIndex, int detectorIndex);
-    public float getDetectorGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorGain(int instrumentIndex, int detectorIndex);
+    public double getDetectorGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
     public String getDetectorID(int instrumentIndex, int detectorIndex);
     public String getDetectorID(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
@@ -205,8 +205,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getDetectorModel(int instrumentIndex, int detectorIndex);
     public String getDetectorModel(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorOffset(int instrumentIndex, int detectorIndex);
-    public float getDetectorOffset(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorOffset(int instrumentIndex, int detectorIndex);
+    public double getDetectorOffset(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
     public String getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
     public String getDetectorSerialNumber(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
@@ -214,11 +214,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getDetectorType(int instrumentIndex, int detectorIndex);
     public String getDetectorType(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorVoltage(int instrumentIndex, int detectorIndex);
-    public float getDetectorVoltage(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorVoltage(int instrumentIndex, int detectorIndex);
+    public double getDetectorVoltage(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorZoom(int instrumentIndex, int detectorIndex);
-    public float getDetectorZoom(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorZoom(int instrumentIndex, int detectorIndex);
+    public double getDetectorZoom(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
     public String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex);
     public String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -226,17 +226,17 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex);
     public String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
-    public float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
+    public double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
-    public float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+    public double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
-    public float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
+    public double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
-    public float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
+    public double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public String getDichroicID(int instrumentIndex, int dichroicIndex);
     public String getDichroicID(int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx);
@@ -250,17 +250,17 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getDichroicModel(int instrumentIndex, int dichroicIndex);
     public String getDichroicModel(int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx);
 
-    public float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
-    public float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
+    public double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
-    public float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
-    public float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
+    public double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
-    public float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
-    public float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
+    public double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
-    public float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
-    public float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
+    public double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
     public int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex);
     public int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
@@ -274,8 +274,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getDisplayOptionsID(int imageIndex);
     public String getDisplayOptionsID(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getDisplayOptionsZoom(int imageIndex);
-    public float getDisplayOptionsZoom(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getDisplayOptionsZoom(int imageIndex);
+    public double getDisplayOptionsZoom(int imageIndex, java.util.Map<String, String> __ctx);
 
     public String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex);
     public String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -430,17 +430,17 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getImageName(int imageIndex);
     public String getImageName(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getImagingEnvironmentAirPressure(int imageIndex);
-    public float getImagingEnvironmentAirPressure(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getImagingEnvironmentAirPressure(int imageIndex);
+    public double getImagingEnvironmentAirPressure(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getImagingEnvironmentCO2Percent(int imageIndex);
-    public float getImagingEnvironmentCO2Percent(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getImagingEnvironmentCO2Percent(int imageIndex);
+    public double getImagingEnvironmentCO2Percent(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getImagingEnvironmentHumidity(int imageIndex);
-    public float getImagingEnvironmentHumidity(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getImagingEnvironmentHumidity(int imageIndex);
+    public double getImagingEnvironmentHumidity(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getImagingEnvironmentTemperature(int imageIndex);
-    public float getImagingEnvironmentTemperature(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getImagingEnvironmentTemperature(int imageIndex);
+    public double getImagingEnvironmentTemperature(int imageIndex, java.util.Map<String, String> __ctx);
 
     public String getInstrumentID(int instrumentIndex);
     public String getInstrumentID(int instrumentIndex, java.util.Map<String, String> __ctx);
@@ -457,8 +457,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getLaserPulse(int instrumentIndex, int lightSourceIndex);
     public String getLaserPulse(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
-    public boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
-    public boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
+    public double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
+    public double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
     public boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex);
     public boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
@@ -478,14 +478,14 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getLightSourceModel(int instrumentIndex, int lightSourceIndex);
     public String getLightSourceModel(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
-    public float getLightSourcePower(int instrumentIndex, int lightSourceIndex);
-    public float getLightSourcePower(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
+    public double getLightSourcePower(int instrumentIndex, int lightSourceIndex);
+    public double getLightSourcePower(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
     public String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex);
     public String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
-    public float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-    public float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
+    public double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    public double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
 
     public String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     public String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
@@ -493,8 +493,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     public int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
 
-    public float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
-    public float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
+    public double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex);
     public String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -553,8 +553,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getLogicalChannelName(int imageIndex, int logicalChannelIndex);
     public String getLogicalChannelName(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
-    public float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
+    public double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex);
     public String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -562,8 +562,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex);
     public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
-    public float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
+    public double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
     public int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -661,8 +661,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public int getOTFSizeY(int instrumentIndex, int otfIndex);
     public int getOTFSizeY(int instrumentIndex, int otfIndex, java.util.Map<String, String> __ctx);
 
-    public float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
-    public float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
+    public double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
+    public double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
     public String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
     public String getObjectiveCorrection(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
@@ -676,8 +676,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public boolean getObjectiveIris(int instrumentIndex, int objectiveIndex);
     public boolean getObjectiveIris(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
-    public float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
-    public float getObjectiveLensNA(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
+    public double getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
+    public double getObjectiveLensNA(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
     public String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
     public String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
@@ -691,11 +691,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
     public String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
-    public float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
-    public float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
+    public double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+    public double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
-    public float getObjectiveSettingsCorrectionCollar(int imageIndex);
-    public float getObjectiveSettingsCorrectionCollar(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getObjectiveSettingsCorrectionCollar(int imageIndex);
+    public double getObjectiveSettingsCorrectionCollar(int imageIndex, java.util.Map<String, String> __ctx);
 
     public String getObjectiveSettingsMedium(int imageIndex);
     public String getObjectiveSettingsMedium(int imageIndex, java.util.Map<String, String> __ctx);
@@ -703,8 +703,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getObjectiveSettingsObjective(int imageIndex);
     public String getObjectiveSettingsObjective(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getObjectiveSettingsRefractiveIndex(int imageIndex);
-    public float getObjectiveSettingsRefractiveIndex(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getObjectiveSettingsRefractiveIndex(int imageIndex);
+    public double getObjectiveSettingsRefractiveIndex(int imageIndex, java.util.Map<String, String> __ctx);
 
     public String getPathD(int imageIndex, int roiIndex, int shapeIndex);
     public String getPathD(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -754,11 +754,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex);
     public int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
-    public float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
+    public double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
-    public float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
+    public double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
     public String getPlateColumnNamingConvention(int plateIndex);
     public String getPlateColumnNamingConvention(int plateIndex, java.util.Map<String, String> __ctx);
@@ -1030,8 +1030,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex);
     public int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
-    public float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
-    public float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
+    public double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
+    public double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
     public int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex);
     public int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -1069,23 +1069,23 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public String getStageLabelName(int imageIndex);
     public String getStageLabelName(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getStageLabelX(int imageIndex);
-    public float getStageLabelX(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getStageLabelX(int imageIndex);
+    public double getStageLabelX(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getStageLabelY(int imageIndex);
-    public float getStageLabelY(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getStageLabelY(int imageIndex);
+    public double getStageLabelY(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getStageLabelZ(int imageIndex);
-    public float getStageLabelZ(int imageIndex, java.util.Map<String, String> __ctx);
+    public double getStageLabelZ(int imageIndex);
+    public double getStageLabelZ(int imageIndex, java.util.Map<String, String> __ctx);
 
-    public float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
-    public float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
+    public double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
-    public float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
+    public double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
-    public float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
+    public double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
     public String getThumbnailHref(int imageIndex);
     public String getThumbnailHref(int imageIndex, java.util.Map<String, String> __ctx);
@@ -1162,11 +1162,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex);
     public int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
 
-    public float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
-    public float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
+    public double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
+    public double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
 
-    public float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
-    public float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
+    public double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
+    public double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
 
     public int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
     public int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
@@ -1231,11 +1231,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setDatasetRefID(String id, int imageIndex, int datasetRefIndex);
     public void setDatasetRefID(String id, int imageIndex, int datasetRefIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex);
-    public void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex);
+    public void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorGain(float gain, int instrumentIndex, int detectorIndex);
-    public void setDetectorGain(float gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorGain(double gain, int instrumentIndex, int detectorIndex);
+    public void setDetectorGain(double gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
     public void setDetectorID(String id, int instrumentIndex, int detectorIndex);
     public void setDetectorID(String id, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
@@ -1246,8 +1246,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setDetectorModel(String model, int instrumentIndex, int detectorIndex);
     public void setDetectorModel(String model, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex);
-    public void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex);
+    public void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
     public void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex);
     public void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
@@ -1255,11 +1255,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setDetectorType(String type, int instrumentIndex, int detectorIndex);
     public void setDetectorType(String type, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex);
-    public void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex);
+    public void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex);
-    public void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex);
+    public void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx);
 
     public void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex);
     public void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -1267,17 +1267,17 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex);
     public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex);
-    public void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex);
+    public void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex);
-    public void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex);
+    public void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex);
-    public void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex);
+    public void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex);
-    public void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex);
+    public void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
     public void setDichroicID(String id, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx);
@@ -1291,17 +1291,17 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setDichroicModel(String model, int instrumentIndex, int dichroicIndex);
     public void setDichroicModel(String model, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx);
 
-    public void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex);
-    public void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex);
+    public void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
-    public void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex);
-    public void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex);
+    public void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
-    public void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex);
-    public void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex);
+    public void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
-    public void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex);
-    public void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
+    public void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex);
+    public void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
 
     public void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex);
     public void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx);
@@ -1315,8 +1315,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setDisplayOptionsID(String id, int imageIndex);
     public void setDisplayOptionsID(String id, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setDisplayOptionsZoom(float zoom, int imageIndex);
-    public void setDisplayOptionsZoom(float zoom, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setDisplayOptionsZoom(double zoom, int imageIndex);
+    public void setDisplayOptionsZoom(double zoom, int imageIndex, java.util.Map<String, String> __ctx);
 
     public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
     public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -1471,17 +1471,17 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setImageName(String name, int imageIndex);
     public void setImageName(String name, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setImagingEnvironmentAirPressure(float airPressure, int imageIndex);
-    public void setImagingEnvironmentAirPressure(float airPressure, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setImagingEnvironmentAirPressure(double airPressure, int imageIndex);
+    public void setImagingEnvironmentAirPressure(double airPressure, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex);
-    public void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex);
+    public void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setImagingEnvironmentHumidity(float humidity, int imageIndex);
-    public void setImagingEnvironmentHumidity(float humidity, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setImagingEnvironmentHumidity(double humidity, int imageIndex);
+    public void setImagingEnvironmentHumidity(double humidity, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setImagingEnvironmentTemperature(float temperature, int imageIndex);
-    public void setImagingEnvironmentTemperature(float temperature, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setImagingEnvironmentTemperature(double temperature, int imageIndex);
+    public void setImagingEnvironmentTemperature(double temperature, int imageIndex, java.util.Map<String, String> __ctx);
 
     public void setInstrumentID(String id, int instrumentIndex);
     public void setInstrumentID(String id, int instrumentIndex, java.util.Map<String, String> __ctx);
@@ -1498,8 +1498,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex);
     public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
-    public void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex);
-    public void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
+    public void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex);
+    public void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
     public void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex);
     public void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
@@ -1519,14 +1519,14 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex);
     public void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
-    public void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex);
-    public void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
+    public void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex);
+    public void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
     public void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
     public void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx);
 
-    public void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-    public void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
+    public void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    public void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
 
     public void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     public void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
@@ -1534,8 +1534,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     public void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx);
 
-    public void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex);
-    public void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex);
+    public void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex);
     public void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -1594,8 +1594,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex);
     public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex);
-    public void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex);
+    public void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex);
     public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -1603,8 +1603,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex);
     public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
-    public void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex);
-    public void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
+    public void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex);
+    public void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
 
     public void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex);
     public void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx);
@@ -1702,8 +1702,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex);
     public void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex, java.util.Map<String, String> __ctx);
 
-    public void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex);
-    public void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
+    public void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex);
+    public void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
     public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex);
     public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
@@ -1717,8 +1717,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex);
     public void setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
-    public void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex);
-    public void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
+    public void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex);
+    public void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
     public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex);
     public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
@@ -1732,11 +1732,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
     public void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
-    public void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex);
-    public void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
+    public void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex);
+    public void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx);
 
-    public void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex);
-    public void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex);
+    public void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, java.util.Map<String, String> __ctx);
 
     public void setObjectiveSettingsMedium(String medium, int imageIndex);
     public void setObjectiveSettingsMedium(String medium, int imageIndex, java.util.Map<String, String> __ctx);
@@ -1744,8 +1744,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setObjectiveSettingsObjective(String objective, int imageIndex);
     public void setObjectiveSettingsObjective(String objective, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex);
-    public void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex);
+    public void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx);
 
     public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex);
     public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -1795,11 +1795,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex);
     public void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
-    public void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+    public void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
-    public void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
+    public void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
     public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex);
     public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, java.util.Map<String, String> __ctx);
@@ -2071,8 +2071,8 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
     public void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
-    public void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
-    public void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
+    public void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
+    public void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
 
     public void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
     public void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx);
@@ -2110,23 +2110,23 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setStageLabelName(String name, int imageIndex);
     public void setStageLabelName(String name, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setStageLabelX(float x, int imageIndex);
-    public void setStageLabelX(float x, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setStageLabelX(double x, int imageIndex);
+    public void setStageLabelX(double x, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setStageLabelY(float y, int imageIndex);
-    public void setStageLabelY(float y, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setStageLabelY(double y, int imageIndex);
+    public void setStageLabelY(double y, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setStageLabelZ(float z, int imageIndex);
-    public void setStageLabelZ(float z, int imageIndex, java.util.Map<String, String> __ctx);
+    public void setStageLabelZ(double z, int imageIndex);
+    public void setStageLabelZ(double z, int imageIndex, java.util.Map<String, String> __ctx);
 
-    public void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex);
-    public void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex);
+    public void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex);
-    public void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex);
+    public void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
-    public void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
-    public void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
+    public void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex);
+    public void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx);
 
     public void setThumbnailHref(String href, int imageIndex);
     public void setThumbnailHref(String href, int imageIndex, java.util.Map<String, String> __ctx);
@@ -2203,11 +2203,11 @@ public interface IMetadataPrx extends Ice.ObjectPrx
     public void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex);
     public void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
 
-    public void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex);
-    public void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
+    public void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex);
+    public void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
 
-    public void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex);
-    public void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
+    public void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex);
+    public void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);
 
     public void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
     public void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx);

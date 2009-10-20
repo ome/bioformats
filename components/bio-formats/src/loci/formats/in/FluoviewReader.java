@@ -62,7 +62,7 @@ public class FluoviewReader extends BaseTiffReader {
   // -- Fields --
 
   /** Pixel dimensions for this file. */
-  private float voxelX = 1f, voxelY = 1f, voxelZ = 1f, voxelC = 1f, voxelT = 1f;
+  private double voxelX = 1, voxelY = 1, voxelZ = 1, voxelC = 1, voxelT = 1;
 
   private String dimensionOrder;
 
@@ -142,7 +142,7 @@ public class FluoviewReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      voxelX = voxelY = voxelZ = voxelC = voxelT = 1f;
+      voxelX = voxelY = voxelZ = voxelC = voxelT = 1;
       dimensionOrder = null;
       gains = voltages = offsets = channelNames = lensNA = null;
       mag = detManu = objManu = comment = null;
@@ -254,7 +254,7 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<10; i++) {
       String name = names[i];
       int size = sizes[i];
-      float voxel = (float) resolutions[i];
+      double voxel = resolutions[i];
       if (name == null || size == 0) continue;
       name = name.toLowerCase().trim();
       if (name.length() == 0) continue;
@@ -421,10 +421,10 @@ public class FluoviewReader extends BaseTiffReader {
     store.setImageInstrumentRef(instrumentID, 0);
 
     // populate Dimensions
-    store.setDimensionsPhysicalSizeX(new Float(voxelX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(voxelY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(voxelZ), 0, 0);
-    store.setDimensionsTimeIncrement(new Float(voxelT), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(voxelX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(voxelY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(voxelZ), 0, 0);
+    store.setDimensionsTimeIncrement(new Double(voxelT), 0, 0);
     if ((int) voxelC > 0) {
       store.setDimensionsWaveIncrement(new Integer((int) voxelC), 0, 0);
     }
@@ -442,17 +442,17 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getSizeC(); i++) {
       // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), null, null,
-//        gamma == null ? null : new Float(gamma.floatValue()), null);
+//        gamma == null ? null : new Double(gamma.doubleValue()), null);
 
       if (voltages[i] != null) {
         if (detManu != null) store.setDetectorManufacturer(detManu, 0, 0);
-        store.setDetectorSettingsVoltage(new Float(voltages[i]), 0, 0);
+        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, 0);
       }
       if (gains[i] != null) {
-        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+        store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
       }
       if (offsets[i] != null) {
-        store.setDetectorSettingsOffset(new Float(offsets[i]), 0, i);
+        store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
       }
       store.setDetectorType("Unknown", 0, i);
 
@@ -481,12 +481,12 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     if (mag != null) {
-      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+      store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
     }
 
     for (int i=0; i<getSizeC(); i++) {
       if (lensNA[i] != null) {
-        store.setObjectiveLensNA(new Float(lensNA[i]), 0, i);
+        store.setObjectiveLensNA(new Double(lensNA[i]), 0, i);
       }
     }
 

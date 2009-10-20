@@ -91,8 +91,8 @@ public class GelReader extends BaseTiffReader {
     boolean sqrt = ifd.getIFDLongValue(MD_FILETAG, true, LINEAR) == SQUARE_ROOT;
 
     if (sqrt) {
-      float scale = ((TiffRational)
-        ifd.getIFDValue(MD_SCALE_PIXEL)).floatValue();
+      double scale = ((TiffRational)
+        ifd.getIFDValue(MD_SCALE_PIXEL)).doubleValue();
 
       byte[] tmp = new byte[buf.length];
       super.openBytes(no, tmp, x, y, w, h);
@@ -103,7 +103,7 @@ public class GelReader extends BaseTiffReader {
         long value = DataTools.bytesToShort(tmp, i*originalBytes,
           originalBytes, isLittleEndian());
         long square = value * value;
-        float pixel = square * scale;
+        float pixel = (float) (square * scale);
         DataTools.unpackBytes(Float.floatToIntBits(pixel), buf, i*4, 4,
           isLittleEndian());
       }
@@ -180,7 +180,7 @@ public class GelReader extends BaseTiffReader {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
-    Float pixelSize = new Float(scale.floatValue());
+    Double pixelSize = new Double(scale.doubleValue());
     store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
     store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
   }

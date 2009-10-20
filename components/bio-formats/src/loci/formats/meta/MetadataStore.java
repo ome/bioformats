@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 5, 2009 9:38:21 AM CDT
+ * Created by curtis via MetadataAutogen on Oct 19, 2009 10:56:59 PM EDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -241,7 +241,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  void setDetectorAmplificationGain(Float amplificationGain, int instrumentIndex, int detectorIndex);
+  void setDetectorAmplificationGain(Double amplificationGain, int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, sets the gain of the detector.
@@ -249,7 +249,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex);
+  void setDetectorGain(Double gain, int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, sets unique label identifying the detector.
@@ -281,7 +281,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  void setDetectorOffset(Float offset, int instrumentIndex, int detectorIndex);
+  void setDetectorOffset(Double offset, int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, sets serial number of the detector.
@@ -305,7 +305,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  void setDetectorVoltage(Float voltage, int instrumentIndex, int detectorIndex);
+  void setDetectorVoltage(Double voltage, int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, sets optional zoom value of the detector.
@@ -313,7 +313,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  void setDetectorZoom(Float zoom, int instrumentIndex, int detectorIndex);
+  void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex);
 
   // - DetectorSettings property storage -
 
@@ -339,7 +339,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex);
+  void setDetectorSettingsGain(Double gain, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular DetectorSettings, sets the detector offset.
@@ -347,7 +347,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex);
+  void setDetectorSettingsOffset(Double offset, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular DetectorSettings, sets the speed at which the detector can count pixels, in MHz.
@@ -355,7 +355,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex);
+  void setDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular DetectorSettings, sets the detector voltage.
@@ -363,7 +363,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex);
+  void setDetectorSettingsVoltage(Double voltage, int imageIndex, int logicalChannelIndex);
 
   // - Dichroic property storage -
 
@@ -407,7 +407,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex);
+  void setDimensionsPhysicalSizeX(Double physicalSizeX, int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, sets the size of an individual pixel's Y axis in microns.
@@ -415,7 +415,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex);
+  void setDimensionsPhysicalSizeY(Double physicalSizeY, int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, sets the size of an individual pixel's Z axis in microns.
@@ -423,7 +423,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex);
+  void setDimensionsPhysicalSizeZ(Double physicalSizeZ, int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, sets the distance between adjacent time points in seconds.
@@ -431,7 +431,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex);
+  void setDimensionsTimeIncrement(Double timeIncrement, int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, sets the distance between adjacent wavelengths in nanometers.
@@ -470,7 +470,7 @@ public interface MetadataStore {
    * @param zoom zoom factor for use in the display (NOT THE LENS ZOOM)
    * @param imageIndex index of the Image
    */
-  void setDisplayOptionsZoom(Float zoom, int imageIndex);
+  void setDisplayOptionsZoom(Double zoom, int imageIndex);
 
   // - Ellipse property storage -
 
@@ -895,28 +895,28 @@ public interface MetadataStore {
    * @param airPressure air pressure, in millibars
    * @param imageIndex index of the Image
    */
-  void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex);
+  void setImagingEnvironmentAirPressure(Double airPressure, int imageIndex);
 
   /**
    * For a particular ImagingEnvironment, sets CO2 level, in percent fractions from 0.0 to 1.0.
    * @param cO2Percent CO2 level, in percent fractions from 0.0 to 1.0
    * @param imageIndex index of the Image
    */
-  void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex);
+  void setImagingEnvironmentCO2Percent(Double cO2Percent, int imageIndex);
 
   /**
    * For a particular ImagingEnvironment, sets humidity, in percent fractions from 0.0 to 1.0.
    * @param humidity humidity, in percent fractions from 0.0 to 1.0
    * @param imageIndex index of the Image
    */
-  void setImagingEnvironmentHumidity(Float humidity, int imageIndex);
+  void setImagingEnvironmentHumidity(Double humidity, int imageIndex);
 
   /**
    * For a particular ImagingEnvironment, sets temperature of the imaging environment, in Celsius.
    * @param temperature temperature of the imaging environment, in Celsius
    * @param imageIndex index of the Image
    */
-  void setImagingEnvironmentTemperature(Float temperature, int imageIndex);
+  void setImagingEnvironmentTemperature(Double temperature, int imageIndex);
 
   // - Instrument property storage -
 
@@ -967,7 +967,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  void setLaserRepetitionRate(Boolean repetitionRate, int instrumentIndex, int lightSourceIndex);
+  void setLaserRepetitionRate(Double repetitionRate, int instrumentIndex, int lightSourceIndex);
 
   /**
    * For a particular Laser, sets indicates whether or not the laser can be tuned.
@@ -1025,7 +1025,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  void setLightSourcePower(Float power, int instrumentIndex, int lightSourceIndex);
+  void setLightSourcePower(Double power, int instrumentIndex, int lightSourceIndex);
 
   /**
    * For a particular LightSource, sets serial number of the light source.
@@ -1044,7 +1044,7 @@ public interface MetadataStore {
    * @param microbeamManipulationIndex index of the MicrobeamManipulation
    * @param lightSourceRefIndex index of the LightSourceRef
    */
-  void setLightSourceRefAttenuation(Float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+  void setLightSourceRefAttenuation(Double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
   /**
    * For a particular LightSourceRef, sets TODO.
@@ -1072,7 +1072,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex);
+  void setLightSourceSettingsAttenuation(Double attenuation, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LightSourceSettings, sets the primary light source.
@@ -1242,7 +1242,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex);
+  void setLogicalChannelNdFilter(Double ndFilter, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, sets the OTF associated with the logical channel.
@@ -1266,7 +1266,7 @@ public interface MetadataStore {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  void setLogicalChannelPinholeSize(Float pinholeSize, int imageIndex, int logicalChannelIndex);
+  void setLogicalChannelPinholeSize(Double pinholeSize, int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, sets TODO.
@@ -1551,7 +1551,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
-  void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex);
+  void setObjectiveCalibratedMagnification(Double calibratedMagnification, int instrumentIndex, int objectiveIndex);
 
   /**
    * For a particular Objective, sets type of correction coating applied to the objective lens.
@@ -1591,7 +1591,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
-  void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex);
+  void setObjectiveLensNA(Double lensNA, int instrumentIndex, int objectiveIndex);
 
   /**
    * For a particular Objective, sets the name of the objective's manufacturer.
@@ -1631,7 +1631,7 @@ public interface MetadataStore {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
-  void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex);
+  void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex);
 
   // - ObjectiveSettings property storage -
 
@@ -1640,7 +1640,7 @@ public interface MetadataStore {
    * @param correctionCollar unit-less setting of the adjustable correction collar
    * @param imageIndex index of the Image
    */
-  void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex);
+  void setObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex);
 
   /**
    * For a particular ObjectiveSettings, sets immersion medium for the lens.
@@ -1661,7 +1661,7 @@ public interface MetadataStore {
    * @param refractiveIndex unit-less refractive index of the immersion medium
    * @param imageIndex index of the Image
    */
-  void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex);
+  void setObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex);
 
   // - Path property storage -
 
@@ -1813,7 +1813,7 @@ public interface MetadataStore {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+  void setPlaneTimingDeltaT(Double deltaT, int imageIndex, int pixelsIndex, int planeIndex);
 
   /**
    * For a particular PlaneTiming, sets the exposure time in seconds.
@@ -1822,7 +1822,7 @@ public interface MetadataStore {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
+  void setPlaneTimingExposureTime(Double exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
 
   // - Plate property storage -
 
@@ -2606,7 +2606,7 @@ public interface MetadataStore {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
+  void setShapeStrokeOpacity(Double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Shape, sets width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas..
@@ -2721,21 +2721,21 @@ public interface MetadataStore {
    * @param x the x coordinate of the stage
    * @param imageIndex index of the Image
    */
-  void setStageLabelX(Float x, int imageIndex);
+  void setStageLabelX(Double x, int imageIndex);
 
   /**
    * For a particular StageLabel, sets the y coordinate of the stage.
    * @param y the y coordinate of the stage
    * @param imageIndex index of the Image
    */
-  void setStageLabelY(Float y, int imageIndex);
+  void setStageLabelY(Double y, int imageIndex);
 
   /**
    * For a particular StageLabel, sets the z coordinate of the stage.
    * @param z the z coordinate of the stage
    * @param imageIndex index of the Image
    */
-  void setStageLabelZ(Float z, int imageIndex);
+  void setStageLabelZ(Double z, int imageIndex);
 
   // - StagePosition property storage -
 
@@ -2746,7 +2746,7 @@ public interface MetadataStore {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex);
+  void setStagePositionPositionX(Double positionX, int imageIndex, int pixelsIndex, int planeIndex);
 
   /**
    * For a particular StagePosition, sets the Y coordinate of the stage position.
@@ -2755,7 +2755,7 @@ public interface MetadataStore {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex);
+  void setStagePositionPositionY(Double positionY, int imageIndex, int pixelsIndex, int planeIndex);
 
   /**
    * For a particular StagePosition, sets the Z coordinate of the stage position.
@@ -2764,7 +2764,7 @@ public interface MetadataStore {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
+  void setStagePositionPositionZ(Double positionZ, int imageIndex, int pixelsIndex, int planeIndex);
 
   // - Thumbnail property storage -
 
@@ -2990,7 +2990,7 @@ public interface MetadataStore {
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex);
+  void setWellSamplePosX(Double posX, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets Y position of the image within the well.
@@ -2999,7 +2999,7 @@ public interface MetadataStore {
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex);
+  void setWellSamplePosY(Double posY, int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, sets time-point at which the image started to be collected.

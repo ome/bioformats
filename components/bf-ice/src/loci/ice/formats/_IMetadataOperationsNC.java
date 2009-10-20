@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -131,9 +131,9 @@ public interface _IMetadataOperationsNC
 
     String getDatasetRefID(int imageIndex, int datasetRefIndex);
 
-    float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
+    double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
 
-    float getDetectorGain(int instrumentIndex, int detectorIndex);
+    double getDetectorGain(int instrumentIndex, int detectorIndex);
 
     String getDetectorID(int instrumentIndex, int detectorIndex);
 
@@ -141,27 +141,27 @@ public interface _IMetadataOperationsNC
 
     String getDetectorModel(int instrumentIndex, int detectorIndex);
 
-    float getDetectorOffset(int instrumentIndex, int detectorIndex);
+    double getDetectorOffset(int instrumentIndex, int detectorIndex);
 
     String getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
 
     String getDetectorType(int instrumentIndex, int detectorIndex);
 
-    float getDetectorVoltage(int instrumentIndex, int detectorIndex);
+    double getDetectorVoltage(int instrumentIndex, int detectorIndex);
 
-    float getDetectorZoom(int instrumentIndex, int detectorIndex);
+    double getDetectorZoom(int instrumentIndex, int detectorIndex);
 
     String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex);
 
     String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex);
 
-    float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
 
-    float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
 
-    float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
 
-    float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
 
     String getDichroicID(int instrumentIndex, int dichroicIndex);
 
@@ -171,13 +171,13 @@ public interface _IMetadataOperationsNC
 
     String getDichroicModel(int instrumentIndex, int dichroicIndex);
 
-    float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
+    double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
 
-    float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
+    double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
 
-    float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
+    double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
 
-    float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
+    double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
 
     int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex);
 
@@ -187,7 +187,7 @@ public interface _IMetadataOperationsNC
 
     String getDisplayOptionsID(int imageIndex);
 
-    float getDisplayOptionsZoom(int imageIndex);
+    double getDisplayOptionsZoom(int imageIndex);
 
     String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex);
 
@@ -291,13 +291,13 @@ public interface _IMetadataOperationsNC
 
     String getImageName(int imageIndex);
 
-    float getImagingEnvironmentAirPressure(int imageIndex);
+    double getImagingEnvironmentAirPressure(int imageIndex);
 
-    float getImagingEnvironmentCO2Percent(int imageIndex);
+    double getImagingEnvironmentCO2Percent(int imageIndex);
 
-    float getImagingEnvironmentHumidity(int imageIndex);
+    double getImagingEnvironmentHumidity(int imageIndex);
 
-    float getImagingEnvironmentTemperature(int imageIndex);
+    double getImagingEnvironmentTemperature(int imageIndex);
 
     String getInstrumentID(int instrumentIndex);
 
@@ -309,7 +309,7 @@ public interface _IMetadataOperationsNC
 
     String getLaserPulse(int instrumentIndex, int lightSourceIndex);
 
-    boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
+    double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
 
     boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex);
 
@@ -323,17 +323,17 @@ public interface _IMetadataOperationsNC
 
     String getLightSourceModel(int instrumentIndex, int lightSourceIndex);
 
-    float getLightSourcePower(int instrumentIndex, int lightSourceIndex);
+    double getLightSourcePower(int instrumentIndex, int lightSourceIndex);
 
     String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex);
 
-    float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
     String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
     int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
-    float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
+    double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
 
     String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex);
 
@@ -373,13 +373,13 @@ public interface _IMetadataOperationsNC
 
     String getLogicalChannelName(int imageIndex, int logicalChannelIndex);
 
-    float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
+    double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
 
     String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex);
 
     String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex);
 
-    float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
+    double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
 
     int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
 
@@ -445,7 +445,7 @@ public interface _IMetadataOperationsNC
 
     int getOTFSizeY(int instrumentIndex, int otfIndex);
 
-    float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
+    double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
 
     String getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
 
@@ -455,7 +455,7 @@ public interface _IMetadataOperationsNC
 
     boolean getObjectiveIris(int instrumentIndex, int objectiveIndex);
 
-    float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
+    double getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
 
     String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
 
@@ -465,15 +465,15 @@ public interface _IMetadataOperationsNC
 
     String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
 
-    float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+    double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
 
-    float getObjectiveSettingsCorrectionCollar(int imageIndex);
+    double getObjectiveSettingsCorrectionCollar(int imageIndex);
 
     String getObjectiveSettingsMedium(int imageIndex);
 
     String getObjectiveSettingsObjective(int imageIndex);
 
-    float getObjectiveSettingsRefractiveIndex(int imageIndex);
+    double getObjectiveSettingsRefractiveIndex(int imageIndex);
 
     String getPathD(int imageIndex, int roiIndex, int shapeIndex);
 
@@ -507,9 +507,9 @@ public interface _IMetadataOperationsNC
 
     int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex);
 
-    float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
+    double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
 
-    float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
+    double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
 
     String getPlateColumnNamingConvention(int plateIndex);
 
@@ -691,7 +691,7 @@ public interface _IMetadataOperationsNC
 
     int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex);
 
-    float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
+    double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
 
     int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex);
 
@@ -717,17 +717,17 @@ public interface _IMetadataOperationsNC
 
     String getStageLabelName(int imageIndex);
 
-    float getStageLabelX(int imageIndex);
+    double getStageLabelX(int imageIndex);
 
-    float getStageLabelY(int imageIndex);
+    double getStageLabelY(int imageIndex);
 
-    float getStageLabelZ(int imageIndex);
+    double getStageLabelZ(int imageIndex);
 
-    float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
+    double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
 
-    float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
+    double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
 
-    float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
+    double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
 
     String getThumbnailHref(int imageIndex);
 
@@ -779,9 +779,9 @@ public interface _IMetadataOperationsNC
 
     int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex);
 
-    float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
+    double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
 
-    float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
+    double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
 
     int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
@@ -825,9 +825,9 @@ public interface _IMetadataOperationsNC
 
     void setDatasetRefID(String id, int imageIndex, int datasetRefIndex);
 
-    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex);
+    void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex);
 
-    void setDetectorGain(float gain, int instrumentIndex, int detectorIndex);
+    void setDetectorGain(double gain, int instrumentIndex, int detectorIndex);
 
     void setDetectorID(String id, int instrumentIndex, int detectorIndex);
 
@@ -835,27 +835,27 @@ public interface _IMetadataOperationsNC
 
     void setDetectorModel(String model, int instrumentIndex, int detectorIndex);
 
-    void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex);
+    void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex);
 
     void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex);
 
     void setDetectorType(String type, int instrumentIndex, int detectorIndex);
 
-    void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex);
+    void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex);
 
-    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex);
+    void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex);
 
     void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex);
 
     void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex);
 
-    void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex);
 
-    void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex);
 
-    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex);
 
-    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex);
 
     void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
 
@@ -865,13 +865,13 @@ public interface _IMetadataOperationsNC
 
     void setDichroicModel(String model, int instrumentIndex, int dichroicIndex);
 
-    void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex);
 
-    void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex);
 
-    void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex);
 
-    void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex);
+    void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex);
 
     void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex);
 
@@ -881,7 +881,7 @@ public interface _IMetadataOperationsNC
 
     void setDisplayOptionsID(String id, int imageIndex);
 
-    void setDisplayOptionsZoom(float zoom, int imageIndex);
+    void setDisplayOptionsZoom(double zoom, int imageIndex);
 
     void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
 
@@ -985,13 +985,13 @@ public interface _IMetadataOperationsNC
 
     void setImageName(String name, int imageIndex);
 
-    void setImagingEnvironmentAirPressure(float airPressure, int imageIndex);
+    void setImagingEnvironmentAirPressure(double airPressure, int imageIndex);
 
-    void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex);
+    void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex);
 
-    void setImagingEnvironmentHumidity(float humidity, int imageIndex);
+    void setImagingEnvironmentHumidity(double humidity, int imageIndex);
 
-    void setImagingEnvironmentTemperature(float temperature, int imageIndex);
+    void setImagingEnvironmentTemperature(double temperature, int imageIndex);
 
     void setInstrumentID(String id, int instrumentIndex);
 
@@ -1003,7 +1003,7 @@ public interface _IMetadataOperationsNC
 
     void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex);
 
-    void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex);
+    void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex);
 
     void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex);
 
@@ -1017,17 +1017,17 @@ public interface _IMetadataOperationsNC
 
     void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex);
 
-    void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex);
+    void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex);
 
     void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
 
-    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
     void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
     void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
-    void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex);
+    void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex);
 
     void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex);
 
@@ -1067,13 +1067,13 @@ public interface _IMetadataOperationsNC
 
     void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex);
 
-    void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex);
 
     void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex);
 
     void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex);
 
-    void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex);
 
     void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex);
 
@@ -1139,7 +1139,7 @@ public interface _IMetadataOperationsNC
 
     void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex);
 
-    void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex);
+    void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex);
 
     void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex);
 
@@ -1149,7 +1149,7 @@ public interface _IMetadataOperationsNC
 
     void setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex);
 
-    void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex);
+    void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex);
 
     void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex);
 
@@ -1159,15 +1159,15 @@ public interface _IMetadataOperationsNC
 
     void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
 
-    void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex);
+    void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex);
 
-    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex);
+    void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex);
 
     void setObjectiveSettingsMedium(String medium, int imageIndex);
 
     void setObjectiveSettingsObjective(String objective, int imageIndex);
 
-    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex);
+    void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex);
 
     void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex);
 
@@ -1201,9 +1201,9 @@ public interface _IMetadataOperationsNC
 
     void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex);
 
-    void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex);
 
-    void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
 
     void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex);
 
@@ -1385,7 +1385,7 @@ public interface _IMetadataOperationsNC
 
     void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
 
-    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
 
     void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
 
@@ -1411,17 +1411,17 @@ public interface _IMetadataOperationsNC
 
     void setStageLabelName(String name, int imageIndex);
 
-    void setStageLabelX(float x, int imageIndex);
+    void setStageLabelX(double x, int imageIndex);
 
-    void setStageLabelY(float y, int imageIndex);
+    void setStageLabelY(double y, int imageIndex);
 
-    void setStageLabelZ(float z, int imageIndex);
+    void setStageLabelZ(double z, int imageIndex);
 
-    void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex);
 
-    void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex);
 
-    void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex);
 
     void setThumbnailHref(String href, int imageIndex);
 
@@ -1473,9 +1473,9 @@ public interface _IMetadataOperationsNC
 
     void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex);
 
-    void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex);
 
-    void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex);
 
     void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 

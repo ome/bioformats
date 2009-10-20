@@ -64,7 +64,7 @@ public class TillVisionReader extends FormatReader {
   // -- Fields --
 
   private RandomAccessInputStream[] pixelsStream;
-  private Hashtable<Integer, Float> exposureTimes;
+  private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private int embeddedOffset;
 
@@ -122,7 +122,7 @@ public class TillVisionReader extends FormatReader {
     debug("TillVisionReader.initFile(" + id + ")");
     super.initFile(id);
 
-    exposureTimes = new Hashtable<Integer, Float>();
+    exposureTimes = new Hashtable<Integer, Double>();
 
     POITools poi = new POITools(id);
     Vector<String> documents = poi.getDocumentList();
@@ -234,8 +234,8 @@ public class TillVisionReader extends FormatReader {
                 dateTime = value + " " + dateTime;
               }
               else if (key.equals("Exposure time [ms]")) {
-                float exp = Float.parseFloat(value) / 1000;
-                exposureTimes.put(new Integer(nImages), new Float(exp));
+                double exp = Double.parseDouble(value) / 1000;
+                exposureTimes.put(new Integer(nImages), new Double(exp));
               }
               else if (key.equals("Image type")) {
                 types.add(value);

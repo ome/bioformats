@@ -44,7 +44,7 @@ public class PrintTimestamps {
   public static void printGlobalTiming(IMetadata meta, int series) {
     String imageName = meta.getImageName(series);
     String creationDate = meta.getImageCreationDate(series);
-    Float timeInc = meta.getDimensionsTimeIncrement(series, 0);
+    Double timeInc = meta.getDimensionsTimeIncrement(series, 0);
     System.out.println();
     System.out.println("Global timing information:");
     System.out.println("\tImage name = " + imageName);
@@ -63,7 +63,7 @@ public class PrintTimestamps {
       "Timing information per timepoint (from beginning of experiment):");
     int planeCount = meta.getPlaneCount(series, 0);
     for (int i = 0; i < planeCount; i++) {
-      Float deltaT = meta.getPlaneTimingDeltaT(series, 0, i);
+      Double deltaT = meta.getPlaneTimingDeltaT(series, 0, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, 0, i).intValue();
@@ -89,7 +89,7 @@ public class PrintTimestamps {
       "Timing information per plane (from beginning of experiment):");
     int planeCount = meta.getPlaneCount(series, 0);
     for (int i = 0; i < planeCount; i++) {
-      Float deltaT = meta.getPlaneTimingDeltaT(series, 0, i);
+      Double deltaT = meta.getPlaneTimingDeltaT(series, 0, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, 0, i).intValue();

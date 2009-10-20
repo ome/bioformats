@@ -100,45 +100,45 @@ public class PixelsNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getTimeIncrement()
+	public Double getTimeIncrement()
 	{
-		return getFloatAttribute("TimeIncrement");
+		return getDoubleAttribute("TimeIncrement");
 	}
 
-	public void setTimeIncrement(Float timeIncrement)
+	public void setTimeIncrement(Double timeIncrement)
 	{
 		setAttribute("TimeIncrement", timeIncrement);
 	}
 
 	// Attribute
-	public Float getPhysicalSizeY()
+	public Double getPhysicalSizeY()
 	{
-		return getFloatAttribute("PhysicalSizeY");
+		return getDoubleAttribute("PhysicalSizeY");
 	}
 
-	public void setPhysicalSizeY(Float physicalSizeY)
+	public void setPhysicalSizeY(Double physicalSizeY)
 	{
 		setAttribute("PhysicalSizeY", physicalSizeY);
 	}
 
 	// Attribute
-	public Float getPhysicalSizeX()
+	public Double getPhysicalSizeX()
 	{
-		return getFloatAttribute("PhysicalSizeX");
+		return getDoubleAttribute("PhysicalSizeX");
 	}
 
-	public void setPhysicalSizeX(Float physicalSizeX)
+	public void setPhysicalSizeX(Double physicalSizeX)
 	{
 		setAttribute("PhysicalSizeX", physicalSizeX);
 	}
 
 	// Attribute
-	public Float getPhysicalSizeZ()
+	public Double getPhysicalSizeZ()
 	{
-		return getFloatAttribute("PhysicalSizeZ");
+		return getDoubleAttribute("PhysicalSizeZ");
 	}
 
-	public void setPhysicalSizeZ(Float physicalSizeZ)
+	public void setPhysicalSizeZ(Double physicalSizeZ)
 	{
 		setAttribute("PhysicalSizeZ", physicalSizeZ);
 	}

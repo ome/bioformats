@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -1123,13 +1123,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorAmplificationGain(final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorAmplificationGain", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1229,13 +1229,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorGain(final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorGain", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1441,13 +1441,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorOffset(final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorOffset", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1653,13 +1653,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorSettingsGain(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorSettingsGain", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1706,13 +1706,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorSettingsOffset(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorSettingsOffset", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1759,13 +1759,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorSettingsReadOutRate(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorSettingsReadOutRate", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1812,13 +1812,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorSettingsVoltage(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorSettingsVoltage", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1918,13 +1918,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorVoltage(final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorVoltage", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -1971,13 +1971,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDetectorZoom(final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDetectorZoom", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -2289,13 +2289,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeX(final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDimensionsPhysicalSizeX", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -2342,13 +2342,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeY(final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDimensionsPhysicalSizeY", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -2395,13 +2395,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeZ(final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDimensionsPhysicalSizeZ", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -2448,13 +2448,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDimensionsTimeIncrement(final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDimensionsTimeIncrement", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -2713,13 +2713,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getDisplayOptionsZoom(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getDisplayOptionsZoom", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -5893,13 +5893,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getImagingEnvironmentAirPressure(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getImagingEnvironmentAirPressure", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -5946,13 +5946,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getImagingEnvironmentCO2Percent(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getImagingEnvironmentCO2Percent", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -5999,13 +5999,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getImagingEnvironmentHumidity(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getImagingEnvironmentHumidity", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -6052,13 +6052,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getImagingEnvironmentTemperature(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getImagingEnvironmentTemperature", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -6423,13 +6423,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public boolean
+    public double
     getLaserRepetitionRate(final int instrumentIndex, final int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getLaserRepetitionRate", Ice.OperationMode.Normal, __ctx);
-        final Ice.BooleanHolder __result = new Ice.BooleanHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -6847,13 +6847,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getLightSourcePower(final int instrumentIndex, final int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getLightSourcePower", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -6900,13 +6900,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getLightSourceRefAttenuation(final int imageIndex, final int microbeamManipulationIndex, final int lightSourceRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getLightSourceRefAttenuation", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -7165,13 +7165,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getLightSourceSettingsAttenuation(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getLightSourceSettingsAttenuation", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -8278,13 +8278,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getLogicalChannelNdFilter(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getLogicalChannelNdFilter", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -8437,13 +8437,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getLogicalChannelPinholeSize(final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getLogicalChannelPinholeSize", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -10398,13 +10398,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getObjectiveCalibratedMagnification(final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getObjectiveCalibratedMagnification", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -10716,13 +10716,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getObjectiveLensNA(final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getObjectiveLensNA", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -10981,13 +10981,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getObjectiveSettingsCorrectionCollar(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getObjectiveSettingsCorrectionCollar", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -11140,13 +11140,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getObjectiveSettingsRefractiveIndex(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getObjectiveSettingsRefractiveIndex", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -11193,13 +11193,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getObjectiveWorkingDistance(final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getObjectiveWorkingDistance", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -12200,13 +12200,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getPlaneTimingDeltaT(final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getPlaneTimingDeltaT", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -12253,13 +12253,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getPlaneTimingExposureTime(final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getPlaneTimingExposureTime", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -17765,13 +17765,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getShapeStrokeOpacity(final int imageIndex, final int roiIndex, final int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getShapeStrokeOpacity", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -18454,13 +18454,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getStageLabelX(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getStageLabelX", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -18507,13 +18507,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getStageLabelY(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getStageLabelY", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -18560,13 +18560,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getStageLabelZ(final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getStageLabelZ", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -18613,13 +18613,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getStagePositionPositionX(final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getStagePositionPositionX", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -18666,13 +18666,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getStagePositionPositionY(final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getStagePositionPositionY", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -18719,13 +18719,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getStagePositionPositionZ(final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getStagePositionPositionZ", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -20256,13 +20256,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getWellSamplePosX(final int plateIndex, final int wellIndex, final int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getWellSamplePosX", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -20309,13 +20309,13 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
         return __result.value;
     }
 
-    public float
+    public double
     getWellSamplePosY(final int plateIndex, final int wellIndex, final int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
         __initCurrent(__current, "getWellSamplePosY", Ice.OperationMode.Normal, __ctx);
-        final Ice.FloatHolder __result = new Ice.FloatHolder();
+        final Ice.DoubleHolder __result = new Ice.DoubleHolder();
         IceInternal.Direct __direct = null;
         try
         {
@@ -21425,7 +21425,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorAmplificationGain(final float amplificationGain, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorAmplificationGain(final double amplificationGain, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -21475,7 +21475,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorGain(final float gain, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorGain(final double gain, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -21675,7 +21675,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorOffset(final float offset, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorOffset(final double offset, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -21875,7 +21875,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorSettingsGain(final float gain, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsGain(final double gain, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -21925,7 +21925,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorSettingsOffset(final float offset, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsOffset(final double offset, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -21975,7 +21975,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorSettingsReadOutRate(final float readOutRate, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsReadOutRate(final double readOutRate, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22025,7 +22025,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorSettingsVoltage(final float voltage, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsVoltage(final double voltage, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22125,7 +22125,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorVoltage(final float voltage, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorVoltage(final double voltage, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22175,7 +22175,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDetectorZoom(final float zoom, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorZoom(final double zoom, final int instrumentIndex, final int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22425,7 +22425,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDimensionsPhysicalSizeX(final float physicalSizeX, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsPhysicalSizeX(final double physicalSizeX, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22475,7 +22475,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDimensionsPhysicalSizeY(final float physicalSizeY, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsPhysicalSizeY(final double physicalSizeY, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22525,7 +22525,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDimensionsPhysicalSizeZ(final float physicalSizeZ, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsPhysicalSizeZ(final double physicalSizeZ, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22575,7 +22575,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDimensionsTimeIncrement(final float timeIncrement, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsTimeIncrement(final double timeIncrement, final int imageIndex, final int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -22825,7 +22825,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setDisplayOptionsZoom(final float zoom, final int imageIndex, java.util.Map<String, String> __ctx)
+    setDisplayOptionsZoom(final double zoom, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -25425,7 +25425,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setImagingEnvironmentAirPressure(final float airPressure, final int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentAirPressure(final double airPressure, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -25475,7 +25475,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setImagingEnvironmentCO2Percent(final float cO2Percent, final int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentCO2Percent(final double cO2Percent, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -25525,7 +25525,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setImagingEnvironmentHumidity(final float humidity, final int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentHumidity(final double humidity, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -25575,7 +25575,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setImagingEnvironmentTemperature(final float temperature, final int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentTemperature(final double temperature, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -25875,7 +25875,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setLaserRepetitionRate(final boolean repetitionRate, final int instrumentIndex, final int lightSourceIndex, java.util.Map<String, String> __ctx)
+    setLaserRepetitionRate(final double repetitionRate, final int instrumentIndex, final int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -26225,7 +26225,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setLightSourcePower(final float power, final int instrumentIndex, final int lightSourceIndex, java.util.Map<String, String> __ctx)
+    setLightSourcePower(final double power, final int instrumentIndex, final int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -26275,7 +26275,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setLightSourceRefAttenuation(final float attenuation, final int imageIndex, final int microbeamManipulationIndex, final int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    setLightSourceRefAttenuation(final double attenuation, final int imageIndex, final int microbeamManipulationIndex, final int lightSourceRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -26475,7 +26475,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setLightSourceSettingsAttenuation(final float attenuation, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setLightSourceSettingsAttenuation(final double attenuation, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -27475,7 +27475,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setLogicalChannelNdFilter(final float ndFilter, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setLogicalChannelNdFilter(final double ndFilter, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -27625,7 +27625,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setLogicalChannelPinholeSize(final float pinholeSize, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setLogicalChannelPinholeSize(final double pinholeSize, final int imageIndex, final int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -29275,7 +29275,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setObjectiveCalibratedMagnification(final float calibratedMagnification, final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
+    setObjectiveCalibratedMagnification(final double calibratedMagnification, final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -29525,7 +29525,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setObjectiveLensNA(final float lensNA, final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
+    setObjectiveLensNA(final double lensNA, final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -29775,7 +29775,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setObjectiveSettingsCorrectionCollar(final float correctionCollar, final int imageIndex, java.util.Map<String, String> __ctx)
+    setObjectiveSettingsCorrectionCollar(final double correctionCollar, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -29925,7 +29925,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setObjectiveSettingsRefractiveIndex(final float refractiveIndex, final int imageIndex, java.util.Map<String, String> __ctx)
+    setObjectiveSettingsRefractiveIndex(final double refractiveIndex, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -29975,7 +29975,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setObjectiveWorkingDistance(final float workingDistance, final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
+    setObjectiveWorkingDistance(final double workingDistance, final int instrumentIndex, final int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -30825,7 +30825,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setPlaneTimingDeltaT(final float deltaT, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
+    setPlaneTimingDeltaT(final double deltaT, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -30875,7 +30875,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setPlaneTimingExposureTime(final float exposureTime, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
+    setPlaneTimingExposureTime(final double exposureTime, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -35425,7 +35425,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setShapeStrokeOpacity(final float strokeOpacity, final int imageIndex, final int roiIndex, final int shapeIndex, java.util.Map<String, String> __ctx)
+    setShapeStrokeOpacity(final double strokeOpacity, final int imageIndex, final int roiIndex, final int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -36075,7 +36075,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setStageLabelX(final float x, final int imageIndex, java.util.Map<String, String> __ctx)
+    setStageLabelX(final double x, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -36125,7 +36125,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setStageLabelY(final float y, final int imageIndex, java.util.Map<String, String> __ctx)
+    setStageLabelY(final double y, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -36175,7 +36175,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setStageLabelZ(final float z, final int imageIndex, java.util.Map<String, String> __ctx)
+    setStageLabelZ(final double z, final int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -36225,7 +36225,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setStagePositionPositionX(final float positionX, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
+    setStagePositionPositionX(final double positionX, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -36275,7 +36275,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setStagePositionPositionY(final float positionY, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
+    setStagePositionPositionY(final double positionY, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -36325,7 +36325,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setStagePositionPositionZ(final float positionZ, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
+    setStagePositionPositionZ(final double positionZ, final int imageIndex, final int pixelsIndex, final int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -37625,7 +37625,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setWellSamplePosX(final float posX, final int plateIndex, final int wellIndex, final int wellSampleIndex, java.util.Map<String, String> __ctx)
+    setWellSamplePosX(final double posX, final int plateIndex, final int wellIndex, final int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -37675,7 +37675,7 @@ public final class _IMetadataDelD extends Ice._ObjectDelD implements _IMetadataD
     }
 
     public void
-    setWellSamplePosY(final float posY, final int plateIndex, final int wellIndex, final int wellSampleIndex, java.util.Map<String, String> __ctx)
+    setWellSamplePosY(final double posY, final int plateIndex, final int wellIndex, final int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();

@@ -84,11 +84,11 @@ public class NativeND2Reader extends FormatReader {
 
   private int numSeries;
 
-  private float pixelSizeX, pixelSizeY, pixelSizeZ;
+  private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private String voltage, mag, na, objectiveModel, immersion, correction;
 
   private Vector<String> channelNames, modality, binning;
-  private Vector<Float> speed, gain, temperature, exposureTime;
+  private Vector<Double> speed, gain, temperature, exposureTime;
   private Vector<Integer> exWave, emWave, power;
   private Vector<Hashtable<String, String>> rois;
 
@@ -205,10 +205,10 @@ public class NativeND2Reader extends FormatReader {
 
     channelNames = new Vector<String>();
     binning = new Vector<String>();
-    speed = new Vector<Float>();
-    gain = new Vector<Float>();
-    temperature = new Vector<Float>();
-    exposureTime = new Vector<Float>();
+    speed = new Vector<Double>();
+    gain = new Vector<Double>();
+    temperature = new Vector<Double>();
+    exposureTime = new Vector<Double>();
     modality = new Vector<String>();
     exWave = new Vector<Integer>();
     emWave = new Vector<Integer>();
@@ -858,9 +858,9 @@ public class NativeND2Reader extends FormatReader {
 
     // populate Dimensions data
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
+      store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
+      store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), i, 0);
     }
 
     // populate PlaneTiming data
@@ -871,8 +871,8 @@ public class NativeND2Reader extends FormatReader {
           int[] coords = getZCTCoords(n);
           int stampIndex = coords[2];
           if (tsT.size() == getImageCount()) stampIndex = n;
-          float stamp = tsT.get(stampIndex).floatValue();
-          store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
+          double stamp = tsT.get(stampIndex).doubleValue();
+          store.setPlaneTimingDeltaT(new Double(stamp), i, 0, n);
 
           int index = i * getSizeC() + coords[1];
           if (index < exposureTime.size()) {
@@ -917,20 +917,20 @@ public class NativeND2Reader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       if (i * getSizeC() < temperature.size()) {
-        Float temp = temperature.get(i * getSizeC());
+        Double temp = temperature.get(i * getSizeC());
         store.setImagingEnvironmentTemperature(temp, i);
       }
     }
 
     // populate DetectorSettings
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
+      store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
     }
 
     // populate Objective
-    if (na != null) store.setObjectiveLensNA(new Float(na), 0, 0);
+    if (na != null) store.setObjectiveLensNA(new Double(na), 0, 0);
     if (mag != null) {
-      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+      store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
     }
     if (objectiveModel != null) {
       store.setObjectiveModel(objectiveModel, 0, 0);
@@ -1006,11 +1006,11 @@ public class NativeND2Reader extends FormatReader {
     if (key == null || value == null) return;
     addGlobalMeta(key, value);
     if (key.endsWith("dCalibration")) {
-      pixelSizeX = Float.parseFloat(value);
+      pixelSizeX = Double.parseDouble(value);
       pixelSizeY = pixelSizeX;
     }
-    else if (key.endsWith("dZStep")) pixelSizeZ = Float.parseFloat(value);
-    else if (key.endsWith("Gain")) gain.add(new Float(value));
+    else if (key.endsWith("dZStep")) pixelSizeZ = Double.parseDouble(value);
+    else if (key.endsWith("Gain")) gain.add(new Double(value));
     else if (key.endsWith("dLampVoltage")) voltage = value;
     else if (key.endsWith("dObjectiveMag") && mag == null) mag = value;
     else if (key.endsWith("dObjectiveNA")) na = value;
@@ -1144,19 +1144,19 @@ public class NativeND2Reader extends FormatReader {
             else if (v[0].equals("Readout Speed")) {
               int last = v[1].lastIndexOf(" ");
               if (last != -1) v[1] = v[1].substring(0, last);
-              speed.add(new Float(v[1]));
+              speed.add(new Double(v[1]));
             }
             else if (v[0].equals("Temperature")) {
               String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
-              temperature.add(new Float(temp));
+              temperature.add(new Double(temp));
             }
             else if (v[0].equals("Exposure")) {
               String[] s = v[1].trim().split(" ");
               try {
-                float time = Float.parseFloat(s[0]);
+                double time = Double.parseDouble(s[0]);
                 // TODO: check for other units
                 if (s[1].equals("ms")) time /= 1000;
-                exposureTime.add(new Float(time));
+                exposureTime.add(new Double(time));
               }
               catch (NumberFormatException e) { }
             }
@@ -1165,7 +1165,7 @@ public class NativeND2Reader extends FormatReader {
             int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
             int last = v[0].indexOf(" ", space + 1);
             if (last == -1) last = v[0].length();
-            pixelSizeZ = Float.parseFloat(v[0].substring(space, last));
+            pixelSizeZ = Double.parseDouble(v[0].substring(space, last));
           }
           else if (v[0].equals("Line")) {
             String[] values = t.split(";");
@@ -1180,7 +1180,7 @@ public class NativeND2Reader extends FormatReader {
                 exWave.add(new Integer(nextValue));
               }
               else if (nextKey.equals("Power")) {
-                power.add(new Integer((int) Float.parseFloat(nextValue)));
+                power.add(new Integer((int) Double.parseDouble(nextValue)));
               }
             }
           }

@@ -92,8 +92,8 @@ public class MetamorphReader extends BaseTiffReader {
   private double[] wave;
 
   private String binning;
-  private float zoom, stepSize;
-  private Float exposureTime;
+  private double zoom, stepSize;
+  private Double exposureTime;
   private Vector<String> waveNames;
   private Vector<String> stageNames;
   private long[] internalStamps;
@@ -303,7 +303,7 @@ public class MetamorphReader extends BaseTiffReader {
           creationTime = value;
         }
         else if (key.equals("ZStepSize")) {
-          stepSize = Float.parseFloat(value);
+          stepSize = Double.parseDouble(value);
         }
         else if (key.equals("NStagePositions")) {
           nstages = Integer.parseInt(value);
@@ -575,15 +575,15 @@ public class MetamorphReader extends BaseTiffReader {
       store.setImageDescription("", i);
 
       store.setImagingEnvironmentTemperature(
-        new Float(handler.getTemperature()), i);
+        new Double(handler.getTemperature()), i);
       store.setDimensionsPhysicalSizeX(
-        new Float(handler.getPixelSizeX()), i, 0);
+        new Double(handler.getPixelSizeX()), i, 0);
       store.setDimensionsPhysicalSizeY(
-        new Float(handler.getPixelSizeY()), i, 0);
+        new Double(handler.getPixelSizeY()), i, 0);
       if (zDistances != null) {
-        stepSize = (float) zDistances[0];
+        stepSize = zDistances[0];
       }
-      store.setDimensionsPhysicalSizeZ(new Float(stepSize), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(stepSize), i, 0);
 
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -610,7 +610,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(
-            new Float(handler.getReadOutRate()), i, c);
+            new Double(handler.getReadOutRate()), i, c);
         }
         store.setDetectorSettingsDetector(detectorID, i, c);
 
@@ -642,9 +642,9 @@ public class MetamorphReader extends BaseTiffReader {
         startDate = DateTools.getTime(timestamps.get(0), MEDIUM_DATE_FORMAT);
       }
 
-      Float positionX = new Float(handler.getStagePositionX());
-      Float positionY = new Float(handler.getStagePositionY());
-      Vector<Float> exposureTimes = handler.getExposures();
+      Double positionX = new Double(handler.getStagePositionX());
+      Double positionY = new Double(handler.getStagePositionY());
+      Vector<Double> exposureTimes = handler.getExposures();
       if (exposureTimes.size() == 0) {
         for (int p=0; p<getImageCount(); p++) {
           exposureTimes.add(exposureTime);
@@ -656,8 +656,8 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
-        Float deltaT = 0f;
-        Float exposureTime = 0f;
+        Double deltaT = new Double(0);
+        Double exposureTime = new Double(0);
 
         if (coords[2] > 0 && stks != null && lastFile >= 0 &&
           stks[i][lastFile] != null)
@@ -686,11 +686,11 @@ public class MetamorphReader extends BaseTiffReader {
           if (coords[2] < timestamps.size()) index = coords[2];
           String stamp = timestamps.get(index);
           long ms = DateTools.getTime(stamp, MEDIUM_DATE_FORMAT);
-          deltaT = new Float((ms - startDate) / 1000f);
+          deltaT = new Double((ms - startDate) / 1000.0);
         }
         else if (internalStamps != null && p < internalStamps.length) {
           long delta = internalStamps[p] - internalStamps[0];
-          deltaT = new Float(delta / 1000f);
+          deltaT = new Double(delta / 1000.0);
           if (coords[2] < exposureTimes.size()) index = coords[2];
         }
 
@@ -702,21 +702,19 @@ public class MetamorphReader extends BaseTiffReader {
         store.setPlaneTimingExposureTime(exposureTime, i, 0, p);
 
         if (stageX != null && p < stageX.length) {
-          store.setStagePositionPositionX(
-            new Float((float) stageX[p]), i, 0, p);
+          store.setStagePositionPositionX(new Double(stageX[p]), i, 0, p);
         }
         if (stageY != null && p < stageY.length) {
-          store.setStagePositionPositionY(
-            new Float((float) stageY[p]), i, 0, p);
+          store.setStagePositionPositionY(new Double(stageY[p]), i, 0, p);
         }
       }
     }
     setSeries(0);
 
     store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorZoom(new Float(zoom), 0, 0);
-    if (handler != null && handler.getZoom() != 0f) {
-      store.setDetectorZoom(new Float(handler.getZoom()), 0, 0);
+    store.setDetectorZoom(new Double(zoom), 0, 0);
+    if (handler != null && handler.getZoom() != 0) {
+      store.setDetectorZoom(new Double(handler.getZoom()), 0, 0);
     }
     store.setDetectorType("Unknown", 0, 0);
   }
@@ -868,8 +866,8 @@ public class MetamorphReader extends BaseTiffReader {
             if (value.indexOf(" ") != -1) {
               value = value.substring(0, value.indexOf(" "));
             }
-            float exposure = Float.parseFloat(value);
-            exposureTime = new Float(exposure / 1000);
+            double exposure = Double.parseDouble(value);
+            exposureTime = new Double(exposure / 1000);
           }
         }
       }
@@ -1153,7 +1151,7 @@ public class MetamorphReader extends BaseTiffReader {
       in.seek(lastOffset);
 
       if ("Zoom".equals(key) && value != null) {
-        zoom = Float.parseFloat(value.toString());
+        zoom = Double.parseDouble(value.toString());
       }
     }
     in.seek(saveLoc);

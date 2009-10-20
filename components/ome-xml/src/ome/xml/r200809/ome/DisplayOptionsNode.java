@@ -108,12 +108,12 @@ public class DisplayOptionsNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getZoom()
+	public Double getZoom()
 	{
-		return getFloatAttribute("Zoom");
+		return getDoubleAttribute("Zoom");
 	}
 
-	public void setZoom(Float zoom)
+	public void setZoom(Double zoom)
 	{
 		setAttribute("Zoom", zoom);
 	}

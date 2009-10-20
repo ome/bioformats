@@ -99,8 +99,8 @@ public class FlexReader extends FormatReader {
   private int wellRows, wellColumns;
 
   private Vector<String> channelNames;
-  private Vector<Float> xPositions, yPositions;
-  private Vector<Float> xSizes, ySizes;
+  private Vector<Double> xPositions, yPositions;
+  private Vector<Double> xSizes, ySizes;
   private Vector<String> cameraIDs, objectiveIDs, lightSourceIDs;
   private HashMap<String, Vector<String>> lightSourceCombinationIDs;
   private Vector<String> cameraRefs, binnings, objectiveRefs;
@@ -512,10 +512,10 @@ public class FlexReader extends FormatReader {
     if (flexFiles[wellRow][wellCol] == null) return;
 
     if (channelNames == null) channelNames = new Vector<String>();
-    if (xPositions == null) xPositions = new Vector<Float>();
-    if (yPositions == null) yPositions = new Vector<Float>();
-    if (xSizes == null) xSizes = new Vector<Float>();
-    if (ySizes == null) ySizes = new Vector<Float>();
+    if (xPositions == null) xPositions = new Vector<Double>();
+    if (yPositions == null) yPositions = new Vector<Double>();
+    if (xSizes == null) xSizes = new Vector<Double>();
+    if (ySizes == null) ySizes = new Vector<Double>();
     if (cameraIDs == null) cameraIDs = new Vector<String>();
     if (lightSourceIDs == null) lightSourceIDs = new Vector<String>();
     if (objectiveIDs == null) objectiveIDs = new Vector<String>();
@@ -961,11 +961,11 @@ public class FlexReader extends FormatReader {
         store.setLaserLaserMedium("Unknown", 0, nextLaser);
       }
       else if (qName.equals("Magnification")) {
-        store.setObjectiveCalibratedMagnification(new Float(value), 0,
+        store.setObjectiveCalibratedMagnification(new Double(value), 0,
           nextObjective);
       }
       else if (qName.equals("NumAperture")) {
-        store.setObjectiveLensNA(new Float(value), 0, nextObjective);
+        store.setObjectiveLensNA(new Double(value), 0, nextObjective);
       }
       else if (qName.equals("Immersion")) {
         if (value.equals("1.33")) value = "Water";
@@ -974,7 +974,7 @@ public class FlexReader extends FormatReader {
         store.setObjectiveImmersion(value, 0, nextObjective);
       }
       else if (qName.equals("OffsetX") || qName.equals("OffsetY")) {
-        Float offset = new Float(Float.parseFloat(value) * 1000000);
+        Double offset = new Double(Double.parseDouble(value) * 1000000);
         if (qName.equals("OffsetX")) xPositions.add(offset);
         else yPositions.add(offset);
       }
@@ -1018,31 +1018,31 @@ public class FlexReader extends FormatReader {
           cameraRefs.add(detectorID);
         }
         else if (qName.equals("ImageResolutionX")) {
-          float v = Float.parseFloat(value) * 1000000;
-          xSizes.add(new Float(v));
+          double v = Double.parseDouble(value) * 1000000;
+          xSizes.add(new Double(v));
         }
         else if (qName.equals("ImageResolutionY")) {
-          float v = Float.parseFloat(value) * 1000000;
-          ySizes.add(new Float(v));
+          double v = Double.parseDouble(value) * 1000000;
+          ySizes.add(new Double(v));
         }
         else if (qName.equals("PositionX")) {
-          Float v = new Float(Float.parseFloat(value) * 1000000);
+          Double v = new Double(Double.parseDouble(value) * 1000000);
           store.setStagePositionPositionX(v, currentSeries, 0, currentImage);
         }
         else if (qName.equals("PositionY")) {
-          Float v = new Float(Float.parseFloat(value) * 1000000);
+          Double v = new Double(Double.parseDouble(value) * 1000000);
           store.setStagePositionPositionY(v, currentSeries, 0, currentImage);
         }
         else if (qName.equals("PositionZ")) {
-          Float v = new Float(Float.parseFloat(value) * 1000000);
+          Double v = new Double(Double.parseDouble(value) * 1000000);
           store.setStagePositionPositionZ(v, currentSeries, 0, currentImage);
         }
         else if (qName.equals("TimepointOffsetUsed")) {
-          store.setPlaneTimingDeltaT(new Float(value), currentSeries, 0,
+          store.setPlaneTimingDeltaT(new Double(value), currentSeries, 0,
             currentImage);
         }
         else if (qName.equals("CameraExposureTime")) {
-          store.setPlaneTimingExposureTime(new Float(value), currentSeries, 0,
+          store.setPlaneTimingExposureTime(new Double(value), currentSeries, 0,
             currentImage);
         }
         else if (qName.equals("LightSourceCombinationRef")) {

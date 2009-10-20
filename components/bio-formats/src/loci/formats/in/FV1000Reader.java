@@ -548,9 +548,9 @@ public class FV1000Reader extends FormatReader {
           }
           else channel = channels.get(index - 1);
 
-          if (key.equals("AnalogPMTGain")) channel.gain = new Float(value);
+          if (key.equals("AnalogPMTGain")) channel.gain = new Double(value);
           else if (key.equals("AnalogPMTVoltage")) {
-            channel.voltage = new Float(value);
+            channel.voltage = new Double(value);
           }
           else if (key.equals("BF Name")) {
             channel.barrierFilter = value;
@@ -854,24 +854,24 @@ public class FV1000Reader extends FormatReader {
 
     // calculate axis sizes
 
-    float sizeZ = 1f, sizeT = 1f;
+    double pixelSizeZ = 1, pixelSizeT = 1;
 
     int realChannels = 0;
     for (int i=0; i<9; i++) {
       int ss = Integer.parseInt(size[i]);
       if (pixelSize[i] == null) pixelSize[i] = "1.0";
       pixelSize[i] = pixelSize[i].replaceAll("\"", "");
-      Float pixel = new Float(pixelSize[i]);
+      Double pixel = new Double(pixelSize[i]);
       if (code[i].equals("X")) core[0].sizeX = ss;
       else if (code[i].equals("Y")) core[0].sizeY = ss;
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        sizeZ = (float) (pixel.floatValue() * 0.001);
+        pixelSizeZ = pixel.doubleValue() / 1000;
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
-        sizeT = pixel.floatValue() / 1000;
+        pixelSizeT = pixel.doubleValue() / 1000;
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
@@ -999,13 +999,13 @@ public class FV1000Reader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizeX != null) {
-        store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
+        store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
       }
       if (pixelSizeY != null) {
-        store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
+        store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
       }
-      store.setDimensionsPhysicalSizeZ(new Float(sizeZ), i, 0);
-      store.setDimensionsTimeIncrement(new Float(sizeT), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), i, 0);
+      store.setDimensionsTimeIncrement(new Double(pixelSizeT), i, 0);
 
       // populate LogicalChannel data
 
@@ -1103,14 +1103,14 @@ public class FV1000Reader extends FormatReader {
 
     // populate Objective data
 
-    if (lensNA != null) store.setObjectiveLensNA(new Float(lensNA), 0, 0);
+    if (lensNA != null) store.setObjectiveLensNA(new Double(lensNA), 0, 0);
     store.setObjectiveModel(objectiveName, 0, 0);
     if (magnification != null) {
       store.setObjectiveNominalMagnification(
         new Integer((int) Float.parseFloat(magnification)), 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     }
     store.setObjectiveCorrection("Unknown", 0, 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
@@ -1422,8 +1422,8 @@ public class FV1000Reader extends FormatReader {
 
   class ChannelData {
     public boolean active;
-    public Float gain;
-    public Float voltage;
+    public Double gain;
+    public Double voltage;
     public String name;
     public String emissionFilter;
     public String excitationFilter;

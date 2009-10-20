@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -194,7 +194,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDatasetRefID(imageIndex, datasetRefIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorAmplificationGain(int instrumentIndex, int detectorIndex)
     {
         return getDetectorAmplificationGain(instrumentIndex, detectorIndex, null);
@@ -206,7 +206,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDetectorCount(instrumentIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorGain(int instrumentIndex, int detectorIndex)
     {
         return getDetectorGain(instrumentIndex, detectorIndex, null);
@@ -230,7 +230,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDetectorModel(instrumentIndex, detectorIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorOffset(int instrumentIndex, int detectorIndex)
     {
         return getDetectorOffset(instrumentIndex, detectorIndex, null);
@@ -254,25 +254,25 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDetectorSettingsDetector(imageIndex, logicalChannelIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorSettingsGain(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsGain(imageIndex, logicalChannelIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsOffset(imageIndex, logicalChannelIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsVoltage(imageIndex, logicalChannelIndex, null);
@@ -284,13 +284,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDetectorType(instrumentIndex, detectorIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorVoltage(int instrumentIndex, int detectorIndex)
     {
         return getDetectorVoltage(instrumentIndex, detectorIndex, null);
     }
 
-    public final float
+    public final double
     getDetectorZoom(int instrumentIndex, int detectorIndex)
     {
         return getDetectorZoom(instrumentIndex, detectorIndex, null);
@@ -326,25 +326,25 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDichroicModel(instrumentIndex, dichroicIndex, null);
     }
 
-    public final float
+    public final double
     getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex)
     {
         return getDimensionsPhysicalSizeX(imageIndex, pixelsIndex, null);
     }
 
-    public final float
+    public final double
     getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex)
     {
         return getDimensionsPhysicalSizeY(imageIndex, pixelsIndex, null);
     }
 
-    public final float
+    public final double
     getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex)
     {
         return getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex, null);
     }
 
-    public final float
+    public final double
     getDimensionsTimeIncrement(int imageIndex, int pixelsIndex)
     {
         return getDimensionsTimeIncrement(imageIndex, pixelsIndex, null);
@@ -374,7 +374,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getDisplayOptionsID(imageIndex, null);
     }
 
-    public final float
+    public final double
     getDisplayOptionsZoom(int imageIndex)
     {
         return getDisplayOptionsZoom(imageIndex, null);
@@ -734,25 +734,25 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getImageName(imageIndex, null);
     }
 
-    public final float
+    public final double
     getImagingEnvironmentAirPressure(int imageIndex)
     {
         return getImagingEnvironmentAirPressure(imageIndex, null);
     }
 
-    public final float
+    public final double
     getImagingEnvironmentCO2Percent(int imageIndex)
     {
         return getImagingEnvironmentCO2Percent(imageIndex, null);
     }
 
-    public final float
+    public final double
     getImagingEnvironmentHumidity(int imageIndex)
     {
         return getImagingEnvironmentHumidity(imageIndex, null);
     }
 
-    public final float
+    public final double
     getImagingEnvironmentTemperature(int imageIndex)
     {
         return getImagingEnvironmentTemperature(imageIndex, null);
@@ -794,7 +794,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getLaserPulse(instrumentIndex, lightSourceIndex, null);
     }
 
-    public final boolean
+    public final double
     getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex)
     {
         return getLaserRepetitionRate(instrumentIndex, lightSourceIndex, null);
@@ -842,13 +842,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getLightSourceModel(instrumentIndex, lightSourceIndex, null);
     }
 
-    public final float
+    public final double
     getLightSourcePower(int instrumentIndex, int lightSourceIndex)
     {
         return getLightSourcePower(instrumentIndex, lightSourceIndex, null);
     }
 
-    public final float
+    public final double
     getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
     {
         return getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null);
@@ -878,7 +878,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getLightSourceSerialNumber(instrumentIndex, lightSourceIndex, null);
     }
 
-    public final float
+    public final double
     getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex)
     {
         return getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex, null);
@@ -1004,7 +1004,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getLogicalChannelName(imageIndex, logicalChannelIndex, null);
     }
 
-    public final float
+    public final double
     getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex)
     {
         return getLogicalChannelNdFilter(imageIndex, logicalChannelIndex, null);
@@ -1022,7 +1022,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex, null);
     }
 
-    public final float
+    public final double
     getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex)
     {
         return getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex, null);
@@ -1244,7 +1244,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getOTFSizeY(instrumentIndex, otfIndex, null);
     }
 
-    public final float
+    public final double
     getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex)
     {
         return getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex, null);
@@ -1280,7 +1280,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getObjectiveIris(instrumentIndex, objectiveIndex, null);
     }
 
-    public final float
+    public final double
     getObjectiveLensNA(int instrumentIndex, int objectiveIndex)
     {
         return getObjectiveLensNA(instrumentIndex, objectiveIndex, null);
@@ -1310,7 +1310,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getObjectiveSerialNumber(instrumentIndex, objectiveIndex, null);
     }
 
-    public final float
+    public final double
     getObjectiveSettingsCorrectionCollar(int imageIndex)
     {
         return getObjectiveSettingsCorrectionCollar(imageIndex, null);
@@ -1328,13 +1328,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getObjectiveSettingsObjective(imageIndex, null);
     }
 
-    public final float
+    public final double
     getObjectiveSettingsRefractiveIndex(int imageIndex)
     {
         return getObjectiveSettingsRefractiveIndex(imageIndex, null);
     }
 
-    public final float
+    public final double
     getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex)
     {
         return getObjectiveWorkingDistance(instrumentIndex, objectiveIndex, null);
@@ -1448,13 +1448,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getPlaneTheZ(imageIndex, pixelsIndex, planeIndex, null);
     }
 
-    public final float
+    public final double
     getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex, null);
     }
 
-    public final float
+    public final double
     getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex, null);
@@ -2078,7 +2078,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getShapeStrokeMiterLimit(imageIndex, roiIndex, shapeIndex, null);
     }
 
-    public final float
+    public final double
     getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex)
     {
         return getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex, null);
@@ -2156,37 +2156,37 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getStageLabelName(imageIndex, null);
     }
 
-    public final float
+    public final double
     getStageLabelX(int imageIndex)
     {
         return getStageLabelX(imageIndex, null);
     }
 
-    public final float
+    public final double
     getStageLabelY(int imageIndex)
     {
         return getStageLabelY(imageIndex, null);
     }
 
-    public final float
+    public final double
     getStageLabelZ(int imageIndex)
     {
         return getStageLabelZ(imageIndex, null);
     }
 
-    public final float
+    public final double
     getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex, null);
     }
 
-    public final float
+    public final double
     getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex, null);
     }
 
-    public final float
+    public final double
     getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex, null);
@@ -2360,13 +2360,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         return getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex, null);
     }
 
-    public final float
+    public final double
     getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex)
     {
         return getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex, null);
     }
 
-    public final float
+    public final double
     getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex)
     {
         return getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex, null);
@@ -2499,13 +2499,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex)
+    setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex)
     {
         setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex, null);
     }
 
     public final void
-    setDetectorGain(float gain, int instrumentIndex, int detectorIndex)
+    setDetectorGain(double gain, int instrumentIndex, int detectorIndex)
     {
         setDetectorGain(gain, instrumentIndex, detectorIndex, null);
     }
@@ -2529,7 +2529,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setDetectorOffset(float offset, int instrumentIndex, int detectorIndex)
+    setDetectorOffset(double offset, int instrumentIndex, int detectorIndex)
     {
         setDetectorOffset(offset, instrumentIndex, detectorIndex, null);
     }
@@ -2553,25 +2553,25 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex, null);
     }
 
     public final void
-    setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex, null);
     }
 
     public final void
-    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex, null);
     }
 
     public final void
-    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex, null);
     }
@@ -2583,13 +2583,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex)
+    setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex)
     {
         setDetectorVoltage(voltage, instrumentIndex, detectorIndex, null);
     }
 
     public final void
-    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex)
+    setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex)
     {
         setDetectorZoom(zoom, instrumentIndex, detectorIndex, null);
     }
@@ -2619,25 +2619,25 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex)
+    setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex)
     {
         setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex, null);
     }
 
     public final void
-    setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex)
+    setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex)
     {
         setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex, null);
     }
 
     public final void
-    setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex)
+    setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex)
     {
         setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex, null);
     }
 
     public final void
-    setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex)
+    setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex)
     {
         setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex, null);
     }
@@ -2667,7 +2667,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setDisplayOptionsZoom(float zoom, int imageIndex)
+    setDisplayOptionsZoom(double zoom, int imageIndex)
     {
         setDisplayOptionsZoom(zoom, imageIndex, null);
     }
@@ -2979,25 +2979,25 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setImagingEnvironmentAirPressure(float airPressure, int imageIndex)
+    setImagingEnvironmentAirPressure(double airPressure, int imageIndex)
     {
         setImagingEnvironmentAirPressure(airPressure, imageIndex, null);
     }
 
     public final void
-    setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex)
+    setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex)
     {
         setImagingEnvironmentCO2Percent(cO2Percent, imageIndex, null);
     }
 
     public final void
-    setImagingEnvironmentHumidity(float humidity, int imageIndex)
+    setImagingEnvironmentHumidity(double humidity, int imageIndex)
     {
         setImagingEnvironmentHumidity(humidity, imageIndex, null);
     }
 
     public final void
-    setImagingEnvironmentTemperature(float temperature, int imageIndex)
+    setImagingEnvironmentTemperature(double temperature, int imageIndex)
     {
         setImagingEnvironmentTemperature(temperature, imageIndex, null);
     }
@@ -3033,7 +3033,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex)
+    setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex)
     {
         setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex, null);
     }
@@ -3075,13 +3075,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex)
+    setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex)
     {
         setLightSourcePower(power, instrumentIndex, lightSourceIndex, null);
     }
 
     public final void
-    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
+    setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
     {
         setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null);
     }
@@ -3105,7 +3105,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex)
+    setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex)
     {
         setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex, null);
     }
@@ -3225,7 +3225,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex)
+    setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex)
     {
         setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex, null);
     }
@@ -3243,7 +3243,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex)
+    setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex)
     {
         setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex, null);
     }
@@ -3441,7 +3441,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex)
+    setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex)
     {
         setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex, null);
     }
@@ -3471,7 +3471,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex)
+    setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex)
     {
         setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex, null);
     }
@@ -3501,7 +3501,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex)
+    setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex)
     {
         setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex, null);
     }
@@ -3519,13 +3519,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex)
+    setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex)
     {
         setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex, null);
     }
 
     public final void
-    setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex)
+    setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex)
     {
         setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex, null);
     }
@@ -3627,13 +3627,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex)
+    setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex, null);
     }
 
     public final void
-    setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex)
+    setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex, null);
     }
@@ -4179,7 +4179,7 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex)
+    setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex)
     {
         setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex, null);
     }
@@ -4257,37 +4257,37 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setStageLabelX(float x, int imageIndex)
+    setStageLabelX(double x, int imageIndex)
     {
         setStageLabelX(x, imageIndex, null);
     }
 
     public final void
-    setStageLabelY(float y, int imageIndex)
+    setStageLabelY(double y, int imageIndex)
     {
         setStageLabelY(y, imageIndex, null);
     }
 
     public final void
-    setStageLabelZ(float z, int imageIndex)
+    setStageLabelZ(double z, int imageIndex)
     {
         setStageLabelZ(z, imageIndex, null);
     }
 
     public final void
-    setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex)
+    setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex, null);
     }
 
     public final void
-    setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex)
+    setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex, null);
     }
 
     public final void
-    setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex)
+    setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex, null);
     }
@@ -4443,13 +4443,13 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
     }
 
     public final void
-    setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex)
+    setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex)
     {
         setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex, null);
     }
 
     public final void
-    setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex)
+    setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex)
     {
         setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex, null);
     }
@@ -5379,8 +5379,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         detectorIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorAmplificationGain(instrumentIndex, detectorIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorAmplificationGain(instrumentIndex, detectorIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5396,8 +5396,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         detectorIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorGain(instrumentIndex, detectorIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorGain(instrumentIndex, detectorIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5464,8 +5464,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         detectorIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorOffset(instrumentIndex, detectorIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorOffset(instrumentIndex, detectorIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5515,8 +5515,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         detectorIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorVoltage(instrumentIndex, detectorIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorVoltage(instrumentIndex, detectorIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5532,8 +5532,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         detectorIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorZoom(instrumentIndex, detectorIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorZoom(instrumentIndex, detectorIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5583,8 +5583,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorSettingsGain(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorSettingsGain(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5600,8 +5600,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorSettingsOffset(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorSettingsOffset(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5617,8 +5617,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5634,8 +5634,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDetectorSettingsVoltage(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDetectorSettingsVoltage(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5719,8 +5719,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         pixelsIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5736,8 +5736,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         pixelsIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5753,8 +5753,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         pixelsIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5770,8 +5770,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         pixelsIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDimensionsTimeIncrement(imageIndex, pixelsIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDimensionsTimeIncrement(imageIndex, pixelsIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -5849,8 +5849,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getDisplayOptionsZoom(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getDisplayOptionsZoom(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6699,8 +6699,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getImagingEnvironmentAirPressure(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getImagingEnvironmentAirPressure(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6714,8 +6714,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getImagingEnvironmentCO2Percent(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getImagingEnvironmentCO2Percent(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6729,8 +6729,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getImagingEnvironmentHumidity(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getImagingEnvironmentHumidity(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6744,8 +6744,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getImagingEnvironmentTemperature(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getImagingEnvironmentTemperature(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6844,8 +6844,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         lightSourceIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        boolean __ret = __obj.getLaserRepetitionRate(instrumentIndex, lightSourceIndex, __current);
-        __os.writeBool(__ret);
+        double __ret = __obj.getLaserRepetitionRate(instrumentIndex, lightSourceIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6963,8 +6963,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         lightSourceIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getLightSourcePower(instrumentIndex, lightSourceIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getLightSourcePower(instrumentIndex, lightSourceIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -6999,8 +6999,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         lightSourceRefIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -7054,8 +7054,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -7406,8 +7406,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -7457,8 +7457,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         logicalChannelIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8032,8 +8032,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         objectiveIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8117,8 +8117,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         objectiveIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getObjectiveLensNA(instrumentIndex, objectiveIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getObjectiveLensNA(instrumentIndex, objectiveIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8202,8 +8202,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         objectiveIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8217,8 +8217,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getObjectiveSettingsCorrectionCollar(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getObjectiveSettingsCorrectionCollar(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8262,8 +8262,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getObjectiveSettingsRefractiveIndex(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getObjectiveSettingsRefractiveIndex(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8567,8 +8567,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         planeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -8586,8 +8586,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         planeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10173,8 +10173,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         shapeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10412,8 +10412,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getStageLabelX(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getStageLabelX(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10427,8 +10427,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getStageLabelY(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getStageLabelY(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10442,8 +10442,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         imageIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getStageLabelZ(imageIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getStageLabelZ(imageIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10461,8 +10461,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         planeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10480,8 +10480,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         planeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10499,8 +10499,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         planeIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10957,8 +10957,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         wellSampleIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -10976,8 +10976,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         wellSampleIndex = __is.readInt();
         __is.endReadEncaps();
         IceInternal.BasicStream __os = __inS.os();
-        float __ret = __obj.getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex, __current);
-        __os.writeFloat(__ret);
+        double __ret = __obj.getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex, __current);
+        __os.writeDouble(__ret);
         return Ice.DispatchStatus.DispatchOK;
     }
 
@@ -11338,8 +11338,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float amplificationGain;
-        amplificationGain = __is.readFloat();
+        double amplificationGain;
+        amplificationGain = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int detectorIndex;
@@ -11355,8 +11355,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float gain;
-        gain = __is.readFloat();
+        double gain;
+        gain = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int detectorIndex;
@@ -11423,8 +11423,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float offset;
-        offset = __is.readFloat();
+        double offset;
+        offset = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int detectorIndex;
@@ -11474,8 +11474,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float voltage;
-        voltage = __is.readFloat();
+        double voltage;
+        voltage = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int detectorIndex;
@@ -11491,8 +11491,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float zoom;
-        zoom = __is.readFloat();
+        double zoom;
+        zoom = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int detectorIndex;
@@ -11542,8 +11542,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float gain;
-        gain = __is.readFloat();
+        double gain;
+        gain = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -11559,8 +11559,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float offset;
-        offset = __is.readFloat();
+        double offset;
+        offset = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -11576,8 +11576,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float readOutRate;
-        readOutRate = __is.readFloat();
+        double readOutRate;
+        readOutRate = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -11593,8 +11593,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float voltage;
-        voltage = __is.readFloat();
+        double voltage;
+        voltage = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -11678,8 +11678,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float physicalSizeX;
-        physicalSizeX = __is.readFloat();
+        double physicalSizeX;
+        physicalSizeX = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -11695,8 +11695,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float physicalSizeY;
-        physicalSizeY = __is.readFloat();
+        double physicalSizeY;
+        physicalSizeY = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -11712,8 +11712,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float physicalSizeZ;
-        physicalSizeZ = __is.readFloat();
+        double physicalSizeZ;
+        physicalSizeZ = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -11729,8 +11729,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float timeIncrement;
-        timeIncrement = __is.readFloat();
+        double timeIncrement;
+        timeIncrement = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -11810,8 +11810,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float zoom;
-        zoom = __is.readFloat();
+        double zoom;
+        zoom = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -12660,8 +12660,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float airPressure;
-        airPressure = __is.readFloat();
+        double airPressure;
+        airPressure = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -12675,8 +12675,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float cO2Percent;
-        cO2Percent = __is.readFloat();
+        double cO2Percent;
+        cO2Percent = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -12690,8 +12690,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float humidity;
-        humidity = __is.readFloat();
+        double humidity;
+        humidity = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -12705,8 +12705,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float temperature;
-        temperature = __is.readFloat();
+        double temperature;
+        temperature = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -12803,8 +12803,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        boolean repetitionRate;
-        repetitionRate = __is.readBool();
+        double repetitionRate;
+        repetitionRate = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int lightSourceIndex;
@@ -12922,8 +12922,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float power;
-        power = __is.readFloat();
+        double power;
+        power = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int lightSourceIndex;
@@ -12956,8 +12956,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float attenuation;
-        attenuation = __is.readFloat();
+        double attenuation;
+        attenuation = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int microbeamManipulationIndex;
@@ -13013,8 +13013,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float attenuation;
-        attenuation = __is.readFloat();
+        double attenuation;
+        attenuation = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -13365,8 +13365,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float ndFilter;
-        ndFilter = __is.readFloat();
+        double ndFilter;
+        ndFilter = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -13416,8 +13416,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float pinholeSize;
-        pinholeSize = __is.readFloat();
+        double pinholeSize;
+        pinholeSize = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int logicalChannelIndex;
@@ -13991,8 +13991,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float calibratedMagnification;
-        calibratedMagnification = __is.readFloat();
+        double calibratedMagnification;
+        calibratedMagnification = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int objectiveIndex;
@@ -14076,8 +14076,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float lensNA;
-        lensNA = __is.readFloat();
+        double lensNA;
+        lensNA = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int objectiveIndex;
@@ -14161,8 +14161,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float workingDistance;
-        workingDistance = __is.readFloat();
+        double workingDistance;
+        workingDistance = __is.readDouble();
         int instrumentIndex;
         instrumentIndex = __is.readInt();
         int objectiveIndex;
@@ -14178,8 +14178,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float correctionCollar;
-        correctionCollar = __is.readFloat();
+        double correctionCollar;
+        correctionCollar = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -14223,8 +14223,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float refractiveIndex;
-        refractiveIndex = __is.readFloat();
+        double refractiveIndex;
+        refractiveIndex = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -14524,8 +14524,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float deltaT;
-        deltaT = __is.readFloat();
+        double deltaT;
+        deltaT = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -14543,8 +14543,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float exposureTime;
-        exposureTime = __is.readFloat();
+        double exposureTime;
+        exposureTime = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -16130,8 +16130,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float strokeOpacity;
-        strokeOpacity = __is.readFloat();
+        double strokeOpacity;
+        strokeOpacity = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int roiIndex;
@@ -16373,8 +16373,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float x;
-        x = __is.readFloat();
+        double x;
+        x = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -16388,8 +16388,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float y;
-        y = __is.readFloat();
+        double y;
+        y = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -16403,8 +16403,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float z;
-        z = __is.readFloat();
+        double z;
+        z = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         __is.endReadEncaps();
@@ -16418,8 +16418,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float positionX;
-        positionX = __is.readFloat();
+        double positionX;
+        positionX = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -16437,8 +16437,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float positionY;
-        positionY = __is.readFloat();
+        double positionY;
+        positionY = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -16456,8 +16456,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float positionZ;
-        positionZ = __is.readFloat();
+        double positionZ;
+        positionZ = __is.readDouble();
         int imageIndex;
         imageIndex = __is.readInt();
         int pixelsIndex;
@@ -16914,8 +16914,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float posX;
-        posX = __is.readFloat();
+        double posX;
+        posX = __is.readDouble();
         int plateIndex;
         plateIndex = __is.readInt();
         int wellIndex;
@@ -16933,8 +16933,8 @@ public abstract class _IMetadataDisp extends Ice.ObjectImpl implements IMetadata
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        float posY;
-        posY = __is.readFloat();
+        double posY;
+        posY = __is.readDouble();
         int plateIndex;
         plateIndex = __is.readInt();
         int wellIndex;

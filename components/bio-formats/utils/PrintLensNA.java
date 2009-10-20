@@ -46,7 +46,7 @@ public class PrintLensNA {
         " [" + meta.getInstrumentID(i) + "]: " +
         objectiveCount + " objective(s) found");
       for (int o=0; o<objectiveCount; o++) {
-        Float lensNA = meta.getObjectiveLensNA(i, o);
+        Double lensNA = meta.getObjectiveLensNA(i, o);
         System.out.println("\tObjective #" + o +
           " [" + meta.getObjectiveID(i, o) + "]: LensNA=" + lensNA);
       }

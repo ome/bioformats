@@ -209,7 +209,7 @@ public class AliconaReader extends FormatReader {
     // According to the spec, the voltage and magnification values are those
     // used when the dataset was acquired, i.e. detector settings.
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
+      store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
 
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -223,11 +223,12 @@ public class AliconaReader extends FormatReader {
     // populate Objective data
 
     if (magnification != null) {
-      store.setObjectiveCalibratedMagnification(new Float(magnification), 0, 0);
+      store.setObjectiveCalibratedMagnification(
+        new Double(magnification), 0, 0);
     }
 
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     }
 
     store.setObjectiveCorrection("Unknown", 0, 0);
@@ -241,11 +242,11 @@ public class AliconaReader extends FormatReader {
     // populate Dimensions data
 
     if (pntX != null && pntY != null) {
-      float pixelSizeX = Float.parseFloat(pntX) * 1000000;
-      float pixelSizeY = Float.parseFloat(pntY) * 1000000;
+      double pixelSizeX = Double.parseDouble(pntX) * 1000000;
+      double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+      store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
     }
   }
 

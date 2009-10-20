@@ -53,8 +53,8 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- Fields --
 
-  private float pixelSizeX, pixelSizeY, pixelSizeZ;
-  private float minX, minY, minZ, maxX, maxY, maxZ;
+  private double pixelSizeX, pixelSizeY, pixelSizeZ;
+  private double minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
   private NetcdfTools netcdf;
 
@@ -167,7 +167,7 @@ public class ImarisHDFReader extends FormatReader {
 
     netcdf = new NetcdfTools(id);
 
-    pixelSizeX = pixelSizeY = pixelSizeZ = 1.0f;
+    pixelSizeX = pixelSizeY = pixelSizeZ = 1;
 
     emWave = new Vector<String>();
     exWave = new Vector<String>();
@@ -203,20 +203,20 @@ public class ImarisHDFReader extends FormatReader {
         core[0].sizeT = Integer.parseInt(value);
       }
       else if (name.equals("RecordingEntrySampleSpacing")) {
-        pixelSizeX = Float.parseFloat(value);
+        pixelSizeX = Double.parseDouble(value);
       }
       else if (name.equals("RecordingEntryLineSpacing")) {
-        pixelSizeY = Float.parseFloat(value);
+        pixelSizeY = Double.parseDouble(value);
       }
       else if (name.equals("RecordingEntryPlaneSpacing")) {
-        pixelSizeZ = Float.parseFloat(value);
+        pixelSizeZ = Double.parseDouble(value);
       }
-      else if (name.equals("ExtMax0")) maxX = Float.parseFloat(value);
-      else if (name.equals("ExtMax1")) maxY = Float.parseFloat(value);
-      else if (name.equals("ExtMax2")) maxZ = Float.parseFloat(value);
-      else if (name.equals("ExtMin0")) minX = Float.parseFloat(value);
-      else if (name.equals("ExtMin1")) minY = Float.parseFloat(value);
-      else if (name.equals("ExtMin2")) minZ = Float.parseFloat(value);
+      else if (name.equals("ExtMax0")) maxX = Double.parseDouble(value);
+      else if (name.equals("ExtMax1")) maxY = Double.parseDouble(value);
+      else if (name.equals("ExtMax2")) maxZ = Double.parseDouble(value);
+      else if (name.equals("ExtMin0")) minX = Double.parseDouble(value);
+      else if (name.equals("ExtMin1")) minY = Double.parseDouble(value);
+      else if (name.equals("ExtMin2")) minZ = Double.parseDouble(value);
 
       if (attr.startsWith("/DataSet/ResolutionLevel_")) {
         int slash = attr.indexOf("/", 25);
@@ -312,13 +312,13 @@ public class ImarisHDFReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<getSeriesCount(); i++) {
-      float px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
+      double px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
       if (px == 1) px = (maxX - minX) / core[i].sizeX;
       if (py == 1) py = (maxY - minY) / core[i].sizeY;
       if (pz == 1) pz = (maxZ - minZ) / core[i].sizeZ;
-      store.setDimensionsPhysicalSizeX(new Float(px), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(py), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(pz), i, 0);
+      store.setDimensionsPhysicalSizeX(new Double(px), i, 0);
+      store.setDimensionsPhysicalSizeY(new Double(py), i, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(pz), i, 0);
     }
 
     int cIndex = 0;

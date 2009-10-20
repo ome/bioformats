@@ -444,10 +444,10 @@ public class NiftiReader extends FormatReader {
 
     store.setImageDescription(description, 0);
 
-    store.setDimensionsPhysicalSizeX(new Float(voxelWidth), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(voxelHeight), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(sliceThickness), 0, 0);
-    store.setDimensionsTimeIncrement(new Float(deltaT), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(voxelWidth), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(voxelHeight), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(sliceThickness), 0, 0);
+    store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
   }
 
 }

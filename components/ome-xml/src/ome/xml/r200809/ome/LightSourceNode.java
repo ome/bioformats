@@ -85,12 +85,12 @@ public class LightSourceNode extends ManufactSpecNode
 	}
 
 	// Attribute
-	public Float getPower()
+	public Double getPower()
 	{
-		return getFloatAttribute("Power");
+		return getDoubleAttribute("Power");
 	}
 
-	public void setPower(Float power)
+	public void setPower(Double power)
 	{
 		setAttribute("Power", power);
 	}

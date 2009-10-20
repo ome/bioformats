@@ -89,34 +89,34 @@ public class ChannelSpecTypeNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getWhiteLevel()
+	public Double getWhiteLevel()
 	{
-		return getFloatAttribute("WhiteLevel");
+		return getDoubleAttribute("WhiteLevel");
 	}
 
-	public void setWhiteLevel(Float whiteLevel)
+	public void setWhiteLevel(Double whiteLevel)
 	{
 		setAttribute("WhiteLevel", whiteLevel);
 	}
 
 	// Attribute
-	public Float getBlackLevel()
+	public Double getBlackLevel()
 	{
-		return getFloatAttribute("BlackLevel");
+		return getDoubleAttribute("BlackLevel");
 	}
 
-	public void setBlackLevel(Float blackLevel)
+	public void setBlackLevel(Double blackLevel)
 	{
 		setAttribute("BlackLevel", blackLevel);
 	}
 
 	// Attribute
-	public Float getGamma()
+	public Double getGamma()
 	{
-		return getFloatAttribute("Gamma");
+		return getDoubleAttribute("Gamma");
 	}
 
-	public void setGamma(Float gamma)
+	public void setGamma(Double gamma)
 	{
 		setAttribute("Gamma", gamma);
 	}

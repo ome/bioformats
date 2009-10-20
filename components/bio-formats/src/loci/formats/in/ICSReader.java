@@ -350,7 +350,7 @@ public class ICSReader extends FormatReader {
 
     status("Reading metadata");
 
-    Float[] pixelSizes = null;
+    Double[] pixelSizes = null;
     String[] axes = null;
     int[] axisLengths = null;
     String byteOrder = null, rFormat = null, compression = null;
@@ -364,15 +364,15 @@ public class ICSReader extends FormatReader {
     boolean signed = false;
 
     StringBuffer textBlock = new StringBuffer();
-    float[] sizes = null;
+    double[] sizes = null;
 
     Integer[] emWaves = null, exWaves = null;
-    Float[] stagePos = null;
+    Double[] stagePos = null;
     String imageName = null, date = null, description = null;
-    Float magnification = null, lensNA = null, workingDistance = null;
+    Double magnification = null, lensNA = null, workingDistance = null;
     String objectiveModel = null, immersion = null, lastName = null;
-    Hashtable<Integer, Float> gains = new Hashtable<Integer, Float>();
-    Hashtable<Integer, Float> pinholes = new Hashtable<Integer, Float>();
+    Hashtable<Integer, Double> gains = new Hashtable<Integer, Double>();
+    Hashtable<Integer, Double> pinholes = new Hashtable<Integer, Double>();
     Hashtable<Integer, Integer> wavelengths = new Hashtable<Integer, Integer>();
     Hashtable<Integer, String> channelNames = new Hashtable<Integer, String>();
 
@@ -409,9 +409,9 @@ public class ICSReader extends FormatReader {
         String v = value.toString().trim();
         addGlobalMeta(k, v);
 
-        Float floatValue = null;
+        Double doubleValue = null;
         try {
-          floatValue = new Float(v);
+          doubleValue = new Double(v);
         }
         catch (NumberFormatException e) {
           traceDebug(e);
@@ -445,10 +445,10 @@ public class ICSReader extends FormatReader {
         }
         else if (k.equalsIgnoreCase("parameter scale")) {
           StringTokenizer t = new StringTokenizer(v);
-          pixelSizes = new Float[t.countTokens()];
+          pixelSizes = new Double[t.countTokens()];
           for (int n=0; n<pixelSizes.length; n++) {
             try {
-              pixelSizes[n] = new Float(t.nextToken().trim());
+              pixelSizes[n] = new Double(t.nextToken().trim());
             }
             catch (NumberFormatException e) {
               traceDebug(e);
@@ -463,7 +463,7 @@ public class ICSReader extends FormatReader {
           emWaves = new Integer[waves.length];
           for (int n=0; n<emWaves.length; n++) {
             try {
-              emWaves[n] = new Integer((int) Float.parseFloat(waves[n]));
+              emWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
             }
             catch (NumberFormatException e) {
               traceDebug(e);
@@ -475,7 +475,7 @@ public class ICSReader extends FormatReader {
           exWaves = new Integer[waves.length];
           for (int n=0; n<exWaves.length; n++) {
             try {
-              exWaves[n] = new Integer((int) Float.parseFloat(waves[n]));
+              exWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
             }
             catch (NumberFormatException e) {
               traceDebug(e);
@@ -510,7 +510,7 @@ public class ICSReader extends FormatReader {
             n = new Integer(n.intValue() - 1);
           }
           catch (NumberFormatException e) { }
-          if (floatValue != null) gains.put(n, floatValue);
+          if (doubleValue != null) gains.put(n, doubleValue);
         }
         else if (k.startsWith("history laser") && k.endsWith("wavelength")) {
           int laser = Integer.parseInt(k.substring(13, k.indexOf(" ", 13))) - 1;
@@ -529,13 +529,13 @@ public class ICSReader extends FormatReader {
           immersion = v;
         }
         else if (k.equalsIgnoreCase("history objective NA")) {
-          lensNA = floatValue;
+          lensNA = doubleValue;
         }
         else if (k.equalsIgnoreCase("history objective WorkingDistance")) {
-          workingDistance = floatValue;
+          workingDistance = doubleValue;
         }
         else if (k.equalsIgnoreCase("history objective magnification")) {
-          magnification = floatValue;
+          magnification = doubleValue;
         }
         else if (k.equalsIgnoreCase("sensor s_params PinholeRadius")) {
           String[] pins = v.split(" ");
@@ -543,7 +543,7 @@ public class ICSReader extends FormatReader {
           for (int n=0; n<pins.length; n++) {
             if (pins[n].trim().equals("")) continue;
             try {
-              pinholes.put(new Integer(channel++), new Float(pins[n]));
+              pinholes.put(new Integer(channel++), new Double(pins[n]));
             }
             catch (NumberFormatException e) {
               traceDebug(e);
@@ -553,10 +553,10 @@ public class ICSReader extends FormatReader {
         else if (k.equalsIgnoreCase("history author")) lastName = v;
         else if (k.equalsIgnoreCase("history extents")) {
           String[] lengths = v.split(" ");
-          sizes = new float[lengths.length];
+          sizes = new double[lengths.length];
           for (int n=0; n<sizes.length; n++) {
             try {
-              sizes[n] = Float.parseFloat(lengths[n].trim());
+              sizes[n] = Double.parseDouble(lengths[n].trim());
             }
             catch (NumberFormatException e) {
               traceDebug(e);
@@ -565,10 +565,10 @@ public class ICSReader extends FormatReader {
         }
         else if (k.equalsIgnoreCase("history stage_xyzum")) {
           String[] positions = v.split(" ");
-          stagePos = new Float[positions.length];
+          stagePos = new Double[positions.length];
           for (int n=0; n<stagePos.length; n++) {
             try {
-              stagePos[n] = new Float(positions[n]);
+              stagePos[n] = new Double(positions[n]);
             }
             catch (NumberFormatException e) {
               traceDebug(e);
@@ -812,11 +812,11 @@ public class ICSReader extends FormatReader {
     }
     else if (sizes != null) {
       if (sizes.length > 0) {
-        store.setDimensionsPhysicalSizeX(new Float(sizes[0]), 0, 0);
+        store.setDimensionsPhysicalSizeX(new Double(sizes[0]), 0, 0);
       }
       if (sizes.length > 1) {
         sizes[1] /= getSizeY();
-        store.setDimensionsPhysicalSizeY(new Float(sizes[1]), 0, 0);
+        store.setDimensionsPhysicalSizeY(new Double(sizes[1]), 0, 0);
       }
     }
 

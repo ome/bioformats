@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -190,10 +190,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getDatasetRefID(int imageIndex, int datasetRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    double getDetectorGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getDetectorID(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
@@ -205,7 +205,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getDetectorModel(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorOffset(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    double getDetectorOffset(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getDetectorSerialNumber(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
@@ -214,10 +214,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getDetectorType(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorVoltage(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    double getDetectorVoltage(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorZoom(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    double getDetectorZoom(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -226,16 +226,16 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getDichroicID(int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
@@ -250,16 +250,16 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getDichroicModel(int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
@@ -274,7 +274,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getDisplayOptionsID(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getDisplayOptionsZoom(int imageIndex, java.util.Map<String, String> __ctx)
+    double getDisplayOptionsZoom(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -430,16 +430,16 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getImageName(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getImagingEnvironmentAirPressure(int imageIndex, java.util.Map<String, String> __ctx)
+    double getImagingEnvironmentAirPressure(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getImagingEnvironmentCO2Percent(int imageIndex, java.util.Map<String, String> __ctx)
+    double getImagingEnvironmentCO2Percent(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getImagingEnvironmentHumidity(int imageIndex, java.util.Map<String, String> __ctx)
+    double getImagingEnvironmentHumidity(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getImagingEnvironmentTemperature(int imageIndex, java.util.Map<String, String> __ctx)
+    double getImagingEnvironmentTemperature(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getInstrumentID(int instrumentIndex, java.util.Map<String, String> __ctx)
@@ -457,7 +457,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getLaserPulse(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
@@ -478,13 +478,13 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getLightSourceModel(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getLightSourcePower(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    double getLightSourcePower(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
@@ -493,7 +493,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -553,7 +553,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getLogicalChannelName(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -562,7 +562,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -661,7 +661,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     int getOTFSizeY(int instrumentIndex, int otfIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getObjectiveCorrection(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
@@ -676,7 +676,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     boolean getObjectiveIris(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getObjectiveLensNA(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    double getObjectiveLensNA(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
@@ -691,10 +691,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getObjectiveSettingsCorrectionCollar(int imageIndex, java.util.Map<String, String> __ctx)
+    double getObjectiveSettingsCorrectionCollar(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getObjectiveSettingsMedium(int imageIndex, java.util.Map<String, String> __ctx)
@@ -703,7 +703,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getObjectiveSettingsObjective(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getObjectiveSettingsRefractiveIndex(int imageIndex, java.util.Map<String, String> __ctx)
+    double getObjectiveSettingsRefractiveIndex(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getPathD(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -754,10 +754,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getPlateColumnNamingConvention(int plateIndex, java.util.Map<String, String> __ctx)
@@ -1030,7 +1030,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -1069,22 +1069,22 @@ public interface _IMetadataDel extends Ice._ObjectDel
     String getStageLabelName(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getStageLabelX(int imageIndex, java.util.Map<String, String> __ctx)
+    double getStageLabelX(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getStageLabelY(int imageIndex, java.util.Map<String, String> __ctx)
+    double getStageLabelY(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getStageLabelZ(int imageIndex, java.util.Map<String, String> __ctx)
+    double getStageLabelZ(int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     String getThumbnailHref(int imageIndex, java.util.Map<String, String> __ctx)
@@ -1162,10 +1162,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
@@ -1231,10 +1231,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setDatasetRefID(String id, int imageIndex, int datasetRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorGain(float gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    void setDetectorGain(double gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setDetectorID(String id, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
@@ -1246,7 +1246,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setDetectorModel(String model, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
@@ -1255,10 +1255,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setDetectorType(String type, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -1267,16 +1267,16 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setDichroicID(String id, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
@@ -1291,16 +1291,16 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setDichroicModel(String model, int instrumentIndex, int dichroicIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
@@ -1315,7 +1315,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setDisplayOptionsID(String id, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setDisplayOptionsZoom(float zoom, int imageIndex, java.util.Map<String, String> __ctx)
+    void setDisplayOptionsZoom(double zoom, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -1471,16 +1471,16 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setImageName(String name, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setImagingEnvironmentAirPressure(float airPressure, int imageIndex, java.util.Map<String, String> __ctx)
+    void setImagingEnvironmentAirPressure(double airPressure, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, java.util.Map<String, String> __ctx)
+    void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setImagingEnvironmentHumidity(float humidity, int imageIndex, java.util.Map<String, String> __ctx)
+    void setImagingEnvironmentHumidity(double humidity, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setImagingEnvironmentTemperature(float temperature, int imageIndex, java.util.Map<String, String> __ctx)
+    void setImagingEnvironmentTemperature(double temperature, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setInstrumentID(String id, int instrumentIndex, java.util.Map<String, String> __ctx)
@@ -1498,7 +1498,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
@@ -1519,13 +1519,13 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
@@ -1534,7 +1534,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -1594,7 +1594,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -1603,7 +1603,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
@@ -1702,7 +1702,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
@@ -1717,7 +1717,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
@@ -1732,10 +1732,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, java.util.Map<String, String> __ctx)
+    void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setObjectiveSettingsMedium(String medium, int imageIndex, java.util.Map<String, String> __ctx)
@@ -1744,7 +1744,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setObjectiveSettingsObjective(String objective, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx)
+    void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -1795,10 +1795,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, java.util.Map<String, String> __ctx)
@@ -2071,7 +2071,7 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
@@ -2110,22 +2110,22 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setStageLabelName(String name, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStageLabelX(float x, int imageIndex, java.util.Map<String, String> __ctx)
+    void setStageLabelX(double x, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStageLabelY(float y, int imageIndex, java.util.Map<String, String> __ctx)
+    void setStageLabelY(double y, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStageLabelZ(float z, int imageIndex, java.util.Map<String, String> __ctx)
+    void setStageLabelZ(double z, int imageIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setThumbnailHref(String href, int imageIndex, java.util.Map<String, String> __ctx)
@@ -2203,10 +2203,10 @@ public interface _IMetadataDel extends Ice._ObjectDel
     void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
-    void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 
     void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)

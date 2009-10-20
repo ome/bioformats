@@ -200,12 +200,12 @@ public class ChannelInfoNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getNDfilter()
+	public Double getNDfilter()
 	{
-		return getFloatAttribute("NDfilter");
+		return getDoubleAttribute("NDfilter");
 	}
 
-	public void setNDfilter(Float ndfilter)
+	public void setNDfilter(Double ndfilter)
 	{
 		setAttribute("NDfilter", ndfilter);
 	}

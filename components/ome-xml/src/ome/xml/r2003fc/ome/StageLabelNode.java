@@ -77,34 +77,34 @@ public class StageLabelNode extends OMEXMLNode
 	// -- StageLabel API methods --
 
 	// Attribute
-	public Float getY()
+	public Double getY()
 	{
-		return getFloatAttribute("Y");
+		return getDoubleAttribute("Y");
 	}
 
-	public void setY(Float y)
+	public void setY(Double y)
 	{
 		setAttribute("Y", y);
 	}
 
 	// Attribute
-	public Float getX()
+	public Double getX()
 	{
-		return getFloatAttribute("X");
+		return getDoubleAttribute("X");
 	}
 
-	public void setX(Float x)
+	public void setX(Double x)
 	{
 		setAttribute("X", x);
 	}
 
 	// Attribute
-	public Float getZ()
+	public Double getZ()
 	{
-		return getFloatAttribute("Z");
+		return getDoubleAttribute("Z");
 	}
 
-	public void setZ(Float z)
+	public void setZ(Double z)
 	{
 		setAttribute("Z", z);
 	}

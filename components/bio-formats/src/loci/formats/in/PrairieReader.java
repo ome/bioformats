@@ -84,7 +84,7 @@ public class PrairieReader extends FormatReader {
   private int zt;
   private Vector<String> f, gains, offsets;
   private boolean isZ;
-  private float pixelSizeX, pixelSizeY;
+  private double pixelSizeX, pixelSizeY;
   private String date, laserPower;
 
   // -- Constructor --
@@ -276,17 +276,17 @@ public class PrairieReader extends FormatReader {
         store.setInstrumentID(instrumentID, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
-        store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-        store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+        store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
+        store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
         for (int i=0; i<getSizeC(); i++) {
           String gain = i < gains.size() ? gains.get(i) : null;
           String offset = i < offsets.size() ? offsets.get(i) : null;
 
           if (offset != null) {
-            store.setDetectorSettingsOffset(new Float(offset), 0, i);
+            store.setDetectorSettingsOffset(new Double(offset), 0, i);
           }
           if (gain != null) {
-            store.setDetectorSettingsGain(new Float(gain), 0, i);
+            store.setDetectorSettingsGain(new Double(gain), 0, i);
           }
 
           // link DetectorSettings to an actual Detector
@@ -304,7 +304,7 @@ public class PrairieReader extends FormatReader {
 
         /* TODO : check if this is correct
         if (laserPower != null) {
-          store.setLaserPower(new Float(laserPower), 0, 0);
+          store.setLaserPower(new Double(laserPower), 0, 0);
         }
         */
       }
@@ -382,10 +382,10 @@ public class PrairieReader extends FormatReader {
           core[0].sizeY = Integer.parseInt(value);
         }
         else if (key.equals("micronsPerPixel_XAxis")) {
-          pixelSizeX = Float.parseFloat(value);
+          pixelSizeX = Double.parseDouble(value);
         }
         else if (key.equals("micronsPerPixel_YAxis")) {
-          pixelSizeY = Float.parseFloat(value);
+          pixelSizeY = Double.parseDouble(value);
         }
         else if (key.startsWith("pmtGain_")) gains.add(value);
         else if (key.startsWith("pmtOffset_")) offsets.add(value);

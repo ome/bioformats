@@ -255,12 +255,12 @@ public class ImageNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getTimeIncrement()
+	public Double getTimeIncrement()
 	{
-		return getFloatAttribute("TimeIncrement");
+		return getDoubleAttribute("TimeIncrement");
 	}
 
-	public void setTimeIncrement(Float timeIncrement)
+	public void setTimeIncrement(Double timeIncrement)
 	{
 		setAttribute("TimeIncrement", timeIncrement);
 	}
@@ -314,34 +314,34 @@ public class ImageNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getPixelSizeZ()
+	public Double getPixelSizeZ()
 	{
-		return getFloatAttribute("PixelSizeZ");
+		return getDoubleAttribute("PixelSizeZ");
 	}
 
-	public void setPixelSizeZ(Float pixelSizeZ)
+	public void setPixelSizeZ(Double pixelSizeZ)
 	{
 		setAttribute("PixelSizeZ", pixelSizeZ);
 	}
 
 	// Attribute
-	public Float getPixelSizeY()
+	public Double getPixelSizeY()
 	{
-		return getFloatAttribute("PixelSizeY");
+		return getDoubleAttribute("PixelSizeY");
 	}
 
-	public void setPixelSizeY(Float pixelSizeY)
+	public void setPixelSizeY(Double pixelSizeY)
 	{
 		setAttribute("PixelSizeY", pixelSizeY);
 	}
 
 	// Attribute
-	public Float getPixelSizeX()
+	public Double getPixelSizeX()
 	{
-		return getFloatAttribute("PixelSizeX");
+		return getDoubleAttribute("PixelSizeX");
 	}
 
-	public void setPixelSizeX(Float pixelSizeX)
+	public void setPixelSizeX(Double pixelSizeX)
 	{
 		setAttribute("PixelSizeX", pixelSizeX);
 	}

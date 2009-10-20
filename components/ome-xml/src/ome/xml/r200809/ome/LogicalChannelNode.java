@@ -209,23 +209,23 @@ public class LogicalChannelNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getPinholeSize()
+	public Double getPinholeSize()
 	{
-		return getFloatAttribute("PinholeSize");
+		return getDoubleAttribute("PinholeSize");
 	}
 
-	public void setPinholeSize(Float pinholeSize)
+	public void setPinholeSize(Double pinholeSize)
 	{
 		setAttribute("PinholeSize", pinholeSize);
 	}
 
 	// Attribute
-	public Float getNdFilter()
+	public Double getNdFilter()
 	{
-		return getFloatAttribute("NdFilter");
+		return getDoubleAttribute("NdFilter");
 	}
 
-	public void setNdFilter(Float ndFilter)
+	public void setNdFilter(Double ndFilter)
 	{
 		setAttribute("NdFilter", ndFilter);
 	}

@@ -420,9 +420,9 @@ public final class SampleTest {
     String imageLogicalChannelFluor = imageLogicalChannel.getFluor();
     checkValue("Image LogicalChannel Fluor",
       imageLogicalChannelFluor, "GFP");
-    Float imageLogicalChannelNdFilter = imageLogicalChannel.getNdFilter();
+    Double imageLogicalChannelNdFilter = imageLogicalChannel.getNdFilter();
     checkValue("Image LogicalChannel NdFilter",
-      imageLogicalChannelNdFilter, new Float(0.0f));
+      imageLogicalChannelNdFilter, new Double(0.0));
     Integer imageLogicalChannelPockelCellSetting =
       imageLogicalChannel.getPockelCellSetting();
     checkNull("Image LogicalChannel PockelCellSetting",
@@ -458,11 +458,11 @@ public final class SampleTest {
       imageDisplayOptionsTime);
     int imageDisplayOptionsROICount = imageDisplayOptions.getROICount();
     Vector imageDisplayOptionsROIList = imageDisplayOptions.getROIList();
-    checkCount("Image DisplayOptions ROI", 
+    checkCount("Image DisplayOptions ROI",
       imageDisplayOptionsROICount, imageDisplayOptionsROIList, 1);
-    Float imageDisplayOptionsZoom = imageDisplayOptions.getZoom();
+    Double imageDisplayOptionsZoom = imageDisplayOptions.getZoom();
     checkValue("Image DisplayOptions Zoom",
-      imageDisplayOptionsZoom, new Float(1.0f));
+      imageDisplayOptionsZoom, new Double(1.0));
     String imageDisplayOptionsDisplay = imageDisplayOptions.getDisplay();
     checkValue("Image DisplayOptions Display",
       imageDisplayOptionsDisplay, "RGB");
@@ -470,12 +470,12 @@ public final class SampleTest {
     // check OME/Image/StageLabel
     String imageStageLabelName = imageStageLabel.getName();
     checkValue("Image StageLabel Name", imageStageLabelName, "Zulu");
-    Float imageStageLabelX = imageStageLabel.getX();
-    checkValue("Image StageLabel X", imageStageLabelX, new Float(123));
-    Float imageStageLabelY = imageStageLabel.getY();
-    checkValue("Image StageLabel Y", imageStageLabelY, new Float(456));
-    Float imageStageLabelZ = imageStageLabel.getZ();
-    checkValue("Image StageLabel Z", imageStageLabelZ, new Float(789));
+    Double imageStageLabelX = imageStageLabel.getX();
+    checkValue("Image StageLabel X", imageStageLabelX, new Double(123));
+    Double imageStageLabelY = imageStageLabel.getY();
+    checkValue("Image StageLabel Y", imageStageLabelY, new Double(456));
+    Double imageStageLabelZ = imageStageLabel.getZ();
+    checkValue("Image StageLabel Z", imageStageLabelZ, new Double(789));
 
     // check OME/Image/Pixels
     PixelsNode imagePixels = (PixelsNode) imagePixelsList.get(0);
@@ -505,16 +505,16 @@ public final class SampleTest {
     checkValue("Image Pixels SizeC", imagePixelsSizeC, new Integer(1));
     Integer imagePixelsSizeT = imagePixels.getSizeT();
     checkValue("Image Pixels SizeT", imagePixelsSizeT, new Integer(6));
-    Float imagePixelsPhysicalSizeX = imagePixels.getPhysicalSizeX();
+    Double imagePixelsPhysicalSizeX = imagePixels.getPhysicalSizeX();
     checkValue("Image Pixels PhysicalSizeX",
-      imagePixelsPhysicalSizeX, new Float(0.2f));
-    Float imagePixelsPhysicalSizeY = imagePixels.getPhysicalSizeY();
+      imagePixelsPhysicalSizeX, new Double(0.2));
+    Double imagePixelsPhysicalSizeY = imagePixels.getPhysicalSizeY();
     checkValue("Image Pixels PhysicalSizeY",
-      imagePixelsPhysicalSizeY, new Float(0.2f));
-    Float imagePixelsPhysicalSizeZ = imagePixels.getPhysicalSizeZ();
+      imagePixelsPhysicalSizeY, new Double(0.2));
+    Double imagePixelsPhysicalSizeZ = imagePixels.getPhysicalSizeZ();
     checkValue("Image Pixels PhysicalSizeZ",
-      imagePixelsPhysicalSizeZ, new Float(0.2f));
-    Float imagePixelsTimeIncrement = imagePixels.getTimeIncrement();
+      imagePixelsPhysicalSizeZ, new Double(0.2));
+    Double imagePixelsTimeIncrement = imagePixels.getTimeIncrement();
     checkNull("Image Pixels TimeIncrement", imagePixelsTimeIncrement);
     Integer imagePixelsWaveStart = imagePixels.getWaveStart();
     checkNull("Image Pixels WaveStart", imagePixelsWaveStart);
@@ -584,15 +584,15 @@ public final class SampleTest {
       imageDisplayOptionsRedChannel.getChannelNumber();
     checkValue("Image DisplayOptions RedChannel ChannelNumber",
       imageDisplayOptionsRedChannelChannelNumber, new Integer(0));
-    Float imageDisplayOptionsRedChannelBlackLevel =
+    Double imageDisplayOptionsRedChannelBlackLevel =
       imageDisplayOptionsRedChannel.getBlackLevel();
     checkValue("Image DisplayOptions RedChannel BlackLevel",
-      imageDisplayOptionsRedChannelBlackLevel, new Float(144));
-    Float imageDisplayOptionsRedChannelWhiteLevel =
+      imageDisplayOptionsRedChannelBlackLevel, new Double(144));
+    Double imageDisplayOptionsRedChannelWhiteLevel =
       imageDisplayOptionsRedChannel.getWhiteLevel();
     checkValue("Image DisplayOptions RedChannel WhiteLevel",
-      imageDisplayOptionsRedChannelWhiteLevel, new Float(338));
-    Float imageDisplayOptionsRedChannelGamma =
+      imageDisplayOptionsRedChannelWhiteLevel, new Double(338));
+    Double imageDisplayOptionsRedChannelGamma =
       imageDisplayOptionsRedChannel.getGamma();
     checkNull("Image DisplayOptions RedChannel Gamma",
       imageDisplayOptionsRedChannelGamma);
@@ -606,15 +606,15 @@ public final class SampleTest {
       imageDisplayOptionsGreenChannel.getChannelNumber();
     checkValue("Image DisplayOptions GreenChannel ChannelNumber",
       imageDisplayOptionsGreenChannelChannelNumber, new Integer(0));
-    Float imageDisplayOptionsGreenChannelBlackLevel =
+    Double imageDisplayOptionsGreenChannelBlackLevel =
       imageDisplayOptionsGreenChannel.getBlackLevel();
     checkValue("Image DisplayOptions GreenChannel BlackLevel",
-      imageDisplayOptionsGreenChannelBlackLevel, new Float(144));
-    Float imageDisplayOptionsGreenChannelWhiteLevel =
+      imageDisplayOptionsGreenChannelBlackLevel, new Double(144));
+    Double imageDisplayOptionsGreenChannelWhiteLevel =
       imageDisplayOptionsGreenChannel.getWhiteLevel();
     checkValue("Image DisplayOptions GreenChannel WhiteLevel",
-      imageDisplayOptionsGreenChannelWhiteLevel, new Float(338));
-    Float imageDisplayOptionsGreenChannelGamma =
+      imageDisplayOptionsGreenChannelWhiteLevel, new Double(338));
+    Double imageDisplayOptionsGreenChannelGamma =
       imageDisplayOptionsGreenChannel.getGamma();
     checkNull("Image DisplayOptions GreenChannel Gamma",
       imageDisplayOptionsGreenChannelGamma);
@@ -628,15 +628,15 @@ public final class SampleTest {
       imageDisplayOptionsBlueChannel.getChannelNumber();
     checkValue("Image DisplayOptions BlueChannel ChannelNumber",
       imageDisplayOptionsBlueChannelChannelNumber, new Integer(0));
-    Float imageDisplayOptionsBlueChannelBlackLevel =
+    Double imageDisplayOptionsBlueChannelBlackLevel =
       imageDisplayOptionsBlueChannel.getBlackLevel();
     checkValue("Image DisplayOptions BlueChannel BlackLevel",
-      imageDisplayOptionsBlueChannelBlackLevel, new Float(144));
-    Float imageDisplayOptionsBlueChannelWhiteLevel =
+      imageDisplayOptionsBlueChannelBlackLevel, new Double(144));
+    Double imageDisplayOptionsBlueChannelWhiteLevel =
       imageDisplayOptionsBlueChannel.getWhiteLevel();
     checkValue("Image DisplayOptions BlueChannel WhiteLevel",
-      imageDisplayOptionsBlueChannelWhiteLevel, new Float(338));
-    Float imageDisplayOptionsBlueChannelGamma =
+      imageDisplayOptionsBlueChannelWhiteLevel, new Double(338));
+    Double imageDisplayOptionsBlueChannelGamma =
       imageDisplayOptionsBlueChannel.getGamma();
     checkNull("Image DisplayOptions BlueChannel Gamma",
       imageDisplayOptionsBlueChannelGamma);
@@ -654,15 +654,15 @@ public final class SampleTest {
       imageDisplayOptionsGreyChannel.getChannelNumber();
     checkValue("Image DisplayOptions GreyChannel ChannelNumber",
       imageDisplayOptionsGreyChannelChannelNumber, new Integer(0));
-    Float imageDisplayOptionsGreyChannelBlackLevel =
+    Double imageDisplayOptionsGreyChannelBlackLevel =
       imageDisplayOptionsGreyChannel.getBlackLevel();
     checkValue("Image DisplayOptions GreyChannel BlackLevel",
-      imageDisplayOptionsGreyChannelBlackLevel, new Float(144));
-    Float imageDisplayOptionsGreyChannelWhiteLevel =
+      imageDisplayOptionsGreyChannelBlackLevel, new Double(144));
+    Double imageDisplayOptionsGreyChannelWhiteLevel =
       imageDisplayOptionsGreyChannel.getWhiteLevel();
     checkValue("Image DisplayOptions GreyChannel WhiteLevel",
-      imageDisplayOptionsGreyChannelWhiteLevel, new Float(338));
-    Float imageDisplayOptionsGreyChannelGamma =
+      imageDisplayOptionsGreyChannelWhiteLevel, new Double(338));
+    Double imageDisplayOptionsGreyChannelGamma =
       imageDisplayOptionsGreyChannel.getGamma();
     checkNull("Image DisplayOptions GreyChannel Gamma",
       imageDisplayOptionsGreyChannelGamma);
@@ -812,7 +812,7 @@ public final class SampleTest {
 
     // create OME/CA/Objective
     ObjectiveNode objective = new ObjectiveNode(ca, "Olympus", "SPlanL",
-      "456anxcoas123", new Float(2.4f), new Float(40), instrument);
+      "456anxcoas123", new Double(2.4f), new Double(40), instrument);
     objective.setNodeID("urn:lsid:foo.bar.com:Objective:123456");
 
     // create OME/CA/Filter
@@ -850,7 +850,7 @@ public final class SampleTest {
 
     // create OME/Image/CA/Dimensions
     DimensionsNode dimensions = new DimensionsNode(imageCA,
-      new Float(0.2f), new Float(0.2f), new Float(0.2f), null, null);
+      new Double(0.2), new Double(0.2), new Double(0.2), null, null);
 
     // create OME/Image/CA/ImageExperiment
     ImageExperimentNode imageExperiment = new ImageExperimentNode(imageCA,
@@ -862,8 +862,8 @@ public final class SampleTest {
 
     // create OME/Image/CA/ImagingEnvironment
     ImagingEnvironmentNode imagingEnvironment =
-      new ImagingEnvironmentNode(imageCA, new Float(.1f),
-      new Float(.1f), new Float(.2f), new Float(.3f));
+      new ImagingEnvironmentNode(imageCA, new Double(.1),
+      new Double(.1), new Double(.2), new Double(.3));
 
     // create OME/Image/CA/Thumbnail
     ThumbnailNode thumbnail = new ThumbnailNode(imageCA, "image/jpeg", null,
@@ -874,7 +874,7 @@ public final class SampleTest {
       "Ch 1", null, filter, lightSource2, null, null, otf, detector, null,
       null, "Epifluorescence", null, null, null, null, lightSource1, null,
       "Photobleaching", null, new Integer(490), new Integer(528), "GFP",
-      new Float(0));
+      new Double(0));
     logicalChannel.setNodeID("urn:lsid:foo.bar.com:LogicalChannel:123456");
 
     // create OME/Image/CA/PixelChannelComponent
@@ -884,7 +884,7 @@ public final class SampleTest {
 
     // create OME/Image/CA/DisplayOptions
     DisplayOptionsNode displayOptions = new DisplayOptionsNode(imageCA,
-      null, new Float(1), null, Boolean.TRUE, null, Boolean.TRUE, null,
+      null, new Double(1), null, Boolean.TRUE, null, Boolean.TRUE, null,
       Boolean.TRUE, Boolean.TRUE, null, null, new Integer(3), new Integer(3),
       new Integer(3), new Integer(3));
     displayOptions.setNodeID("urn:lsid:foo.bar.com:DisplayOptions:123456");
@@ -917,7 +917,7 @@ public final class SampleTest {
 
     // create OME/Image/CA/StageLabel
     StageLabelNode stageLabel = new StageLabelNode(imageCA,
-      "Zulu", new Float(123), new Float(456), new Float(789));
+      "Zulu", new Double(123), new Double(456), new Double(789));
 
     // create OME/Image/CA/ImagePlate
     ImagePlateNode imagePlate = new ImagePlateNode(imageCA,

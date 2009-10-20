@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 5, 2009 9:38:21 AM CDT
+ * Created by curtis via MetadataAutogen on Oct 19, 2009 10:56:59 PM EDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -287,14 +287,14 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  Float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
+  Double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, gets the gain of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  Float getDetectorGain(int instrumentIndex, int detectorIndex);
+  Double getDetectorGain(int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, gets unique label identifying the detector.
@@ -322,7 +322,7 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  Float getDetectorOffset(int instrumentIndex, int detectorIndex);
+  Double getDetectorOffset(int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, gets serial number of the detector.
@@ -343,14 +343,14 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  Float getDetectorVoltage(int instrumentIndex, int detectorIndex);
+  Double getDetectorVoltage(int instrumentIndex, int detectorIndex);
 
   /**
    * For a particular Detector, gets optional zoom value of the detector.
    * @param instrumentIndex index of the Instrument
    * @param detectorIndex index of the Detector
    */
-  Float getDetectorZoom(int instrumentIndex, int detectorIndex);
+  Double getDetectorZoom(int instrumentIndex, int detectorIndex);
 
   // - DetectorSettings property retrieval -
 
@@ -373,28 +373,28 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
+  Double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular DetectorSettings, gets the detector offset.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+  Double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular DetectorSettings, gets the speed at which the detector can count pixels, in MHz.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
+  Double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular DetectorSettings, gets the detector voltage.
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
+  Double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
 
   // - Dichroic property retrieval -
 
@@ -433,28 +433,28 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
+  Double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, gets the size of an individual pixel's Y axis in microns.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
+  Double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, gets the size of an individual pixel's Z axis in microns.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
+  Double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, gets the distance between adjacent time points in seconds.
    * @param imageIndex index of the Image
    * @param pixelsIndex index of the Pixels
    */
-  Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
+  Double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
 
   /**
    * For a particular Dimensions, gets the distance between adjacent wavelengths in nanometers.
@@ -488,7 +488,7 @@ public interface MetadataRetrieve {
    * For a particular DisplayOptions, gets zoom factor for use in the display (NOT THE LENS ZOOM).
    * @param imageIndex index of the Image
    */
-  Float getDisplayOptionsZoom(int imageIndex);
+  Double getDisplayOptionsZoom(int imageIndex);
 
   // - Ellipse property retrieval -
 
@@ -861,25 +861,25 @@ public interface MetadataRetrieve {
    * For a particular ImagingEnvironment, gets air pressure, in millibars.
    * @param imageIndex index of the Image
    */
-  Float getImagingEnvironmentAirPressure(int imageIndex);
+  Double getImagingEnvironmentAirPressure(int imageIndex);
 
   /**
    * For a particular ImagingEnvironment, gets CO2 level, in percent fractions from 0.0 to 1.0.
    * @param imageIndex index of the Image
    */
-  Float getImagingEnvironmentCO2Percent(int imageIndex);
+  Double getImagingEnvironmentCO2Percent(int imageIndex);
 
   /**
    * For a particular ImagingEnvironment, gets humidity, in percent fractions from 0.0 to 1.0.
    * @param imageIndex index of the Image
    */
-  Float getImagingEnvironmentHumidity(int imageIndex);
+  Double getImagingEnvironmentHumidity(int imageIndex);
 
   /**
    * For a particular ImagingEnvironment, gets temperature of the imaging environment, in Celsius.
    * @param imageIndex index of the Image
    */
-  Float getImagingEnvironmentTemperature(int imageIndex);
+  Double getImagingEnvironmentTemperature(int imageIndex);
 
   // - Instrument property retrieval -
 
@@ -924,7 +924,7 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  Boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
+  Double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
 
   /**
    * For a particular Laser, gets indicates whether or not the laser can be tuned.
@@ -975,7 +975,7 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param lightSourceIndex index of the LightSource
    */
-  Float getLightSourcePower(int instrumentIndex, int lightSourceIndex);
+  Double getLightSourcePower(int instrumentIndex, int lightSourceIndex);
 
   /**
    * For a particular LightSource, gets serial number of the light source.
@@ -992,7 +992,7 @@ public interface MetadataRetrieve {
    * @param microbeamManipulationIndex index of the MicrobeamManipulation
    * @param lightSourceRefIndex index of the LightSourceRef
    */
-  Float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+  Double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
   /**
    * For a particular LightSourceRef, gets TODO.
@@ -1017,7 +1017,7 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
+  Double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LightSourceSettings, gets the primary light source.
@@ -1167,7 +1167,7 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
+  Double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, gets the OTF associated with the logical channel.
@@ -1188,7 +1188,7 @@ public interface MetadataRetrieve {
    * @param imageIndex index of the Image
    * @param logicalChannelIndex index of the LogicalChannel
    */
-  Float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
+  Double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
 
   /**
    * For a particular LogicalChannel, gets TODO.
@@ -1440,7 +1440,7 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
-  Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
+  Double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
 
   /**
    * For a particular Objective, gets type of correction coating applied to the objective lens.
@@ -1475,7 +1475,7 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
-  Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
+  Double getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
 
   /**
    * For a particular Objective, gets the name of the objective's manufacturer.
@@ -1510,7 +1510,7 @@ public interface MetadataRetrieve {
    * @param instrumentIndex index of the Instrument
    * @param objectiveIndex index of the Objective
    */
-  Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+  Double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
 
   // - ObjectiveSettings property retrieval -
 
@@ -1518,7 +1518,7 @@ public interface MetadataRetrieve {
    * For a particular ObjectiveSettings, gets unit-less setting of the adjustable correction collar.
    * @param imageIndex index of the Image
    */
-  Float getObjectiveSettingsCorrectionCollar(int imageIndex);
+  Double getObjectiveSettingsCorrectionCollar(int imageIndex);
 
   /**
    * For a particular ObjectiveSettings, gets immersion medium for the lens.
@@ -1536,7 +1536,7 @@ public interface MetadataRetrieve {
    * For a particular ObjectiveSettings, gets unit-less refractive index of the immersion medium.
    * @param imageIndex index of the Image
    */
-  Float getObjectiveSettingsRefractiveIndex(int imageIndex);
+  Double getObjectiveSettingsRefractiveIndex(int imageIndex);
 
   // - Path property retrieval -
 
@@ -1671,7 +1671,7 @@ public interface MetadataRetrieve {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
+  Double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
 
   /**
    * For a particular PlaneTiming, gets the exposure time in seconds.
@@ -1679,7 +1679,7 @@ public interface MetadataRetrieve {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
+  Double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
 
   // - Plate property retrieval -
 
@@ -2372,7 +2372,7 @@ public interface MetadataRetrieve {
    * @param roiIndex index of the ROI
    * @param shapeIndex index of the Shape
    */
-  Float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
+  Double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
 
   /**
    * For a particular Shape, gets width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas..
@@ -2474,19 +2474,19 @@ public interface MetadataRetrieve {
    * For a particular StageLabel, gets the x coordinate of the stage.
    * @param imageIndex index of the Image
    */
-  Float getStageLabelX(int imageIndex);
+  Double getStageLabelX(int imageIndex);
 
   /**
    * For a particular StageLabel, gets the y coordinate of the stage.
    * @param imageIndex index of the Image
    */
-  Float getStageLabelY(int imageIndex);
+  Double getStageLabelY(int imageIndex);
 
   /**
    * For a particular StageLabel, gets the z coordinate of the stage.
    * @param imageIndex index of the Image
    */
-  Float getStageLabelZ(int imageIndex);
+  Double getStageLabelZ(int imageIndex);
 
   // - StagePosition property retrieval -
 
@@ -2496,7 +2496,7 @@ public interface MetadataRetrieve {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
+  Double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
 
   /**
    * For a particular StagePosition, gets the Y coordinate of the stage position.
@@ -2504,7 +2504,7 @@ public interface MetadataRetrieve {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
+  Double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
 
   /**
    * For a particular StagePosition, gets the Z coordinate of the stage position.
@@ -2512,7 +2512,7 @@ public interface MetadataRetrieve {
    * @param pixelsIndex index of the Pixels
    * @param planeIndex index of the Plane
    */
-  Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
+  Double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
 
   // - Thumbnail property retrieval -
 
@@ -2712,7 +2712,7 @@ public interface MetadataRetrieve {
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  Float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
+  Double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets Y position of the image within the well.
@@ -2720,7 +2720,7 @@ public interface MetadataRetrieve {
    * @param wellIndex index of the Well
    * @param wellSampleIndex index of the WellSample
    */
-  Float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
+  Double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
 
   /**
    * For a particular WellSample, gets time-point at which the image started to be collected.

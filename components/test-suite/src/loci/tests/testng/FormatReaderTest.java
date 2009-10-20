@@ -414,8 +414,8 @@ public class FormatReaderTest {
 
         // Z, C and T indices should be populated if PlaneTiming is present
 
-        Float deltaT = retrieve.getPlaneTimingDeltaT(i, 0, 0);
-        Float exposure = retrieve.getPlaneTimingExposureTime(i, 0, 0);
+        Double deltaT = retrieve.getPlaneTimingDeltaT(i, 0, 0);
+        Double exposure = retrieve.getPlaneTimingExposureTime(i, 0, 0);
         Integer z = retrieve.getPlaneTheZ(i, 0, 0);
         Integer c = retrieve.getPlaneTheC(i, 0, 0);
         Integer t = retrieve.getPlaneTheT(i, 0, 0);

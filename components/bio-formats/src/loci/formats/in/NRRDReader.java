@@ -276,10 +276,10 @@ public class NRRDReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     for (int i=0; i<pixelSizes.length; i++) {
-      Float f = new Float(pixelSizes[i].trim());
-      if (i == 0) store.setDimensionsPhysicalSizeX(f, 0, 0);
-      else if (i == 1) store.setDimensionsPhysicalSizeY(f, 0, 0);
-      else if (i == 2) store.setDimensionsPhysicalSizeZ(f, 0, 0);
+      Double d = new Double(pixelSizes[i].trim());
+      if (i == 0) store.setDimensionsPhysicalSizeX(d, 0, 0);
+      else if (i == 1) store.setDimensionsPhysicalSizeY(d, 0, 0);
+      else if (i == 2) store.setDimensionsPhysicalSizeZ(d, 0, 0);
     }
   }
 

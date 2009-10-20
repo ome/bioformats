@@ -78,34 +78,34 @@ public class StagePositionNode extends OMEXMLNode
 	// -- StagePosition API methods --
 
 	// Attribute
-	public Float getPositionZ()
+	public Double getPositionZ()
 	{
-		return getFloatAttribute("PositionZ");
+		return getDoubleAttribute("PositionZ");
 	}
 
-	public void setPositionZ(Float positionZ)
+	public void setPositionZ(Double positionZ)
 	{
 		setAttribute("PositionZ", positionZ);
 	}
 
 	// Attribute
-	public Float getPositionX()
+	public Double getPositionX()
 	{
-		return getFloatAttribute("PositionX");
+		return getDoubleAttribute("PositionX");
 	}
 
-	public void setPositionX(Float positionX)
+	public void setPositionX(Double positionX)
 	{
 		setAttribute("PositionX", positionX);
 	}
 
 	// Attribute
-	public Float getPositionY()
+	public Double getPositionY()
 	{
-		return getFloatAttribute("PositionY");
+		return getDoubleAttribute("PositionY");
 	}
 
-	public void setPositionY(Float positionY)
+	public void setPositionY(Double positionY)
 	{
 		setAttribute("PositionY", positionY);
 	}

@@ -167,11 +167,11 @@ public class CellomicsReader extends FormatReader {
 
     // physical dimensions are stored as pixels per meter - we want them
     // in microns per pixel
-    float width = pixelWidth == 0 ? 0 : 1000000f / pixelWidth;
-    float height = pixelHeight == 0 ? 0 : 1000000f / pixelHeight;
+    double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
+    double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-    store.setDimensionsPhysicalSizeX(new Float(width), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(height), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(width), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(height), 0, 0);
   }
 
 }

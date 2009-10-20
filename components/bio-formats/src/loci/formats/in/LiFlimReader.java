@@ -133,7 +133,7 @@ public class LiFlimReader extends FormatReader {
   private int numRegions = 0;
   private Hashtable<Integer, ROI> rois;
   private Hashtable<Integer, String> stampValues;
-  private Float exposureTime;
+  private Double exposureTime;
 
   /** True if gzip compression was used to deflate the pixels. */
   private boolean gzip;
@@ -313,12 +313,13 @@ public class LiFlimReader extends FormatReader {
         }
         else if (metaKey.endsWith("ExposureTime")) {
           String exp = value;
-          float expTime = Float.parseFloat(exp.substring(0, exp.indexOf(" ")));
+          double expTime =
+            Double.parseDouble(exp.substring(0, exp.indexOf(" ")));
           String units = exp.substring(exp.indexOf(" ") + 1).toLowerCase();
           if (units.equals("ms")) {
             expTime /= 1000;
           }
-          exposureTime = new Float(expTime);
+          exposureTime = new Double(expTime);
         }
       }
     }
@@ -413,16 +414,16 @@ public class LiFlimReader extends FormatReader {
       long stampHi = Long.parseLong(stampWords[0]);
       long stampLo = Long.parseLong(stampWords[1]);
       long stamp = DateTools.getMillisFromTicks(stampHi, stampLo);
-      Float deltaT;
+      Double deltaT;
       if (t == 0) {
         String date = DateTools.convertDate(stamp, DateTools.COBOL);
         store.setImageCreationDate(date, 0);
         firstStamp = stamp;
-        deltaT = new Float(0);
+        deltaT = new Double(0);
       }
       else {
         long ms = stamp - firstStamp;
-        deltaT = new Float(ms / 1000f);
+        deltaT = new Double(ms / 1000.0);
       }
       for (int c=0; c<getEffectiveSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {

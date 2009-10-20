@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -895,20 +895,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorAmplificationGain(int instrumentIndex, int detectorIndex)
     {
         return getDetectorAmplificationGain(instrumentIndex, detectorIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorAmplificationGain(instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -979,20 +979,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorGain(int instrumentIndex, int detectorIndex)
     {
         return getDetectorGain(instrumentIndex, detectorIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorGain(instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorGain(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1147,20 +1147,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorOffset(int instrumentIndex, int detectorIndex)
     {
         return getDetectorOffset(instrumentIndex, detectorIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorOffset(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorOffset(instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorOffset(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1315,20 +1315,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorSettingsGain(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsGain(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorSettingsGain(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1357,20 +1357,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsOffset(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorSettingsOffset(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1399,20 +1399,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1441,20 +1441,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex)
     {
         return getDetectorSettingsVoltage(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorSettingsVoltage(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1525,20 +1525,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorVoltage(int instrumentIndex, int detectorIndex)
     {
         return getDetectorVoltage(instrumentIndex, detectorIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorVoltage(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorVoltage(instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorVoltage(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1567,20 +1567,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDetectorZoom(int instrumentIndex, int detectorIndex)
     {
         return getDetectorZoom(instrumentIndex, detectorIndex, null, false);
     }
 
-    public float
+    public double
     getDetectorZoom(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         return getDetectorZoom(instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDetectorZoom(int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1819,20 +1819,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex)
     {
         return getDimensionsPhysicalSizeX(imageIndex, pixelsIndex, null, false);
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         return getDimensionsPhysicalSizeX(imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1861,20 +1861,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex)
     {
         return getDimensionsPhysicalSizeY(imageIndex, pixelsIndex, null, false);
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         return getDimensionsPhysicalSizeY(imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1903,20 +1903,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex)
     {
         return getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex, null, false);
     }
 
-    public float
+    public double
     getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         return getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -1945,20 +1945,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDimensionsTimeIncrement(int imageIndex, int pixelsIndex)
     {
         return getDimensionsTimeIncrement(imageIndex, pixelsIndex, null, false);
     }
 
-    public float
+    public double
     getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         return getDimensionsTimeIncrement(imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -2155,20 +2155,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getDisplayOptionsZoom(int imageIndex)
     {
         return getDisplayOptionsZoom(imageIndex, null, false);
     }
 
-    public float
+    public double
     getDisplayOptionsZoom(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getDisplayOptionsZoom(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getDisplayOptionsZoom(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -4675,20 +4675,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getImagingEnvironmentAirPressure(int imageIndex)
     {
         return getImagingEnvironmentAirPressure(imageIndex, null, false);
     }
 
-    public float
+    public double
     getImagingEnvironmentAirPressure(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getImagingEnvironmentAirPressure(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getImagingEnvironmentAirPressure(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -4717,20 +4717,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getImagingEnvironmentCO2Percent(int imageIndex)
     {
         return getImagingEnvironmentCO2Percent(imageIndex, null, false);
     }
 
-    public float
+    public double
     getImagingEnvironmentCO2Percent(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getImagingEnvironmentCO2Percent(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getImagingEnvironmentCO2Percent(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -4759,20 +4759,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getImagingEnvironmentHumidity(int imageIndex)
     {
         return getImagingEnvironmentHumidity(imageIndex, null, false);
     }
 
-    public float
+    public double
     getImagingEnvironmentHumidity(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getImagingEnvironmentHumidity(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getImagingEnvironmentHumidity(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -4801,20 +4801,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getImagingEnvironmentTemperature(int imageIndex)
     {
         return getImagingEnvironmentTemperature(imageIndex, null, false);
     }
 
-    public float
+    public double
     getImagingEnvironmentTemperature(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getImagingEnvironmentTemperature(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getImagingEnvironmentTemperature(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -5095,20 +5095,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public boolean
+    public double
     getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex)
     {
         return getLaserRepetitionRate(instrumentIndex, lightSourceIndex, null, false);
     }
 
-    public boolean
+    public double
     getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
     {
         return getLaserRepetitionRate(instrumentIndex, lightSourceIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private boolean
+    private double
     getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -5431,20 +5431,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getLightSourcePower(int instrumentIndex, int lightSourceIndex)
     {
         return getLightSourcePower(instrumentIndex, lightSourceIndex, null, false);
     }
 
-    public float
+    public double
     getLightSourcePower(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
     {
         return getLightSourcePower(instrumentIndex, lightSourceIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getLightSourcePower(int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -5473,20 +5473,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
     {
         return getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null, false);
     }
 
-    public float
+    public double
     getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
     {
         return getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -5683,20 +5683,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex)
     {
         return getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -6565,20 +6565,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex)
     {
         return getLogicalChannelNdFilter(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getLogicalChannelNdFilter(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -6691,20 +6691,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex)
     {
         return getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex, null, false);
     }
 
-    public float
+    public double
     getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         return getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -8245,20 +8245,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex)
     {
         return getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex, null, false);
     }
 
-    public float
+    public double
     getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
     {
         return getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -8497,20 +8497,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getObjectiveLensNA(int instrumentIndex, int objectiveIndex)
     {
         return getObjectiveLensNA(instrumentIndex, objectiveIndex, null, false);
     }
 
-    public float
+    public double
     getObjectiveLensNA(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
     {
         return getObjectiveLensNA(instrumentIndex, objectiveIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getObjectiveLensNA(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -8707,20 +8707,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getObjectiveSettingsCorrectionCollar(int imageIndex)
     {
         return getObjectiveSettingsCorrectionCollar(imageIndex, null, false);
     }
 
-    public float
+    public double
     getObjectiveSettingsCorrectionCollar(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getObjectiveSettingsCorrectionCollar(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getObjectiveSettingsCorrectionCollar(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -8833,20 +8833,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getObjectiveSettingsRefractiveIndex(int imageIndex)
     {
         return getObjectiveSettingsRefractiveIndex(imageIndex, null, false);
     }
 
-    public float
+    public double
     getObjectiveSettingsRefractiveIndex(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getObjectiveSettingsRefractiveIndex(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getObjectiveSettingsRefractiveIndex(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -8875,20 +8875,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex)
     {
         return getObjectiveWorkingDistance(instrumentIndex, objectiveIndex, null, false);
     }
 
-    public float
+    public double
     getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
     {
         return getObjectiveWorkingDistance(instrumentIndex, objectiveIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -9673,20 +9673,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
-    public float
+    public double
     getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         return getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -9715,20 +9715,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
-    public float
+    public double
     getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         return getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14083,20 +14083,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex)
     {
         return getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex, null, false);
     }
 
-    public float
+    public double
     getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
     {
         return getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14629,20 +14629,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getStageLabelX(int imageIndex)
     {
         return getStageLabelX(imageIndex, null, false);
     }
 
-    public float
+    public double
     getStageLabelX(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getStageLabelX(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getStageLabelX(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14671,20 +14671,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getStageLabelY(int imageIndex)
     {
         return getStageLabelY(imageIndex, null, false);
     }
 
-    public float
+    public double
     getStageLabelY(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getStageLabelY(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getStageLabelY(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14713,20 +14713,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getStageLabelZ(int imageIndex)
     {
         return getStageLabelZ(imageIndex, null, false);
     }
 
-    public float
+    public double
     getStageLabelZ(int imageIndex, java.util.Map<String, String> __ctx)
     {
         return getStageLabelZ(imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getStageLabelZ(int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14755,20 +14755,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
-    public float
+    public double
     getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         return getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14797,20 +14797,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
-    public float
+    public double
     getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         return getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -14839,20 +14839,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex)
     {
         return getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
-    public float
+    public double
     getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         return getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -16057,20 +16057,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex)
     {
         return getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex, null, false);
     }
 
-    public float
+    public double
     getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
     {
         return getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -16099,20 +16099,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
         }
     }
 
-    public float
+    public double
     getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex)
     {
         return getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex, null, false);
     }
 
-    public float
+    public double
     getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
     {
         return getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
-    private float
+    private double
     getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
@@ -17024,20 +17024,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex)
+    setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex)
     {
         setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex, null, false);
     }
 
     public void
-    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17066,20 +17066,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorGain(float gain, int instrumentIndex, int detectorIndex)
+    setDetectorGain(double gain, int instrumentIndex, int detectorIndex)
     {
         setDetectorGain(gain, instrumentIndex, detectorIndex, null, false);
     }
 
     public void
-    setDetectorGain(float gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorGain(double gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorGain(gain, instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorGain(float gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorGain(double gain, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17234,20 +17234,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorOffset(float offset, int instrumentIndex, int detectorIndex)
+    setDetectorOffset(double offset, int instrumentIndex, int detectorIndex)
     {
         setDetectorOffset(offset, instrumentIndex, detectorIndex, null, false);
     }
 
     public void
-    setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorOffset(double offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorOffset(offset, instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorOffset(double offset, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17402,20 +17402,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17444,20 +17444,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17486,20 +17486,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17528,20 +17528,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex)
+    setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex)
     {
         setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17612,20 +17612,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex)
+    setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex)
     {
         setDetectorVoltage(voltage, instrumentIndex, detectorIndex, null, false);
     }
 
     public void
-    setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorVoltage(voltage, instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17654,20 +17654,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex)
+    setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex)
     {
         setDetectorZoom(zoom, instrumentIndex, detectorIndex, null, false);
     }
 
     public void
-    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
+    setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx)
     {
         setDetectorZoom(zoom, instrumentIndex, detectorIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17864,20 +17864,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex)
+    setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex)
     {
         setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex, null, false);
     }
 
     public void
-    setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17906,20 +17906,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex)
+    setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex)
     {
         setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex, null, false);
     }
 
     public void
-    setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17948,20 +17948,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex)
+    setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex)
     {
         setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex, null, false);
     }
 
     public void
-    setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -17990,20 +17990,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex)
+    setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex)
     {
         setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex, null, false);
     }
 
     public void
-    setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
+    setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx)
     {
         setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -18200,20 +18200,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setDisplayOptionsZoom(float zoom, int imageIndex)
+    setDisplayOptionsZoom(double zoom, int imageIndex)
     {
         setDisplayOptionsZoom(zoom, imageIndex, null, false);
     }
 
     public void
-    setDisplayOptionsZoom(float zoom, int imageIndex, java.util.Map<String, String> __ctx)
+    setDisplayOptionsZoom(double zoom, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setDisplayOptionsZoom(zoom, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setDisplayOptionsZoom(float zoom, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setDisplayOptionsZoom(double zoom, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -20384,20 +20384,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setImagingEnvironmentAirPressure(float airPressure, int imageIndex)
+    setImagingEnvironmentAirPressure(double airPressure, int imageIndex)
     {
         setImagingEnvironmentAirPressure(airPressure, imageIndex, null, false);
     }
 
     public void
-    setImagingEnvironmentAirPressure(float airPressure, int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentAirPressure(double airPressure, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setImagingEnvironmentAirPressure(airPressure, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setImagingEnvironmentAirPressure(float airPressure, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setImagingEnvironmentAirPressure(double airPressure, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -20426,20 +20426,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex)
+    setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex)
     {
         setImagingEnvironmentCO2Percent(cO2Percent, imageIndex, null, false);
     }
 
     public void
-    setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setImagingEnvironmentCO2Percent(cO2Percent, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -20468,20 +20468,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setImagingEnvironmentHumidity(float humidity, int imageIndex)
+    setImagingEnvironmentHumidity(double humidity, int imageIndex)
     {
         setImagingEnvironmentHumidity(humidity, imageIndex, null, false);
     }
 
     public void
-    setImagingEnvironmentHumidity(float humidity, int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentHumidity(double humidity, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setImagingEnvironmentHumidity(humidity, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setImagingEnvironmentHumidity(float humidity, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setImagingEnvironmentHumidity(double humidity, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -20510,20 +20510,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setImagingEnvironmentTemperature(float temperature, int imageIndex)
+    setImagingEnvironmentTemperature(double temperature, int imageIndex)
     {
         setImagingEnvironmentTemperature(temperature, imageIndex, null, false);
     }
 
     public void
-    setImagingEnvironmentTemperature(float temperature, int imageIndex, java.util.Map<String, String> __ctx)
+    setImagingEnvironmentTemperature(double temperature, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setImagingEnvironmentTemperature(temperature, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setImagingEnvironmentTemperature(float temperature, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setImagingEnvironmentTemperature(double temperature, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -20762,20 +20762,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex)
+    setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex)
     {
         setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex, null, false);
     }
 
     public void
-    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
     {
         setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -21056,20 +21056,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex)
+    setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex)
     {
         setLightSourcePower(power, instrumentIndex, lightSourceIndex, null, false);
     }
 
     public void
-    setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
+    setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx)
     {
         setLightSourcePower(power, instrumentIndex, lightSourceIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -21098,20 +21098,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
+    setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex)
     {
         setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, null, false);
     }
 
     public void
-    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
+    setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx)
     {
         setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -21266,20 +21266,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex)
+    setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex)
     {
         setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -22106,20 +22106,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex)
+    setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex)
     {
         setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -22232,20 +22232,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex)
+    setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex)
     {
         setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex, null, false);
     }
 
     public void
-    setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
+    setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx)
     {
         setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -23618,20 +23618,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex)
+    setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex)
     {
         setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex, null, false);
     }
 
     public void
-    setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
     {
         setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -23828,20 +23828,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex)
+    setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex)
     {
         setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex, null, false);
     }
 
     public void
-    setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
     {
         setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -24038,20 +24038,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex)
+    setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex)
     {
         setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex, null, false);
     }
 
     public void
-    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, java.util.Map<String, String> __ctx)
+    setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -24164,20 +24164,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex)
+    setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex)
     {
         setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex, null, false);
     }
 
     public void
-    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx)
+    setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -24206,20 +24206,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex)
+    setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex)
     {
         setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex, null, false);
     }
 
     public void
-    setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
+    setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx)
     {
         setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -24920,20 +24920,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex)
+    setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
     public void
-    setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -24962,20 +24962,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex)
+    setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
     public void
-    setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -28784,20 +28784,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex)
+    setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex)
     {
         setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex, null, false);
     }
 
     public void
-    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
+    setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx)
     {
         setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -29330,20 +29330,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setStageLabelX(float x, int imageIndex)
+    setStageLabelX(double x, int imageIndex)
     {
         setStageLabelX(x, imageIndex, null, false);
     }
 
     public void
-    setStageLabelX(float x, int imageIndex, java.util.Map<String, String> __ctx)
+    setStageLabelX(double x, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setStageLabelX(x, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setStageLabelX(float x, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setStageLabelX(double x, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -29372,20 +29372,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setStageLabelY(float y, int imageIndex)
+    setStageLabelY(double y, int imageIndex)
     {
         setStageLabelY(y, imageIndex, null, false);
     }
 
     public void
-    setStageLabelY(float y, int imageIndex, java.util.Map<String, String> __ctx)
+    setStageLabelY(double y, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setStageLabelY(y, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setStageLabelY(float y, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setStageLabelY(double y, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -29414,20 +29414,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setStageLabelZ(float z, int imageIndex)
+    setStageLabelZ(double z, int imageIndex)
     {
         setStageLabelZ(z, imageIndex, null, false);
     }
 
     public void
-    setStageLabelZ(float z, int imageIndex, java.util.Map<String, String> __ctx)
+    setStageLabelZ(double z, int imageIndex, java.util.Map<String, String> __ctx)
     {
         setStageLabelZ(z, imageIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setStageLabelZ(float z, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setStageLabelZ(double z, int imageIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -29456,20 +29456,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex)
+    setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
     public void
-    setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -29498,20 +29498,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex)
+    setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
     public void
-    setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -29540,20 +29540,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex)
+    setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex)
     {
         setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex, null, false);
     }
 
     public void
-    setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
+    setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx)
     {
         setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -30632,20 +30632,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex)
+    setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex)
     {
         setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex, null, false);
     }
 
     public void
-    setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
     {
         setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -30674,20 +30674,20 @@ public final class IMetadataPrxHelper extends Ice.ObjectPrxHelperBase implements
     }
 
     public void
-    setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex)
+    setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex)
     {
         setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex, null, false);
     }
 
     public void
-    setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
+    setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx)
     {
         setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex, __ctx, true);
     }
 
     @SuppressWarnings("unchecked")
     private void
-    setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {

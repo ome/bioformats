@@ -106,7 +106,7 @@ public class BioRadReader extends FormatReader {
 
   private Vector<Note> noteStrings;
 
-  private Vector<Float> offset, gain;
+  private Vector<Double> offset, gain;
 
   // -- Constructor --
 
@@ -236,8 +236,8 @@ public class BioRadReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    offset = new Vector<Float>();
-    gain = new Vector<Float>();
+    offset = new Vector<Double>();
+    gain = new Vector<Double>();
 
     used = new Vector<String>();
     used.add(currentId);
@@ -514,24 +514,24 @@ public class BioRadReader extends FormatReader {
 
                   if (key.endsWith("OFFSET")) {
                     if (nextDetector < offset.size()) {
-                      offset.setElementAt(new Float(value), nextDetector);
+                      offset.setElementAt(new Double(value), nextDetector);
                     }
                     else {
                       while (nextDetector > offset.size()) {
                         offset.add(null);
                       }
-                      offset.add(new Float(value));
+                      offset.add(new Double(value));
                     }
                   }
                   else if (key.endsWith("GAIN")) {
                     if (nextDetector < gain.size()) {
-                      gain.setElementAt(new Float(value), nextDetector);
+                      gain.setElementAt(new Double(value), nextDetector);
                     }
                     else {
                       while (nextDetector > gain.size()) {
                         gain.add(null);
                       }
-                      gain.add(new Float(value));
+                      gain.add(new Double(value));
                     }
                   }
                   nextDetector++;
@@ -545,7 +545,7 @@ public class BioRadReader extends FormatReader {
                   int type = Integer.parseInt(values[0]);
                   if (type == 257 && values.length >= 3) {
                     // found length of axis in um
-                    Float pixelSize = new Float(values[2]);
+                    Double pixelSize = new Double(values[2]);
                     if (key.equals("AXIS_2")) {
                       store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
                     }
@@ -560,12 +560,12 @@ public class BioRadReader extends FormatReader {
           }
           else if (n.p.startsWith("AXIS_2")) {
             String[] values = n.p.split(" ");
-            Float pixelSize = new Float(values[3]);
+            Double pixelSize = new Double(values[3]);
             store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
           }
           else if (n.p.startsWith("AXIS_3")) {
             String[] values = n.p.split(" ");
-            Float pixelSize = new Float(values[3]);
+            Double pixelSize = new Double(values[3]);
             store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
           }
           else {
@@ -599,7 +599,7 @@ public class BioRadReader extends FormatReader {
 
                 store.setObjectiveNominalMagnification(
                   new Integer((int) Double.parseDouble(values[11])), 0, 0);
-                store.setDimensionsPhysicalSizeZ(new Float(values[14]), 0, 0);
+                store.setDimensionsPhysicalSizeZ(new Double(values[14]), 0, 0);
                 break;
               case 2:
                 addGlobalMeta("Z Start", values[0]);
@@ -609,15 +609,15 @@ public class BioRadReader extends FormatReader {
                 addGlobalMeta("Scan area width", values[4]);
                 addGlobalMeta("Scan area height", values[5]);
 
-                float width =
-                  Float.parseFloat(values[4]) - Float.parseFloat(values[2]);
+                double width =
+                  Double.parseDouble(values[4]) - Double.parseDouble(values[2]);
                 width /= getSizeX();
-                float height =
-                  Float.parseFloat(values[5]) - Float.parseFloat(values[3]);
+                double height =
+                  Double.parseDouble(values[5]) - Double.parseDouble(values[3]);
                 height /= getSizeY();
 
-                store.setDimensionsPhysicalSizeX(new Float(width), 0, 0);
-                store.setDimensionsPhysicalSizeY(new Float(height), 0, 0);
+                store.setDimensionsPhysicalSizeX(new Double(width), 0, 0);
+                store.setDimensionsPhysicalSizeY(new Double(height), 0, 0);
 
                 break;
               case 3:
@@ -703,8 +703,8 @@ public class BioRadReader extends FormatReader {
                   String detectorID =
                     MetadataTools.createLSID("Detector", 0, i);
                   store.setDetectorID(detectorID, 0, i);
-                  store.setDetectorOffset(new Float(values[i * 3]), 0, i);
-                  store.setDetectorGain(new Float(values[i * 3 + 1]), 0, i);
+                  store.setDetectorOffset(new Double(values[i * 3]), 0, i);
+                  store.setDetectorGain(new Double(values[i * 3 + 1]), 0, i);
                   store.setDetectorType("Unknown", 0, i);
                 }
                 break;
@@ -945,15 +945,15 @@ public class BioRadReader extends FormatReader {
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
 
-    store.setObjectiveLensNA(new Float(lens), 0, 0);
+    store.setObjectiveLensNA(new Double(lens), 0, 0);
     store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
     store.setObjectiveCorrection("Unknown", 0, 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
 
     // link Detector to Image
     for (int i=0; i<getEffectiveSizeC(); i++) {
-      Float detectorOffset = i < offset.size() ? offset.get(i) : null;
-      Float detectorGain = i < gain.size() ? gain.get(i) : null;
+      Double detectorOffset = i < offset.size() ? offset.get(i) : null;
+      Double detectorGain = i < gain.size() ? gain.get(i) : null;
 
       if (detectorOffset != null || detectorGain != null) {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);

@@ -250,7 +250,7 @@ public class IvisionReader extends FormatReader {
     store.setImageInstrumentRef(instrumentID, 0);
 
     if (deltaT != null) {
-      store.setDimensionsTimeIncrement(new Float(deltaT), 0, 0);
+      store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
     }
 
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -260,12 +260,12 @@ public class IvisionReader extends FormatReader {
     store.setObjectiveCorrection("Unknown", 0, 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
 
-    if (lensNA != null) store.setObjectiveLensNA(new Float(lensNA), 0, 0);
+    if (lensNA != null) store.setObjectiveLensNA(new Double(lensNA), 0, 0);
     if (magnification != null) {
       store.setObjectiveNominalMagnification(new Integer(magnification), 0, 0);
     }
     if (refractiveIndex != null) {
-      store.setObjectiveSettingsRefractiveIndex(new Float(refractiveIndex), 0);
+      store.setObjectiveSettingsRefractiveIndex(new Double(refractiveIndex), 0);
     }
 
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -275,7 +275,7 @@ public class IvisionReader extends FormatReader {
     store.setDetectorType("Unknown", 0, 0);
 
     store.setDetectorSettingsBinning(binX + "x" + binY, 0, 0);
-    if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
+    if (gain != null) store.setDetectorSettingsGain(new Double(gain), 0, 0);
   }
 
   // -- Helper class --

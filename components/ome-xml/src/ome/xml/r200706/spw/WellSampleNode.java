@@ -113,23 +113,23 @@ public class WellSampleNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Float getPosX()
+	public Double getPosX()
 	{
-		return getFloatAttribute("PosX");
+		return getDoubleAttribute("PosX");
 	}
 
-	public void setPosX(Float posX)
+	public void setPosX(Double posX)
 	{
 		setAttribute("PosX", posX);
 	}
 
 	// Attribute
-	public Float getPosY()
+	public Double getPosY()
 	{
-		return getFloatAttribute("PosY");
+		return getDoubleAttribute("PosY");
 	}
 
-	public void setPosY(Float posY)
+	public void setPosY(Double posY)
 	{
 		setAttribute("PosY", posY);
 	}

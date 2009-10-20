@@ -1,13 +1,13 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 
 package loci.ice.formats;
 
@@ -131,9 +131,9 @@ public interface _IMetadataOperations
 
     String getDatasetRefID(int imageIndex, int datasetRefIndex, Ice.Current __current);
 
-    float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, Ice.Current __current);
+    double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    float getDetectorGain(int instrumentIndex, int detectorIndex, Ice.Current __current);
+    double getDetectorGain(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     String getDetectorID(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
@@ -141,27 +141,27 @@ public interface _IMetadataOperations
 
     String getDetectorModel(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    float getDetectorOffset(int instrumentIndex, int detectorIndex, Ice.Current __current);
+    double getDetectorOffset(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     String getDetectorSerialNumber(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     String getDetectorType(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    float getDetectorVoltage(int instrumentIndex, int detectorIndex, Ice.Current __current);
+    double getDetectorVoltage(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    float getDetectorZoom(int instrumentIndex, int detectorIndex, Ice.Current __current);
+    double getDetectorZoom(int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     String getDichroicID(int instrumentIndex, int dichroicIndex, Ice.Current __current);
 
@@ -171,13 +171,13 @@ public interface _IMetadataOperations
 
     String getDichroicModel(int instrumentIndex, int dichroicIndex, Ice.Current __current);
 
-    float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Ice.Current __current);
+    double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Ice.Current __current);
 
-    float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Ice.Current __current);
+    double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Ice.Current __current);
 
-    float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Ice.Current __current);
+    double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Ice.Current __current);
 
-    float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Ice.Current __current);
+    double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Ice.Current __current);
 
     int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex, Ice.Current __current);
 
@@ -187,7 +187,7 @@ public interface _IMetadataOperations
 
     String getDisplayOptionsID(int imageIndex, Ice.Current __current);
 
-    float getDisplayOptionsZoom(int imageIndex, Ice.Current __current);
+    double getDisplayOptionsZoom(int imageIndex, Ice.Current __current);
 
     String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -291,13 +291,13 @@ public interface _IMetadataOperations
 
     String getImageName(int imageIndex, Ice.Current __current);
 
-    float getImagingEnvironmentAirPressure(int imageIndex, Ice.Current __current);
+    double getImagingEnvironmentAirPressure(int imageIndex, Ice.Current __current);
 
-    float getImagingEnvironmentCO2Percent(int imageIndex, Ice.Current __current);
+    double getImagingEnvironmentCO2Percent(int imageIndex, Ice.Current __current);
 
-    float getImagingEnvironmentHumidity(int imageIndex, Ice.Current __current);
+    double getImagingEnvironmentHumidity(int imageIndex, Ice.Current __current);
 
-    float getImagingEnvironmentTemperature(int imageIndex, Ice.Current __current);
+    double getImagingEnvironmentTemperature(int imageIndex, Ice.Current __current);
 
     String getInstrumentID(int instrumentIndex, Ice.Current __current);
 
@@ -309,7 +309,7 @@ public interface _IMetadataOperations
 
     String getLaserPulse(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
-    boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+    double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
     boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
@@ -323,17 +323,17 @@ public interface _IMetadataOperations
 
     String getLightSourceModel(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
-    float getLightSourcePower(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+    double getLightSourcePower(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
     String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
-    float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
+    double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
 
     String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
 
     int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
 
-    float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
@@ -373,13 +373,13 @@ public interface _IMetadataOperations
 
     String getLogicalChannelName(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
@@ -445,7 +445,7 @@ public interface _IMetadataOperations
 
     int getOTFSizeY(int instrumentIndex, int otfIndex, Ice.Current __current);
 
-    float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, Ice.Current __current);
+    double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
     String getObjectiveCorrection(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
@@ -455,7 +455,7 @@ public interface _IMetadataOperations
 
     boolean getObjectiveIris(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
-    float getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Ice.Current __current);
+    double getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
     String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
@@ -465,15 +465,15 @@ public interface _IMetadataOperations
 
     String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
-    float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, Ice.Current __current);
+    double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
-    float getObjectiveSettingsCorrectionCollar(int imageIndex, Ice.Current __current);
+    double getObjectiveSettingsCorrectionCollar(int imageIndex, Ice.Current __current);
 
     String getObjectiveSettingsMedium(int imageIndex, Ice.Current __current);
 
     String getObjectiveSettingsObjective(int imageIndex, Ice.Current __current);
 
-    float getObjectiveSettingsRefractiveIndex(int imageIndex, Ice.Current __current);
+    double getObjectiveSettingsRefractiveIndex(int imageIndex, Ice.Current __current);
 
     String getPathD(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -507,9 +507,9 @@ public interface _IMetadataOperations
 
     int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
     String getPlateColumnNamingConvention(int plateIndex, Ice.Current __current);
 
@@ -691,7 +691,7 @@ public interface _IMetadataOperations
 
     int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+    double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
     int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -717,17 +717,17 @@ public interface _IMetadataOperations
 
     String getStageLabelName(int imageIndex, Ice.Current __current);
 
-    float getStageLabelX(int imageIndex, Ice.Current __current);
+    double getStageLabelX(int imageIndex, Ice.Current __current);
 
-    float getStageLabelY(int imageIndex, Ice.Current __current);
+    double getStageLabelY(int imageIndex, Ice.Current __current);
 
-    float getStageLabelZ(int imageIndex, Ice.Current __current);
+    double getStageLabelZ(int imageIndex, Ice.Current __current);
 
-    float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
     String getThumbnailHref(int imageIndex, Ice.Current __current);
 
@@ -779,9 +779,9 @@ public interface _IMetadataOperations
 
     int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
-    float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
+    double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
-    float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
+    double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
     int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
@@ -825,9 +825,9 @@ public interface _IMetadataOperations
 
     void setDatasetRefID(String id, int imageIndex, int datasetRefIndex, Ice.Current __current);
 
-    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, Ice.Current __current);
+    void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    void setDetectorGain(float gain, int instrumentIndex, int detectorIndex, Ice.Current __current);
+    void setDetectorGain(double gain, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     void setDetectorID(String id, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
@@ -835,27 +835,27 @@ public interface _IMetadataOperations
 
     void setDetectorModel(String model, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, Ice.Current __current);
+    void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     void setDetectorType(String type, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, Ice.Current __current);
+    void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
-    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, Ice.Current __current);
+    void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex, Ice.Current __current);
 
     void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setDichroicID(String id, int instrumentIndex, int dichroicIndex, Ice.Current __current);
 
@@ -865,13 +865,13 @@ public interface _IMetadataOperations
 
     void setDichroicModel(String model, int instrumentIndex, int dichroicIndex, Ice.Current __current);
 
-    void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, Ice.Current __current);
+    void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, Ice.Current __current);
 
-    void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, Ice.Current __current);
+    void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, Ice.Current __current);
 
-    void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, Ice.Current __current);
+    void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, Ice.Current __current);
 
-    void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, Ice.Current __current);
+    void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, Ice.Current __current);
 
     void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex, Ice.Current __current);
 
@@ -881,7 +881,7 @@ public interface _IMetadataOperations
 
     void setDisplayOptionsID(String id, int imageIndex, Ice.Current __current);
 
-    void setDisplayOptionsZoom(float zoom, int imageIndex, Ice.Current __current);
+    void setDisplayOptionsZoom(double zoom, int imageIndex, Ice.Current __current);
 
     void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -985,13 +985,13 @@ public interface _IMetadataOperations
 
     void setImageName(String name, int imageIndex, Ice.Current __current);
 
-    void setImagingEnvironmentAirPressure(float airPressure, int imageIndex, Ice.Current __current);
+    void setImagingEnvironmentAirPressure(double airPressure, int imageIndex, Ice.Current __current);
 
-    void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, Ice.Current __current);
+    void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, Ice.Current __current);
 
-    void setImagingEnvironmentHumidity(float humidity, int imageIndex, Ice.Current __current);
+    void setImagingEnvironmentHumidity(double humidity, int imageIndex, Ice.Current __current);
 
-    void setImagingEnvironmentTemperature(float temperature, int imageIndex, Ice.Current __current);
+    void setImagingEnvironmentTemperature(double temperature, int imageIndex, Ice.Current __current);
 
     void setInstrumentID(String id, int instrumentIndex, Ice.Current __current);
 
@@ -1003,7 +1003,7 @@ public interface _IMetadataOperations
 
     void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
-    void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+    void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
     void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
@@ -1017,17 +1017,17 @@ public interface _IMetadataOperations
 
     void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
-    void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
+    void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
     void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex, Ice.Current __current);
 
-    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
+    void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
 
     void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
 
     void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Ice.Current __current);
 
-    void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
@@ -1067,13 +1067,13 @@ public interface _IMetadataOperations
 
     void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
-    void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, Ice.Current __current);
+    void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
     void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex, Ice.Current __current);
 
@@ -1139,7 +1139,7 @@ public interface _IMetadataOperations
 
     void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex, Ice.Current __current);
 
-    void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, Ice.Current __current);
+    void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
     void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
@@ -1149,7 +1149,7 @@ public interface _IMetadataOperations
 
     void setObjectiveIris(boolean iris, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
-    void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, Ice.Current __current);
+    void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
     void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
@@ -1159,15 +1159,15 @@ public interface _IMetadataOperations
 
     void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
-    void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, Ice.Current __current);
+    void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex, Ice.Current __current);
 
-    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, Ice.Current __current);
+    void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, Ice.Current __current);
 
     void setObjectiveSettingsMedium(String medium, int imageIndex, Ice.Current __current);
 
     void setObjectiveSettingsObjective(String objective, int imageIndex, Ice.Current __current);
 
-    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, Ice.Current __current);
+    void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, Ice.Current __current);
 
     void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -1201,9 +1201,9 @@ public interface _IMetadataOperations
 
     void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
     void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, Ice.Current __current);
 
@@ -1385,7 +1385,7 @@ public interface _IMetadataOperations
 
     void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
-    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
+    void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
     void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, Ice.Current __current);
 
@@ -1411,17 +1411,17 @@ public interface _IMetadataOperations
 
     void setStageLabelName(String name, int imageIndex, Ice.Current __current);
 
-    void setStageLabelX(float x, int imageIndex, Ice.Current __current);
+    void setStageLabelX(double x, int imageIndex, Ice.Current __current);
 
-    void setStageLabelY(float y, int imageIndex, Ice.Current __current);
+    void setStageLabelY(double y, int imageIndex, Ice.Current __current);
 
-    void setStageLabelZ(float z, int imageIndex, Ice.Current __current);
+    void setStageLabelZ(double z, int imageIndex, Ice.Current __current);
 
-    void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
-    void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
+    void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, Ice.Current __current);
 
     void setThumbnailHref(String href, int imageIndex, Ice.Current __current);
 
@@ -1473,9 +1473,9 @@ public interface _IMetadataOperations
 
     void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
-    void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
+    void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
-    void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
+    void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 
     void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex, Ice.Current __current);
 

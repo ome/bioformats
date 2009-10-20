@@ -54,12 +54,12 @@ public class NikonTiffReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private float physicalSizeX, physicalSizeY, physicalSizeZ;
+  private double physicalSizeX, physicalSizeY, physicalSizeZ;
   private Vector<String> filterModels, dichroicModels, laserIDs;
   private int magnification;
-  private float lensNA, workingDistance, pinholeSize;
+  private double lensNA, workingDistance, pinholeSize;
   private String correction, immersion;
-  private Vector<Float> gain;
+  private Vector<Double> gain;
   private Vector<Integer> wavelength, emWave, exWave;
 
   // -- Constructor --
@@ -104,7 +104,7 @@ public class NikonTiffReader extends BaseTiffReader {
     filterModels = new Vector<String>();
     dichroicModels = new Vector<String>();
     laserIDs = new Vector<String>();
-    gain = new Vector<Float>();
+    gain = new Vector<Double>();
     wavelength = new Vector<Integer>();
     emWave = new Vector<Integer>();
     exWave = new Vector<Integer>();
@@ -161,22 +161,22 @@ public class NikonTiffReader extends BaseTiffReader {
         correction = value;
       }
       else if (key.equals("history objective Magnification")) {
-        magnification = (int) Float.parseFloat(value);
+        magnification = (int) Double.parseDouble(value);
       }
       else if (key.equals("history objective NA")) {
-        lensNA = Float.parseFloat(value);
+        lensNA = Double.parseDouble(value);
       }
       else if (key.equals("history objective WorkingDistance")) {
-        workingDistance = Float.parseFloat(value);
+        workingDistance = Double.parseDouble(value);
       }
       else if (key.equals("history objective Immersion")) {
         immersion = value;
       }
       else if (key.startsWith("history gain")) {
-        gain.add(new Float(value));
+        gain.add(new Double(value));
       }
       else if (key.equals("history pinhole")) {
-        pinholeSize = new Float(value.substring(0, value.indexOf(" ")));
+        pinholeSize = new Double(value.substring(0, value.indexOf(" ")));
       }
       else if (key.startsWith("history laser") && key.endsWith("wavelength")) {
         wavelength.add(new Integer(value.replaceAll("\\D", "")));
@@ -210,9 +210,9 @@ public class NikonTiffReader extends BaseTiffReader {
 
     store.setImageDescription("", 0);
 
-    store.setDimensionsPhysicalSizeX(new Float(physicalSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(physicalSizeY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(physicalSizeZ), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(physicalSizeX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(physicalSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(physicalSizeZ), 0, 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -225,8 +225,8 @@ public class NikonTiffReader extends BaseTiffReader {
 
     if (correction == null) correction = "Unknown";
     store.setObjectiveCorrection(correction, 0, 0);
-    store.setObjectiveLensNA(new Float(lensNA), 0, 0);
-    store.setObjectiveWorkingDistance(new Float(workingDistance), 0, 0);
+    store.setObjectiveLensNA(new Double(lensNA), 0, 0);
+    store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     if (immersion == null) immersion = "Unknown";
     store.setObjectiveImmersion(immersion, 0, 0);
 
@@ -245,7 +245,7 @@ public class NikonTiffReader extends BaseTiffReader {
     }
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
-      store.setLogicalChannelPinholeSize(new Float(pinholeSize), 0, c);
+      store.setLogicalChannelPinholeSize(new Double(pinholeSize), 0, c);
       if (c < exWave.size()) {
         store.setLogicalChannelExWave(exWave.get(c), 0, c);
       }
@@ -272,13 +272,13 @@ public class NikonTiffReader extends BaseTiffReader {
   private void parseDimensionSizes(String[] labels, String[] sizes) {
     for (int i=0; i<labels.length; i++) {
       if (labels[i].startsWith("z")) {
-        physicalSizeZ = Float.parseFloat(sizes[i]);
+        physicalSizeZ = Double.parseDouble(sizes[i]);
       }
       else if (labels[i].equals("x")) {
-        physicalSizeX = Float.parseFloat(sizes[i]);
+        physicalSizeX = Double.parseDouble(sizes[i]);
       }
       else if (labels[i].equals("y")) {
-        physicalSizeY = Float.parseFloat(sizes[i]);
+        physicalSizeY = Double.parseDouble(sizes[i]);
       }
     }
   }

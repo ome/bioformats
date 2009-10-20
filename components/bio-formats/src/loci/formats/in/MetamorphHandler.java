@@ -50,13 +50,13 @@ public class MetamorphHandler extends DefaultHandler {
   private String imageName;
   private String date;
   private Vector<Integer> wavelengths;
-  private Vector<Float> zPositions;
-  private float pixelSizeX, pixelSizeY;
-  private float temperature;
+  private Vector<Double> zPositions;
+  private double pixelSizeX, pixelSizeY;
+  private double temperature;
   private String binning;
-  private float readOutRate, zoom;
-  private float positionX, positionY;
-  private Vector<Float> exposures;
+  private double readOutRate, zoom;
+  private double positionX, positionY;
+  private Vector<Double> exposures;
 
   // -- Constructor --
 
@@ -65,8 +65,8 @@ public class MetamorphHandler extends DefaultHandler {
     this.metadata = metadata;
     timestamps = new Vector<String>();
     wavelengths = new Vector<Integer>();
-    zPositions = new Vector<Float>();
-    exposures = new Vector<Float>();
+    zPositions = new Vector<Double>();
+    exposures = new Vector<Double>();
   }
 
   // -- MetamorphHandler API methods --
@@ -75,29 +75,29 @@ public class MetamorphHandler extends DefaultHandler {
 
   public Vector<Integer> getWavelengths() { return wavelengths; }
 
-  public Vector<Float> getZPositions() { return zPositions; }
+  public Vector<Double> getZPositions() { return zPositions; }
 
   public String getDate() { return date; }
 
   public String getImageName() { return imageName; }
 
-  public float getPixelSizeX() { return pixelSizeX; }
+  public double getPixelSizeX() { return pixelSizeX; }
 
-  public float getPixelSizeY() { return pixelSizeY; }
+  public double getPixelSizeY() { return pixelSizeY; }
 
-  public float getTemperature() { return temperature; }
+  public double getTemperature() { return temperature; }
 
   public String getBinning() { return binning; }
 
-  public float getReadOutRate() { return readOutRate; }
+  public double getReadOutRate() { return readOutRate; }
 
-  public float getZoom() { return zoom; }
+  public double getZoom() { return zoom; }
 
-  public float getStagePositionX() { return positionX; }
+  public double getStagePositionX() { return positionX; }
 
-  public float getStagePositionY() { return positionY; }
+  public double getStagePositionY() { return positionY; }
 
-  public Vector<Float> getExposures() { return exposures; }
+  public Vector<Double> getExposures() { return exposures; }
 
   // -- DefaultHandler API methods --
 
@@ -163,16 +163,16 @@ public class MetamorphHandler extends DefaultHandler {
   /** Check if the value needs to be saved. */
   private void checkKey(String key, String value) {
     if (key.equals("Temperature")) {
-      temperature = Float.parseFloat(value);
+      temperature = Double.parseDouble(value);
     }
     else if (key.equals("spatial-calibration-x")) {
-      pixelSizeX = Float.parseFloat(value);
+      pixelSizeX = Double.parseDouble(value);
     }
     else if (key.equals("spatial-calibration-y")) {
-      pixelSizeY = Float.parseFloat(value);
+      pixelSizeY = Double.parseDouble(value);
     }
     else if (key.equals("z-position")) {
-      zPositions.add(new Float(value));
+      zPositions.add(new Double(value));
     }
     else if (key.equals("wavelength")) {
       wavelengths.add(new Integer(value));
@@ -186,26 +186,26 @@ public class MetamorphHandler extends DefaultHandler {
       binning = value;
     }
     else if (key.equals("Readout Frequency")) {
-      readOutRate = Float.parseFloat(value);
+      readOutRate = Double.parseDouble(value);
     }
     else if (key.equals("zoom-percent")) {
-      zoom = Float.parseFloat(value);
+      zoom = Double.parseDouble(value);
     }
     else if (key.equals("stage-position-x")) {
-      positionX = Float.parseFloat(value);
+      positionX = Double.parseDouble(value);
     }
     else if (key.equals("stage-position-y")) {
-      positionY = Float.parseFloat(value);
+      positionY = Double.parseDouble(value);
     }
     else if (key.equals("Speed")) {
-      readOutRate = Float.parseFloat(value);
+      readOutRate = Double.parseDouble(value);
     }
     else if (key.equals("Exposure")) {
       if (value.indexOf(" ") != -1) {
         value = value.substring(0, value.indexOf(" "));
       }
       // exposure times are stored in milliseconds, we want them in seconds
-      exposures.add(new Float(Float.parseFloat(value) / 1000));
+      exposures.add(new Double(Double.parseDouble(value) / 1000));
     }
   }
 

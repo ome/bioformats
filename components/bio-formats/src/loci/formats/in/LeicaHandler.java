@@ -57,8 +57,8 @@ public class LeicaHandler extends DefaultHandler {
   private int count = 0, numChannels, extras;
 
   private Vector<String> lutNames;
-  private Vector<Float> xPos, yPos, zPos;
-  private float physicalSizeX, physicalSizeY;
+  private Vector<Double> xPos, yPos, zPos;
+  private double physicalSizeX, physicalSizeY;
 
   private int numDatasets = -1;
   private Hashtable globalMetadata;
@@ -67,7 +67,7 @@ public class LeicaHandler extends DefaultHandler {
 
   private int channel = 0;
   private int nextLaser, nextChannel, nextDetector = -1;
-  private Float zoom, pinhole;
+  private Double zoom, pinhole;
   private Vector<Integer> detectorIndices;
   private String filterWheelName;
   private int nextFilter = 0;
@@ -94,9 +94,9 @@ public class LeicaHandler extends DefaultHandler {
     this.store = store;
     core = new Vector<CoreMetadata>();
     detectorIndices = new Vector<Integer>();
-    xPos = new Vector<Float>();
-    yPos = new Vector<Float>();
-    zPos = new Vector<Float>();
+    xPos = new Vector<Double>();
+    yPos = new Vector<Double>();
+    zPos = new Vector<Double>();
     bytesPerAxis = new Hashtable<Integer, String>();
   }
 
@@ -302,7 +302,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("DimensionDescription")) {
       int len = Integer.parseInt(attributes.getValue("NumberOfElements"));
       int id = Integer.parseInt(attributes.getValue("DimID"));
-      float physicalLen = Float.parseFloat(attributes.getValue("Length"));
+      double physicalLen = Double.parseDouble(attributes.getValue("Length"));
       String unit = attributes.getValue("Unit");
       int nBytes = Integer.parseInt(attributes.getValue("BytesInc"));
 
@@ -314,7 +314,7 @@ public class LeicaHandler extends DefaultHandler {
         physicalLen *= 1000000;
       }
 
-      Float physicalSize = new Float(physicalLen);
+      Double physicalSize = new Double(physicalLen);
 
       CoreMetadata coreMeta = core.get(core.size() - 1);
 
@@ -334,7 +334,7 @@ public class LeicaHandler extends DefaultHandler {
               coreMeta.pixelType = FormatTools.FLOAT;
               break;
           }
-          physicalSizeX = physicalSize.floatValue();
+          physicalSizeX = physicalSize.doubleValue();
           store.setDimensionsPhysicalSizeX(physicalSize, numDatasets, 0);
           break;
         case 2: // Y axis
@@ -348,7 +348,7 @@ public class LeicaHandler extends DefaultHandler {
           }
           else {
             coreMeta.sizeY = len;
-            physicalSizeY = physicalSize.floatValue();
+            physicalSizeY = physicalSize.doubleValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
           }
           break;
@@ -357,7 +357,7 @@ public class LeicaHandler extends DefaultHandler {
             // XZ scan - swap Y and Z
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
-            physicalSizeY = physicalSize.floatValue();
+            physicalSizeY = physicalSize.doubleValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
           }
           else {
@@ -370,7 +370,7 @@ public class LeicaHandler extends DefaultHandler {
             // XT scan - swap Y and T
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
-            physicalSizeY = physicalSize.floatValue();
+            physicalSizeY = physicalSize.doubleValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
           }
           else {
@@ -391,17 +391,17 @@ public class LeicaHandler extends DefaultHandler {
         store.setMicroscopeType("Unknown", numDatasets);
       }
       else if (id.equals("dblPinhole")) {
-        pinhole = new Float(Float.parseFloat(value) * 1000000);
+        pinhole = new Double(Double.parseDouble(value) * 1000000);
       }
       else if (id.equals("dblZoom")) {
-        zoom = new Float(value);
+        zoom = new Double(value);
       }
       else if (id.equals("dblStepSize")) {
-        float zStep = (float) (Double.parseDouble(value) * 1000000);
-        store.setDimensionsPhysicalSizeZ(new Float(zStep), numDatasets, 0);
+        double zStep = Double.parseDouble(value) * 1000000;
+        store.setDimensionsPhysicalSizeZ(new Double(zStep), numDatasets, 0);
       }
       else if (id.equals("nDelayTime_s")) {
-        store.setDimensionsTimeIncrement(new Float(value), numDatasets, 0);
+        store.setDimensionsTimeIncrement(new Double(value), numDatasets, 0);
       }
       else if (id.equals("CameraName")) {
         store.setDetectorModel(value, numDatasets, 0);
@@ -413,10 +413,11 @@ public class LeicaHandler extends DefaultHandler {
         }
         catch (NumberFormatException e) { }
         if (id.endsWith("ExposureTime")) {
-          store.setPlaneTimingExposureTime(new Float(value), numDatasets, 0, c);
+          store.setPlaneTimingExposureTime(new Double(value),
+            numDatasets, 0, c);
         }
         else if (id.endsWith("Gain")) {
-          store.setDetectorSettingsGain(new Float(value), numDatasets, c);
+          store.setDetectorSettingsGain(new Double(value), numDatasets, c);
 
           String detectorID =
             MetadataTools.createLSID("Detector", numDatasets, 0);
@@ -428,7 +429,7 @@ public class LeicaHandler extends DefaultHandler {
         else if (id.endsWith("WaveLength")) {
           store.setLogicalChannelExWave(new Integer(value), numDatasets, c);
         }
-        // this is not a typo
+        // NB: "UesrDefName" is not a typo.
         else if (id.endsWith("UesrDefName") && !value.equals("None")) {
           store.setLogicalChannelName(value, numDatasets, c);
         }
@@ -442,7 +443,7 @@ public class LeicaHandler extends DefaultHandler {
       CoreMetadata coreMeta = core.get(numDatasets);
 
       if (attribute.equals("NumericalAperture")) {
-        store.setObjectiveLensNA(new Float(variant), numDatasets, 0);
+        store.setObjectiveLensNA(new Double(variant), numDatasets, 0);
       }
       else if (attribute.equals("OrderNumber")) {
         store.setObjectiveSerialNumber(variant, numDatasets, 0);
@@ -459,11 +460,11 @@ public class LeicaHandler extends DefaultHandler {
         }
         else if (attribute.equals("HighVoltage")) {
           Detector d = detectors.get(detectors.size() - 1);
-          d.voltage = new Float(variant);
+          d.voltage = new Double(variant);
         }
         else if (attribute.equals("VideoOffset")) {
           Detector d = detectors.get(detectors.size() - 1);
-          d.offset = new Float(variant);
+          d.offset = new Double(variant);
         }
       }
       else if (attribute.equals("Objective")) {
@@ -476,12 +477,12 @@ public class LeicaHandler extends DefaultHandler {
           if (x != -1) {
             foundMag = true;
 
-            int mag = (int) Float.parseFloat(token.substring(0, x));
+            int mag = (int) Double.parseDouble(token.substring(0, x));
             String na = token.substring(x + 1);
 
             store.setObjectiveNominalMagnification(
               new Integer(mag), numDatasets, 0);
-            store.setObjectiveLensNA(new Float(na), numDatasets, 0);
+            store.setObjectiveLensNA(new Double(na), numDatasets, 0);
           }
           else {
             model.append(token);
@@ -510,13 +511,13 @@ public class LeicaHandler extends DefaultHandler {
         String id = MetadataTools.createLSID("Objective", numDatasets, 0);
         store.setObjectiveID(id, numDatasets, 0);
         store.setObjectiveSettingsObjective(id, numDatasets);
-        store.setObjectiveSettingsRefractiveIndex(new Float(variant),
+        store.setObjectiveSettingsRefractiveIndex(new Double(variant),
           numDatasets);
       }
       else if (attribute.equals("XPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
         int nPlanes = coreMeta.imageCount / c;
-        Float posX = new Float(variant);
+        Double posX = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
           int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC) + channel;
           if (index >= nPlanes) continue;
@@ -527,7 +528,7 @@ public class LeicaHandler extends DefaultHandler {
       else if (attribute.equals("YPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
         int nPlanes = coreMeta.imageCount / c;
-        Float posY = new Float(variant);
+        Double posY = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
           int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC) + channel;
           if (index >= nPlanes) continue;
@@ -538,7 +539,7 @@ public class LeicaHandler extends DefaultHandler {
       else if (attribute.equals("ZPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
         int nPlanes = coreMeta.imageCount / c;
-        Float posZ = new Float(variant);
+        Double posZ = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
           int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC) + channel;
           if (index >= nPlanes) continue;
@@ -549,7 +550,7 @@ public class LeicaHandler extends DefaultHandler {
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;
         try {
-          v = new Integer((int) Float.parseFloat(variant));
+          v = new Integer((int) Double.parseDouble(variant));
         }
         catch (NumberFormatException e) { }
         if (attributes.getValue("Description").endsWith("(left)")) {
@@ -570,8 +571,8 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("Detector")) {
-      Float gain = new Float(attributes.getValue("Gain"));
-      Float offset = new Float(attributes.getValue("Offset"));
+      Double gain = new Double(attributes.getValue("Gain"));
+      Double offset = new Double(attributes.getValue("Offset"));
       boolean active = attributes.getValue("IsActive").equals("1");
 
       if (active) {
@@ -632,11 +633,11 @@ public class LeicaHandler extends DefaultHandler {
             nextChannel);
         }
 
-        if (laser != null && laser.intensity > 0f) {
+        if (laser != null && laser.intensity > 0) {
           store.setLightSourceSettingsLightSource(laser.id, numDatasets,
             nextChannel);
           store.setLightSourceSettingsAttenuation(
-            new Float(laser.intensity / 100f), numDatasets, nextChannel);
+            new Double(laser.intensity / 100.0), numDatasets, nextChannel);
           store.setLogicalChannelExWave(laser.wavelength, numDatasets,
             nextChannel);
         }
@@ -657,7 +658,7 @@ public class LeicaHandler extends DefaultHandler {
       store.setLaserType("Unknown", numDatasets, l.index);
       store.setLaserLaserMedium("Unknown", numDatasets, l.index);
 
-      l.intensity = Float.parseFloat(attributes.getValue("IntensityDev"));
+      l.intensity = Double.parseDouble(attributes.getValue("IntensityDev"));
 
       if (l.intensity > 0) lasers.add(l);
     }
@@ -674,7 +675,7 @@ public class LeicaHandler extends DefaultHandler {
           store.setImageCreationDate(date, numDatasets);
         }
         firstStamp = ms;
-        store.setPlaneTimingDeltaT(new Float(0), numDatasets, 0, count);
+        store.setPlaneTimingDeltaT(new Double(0), numDatasets, 0, count);
       }
       else {
         CoreMetadata coreMeta = core.get(numDatasets);
@@ -682,7 +683,7 @@ public class LeicaHandler extends DefaultHandler {
         if (count < nImages) {
           ms -= firstStamp;
           store.setPlaneTimingDeltaT(
-            new Float(ms / 1000f), numDatasets, 0, count);
+            new Double(ms / 1000.0), numDatasets, 0, count);
         }
       }
 
@@ -692,7 +693,7 @@ public class LeicaHandler extends DefaultHandler {
       CoreMetadata coreMeta = core.get(numDatasets);
       int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
       if (count < nImages) {
-        Float time = new Float(attributes.getValue("Time"));
+        Double time = new Double(attributes.getValue("Time"));
         store.setPlaneTimingDeltaT(time, numDatasets, 0, count++);
       }
     }
@@ -705,11 +706,11 @@ public class LeicaHandler extends DefaultHandler {
       roi.name = attributes.getValue("name");
       roi.fontName = attributes.getValue("fontName");
       roi.fontSize = attributes.getValue("fontSize");
-      roi.transX = parseFloat(attributes.getValue("transTransX"));
-      roi.transY = parseFloat(attributes.getValue("transTransY"));
-      roi.scaleX = parseFloat(attributes.getValue("transScalingX"));
-      roi.scaleY = parseFloat(attributes.getValue("transScalingY"));
-      roi.rotation = parseFloat(attributes.getValue("transRotation"));
+      roi.transX = parseDouble(attributes.getValue("transTransX"));
+      roi.transY = parseDouble(attributes.getValue("transTransY"));
+      roi.scaleX = parseDouble(attributes.getValue("transScalingX"));
+      roi.scaleY = parseDouble(attributes.getValue("transScalingY"));
+      roi.rotation = parseDouble(attributes.getValue("transRotation"));
       String linewidth = attributes.getValue("linewidth");
       if (linewidth != null) roi.linewidth = Integer.parseInt(linewidth);
       roi.text = attributes.getValue("text");
@@ -717,8 +718,8 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("Vertex")) {
       String x = attributes.getValue("x").replaceAll(",", ".");
       String y = attributes.getValue("y").replaceAll(",", ".");
-      roi.x.add(new Float(x));
-      roi.y.add(new Float(y));
+      roi.x.add(new Double(x));
+      roi.y.add(new Double(y));
     }
     else if (qName.equals("ROI")) {
       alternateCenter = true;
@@ -727,9 +728,10 @@ public class LeicaHandler extends DefaultHandler {
       MultiBand m = new MultiBand();
       m.dyeName = attributes.getValue("DyeName");
       m.channel = Integer.parseInt(attributes.getValue("Channel"));
-      m.cutIn = Math.round(Float.parseFloat(attributes.getValue("LeftWorld")));
-      m.cutOut =
-        Math.round(Float.parseFloat(attributes.getValue("RightWorld")));
+      m.cutIn = (int)
+        Math.round(Double.parseDouble(attributes.getValue("LeftWorld")));
+      m.cutOut = (int)
+        Math.round(Double.parseDouble(attributes.getValue("RightWorld")));
 
       multiBands.add(m);
     }
@@ -766,15 +768,15 @@ public class LeicaHandler extends DefaultHandler {
     // -- Fields --
     public int type;
 
-    public Vector<Float> x = new Vector<Float>();
-    public Vector<Float> y = new Vector<Float>();
+    public Vector<Double> x = new Vector<Double>();
+    public Vector<Double> y = new Vector<Double>();
 
     // center point of the ROI
-    public float transX, transY;
+    public double transX, transY;
 
     // transformation parameters
-    public float scaleX, scaleY;
-    public float rotation;
+    public double scaleX, scaleY;
+    public double rotation;
 
     public int color;
     public int linewidth;
@@ -797,21 +799,21 @@ public class LeicaHandler extends DefaultHandler {
       if (fontName != null) store.setShapeFontFamily(fontName, series, roi, 0);
       if (fontSize != null) {
         store.setShapeFontSize(
-          new Integer((int) Float.parseFloat(fontSize)), series, roi, 0);
+          new Integer((int) Double.parseDouble(fontSize)), series, roi, 0);
       }
       store.setShapeStrokeColor(String.valueOf(color), series, roi, 0);
       store.setShapeStrokeWidth(new Integer(linewidth), series, roi, 0);
 
       if (!normalized) normalize();
 
-      float cornerX = x.get(0).floatValue();
-      float cornerY = y.get(0).floatValue();
+      double cornerX = x.get(0).doubleValue();
+      double cornerY = y.get(0).doubleValue();
 
       int centerX = (core.get(series).sizeX / 2) - 1;
       int centerY = (core.get(series).sizeY / 2) - 1;
 
-      float roiX = centerX + transX;
-      float roiY = centerY + transY;
+      double roiX = centerX + transX;
+      double roiY = centerY + transY;
 
       if (alternateCenter) {
         roiX = transX - 2 * cornerX;
@@ -824,9 +826,9 @@ public class LeicaHandler extends DefaultHandler {
         case POLYGON:
           StringBuffer points = new StringBuffer();
           for (int i=0; i<x.size(); i++) {
-            points.append(x.get(i).floatValue() + roiX);
+            points.append(x.get(i).doubleValue() + roiX);
             points.append(",");
-            points.append(y.get(i).floatValue() + roiY);
+            points.append(y.get(i).doubleValue() + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
           store.setPolygonPoints(points.toString(), series, roi, 0);
@@ -838,8 +840,8 @@ public class LeicaHandler extends DefaultHandler {
             String.valueOf(roiX - Math.abs(cornerX)), series, roi, 0);
           store.setRectY(
             String.valueOf(roiY - Math.abs(cornerY)), series, roi, 0);
-          float width = (float) (2 * Math.abs(cornerX));
-          float height = (float) (2 * Math.abs(cornerY));
+          double width = 2 * Math.abs(cornerX);
+          double height = 2 * Math.abs(cornerY);
           store.setRectWidth(String.valueOf(width), series, roi, 0);
           store.setRectHeight(String.valueOf(height), series, roi, 0);
 
@@ -873,27 +875,27 @@ public class LeicaHandler extends DefaultHandler {
       transY *= (1 / physicalSizeY);
 
       for (int i=0; i<x.size(); i++) {
-        float coordinate = x.get(i).floatValue() * 1000000;
+        double coordinate = x.get(i).doubleValue() * 1000000;
         coordinate *= (1 / physicalSizeX);
-        x.setElementAt(new Float(coordinate), i);
+        x.setElementAt(new Double(coordinate), i);
       }
 
       for (int i=0; i<y.size(); i++) {
-        float coordinate = y.get(i).floatValue() * 1000000;
+        double coordinate = y.get(i).doubleValue() * 1000000;
         coordinate *= (1 / physicalSizeY);
-        y.setElementAt(new Float(coordinate), i);
+        y.setElementAt(new Double(coordinate), i);
       }
 
       normalized = true;
     }
   }
 
-  private float parseFloat(String number) {
+  private double parseDouble(String number) {
     if (number != null) {
       number = number.replaceAll(",", ".");
-      return Float.parseFloat(number);
+      return Double.parseDouble(number);
     }
-    return 0f;
+    return 0;
   }
 
   // -- Helper classes --
@@ -907,17 +909,17 @@ public class LeicaHandler extends DefaultHandler {
 
   class Detector {
     public int channel;
-    public Float zoom;
+    public Double zoom;
     public String type;
     public String model;
     public boolean active;
-    public Float voltage;
-    public Float offset;
+    public Double voltage;
+    public Double offset;
   }
 
   class Laser {
     public Integer wavelength;
-    public float intensity;
+    public double intensity;
     public String id;
     public int index;
   }

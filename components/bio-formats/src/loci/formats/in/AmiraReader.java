@@ -162,12 +162,12 @@ public class AmiraReader extends FormatReader {
 
     // Note that Amira specifies a bounding box, not pixel sizes.
     // The bounding box is the range of the centre of the voxels
-    float pixelWidth = (float) (parameters.x1 - parameters.x0) /
+    double pixelWidth = (double) (parameters.x1 - parameters.x0) /
       (parameters.width - 1);
-    float pixelHeight = (float) (parameters.y1 - parameters.y0) /
+    double pixelHeight = (double) (parameters.y1 - parameters.y0) /
       (parameters.height - 1);
     // TODO - what is correct setting if single slice?
-    float pixelDepth = (float) (parameters.z1 - parameters.z0) /
+    double pixelDepth = (double) (parameters.z1 - parameters.z0) /
       (parameters.depth - 1);
 
     // Amira does not have a standard form for encoding units, so we just
@@ -177,9 +177,9 @@ public class AmiraReader extends FormatReader {
     addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
     // NB these methods expects pixels sizes in microns
-    store.setDimensionsPhysicalSizeX(new Float(pixelWidth), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixelHeight), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(pixelDepth), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(pixelWidth), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(pixelHeight), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(pixelDepth), 0, 0);
 
     if (parameters.ascii)
       planeReader = new ASCII(core[0].pixelType,

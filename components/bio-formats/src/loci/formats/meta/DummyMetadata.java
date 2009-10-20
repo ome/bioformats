@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 5, 2009 9:38:21 AM CDT
+ * Created by curtis via MetadataAutogen on Oct 19, 2009 10:56:59 PM EDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -345,11 +345,11 @@ public class DummyMetadata implements IMetadata {
   // - Detector property retrieval -
 
   /* @see MetadataRetrieve#getDetectorAmplificationGain(int, int) */
-  public Float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex) {
+  public Double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorGain(int, int) */
-  public Float getDetectorGain(int instrumentIndex, int detectorIndex) {
+  public Double getDetectorGain(int instrumentIndex, int detectorIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorID(int, int) */
@@ -365,7 +365,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorOffset(int, int) */
-  public Float getDetectorOffset(int instrumentIndex, int detectorIndex) {
+  public Double getDetectorOffset(int instrumentIndex, int detectorIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorSerialNumber(int, int) */
@@ -377,11 +377,11 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorVoltage(int, int) */
-  public Float getDetectorVoltage(int instrumentIndex, int detectorIndex) {
+  public Double getDetectorVoltage(int instrumentIndex, int detectorIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorZoom(int, int) */
-  public Float getDetectorZoom(int instrumentIndex, int detectorIndex) {
+  public Double getDetectorZoom(int instrumentIndex, int detectorIndex) {
     return null;
   }
 
@@ -396,19 +396,19 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorSettingsGain(int, int) */
-  public Float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex) {
+  public Double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorSettingsOffset(int, int) */
-  public Float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex) {
+  public Double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorSettingsReadOutRate(int, int) */
-  public Float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex) {
+  public Double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDetectorSettingsVoltage(int, int) */
-  public Float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex) {
+  public Double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex) {
     return null;
   }
 
@@ -434,19 +434,19 @@ public class DummyMetadata implements IMetadata {
   // - Dimensions property retrieval -
 
   /* @see MetadataRetrieve#getDimensionsPhysicalSizeX(int, int) */
-  public Float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex) {
+  public Double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDimensionsPhysicalSizeY(int, int) */
-  public Float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex) {
+  public Double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDimensionsPhysicalSizeZ(int, int) */
-  public Float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex) {
+  public Double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDimensionsTimeIncrement(int, int) */
-  public Float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex) {
+  public Double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getDimensionsWaveIncrement(int, int) */
@@ -469,7 +469,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getDisplayOptionsZoom(int) */
-  public Float getDisplayOptionsZoom(int imageIndex) {
+  public Double getDisplayOptionsZoom(int imageIndex) {
     return null;
   }
 
@@ -716,19 +716,19 @@ public class DummyMetadata implements IMetadata {
   // - ImagingEnvironment property retrieval -
 
   /* @see MetadataRetrieve#getImagingEnvironmentAirPressure(int) */
-  public Float getImagingEnvironmentAirPressure(int imageIndex) {
+  public Double getImagingEnvironmentAirPressure(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getImagingEnvironmentCO2Percent(int) */
-  public Float getImagingEnvironmentCO2Percent(int imageIndex) {
+  public Double getImagingEnvironmentCO2Percent(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getImagingEnvironmentHumidity(int) */
-  public Float getImagingEnvironmentHumidity(int imageIndex) {
+  public Double getImagingEnvironmentHumidity(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getImagingEnvironmentTemperature(int) */
-  public Float getImagingEnvironmentTemperature(int imageIndex) {
+  public Double getImagingEnvironmentTemperature(int imageIndex) {
     return null;
   }
 
@@ -758,7 +758,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getLaserRepetitionRate(int, int) */
-  public Boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex) {
+  public Double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLaserTuneable(int, int) */
@@ -789,7 +789,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getLightSourcePower(int, int) */
-  public Float getLightSourcePower(int instrumentIndex, int lightSourceIndex) {
+  public Double getLightSourcePower(int instrumentIndex, int lightSourceIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLightSourceSerialNumber(int, int) */
@@ -800,7 +800,7 @@ public class DummyMetadata implements IMetadata {
   // - LightSourceRef property retrieval -
 
   /* @see MetadataRetrieve#getLightSourceRefAttenuation(int, int, int) */
-  public Float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+  public Double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLightSourceRefLightSource(int, int, int) */
@@ -815,7 +815,7 @@ public class DummyMetadata implements IMetadata {
   // - LightSourceSettings property retrieval -
 
   /* @see MetadataRetrieve#getLightSourceSettingsAttenuation(int, int) */
-  public Float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
+  public Double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLightSourceSettingsLightSource(int, int) */
@@ -901,7 +901,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getLogicalChannelNdFilter(int, int) */
-  public Float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex) {
+  public Double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLogicalChannelOTF(int, int) */
@@ -913,7 +913,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getLogicalChannelPinholeSize(int, int) */
-  public Float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex) {
+  public Double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getLogicalChannelPockelCellSetting(int, int) */
@@ -1066,7 +1066,7 @@ public class DummyMetadata implements IMetadata {
   // - Objective property retrieval -
 
   /* @see MetadataRetrieve#getObjectiveCalibratedMagnification(int, int) */
-  public Float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex) {
+  public Double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveCorrection(int, int) */
@@ -1086,7 +1086,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveLensNA(int, int) */
-  public Float getObjectiveLensNA(int instrumentIndex, int objectiveIndex) {
+  public Double getObjectiveLensNA(int instrumentIndex, int objectiveIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveManufacturer(int, int) */
@@ -1106,14 +1106,14 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveWorkingDistance(int, int) */
-  public Float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex) {
+  public Double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex) {
     return null;
   }
 
   // - ObjectiveSettings property retrieval -
 
   /* @see MetadataRetrieve#getObjectiveSettingsCorrectionCollar(int) */
-  public Float getObjectiveSettingsCorrectionCollar(int imageIndex) {
+  public Double getObjectiveSettingsCorrectionCollar(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveSettingsMedium(int) */
@@ -1125,7 +1125,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getObjectiveSettingsRefractiveIndex(int) */
-  public Float getObjectiveSettingsRefractiveIndex(int imageIndex) {
+  public Double getObjectiveSettingsRefractiveIndex(int imageIndex) {
     return null;
   }
 
@@ -1205,11 +1205,11 @@ public class DummyMetadata implements IMetadata {
   // - PlaneTiming property retrieval -
 
   /* @see MetadataRetrieve#getPlaneTimingDeltaT(int, int, int) */
-  public Float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex) {
+  public Double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getPlaneTimingExposureTime(int, int, int) */
-  public Float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex) {
+  public Double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex) {
     return null;
   }
 
@@ -1627,7 +1627,7 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getShapeStrokeOpacity(int, int, int) */
-  public Float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex) {
+  public Double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getShapeStrokeWidth(int, int, int) */
@@ -1682,30 +1682,30 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getStageLabelX(int) */
-  public Float getStageLabelX(int imageIndex) {
+  public Double getStageLabelX(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getStageLabelY(int) */
-  public Float getStageLabelY(int imageIndex) {
+  public Double getStageLabelY(int imageIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getStageLabelZ(int) */
-  public Float getStageLabelZ(int imageIndex) {
+  public Double getStageLabelZ(int imageIndex) {
     return null;
   }
 
   // - StagePosition property retrieval -
 
   /* @see MetadataRetrieve#getStagePositionPositionX(int, int, int) */
-  public Float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex) {
+  public Double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getStagePositionPositionY(int, int, int) */
-  public Float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex) {
+  public Double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getStagePositionPositionZ(int, int, int) */
-  public Float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex) {
+  public Double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex) {
     return null;
   }
 
@@ -1824,11 +1824,11 @@ public class DummyMetadata implements IMetadata {
     return null;
   }
   /* @see MetadataRetrieve#getWellSamplePosX(int, int, int) */
-  public Float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex) {
+  public Double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getWellSamplePosY(int, int, int) */
-  public Float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex) {
+  public Double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex) {
     return null;
   }
   /* @see MetadataRetrieve#getWellSampleTimepoint(int, int, int) */
@@ -1944,12 +1944,12 @@ public class DummyMetadata implements IMetadata {
 
   // - Detector property storage -
 
-  /* @see MetadataStore#setDetectorAmplificationGain(Float, int, int) */
-  public void setDetectorAmplificationGain(Float amplificationGain, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorAmplificationGain(Double, int, int) */
+  public void setDetectorAmplificationGain(Double amplificationGain, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetectorGain(Float, int, int) */
-  public void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorGain(Double, int, int) */
+  public void setDetectorGain(Double gain, int instrumentIndex, int detectorIndex) {
   }
 
   /* @see MetadataStore#setDetectorID(String, int, int) */
@@ -1964,8 +1964,8 @@ public class DummyMetadata implements IMetadata {
   public void setDetectorModel(String model, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetectorOffset(Float, int, int) */
-  public void setDetectorOffset(Float offset, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorOffset(Double, int, int) */
+  public void setDetectorOffset(Double offset, int instrumentIndex, int detectorIndex) {
   }
 
   /* @see MetadataStore#setDetectorSerialNumber(String, int, int) */
@@ -1976,12 +1976,12 @@ public class DummyMetadata implements IMetadata {
   public void setDetectorType(String type, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetectorVoltage(Float, int, int) */
-  public void setDetectorVoltage(Float voltage, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorVoltage(Double, int, int) */
+  public void setDetectorVoltage(Double voltage, int instrumentIndex, int detectorIndex) {
   }
 
-  /* @see MetadataStore#setDetectorZoom(Float, int, int) */
-  public void setDetectorZoom(Float zoom, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorZoom(Double, int, int) */
+  public void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex) {
   }
 
   // - DetectorSettings property storage -
@@ -1994,20 +1994,20 @@ public class DummyMetadata implements IMetadata {
   public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setDetectorSettingsGain(Float, int, int) */
-  public void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsGain(Double, int, int) */
+  public void setDetectorSettingsGain(Double gain, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setDetectorSettingsOffset(Float, int, int) */
-  public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsOffset(Double, int, int) */
+  public void setDetectorSettingsOffset(Double offset, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setDetectorSettingsReadOutRate(Float, int, int) */
-  public void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsReadOutRate(Double, int, int) */
+  public void setDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setDetectorSettingsVoltage(Float, int, int) */
-  public void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsVoltage(Double, int, int) */
+  public void setDetectorSettingsVoltage(Double voltage, int imageIndex, int logicalChannelIndex) {
   }
 
   // - Dichroic property storage -
@@ -2030,20 +2030,20 @@ public class DummyMetadata implements IMetadata {
 
   // - Dimensions property storage -
 
-  /* @see MetadataStore#setDimensionsPhysicalSizeX(Float, int, int) */
-  public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsPhysicalSizeX(Double, int, int) */
+  public void setDimensionsPhysicalSizeX(Double physicalSizeX, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensionsPhysicalSizeY(Float, int, int) */
-  public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsPhysicalSizeY(Double, int, int) */
+  public void setDimensionsPhysicalSizeY(Double physicalSizeY, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensionsPhysicalSizeZ(Float, int, int) */
-  public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsPhysicalSizeZ(Double, int, int) */
+  public void setDimensionsPhysicalSizeZ(Double physicalSizeZ, int imageIndex, int pixelsIndex) {
   }
 
-  /* @see MetadataStore#setDimensionsTimeIncrement(Float, int, int) */
-  public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsTimeIncrement(Double, int, int) */
+  public void setDimensionsTimeIncrement(Double timeIncrement, int imageIndex, int pixelsIndex) {
   }
 
   /* @see MetadataStore#setDimensionsWaveIncrement(Integer, int, int) */
@@ -2064,8 +2064,8 @@ public class DummyMetadata implements IMetadata {
   public void setDisplayOptionsID(String id, int imageIndex) {
   }
 
-  /* @see MetadataStore#setDisplayOptionsZoom(Float, int) */
-  public void setDisplayOptionsZoom(Float zoom, int imageIndex) {
+  /* @see MetadataStore#setDisplayOptionsZoom(Double, int) */
+  public void setDisplayOptionsZoom(Double zoom, int imageIndex) {
   }
 
   // - Ellipse property storage -
@@ -2298,20 +2298,20 @@ public class DummyMetadata implements IMetadata {
 
   // - ImagingEnvironment property storage -
 
-  /* @see MetadataStore#setImagingEnvironmentAirPressure(Float, int) */
-  public void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentAirPressure(Double, int) */
+  public void setImagingEnvironmentAirPressure(Double airPressure, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironmentCO2Percent(Float, int) */
-  public void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentCO2Percent(Double, int) */
+  public void setImagingEnvironmentCO2Percent(Double cO2Percent, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironmentHumidity(Float, int) */
-  public void setImagingEnvironmentHumidity(Float humidity, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentHumidity(Double, int) */
+  public void setImagingEnvironmentHumidity(Double humidity, int imageIndex) {
   }
 
-  /* @see MetadataStore#setImagingEnvironmentTemperature(Float, int) */
-  public void setImagingEnvironmentTemperature(Float temperature, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentTemperature(Double, int) */
+  public void setImagingEnvironmentTemperature(Double temperature, int imageIndex) {
   }
 
   // - Instrument property storage -
@@ -2338,8 +2338,8 @@ public class DummyMetadata implements IMetadata {
   public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLaserRepetitionRate(Boolean, int, int) */
-  public void setLaserRepetitionRate(Boolean repetitionRate, int instrumentIndex, int lightSourceIndex) {
+  /* @see MetadataStore#setLaserRepetitionRate(Double, int, int) */
+  public void setLaserRepetitionRate(Double repetitionRate, int instrumentIndex, int lightSourceIndex) {
   }
 
   /* @see MetadataStore#setLaserTuneable(Boolean, int, int) */
@@ -2368,8 +2368,8 @@ public class DummyMetadata implements IMetadata {
   public void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex) {
   }
 
-  /* @see MetadataStore#setLightSourcePower(Float, int, int) */
-  public void setLightSourcePower(Float power, int instrumentIndex, int lightSourceIndex) {
+  /* @see MetadataStore#setLightSourcePower(Double, int, int) */
+  public void setLightSourcePower(Double power, int instrumentIndex, int lightSourceIndex) {
   }
 
   /* @see MetadataStore#setLightSourceSerialNumber(String, int, int) */
@@ -2378,8 +2378,8 @@ public class DummyMetadata implements IMetadata {
 
   // - LightSourceRef property storage -
 
-  /* @see MetadataStore#setLightSourceRefAttenuation(Float, int, int, int) */
-  public void setLightSourceRefAttenuation(Float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+  /* @see MetadataStore#setLightSourceRefAttenuation(Double, int, int, int) */
+  public void setLightSourceRefAttenuation(Double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
   }
 
   /* @see MetadataStore#setLightSourceRefLightSource(String, int, int, int) */
@@ -2392,8 +2392,8 @@ public class DummyMetadata implements IMetadata {
 
   // - LightSourceSettings property storage -
 
-  /* @see MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
-  public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLightSourceSettingsAttenuation(Double, int, int) */
+  public void setLightSourceSettingsAttenuation(Double attenuation, int imageIndex, int logicalChannelIndex) {
   }
 
   /* @see MetadataStore#setLightSourceSettingsLightSource(String, int, int) */
@@ -2476,8 +2476,8 @@ public class DummyMetadata implements IMetadata {
   public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannelNdFilter(Float, int, int) */
-  public void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLogicalChannelNdFilter(Double, int, int) */
+  public void setLogicalChannelNdFilter(Double ndFilter, int imageIndex, int logicalChannelIndex) {
   }
 
   /* @see MetadataStore#setLogicalChannelOTF(String, int, int) */
@@ -2488,8 +2488,8 @@ public class DummyMetadata implements IMetadata {
   public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex) {
   }
 
-  /* @see MetadataStore#setLogicalChannelPinholeSize(Float, int, int) */
-  public void setLogicalChannelPinholeSize(Float pinholeSize, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLogicalChannelPinholeSize(Double, int, int) */
+  public void setLogicalChannelPinholeSize(Double pinholeSize, int imageIndex, int logicalChannelIndex) {
   }
 
   /* @see MetadataStore#setLogicalChannelPockelCellSetting(Integer, int, int) */
@@ -2634,8 +2634,8 @@ public class DummyMetadata implements IMetadata {
 
   // - Objective property storage -
 
-  /* @see MetadataStore#setObjectiveCalibratedMagnification(Float, int, int) */
-  public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex) {
+  /* @see MetadataStore#setObjectiveCalibratedMagnification(Double, int, int) */
+  public void setObjectiveCalibratedMagnification(Double calibratedMagnification, int instrumentIndex, int objectiveIndex) {
   }
 
   /* @see MetadataStore#setObjectiveCorrection(String, int, int) */
@@ -2654,8 +2654,8 @@ public class DummyMetadata implements IMetadata {
   public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjectiveLensNA(Float, int, int) */
-  public void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex) {
+  /* @see MetadataStore#setObjectiveLensNA(Double, int, int) */
+  public void setObjectiveLensNA(Double lensNA, int instrumentIndex, int objectiveIndex) {
   }
 
   /* @see MetadataStore#setObjectiveManufacturer(String, int, int) */
@@ -2674,14 +2674,14 @@ public class DummyMetadata implements IMetadata {
   public void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex) {
   }
 
-  /* @see MetadataStore#setObjectiveWorkingDistance(Float, int, int) */
-  public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
+  /* @see MetadataStore#setObjectiveWorkingDistance(Double, int, int) */
+  public void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex) {
   }
 
   // - ObjectiveSettings property storage -
 
-  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Float, int) */
-  public void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex) {
+  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Double, int) */
+  public void setObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex) {
   }
 
   /* @see MetadataStore#setObjectiveSettingsMedium(String, int) */
@@ -2692,8 +2692,8 @@ public class DummyMetadata implements IMetadata {
   public void setObjectiveSettingsObjective(String objective, int imageIndex) {
   }
 
-  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Float, int) */
-  public void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex) {
+  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Double, int) */
+  public void setObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex) {
   }
 
   // - Path property storage -
@@ -2768,12 +2768,12 @@ public class DummyMetadata implements IMetadata {
 
   // - PlaneTiming property storage -
 
-  /* @see MetadataStore#setPlaneTimingDeltaT(Float, int, int, int) */
-  public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setPlaneTimingDeltaT(Double, int, int, int) */
+  public void setPlaneTimingDeltaT(Double deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setPlaneTimingExposureTime(Float, int, int, int) */
-  public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setPlaneTimingExposureTime(Double, int, int, int) */
+  public void setPlaneTimingExposureTime(Double exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
   // - Plate property storage -
@@ -3172,8 +3172,8 @@ public class DummyMetadata implements IMetadata {
   public void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
-  /* @see MetadataStore#setShapeStrokeOpacity(Float, int, int, int) */
-  public void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setShapeStrokeOpacity(Double, int, int, int) */
+  public void setShapeStrokeOpacity(Double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
   }
 
   /* @see MetadataStore#setShapeStrokeWidth(Integer, int, int, int) */
@@ -3226,30 +3226,30 @@ public class DummyMetadata implements IMetadata {
   public void setStageLabelName(String name, int imageIndex) {
   }
 
-  /* @see MetadataStore#setStageLabelX(Float, int) */
-  public void setStageLabelX(Float x, int imageIndex) {
+  /* @see MetadataStore#setStageLabelX(Double, int) */
+  public void setStageLabelX(Double x, int imageIndex) {
   }
 
-  /* @see MetadataStore#setStageLabelY(Float, int) */
-  public void setStageLabelY(Float y, int imageIndex) {
+  /* @see MetadataStore#setStageLabelY(Double, int) */
+  public void setStageLabelY(Double y, int imageIndex) {
   }
 
-  /* @see MetadataStore#setStageLabelZ(Float, int) */
-  public void setStageLabelZ(Float z, int imageIndex) {
+  /* @see MetadataStore#setStageLabelZ(Double, int) */
+  public void setStageLabelZ(Double z, int imageIndex) {
   }
 
   // - StagePosition property storage -
 
-  /* @see MetadataStore#setStagePositionPositionX(Float, int, int, int) */
-  public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setStagePositionPositionX(Double, int, int, int) */
+  public void setStagePositionPositionX(Double positionX, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setStagePositionPositionY(Float, int, int, int) */
-  public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setStagePositionPositionY(Double, int, int, int) */
+  public void setStagePositionPositionY(Double positionY, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
-  /* @see MetadataStore#setStagePositionPositionZ(Float, int, int, int) */
-  public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setStagePositionPositionZ(Double, int, int, int) */
+  public void setStagePositionPositionZ(Double positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
   }
 
   // - Thumbnail property storage -
@@ -3362,12 +3362,12 @@ public class DummyMetadata implements IMetadata {
   public void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
-  /* @see MetadataStore#setWellSamplePosX(Float, int, int, int) */
-  public void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSamplePosX(Double, int, int, int) */
+  public void setWellSamplePosX(Double posX, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
-  /* @see MetadataStore#setWellSamplePosY(Float, int, int, int) */
-  public void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSamplePosY(Double, int, int, int) */
+  public void setWellSamplePosY(Double posY, int plateIndex, int wellIndex, int wellSampleIndex) {
   }
 
   /* @see MetadataStore#setWellSampleTimepoint(Integer, int, int, int) */

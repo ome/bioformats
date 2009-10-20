@@ -84,9 +84,9 @@ public class PerkinElmerReader extends FormatReader {
 
   private String details, sliceSpace;
 
-  private float pixelSizeX = 1f, pixelSizeY = 1f;
+  private double pixelSizeX = 1, pixelSizeY = 1;
   private String finishTime = null, startTime = null;
-  private float originX = 0f, originY = 0f, originZ = 0f;
+  private double originX = 0, originY = 0, originZ = 0;
 
   // -- Constructor --
 
@@ -504,8 +504,8 @@ public class PerkinElmerReader extends FormatReader {
     // be aggressive about parsing the HTML file, since it's the only one that
     // explicitly defines the number of wavelengths and timepoints
 
-    Vector<Float> exposureTimes = new Vector<Float>();
-    Vector<Float> zPositions = new Vector<Float>();
+    Vector<Double> exposureTimes = new Vector<Double>();
+    Vector<Double> zPositions = new Vector<Double>();
     Vector<Integer> emWaves = new Vector<Integer>();
     Vector<Integer> exWaves = new Vector<Integer>();
 
@@ -526,7 +526,7 @@ public class PerkinElmerReader extends FormatReader {
           if (exposure.endsWith(",")) {
             exposure = exposure.substring(0, exposure.length() - 1);
           }
-          exposureTimes.add(new Float(Float.parseFloat(exposure) / 1000));
+          exposureTimes.add(new Double(Double.parseDouble(exposure) / 1000));
 
           if (tokens[j].indexOf("nm") != -1) {
             int nmIndex = tokens[j].indexOf("nm");
@@ -550,7 +550,7 @@ public class PerkinElmerReader extends FormatReader {
         else if (tokens[j + 1].trim().equals("Slice Z positions")) {
           for (int q=j + 2; q<tokens.length; q++) {
             if (!tokens[q].trim().equals("")) {
-              zPositions.add(new Float(tokens[q].trim()));
+              zPositions.add(new Double(tokens[q].trim()));
             }
           }
         }
@@ -674,8 +674,8 @@ public class PerkinElmerReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     // populate Dimensions element
-    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
 
     // populate Image element
     if (finishTime != null) {
@@ -709,18 +709,18 @@ public class PerkinElmerReader extends FormatReader {
       end = DateTools.getTime(finishTime, DateTools.ISO8601_FORMAT);
     }
 
-    float secondsPerPlane = ((float) (end - start) / getImageCount()) / 1000f;
+    double secondsPerPlane = (double) (end - start) / getImageCount() / 1000;
 
     for (int i=0; i<getImageCount(); i++) {
       int[] zct = getZCTCoords(i);
-      store.setPlaneTimingDeltaT(new Float(i * secondsPerPlane), 0, 0, i);
+      store.setPlaneTimingDeltaT(new Double(i * secondsPerPlane), 0, 0, i);
       if (zct[1] < exposureTimes.size()) {
         store.setPlaneTimingExposureTime(exposureTimes.get(zct[1]), 0, 0, i);
       }
 
       if (zct[0] < zPositions.size()) {
-        store.setStagePositionPositionX(new Float(0.0), 0, 0, i);
-        store.setStagePositionPositionY(new Float(0.0), 0, 0, i);
+        store.setStagePositionPositionX(new Double(0.0), 0, 0, i);
+        store.setStagePositionPositionY(new Double(0.0), 0, 0, i);
         store.setStagePositionPositionZ(zPositions.get(zct[0]), 0, 0, i);
       }
     }
@@ -744,21 +744,21 @@ public class PerkinElmerReader extends FormatReader {
       else if (key.equals("Experiment details:")) details = value;
       else if (key.equals("Z slice space")) sliceSpace = value;
       else if (key.equals("Pixel Size X")) {
-        pixelSizeX = Float.parseFloat(value);
+        pixelSizeX = Double.parseDouble(value);
       }
       else if (key.equals("Pixel Size Y")) {
-        pixelSizeY = Float.parseFloat(value);
+        pixelSizeY = Double.parseDouble(value);
       }
       else if (key.equals("Finish Time:")) finishTime = value;
       else if (key.equals("Start Time:")) startTime = value;
       else if (key.equals("Origin X")) {
-        originX = Float.parseFloat(value);
+        originX = Double.parseDouble(value);
       }
       else if (key.equals("Origin Y")) {
-        originY = Float.parseFloat(value);
+        originY = Double.parseDouble(value);
       }
       else if (key.equals("Origin Z")) {
-        originZ = Float.parseFloat(value);
+        originZ = Double.parseDouble(value);
       }
     }
     catch (NumberFormatException exc) {

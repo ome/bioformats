@@ -109,12 +109,12 @@ public class LightSourceRefNode extends ReferenceNode
 	}
 
 	// Attribute
-	public Float getAttenuation()
+	public Double getAttenuation()
 	{
-		return getFloatAttribute("Attenuation");
+		return getDoubleAttribute("Attenuation");
 	}
 
-	public void setAttenuation(Float attenuation)
+	public void setAttenuation(Double attenuation)
 	{
 		setAttribute("Attenuation", attenuation);
 	}

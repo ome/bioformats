@@ -96,7 +96,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private Vector<RandomAccessInputStream> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  private float stageX = 0f, stageY = 0f;
+  private double stageX = 0, stageY = 0;
 
   private int[] channelColors;
   private int lastPlane;
@@ -596,8 +596,8 @@ public class ZeissZVIReader extends FormatReader {
     for (int plane=0; plane<getImageCount(); plane++) {
       int[] zct = getZCTCoords(plane);
       String exposure = exposureTime.get(new Integer(zct[1]));
-      Float exp = new Float(0.0);
-      try { exp = new Float(exposure); }
+      Double exp = new Double(0.0);
+      try { exp = new Double(exposure); }
       catch (NumberFormatException e) { }
       catch (NullPointerException e) { }
       store.setPlaneTimingExposureTime(exp, 0, 0, plane);
@@ -606,11 +606,11 @@ public class ZeissZVIReader extends FormatReader {
         String timestamp = timestamps.get(new Integer(plane));
         long stamp = parseTimestamp(timestamp);
         stamp -= firstStamp;
-        store.setPlaneTimingDeltaT(new Float(stamp / 1600000), 0, 0, plane);
+        store.setPlaneTimingDeltaT(new Double(stamp / 1600000), 0, 0, plane);
       }
 
-      store.setStagePositionPositionX(new Float(stageX), 0, 0, plane);
-      store.setStagePositionPositionY(new Float(stageY), 0, 0, plane);
+      store.setStagePositionPositionX(new Double(stageX), 0, 0, plane);
+      store.setStagePositionPositionY(new Double(stageY), 0, 0, plane);
     }
 
     for (RandomAccessInputStream s : tagsToParse) {
@@ -751,13 +751,13 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
         else if (key.startsWith("Scale Factor for X")) {
-          store.setDimensionsPhysicalSizeX(new Float(value), 0, 0);
+          store.setDimensionsPhysicalSizeX(new Double(value), 0, 0);
         }
         else if (key.startsWith("Scale Factor for Y")) {
-          store.setDimensionsPhysicalSizeY(new Float(value), 0, 0);
+          store.setDimensionsPhysicalSizeY(new Double(value), 0, 0);
         }
         else if (key.startsWith("Scale Factor for Z")) {
-          store.setDimensionsPhysicalSizeZ(new Float(value), 0, 0);
+          store.setDimensionsPhysicalSizeZ(new Double(value), 0, 0);
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1 && nextEmWave < effectiveSizeC) {
@@ -785,23 +785,23 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("BlackValue")) {
           if (cIndex != -1) {
-            // store.setGreyChannelBlackValue(new Float(value), 0);
+            // store.setGreyChannelBlackValue(new Double(value), 0);
           }
         }
         else if (key.startsWith("WhiteValue")) {
           if (cIndex != -1) {
-            // store.setGreyChannelWhiteValue(new Float(value), 0);
+            // store.setGreyChannelWhiteValue(new Double(value), 0);
           }
         }
         else if (key.startsWith("GammaValue")) {
           if (cIndex != -1) {
-            // store.setGreyChannelGammaValue(new Float(value), 0);
+            // store.setGreyChannelGammaValue(new Double(value), 0);
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
           if (cIndex != -1) {
             try {
-              float exp = Float.parseFloat(value) / 1000;
+              double exp = Double.parseDouble(value) / 1000;
               exposureTime.put(new Integer(cIndex), String.valueOf(exp));
             }
             catch (NumberFormatException e) { }
@@ -819,7 +819,7 @@ public class ZeissZVIReader extends FormatReader {
           store.setExperimenterOMEName("Unknown", 0);
         }
         else if (key.startsWith("Objective Magnification")) {
-          float mag = Float.parseFloat(value);
+          double mag = Double.parseDouble(value);
           store.setObjectiveNominalMagnification(new Integer((int) mag), 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
@@ -828,25 +828,25 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveImmersion("Unknown", 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
-          store.setObjectiveLensNA(new Float(value), 0, 0);
+          store.setObjectiveLensNA(new Double(value), 0, 0);
         }
         else if (key.startsWith("Objective Name")) {
           String[] tokens = value.split(" ");
           for (int q=0; q<tokens.length; q++) {
             int slash = tokens[q].indexOf("/");
             if (slash != -1) {
-              int mag =
-                (int) Float.parseFloat(tokens[q].substring(0, slash - q));
+              int mag = (int)
+                Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
-              store.setObjectiveLensNA(new Float(na), 0, 0);
+              store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(tokens[q - 1], 0, 0);
               break;
             }
           }
         }
         else if (key.startsWith("Objective Working Distance")) {
-          store.setObjectiveWorkingDistance(new Float(value), 0, 0);
+          store.setObjectiveWorkingDistance(new Double(value), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
           String immersion = null;
@@ -864,16 +864,16 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveImmersion(immersion, 0, 0);
         }
         else if (key.indexOf("Stage Position X") != -1) {
-          stageX = Float.parseFloat(value);
+          stageX = Double.parseDouble(value);
         }
         else if (key.indexOf("Stage Position Y") != -1) {
-          stageY = Float.parseFloat(value);
+          stageY = Double.parseDouble(value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
-          store.setDetectorSettingsGain(new Float(value), 0, cIndex);
+          store.setDetectorSettingsGain(new Double(value), 0, cIndex);
         }
         else if (key.startsWith("Orca Analog Offset")) {
-          store.setDetectorSettingsOffset(new Float(value), 0, cIndex);
+          store.setDetectorSettingsOffset(new Double(value), 0, cIndex);
         }
         else if (key.startsWith("Comments")) {
           store.setImageDescription(value, 0);
@@ -1014,17 +1014,18 @@ public class ZeissZVIReader extends FormatReader {
     }
   }
 
-  private float getScaleUnit(String value) {
+  // TODO: this method is never called; eliminate?
+  private double getScaleUnit(String value) {
     int v = Integer.parseInt(value);
     switch (v) {
       case 72: // meters
-        return 1000000f;
+        return 1000000;
       case 77: // nanometers
-        return 0.001f;
+        return 0.001;
       case 81: // inches
-        return 25400f;
+        return 25400;
     }
-    return 1f;
+    return 1;
   }
 
   /** Return the string corresponding to the given ID. */

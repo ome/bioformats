@@ -137,7 +137,7 @@ public class PCIReader extends FormatReader {
 
     poi = new POITools(Location.getMappedId(currentId));
 
-    float scaleFactor = 1f;
+    double scaleFactor = 1;
 
     Vector<String> allFiles = poi.getDocumentList();
     if (allFiles.size() == 0) {
@@ -174,7 +174,7 @@ public class PCIReader extends FormatReader {
               if (value.indexOf(";") != -1) {
                 value = value.substring(0, value.indexOf(";"));
               }
-              scaleFactor = Float.parseFloat(value.trim());
+              scaleFactor = Double.parseDouble(value.trim());
             }
           }
         }
@@ -278,15 +278,16 @@ public class PCIReader extends FormatReader {
       store.setImageCreationDate(creationDate, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setDimensionsPhysicalSizeX(new Float(scaleFactor), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(scaleFactor), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(scaleFactor), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(scaleFactor), 0, 0);
 
     for (int i=0; i<timestamps.size(); i++) {
-      Float timestamp = new Float(timestamps.get(new Integer(i)).floatValue());
+      Double timestamp = new Double(
+        timestamps.get(new Integer(i)).doubleValue());
       store.setPlaneTimingDeltaT(timestamp, 0, 0, i);
       if (i == 2) {
-        float first = timestamps.get(new Integer(1)).floatValue();
-        Float increment = new Float(timestamp.floatValue() - first);
+        double first = timestamps.get(new Integer(1)).doubleValue();
+        Double increment = new Double(timestamp.doubleValue() - first);
         store.setDimensionsTimeIncrement(increment, 0, 0);
       }
     }

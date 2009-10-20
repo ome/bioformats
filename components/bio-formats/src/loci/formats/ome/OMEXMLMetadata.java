@@ -228,21 +228,21 @@ public abstract class OMEXMLMetadata implements IMetadata {
   }
 
   /**
-   * Converts Float value to Integer. Used to convert
+   * Converts Double value to Integer. Used to convert
    * from 2008-02 LogicalChannel PinholeSize Integer value
-   * to LogicalChannel PinholeSize Float value.
+   * to LogicalChannel PinholeSize Double value.
    */
-  protected Integer floatToInteger(Float value) {
+  protected Integer doubleToInteger(Double value) {
     return value == null ? null : new Integer(value.intValue());
   }
 
   /**
-   * Converts Integer value to Float. Used to convert
-   * from LogicalChannel PinholeSize Float value
+   * Converts Integer value to Double. Used to convert
+   * from LogicalChannel PinholeSize Double value
    * to 2008-02 LogicalChannel PinholeSize Integer value.
    */
-  protected Float integerToFloat(Integer value) {
-    return value == null ? null : new Float(value.floatValue());
+  protected Double integerToDouble(Integer value) {
+    return value == null ? null : new Double(value.doubleValue());
   }
 
 }

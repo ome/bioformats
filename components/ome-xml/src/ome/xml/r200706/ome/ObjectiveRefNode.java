@@ -98,23 +98,23 @@ public class ObjectiveRefNode extends ReferenceNode
 	// -- ObjectiveRef API methods --
 
 	// Attribute
-	public Float getRefractiveIndex()
+	public Double getRefractiveIndex()
 	{
-		return getFloatAttribute("RefractiveIndex");
+		return getDoubleAttribute("RefractiveIndex");
 	}
 
-	public void setRefractiveIndex(Float refractiveIndex)
+	public void setRefractiveIndex(Double refractiveIndex)
 	{
 		setAttribute("RefractiveIndex", refractiveIndex);
 	}
 
 	// Attribute
-	public Float getCorrectionCollar()
+	public Double getCorrectionCollar()
 	{
-		return getFloatAttribute("CorrectionCollar");
+		return getDoubleAttribute("CorrectionCollar");
 	}
 
-	public void setCorrectionCollar(Float correctionCollar)
+	public void setCorrectionCollar(Double correctionCollar)
 	{
 		setAttribute("CorrectionCollar", correctionCollar);
 	}

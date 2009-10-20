@@ -58,7 +58,7 @@ public class SlidebookReader extends FormatReader {
   private Vector<Long> metadataOffsets;
   private Vector<Long> pixelOffsets;
   private Vector<Long> pixelLengths;
-  private Vector<Float> ndFilters;
+  private Vector<Double> ndFilters;
 
   // -- Constructor --
 
@@ -143,7 +143,7 @@ public class SlidebookReader extends FormatReader {
     metadataOffsets = new Vector<Long>();
     pixelOffsets = new Vector<Long>();
     pixelLengths = new Vector<Long>();
-    ndFilters = new Vector<Float>();
+    ndFilters = new Vector<Double>();
 
     in.seek(0);
 
@@ -285,9 +285,9 @@ public class SlidebookReader extends FormatReader {
 
     // determine total number of pixel bytes
 
-    float pixelSize = 1f;
+    float pixelSize = 1;
     String objective = null;
-    Vector<Float> pixelSizeZ = new Vector<Float>();
+    Vector<Double> pixelSizeZ = new Vector<Double>();
 
     long pixelBytes = 0;
     for (int i=0; i<pixelLengths.size(); i++) {
@@ -322,7 +322,7 @@ public class SlidebookReader extends FormatReader {
         if (n == 'i') {
           iCount++;
           in.skipBytes(94);
-          pixelSizeZ.add(new Float(in.readFloat()));
+          pixelSizeZ.add(new Double(in.readFloat()));
           in.seek(in.getFilePointer() - 20);
 
           for (int j=0; j<pixelOffsets.size(); j++) {
@@ -402,7 +402,7 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'e') {
           in.skipBytes(174);
-          ndFilters.add(new Float(in.readFloat()));
+          ndFilters.add(new Double(in.readFloat()));
           in.skipBytes(40);
           setSeries(nextName);
           addSeriesMeta("channel " + ndFilters.size() + " intensification",
@@ -470,8 +470,8 @@ public class SlidebookReader extends FormatReader {
     // populate Dimensions data
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Float(pixelSize), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixelSize), i, 0);
+      store.setDimensionsPhysicalSizeX(new Double(pixelSize), i, 0);
+      store.setDimensionsPhysicalSizeY(new Double(pixelSize), i, 0);
       int idx = 0;
       for (int q=0; q<i; q++) {
         idx += core[q].sizeC;

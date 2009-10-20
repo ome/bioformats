@@ -75,7 +75,7 @@ public class InCellReader extends FormatReader {
 
   private int wellRows, wellCols;
   private Hashtable<Integer, int[]> wellCoordinates;
-  private Vector<Float> posX, posY;
+  private Vector<Double> posX, posY;
 
   private int firstRow, firstCol;
   private int lastCol;
@@ -243,8 +243,8 @@ public class InCellReader extends FormatReader {
     // parse metadata from the .xdce or .xml file
 
     wellCoordinates = new Hashtable<Integer, int[]>();
-    posX = new Vector<Float>();
-    posY = new Vector<Float>();
+    posX = new Vector<Double>();
+    posY = new Vector<Double>();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -678,7 +678,7 @@ public class InCellReader extends FormatReader {
     private int currentRow = -1, currentCol = -1;
     private int currentField = 0;
     private int currentImage, currentPlane;
-    private Float timestamp, exposure, zPosition;
+    private Double timestamp, exposure, zPosition;
     private String channelName = null;
 
     public InCellHandler(MetadataStore store) {
@@ -726,9 +726,9 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Image")) {
         openImage = true;
-        float time =
-          Float.parseFloat(attributes.getValue("acquisition_time_ms"));
-        timestamp = new Float(time / 1000);
+        double time =
+          Double.parseDouble(attributes.getValue("acquisition_time_ms"));
+        timestamp = new Double(time / 1000);
       }
       else if (qName.equals("Identifier")) {
         currentField = Integer.parseInt(attributes.getValue("field_index"));
@@ -742,7 +742,7 @@ public class InCellReader extends FormatReader {
         img.zPosition = zPosition;
       }
       else if (qName.equals("FocusPosition")) {
-        zPosition = new Float(attributes.getValue("z"));
+        zPosition = new Double(attributes.getValue("z"));
       }
       else if (qName.equals("Creation")) {
         String date = attributes.getValue("date"); // yyyy-mm-dd
@@ -750,9 +750,9 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        store.setObjectiveNominalMagnification(new Integer(
-          (int) Float.parseFloat(attributes.getValue("magnification"))), 0, 0);
-        store.setObjectiveLensNA(new Float(
+        store.setObjectiveNominalMagnification(new Integer((int)
+          Double.parseDouble(attributes.getValue("magnification"))), 0, 0);
+        store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         store.setObjectiveImmersion("Unknown", 0, 0);
 
@@ -763,9 +763,9 @@ public class InCellReader extends FormatReader {
         if (tokens.length > 2) store.setObjectiveCorrection(tokens[2], 0, 0);
         else store.setObjectiveCorrection("Unknown", 0, 0);
 
-        Float pixelSizeX = new Float(attributes.getValue("pixel_width"));
-        Float pixelSizeY = new Float(attributes.getValue("pixel_height"));
-        Float refractive = new Float(attributes.getValue("refractive_index"));
+        Double pixelSizeX = new Double(attributes.getValue("pixel_width"));
+        Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
+        Double refractive = new Double(attributes.getValue("refractive_index"));
 
         // link Objective to Image
         String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -811,7 +811,7 @@ public class InCellReader extends FormatReader {
         setSeries(0);
       }
       else if (qName.equals("Gain")) {
-        Float gain = new Float(attributes.getValue("value"));
+        Double gain = new Double(attributes.getValue("value"));
         for (int i=0; i<getSeriesCount(); i++) {
           setSeries(i);
           for (int q=0; q<getSizeC(); q++) {
@@ -821,7 +821,7 @@ public class InCellReader extends FormatReader {
         setSeries(0);
       }
       else if (qName.equals("PlateTemperature")) {
-        Float temperature = new Float(attributes.getValue("value"));
+        Double temperature = new Double(attributes.getValue("value"));
         for (int i=0; i<getSeriesCount(); i++) {
           store.setImagingEnvironmentTemperature(temperature, i);
         }
@@ -844,8 +844,8 @@ public class InCellReader extends FormatReader {
         currentCol = Integer.parseInt(attributes.getValue("number")) - 1;
       }
       else if (qName.equals("Exposure") && openImage) {
-        float exp = Float.parseFloat(attributes.getValue("time"));
-        exposure = new Float(exp / 1000);
+        double exp = Double.parseDouble(attributes.getValue("time"));
+        exposure = new Double(exp / 1000);
       }
       else if (qName.equals("NamingRows")) {
         rowName = attributes.getValue("begin");
@@ -866,8 +866,8 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("offset_point")) {
-        posX.add(new Float(attributes.getValue("x")));
-        posY.add(new Float(attributes.getValue("y")));
+        posX.add(new Double(attributes.getValue("x")));
+        posY.add(new Double(attributes.getValue("y")));
       }
     }
   }
@@ -876,8 +876,8 @@ public class InCellReader extends FormatReader {
     public String filename;
     public String thumbnailFile;
     public boolean isTiff;
-    public Float deltaT, exposure;
-    public Float zPosition;
+    public Double deltaT, exposure;
+    public Double zPosition;
   }
 
 }

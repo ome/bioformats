@@ -162,12 +162,12 @@ public class LaserNode extends OMEXMLNode
 	}
 
 	// Attribute
-	public Boolean getRepetitionRate()
+	public Double getRepetitionRate()
 	{
-		return getBooleanAttribute("RepetitionRate");
+		return getDoubleAttribute("RepetitionRate");
 	}
 
-	public void setRepetitionRate(Boolean repetitionRate)
+	public void setRepetitionRate(Double repetitionRate)
 	{
 		setAttribute("RepetitionRate", repetitionRate);
 	}

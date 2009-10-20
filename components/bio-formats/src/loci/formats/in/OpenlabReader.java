@@ -589,8 +589,8 @@ public class OpenlabReader extends FormatReader {
 
     // populate MetadataStore
 
-    store.setDimensionsPhysicalSizeX(new Float(xcal), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(ycal), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(xcal), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(ycal), 0, 0);
 
     // link Instrument and Image
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -598,12 +598,12 @@ public class OpenlabReader extends FormatReader {
     store.setImageInstrumentRef(instrumentID, 0);
 
     try {
-      if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
+      if (gain != null) store.setDetectorSettingsGain(new Double(gain), 0, 0);
     }
     catch (NumberFormatException e) { }
     try {
       if (detectorOffset != null) {
-        store.setDetectorSettingsOffset(new Float(detectorOffset), 0, 0);
+        store.setDetectorSettingsOffset(new Double(detectorOffset), 0, 0);
       }
     }
     catch (NumberFormatException e) { }
@@ -615,9 +615,9 @@ public class OpenlabReader extends FormatReader {
 
     store.setDetectorType("Unknown", 0, 0);
 
-    Float stageX = xPos == null ? null : new Float(xPos);
-    Float stageY = yPos == null ? null : new Float(yPos);
-    Float stageZ = zPos == null ? null : new Float(zPos);
+    Double stageX = xPos == null ? null : new Double(xPos);
+    Double stageY = yPos == null ? null : new Double(yPos);
+    Double stageZ = zPos == null ? null : new Double(zPos);
 
     for (int series=0; series<getSeriesCount(); series++) {
       setSeries(series);

@@ -98,12 +98,12 @@ public class DetectorRefNode extends ReferenceNode
 	// -- DetectorRef API methods --
 
 	// Attribute
-	public Float getGain()
+	public Double getGain()
 	{
-		return getFloatAttribute("Gain");
+		return getDoubleAttribute("Gain");
 	}
 
-	public void setGain(Float gain)
+	public void setGain(Double gain)
 	{
 		setAttribute("Gain", gain);
 	}
@@ -120,23 +120,23 @@ public class DetectorRefNode extends ReferenceNode
 	}
 
 	// Attribute
-	public Float getVoltage()
+	public Double getVoltage()
 	{
-		return getFloatAttribute("Voltage");
+		return getDoubleAttribute("Voltage");
 	}
 
-	public void setVoltage(Float voltage)
+	public void setVoltage(Double voltage)
 	{
 		setAttribute("Voltage", voltage);
 	}
 
 	// Attribute
-	public Float getOffset()
+	public Double getOffset()
 	{
-		return getFloatAttribute("Offset");
+		return getDoubleAttribute("Offset");
 	}
 
-	public void setOffset(Float offset)
+	public void setOffset(Double offset)
 	{
 		setAttribute("Offset", offset);
 	}
@@ -144,12 +144,12 @@ public class DetectorRefNode extends ReferenceNode
 	// *** WARNING *** Unhandled or skipped property ID
 
 	// Attribute
-	public Float getReadOutRate()
+	public Double getReadOutRate()
 	{
-		return getFloatAttribute("ReadOutRate");
+		return getDoubleAttribute("ReadOutRate");
 	}
 
-	public void setReadOutRate(Float readOutRate)
+	public void setReadOutRate(Double readOutRate)
 	{
 		setAttribute("ReadOutRate", readOutRate);
 	}

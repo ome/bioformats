@@ -78,45 +78,45 @@ public class DetectorNode extends ManufactSpecNode
 	// -- Detector API methods --
 
 	// Attribute
-	public Float getZoom()
+	public Double getZoom()
 	{
-		return getFloatAttribute("Zoom");
+		return getDoubleAttribute("Zoom");
 	}
 
-	public void setZoom(Float zoom)
+	public void setZoom(Double zoom)
 	{
 		setAttribute("Zoom", zoom);
 	}
 
 	// Attribute
-	public Float getAmplificationGain()
+	public Double getAmplificationGain()
 	{
-		return getFloatAttribute("AmplificationGain");
+		return getDoubleAttribute("AmplificationGain");
 	}
 
-	public void setAmplificationGain(Float amplificationGain)
+	public void setAmplificationGain(Double amplificationGain)
 	{
 		setAttribute("AmplificationGain", amplificationGain);
 	}
 
 	// Attribute
-	public Float getGain()
+	public Double getGain()
 	{
-		return getFloatAttribute("Gain");
+		return getDoubleAttribute("Gain");
 	}
 
-	public void setGain(Float gain)
+	public void setGain(Double gain)
 	{
 		setAttribute("Gain", gain);
 	}
 
 	// Attribute
-	public Float getOffset()
+	public Double getOffset()
 	{
-		return getFloatAttribute("Offset");
+		return getDoubleAttribute("Offset");
 	}
 
-	public void setOffset(Float offset)
+	public void setOffset(Double offset)
 	{
 		setAttribute("Offset", offset);
 	}
@@ -146,12 +146,12 @@ public class DetectorNode extends ManufactSpecNode
 	// *** WARNING *** Unhandled or skipped property ID
 
 	// Attribute
-	public Float getVoltage()
+	public Double getVoltage()
 	{
-		return getFloatAttribute("Voltage");
+		return getDoubleAttribute("Voltage");
 	}
 
-	public void setVoltage(Float voltage)
+	public void setVoltage(Double voltage)
 	{
 		setAttribute("Voltage", voltage);
 	}

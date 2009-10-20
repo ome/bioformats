@@ -224,13 +224,13 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    float x = (xlen / mx) == Float.POSITIVE_INFINITY ? 1f : (xlen / mx);
-    float y = (ylen / my) == Float.POSITIVE_INFINITY ? 1f : (ylen / my);
-    float z = (zlen / mz) == Float.POSITIVE_INFINITY ? 1f : (zlen / mz);
+    double x = (xlen / mx) == Double.POSITIVE_INFINITY ? 1 : (xlen / mx);
+    double y = (ylen / my) == Double.POSITIVE_INFINITY ? 1 : (ylen / my);
+    double z = (zlen / mz) == Double.POSITIVE_INFINITY ? 1 : (zlen / mz);
 
-    store.setDimensionsPhysicalSizeX(new Float(x), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(y), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(z), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(x), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(y), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(z), 0, 0);
   }
 
 }

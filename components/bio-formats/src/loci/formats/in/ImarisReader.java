@@ -197,17 +197,17 @@ public class ImarisReader extends FormatReader {
 
     // populate Dimensions data
 
-    store.setDimensionsPhysicalSizeX(new Float(dx), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(dy), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(dz), 0, 0);
-    store.setDimensionsTimeIncrement(new Float(1), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(dx), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(dy), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(dz), 0, 0);
+    store.setDimensionsTimeIncrement(new Double(1), 0, 0);
     store.setDimensionsWaveIncrement(new Integer(1), 0, 0);
 
     // populate LogicalChannel data
 
     for (int i=0; i<getSizeC(); i++) {
       if (pinholes[i] > 0) {
-        store.setLogicalChannelPinholeSize(new Float(pinholes[i]), 0, i);
+        store.setLogicalChannelPinholeSize(new Double(pinholes[i]), 0, i);
       }
     }
 
@@ -215,9 +215,9 @@ public class ImarisReader extends FormatReader {
 
     for (int i=0; i<getSizeC(); i++) {
       if (gains[i] > 0) {
-        store.setDetectorSettingsGain(new Float(gains[i]), 0, i);
+        store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
       }
-      store.setDetectorSettingsOffset(new Float(offsets[i]), i, 0);
+      store.setDetectorSettingsOffset(new Double(offsets[i]), i, 0);
 
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
@@ -227,7 +227,7 @@ public class ImarisReader extends FormatReader {
     }
 
     // CTR CHECK
-    //store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+    //store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
   }
 
 }

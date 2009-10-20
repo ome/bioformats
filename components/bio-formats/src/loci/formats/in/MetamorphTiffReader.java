@@ -89,8 +89,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     Vector<String> timestamps = handler.getTimestamps();
     Vector<Integer> wavelengths = handler.getWavelengths();
-    Vector<Float> zPositions = handler.getZPositions();
-    Vector<Float> exposures = handler.getExposures();
+    Vector<Double> zPositions = handler.getZPositions();
+    Vector<Double> exposures = handler.getExposures();
 
     // calculate axis sizes
 
@@ -103,9 +103,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
     core[0].sizeC = uniqueC.size();
 
-    Vector<Float> uniqueZ = new Vector<Float>();
+    Vector<Double> uniqueZ = new Vector<Double>();
     for (int i=0; i<zPositions.size(); i++) {
-      Float z = zPositions.get(i);
+      Double z = zPositions.get(i);
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
     core[0].sizeZ = uniqueZ.size();
@@ -138,7 +138,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       if (coords[2] < timestamps.size()) {
         String stamp = timestamps.get(coords[2]);
         long ms = DateTools.getTime(stamp, parse);
-        store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
+        store.setPlaneTimingDeltaT(new Double((ms - startDate) / 1000.0),
           0, 0, i);
       }
       if (i < exposures.size()) {
@@ -151,8 +151,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     store.setImageCreationDate(date, 0);
 
     store.setImagingEnvironmentTemperature(
-      new Float(handler.getTemperature()), 0);
-    store.setDimensionsPhysicalSizeX(new Float(handler.getPixelSizeX()), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(handler.getPixelSizeY()), 0, 0);
+      new Double(handler.getTemperature()), 0);
+    store.setDimensionsPhysicalSizeX(new Double(handler.getPixelSizeX()), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(handler.getPixelSizeY()), 0, 0);
   }
 }

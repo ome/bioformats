@@ -280,22 +280,22 @@ public class LociFunctions extends MacroFunctions {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Float val = null;
+    Double val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlaneTimingDeltaT(imageIndex, 0, planeIndex);
     }
-    deltaT[0] = new Double(val == null ? Double.NaN : val.doubleValue());
+    deltaT[0] = val == null ? new Double(Double.NaN) : val;
   }
 
   public void getPlaneTimingExposureTime(Double[] exposureTime, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Float val = null;
+    Double val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlaneTimingExposureTime(imageIndex, 0, planeIndex);
     }
-    exposureTime[0] = new Double(val == null ? Double.NaN : val.doubleValue());
+    exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
 
   // -- PlugIn API methods --

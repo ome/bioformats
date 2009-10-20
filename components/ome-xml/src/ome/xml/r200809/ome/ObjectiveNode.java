@@ -78,12 +78,12 @@ public class ObjectiveNode extends ManufactSpecNode
 	// -- Objective API methods --
 
 	// Element which is not complex (has only a text node)
-	public Float getWorkingDistance()
+	public Double getWorkingDistance()
 	{
-		return getFloatCData("WorkingDistance");
+		return getDoubleCData("WorkingDistance");
 	}
 
-	public void setWorkingDistance(Float workingDistance)
+	public void setWorkingDistance(Double workingDistance)
 	{
 		setCData("WorkingDistance", workingDistance);
 	}
@@ -133,12 +133,12 @@ public class ObjectiveNode extends ManufactSpecNode
 	}
 
 	// Element which is not complex (has only a text node)
-	public Float getLensNA()
+	public Double getLensNA()
 	{
-		return getFloatCData("LensNA");
+		return getDoubleCData("LensNA");
 	}
 
-	public void setLensNA(Float lensNA)
+	public void setLensNA(Double lensNA)
 	{
 		setCData("LensNA", lensNA);
 	}
@@ -155,12 +155,12 @@ public class ObjectiveNode extends ManufactSpecNode
 	}
 
 	// Element which is not complex (has only a text node)
-	public Float getCalibratedMagnification()
+	public Double getCalibratedMagnification()
 	{
-		return getFloatCData("CalibratedMagnification");
+		return getDoubleCData("CalibratedMagnification");
 	}
 
-	public void setCalibratedMagnification(Float calibratedMagnification)
+	public void setCalibratedMagnification(Double calibratedMagnification)
 	{
 		setCData("CalibratedMagnification", calibratedMagnification);
 	}

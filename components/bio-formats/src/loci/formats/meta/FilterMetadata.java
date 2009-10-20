@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 5, 2009 9:38:21 AM CDT
+ * Created by curtis via MetadataAutogen on Oct 19, 2009 10:56:59 PM EDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -195,13 +195,13 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Detector property storage -
 
-  /* @see MetadataStore#setDetectorAmplificationGain(Float, int, int) */
-  public void setDetectorAmplificationGain(Float amplificationGain, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorAmplificationGain(Double, int, int) */
+  public void setDetectorAmplificationGain(Double amplificationGain, int instrumentIndex, int detectorIndex) {
     store.setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex);
   }
 
-  /* @see MetadataStore#setDetectorGain(Float, int, int) */
-  public void setDetectorGain(Float gain, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorGain(Double, int, int) */
+  public void setDetectorGain(Double gain, int instrumentIndex, int detectorIndex) {
     store.setDetectorGain(gain, instrumentIndex, detectorIndex);
   }
 
@@ -223,8 +223,8 @@ public class FilterMetadata implements MetadataStore {
     store.setDetectorModel(value, instrumentIndex, detectorIndex);
   }
 
-  /* @see MetadataStore#setDetectorOffset(Float, int, int) */
-  public void setDetectorOffset(Float offset, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorOffset(Double, int, int) */
+  public void setDetectorOffset(Double offset, int instrumentIndex, int detectorIndex) {
     store.setDetectorOffset(offset, instrumentIndex, detectorIndex);
   }
 
@@ -240,13 +240,13 @@ public class FilterMetadata implements MetadataStore {
     store.setDetectorType(value, instrumentIndex, detectorIndex);
   }
 
-  /* @see MetadataStore#setDetectorVoltage(Float, int, int) */
-  public void setDetectorVoltage(Float voltage, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorVoltage(Double, int, int) */
+  public void setDetectorVoltage(Double voltage, int instrumentIndex, int detectorIndex) {
     store.setDetectorVoltage(voltage, instrumentIndex, detectorIndex);
   }
 
-  /* @see MetadataStore#setDetectorZoom(Float, int, int) */
-  public void setDetectorZoom(Float zoom, int instrumentIndex, int detectorIndex) {
+  /* @see MetadataStore#setDetectorZoom(Double, int, int) */
+  public void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex) {
     store.setDetectorZoom(zoom, instrumentIndex, detectorIndex);
   }
 
@@ -264,23 +264,23 @@ public class FilterMetadata implements MetadataStore {
     store.setDetectorSettingsDetector(value, imageIndex, logicalChannelIndex);
   }
 
-  /* @see MetadataStore#setDetectorSettingsGain(Float, int, int) */
-  public void setDetectorSettingsGain(Float gain, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsGain(Double, int, int) */
+  public void setDetectorSettingsGain(Double gain, int imageIndex, int logicalChannelIndex) {
     store.setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex);
   }
 
-  /* @see MetadataStore#setDetectorSettingsOffset(Float, int, int) */
-  public void setDetectorSettingsOffset(Float offset, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsOffset(Double, int, int) */
+  public void setDetectorSettingsOffset(Double offset, int imageIndex, int logicalChannelIndex) {
     store.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex);
   }
 
-  /* @see MetadataStore#setDetectorSettingsReadOutRate(Float, int, int) */
-  public void setDetectorSettingsReadOutRate(Float readOutRate, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsReadOutRate(Double, int, int) */
+  public void setDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int logicalChannelIndex) {
     store.setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex);
   }
 
-  /* @see MetadataStore#setDetectorSettingsVoltage(Float, int, int) */
-  public void setDetectorSettingsVoltage(Float voltage, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setDetectorSettingsVoltage(Double, int, int) */
+  public void setDetectorSettingsVoltage(Double voltage, int imageIndex, int logicalChannelIndex) {
     store.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex);
   }
 
@@ -312,23 +312,23 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Dimensions property storage -
 
-  /* @see MetadataStore#setDimensionsPhysicalSizeX(Float, int, int) */
-  public void setDimensionsPhysicalSizeX(Float physicalSizeX, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsPhysicalSizeX(Double, int, int) */
+  public void setDimensionsPhysicalSizeX(Double physicalSizeX, int imageIndex, int pixelsIndex) {
     store.setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex);
   }
 
-  /* @see MetadataStore#setDimensionsPhysicalSizeY(Float, int, int) */
-  public void setDimensionsPhysicalSizeY(Float physicalSizeY, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsPhysicalSizeY(Double, int, int) */
+  public void setDimensionsPhysicalSizeY(Double physicalSizeY, int imageIndex, int pixelsIndex) {
     store.setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex);
   }
 
-  /* @see MetadataStore#setDimensionsPhysicalSizeZ(Float, int, int) */
-  public void setDimensionsPhysicalSizeZ(Float physicalSizeZ, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsPhysicalSizeZ(Double, int, int) */
+  public void setDimensionsPhysicalSizeZ(Double physicalSizeZ, int imageIndex, int pixelsIndex) {
     store.setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex);
   }
 
-  /* @see MetadataStore#setDimensionsTimeIncrement(Float, int, int) */
-  public void setDimensionsTimeIncrement(Float timeIncrement, int imageIndex, int pixelsIndex) {
+  /* @see MetadataStore#setDimensionsTimeIncrement(Double, int, int) */
+  public void setDimensionsTimeIncrement(Double timeIncrement, int imageIndex, int pixelsIndex) {
     store.setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex);
   }
 
@@ -356,8 +356,8 @@ public class FilterMetadata implements MetadataStore {
     store.setDisplayOptionsID(value, imageIndex);
   }
 
-  /* @see MetadataStore#setDisplayOptionsZoom(Float, int) */
-  public void setDisplayOptionsZoom(Float zoom, int imageIndex) {
+  /* @see MetadataStore#setDisplayOptionsZoom(Double, int) */
+  public void setDisplayOptionsZoom(Double zoom, int imageIndex) {
     store.setDisplayOptionsZoom(zoom, imageIndex);
   }
 
@@ -693,23 +693,23 @@ public class FilterMetadata implements MetadataStore {
 
   // -- ImagingEnvironment property storage -
 
-  /* @see MetadataStore#setImagingEnvironmentAirPressure(Float, int) */
-  public void setImagingEnvironmentAirPressure(Float airPressure, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentAirPressure(Double, int) */
+  public void setImagingEnvironmentAirPressure(Double airPressure, int imageIndex) {
     store.setImagingEnvironmentAirPressure(airPressure, imageIndex);
   }
 
-  /* @see MetadataStore#setImagingEnvironmentCO2Percent(Float, int) */
-  public void setImagingEnvironmentCO2Percent(Float cO2Percent, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentCO2Percent(Double, int) */
+  public void setImagingEnvironmentCO2Percent(Double cO2Percent, int imageIndex) {
     store.setImagingEnvironmentCO2Percent(cO2Percent, imageIndex);
   }
 
-  /* @see MetadataStore#setImagingEnvironmentHumidity(Float, int) */
-  public void setImagingEnvironmentHumidity(Float humidity, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentHumidity(Double, int) */
+  public void setImagingEnvironmentHumidity(Double humidity, int imageIndex) {
     store.setImagingEnvironmentHumidity(humidity, imageIndex);
   }
 
-  /* @see MetadataStore#setImagingEnvironmentTemperature(Float, int) */
-  public void setImagingEnvironmentTemperature(Float temperature, int imageIndex) {
+  /* @see MetadataStore#setImagingEnvironmentTemperature(Double, int) */
+  public void setImagingEnvironmentTemperature(Double temperature, int imageIndex) {
     store.setImagingEnvironmentTemperature(temperature, imageIndex);
   }
 
@@ -745,8 +745,8 @@ public class FilterMetadata implements MetadataStore {
     store.setLaserPulse(value, instrumentIndex, lightSourceIndex);
   }
 
-  /* @see MetadataStore#setLaserRepetitionRate(Boolean, int, int) */
-  public void setLaserRepetitionRate(Boolean repetitionRate, int instrumentIndex, int lightSourceIndex) {
+  /* @see MetadataStore#setLaserRepetitionRate(Double, int, int) */
+  public void setLaserRepetitionRate(Double repetitionRate, int instrumentIndex, int lightSourceIndex) {
     store.setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex);
   }
 
@@ -786,8 +786,8 @@ public class FilterMetadata implements MetadataStore {
     store.setLightSourceModel(value, instrumentIndex, lightSourceIndex);
   }
 
-  /* @see MetadataStore#setLightSourcePower(Float, int, int) */
-  public void setLightSourcePower(Float power, int instrumentIndex, int lightSourceIndex) {
+  /* @see MetadataStore#setLightSourcePower(Double, int, int) */
+  public void setLightSourcePower(Double power, int instrumentIndex, int lightSourceIndex) {
     store.setLightSourcePower(power, instrumentIndex, lightSourceIndex);
   }
 
@@ -799,8 +799,8 @@ public class FilterMetadata implements MetadataStore {
 
   // -- LightSourceRef property storage -
 
-  /* @see MetadataStore#setLightSourceRefAttenuation(Float, int, int, int) */
-  public void setLightSourceRefAttenuation(Float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
+  /* @see MetadataStore#setLightSourceRefAttenuation(Double, int, int, int) */
+  public void setLightSourceRefAttenuation(Double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex) {
     store.setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
   }
 
@@ -817,8 +817,8 @@ public class FilterMetadata implements MetadataStore {
 
   // -- LightSourceSettings property storage -
 
-  /* @see MetadataStore#setLightSourceSettingsAttenuation(Float, int, int) */
-  public void setLightSourceSettingsAttenuation(Float attenuation, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLightSourceSettingsAttenuation(Double, int, int) */
+  public void setLightSourceSettingsAttenuation(Double attenuation, int imageIndex, int logicalChannelIndex) {
     store.setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex);
   }
 
@@ -937,8 +937,8 @@ public class FilterMetadata implements MetadataStore {
     store.setLogicalChannelName(value, imageIndex, logicalChannelIndex);
   }
 
-  /* @see MetadataStore#setLogicalChannelNdFilter(Float, int, int) */
-  public void setLogicalChannelNdFilter(Float ndFilter, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLogicalChannelNdFilter(Double, int, int) */
+  public void setLogicalChannelNdFilter(Double ndFilter, int imageIndex, int logicalChannelIndex) {
     store.setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex);
   }
 
@@ -954,8 +954,8 @@ public class FilterMetadata implements MetadataStore {
     store.setLogicalChannelPhotometricInterpretation(value, imageIndex, logicalChannelIndex);
   }
 
-  /* @see MetadataStore#setLogicalChannelPinholeSize(Float, int, int) */
-  public void setLogicalChannelPinholeSize(Float pinholeSize, int imageIndex, int logicalChannelIndex) {
+  /* @see MetadataStore#setLogicalChannelPinholeSize(Double, int, int) */
+  public void setLogicalChannelPinholeSize(Double pinholeSize, int imageIndex, int logicalChannelIndex) {
     store.setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex);
   }
 
@@ -1156,8 +1156,8 @@ public class FilterMetadata implements MetadataStore {
 
   // -- Objective property storage -
 
-  /* @see MetadataStore#setObjectiveCalibratedMagnification(Float, int, int) */
-  public void setObjectiveCalibratedMagnification(Float calibratedMagnification, int instrumentIndex, int objectiveIndex) {
+  /* @see MetadataStore#setObjectiveCalibratedMagnification(Double, int, int) */
+  public void setObjectiveCalibratedMagnification(Double calibratedMagnification, int instrumentIndex, int objectiveIndex) {
     store.setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex);
   }
 
@@ -1184,8 +1184,8 @@ public class FilterMetadata implements MetadataStore {
     store.setObjectiveIris(iris, instrumentIndex, objectiveIndex);
   }
 
-  /* @see MetadataStore#setObjectiveLensNA(Float, int, int) */
-  public void setObjectiveLensNA(Float lensNA, int instrumentIndex, int objectiveIndex) {
+  /* @see MetadataStore#setObjectiveLensNA(Double, int, int) */
+  public void setObjectiveLensNA(Double lensNA, int instrumentIndex, int objectiveIndex) {
     store.setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex);
   }
 
@@ -1212,15 +1212,15 @@ public class FilterMetadata implements MetadataStore {
     store.setObjectiveSerialNumber(value, instrumentIndex, objectiveIndex);
   }
 
-  /* @see MetadataStore#setObjectiveWorkingDistance(Float, int, int) */
-  public void setObjectiveWorkingDistance(Float workingDistance, int instrumentIndex, int objectiveIndex) {
+  /* @see MetadataStore#setObjectiveWorkingDistance(Double, int, int) */
+  public void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex) {
     store.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex);
   }
 
   // -- ObjectiveSettings property storage -
 
-  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Float, int) */
-  public void setObjectiveSettingsCorrectionCollar(Float correctionCollar, int imageIndex) {
+  /* @see MetadataStore#setObjectiveSettingsCorrectionCollar(Double, int) */
+  public void setObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex) {
     store.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
   }
 
@@ -1236,8 +1236,8 @@ public class FilterMetadata implements MetadataStore {
     store.setObjectiveSettingsObjective(value, imageIndex);
   }
 
-  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Float, int) */
-  public void setObjectiveSettingsRefractiveIndex(Float refractiveIndex, int imageIndex) {
+  /* @see MetadataStore#setObjectiveSettingsRefractiveIndex(Double, int) */
+  public void setObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex) {
     store.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
   }
 
@@ -1336,13 +1336,13 @@ public class FilterMetadata implements MetadataStore {
 
   // -- PlaneTiming property storage -
 
-  /* @see MetadataStore#setPlaneTimingDeltaT(Float, int, int, int) */
-  public void setPlaneTimingDeltaT(Float deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setPlaneTimingDeltaT(Double, int, int, int) */
+  public void setPlaneTimingDeltaT(Double deltaT, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex);
   }
 
-  /* @see MetadataStore#setPlaneTimingExposureTime(Float, int, int, int) */
-  public void setPlaneTimingExposureTime(Float exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setPlaneTimingExposureTime(Double, int, int, int) */
+  public void setPlaneTimingExposureTime(Double exposureTime, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -1907,8 +1907,8 @@ public class FilterMetadata implements MetadataStore {
     store.setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex);
   }
 
-  /* @see MetadataStore#setShapeStrokeOpacity(Float, int, int, int) */
-  public void setShapeStrokeOpacity(Float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
+  /* @see MetadataStore#setShapeStrokeOpacity(Double, int, int, int) */
+  public void setShapeStrokeOpacity(Double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex) {
     store.setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex);
   }
 
@@ -1982,35 +1982,35 @@ public class FilterMetadata implements MetadataStore {
     store.setStageLabelName(value, imageIndex);
   }
 
-  /* @see MetadataStore#setStageLabelX(Float, int) */
-  public void setStageLabelX(Float x, int imageIndex) {
+  /* @see MetadataStore#setStageLabelX(Double, int) */
+  public void setStageLabelX(Double x, int imageIndex) {
     store.setStageLabelX(x, imageIndex);
   }
 
-  /* @see MetadataStore#setStageLabelY(Float, int) */
-  public void setStageLabelY(Float y, int imageIndex) {
+  /* @see MetadataStore#setStageLabelY(Double, int) */
+  public void setStageLabelY(Double y, int imageIndex) {
     store.setStageLabelY(y, imageIndex);
   }
 
-  /* @see MetadataStore#setStageLabelZ(Float, int) */
-  public void setStageLabelZ(Float z, int imageIndex) {
+  /* @see MetadataStore#setStageLabelZ(Double, int) */
+  public void setStageLabelZ(Double z, int imageIndex) {
     store.setStageLabelZ(z, imageIndex);
   }
 
   // -- StagePosition property storage -
 
-  /* @see MetadataStore#setStagePositionPositionX(Float, int, int, int) */
-  public void setStagePositionPositionX(Float positionX, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setStagePositionPositionX(Double, int, int, int) */
+  public void setStagePositionPositionX(Double positionX, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex);
   }
 
-  /* @see MetadataStore#setStagePositionPositionY(Float, int, int, int) */
-  public void setStagePositionPositionY(Float positionY, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setStagePositionPositionY(Double, int, int, int) */
+  public void setStagePositionPositionY(Double positionY, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex);
   }
 
-  /* @see MetadataStore#setStagePositionPositionZ(Float, int, int, int) */
-  public void setStagePositionPositionZ(Float positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
+  /* @see MetadataStore#setStagePositionPositionZ(Double, int, int, int) */
+  public void setStagePositionPositionZ(Double positionZ, int imageIndex, int pixelsIndex, int planeIndex) {
     store.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -2161,13 +2161,13 @@ public class FilterMetadata implements MetadataStore {
     store.setWellSampleIndex(index, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  /* @see MetadataStore#setWellSamplePosX(Float, int, int, int) */
-  public void setWellSamplePosX(Float posX, int plateIndex, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSamplePosX(Double, int, int, int) */
+  public void setWellSamplePosX(Double posX, int plateIndex, int wellIndex, int wellSampleIndex) {
     store.setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  /* @see MetadataStore#setWellSamplePosY(Float, int, int, int) */
-  public void setWellSamplePosY(Float posY, int plateIndex, int wellIndex, int wellSampleIndex) {
+  /* @see MetadataStore#setWellSamplePosY(Double, int, int, int) */
+  public void setWellSamplePosY(Double posY, int plateIndex, int wellIndex, int wellSampleIndex) {
     store.setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex);
   }
 

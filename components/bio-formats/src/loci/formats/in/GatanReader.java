@@ -82,7 +82,7 @@ public class GatanReader extends FormatReader {
 
   private boolean signed;
   private long timestamp;
-  private float gamma, mag, voltage;
+  private double gamma, mag, voltage;
   private String info;
 
   // -- Constructor --
@@ -205,20 +205,20 @@ public class GatanReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    Float pixX = new Float(1);
-    Float pixY = new Float(1);
-    Float pixZ = new Float(1);
+    Double pixX = new Double(1);
+    Double pixY = new Double(1);
+    Double pixZ = new Double(1);
 
     if (pixelSizes.size() > 0) {
-      pixX = new Float(pixelSizes.get(0));
+      pixX = new Double(pixelSizes.get(0));
     }
 
     if (pixelSizes.size() > 1) {
-      pixY = new Float(pixelSizes.get(1));
+      pixY = new Double(pixelSizes.get(1));
     }
 
     if (pixelSizes.size() > 2) {
-      pixZ = new Float(pixelSizes.get(2));
+      pixZ = new Double(pixelSizes.get(2));
     }
 
     store.setDimensionsPhysicalSizeX(pixX, 0, 0);
@@ -228,12 +228,12 @@ public class GatanReader extends FormatReader {
     for (int i=0; i<getSizeC(); i++) {
       // CTR CHECK
 //      store.setDisplayChannel(new Integer(i), null, null,
-//        new Float(gamma), null);
+//        new Double(gamma), null);
     }
 
     // CTR CHECK
-    //store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
-    //store.setDetectorVoltage(new Float(voltage), 0, 0);
+    //store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
+    //store.setDetectorVoltage(new Double(voltage), 0, 0);
 
     if (info == null) info = "";
     StringTokenizer scopeInfo = new StringTokenizer(info, "(");
@@ -398,27 +398,27 @@ public class GatanReader extends FormatReader {
         if (labelString.equals("Scale")) {
           if (value.indexOf(",") == -1) pixelSizes.add(value);
           else {
-            float start =
-              Float.parseFloat(value.substring(0, value.indexOf(",")));
-            float end =
-              Float.parseFloat(value.substring(value.indexOf(",") + 2));
+            double start =
+              Double.parseDouble(value.substring(0, value.indexOf(",")));
+            double end =
+              Double.parseDouble(value.substring(value.indexOf(",") + 2));
             pixelSizes.add(String.valueOf(end - start));
           }
         }
         else if (labelString.equals("LowLimit")) {
-          signed = Float.parseFloat(value) < 0;
+          signed = Double.parseDouble(value) < 0;
         }
         else if (labelString.equals("Acquisition Start Time (epoch)")) {
           timestamp = (long) Double.parseDouble(value);
         }
         else if (labelString.equals("Voltage")) {
-          voltage = Float.parseFloat(value);
+          voltage = Double.parseDouble(value);
         }
         else if (labelString.equals("Microscope Info")) info = value;
         else if (labelString.equals("Indicated Magnification")) {
-          mag = Float.parseFloat(value);
+          mag = Double.parseDouble(value);
         }
-        else if (labelString.equals("Gamma")) gamma = Float.parseFloat(value);
+        else if (labelString.equals("Gamma")) gamma = Double.parseDouble(value);
 
         value = null;
       }

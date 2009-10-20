@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 2, 2009 8:39:12 AM CDT
+ * Created by curtis via MetadataAutogen on Oct 20, 2009 12:57:18 AM EDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -324,11 +324,11 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Detector property retrieval -
 
-  public float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, Current current) {
+  public double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorAmplificationGain(instrumentIndex, detectorIndex);
   }
 
-  public float getDetectorGain(int instrumentIndex, int detectorIndex, Current current) {
+  public double getDetectorGain(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorGain(instrumentIndex, detectorIndex);
   }
 
@@ -344,7 +344,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDetectorModel(instrumentIndex, detectorIndex);
   }
 
-  public float getDetectorOffset(int instrumentIndex, int detectorIndex, Current current) {
+  public double getDetectorOffset(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorOffset(instrumentIndex, detectorIndex);
   }
 
@@ -356,11 +356,11 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDetectorType(instrumentIndex, detectorIndex);
   }
 
-  public float getDetectorVoltage(int instrumentIndex, int detectorIndex, Current current) {
+  public double getDetectorVoltage(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorVoltage(instrumentIndex, detectorIndex);
   }
 
-  public float getDetectorZoom(int instrumentIndex, int detectorIndex, Current current) {
+  public double getDetectorZoom(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorZoom(instrumentIndex, detectorIndex);
   }
 
@@ -374,19 +374,19 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDetectorSettingsDetector(imageIndex, logicalChannelIndex);
   }
 
-  public float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getDetectorSettingsGain(imageIndex, logicalChannelIndex);
   }
 
-  public float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getDetectorSettingsOffset(imageIndex, logicalChannelIndex);
   }
 
-  public float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex);
   }
 
-  public float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getDetectorSettingsVoltage(imageIndex, logicalChannelIndex);
   }
 
@@ -410,19 +410,19 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Dimensions property retrieval -
 
-  public float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Current current) {
+  public double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Current current) {
     return metadataObject.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex);
   }
 
-  public float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Current current) {
+  public double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Current current) {
     return metadataObject.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex);
   }
 
-  public float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Current current) {
+  public double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Current current) {
     return metadataObject.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex);
   }
 
-  public float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Current current) {
+  public double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Current current) {
     return metadataObject.getDimensionsTimeIncrement(imageIndex, pixelsIndex);
   }
 
@@ -444,7 +444,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDisplayOptionsID(imageIndex);
   }
 
-  public float getDisplayOptionsZoom(int imageIndex, Current current) {
+  public double getDisplayOptionsZoom(int imageIndex, Current current) {
     return metadataObject.getDisplayOptionsZoom(imageIndex);
   }
 
@@ -678,19 +678,19 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - ImagingEnvironment property retrieval -
 
-  public float getImagingEnvironmentAirPressure(int imageIndex, Current current) {
+  public double getImagingEnvironmentAirPressure(int imageIndex, Current current) {
     return metadataObject.getImagingEnvironmentAirPressure(imageIndex);
   }
 
-  public float getImagingEnvironmentCO2Percent(int imageIndex, Current current) {
+  public double getImagingEnvironmentCO2Percent(int imageIndex, Current current) {
     return metadataObject.getImagingEnvironmentCO2Percent(imageIndex);
   }
 
-  public float getImagingEnvironmentHumidity(int imageIndex, Current current) {
+  public double getImagingEnvironmentHumidity(int imageIndex, Current current) {
     return metadataObject.getImagingEnvironmentHumidity(imageIndex);
   }
 
-  public float getImagingEnvironmentTemperature(int imageIndex, Current current) {
+  public double getImagingEnvironmentTemperature(int imageIndex, Current current) {
     return metadataObject.getImagingEnvironmentTemperature(imageIndex);
   }
 
@@ -718,7 +718,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getLaserPulse(instrumentIndex, lightSourceIndex);
   }
 
-  public boolean getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, Current current) {
+  public double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, Current current) {
     return metadataObject.getLaserRepetitionRate(instrumentIndex, lightSourceIndex);
   }
 
@@ -748,7 +748,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getLightSourceModel(instrumentIndex, lightSourceIndex);
   }
 
-  public float getLightSourcePower(int instrumentIndex, int lightSourceIndex, Current current) {
+  public double getLightSourcePower(int instrumentIndex, int lightSourceIndex, Current current) {
     return metadataObject.getLightSourcePower(instrumentIndex, lightSourceIndex);
   }
 
@@ -758,7 +758,7 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - LightSourceRef property retrieval -
 
-  public float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
+  public double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
     return metadataObject.getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
   }
 
@@ -772,7 +772,7 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - LightSourceSettings property retrieval -
 
-  public float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex);
   }
 
@@ -856,7 +856,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getLogicalChannelName(imageIndex, logicalChannelIndex);
   }
 
-  public float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex);
   }
 
@@ -868,7 +868,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex);
   }
 
-  public float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Current current) {
+  public double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Current current) {
     return metadataObject.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
   }
 
@@ -1014,7 +1014,7 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Objective property retrieval -
 
-  public float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, Current current) {
+  public double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex, Current current) {
     return metadataObject.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex);
   }
 
@@ -1034,7 +1034,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveIris(instrumentIndex, objectiveIndex);
   }
 
-  public float getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Current current) {
+  public double getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Current current) {
     return metadataObject.getObjectiveLensNA(instrumentIndex, objectiveIndex);
   }
 
@@ -1054,13 +1054,13 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveSerialNumber(instrumentIndex, objectiveIndex);
   }
 
-  public float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, Current current) {
+  public double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex, Current current) {
     return metadataObject.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex);
   }
 
   // - ObjectiveSettings property retrieval -
 
-  public float getObjectiveSettingsCorrectionCollar(int imageIndex, Current current) {
+  public double getObjectiveSettingsCorrectionCollar(int imageIndex, Current current) {
     return metadataObject.getObjectiveSettingsCorrectionCollar(imageIndex);
   }
 
@@ -1072,7 +1072,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveSettingsObjective(imageIndex);
   }
 
-  public float getObjectiveSettingsRefractiveIndex(int imageIndex, Current current) {
+  public double getObjectiveSettingsRefractiveIndex(int imageIndex, Current current) {
     return metadataObject.getObjectiveSettingsRefractiveIndex(imageIndex);
   }
 
@@ -1148,11 +1148,11 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - PlaneTiming property retrieval -
 
-  public float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     return metadataObject.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     return metadataObject.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -1552,7 +1552,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getShapeStrokeMiterLimit(imageIndex, roiIndex, shapeIndex);
   }
 
-  public float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, Current current) {
+  public double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, Current current) {
     return metadataObject.getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex);
   }
 
@@ -1606,29 +1606,29 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getStageLabelName(imageIndex);
   }
 
-  public float getStageLabelX(int imageIndex, Current current) {
+  public double getStageLabelX(int imageIndex, Current current) {
     return metadataObject.getStageLabelX(imageIndex);
   }
 
-  public float getStageLabelY(int imageIndex, Current current) {
+  public double getStageLabelY(int imageIndex, Current current) {
     return metadataObject.getStageLabelY(imageIndex);
   }
 
-  public float getStageLabelZ(int imageIndex, Current current) {
+  public double getStageLabelZ(int imageIndex, Current current) {
     return metadataObject.getStageLabelZ(imageIndex);
   }
 
   // - StagePosition property retrieval -
 
-  public float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     return metadataObject.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     return metadataObject.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex);
   }
 
-  public float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     return metadataObject.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -1742,11 +1742,11 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+  public double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     return metadataObject.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+  public double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     return metadataObject.getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex);
   }
 
@@ -1854,11 +1854,11 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Detector property storage -
 
-  public void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex, Current current) {
+  public void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorAmplificationGain(amplificationGain, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorGain(float gain, int instrumentIndex, int detectorIndex, Current current) {
+  public void setDetectorGain(double gain, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorGain(gain, instrumentIndex, detectorIndex);
   }
 
@@ -1874,7 +1874,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDetectorModel(model, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex, Current current) {
+  public void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorOffset(offset, instrumentIndex, detectorIndex);
   }
 
@@ -1886,11 +1886,11 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDetectorType(type, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex, Current current) {
+  public void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorVoltage(voltage, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex, Current current) {
+  public void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorZoom(zoom, instrumentIndex, detectorIndex);
   }
 
@@ -1904,19 +1904,19 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDetectorSettingsDetector(detector, imageIndex, logicalChannelIndex);
   }
 
-  public void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex);
   }
 
-  public void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex);
   }
 
-  public void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex);
   }
 
-  public void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex);
   }
 
@@ -1940,19 +1940,19 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Dimensions property storage -
 
-  public void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex, Current current) {
+  public void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, Current current) {
     metadataObject.setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex, Current current) {
+  public void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, Current current) {
     metadataObject.setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex, Current current) {
+  public void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, Current current) {
     metadataObject.setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex);
   }
 
-  public void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex, Current current) {
+  public void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, Current current) {
     metadataObject.setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex);
   }
 
@@ -1974,7 +1974,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDisplayOptionsID(id, imageIndex);
   }
 
-  public void setDisplayOptionsZoom(float zoom, int imageIndex, Current current) {
+  public void setDisplayOptionsZoom(double zoom, int imageIndex, Current current) {
     metadataObject.setDisplayOptionsZoom(zoom, imageIndex);
   }
 
@@ -2208,19 +2208,19 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - ImagingEnvironment property storage -
 
-  public void setImagingEnvironmentAirPressure(float airPressure, int imageIndex, Current current) {
+  public void setImagingEnvironmentAirPressure(double airPressure, int imageIndex, Current current) {
     metadataObject.setImagingEnvironmentAirPressure(airPressure, imageIndex);
   }
 
-  public void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex, Current current) {
+  public void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, Current current) {
     metadataObject.setImagingEnvironmentCO2Percent(cO2Percent, imageIndex);
   }
 
-  public void setImagingEnvironmentHumidity(float humidity, int imageIndex, Current current) {
+  public void setImagingEnvironmentHumidity(double humidity, int imageIndex, Current current) {
     metadataObject.setImagingEnvironmentHumidity(humidity, imageIndex);
   }
 
-  public void setImagingEnvironmentTemperature(float temperature, int imageIndex, Current current) {
+  public void setImagingEnvironmentTemperature(double temperature, int imageIndex, Current current) {
     metadataObject.setImagingEnvironmentTemperature(temperature, imageIndex);
   }
 
@@ -2248,7 +2248,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setLaserPulse(pulse, instrumentIndex, lightSourceIndex);
   }
 
-  public void setLaserRepetitionRate(boolean repetitionRate, int instrumentIndex, int lightSourceIndex, Current current) {
+  public void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, Current current) {
     metadataObject.setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex);
   }
 
@@ -2278,7 +2278,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setLightSourceModel(model, instrumentIndex, lightSourceIndex);
   }
 
-  public void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex, Current current) {
+  public void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, Current current) {
     metadataObject.setLightSourcePower(power, instrumentIndex, lightSourceIndex);
   }
 
@@ -2288,7 +2288,7 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - LightSourceRef property storage -
 
-  public void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
+  public void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
     metadataObject.setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
   }
 
@@ -2302,7 +2302,7 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - LightSourceSettings property storage -
 
-  public void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex);
   }
 
@@ -2386,7 +2386,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setLogicalChannelName(name, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex);
   }
 
@@ -2398,7 +2398,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setLogicalChannelPhotometricInterpretation(photometricInterpretation, imageIndex, logicalChannelIndex);
   }
 
-  public void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex, Current current) {
+  public void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, Current current) {
     metadataObject.setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex);
   }
 
@@ -2544,7 +2544,7 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Objective property storage -
 
-  public void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex, Current current) {
+  public void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex, Current current) {
     metadataObject.setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex);
   }
 
@@ -2564,7 +2564,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setObjectiveIris(iris, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex, Current current) {
+  public void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, Current current) {
     metadataObject.setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex);
   }
 
@@ -2584,13 +2584,13 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setObjectiveSerialNumber(serialNumber, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex, Current current) {
+  public void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex, Current current) {
     metadataObject.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex);
   }
 
   // - ObjectiveSettings property storage -
 
-  public void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex, Current current) {
+  public void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, Current current) {
     metadataObject.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
   }
 
@@ -2602,7 +2602,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setObjectiveSettingsObjective(objective, imageIndex);
   }
 
-  public void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex, Current current) {
+  public void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, Current current) {
     metadataObject.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
   }
 
@@ -2678,11 +2678,11 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - PlaneTiming property storage -
 
-  public void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     metadataObject.setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     metadataObject.setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -3082,7 +3082,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex);
   }
 
-  public void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, Current current) {
+  public void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, Current current) {
     metadataObject.setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex);
   }
 
@@ -3136,29 +3136,29 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setStageLabelName(name, imageIndex);
   }
 
-  public void setStageLabelX(float x, int imageIndex, Current current) {
+  public void setStageLabelX(double x, int imageIndex, Current current) {
     metadataObject.setStageLabelX(x, imageIndex);
   }
 
-  public void setStageLabelY(float y, int imageIndex, Current current) {
+  public void setStageLabelY(double y, int imageIndex, Current current) {
     metadataObject.setStageLabelY(y, imageIndex);
   }
 
-  public void setStageLabelZ(float z, int imageIndex, Current current) {
+  public void setStageLabelZ(double z, int imageIndex, Current current) {
     metadataObject.setStageLabelZ(z, imageIndex);
   }
 
   // - StagePosition property storage -
 
-  public void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     metadataObject.setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     metadataObject.setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex);
   }
 
-  public void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
+  public void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
     metadataObject.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
   }
 
@@ -3272,11 +3272,11 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setWellSampleIndex(index, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+  public void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     metadataObject.setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+  public void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     metadataObject.setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex);
   }
 

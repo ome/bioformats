@@ -53,7 +53,7 @@ public class IPLabReader extends FormatReader {
   /** Total number of pixel bytes. */
   private int dataSize;
 
-  private Float pixelSize, timeIncrement;
+  private Double pixelSize, timeIncrement;
 
   // -- Constructor --
 
@@ -260,7 +260,7 @@ public class IPLabReader extends FormatReader {
 
           // CTR CHECK
           //store.setDisplayChannel(new Integer(core[0].sizeC),
-          //  new Double(black), new Double(white), new Float(gamma), null);
+          //  new Double(black), new Double(white), new Double(gamma), null);
         }
       }
       else if (tag.equals("head")) {
@@ -329,7 +329,7 @@ public class IPLabReader extends FormatReader {
               break;
           }
 
-          if (i == 0) pixelSize = new Float(unitsPerPixel);
+          if (i == 0) pixelSize = new Double(unitsPerPixel);
 
           addGlobalMeta("UnitName" + i, xUnitName);
         }
@@ -381,11 +381,11 @@ public class IPLabReader extends FormatReader {
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {
               int plane = getIndex(z, c, i);
-              store.setPlaneTimingDeltaT(new Float(timepoint), 0, 0, plane);
+              store.setPlaneTimingDeltaT(new Double(timepoint), 0, 0, plane);
             }
           }
           if (i == 1) {
-            timeIncrement = new Float(timepoint);
+            timeIncrement = new Double(timepoint);
           }
         }
       }

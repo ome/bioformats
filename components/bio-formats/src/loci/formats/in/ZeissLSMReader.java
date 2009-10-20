@@ -157,7 +157,7 @@ public class ZeissLSMReader extends FormatReader {
   private int nextFilter = 0, nextFilterSet = 0;
   private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
-  private float zoom;
+  private double zoom;
   private Vector<String> imageNames;
   private String binning;
 
@@ -201,7 +201,7 @@ public class ZeissLSMReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
+      pixelSizeX = pixelSizeY = pixelSizeZ = 0;
       lut = null;
       timestamps = null;
       validChannels = 0;
@@ -212,7 +212,7 @@ public class ZeissLSMReader extends FormatReader {
       nextFilter = nextFilterSet = 0;
       nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
       splitPlanes = false;
-      zoom = 0f;
+      zoom = 0;
       imageNames = null;
       binning = null;
     }
@@ -821,33 +821,33 @@ public class ZeissLSMReader extends FormatReader {
 
     imageNames.add(imageName);
 
-    Float pixX = new Float((float) pixelSizeX);
-    Float pixY = new Float((float) pixelSizeY);
-    Float pixZ = new Float((float) pixelSizeZ);
+    Double pixX = new Double(pixelSizeX);
+    Double pixY = new Double(pixelSizeY);
+    Double pixZ = new Double(pixelSizeZ);
 
     store.setDimensionsPhysicalSizeX(pixX, series, 0);
     store.setDimensionsPhysicalSizeY(pixY, series, 0);
     store.setDimensionsPhysicalSizeZ(pixZ, series, 0);
 
-    float firstStamp = 0f;
+    double firstStamp = 0;
     if (timestamps.size() > 0) {
-      firstStamp = timestamps.get(0).floatValue();
+      firstStamp = timestamps.get(0).doubleValue();
     }
 
     for (int i=0; i<getImageCount(); i++) {
       int[] zct = FormatTools.getZCTCoords(this, i);
 
       if (zct[2] < timestamps.size()) {
-        float thisStamp = timestamps.get(zct[2]).floatValue();
-        store.setPlaneTimingDeltaT(new Float(thisStamp - firstStamp),
+        double thisStamp = timestamps.get(zct[2]).doubleValue();
+        store.setPlaneTimingDeltaT(new Double(thisStamp - firstStamp),
           series, 0, i);
         int index = zct[2] + 1;
-        float nextStamp = index < timestamps.size() ?
-          timestamps.get(index).floatValue() : thisStamp;
+        double nextStamp = index < timestamps.size() ?
+          timestamps.get(index).doubleValue() : thisStamp;
         if (i == getSizeT() - 1 && zct[2] > 0) {
-          thisStamp = timestamps.get(zct[2] - 1).floatValue();
+          thisStamp = timestamps.get(zct[2] - 1).doubleValue();
         }
-        store.setPlaneTimingExposureTime(new Float(nextStamp - thisStamp),
+        store.setPlaneTimingExposureTime(new Double(nextStamp - thisStamp),
           series, 0, i);
       }
     }
@@ -905,7 +905,7 @@ public class ZeissLSMReader extends FormatReader {
     }
     else if (block instanceof DetectionChannel) {
       DetectionChannel channel = (DetectionChannel) block;
-      if (channel.pinhole != null && channel.pinhole.floatValue() != 0f &&
+      if (channel.pinhole != null && channel.pinhole.doubleValue() != 0f &&
         nextDetectChannel < getSizeC() && channel.acquire)
       {
         store.setLogicalChannelPinholeSize(channel.pinhole, series,
@@ -963,7 +963,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
       store.setDetectorType("PMT", series, nextDetector);
-      store.setDetectorZoom(new Float(zoom), series, nextDetector);
+      store.setDetectorZoom(new Double(zoom), series, nextDetector);
       nextDetectChannel++;
       nextDetector++;
     }
@@ -1573,7 +1573,7 @@ public class ZeissLSMReader extends FormatReader {
     // Objective data
     public String correction, immersion;
     public Integer magnification;
-    public Float lensNA;
+    public Double lensNA;
     public Boolean iris;
 
     protected void read() throws IOException {
@@ -1592,7 +1592,7 @@ public class ZeissLSMReader extends FormatReader {
         startTime = DateTools.convertDate(stamp, DateTools.MICROSOFT);
       }
 
-      zoom = (float) getDoubleValue(RECORDING_ZOOM);
+      zoom = (Double) getDoubleValue(RECORDING_ZOOM);
 
       String objective = getStringValue(RECORDING_OBJECTIVE);
 
@@ -1612,7 +1612,7 @@ public class ZeissLSMReader extends FormatReader {
         }
         catch (NumberFormatException e) { }
         try {
-          lensNA = new Float(p.substring(p.indexOf("/") + 1));
+          lensNA = new Double(p.substring(p.indexOf("/") + 1));
         }
         catch (NumberFormatException e) { }
       }
@@ -1662,26 +1662,26 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   class Track extends SubBlock {
-    public Float timeIncrement;
+    public Double timeIncrement;
 
     protected void read() throws IOException {
       super.read();
-      timeIncrement = getFloatValue(TRACK_TIME_BETWEEN_STACKS);
+      timeIncrement = getDoubleValue(TRACK_TIME_BETWEEN_STACKS);
       acquire = getIntValue(TRACK_ACQUIRE) != 0;
     }
   }
 
   class DetectionChannel extends SubBlock {
-    public Float pinhole;
-    public Float gain, amplificationGain;
+    public Double pinhole;
+    public Double gain, amplificationGain;
     public String filter, filterSet;
     public String channelName;
 
     protected void read() throws IOException {
       super.read();
-      pinhole = new Float(getFloatValue(CHANNEL_PINHOLE_DIAMETER));
-      gain = new Float(getFloatValue(CHANNEL_DETECTOR_GAIN));
-      amplificationGain = new Float(getFloatValue(CHANNEL_AMPLIFIER_GAIN));
+      pinhole = new Double(getDoubleValue(CHANNEL_PINHOLE_DIAMETER));
+      gain = new Double(getDoubleValue(CHANNEL_DETECTOR_GAIN));
+      amplificationGain = new Double(getDoubleValue(CHANNEL_AMPLIFIER_GAIN));
       filter = getStringValue(CHANNEL_FILTER);
       if (filter != null) {
         filter = filter.trim();
@@ -1698,12 +1698,12 @@ public class ZeissLSMReader extends FormatReader {
 
   class IlluminationChannel extends SubBlock {
     public Integer wavelength;
-    public Float attenuation;
+    public Double attenuation;
 
     protected void read() throws IOException {
       super.read();
       wavelength = new Integer(getIntValue(ILLUM_CHANNEL_WAVELENGTH));
-      attenuation = new Float(getFloatValue(ILLUM_CHANNEL_ATTENUATION));
+      attenuation = new Double(getDoubleValue(ILLUM_CHANNEL_ATTENUATION));
       acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
     }
   }

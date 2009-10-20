@@ -802,8 +802,8 @@ public class MIASReader extends FormatReader {
   private void populateROI(List<String> columns, String[] data, int series,
     int roi, int time, int z, MetadataStore store)
   {
-    float cx = Float.parseFloat(data[columns.indexOf("Col")]);
-    float cy = Float.parseFloat(data[columns.indexOf("Row")]);
+    double cx = Double.parseDouble(data[columns.indexOf("Col")]);
+    double cy = Double.parseDouble(data[columns.indexOf("Row")]);
 
     Integer tv = new Integer(time);
     Integer zv = new Integer(z);
@@ -819,7 +819,7 @@ public class MIASReader extends FormatReader {
     store.setCircleCx(data[columns.indexOf("Col")], series, roi, 0);
     store.setCircleCy(data[columns.indexOf("Row")], series, roi, 0);
 
-    float diam = Float.parseFloat(data[columns.indexOf("Cell Diam.")]);
+    double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     String radius = String.valueOf(diam / 2);
 
     store.setCircleR(radius, series, roi, 0);
@@ -852,7 +852,7 @@ public class MIASReader extends FormatReader {
   private void parseTemplateFile(MetadataStore store) throws IOException {
     if (templateFile == null) return;
 
-    Float physicalSizeX = null, physicalSizeY = null, exposure = null;
+    Double physicalSizeX = null, physicalSizeY = null, exposure = null;
     Vector<String> channelNames = new Vector<String>();
     String date = null;
 
@@ -872,16 +872,16 @@ public class MIASReader extends FormatReader {
           store.setPlateName(value, 0);
         }
         else if (key.equals("Pixel_X")) {
-          physicalSizeX = new Float(value);
+          physicalSizeX = new Double(value);
         }
         else if (key.equals("Pixel_Y")) {
-          physicalSizeY = new Float(value);
+          physicalSizeY = new Double(value);
         }
         else if (key.equals("Objective_ID")) {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          int mag = (int) Float.parseFloat(value);
+          int mag = (int) Double.parseDouble(value);
           store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
         }
         else if (key.startsWith("Mode_")) {
@@ -894,7 +894,7 @@ public class MIASReader extends FormatReader {
           date += " " + value;
         }
         else if (key.equals("Exposure")) {
-          exposure = new Float(value);
+          exposure = new Double(value);
         }
       }
     }

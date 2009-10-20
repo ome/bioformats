@@ -495,8 +495,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       IFD.X_RESOLUTION, false);
     TiffRational yResolution = firstIFD.getIFDRationalValue(
       IFD.Y_RESOLUTION, false);
-    float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
-    float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
+    double pixX = xResolution == null ? 0.0 : 1 / xResolution.doubleValue();
+    double pixY = yResolution == null ? 0.0 : 1 / yResolution.doubleValue();
 
     switch (resolutionUnit) {
       case 2:
@@ -511,22 +511,24 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         break;
     }
 
-    store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(0), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(pixX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(pixY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(0), 0, 0);
 
     // populate StageLabel
     Object x = firstIFD.getIFDValue(IFD.X_POSITION);
     Object y = firstIFD.getIFDValue(IFD.Y_POSITION);
-    Float stageX;
-    Float stageY;
+    Double stageX;
+    Double stageY;
     if (x instanceof TiffRational) {
-      stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
-      stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
+      TiffRational tx = (TiffRational) x;
+      TiffRational ty = (TiffRational) y;
+      stageX = x == null ? null : new Double(tx.doubleValue());
+      stageY = y == null ? null : new Double(ty.doubleValue());
     }
     else {
-      stageX = x == null ? null : new Float((String) x);
-      stageY = y == null ? null : new Float((String) y);
+      stageX = x == null ? null : new Double(x.toString());
+      stageY = y == null ? null : new Double(y.toString());
     }
     // populate Instrument
     //String make = ifd.getIFDStringValue(IFD.MAKE, false);

@@ -97,23 +97,23 @@ public class DetectorRefNode extends ReferenceNode
 	// -- DetectorRef API methods --
 
 	// Attribute
-	public Float getOffset()
+	public Double getOffset()
 	{
-		return getFloatAttribute("Offset");
+		return getDoubleAttribute("Offset");
 	}
 
-	public void setOffset(Float offset)
+	public void setOffset(Double offset)
 	{
 		setAttribute("Offset", offset);
 	}
 
 	// Attribute
-	public Float getGain()
+	public Double getGain()
 	{
-		return getFloatAttribute("Gain");
+		return getDoubleAttribute("Gain");
 	}
 
-	public void setGain(Float gain)
+	public void setGain(Double gain)
 	{
 		setAttribute("Gain", gain);
 	}

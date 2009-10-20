@@ -77,45 +77,45 @@ public class ImagingEnvironmentNode extends OMEXMLNode
 	// -- ImagingEnvironment API methods --
 
 	// Attribute
-	public Float getCO2Percent()
+	public Double getCO2Percent()
 	{
-		return getFloatAttribute("CO2Percent");
+		return getDoubleAttribute("CO2Percent");
 	}
 
-	public void setCO2Percent(Float co2percent)
+	public void setCO2Percent(Double co2percent)
 	{
 		setAttribute("CO2Percent", co2percent);
 	}
 
 	// Attribute
-	public Float getTemperature()
+	public Double getTemperature()
 	{
-		return getFloatAttribute("Temperature");
+		return getDoubleAttribute("Temperature");
 	}
 
-	public void setTemperature(Float temperature)
+	public void setTemperature(Double temperature)
 	{
 		setAttribute("Temperature", temperature);
 	}
 
 	// Attribute
-	public Float getAirPressure()
+	public Double getAirPressure()
 	{
-		return getFloatAttribute("AirPressure");
+		return getDoubleAttribute("AirPressure");
 	}
 
-	public void setAirPressure(Float airPressure)
+	public void setAirPressure(Double airPressure)
 	{
 		setAttribute("AirPressure", airPressure);
 	}
 
 	// Attribute
-	public Float getHumidity()
+	public Double getHumidity()
 	{
-		return getFloatAttribute("Humidity");
+		return getDoubleAttribute("Humidity");
 	}
 
-	public void setHumidity(Float humidity)
+	public void setHumidity(Double humidity)
 	{
 		setAttribute("Humidity", humidity);
 	}

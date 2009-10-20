@@ -88,7 +88,7 @@ public class DeltavisionReader extends FormatReader {
   /** Initialize an array of Extended Header Field structures. */
   protected DVExtHdrFields[][][] extHdrFields = null;
 
-  private Float[] ndFilters;
+  private Double[] ndFilters;
 
   private String logFile;
   private String deconvolutionLogFile;
@@ -439,9 +439,9 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    store.setDimensionsPhysicalSizeX(new Float(pixX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(pixZ), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(pixX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(pixY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(pixZ), 0, 0);
 
     store.setImageDescription(imageDesc, 0);
 
@@ -456,7 +456,7 @@ public class DeltavisionReader extends FormatReader {
     setOffsetInfo(sequence, sizeZ, sizeC, sizeT);
     extHdrFields = new DVExtHdrFields[sizeZ][sizeC][sizeT];
 
-    ndFilters = new Float[sizeC];
+    ndFilters = new Double[sizeC];
 
     // if matching log file exists, extract key/value pairs from it
     boolean logFound = parseLogFile(store);
@@ -490,15 +490,15 @@ public class DeltavisionReader extends FormatReader {
 
       // plane timing
       if (!logFound) {
-        store.setPlaneTimingDeltaT(new Float(hdr.timeStampSeconds), 0, 0, i);
+        store.setPlaneTimingDeltaT(new Double(hdr.timeStampSeconds), 0, 0, i);
       }
-      store.setPlaneTimingExposureTime(new Float(hdr.expTime), 0, 0, i);
+      store.setPlaneTimingExposureTime(new Double(hdr.expTime), 0, 0, i);
 
       // stage position
       if (!logFound) {
-        store.setStagePositionPositionX(new Float(hdr.stageXCoord), 0, 0, i);
-        store.setStagePositionPositionY(new Float(hdr.stageYCoord), 0, 0, i);
-        store.setStagePositionPositionZ(new Float(hdr.stageZCoord), 0, 0, i);
+        store.setStagePositionPositionX(new Double(hdr.stageXCoord), 0, 0, i);
+        store.setStagePositionPositionY(new Double(hdr.stageYCoord), 0, 0, i);
+        store.setStagePositionPositionZ(new Double(hdr.stageZCoord), 0, 0, i);
       }
     }
 
@@ -508,7 +508,7 @@ public class DeltavisionReader extends FormatReader {
       if ((int) hdrC.exWavelen > 0) {
         store.setLogicalChannelExWave(new Integer((int) hdrC.exWavelen), 0, w);
       }
-      if (ndFilters[w] == null) ndFilters[w] = new Float(hdrC.ndFilter);
+      if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
       store.setLogicalChannelNdFilter(ndFilters[w], 0, w);
     }
   }
@@ -626,7 +626,7 @@ public class DeltavisionReader extends FormatReader {
               warn("Could not parse magnification '" + magnification + "'");
             }
             try {
-              store.setObjectiveLensNA(new Float(na), 0, 0);
+              store.setObjectiveLensNA(new Double(na), 0, 0);
             }
             catch (NumberFormatException e) {
               warn("Could not parse N.A. '" + na + "'");
@@ -653,9 +653,9 @@ public class DeltavisionReader extends FormatReader {
           String[] pixelSizes = value.split(" ");
 
           for (int q=0; q<pixelSizes.length; q++) {
-            Float size = null;
+            Double size = null;
             try {
-              size = new Float(pixelSizes[q].trim());
+              size = new Double(pixelSizes[q].trim());
             }
             catch (NumberFormatException e) {
               warn("Could not parse pixel size '" + pixelSizes[q].trim() + "'");
@@ -683,7 +683,7 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("X", "");
           try {
             for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsGain(new Float(value), 0, c);
+              store.setDetectorSettingsGain(new Double(value), 0, c);
             }
           }
           catch (NumberFormatException e) {
@@ -693,9 +693,9 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Speed")) {
           value = value.replaceAll("KHz", "");
           try {
-            float mhz = Float.parseFloat(value) / 1000;
+            double mhz = Double.parseDouble(value) / 1000;
             for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsReadOutRate(new Float(mhz), 0, c);
+              store.setDetectorSettingsReadOutRate(new Double(mhz), 0, c);
             }
           }
           catch (NumberFormatException e) {
@@ -706,7 +706,7 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("C", "").trim();
           try {
             // this is the camera temperature, not the environment temperature
-            //store.setImagingEnvironmentTemperature(new Float(value), 0);
+            //store.setImagingEnvironmentTemperature(new Double(value), 0);
           }
           catch (NumberFormatException e) {
             warn("Could not parse temperature '" + value + "'");
@@ -717,7 +717,7 @@ public class DeltavisionReader extends FormatReader {
           int space = value.indexOf(" ");
           if (space >= 0) value = value.substring(0, space);
           try {
-            store.setPlaneTimingDeltaT(new Float(value), 0, 0, currentImage);
+            store.setPlaneTimingDeltaT(new Double(value), 0, 0, currentImage);
           }
           catch (NumberFormatException e) {
             warn("Could not parse timestamp '" + value + "'");
@@ -737,8 +737,8 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("%", "");
           try {
             int cIndex = getZCTCoords(currentImage)[1];
-            float nd = Float.parseFloat(value);
-            ndFilters[cIndex] = new Float(Math.pow(10, -1 * nd));
+            double nd = Double.parseDouble(value);
+            ndFilters[cIndex] = new Double(Math.pow(10, -1 * nd));
           }
           catch (NumberFormatException exc) {
             warn("Could not parse ND filter '" + value + "'");
@@ -753,9 +753,9 @@ public class DeltavisionReader extends FormatReader {
           }
           String[] coords = value.split(",");
           for (int i=0; i<coords.length; i++) {
-            Float p = null;
+            Double p = null;
             try {
-              p = new Float(coords[i].trim());
+              p = new Double(coords[i].trim());
             }
             catch (NumberFormatException e) {
               warn("Could not parse stage coordinate '" + coords[i] + "'");

@@ -68,13 +68,13 @@ public class MicromanagerReader extends FormatReader {
   private String[] channels;
 
   private String comment, time;
-  private Float exposureTime, sliceThickness, pixelSize;
-  private Float[] timestamps;
+  private Double exposureTime, sliceThickness, pixelSize;
+  private Double[] timestamps;
 
   private int gain;
   private String binning, detectorID, detectorModel, detectorManufacturer;
-  private float temperature;
-  private Vector<Float> voltage;
+  private double temperature;
+  private Vector<Double> voltage;
   private String cameraRef;
   private String cameraMode;
 
@@ -222,8 +222,8 @@ public class MicromanagerReader extends FormatReader {
 
     status("Populating metadata");
 
-    Vector<Float> stamps = new Vector<Float>();
-    voltage = new Vector<Float>();
+    Vector<Double> stamps = new Vector<Double>();
+    voltage = new Vector<Double>();
 
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
@@ -277,10 +277,10 @@ public class MicromanagerReader extends FormatReader {
           core[0].sizeZ = Integer.parseInt(value);
         }
         else if (key.equals("PixelSize_um")) {
-          pixelSize = new Float(value);
+          pixelSize = new Double(value);
         }
         else if (key.equals("z-step_um")) {
-          sliceThickness = new Float(value);
+          sliceThickness = new Double(value);
         }
         else if (key.equals("Time")) time = value;
         else if (key.equals("Comment")) comment = value;
@@ -310,12 +310,12 @@ public class MicromanagerReader extends FormatReader {
           addGlobalMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
-            float t = Float.parseFloat(value);
-            exposureTime = new Float(t / 1000);
+            double t = Double.parseDouble(value);
+            exposureTime = new Double(t / 1000);
           }
           else if (key.equals("ElapsedTime-ms")) {
-            float t = Float.parseFloat(value);
-            stamps.add(new Float(t / 1000));
+            double t = Double.parseDouble(value);
+            stamps.add(new Double(t / 1000));
           }
           else if (key.equals("Core-Camera")) cameraRef = value;
           else if (key.equals(cameraRef + "-Binning")) {
@@ -331,13 +331,13 @@ public class MicromanagerReader extends FormatReader {
             detectorManufacturer = value;
           }
           else if (key.equals(cameraRef + "-Temperature")) {
-            temperature = Float.parseFloat(value);
+            temperature = Double.parseDouble(value);
           }
           else if (key.equals(cameraRef + "-CCDMode")) {
             cameraMode = value;
           }
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
-            voltage.add(new Float(value));
+            voltage.add(new Double(value));
           }
 
           token = st.nextToken().trim();
@@ -345,7 +345,7 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
-    timestamps = stamps.toArray(new Float[stamps.size()]);
+    timestamps = stamps.toArray(new Double[stamps.size()]);
     Arrays.sort(timestamps);
 
     // build list of TIFF files
@@ -448,7 +448,7 @@ public class MicromanagerReader extends FormatReader {
 
     for (int i=0; i<channels.length; i++) {
       store.setDetectorSettingsBinning(binning, 0, i);
-      store.setDetectorSettingsGain(new Float(gain), 0, i);
+      store.setDetectorSettingsGain(new Double(gain), 0, i);
       if (i < voltage.size()) {
         store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
       }
@@ -467,7 +467,7 @@ public class MicromanagerReader extends FormatReader {
     if (cameraMode == null) cameraMode = "Unknown";
     store.setDetectorType(cameraMode, 0, 0);
 
-    store.setImagingEnvironmentTemperature(new Float(temperature), 0);
+    store.setImagingEnvironmentTemperature(new Double(temperature), 0);
   }
 
 }

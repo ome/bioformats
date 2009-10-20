@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Oct 2, 2009 8:39:12 AM CDT
+ * Created by curtis via MetadataAutogen on Oct 20, 2009 12:57:18 AM EDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -220,25 +220,25 @@ module formats {
 
     // - Detector property retrieval -
 
-    float getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
-    float getDetectorGain(int instrumentIndex, int detectorIndex);
+    double getDetectorAmplificationGain(int instrumentIndex, int detectorIndex);
+    double getDetectorGain(int instrumentIndex, int detectorIndex);
     string getDetectorID(int instrumentIndex, int detectorIndex);
     string getDetectorManufacturer(int instrumentIndex, int detectorIndex);
     string getDetectorModel(int instrumentIndex, int detectorIndex);
-    float getDetectorOffset(int instrumentIndex, int detectorIndex);
+    double getDetectorOffset(int instrumentIndex, int detectorIndex);
     string getDetectorSerialNumber(int instrumentIndex, int detectorIndex);
     string getDetectorType(int instrumentIndex, int detectorIndex);
-    float getDetectorVoltage(int instrumentIndex, int detectorIndex);
-    float getDetectorZoom(int instrumentIndex, int detectorIndex);
+    double getDetectorVoltage(int instrumentIndex, int detectorIndex);
+    double getDetectorZoom(int instrumentIndex, int detectorIndex);
 
     // - DetectorSettings property retrieval -
 
     string getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex);
     string getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex);
-    float getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
-    float getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
-    float getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
-    float getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex);
+    double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex);
 
     // - Dichroic property retrieval -
 
@@ -249,10 +249,10 @@ module formats {
 
     // - Dimensions property retrieval -
 
-    float getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
-    float getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
-    float getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
-    float getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
+    double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex);
+    double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex);
+    double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex);
+    double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex);
     int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex);
     int getDimensionsWaveStart(int imageIndex, int pixelsIndex);
 
@@ -260,7 +260,7 @@ module formats {
 
     string getDisplayOptionsDisplay(int imageIndex);
     string getDisplayOptionsID(int imageIndex);
-    float getDisplayOptionsZoom(int imageIndex);
+    double getDisplayOptionsZoom(int imageIndex);
 
     // - Ellipse property retrieval -
 
@@ -351,10 +351,10 @@ module formats {
 
     // - ImagingEnvironment property retrieval -
 
-    float getImagingEnvironmentAirPressure(int imageIndex);
-    float getImagingEnvironmentCO2Percent(int imageIndex);
-    float getImagingEnvironmentHumidity(int imageIndex);
-    float getImagingEnvironmentTemperature(int imageIndex);
+    double getImagingEnvironmentAirPressure(int imageIndex);
+    double getImagingEnvironmentCO2Percent(int imageIndex);
+    double getImagingEnvironmentHumidity(int imageIndex);
+    double getImagingEnvironmentTemperature(int imageIndex);
 
     // - Instrument property retrieval -
 
@@ -366,7 +366,7 @@ module formats {
     string getLaserLaserMedium(int instrumentIndex, int lightSourceIndex);
     bool getLaserPockelCell(int instrumentIndex, int lightSourceIndex);
     string getLaserPulse(int instrumentIndex, int lightSourceIndex);
-    bool getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
+    double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex);
     bool getLaserTuneable(int instrumentIndex, int lightSourceIndex);
     string getLaserType(int instrumentIndex, int lightSourceIndex);
     int getLaserWavelength(int instrumentIndex, int lightSourceIndex);
@@ -376,18 +376,18 @@ module formats {
     string getLightSourceID(int instrumentIndex, int lightSourceIndex);
     string getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex);
     string getLightSourceModel(int instrumentIndex, int lightSourceIndex);
-    float getLightSourcePower(int instrumentIndex, int lightSourceIndex);
+    double getLightSourcePower(int instrumentIndex, int lightSourceIndex);
     string getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex);
 
     // - LightSourceRef property retrieval -
 
-    float getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     string getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
     // - LightSourceSettings property retrieval -
 
-    float getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
+    double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex);
     string getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex);
     int getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex);
 
@@ -413,10 +413,10 @@ module formats {
     string getLogicalChannelLightSource(int imageIndex, int logicalChannelIndex);
     string getLogicalChannelMode(int imageIndex, int logicalChannelIndex);
     string getLogicalChannelName(int imageIndex, int logicalChannelIndex);
-    float getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
+    double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex);
     string getLogicalChannelOTF(int imageIndex, int logicalChannelIndex);
     string getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex);
-    float getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
+    double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex);
     int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex);
     int getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex);
     string getLogicalChannelSecondaryEmissionFilter(int imageIndex, int logicalChannelIndex);
@@ -470,24 +470,24 @@ module formats {
 
     // - Objective property retrieval -
 
-    float getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
+    double getObjectiveCalibratedMagnification(int instrumentIndex, int objectiveIndex);
     string getObjectiveCorrection(int instrumentIndex, int objectiveIndex);
     string getObjectiveID(int instrumentIndex, int objectiveIndex);
     string getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
     bool getObjectiveIris(int instrumentIndex, int objectiveIndex);
-    float getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
+    double getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
     string getObjectiveManufacturer(int instrumentIndex, int objectiveIndex);
     string getObjectiveModel(int instrumentIndex, int objectiveIndex);
     int getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
     string getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
-    float getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
+    double getObjectiveWorkingDistance(int instrumentIndex, int objectiveIndex);
 
     // - ObjectiveSettings property retrieval -
 
-    float getObjectiveSettingsCorrectionCollar(int imageIndex);
+    double getObjectiveSettingsCorrectionCollar(int imageIndex);
     string getObjectiveSettingsMedium(int imageIndex);
     string getObjectiveSettingsObjective(int imageIndex);
-    float getObjectiveSettingsRefractiveIndex(int imageIndex);
+    double getObjectiveSettingsRefractiveIndex(int imageIndex);
 
     // - Path property retrieval -
 
@@ -516,8 +516,8 @@ module formats {
 
     // - PlaneTiming property retrieval -
 
-    float getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
-    float getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
+    double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex);
+    double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex);
 
     // - Plate property retrieval -
 
@@ -662,7 +662,7 @@ module formats {
     string getShapeStrokeLineCap(int imageIndex, int roiIndex, int shapeIndex);
     string getShapeStrokeLineJoin(int imageIndex, int roiIndex, int shapeIndex);
     int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex);
-    float getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
+    double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex);
     int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex);
     string getShapeText(int imageIndex, int roiIndex, int shapeIndex);
     string getShapeTextAnchor(int imageIndex, int roiIndex, int shapeIndex);
@@ -678,15 +678,15 @@ module formats {
     // - StageLabel property retrieval -
 
     string getStageLabelName(int imageIndex);
-    float getStageLabelX(int imageIndex);
-    float getStageLabelY(int imageIndex);
-    float getStageLabelZ(int imageIndex);
+    double getStageLabelX(int imageIndex);
+    double getStageLabelY(int imageIndex);
+    double getStageLabelZ(int imageIndex);
 
     // - StagePosition property retrieval -
 
-    float getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
-    float getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
-    float getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
+    double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex);
+    double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex);
+    double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex);
 
     // - Thumbnail property retrieval -
 
@@ -727,8 +727,8 @@ module formats {
     string getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex);
     string getWellSampleImageRef(int plateIndex, int wellIndex, int wellSampleIndex);
     int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex);
-    float getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
-    float getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
+    double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex);
+    double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex);
     int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
     // - WellSampleRef property retrieval -
@@ -775,24 +775,24 @@ module formats {
     void setDatasetRefID(string id, int imageIndex, int datasetRefIndex);
 
     // - Detector property storage -
-    void setDetectorAmplificationGain(float amplificationGain, int instrumentIndex, int detectorIndex);
-    void setDetectorGain(float gain, int instrumentIndex, int detectorIndex);
+    void setDetectorAmplificationGain(double amplificationGain, int instrumentIndex, int detectorIndex);
+    void setDetectorGain(double gain, int instrumentIndex, int detectorIndex);
     void setDetectorID(string id, int instrumentIndex, int detectorIndex);
     void setDetectorManufacturer(string manufacturer, int instrumentIndex, int detectorIndex);
     void setDetectorModel(string model, int instrumentIndex, int detectorIndex);
-    void setDetectorOffset(float offset, int instrumentIndex, int detectorIndex);
+    void setDetectorOffset(double offset, int instrumentIndex, int detectorIndex);
     void setDetectorSerialNumber(string serialNumber, int instrumentIndex, int detectorIndex);
     void setDetectorType(string type, int instrumentIndex, int detectorIndex);
-    void setDetectorVoltage(float voltage, int instrumentIndex, int detectorIndex);
-    void setDetectorZoom(float zoom, int instrumentIndex, int detectorIndex);
+    void setDetectorVoltage(double voltage, int instrumentIndex, int detectorIndex);
+    void setDetectorZoom(double zoom, int instrumentIndex, int detectorIndex);
 
     // - DetectorSettings property storage -
     void setDetectorSettingsBinning(string binning, int imageIndex, int logicalChannelIndex);
     void setDetectorSettingsDetector(string detector, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsGain(float gain, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsOffset(float offset, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsReadOutRate(float readOutRate, int imageIndex, int logicalChannelIndex);
-    void setDetectorSettingsVoltage(float voltage, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex);
+    void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex);
 
     // - Dichroic property storage -
     void setDichroicID(string id, int instrumentIndex, int dichroicIndex);
@@ -801,17 +801,17 @@ module formats {
     void setDichroicModel(string model, int instrumentIndex, int dichroicIndex);
 
     // - Dimensions property storage -
-    void setDimensionsPhysicalSizeX(float physicalSizeX, int imageIndex, int pixelsIndex);
-    void setDimensionsPhysicalSizeY(float physicalSizeY, int imageIndex, int pixelsIndex);
-    void setDimensionsPhysicalSizeZ(float physicalSizeZ, int imageIndex, int pixelsIndex);
-    void setDimensionsTimeIncrement(float timeIncrement, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex);
+    void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex);
+    void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex);
     void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex);
     void setDimensionsWaveStart(int waveStart, int imageIndex, int pixelsIndex);
 
     // - DisplayOptions property storage -
     void setDisplayOptionsDisplay(string display, int imageIndex);
     void setDisplayOptionsID(string id, int imageIndex);
-    void setDisplayOptionsZoom(float zoom, int imageIndex);
+    void setDisplayOptionsZoom(double zoom, int imageIndex);
 
     // - Ellipse property storage -
     void setEllipseCx(string cx, int imageIndex, int roiIndex, int shapeIndex);
@@ -889,10 +889,10 @@ module formats {
     void setImageName(string name, int imageIndex);
 
     // - ImagingEnvironment property storage -
-    void setImagingEnvironmentAirPressure(float airPressure, int imageIndex);
-    void setImagingEnvironmentCO2Percent(float cO2Percent, int imageIndex);
-    void setImagingEnvironmentHumidity(float humidity, int imageIndex);
-    void setImagingEnvironmentTemperature(float temperature, int imageIndex);
+    void setImagingEnvironmentAirPressure(double airPressure, int imageIndex);
+    void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex);
+    void setImagingEnvironmentHumidity(double humidity, int imageIndex);
+    void setImagingEnvironmentTemperature(double temperature, int imageIndex);
 
     // - Instrument property storage -
     void setInstrumentID(string id, int instrumentIndex);
@@ -902,7 +902,7 @@ module formats {
     void setLaserLaserMedium(string laserMedium, int instrumentIndex, int lightSourceIndex);
     void setLaserPockelCell(bool pockelCell, int instrumentIndex, int lightSourceIndex);
     void setLaserPulse(string pulse, int instrumentIndex, int lightSourceIndex);
-    void setLaserRepetitionRate(bool repetitionRate, int instrumentIndex, int lightSourceIndex);
+    void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex);
     void setLaserTuneable(bool tuneable, int instrumentIndex, int lightSourceIndex);
     void setLaserType(string type, int instrumentIndex, int lightSourceIndex);
     void setLaserWavelength(int wavelength, int instrumentIndex, int lightSourceIndex);
@@ -911,16 +911,16 @@ module formats {
     void setLightSourceID(string id, int instrumentIndex, int lightSourceIndex);
     void setLightSourceManufacturer(string manufacturer, int instrumentIndex, int lightSourceIndex);
     void setLightSourceModel(string model, int instrumentIndex, int lightSourceIndex);
-    void setLightSourcePower(float power, int instrumentIndex, int lightSourceIndex);
+    void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex);
     void setLightSourceSerialNumber(string serialNumber, int instrumentIndex, int lightSourceIndex);
 
     // - LightSourceRef property storage -
-    void setLightSourceRefAttenuation(float attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
+    void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     void setLightSourceRefLightSource(string lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
     void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
 
     // - LightSourceSettings property storage -
-    void setLightSourceSettingsAttenuation(float attenuation, int imageIndex, int logicalChannelIndex);
+    void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex);
     void setLightSourceSettingsLightSource(string lightSource, int imageIndex, int logicalChannelIndex);
     void setLightSourceSettingsWavelength(int wavelength, int imageIndex, int logicalChannelIndex);
 
@@ -944,10 +944,10 @@ module formats {
     void setLogicalChannelLightSource(string lightSource, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelMode(string mode, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelName(string name, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelNdFilter(float ndFilter, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelOTF(string otf, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelPhotometricInterpretation(string photometricInterpretation, int imageIndex, int logicalChannelIndex);
-    void setLogicalChannelPinholeSize(float pinholeSize, int imageIndex, int logicalChannelIndex);
+    void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int logicalChannelIndex);
     void setLogicalChannelSecondaryEmissionFilter(string secondaryEmissionFilter, int imageIndex, int logicalChannelIndex);
@@ -994,23 +994,23 @@ module formats {
     void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex);
 
     // - Objective property storage -
-    void setObjectiveCalibratedMagnification(float calibratedMagnification, int instrumentIndex, int objectiveIndex);
+    void setObjectiveCalibratedMagnification(double calibratedMagnification, int instrumentIndex, int objectiveIndex);
     void setObjectiveCorrection(string correction, int instrumentIndex, int objectiveIndex);
     void setObjectiveID(string id, int instrumentIndex, int objectiveIndex);
     void setObjectiveImmersion(string immersion, int instrumentIndex, int objectiveIndex);
     void setObjectiveIris(bool iris, int instrumentIndex, int objectiveIndex);
-    void setObjectiveLensNA(float lensNA, int instrumentIndex, int objectiveIndex);
+    void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex);
     void setObjectiveManufacturer(string manufacturer, int instrumentIndex, int objectiveIndex);
     void setObjectiveModel(string model, int instrumentIndex, int objectiveIndex);
     void setObjectiveNominalMagnification(int nominalMagnification, int instrumentIndex, int objectiveIndex);
     void setObjectiveSerialNumber(string serialNumber, int instrumentIndex, int objectiveIndex);
-    void setObjectiveWorkingDistance(float workingDistance, int instrumentIndex, int objectiveIndex);
+    void setObjectiveWorkingDistance(double workingDistance, int instrumentIndex, int objectiveIndex);
 
     // - ObjectiveSettings property storage -
-    void setObjectiveSettingsCorrectionCollar(float correctionCollar, int imageIndex);
+    void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex);
     void setObjectiveSettingsMedium(string medium, int imageIndex);
     void setObjectiveSettingsObjective(string objective, int imageIndex);
-    void setObjectiveSettingsRefractiveIndex(float refractiveIndex, int imageIndex);
+    void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex);
 
     // - Path property storage -
     void setPathD(string d, int imageIndex, int roiIndex, int shapeIndex);
@@ -1035,8 +1035,8 @@ module formats {
     void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex);
 
     // - PlaneTiming property storage -
-    void setPlaneTimingDeltaT(float deltaT, int imageIndex, int pixelsIndex, int planeIndex);
-    void setPlaneTimingExposureTime(float exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex);
+    void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
 
     // - Plate property storage -
     void setPlateColumnNamingConvention(string columnNamingConvention, int plateIndex);
@@ -1163,7 +1163,7 @@ module formats {
     void setShapeStrokeLineCap(string strokeLineCap, int imageIndex, int roiIndex, int shapeIndex);
     void setShapeStrokeLineJoin(string strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex);
     void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
-    void setShapeStrokeOpacity(float strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
+    void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
     void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
     void setShapeText(string text, int imageIndex, int roiIndex, int shapeIndex);
     void setShapeTextAnchor(string textAnchor, int imageIndex, int roiIndex, int shapeIndex);
@@ -1178,14 +1178,14 @@ module formats {
 
     // - StageLabel property storage -
     void setStageLabelName(string name, int imageIndex);
-    void setStageLabelX(float x, int imageIndex);
-    void setStageLabelY(float y, int imageIndex);
-    void setStageLabelZ(float z, int imageIndex);
+    void setStageLabelX(double x, int imageIndex);
+    void setStageLabelY(double y, int imageIndex);
+    void setStageLabelZ(double z, int imageIndex);
 
     // - StagePosition property storage -
-    void setStagePositionPositionX(float positionX, int imageIndex, int pixelsIndex, int planeIndex);
-    void setStagePositionPositionY(float positionY, int imageIndex, int pixelsIndex, int planeIndex);
-    void setStagePositionPositionZ(float positionZ, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex);
+    void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex);
 
     // - Thumbnail property storage -
     void setThumbnailHref(string href, int imageIndex);
@@ -1221,8 +1221,8 @@ module formats {
     void setWellSampleID(string id, int plateIndex, int wellIndex, int wellSampleIndex);
     void setWellSampleImageRef(string imageRef, int plateIndex, int wellIndex, int wellSampleIndex);
     void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSamplePosX(float posX, int plateIndex, int wellIndex, int wellSampleIndex);
-    void setWellSamplePosY(float posY, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex);
+    void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex);
     void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 
     // - WellSampleRef property storage -

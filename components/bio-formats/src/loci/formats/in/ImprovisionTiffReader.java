@@ -52,7 +52,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   private String[] cNames;
   private int pixelSizeT;
-  private float pixelSizeX, pixelSizeY, pixelSizeZ;
+  private double pixelSizeX, pixelSizeY, pixelSizeZ;
 
   // -- Constructor --
 
@@ -106,13 +106,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         else if (key.equals("TotalChannels")) tc = value;
         else if (key.equals("TotalTimepoints")) tt = value;
         else if (key.equals("XCalibrationMicrons")) {
-          pixelSizeX = Float.parseFloat(value);
+          pixelSizeX = Double.parseDouble(value);
         }
         else if (key.equals("YCalibrationMicrons")) {
-          pixelSizeY = Float.parseFloat(value);
+          pixelSizeY = Double.parseDouble(value);
         }
         else if (key.equals("ZCalibrationMicrons")) {
-          pixelSizeZ = Float.parseFloat(value);
+          pixelSizeZ = Double.parseDouble(value);
         }
       }
       metadata.remove("Comment");
@@ -214,10 +214,10 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
-    store.setDimensionsTimeIncrement(new Float(pixelSizeT / 1000000.0), 0, 0);
+    store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), 0, 0);
+    store.setDimensionsTimeIncrement(new Double(pixelSizeT / 1000000.0), 0, 0);
   }
 
 }

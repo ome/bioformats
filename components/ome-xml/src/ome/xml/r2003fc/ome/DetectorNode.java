@@ -77,23 +77,23 @@ public class DetectorNode extends ManufactSpecNode
 	// -- Detector API methods --
 
 	// Attribute
-	public Float getGain()
+	public Double getGain()
 	{
-		return getFloatAttribute("Gain");
+		return getDoubleAttribute("Gain");
 	}
 
-	public void setGain(Float gain)
+	public void setGain(Double gain)
 	{
 		setAttribute("Gain", gain);
 	}
 
 	// Attribute
-	public Float getOffset()
+	public Double getOffset()
 	{
-		return getFloatAttribute("Offset");
+		return getDoubleAttribute("Offset");
 	}
 
-	public void setOffset(Float offset)
+	public void setOffset(Double offset)
 	{
 		setAttribute("Offset", offset);
 	}
@@ -123,12 +123,12 @@ public class DetectorNode extends ManufactSpecNode
 	}
 
 	// Attribute
-	public Float getVoltage()
+	public Double getVoltage()
 	{
-		return getFloatAttribute("Voltage");
+		return getDoubleAttribute("Voltage");
 	}
 
-	public void setVoltage(Float voltage)
+	public void setVoltage(Double voltage)
 	{
 		setAttribute("Voltage", voltage);
 	}
