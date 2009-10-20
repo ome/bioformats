@@ -311,7 +311,7 @@ description = a set of pixel dimensions in the metadata store \
 path = Image+
 
 [Dimensions PhysicalSizeX]
-type = Float
+type = Double
 description = the size of an individual pixel's X axis in microns
 
 [Dimensions PhysicalSizeX 2003FC]
@@ -319,7 +319,7 @@ getter = getPixelSizeX
 setter = setPixelSizeX
 
 [Dimensions PhysicalSizeY]
-type = Float
+type = Double
 description = the size of an individual pixel's Y axis in microns
 
 [Dimensions PhysicalSizeY 2003FC]
@@ -327,7 +327,7 @@ getter = getPixelSizeY
 setter = setPixelSizeY
 
 [Dimensions PhysicalSizeZ]
-type = Float
+type = Double
 description = the size of an individual pixel's Z axis in microns
 
 [Dimensions PhysicalSizeZ 2003FC]
@@ -335,7 +335,7 @@ getter = getPixelSizeZ
 setter = setPixelSizeZ
 
 [Dimensions TimeIncrement]
-type = Float
+type = Double
 description = the distance between adjacent time points in seconds
 
 [Dimensions WaveStart]
@@ -377,19 +377,19 @@ path = Image+/ImagingEnvironment
 description = the imaging environment for a particular image
 
 [ImagingEnvironment Temperature]
-type = Float
+type = Double
 description = temperature of the imaging environment, in Celsius
 
 [ImagingEnvironment AirPressure]
-type = Float
+type = Double
 description = air pressure, in millibars
 
 [ImagingEnvironment Humidity]
-type = Float
+type = Double
 description = humidity, in percent fractions from 0.0 to 1.0
 
 [ImagingEnvironment CO2Percent]
-type = Float
+type = Double
 description = CO2 level, in percent fractions from 0.0 to 1.0
 
 ## Plane ##
@@ -439,11 +439,11 @@ description = the timing information for a specific X-Y plane (section) \
 path = -
 
 [PlaneTiming DeltaT]
-type = Float
+type = Double
 description = the time in seconds since the beginning of the experiment
 
 [PlaneTiming ExposureTime]
-type = Float
+type = Double
 description = the exposure time in seconds
 
 ## StagePosition ##
@@ -457,15 +457,15 @@ description = the stage position for a specific X-Y plane (section) \
 path = -
 
 [StagePosition PositionX]
-type = Float
+type = Double
 description = the X coordinate of the stage position
 
 [StagePosition PositionY]
-type = Float
+type = Double
 description = the Y coordinate of the stage position
 
 [StagePosition PositionZ]
-type = Float
+type = Double
 description = the Z coordinate of the stage position
 
 ## MicrobeamManipulation ##
@@ -548,7 +548,7 @@ enumeration = {"Transmitted", "Epifluorescence", "Oblique", "NonLinear"}
 enumeration = {"Transmitted", "Epifluorescence", "Oblique"}
 
 [LogicalChannel PinholeSize]
-type = Float
+type = Double
 description = the size of the pinhole
 
 [LogicalChannel PinholeSize 200802]
@@ -598,7 +598,7 @@ type = String
 description = the fluorescence type
 
 [LogicalChannel NdFilter]
-type = Float
+type = Double
 description = the neutral-density filter value
 
 [LogicalChannel NdFilter 2003FC]
@@ -703,7 +703,7 @@ setter = setNodeID
 description = unique label identifying the display options
 
 [DisplayOptions Zoom]
-type = Float
+type = Double
 description = zoom factor for use in the display (NOT THE LENS ZOOM)
 
 [DisplayOptions Display]
@@ -1145,7 +1145,7 @@ path = -
 path = -
 
 [Shape StrokeOpacity]
-type = Float
+type = Double
 description = opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
 
 [Shape StrokeOpacity 200809]
@@ -1804,14 +1804,14 @@ setter = setNodeID
 description = the objective associated with this image
 
 [ObjectiveSettings RefractiveIndex]
-type = Float
+type = Double
 description = unit-less refractive index of the immersion medium
 
 [ObjectiveSettings RefractiveIndex 2003FC]
 path = -
 
 [ObjectiveSettings CorrectionCollar]
-type = Float
+type = Double
 description = unit-less setting of the adjustable correction collar
 
 [ObjectiveSettings CorrectionCollar 2003FC]
@@ -1841,11 +1841,11 @@ setter = setNodeID
 description = the detector associated with this channel
 
 [DetectorSettings Offset]
-type = Float
+type = Double
 description = the detector offset
 
 [DetectorSettings Gain]
-type = Float
+type = Double
 description = the detector gain
 
 [DetectorSettings Binning]
@@ -1857,14 +1857,14 @@ enumeration = {"1x1", "2x2", "4x4", "8x8"}
 path = -
 
 [DetectorSettings Voltage]
-type = Float
+type = Double
 description = the detector voltage
 
 [DetectorSettings Voltage 2003FC]
 path = -
 
 [DetectorSettings ReadOutRate]
-type = Float
+type = Double
 description = the speed at which the detector can count pixels, in MHz
 
 [DetectorSettings ReadOutRate 2003FC]
@@ -1886,7 +1886,7 @@ setter = setNodeID
 description = the primary light source
 
 [LightSourceSettings Attenuation]
-type = Float
+type = Double
 description = the primary light source attenuation
 
 [LightSourceSettings Wavelength]
@@ -1910,7 +1910,7 @@ type = String
 description = TODO
 
 [LightSourceRef Attenuation]
-type = Float
+type = Double
 description = the primary light source attenuation
 
 [LightSourceRef Wavelength]
@@ -1930,15 +1930,15 @@ type = String
 description = a name for the stage label
 
 [StageLabel X]
-type = Float
+type = Double
 description = the x coordinate of the stage
 
 [StageLabel Y]
-type = Float
+type = Double
 description = the y coordinate of the stage
 
 [StageLabel Z]
-type = Float
+type = Double
 description = the z coordinate of the stage
 
 ### Entities for Instrument hardware -- these DO NOT vary by Image ###
@@ -2016,7 +2016,7 @@ type = String
 description = serial number of the light source
 
 [LightSource Power]
-type = Float
+type = Double
 description = the light source power, in watts
 
 [LightSource Power 200706]
@@ -2095,7 +2095,7 @@ description = TODO
 path = -
 
 [Laser RepetitionRate]
-type = Boolean
+type = Double
 description = rate in Hz at which the laser pulses
 
 [Laser RepetitionRate 2003FC]
@@ -2184,26 +2184,26 @@ defaultValue = "Unknown"
 enumeration = {"CCD", "Intensified-CCD", "Analog-Video", "PMT", "Photodiode", "Spectroscopy", "Life-time-Imaging", "Correlation-Spectroscopy", "FTIR"}
 
 [Detector Gain]
-type = Float
+type = Double
 description = the gain of the detector
 
 [Detector Voltage]
-type = Float
+type = Double
 description = the voltage of the detector
 
 [Detector Offset]
-type = Float
+type = Double
 description = the offset of the detector
 
 [Detector Zoom]
-type = Float
+type = Double
 description = optional zoom value of the detector
 
 [Detector Zoom 2003FC]
 path = -
 
 [Detector AmplificationGain]
-type = Float
+type = Double
 description = amplification gain of the detector
 
 [Detector AmplificationGain 2003FC]
@@ -2259,7 +2259,7 @@ enumeration = {"Oil", "Water", "WaterDipping", "Air", "Multi", "Glycerol", "Othe
 path = -
 
 [Objective LensNA]
-type = Float
+type = Double
 description = numerical aperture of the lens
 
 [Objective NominalMagnification]
@@ -2270,7 +2270,7 @@ description = the specified magnification of the objective
 path = -
 
 [Objective CalibratedMagnification]
-type = Float
+type = Double
 description = the measured magnification of the objective
 
 [Objective CalibratedMagnification 2003FC]
@@ -2278,7 +2278,7 @@ getter = getMagnification
 setter = setMagnification
 
 [Objective WorkingDistance]
-type = Float
+type = Double
 description = working distance of the objective, in um
 
 [Objective WorkingDistance 2003FC]
@@ -3097,11 +3097,11 @@ type = Integer
 description = link to the Image element
 
 [WellSample PosX]
-type = Float
+type = Double
 description = X position of the image within the well
 
 [WellSample PosY]
-type = Float
+type = Double
 description = Y position of the image within the well
 
 [WellSample Timepoint]
