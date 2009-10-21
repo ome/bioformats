@@ -1,0 +1,186 @@
+<!--
+java.xml
+
+Ant build file for logic common to Java-based components.
+All Java-based component build files inherit from this build file.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project>
+  <property file="${root.dir}/components/java.properties"/>
+  <import file="${root.dir}/components/common.xml"/>
+
+  <!-- Main build targets -->
+
+  <target name="compile" depends="copy-source" description="compile classes">
+    <javac debug="true" deprecation="${component.deprecation}"
+      source="${component.java-version}"
+      target="${component.java-version}"
+      srcdir="${dest.dir}" destdir="${classes.dir}"
+      classpath="${component.classpath}"
+      includes="${component.source}"/>
+  </target>
+
+  <target name="exec" depends="compile" description="execute package">
+    <java fork="true" classname="${component.main-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"/>
+  </target>
+
+  <target name="findbugs" depends="jar"
+    description="check source code for bugs">
+    <if>
+      <isset property="findbugs.home"/>
+      <then>
+        <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
+          output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high">
+          <auxClasspath path="${component.classpath}"/>
+          <sourcePath path="${dest.dir}"/>
+          <class location="${classes.dir}"/>
+        </findbugs>
+      </then>
+      <else>
+<echo>
+Please set the findbugs.home property to point to
+your FindBugs installation's lib directory. E.g.:
+  ant -Dfindbugs.home=${user.home}/findbugs/lib findbugs
+</echo>
+        <fail message="FindBugs not found."/>
+      </else>
+    </if>
+  </target>
+
+  <target name="style" depends="compile"
+    description="check source code style">
+    <checkstyle config="${root.dir}/checkstyle.xml" failOnViolation="false"
+      classpath="${classes.dir}:${component.classpath}">
+      <fileset dir="${dest.dir}" includes="${component.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="jar" depends="compile"
+    description="generate JAR file">
+    <mkdir dir="${artifact.dir}"/>
+    <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
+<!--
+      <manifest>
+        <attribute name="Main-Class" value="${component.main-class}"/>
+        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+      </manifest>
+-->
+    </jar>
+    <!-- NB: Add OSGi bundle metadata. -->
+    <echo>Injecting OSGi bundle information...</echo>
+    <bundle outputDir="${artifact.dir}"
+      bundleName="${component.name}"
+      bundleSymbolicName="${domain.prefix}.${component.name}"
+      bundleVersion="${component.version}.${svn.revision}"
+      classpath="${classes.dir}"
+      exportPackage="*;version=&quot;${component.version}&quot;"
+      filename="${component.name}">
+      <manifest>
+        <attribute name="Main-Class" value="${component.main-class}"/>
+        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+      </manifest>
+    </bundle>
+  </target>
+
+  <target name="utils" depends="jar"
+    description="compile extra utilities">
+    <delete>
+      <fileset dir="${utils.dir}" includes="*.class"/>
+    </delete>
+    <javac debug="true" deprecation="true" source="1.5" target="1.5"
+      srcdir="${utils.dir}" includes="*.java"
+      classpath="${artifact.dir}/${component.jar}"/>
+  </target>
+
+  <target name="docs" depends="compile"
+    description="generate javadocs">
+    <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
+      classpath="${component.classpath}:${classes.dir}"
+      author="true" version="true" use="true"
+      nodeprecated="true" windowtitle="Bio-Formats API">
+      <packageset dir="${dest.dir}"/>
+      <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
+      <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
+      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/"/>
+      <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
+      <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
+    </javadoc>
+  </target>
+
+  <target name="clean-classes" description="remove classes from build folder">
+    <delete dir="${classes.dir}"/>
+  </target>
+
+  <target name="clean-dist"
+    description="remove distribution bundles from build folder">
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <target name="clean-docs" description="remove javadocs from build folder">
+    <delete dir="${docs.dir}"/>
+  </target>
+
+  <target name="clean-src" description="remove source files from build folder">
+    <delete dir="${dest.dir}"/>
+  </target>
+
+  <target name="clean-jar" description="remove JAR file from artifacts folder">
+    <delete>
+      <fileset dir="${artifact.dir}" includes="${component.jar}"/>
+    </delete>
+  </target>
+
+  <!-- Internal build targets -->
+
+  <target name="init"
+    depends="init-timestamp, init-revision, init-release, init-manifest-cp"/>
+
+  <target name="init-manifest-cp">
+    <!-- construct manifest classpath -->
+    <propertyregex property="component.manifest-cp-temp"
+      input="${component.runtime-cp}" replace=""
+      defaultValue="${component.runtime-cp}">
+      <regexp pattern="[^\:]*\/"/>
+    </propertyregex>
+    <propertyregex property="component.manifest-cp"
+      input="${component.manifest-cp-temp}" replace=" "
+      defaultValue="${component.manifest-cp-temp}">
+      <regexp pattern=":"/>
+    </propertyregex>
+    <!--<echo>Manifest-Classpath: ${component.manifest-cp}</echo>-->
+  </target>
+
+  <target name="copy-source" depends="init">
+    <!-- copy binary resources -->
+    <copy todir="${dest.dir}" preservelastmodified="true">
+      <!--
+        include (none) to prevent problems if component.resources-bin is empty
+      -->
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
+    </copy>
+    <!-- copy source files and text resources with filtering -->
+    <copy todir="${dest.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}"
+        includes="${component.source} ${component.resources-text}"/>
+      <filterset>
+        <filter token="date" value="${DATE}"/>
+        <filter token="year" value="${YEAR}"/>
+        <filter token="svn.revision" value="${svn.revision}"/>
+        <filter token="visbio.version" value="${visbio.version}"/>
+        <filter token="release.version" value="${release.version}"/>
+      </filterset>
+    </copy>
+    <!-- copy resources to classes folder -->
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${dest.dir}" excludes="${component.source}"/>
+    </copy>
+  </target>
+
+</project>

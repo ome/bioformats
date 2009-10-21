@@ -1,0 +1,121 @@
+#
+# readers.txt
+#
+
+# OME Bio-Formats package for reading and converting biological file formats.
+# Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This document is a configuration file identifying all file format readers
+# available to Bio-Formats, and the order in which they should be used.
+# Please do not edit unless you know what you are doing (see reader-guide.txt).
+
+# readers for compressed/archive files
+loci.formats.in.ZipReader             # zip
+
+# javax.imageio readers
+loci.formats.in.APNGReader            # png [javax.imageio]
+loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
+
+# standalone readers with unique file extensions
+loci.formats.in.PGMReader             # pgm
+loci.formats.in.FitsReader            # fits
+loci.formats.in.PCXReader             # pcx
+loci.formats.in.GIFReader             # gif
+loci.formats.in.BMPReader             # bmp
+loci.formats.in.IPLabReader           # ipl
+loci.formats.in.IvisionReader         # ipm
+loci.formats.in.DeltavisionReader     # dv, r3d
+loci.formats.in.MRCReader             # mrc
+loci.formats.in.GatanReader           # dm3
+loci.formats.in.ImarisReader          # ims
+loci.formats.in.OpenlabRawReader      # raw
+loci.formats.in.OMEXMLReader          # ome
+loci.formats.in.LIFReader             # lif
+loci.formats.in.AVIReader             # avi
+loci.formats.in.PictReader            # pict, pct
+loci.formats.in.SDTReader             # sdt
+loci.formats.in.EPSReader             # eps, epsi
+loci.formats.in.SlidebookReader       # sld
+loci.formats.in.AliconaReader         # al3d
+loci.formats.in.MNGReader             # mng
+loci.formats.in.KhorosReader          # xv
+loci.formats.in.VisitechReader        # html, xys
+loci.formats.in.LIMReader             # lim
+loci.formats.in.PSDReader             # psd
+loci.formats.in.InCellReader          # xdce
+loci.formats.in.L2DReader             # l2d
+loci.formats.in.FEIReader             # img
+loci.formats.in.NAFReader             # naf
+loci.formats.in.MINCReader            # mnc
+loci.formats.in.QTReader              # mov
+loci.formats.in.MRWReader             # mrw
+loci.formats.in.TillVisionReader      # vws
+loci.formats.in.ARFReader             # arf
+loci.formats.in.CellomicsReader       # c01
+loci.formats.in.LiFlimReader          # fli
+loci.formats.in.FakeReader            # fake
+
+# multi-extension messes
+loci.formats.in.NiftiReader           # hdr, img, nii
+loci.formats.in.AnalyzeReader         # hdr, img
+loci.formats.in.APLReader             # apl, mtb, tnb
+loci.formats.in.NRRDReader            # nrrd, nhdr, pic
+loci.formats.in.ICSReader             # ics, ids
+loci.formats.in.PerkinElmerReader     # rec, ano, csv, htm, tim, zpo, 2, 3, ...
+loci.formats.in.AmiraReader           # am, amiramesh, grey, hx, labels, ...
+loci.formats.in.ScanrReader           # dat, xml, tif
+
+# standard PIC reader must go last (it accepts any PIC)
+loci.formats.in.BioRadReader          # pic
+
+# readers requiring third-party libraries
+loci.formats.in.FV1000Reader          # oib, oif, various [POI]
+loci.formats.in.ZeissZVIReader        # zvi [POI]
+loci.formats.in.IPWReader             # ipw [POI]
+loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
+loci.formats.in.JPEG2000Reader        # jp2, j2k [JAI-ImageIO]
+loci.formats.in.PCIReader             # cxd [POI]
+loci.formats.in.ImarisHDFReader       # ims [NetCDF]
+
+# TIFF-based readers with unique file extensions
+loci.formats.in.MetamorphReader       # stk
+loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
+loci.formats.in.SEQReader             # seq
+loci.formats.in.GelReader             # gel
+loci.formats.in.ImarisTiffReader      # ims
+loci.formats.in.FlexReader            # flex [LuraWave]
+loci.formats.in.SVSReader             # svs
+
+# TIFF-based readers with slow isThisType
+loci.formats.in.MIASReader            # tif
+loci.formats.in.TCSReader             # xml, tif
+loci.formats.in.LeicaReader           # lei, tif
+loci.formats.in.NikonReader           # nef, tif
+loci.formats.in.FluoviewReader        # tif
+loci.formats.in.PrairieReader         # xml, cfg, tif
+loci.formats.in.MicromanagerReader    # txt, tif
+loci.formats.in.ImprovisionTiffReader # tif
+loci.formats.in.MetamorphTiffReader   # tif
+loci.formats.in.NikonTiffReader       # tif
+loci.formats.in.OMETiffReader         # tif
+
+# standard TIFF reader must go last (it accepts any TIFF)
+loci.formats.in.TiffReader            # tif, tiff
+
+# non-TIFF readers with slow isThisType
+loci.formats.in.OpenlabReader         # liff
+loci.formats.in.DicomReader           # dcm, dicom

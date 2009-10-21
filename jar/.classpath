@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry exported="true" kind="lib" path="ant-contrib-1.0b1.jar"/>
+	<classpathentry exported="true" kind="lib" path="AppleJavaExtensions.jar"/>
+	<classpathentry exported="true" kind="lib" path="bufr-1.1.00.jar"/>
+	<classpathentry exported="true" kind="lib" path="checkstyle-all-4.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="clibwrapper_jiio.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-httpclient-2.0-rc2.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-logging.jar"/>
+	<classpathentry exported="true" kind="lib" path="findbugs-ant.jar"/>
+	<classpathentry exported="true" kind="lib" path="forms-1.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="grib-5.1.03.jar"/>
+	<classpathentry exported="true" kind="lib" path="Ice-3.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="ij.jar"/>
+	<classpathentry exported="true" kind="lib" path="junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lma.jar"/>
+	<classpathentry exported="true" kind="lib" path="loci-checks.jar"/>
+	<classpathentry exported="true" kind="lib" path="looks-1.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="netcdf-4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="ome-java-deprecated.jar"/>
+	<classpathentry exported="true" kind="lib" path="ome-java.jar"/>
+	<classpathentry exported="true" kind="lib" path="omero-client-4.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="omero-common-4.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="skinlf.jar"/>
+	<classpathentry exported="true" kind="lib" path="slf4j-jdk14.jar"/>
+	<classpathentry exported="true" kind="lib" path="testng-5.7-jdk14.jar"/>
+	<classpathentry exported="true" kind="lib" path="velocity-dep-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="visad-lite.jar"/>
+	<classpathentry exported="true" kind="lib" path="xmlrpc-1.2-b1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

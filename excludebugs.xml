@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Various filters for the FindBugs output
+-->
+
+<FindBugsFilter>
+
+  <!--
+  <Match> <Package name="loci.example"/> </Match>
+  -->
+
+</FindBugsFilter>
+
+

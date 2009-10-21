@@ -1,0 +1,74 @@
+<!--
+common.xml
+
+Ant build file for logic common to every component.
+All component build files inherit from this build file.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project>
+  <import file="${root.dir}/global.xml"/>
+  <property file="${root.dir}/components/common.properties"/>
+
+  <!-- Main build targets -->
+
+  <target name="clean" description="remove all build files except artifacts">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- Internal build targets -->
+
+  <target name="init-timestamp">
+    <tstamp>
+      <format property="DATE" pattern="d MMMMM yyyy"/>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+  </target>
+
+  <target name="init-revision">
+    <!-- determine SVN revision number -->
+    <if>
+      <isset property="svn.revision"/>
+      <else>
+        <!--
+        Thanks to Chris Collins for this code snippet:
+          http://ccollins.wordpress.com/2008/01/30/
+            getting-subversion-revision-in-ant/
+        -->
+        <exec executable="svn" outputproperty="svn.log"
+          failifexecutionfails="false">
+          <arg line="info ${basedir}"/>
+        </exec>
+        <if>
+          <isset property="svn.log"/>
+          <then>
+            <propertyregex property="svn.revision"
+              input="${svn.log}" select="\1">
+              <regexp pattern="Revision: ([0-9]*)"/>
+            </propertyregex>
+            <!--<echo>SVN revision: ${svn.revision}</echo>-->
+          </then>
+        </if>
+      </else>
+    </if>
+  </target>
+
+  <target name="init-release">
+    <exec executable="svn" outputproperty="release.version"
+      failifexecutionfails="false">
+      <arg line="info ${basedir}"/>
+    </exec>
+    <propertyregex property="svn.root" input="${release.version}" select="\1">
+      <regexp pattern="Repository Root: (.*)"/>
+    </propertyregex>
+    <propertyregex property="release.version" override="true"
+      input="${release.version}" select="\1">
+      <regexp pattern="URL: ${svn.root}/(.*)/components/(.*)"/>
+    </propertyregex>
+    <propertyregex property="release.version" override="true"
+      input="${release.version}" regexp="branches/(.*)" replace="stable \1"
+      defaultValue="trunk"/>
+  </target>
+
+</project>
