@@ -286,21 +286,29 @@ public class LIFReader extends FormatReader {
     status("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
-      if (in.readInt() != LIF_MAGIC_BYTE) {
-        throw new FormatException("Invalid Memory Block");
+      debug("Looking for a block at " + in.getFilePointer() + "; " +
+        offsets.size() + " blocks read");
+      int check = in.readInt();
+      if (check != LIF_MAGIC_BYTE) {
+        throw new FormatException("Invalid Memory Block: found magic bytes " +
+          check + ", expected " + LIF_MAGIC_BYTE);
       }
 
       in.skipBytes(4);
-      if (in.read() != LIF_MEMORY_BYTE) {
-        throw new FormatException("Invalid Memory Description");
+      check = in.read();
+      if (check != LIF_MEMORY_BYTE) {
+        throw new FormatException("Invalid Memory Description: found magic " +
+          "byte " + check + ", expected " + LIF_MEMORY_BYTE);
       }
 
       long blockLength = in.readInt();
       if (in.read() != LIF_MEMORY_BYTE) {
         in.seek(in.getFilePointer() - 5);
         blockLength = in.readLong();
-        if (in.read() != LIF_MEMORY_BYTE) {
-          throw new FormatException("Invalid Memory Description");
+        check = in.read();
+        if (check != LIF_MEMORY_BYTE) {
+          throw new FormatException("Invalid Memory Description: found magic " +
+            "byte " + check + ", expected " + LIF_MEMORY_BYTE);
         }
       }
 
