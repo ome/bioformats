@@ -931,6 +931,7 @@ public class MIASReader extends FormatReader {
   private int parseMasks(MetadataStore store, int series, int roi,
     String overlayTiff) throws FormatException, IOException
   {
+    if (!parseMasks) return 0;
     int nOverlays = 3;
     for (int i=0; i<nOverlays; i++) {
       store.setMaskX("0", series, roi + i, 0);
@@ -946,9 +947,7 @@ public class MIASReader extends FormatReader {
       String id = MetadataTools.createLSID("Mask", series, roi, 0);
       overlayFiles.put(id, overlayTiff);
       overlayPlanes.put(id, new Integer(i));
-      if (parseMasks) {
-        populateMaskPixels(series, roi, 0);
-      }
+      populateMaskPixels(series, roi, 0);
     }
     return nOverlays;
   }
