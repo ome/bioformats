@@ -62,7 +62,7 @@ def mainUsage(error):
 	"""
 	cmd = sys.argv[0]
 	print """%s
-Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> <path/to/ome.xsd>
+Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> <path/to/ome.xsd...>
 Generates Java classes from an OME XML Schema definition.
 
 Default package: "%s"
@@ -103,8 +103,8 @@ def main(args):
 	except GetoptError, (msg, opt):
 		mainUsage(msg)
 
-	if len(args) != 1:
-		mainUsage("Expecting single ome.xsd file path!")
+	if len(args) < 1:
+		mainUsage("Expecting at least one XSD file path!")
 
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
@@ -122,7 +122,7 @@ def main(args):
 		print "Output directory '%s' does not exist!" % outputDirectory
 		sys.exit(1)
 
-	model = parseXmlSchema([args[0]], namespace)
+	model = parseXmlSchema(args, namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
@@ -142,7 +142,7 @@ def enumTypesMain(args):
 		mainUsage(msg)
 
 	if len(args) < 1:
-		mainUsage("Expecting single ome.xsd file path!")
+		mainUsage("Expecting at least one XSD file path!")
 
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
