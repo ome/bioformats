@@ -141,7 +141,7 @@ def enumTypesMain(args):
 	except GetoptError, (msg, opt):
 		mainUsage(msg)
 
-	if len(args) != 1:
+	if len(args) < 1:
 		mainUsage("Expecting single ome.xsd file path!")
 
 	outputDirectory = None
@@ -160,7 +160,7 @@ def enumTypesMain(args):
 		print "Output directory '%s' does not exist!" % outputDirectory
 		sys.exit(1)
 
-	model = parseXmlSchema([args[0]], namespace)
+	model = parseXmlSchema(args, namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(ENUM_TEMPLATE).read())
 	for obj in model.objects.values():
