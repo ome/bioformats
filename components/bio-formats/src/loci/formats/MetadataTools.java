@@ -74,6 +74,21 @@ public final class MetadataTools {
   // -- Utility methods - OME-XML --
 
   /**
+   * Retrieves the latest supported version of the OME-XML schema.
+   */
+  public static String getLatestVersion() {
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import ome.xml.OMEXMLFactory");
+      return (String) r.exec("OMEXMLFactory.LATEST_VERSION");
+    }
+    catch (ReflectException e) {
+      LogTools.traceDebug(e);
+    }
+    return null;
+  }
+
+  /**
    * Creates an OME-XML metadata object using reflection, to avoid
    * direct dependencies on the optional {@link loci.formats.ome} package.
    * @return A new instance of {@link loci.formats.ome.OMEXMLMetadata},
@@ -116,8 +131,7 @@ public final class MetadataTools {
       if (version == null) {
         if (ome == null) {
           // default to newest schema version
-          r.exec("import ome.xml.OMEXMLFactory");
-          version = (String) r.exec("OMEXMLFactory.LATEST_VERSION");
+          version = getLatestVersion();
         }
         else {
           // extract schema version from OME root node
