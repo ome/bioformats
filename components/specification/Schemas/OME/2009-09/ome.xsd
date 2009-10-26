@@ -553,7 +553,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The PockelCellSetting used for this channel.
+						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1174,7 +1174,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:simpleType name="Hex40">
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				Binary contents coded in hexadecimal (20 characters long)
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:hexBinary">
@@ -1211,7 +1211,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:simpleType name="PixelType">
 		<xsd:annotation>
 			<xsd:documentation>
-				MISSING
+				The number size/kind used to represent a pixel
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
@@ -1537,7 +1537,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING - Check units
 						CutInTolerance Units: nanometres[nm],
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1545,7 +1544,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" >
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING - Check units
 						CutOutTolerance Units: nanometres[nm],
 					</xsd:documentation>
 				</xsd:annotation>
@@ -2127,7 +2125,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				Either LSID or internal consistent IDs for the file
-				MISSING - TODO - Put in some samples of valid lsid and internal ID
+				See: http://www.ome-xml.org/wiki/LSID
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
