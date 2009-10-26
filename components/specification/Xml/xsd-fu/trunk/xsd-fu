@@ -47,6 +47,7 @@ Available subcommands:
   metadata_store
   metadata_retrieve
   metadata_aggregate
+  enum_types
   doc_gen
   tab_gen
   debug
@@ -130,6 +131,47 @@ def main(args):
 		f.write(classContent)
 		f.close()
 
+def enumTypesMain(args):
+	"""
+	Default main() that parses command line options and generates Java 
+	classes for enumeration types in an output directory.
+	"""
+	try:
+		options, args = getopt(args, "o:p:n:")
+	except GetoptError, (msg, opt):
+		mainUsage(msg)
+
+	if len(args) != 1:
+		mainUsage("Expecting single ome.xsd file path!")
+
+	outputDirectory = None
+	package = DEFAULT_PACKAGE
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
+		if option == "-p":
+			package = argument
+		if option == "-n":
+			namespace = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
+
+	model = parseXmlSchema([args[0]], namespace)
+	fu = TemplateInfo(outputDirectory, package)
+	template = NewTextTemplate(open(ENUM_TEMPLATE).read())
+	for obj in model.objects.values():
+		for prop in obj.properties.values():
+			if not prop.isEnumeration:
+				continue
+			f = open(os.path.join(outputDirectory, "%s.java" % prop.name), "w")
+			classContent = template.generate(fu=fu, klass=prop).render()
+			f.write(classContent)
+			f.close()
+
 def index_string(name):
 	"""Makes a Java method signature string from an index name."""
 	if name[:2].isupper():
@@ -147,7 +189,6 @@ def max_occurs_under_parent(model, parent, name):
 		if prop.name == name:
 			return prop.maxOccurs
 	
-
 def resolve_indexes(indexes, model, names):
 	"""
 	Resolves a String index representation of the hierarchical structure of
@@ -384,6 +425,8 @@ if __name__ == '__main__':
 		metadataRetrieveMain(sys.argv[2:])
 	elif a == "metadata_aggregate":
 		metadataAggregateMain(sys.argv[2:])
+	elif a == "enum_types":
+		enumTypesMain(sys.argv[2:])
 	elif a == "doc_gen":
 		docGenMain(sys.argv[2:])
 	elif a == "tab_gen":

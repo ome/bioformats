@@ -109,6 +109,9 @@ DEFAULT_BASE_CLASS = "OMEXMLNode"
 # The default Java package for OME XML model objects.
 DEFAULT_PACKAGE = "ome.xml.r2008"
 
+# The default template for enum class processing.
+ENUM_TEMPLATE = "templates/Enum.template"
+
 # The default template for class processing.
 CLASS_TEMPLATE = "templates/Class.template"
 
