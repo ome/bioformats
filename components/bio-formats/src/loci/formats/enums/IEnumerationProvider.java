@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Interface for retrieving enumerations for an entity.
@@ -40,7 +40,7 @@ public interface IEnumerationProvider {
    * the latest OME-XML schema version.  If no enumeration corresponds to the
    * given value, null is returned.
    */
-  String getEnumeration(String entity, String value);
+  <T extends Enumeration> T getEnumeration(Class<T> type, String value);
 
   /**
    * Retrieve an enumeration for the specified entity and value.
@@ -48,20 +48,22 @@ public interface IEnumerationProvider {
    * the given OME-XML schema version.  If no enumeration corresponds to the
    * given value, null is returned.
    */
-  String getEnumeration(String entity, String value, String schemaVersion);
+  <T extends Enumeration> T getEnumeration(Class<T> type, String value,
+    String schemaVersion);
 
   /**
    * Retrieves all of the enumerations for the specified entity.
    * @return The enumerations for the given entity, according to the latest
    * OME-XML schema version.
    */
-  Vector<String> getEnumerations(String entity);
+  <T extends Enumeration> List<T> getEnumerations(Class<T> type);
 
   /**
    * Retrieves all of the enumerations for the specified entity.
    * @return The enumerations for the given entity, according to the given
    * OME-XML schema version.
    */
-  Vector<String> getEnumerations(String entity, String schemaVersion);
+  <T extends Enumeration> List<T> getEnumerations(Class<T> type,
+    String schemaVersion);
 
 }

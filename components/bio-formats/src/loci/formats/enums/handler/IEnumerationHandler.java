@@ -23,8 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums.handler;
 
-import java.util.Vector;
+import java.util.List;
 
+import loci.formats.enums.Enumeration;
 import loci.formats.enums.EnumerationException;
 
 /**
@@ -33,8 +34,6 @@ import loci.formats.enums.EnumerationException;
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/IEnumerationHandler.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/IEnumerationHandler.java">SVN</a></dd></dl>
- *
- * @author Melissa Linkert (melissa at glencoesoftware.com)
  */
 public interface IEnumerationHandler {
 
@@ -43,7 +42,7 @@ public interface IEnumerationHandler {
    * @param enumerations List of enumerations for this type.
    * @param value Value for which to find an enumeration.
    */
-  String getEnumeration(Vector<String> enumerations, String value)
+  <T extends Enumeration> T getEnumeration(List<T> enumerations, String value)
     throws EnumerationException;
 
   /**

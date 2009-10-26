@@ -23,8 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums.handler;
 
-import java.util.Vector;
+import java.util.List;
 
+import loci.formats.enums.Enumeration;
 import loci.formats.enums.EnumerationException;
 
 /**
@@ -51,14 +52,14 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
 
   // -- IEnumerationHandler API methods --
 
-  /* @see IEnumerationHandler#getEnumeration(Vector, String) */
-  public String getEnumeration(Vector<String> enumerations, String value)
-    throws EnumerationException
+  /* @see IEnumerationHandler#getEnumeration(List<T>, String) */
+  public <T extends Enumeration> T getEnumeration(List<T> enumerations,
+    String value) throws EnumerationException
   {
     for (String pattern : patterns) {
       if (value.matches(pattern)) {
-        for (String e : enumerations) {
-          if (e.matches(pattern)) {
+        for (T e : enumerations) {
+          if (e.toString().matches(pattern)) {
             return e;
           }
         }

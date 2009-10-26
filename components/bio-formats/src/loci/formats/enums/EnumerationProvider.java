@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.formats.MetadataTools;
 
@@ -57,35 +58,39 @@ public class EnumerationProvider implements IEnumerationProvider {
   // -- IEnumerationProvider API methods --
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(String, String)
+   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class<T>,
+   *   String)
    */
-  public String getEnumeration(String entity, String value) {
+  public <T extends Enumeration> T getEnumeration(Class<T> entity, String value)
+  {
     return getEnumeration(entity, value, schema);
   }
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(String, String,
-   *   String)
+   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class<T>,
+   *   String, String)
    */
-  public String getEnumeration(String entity, String value,
+  public <T extends Enumeration> T getEnumeration(Class<T> entity, String value,
     String schemaVersion)
   {
     // TODO
     return null;
   }
 
-  /* @see loci.formats.enums.IEnumerationProvider#getEnumerations(String) */
-  public Vector<String> getEnumerations(String entity) {
+  /* @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class<T>) */
+  public <T extends Enumeration> List<T> getEnumerations(Class<T> entity) {
     return getEnumerations(entity, schema);
   }
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumerations(String,
+   * @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class<T>,
    *   String)
    */
-  public Vector<String> getEnumerations(String entity, String schemaVersion) {
+  public <T extends Enumeration> List<T> getEnumerations(Class<T> entity,
+    String schemaVersion)
+  {
     // TODO
-    return new Vector<String>();
+    return new ArrayList<T>();
   }
 
 }
