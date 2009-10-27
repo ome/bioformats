@@ -74,6 +74,18 @@ public class MinimalTiffReader extends FormatReader {
     super(name, suffixes);
   }
 
+  // -- MinimalTiffReader API methods --
+
+  /** Gets the list of IFDs associated with the current TIFF's image planes. */
+  public IFDList getIFDs() {
+    return ifds;
+  }
+
+  /** Gets the list of IFDs associated with the current TIFF's thumbnails. */
+  public IFDList getThumbnailIFDs() {
+    return thumbnailIFDs;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
