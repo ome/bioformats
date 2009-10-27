@@ -100,6 +100,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private int[] channelColors;
   private int lastPlane;
+  private Vector<Integer> tiles = new Vector<Integer>();
 
   // -- Constructor --
 
@@ -275,6 +276,15 @@ public class ZeissZVIReader extends FormatReader {
               {
                 ii = row*tileColumns + (tileColumns - col - 1);
               }
+              if (!tiles.contains(new Integer(ii))) {
+                colOffset += tileW;
+                if (colOffset >= w) {
+                  colOffset = 0;
+                  rowOffset += tileH;
+                }
+                continue;
+              }
+              else ii = tiles.indexOf(new Integer(ii));
               ii *= count;
               ii += firstTile;
 
@@ -345,6 +355,7 @@ public class ZeissZVIReader extends FormatReader {
       stageX = stageY = 0;
       channelColors = null;
       lastPlane = 0;
+      tiles.clear();
     }
   }
 
@@ -500,6 +511,12 @@ public class ZeissZVIReader extends FormatReader {
 
     status("Populating metadata");
 
+    for (RandomAccessInputStream s : tagsToParse) {
+      s.order(true);
+      parseTags(-1, s, store);
+      s.close();
+    }
+
     core[0].sizeZ = zIndices.size();
     core[0].sizeT = tIndices.size();
     core[0].sizeC = cIndices.size();
@@ -521,11 +538,6 @@ public class ZeissZVIReader extends FormatReader {
 
     if (getSizeY() * tileRows != realHeight) tileRows++;
     if (getSizeX() * tileColumns != realWidth) tileColumns++;
-
-    while (totalTiles < tileRows * tileColumns && tileRows > 1) {
-      tileRows--;
-    }
-    if (tileRows > 0) tileColumns = totalTiles / tileRows;
 
     if (totalTiles <= 1) {
       tileRows = 1;
@@ -613,11 +625,6 @@ public class ZeissZVIReader extends FormatReader {
       store.setStagePositionPositionY(new Double(stageY), 0, 0, plane);
     }
 
-    for (RandomAccessInputStream s : tagsToParse) {
-      s.order(true);
-      parseTags(-1, s, store);
-      s.close();
-    }
     core[0].indexed = !isRGB() && channelColors != null;
 
     // link DetectorSettings to an actual Detector
@@ -722,22 +729,30 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.equals("ImageWidth")) {
           int v = Integer.parseInt(value);
-          if (getSizeX() == 0) {
+          if (getSizeX() == 0 || v < getSizeX()) {
             core[0].sizeX = v;
           }
           if (realWidth == 0 && v > realWidth) realWidth = v;
         }
         else if (key.equals("ImageHeight")) {
           int v = Integer.parseInt(value);
-          if (getSizeY() == 0) core[0].sizeY = v;
+          if (getSizeY() == 0 || v < getSizeY()) core[0].sizeY = v;
           if (realHeight == 0 || v > realHeight) realHeight = v;
         }
 
         if (cIndex != -1) key += " " + cIndex;
         addGlobalMeta(key, value);
 
+        if (key.startsWith("ImageTile")) {
+          if (!tiles.contains(new Integer(value))) {
+            tiles.add(new Integer(value));
+          }
+        }
+
         if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
-          firstImageTile = value;
+          if (firstImageTile == null) {
+            firstImageTile = value;
+          }
         }
         else if (key.equals("ImageTile Index 1")) secondImageTile = value;
         else if (key.startsWith("MultiChannel Color")) {
