@@ -17,10 +17,10 @@ ${", ".join([index.split()[1] for index in indexes])}\
 	// Is multi path? ${is_multi_path[obj.name]}
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${", ".join(indexes)}, ${index_string(prop.name)}));\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${", ".join(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${", ".join(indexes)}));\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${", ".join(indexes)});\
 {% end %}\
 {% otherwise %}\
 	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name});\
