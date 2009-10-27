@@ -302,6 +302,14 @@ public class FlexReader extends FormatReader {
           "Did you forget to specify the server names?");
       }
     }
+    else {
+      String[] files = findFiles(file, new String[] {RES_SUFFIX});
+      if (files != null) {
+        for (String f : files) {
+          measurementFiles.add(f);
+        }
+      }
+    }
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -667,6 +675,24 @@ public class FlexReader extends FormatReader {
    * .res and .mea files.
    */
   private String[] findFiles(Location baseFile) throws IOException {
+    String[] suffixes = new String[0];
+    if (checkSuffix(baseFile.getName(), FLEX_SUFFIX)) {
+      suffixes = new String[] {MEA_SUFFIX, RES_SUFFIX};
+      debug("Looking for files with the suffix '" + MEA_SUFFIX + "' or '" +
+        RES_SUFFIX + "'.");
+    }
+    else if (checkSuffix(baseFile.getName(), MEA_SUFFIX)) {
+      suffixes = new String[] {FLEX_SUFFIX, RES_SUFFIX};
+      debug("Looking for files with the suffix '" + FLEX_SUFFIX + "' or '" +
+        RES_SUFFIX + "'.");
+    }
+
+    return findFiles(baseFile, suffixes);
+  }
+
+  private String[] findFiles(Location baseFile, String[] suffixes)
+    throws IOException
+  {
     // we're assuming that the directory structure looks something like this:
     //
     //                        top level directory
@@ -688,18 +714,6 @@ public class FlexReader extends FormatReader {
     debug("findFiles(" + baseFile.getAbsolutePath() + ")");
 
     Vector<String> fileList = new Vector<String>();
-
-    String[] suffixes = new String[0];
-    if (checkSuffix(baseFile.getName(), FLEX_SUFFIX)) {
-      suffixes = new String[] {MEA_SUFFIX, RES_SUFFIX};
-      debug("Looking for files with the suffix '" + MEA_SUFFIX + "' or '" +
-        RES_SUFFIX + "'.");
-    }
-    else if (checkSuffix(baseFile.getName(), MEA_SUFFIX)) {
-      suffixes = new String[] {FLEX_SUFFIX, RES_SUFFIX};
-      debug("Looking for files with the suffix '" + FLEX_SUFFIX + "' or '" +
-        RES_SUFFIX + "'.");
-    }
 
     Location plateDir = baseFile.getParentFile();
     String[] files = plateDir.list(true);
