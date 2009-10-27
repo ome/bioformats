@@ -520,7 +520,7 @@ public class FV1000Reader extends FormatReader {
             Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
           if (key.equals("AxisCode")) code[ndx] = value;
           else if (key.equals("MaxSize")) size[ndx] = value;
-          else if (key.equals("Interval")) pixelSize[ndx] = value;
+          else if (key.equals("EndPosition")) pixelSize[ndx] = value;
         }
         else if ((prefix + key).equals(
           "[Reference Image Parameter] - ImageDepth"))
@@ -867,11 +867,11 @@ public class FV1000Reader extends FormatReader {
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        pixelSizeZ = pixel.doubleValue() / 1000;
+        pixelSizeZ = (pixel.doubleValue() / getSizeZ()) / 1000;
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
-        pixelSizeT = pixel.doubleValue() / 1000;
+        pixelSizeT = (pixel.doubleValue() / getSizeT()) / 1000;
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
