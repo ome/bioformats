@@ -1,4 +1,4 @@
-{% def indexes_string(indexes) %}${}", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
 \
 {% def index_string(name) %}\
 {% choose %}\
