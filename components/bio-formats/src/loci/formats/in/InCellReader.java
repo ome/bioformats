@@ -510,10 +510,12 @@ public class InCellReader extends FormatReader {
               int roiIndex = 0;
               double area = 0d;
 
+              if (cellIndex < 0) continue;
               String cell = values[cellIndex].trim();
 
               try {
                 roiIndex = Integer.parseInt(cell) - 1;
+                if (areaIndex < 0) continue;
                 area = Double.parseDouble(values[areaIndex].trim());
               }
               catch (NumberFormatException e) {
@@ -524,8 +526,12 @@ public class InCellReader extends FormatReader {
               double radius = Math.sqrt(area / Math.PI);
 
               // "Cell cg X", "Cell cg Y"
-              store.setCircleCx(values[xIndex].trim(), image, roiIndex, 0);
-              store.setCircleCy(values[yIndex].trim(), image, roiIndex, 0);
+              if (xIndex >= 0) {
+                store.setCircleCx(values[xIndex].trim(), image, roiIndex, 0);
+              }
+              if (yIndex >= 0) {
+                store.setCircleCy(values[yIndex].trim(), image, roiIndex, 0);
+              }
               store.setCircleR(String.valueOf(radius), image, roiIndex, 0);
 
               if (isMetadataCollected()) {
