@@ -1,5 +1,5 @@
 /*
- * ${fu.package}.${name}
+ * ${fu.package}.${klass.javaType}
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,16 +38,16 @@
 
 package ${fu.package};
 
-public enum ${name}
+public enum ${klass.javaType}
 {
   ${", ".join(['%s("%s")' % (value.upper(), value) for value in klass.possibleValues])};
   
-  private ${name}(String value)
+  private ${klass.javaType}(String value)
   {
     this.value = value;
   }
 
-  public static ${name} fromString(String value)
+  public static ${klass.javaType} fromString(String value)
     throws EnumerationException
   {
 {% for value in klass.possibleValues %}\
@@ -57,7 +57,7 @@ public enum ${name}
     }
 {% end %}\
     String s = String.format("%s not a supported value of %s",
-                             value, ${name}.class);
+                             value, ${klass.javaType}.class);
     throw new EnumerationException(s);
   }
 

@@ -167,12 +167,10 @@ def enumTypesMain(args):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			name = prop.name
-			if name == "Type":
-				name = "%s%s" % (obj.name, name)
-			f = open(os.path.join(outputDirectory, "%s.java" % name), "w")
-			classContent = \
-				template.generate(fu=fu, name=name, klass=prop).render()
+			print "%s: %s" % (prop.name, prop.javaType)
+			path = os.path.join(outputDirectory, "%s.java" % prop.javaType)
+			f = open(path, "w")
+			classContent = template.generate(fu=fu, klass=prop).render()
 			f.write(classContent)
 			f.close()
 

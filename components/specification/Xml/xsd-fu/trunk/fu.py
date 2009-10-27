@@ -228,6 +228,24 @@ class OMEModelProperty(object):
 	
 	def _get_javaType(self):
 		try:
+			# Hand back the type of enumerations
+			if self.isEnumeration:
+				javaType = self.name
+				if len(self.delegate.values) == 0:
+					# As we have no directly defined possible values we have
+					# no reason to qualify our type explicitly.
+					return self.type
+				if javaType == "Type":
+					# One of the OME XML unspecific "Type" properties which
+					# can only be qualified by the parent.
+					if self.type.endswith("string"):
+						# We've been defined entirely inline, prefix our Java
+						# type name with the parent type's name.
+						return "%s%s" % (self.parent.name, javaType)
+					# There's another type which describes us, use its name
+					# as our Java type name.
+					return self.type
+				return javaType
 			# Handle XML Schema types that directly map to Java types
 			return JAVA_TYPE_MAP[self.type]
 		except KeyError:
