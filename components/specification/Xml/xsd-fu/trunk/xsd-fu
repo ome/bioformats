@@ -233,7 +233,7 @@ def enumHandlersMain(args):
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
 			path = os.path.join(outputDirectory,
-			                    "%sHandler.java" % prop.javaType)
+			                    "%sEnumHandler.java" % prop.javaType)
 			f = open(path, "w")
 			classContent = template.generate(fu=fu, klass=prop,
 				enum_value_name=enum_value_name).render()

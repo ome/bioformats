@@ -38,7 +38,7 @@
 
 package ${fu.package};
 
-public enum ${klass.javaType}
+public enum ${klass.javaType} implements Enumeration
 {
   ${", ".join(['%s("%s")' % (enum_value_name(value), value) for value in klass.possibleValues])};
   
