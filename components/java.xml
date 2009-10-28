@@ -70,8 +70,11 @@ your FindBugs installation's lib directory. E.g.:
       </manifest>
 -->
     </jar>
+  </target>
+
+  <target name="osgi" depends="jar"
+    description="inject OSGi bundle information">
     <!-- NB: Add OSGi bundle metadata. -->
-    <echo>Injecting OSGi bundle information...</echo>
     <bundle outputDir="${artifact.dir}"
       bundleName="${component.name}"
       bundleSymbolicName="${domain.prefix}.${component.name}"
@@ -140,7 +143,9 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-timestamp, init-revision, init-release, init-manifest-cp"/>
+    depends="init-timestamp, init-revision, init-release, init-manifest-cp">
+    <echo>----------=========== ${component.name} ===========----------</echo>
+  </target>
 
   <target name="init-manifest-cp">
     <!-- construct manifest classpath -->
