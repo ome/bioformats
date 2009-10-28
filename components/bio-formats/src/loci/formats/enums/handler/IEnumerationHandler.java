@@ -42,12 +42,11 @@ public interface IEnumerationHandler {
    * @param enumerations List of enumerations for this type.
    * @param value Value for which to find an enumeration.
    */
-  <T extends Enumeration> T getEnumeration(String value)
-    throws EnumerationException;
+  Enumeration getEnumeration(String value) throws EnumerationException;
 
   /**
    * Retrieve the entity corresponding to this handler.
    */
-  String getEntity();
+  Class<? extends Enumeration> getEntity();
 
 }

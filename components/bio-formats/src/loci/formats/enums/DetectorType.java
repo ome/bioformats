@@ -31,14 +31,14 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 11:37:35+0000
+ * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.enums;
 
-public enum DetectorType
+public enum DetectorType implements Enumeration
 {
   CCD("CCD"), INTENSIFIEDCCD("IntensifiedCCD"), ANALOGVIDEO("AnalogVideo"), PMT("PMT"), PHOTODIODE("Photodiode"), SPECTROSCOPY("Spectroscopy"), LIFETIMEIMAGING("LifetimeImaging"), CORRELATIONSPECTROSCOPY("CorrelationSpectroscopy"), FTIR("FTIR"), EMCCD("EMCCD"), APD("APD"), CMOS("CMOS"), OTHER("Other");
   

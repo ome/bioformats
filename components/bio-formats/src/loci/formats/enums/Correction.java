@@ -31,14 +31,14 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 11:37:35+0000
+ * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.enums;
 
-public enum Correction
+public enum Correction implements Enumeration
 {
   UV("UV"), PLANAPO("PlanApo"), PLANFLUOR("PlanFluor"), SUPERFLUOR("SuperFluor"), VIOLETCORRECTED("VioletCorrected"), ACHRO("Achro"), ACHROMAT("Achromat"), FLUOR("Fluor"), FL("Fl"), FLUAR("Fluar"), NEOFLUAR("Neofluar"), FLUOTAR("Fluotar"), APO("Apo"), PLANNEOFLUAR("PlanNeofluar"), OTHER("Other");
   

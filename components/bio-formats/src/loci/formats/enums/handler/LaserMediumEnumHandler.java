@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.CorrectionHandler
+ * loci.formats.enums.handler.LaserMediumHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -43,38 +43,57 @@ import java.util.List;
 
 import loci.formats.enums.Enumeration;
 import loci.formats.enums.EnumerationException;
-import loci.formats.enums.Correction;
+import loci.formats.enums.LaserMedium;
 
 /**
- * Enumeration handler for Correction.
+ * Enumeration handler for LaserMedium.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserMediumHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserMediumHandler.java">SVN</a></dd></dl>
  */
-public class CorrectionEnumHandler implements IEnumerationHandler {
+public class LaserMediumEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every Correction value must match one of these patterns. */
+  /** Every LaserMedium value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*UV", "UV");
-    p.put("^\\s*PlanApo", "PlanApo");
-    p.put("^\\s*PlanFluor", "PlanFluor");
-    p.put("^\\s*SuperFluor", "SuperFluor");
-    p.put("^\\s*VioletCorrected", "VioletCorrected");
-    p.put("^\\s*Achro", "Achro");
-    p.put("^\\s*Achromat", "Achromat");
-    p.put("^\\s*Fluor", "Fluor");
-    p.put("^\\s*Fl", "Fl");
-    p.put("^\\s*Fluar", "Fluar");
-    p.put("^\\s*Neofluar", "Neofluar");
-    p.put("^\\s*Fluotar", "Fluotar");
-    p.put("^\\s*Apo", "Apo");
-    p.put("^\\s*PlanNeofluar", "PlanNeofluar");
+    p.put("^\\s*Cu", "Cu");
+    p.put("^\\s*Ag", "Ag");
+    p.put("^\\s*ArFl", "ArFl");
+    p.put("^\\s*ArCl", "ArCl");
+    p.put("^\\s*KrFl", "KrFl");
+    p.put("^\\s*KrCl", "KrCl");
+    p.put("^\\s*XeFl", "XeFl");
+    p.put("^\\s*XeCl", "XeCl");
+    p.put("^\\s*XeBr", "XeBr");
+    p.put("^\\s*N", "N");
+    p.put("^\\s*Ar", "Ar");
+    p.put("^\\s*Kr", "Kr");
+    p.put("^\\s*Xe", "Xe");
+    p.put("^\\s*HeNe", "HeNe");
+    p.put("^\\s*HeCd", "HeCd");
+    p.put("^\\s*CO", "CO");
+    p.put("^\\s*CO2", "CO2");
+    p.put("^\\s*H2O", "H2O");
+    p.put("^\\s*HFl", "HFl");
+    p.put("^\\s*NdGlass", "NdGlass");
+    p.put("^\\s*NdYAG", "NdYAG");
+    p.put("^\\s*ErGlass", "ErGlass");
+    p.put("^\\s*ErYAG", "ErYAG");
+    p.put("^\\s*HoYLF", "HoYLF");
+    p.put("^\\s*HoYAG", "HoYAG");
+    p.put("^\\s*Ruby", "Ruby");
+    p.put("^\\s*TiSapphire", "TiSapphire");
+    p.put("^\\s*Alexandrite", "Alexandrite");
+    p.put("^\\s*Rhodamine6G", "Rhodamine6G");
+    p.put("^\\s*CoumarinC30", "CoumarinC30");
+    p.put("^\\s*GaAs", "GaAs");
+    p.put("^\\s*GaAlAs", "GaAlAs");
+    p.put("^\\s*EMinus", "EMinus");
     p.put("^\\s*Other", "Other");
     return p;
   }
@@ -88,7 +107,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.matches(pattern)) {
         String v = patterns.get(pattern);
-        return Correction.fromString(v);
+        return LaserMedium.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -97,7 +116,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return Correction.class;
+    return LaserMedium.class;
   }
 
 }

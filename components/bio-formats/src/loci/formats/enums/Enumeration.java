@@ -30,6 +30,6 @@ package loci.formats.enums;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/Enumeration.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/Enumeration.java">SVN</a></dd></dl>
  */
-public abstract class Enumeration {
+public interface Enumeration {
   // TODO
 }

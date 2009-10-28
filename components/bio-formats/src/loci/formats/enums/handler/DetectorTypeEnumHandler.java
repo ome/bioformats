@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.CorrectionHandler
+ * loci.formats.enums.handler.DetectorTypeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -43,38 +43,36 @@ import java.util.List;
 
 import loci.formats.enums.Enumeration;
 import loci.formats.enums.EnumerationException;
-import loci.formats.enums.Correction;
+import loci.formats.enums.DetectorType;
 
 /**
- * Enumeration handler for Correction.
+ * Enumeration handler for DetectorType.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/DetectorTypeHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/DetectorTypeHandler.java">SVN</a></dd></dl>
  */
-public class CorrectionEnumHandler implements IEnumerationHandler {
+public class DetectorTypeEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every Correction value must match one of these patterns. */
+  /** Every DetectorType value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*UV", "UV");
-    p.put("^\\s*PlanApo", "PlanApo");
-    p.put("^\\s*PlanFluor", "PlanFluor");
-    p.put("^\\s*SuperFluor", "SuperFluor");
-    p.put("^\\s*VioletCorrected", "VioletCorrected");
-    p.put("^\\s*Achro", "Achro");
-    p.put("^\\s*Achromat", "Achromat");
-    p.put("^\\s*Fluor", "Fluor");
-    p.put("^\\s*Fl", "Fl");
-    p.put("^\\s*Fluar", "Fluar");
-    p.put("^\\s*Neofluar", "Neofluar");
-    p.put("^\\s*Fluotar", "Fluotar");
-    p.put("^\\s*Apo", "Apo");
-    p.put("^\\s*PlanNeofluar", "PlanNeofluar");
+    p.put("^\\s*CCD", "CCD");
+    p.put("^\\s*IntensifiedCCD", "IntensifiedCCD");
+    p.put("^\\s*AnalogVideo", "AnalogVideo");
+    p.put("^\\s*PMT", "PMT");
+    p.put("^\\s*Photodiode", "Photodiode");
+    p.put("^\\s*Spectroscopy", "Spectroscopy");
+    p.put("^\\s*LifetimeImaging", "LifetimeImaging");
+    p.put("^\\s*CorrelationSpectroscopy", "CorrelationSpectroscopy");
+    p.put("^\\s*FTIR", "FTIR");
+    p.put("^\\s*EMCCD", "EMCCD");
+    p.put("^\\s*APD", "APD");
+    p.put("^\\s*CMOS", "CMOS");
     p.put("^\\s*Other", "Other");
     return p;
   }
@@ -88,7 +86,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.matches(pattern)) {
         String v = patterns.get(pattern);
-        return Correction.fromString(v);
+        return DetectorType.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -97,7 +95,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return Correction.class;
+    return DetectorType.class;
   }
 
 }

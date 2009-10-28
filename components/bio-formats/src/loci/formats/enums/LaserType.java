@@ -31,14 +31,14 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 11:37:35+0000
+ * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.enums;
 
-public enum LaserType
+public enum LaserType implements Enumeration
 {
   EXCIMER("Excimer"), GAS("Gas"), METALVAPOR("MetalVapor"), SOLIDSTATE("SolidState"), DYE("Dye"), SEMICONDUCTOR("Semiconductor"), FREEELECTRON("FreeElectron"), OTHER("Other");
   

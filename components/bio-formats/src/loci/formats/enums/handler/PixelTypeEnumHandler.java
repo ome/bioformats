@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.CorrectionHandler
+ * loci.formats.enums.handler.PixelTypeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -43,39 +43,35 @@ import java.util.List;
 
 import loci.formats.enums.Enumeration;
 import loci.formats.enums.EnumerationException;
-import loci.formats.enums.Correction;
+import loci.formats.enums.PixelType;
 
 /**
- * Enumeration handler for Correction.
+ * Enumeration handler for PixelType.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/PixelTypeHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/PixelTypeHandler.java">SVN</a></dd></dl>
  */
-public class CorrectionEnumHandler implements IEnumerationHandler {
+public class PixelTypeEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every Correction value must match one of these patterns. */
+  /** Every PixelType value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*UV", "UV");
-    p.put("^\\s*PlanApo", "PlanApo");
-    p.put("^\\s*PlanFluor", "PlanFluor");
-    p.put("^\\s*SuperFluor", "SuperFluor");
-    p.put("^\\s*VioletCorrected", "VioletCorrected");
-    p.put("^\\s*Achro", "Achro");
-    p.put("^\\s*Achromat", "Achromat");
-    p.put("^\\s*Fluor", "Fluor");
-    p.put("^\\s*Fl", "Fl");
-    p.put("^\\s*Fluar", "Fluar");
-    p.put("^\\s*Neofluar", "Neofluar");
-    p.put("^\\s*Fluotar", "Fluotar");
-    p.put("^\\s*Apo", "Apo");
-    p.put("^\\s*PlanNeofluar", "PlanNeofluar");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*int8", "int8");
+    p.put("^\\s*int16", "int16");
+    p.put("^\\s*int32", "int32");
+    p.put("^\\s*uint8", "uint8");
+    p.put("^\\s*uint16", "uint16");
+    p.put("^\\s*uint32", "uint32");
+    p.put("^\\s*float", "float");
+    p.put("^\\s*bit", "bit");
+    p.put("^\\s*double", "double");
+    p.put("^\\s*complex", "complex");
+    p.put("^\\s*double-complex", "double-complex");
     return p;
   }
 
@@ -88,7 +84,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.matches(pattern)) {
         String v = patterns.get(pattern);
-        return Correction.fromString(v);
+        return PixelType.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -97,7 +93,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return Correction.class;
+    return PixelType.class;
   }
 
 }

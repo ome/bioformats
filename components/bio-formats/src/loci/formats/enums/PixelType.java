@@ -31,14 +31,14 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 11:37:35+0000
+ * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.enums;
 
-public enum PixelType
+public enum PixelType implements Enumeration
 {
   INT8("int8"), INT16("int16"), INT32("int32"), UINT8("uint8"), UINT16("uint16"), UINT32("uint32"), FLOAT("float"), BIT("bit"), DOUBLE("double"), COMPLEX("complex"), DOUBLECOMPLEX("double-complex");
   

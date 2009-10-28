@@ -31,14 +31,14 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 11:37:35+0000
+ * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.enums;
 
-public enum LaserMedium
+public enum LaserMedium implements Enumeration
 {
   CU("Cu"), AG("Ag"), ARFL("ArFl"), ARCL("ArCl"), KRFL("KrFl"), KRCL("KrCl"), XEFL("XeFl"), XECL("XeCl"), XEBR("XeBr"), N("N"), AR("Ar"), KR("Kr"), XE("Xe"), HENE("HeNe"), HECD("HeCd"), CO("CO"), CO2("CO2"), H2O("H2O"), HFL("HFl"), NDGLASS("NdGlass"), NDYAG("NdYAG"), ERGLASS("ErGlass"), ERYAG("ErYAG"), HOYLF("HoYLF"), HOYAG("HoYAG"), RUBY("Ruby"), TISAPPHIRE("TiSapphire"), ALEXANDRITE("Alexandrite"), RHODAMINE6G("Rhodamine6G"), COUMARINC30("CoumarinC30"), GAAS("GaAs"), GAALAS("GaAlAs"), EMINUS("EMinus"), OTHER("Other");
   
