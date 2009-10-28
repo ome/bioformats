@@ -62,7 +62,7 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
 {% for value in klass.possibleValues %}\
-    p.put("^\\\s*${value}", "${value}");
+    p.put("^\\\s*${value}\\\s*", "${value}");
 {% end %}\
     return p;
   }
@@ -74,7 +74,7 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return ${klass.javaType}.fromString(v);
       }
