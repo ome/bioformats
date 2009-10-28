@@ -34,7 +34,16 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #ifndef H_ITK_IMAGE_IO_H
 #define H_ITK_IMAGE_IO_H
 
+// for Bio-Formats C++ bindings
 #include "bio-formats.h"
+using jace::proxy::loci::formats::ChannelFiller;
+using jace::proxy::loci::formats::FormatTools;
+using jace::proxy::loci::formats::ImageWriter;
+using jace::proxy::loci::formats::MetadataTools;
+using jace::proxy::loci::formats::meta::IMetadata;
+using jace::proxy::loci::formats::meta::MetadataRetrieve;
+
+#undef Byte
 
 // STL includes
 

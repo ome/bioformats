@@ -67,13 +67,14 @@ namespace itk
 
     // initialize the Java virtual machine
     itkDebugMacro(<<"Creating JVM...");
-    StaticVmLoader loader(JNI_VERSION_1_4);
-    OptionList list;
+    jace::StaticVmLoader loader(JNI_VERSION_1_4);
+    jace::OptionList list;
     list.push_back(jace::ClassPath(
       "jace-runtime.jar:bio-formats.jar:loci_tools.jar"
     ));
     list.push_back(jace::CustomOption("-Xcheck:jni"));
     list.push_back(jace::CustomOption("-Xmx256m"));
+    list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
     //list.push_back(jace::CustomOption("-verbose"));
     //list.push_back(jace::CustomOption("-verbose:jni"));
     jace::helper::createVm(loader, list, false);
@@ -204,18 +205,15 @@ namespace itk
     SetNumberOfComponents(rgbChannelCount); // m_NumberOfComponents
 
     // get physical resolution
+    MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
+    double physX = retrieve.getDimensionsPhysicalSizeX(0, 0).doubleValue();
+    double physY = retrieve.getDimensionsPhysicalSizeY(0, 0).doubleValue();
+    m_Spacing[0] = physX;
+    m_Spacing[1] = physY;
+    if (imageCount > 1) m_Spacing[2] = 1;
 
-    // NB: Jace interface proxies do not inherit from superinterfaces.
-    //     E.g., IMetadata does not possess methods from MetadataRetrieve.
-    //     Need to find a way around this, or improve Jace.
-    //float physX = omeMeta.getDimensionsPhysicalSizeX(0, 0);
-    //float physY = omeMeta.getDimensionsPhysicalSizeY(0, 0);
-    //m_Spacing[0] = physX;
-    //m_Spacing[1] = physY;
-    //if (imageCount > 1) m_Spacing[2] = 1;
-
-    //itkDebugMacro(<<"\tPhysicalSizeX = " << physX);
-    //itkDebugMacro(<<"\tPhysicalSizeY = " << physY);
+    itkDebugMacro(<<"\tPhysicalSizeX = " << physX);
+    itkDebugMacro(<<"\tPhysicalSizeY = " << physY);
   }
 
   void
@@ -223,8 +221,6 @@ namespace itk
   {
     char* data = (char*) pData;
     itkDebugMacro(<<"BioFormatsImageIO::Read");
-
-    typedef JArray<JByte> ByteArray;
 
     int pixelType = reader->getPixelType();
     int bpp = FormatTools::getBytesPerPixel(pixelType);

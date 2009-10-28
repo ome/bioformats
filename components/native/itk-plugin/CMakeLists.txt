@@ -153,7 +153,7 @@ add_library(${lib_name}
 target_link_libraries(${lib_name}
   ITKIO
   jace
-  bfjace
+  bfcpp
   ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES}
 )
 
@@ -188,7 +188,7 @@ set_target_properties(BioFormatsIOPlugin
 target_link_libraries(BioFormatsIOPlugin
   ${lib_name}
   jace
-  bfjace
+  bfcpp
   ${JAVA_JVM_LIBRARY} ${Boost_LIBRARIES}
 )
 
