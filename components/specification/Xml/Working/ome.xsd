@@ -1582,6 +1582,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Light elements -->
 	<xsd:element name="LightSource"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				The lightsource for the instrument.  An instrument may have several light sources.
 				The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
