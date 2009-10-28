@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,11 +61,11 @@ public class IlluminationTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Transmitted", "Transmitted");
-    p.put("^\\s*Epifluorescence", "Epifluorescence");
-    p.put("^\\s*Oblique", "Oblique");
-    p.put("^\\s*NonLinear", "NonLinear");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*Transmitted\\s*", "Transmitted");
+    p.put("^\\s*Epifluorescence\\s*", "Epifluorescence");
+    p.put("^\\s*Oblique\\s*", "Oblique");
+    p.put("^\\s*NonLinear\\s*", "NonLinear");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -76,7 +76,7 @@ public class IlluminationTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return IlluminationType.fromString(v);
       }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,40 +61,40 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Cu", "Cu");
-    p.put("^\\s*Ag", "Ag");
-    p.put("^\\s*ArFl", "ArFl");
-    p.put("^\\s*ArCl", "ArCl");
-    p.put("^\\s*KrFl", "KrFl");
-    p.put("^\\s*KrCl", "KrCl");
-    p.put("^\\s*XeFl", "XeFl");
-    p.put("^\\s*XeCl", "XeCl");
-    p.put("^\\s*XeBr", "XeBr");
-    p.put("^\\s*N", "N");
-    p.put("^\\s*Ar", "Ar");
-    p.put("^\\s*Kr", "Kr");
-    p.put("^\\s*Xe", "Xe");
-    p.put("^\\s*HeNe", "HeNe");
-    p.put("^\\s*HeCd", "HeCd");
-    p.put("^\\s*CO", "CO");
-    p.put("^\\s*CO2", "CO2");
-    p.put("^\\s*H2O", "H2O");
-    p.put("^\\s*HFl", "HFl");
-    p.put("^\\s*NdGlass", "NdGlass");
-    p.put("^\\s*NdYAG", "NdYAG");
-    p.put("^\\s*ErGlass", "ErGlass");
-    p.put("^\\s*ErYAG", "ErYAG");
-    p.put("^\\s*HoYLF", "HoYLF");
-    p.put("^\\s*HoYAG", "HoYAG");
-    p.put("^\\s*Ruby", "Ruby");
-    p.put("^\\s*TiSapphire", "TiSapphire");
-    p.put("^\\s*Alexandrite", "Alexandrite");
-    p.put("^\\s*Rhodamine6G", "Rhodamine6G");
-    p.put("^\\s*CoumarinC30", "CoumarinC30");
-    p.put("^\\s*GaAs", "GaAs");
-    p.put("^\\s*GaAlAs", "GaAlAs");
-    p.put("^\\s*EMinus", "EMinus");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*Cu\\s*", "Cu");
+    p.put("^\\s*Ag\\s*", "Ag");
+    p.put("^\\s*ArFl\\s*", "ArFl");
+    p.put("^\\s*ArCl\\s*", "ArCl");
+    p.put("^\\s*KrFl\\s*", "KrFl");
+    p.put("^\\s*KrCl\\s*", "KrCl");
+    p.put("^\\s*XeFl\\s*", "XeFl");
+    p.put("^\\s*XeCl\\s*", "XeCl");
+    p.put("^\\s*XeBr\\s*", "XeBr");
+    p.put("^\\s*N\\s*", "N");
+    p.put("^\\s*Ar\\s*", "Ar");
+    p.put("^\\s*Kr\\s*", "Kr");
+    p.put("^\\s*Xe\\s*", "Xe");
+    p.put("^\\s*HeNe\\s*", "HeNe");
+    p.put("^\\s*HeCd\\s*", "HeCd");
+    p.put("^\\s*CO\\s*", "CO");
+    p.put("^\\s*CO2\\s*", "CO2");
+    p.put("^\\s*H2O\\s*", "H2O");
+    p.put("^\\s*HFl\\s*", "HFl");
+    p.put("^\\s*NdGlass\\s*", "NdGlass");
+    p.put("^\\s*NdYAG\\s*", "NdYAG");
+    p.put("^\\s*ErGlass\\s*", "ErGlass");
+    p.put("^\\s*ErYAG\\s*", "ErYAG");
+    p.put("^\\s*HoYLF\\s*", "HoYLF");
+    p.put("^\\s*HoYAG\\s*", "HoYAG");
+    p.put("^\\s*Ruby\\s*", "Ruby");
+    p.put("^\\s*TiSapphire\\s*", "TiSapphire");
+    p.put("^\\s*Alexandrite\\s*", "Alexandrite");
+    p.put("^\\s*Rhodamine6G\\s*", "Rhodamine6G");
+    p.put("^\\s*CoumarinC30\\s*", "CoumarinC30");
+    p.put("^\\s*GaAs\\s*", "GaAs");
+    p.put("^\\s*GaAlAs\\s*", "GaAlAs");
+    p.put("^\\s*EMinus\\s*", "EMinus");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -105,7 +105,7 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return LaserMedium.fromString(v);
       }

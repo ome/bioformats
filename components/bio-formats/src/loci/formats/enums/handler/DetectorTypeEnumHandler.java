@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,19 +61,19 @@ public class DetectorTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*CCD", "CCD");
-    p.put("^\\s*IntensifiedCCD", "IntensifiedCCD");
-    p.put("^\\s*AnalogVideo", "AnalogVideo");
-    p.put("^\\s*PMT", "PMT");
-    p.put("^\\s*Photodiode", "Photodiode");
-    p.put("^\\s*Spectroscopy", "Spectroscopy");
-    p.put("^\\s*LifetimeImaging", "LifetimeImaging");
-    p.put("^\\s*CorrelationSpectroscopy", "CorrelationSpectroscopy");
-    p.put("^\\s*FTIR", "FTIR");
-    p.put("^\\s*EMCCD", "EMCCD");
-    p.put("^\\s*APD", "APD");
-    p.put("^\\s*CMOS", "CMOS");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*CCD\\s*", "CCD");
+    p.put("^\\s*IntensifiedCCD\\s*", "IntensifiedCCD");
+    p.put("^\\s*AnalogVideo\\s*", "AnalogVideo");
+    p.put("^\\s*PMT\\s*", "PMT");
+    p.put("^\\s*Photodiode\\s*", "Photodiode");
+    p.put("^\\s*Spectroscopy\\s*", "Spectroscopy");
+    p.put("^\\s*LifetimeImaging\\s*", "LifetimeImaging");
+    p.put("^\\s*CorrelationSpectroscopy\\s*", "CorrelationSpectroscopy");
+    p.put("^\\s*FTIR\\s*", "FTIR");
+    p.put("^\\s*EMCCD\\s*", "EMCCD");
+    p.put("^\\s*APD\\s*", "APD");
+    p.put("^\\s*CMOS\\s*", "CMOS");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -84,7 +84,7 @@ public class DetectorTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return DetectorType.fromString(v);
       }

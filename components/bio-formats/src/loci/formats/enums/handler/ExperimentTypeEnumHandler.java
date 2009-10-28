@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,22 +61,22 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*FP", "FP");
-    p.put("^\\s*FRET", "FRET");
-    p.put("^\\s*TimeLapse", "TimeLapse");
-    p.put("^\\s*FourDPlus", "FourDPlus");
-    p.put("^\\s*Screen", "Screen");
-    p.put("^\\s*Immunocytochemistry", "Immunocytochemistry");
-    p.put("^\\s*Immunofluorescence", "Immunofluorescence");
-    p.put("^\\s*FISH", "FISH");
-    p.put("^\\s*Electrophysiology", "Electrophysiology");
-    p.put("^\\s*IonImaging", "IonImaging");
-    p.put("^\\s*Colocalization", "Colocalization");
-    p.put("^\\s*PGIDocumentation", "PGIDocumentation");
-    p.put("^\\s*FluorescenceLifetime", "FluorescenceLifetime");
-    p.put("^\\s*SpectralImaging", "SpectralImaging");
-    p.put("^\\s*Photobleaching", "Photobleaching");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*FP\\s*", "FP");
+    p.put("^\\s*FRET\\s*", "FRET");
+    p.put("^\\s*TimeLapse\\s*", "TimeLapse");
+    p.put("^\\s*FourDPlus\\s*", "FourDPlus");
+    p.put("^\\s*Screen\\s*", "Screen");
+    p.put("^\\s*Immunocytochemistry\\s*", "Immunocytochemistry");
+    p.put("^\\s*Immunofluorescence\\s*", "Immunofluorescence");
+    p.put("^\\s*FISH\\s*", "FISH");
+    p.put("^\\s*Electrophysiology\\s*", "Electrophysiology");
+    p.put("^\\s*IonImaging\\s*", "IonImaging");
+    p.put("^\\s*Colocalization\\s*", "Colocalization");
+    p.put("^\\s*PGIDocumentation\\s*", "PGIDocumentation");
+    p.put("^\\s*FluorescenceLifetime\\s*", "FluorescenceLifetime");
+    p.put("^\\s*SpectralImaging\\s*", "SpectralImaging");
+    p.put("^\\s*Photobleaching\\s*", "Photobleaching");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -87,7 +87,7 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return ExperimentType.fromString(v);
       }

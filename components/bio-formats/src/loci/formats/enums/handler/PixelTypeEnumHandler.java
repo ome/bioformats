@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,17 +61,17 @@ public class PixelTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*int8", "int8");
-    p.put("^\\s*int16", "int16");
-    p.put("^\\s*int32", "int32");
-    p.put("^\\s*uint8", "uint8");
-    p.put("^\\s*uint16", "uint16");
-    p.put("^\\s*uint32", "uint32");
-    p.put("^\\s*float", "float");
-    p.put("^\\s*bit", "bit");
-    p.put("^\\s*double", "double");
-    p.put("^\\s*complex", "complex");
-    p.put("^\\s*double-complex", "double-complex");
+    p.put("^\\s*int8\\s*", "int8");
+    p.put("^\\s*int16\\s*", "int16");
+    p.put("^\\s*int32\\s*", "int32");
+    p.put("^\\s*uint8\\s*", "uint8");
+    p.put("^\\s*uint16\\s*", "uint16");
+    p.put("^\\s*uint32\\s*", "uint32");
+    p.put("^\\s*float\\s*", "float");
+    p.put("^\\s*bit\\s*", "bit");
+    p.put("^\\s*double\\s*", "double");
+    p.put("^\\s*complex\\s*", "complex");
+    p.put("^\\s*double-complex\\s*", "double-complex");
     return p;
   }
 
@@ -82,7 +82,7 @@ public class PixelTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return PixelType.fromString(v);
       }

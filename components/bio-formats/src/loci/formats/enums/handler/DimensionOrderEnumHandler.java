@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,12 +61,12 @@ public class DimensionOrderEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*XYZCT", "XYZCT");
-    p.put("^\\s*XYZTC", "XYZTC");
-    p.put("^\\s*XYCTZ", "XYCTZ");
-    p.put("^\\s*XYCZT", "XYCZT");
-    p.put("^\\s*XYTCZ", "XYTCZ");
-    p.put("^\\s*XYTZC", "XYTZC");
+    p.put("^\\s*XYZCT\\s*", "XYZCT");
+    p.put("^\\s*XYZTC\\s*", "XYZTC");
+    p.put("^\\s*XYCTZ\\s*", "XYCTZ");
+    p.put("^\\s*XYCZT\\s*", "XYCZT");
+    p.put("^\\s*XYTCZ\\s*", "XYTCZ");
+    p.put("^\\s*XYTZC\\s*", "XYTZC");
     return p;
   }
 
@@ -77,7 +77,7 @@ public class DimensionOrderEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return DimensionOrder.fromString(v);
       }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,11 +61,11 @@ public class MicroscopeTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Upright", "Upright");
-    p.put("^\\s*Inverted", "Inverted");
-    p.put("^\\s*Dissection", "Dissection");
-    p.put("^\\s*Electrophysiology", "Electrophysiology");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*Upright\\s*", "Upright");
+    p.put("^\\s*Inverted\\s*", "Inverted");
+    p.put("^\\s*Dissection\\s*", "Dissection");
+    p.put("^\\s*Electrophysiology\\s*", "Electrophysiology");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -76,7 +76,7 @@ public class MicroscopeTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return MicroscopeType.fromString(v);
       }

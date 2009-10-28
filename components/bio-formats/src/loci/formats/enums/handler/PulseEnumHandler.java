@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,12 +61,12 @@ public class PulseEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*CW", "CW");
-    p.put("^\\s*Single", "Single");
-    p.put("^\\s*QSwitched", "QSwitched");
-    p.put("^\\s*Repetitive", "Repetitive");
-    p.put("^\\s*ModeLocked", "ModeLocked");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*CW\\s*", "CW");
+    p.put("^\\s*Single\\s*", "Single");
+    p.put("^\\s*QSwitched\\s*", "QSwitched");
+    p.put("^\\s*Repetitive\\s*", "Repetitive");
+    p.put("^\\s*ModeLocked\\s*", "ModeLocked");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -77,7 +77,7 @@ public class PulseEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return Pulse.fromString(v);
       }

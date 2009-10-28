@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,15 +61,15 @@ public class ContrastMethodEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Brightfield", "Brightfield");
-    p.put("^\\s*Phase", "Phase");
-    p.put("^\\s*DIC", "DIC");
-    p.put("^\\s*HoffmanModulation", "HoffmanModulation");
-    p.put("^\\s*ObliqueIllumination", "ObliqueIllumination");
-    p.put("^\\s*PolarizedLight", "PolarizedLight");
-    p.put("^\\s*Darkfield", "Darkfield");
-    p.put("^\\s*Fluorescence", "Fluorescence");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*Brightfield\\s*", "Brightfield");
+    p.put("^\\s*Phase\\s*", "Phase");
+    p.put("^\\s*DIC\\s*", "DIC");
+    p.put("^\\s*HoffmanModulation\\s*", "HoffmanModulation");
+    p.put("^\\s*ObliqueIllumination\\s*", "ObliqueIllumination");
+    p.put("^\\s*PolarizedLight\\s*", "PolarizedLight");
+    p.put("^\\s*Darkfield\\s*", "Darkfield");
+    p.put("^\\s*Fluorescence\\s*", "Fluorescence");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -80,7 +80,7 @@ public class ContrastMethodEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return ContrastMethod.fromString(v);
       }

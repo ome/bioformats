@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,21 +61,21 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*UV", "UV");
-    p.put("^\\s*PlanApo", "PlanApo");
-    p.put("^\\s*PlanFluor", "PlanFluor");
-    p.put("^\\s*SuperFluor", "SuperFluor");
-    p.put("^\\s*VioletCorrected", "VioletCorrected");
-    p.put("^\\s*Achro", "Achro");
-    p.put("^\\s*Achromat", "Achromat");
-    p.put("^\\s*Fluor", "Fluor");
-    p.put("^\\s*Fl", "Fl");
-    p.put("^\\s*Fluar", "Fluar");
-    p.put("^\\s*Neofluar", "Neofluar");
-    p.put("^\\s*Fluotar", "Fluotar");
-    p.put("^\\s*Apo", "Apo");
-    p.put("^\\s*PlanNeofluar", "PlanNeofluar");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*UV\\s*", "UV");
+    p.put("^\\s*PlanApo\\s*", "PlanApo");
+    p.put("^\\s*PlanFluor\\s*", "PlanFluor");
+    p.put("^\\s*SuperFluor\\s*", "SuperFluor");
+    p.put("^\\s*VioletCorrected\\s*", "VioletCorrected");
+    p.put("^\\s*Achro\\s*", "Achro");
+    p.put("^\\s*Achromat\\s*", "Achromat");
+    p.put("^\\s*Fluor\\s*", "Fluor");
+    p.put("^\\s*Fl\\s*", "Fl");
+    p.put("^\\s*Fluar\\s*", "Fluar");
+    p.put("^\\s*Neofluar\\s*", "Neofluar");
+    p.put("^\\s*Fluotar\\s*", "Fluotar");
+    p.put("^\\s*Apo\\s*", "Apo");
+    p.put("^\\s*PlanNeofluar\\s*", "PlanNeofluar");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -86,7 +86,7 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return Correction.fromString(v);
       }

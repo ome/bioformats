@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,14 +61,14 @@ public class LaserTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Excimer", "Excimer");
-    p.put("^\\s*Gas", "Gas");
-    p.put("^\\s*MetalVapor", "MetalVapor");
-    p.put("^\\s*SolidState", "SolidState");
-    p.put("^\\s*Dye", "Dye");
-    p.put("^\\s*Semiconductor", "Semiconductor");
-    p.put("^\\s*FreeElectron", "FreeElectron");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*Excimer\\s*", "Excimer");
+    p.put("^\\s*Gas\\s*", "Gas");
+    p.put("^\\s*MetalVapor\\s*", "MetalVapor");
+    p.put("^\\s*SolidState\\s*", "SolidState");
+    p.put("^\\s*Dye\\s*", "Dye");
+    p.put("^\\s*Semiconductor\\s*", "Semiconductor");
+    p.put("^\\s*FreeElectron\\s*", "FreeElectron");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -79,7 +79,7 @@ public class LaserTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return LaserType.fromString(v);
       }

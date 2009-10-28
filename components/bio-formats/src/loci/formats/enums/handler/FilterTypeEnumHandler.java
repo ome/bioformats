@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,11 +61,11 @@ public class FilterTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*LongPass", "LongPass");
-    p.put("^\\s*ShortPass", "ShortPass");
-    p.put("^\\s*BandPass", "BandPass");
-    p.put("^\\s*MultiPass", "MultiPass");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*LongPass\\s*", "LongPass");
+    p.put("^\\s*ShortPass\\s*", "ShortPass");
+    p.put("^\\s*BandPass\\s*", "BandPass");
+    p.put("^\\s*MultiPass\\s*", "MultiPass");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -76,7 +76,7 @@ public class FilterTypeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return FilterType.fromString(v);
       }

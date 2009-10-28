@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,21 +61,21 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*WideField", "WideField");
-    p.put("^\\s*LaserScanningMicroscopy", "LaserScanningMicroscopy");
-    p.put("^\\s*LaserScanningConfocal", "LaserScanningConfocal");
-    p.put("^\\s*SpinningDiskConfocal", "SpinningDiskConfocal");
-    p.put("^\\s*SlitScanConfocal", "SlitScanConfocal");
-    p.put("^\\s*MultiPhotonMicroscopy", "MultiPhotonMicroscopy");
-    p.put("^\\s*StructuredIllumination", "StructuredIllumination");
-    p.put("^\\s*SingleMoleculeImaging", "SingleMoleculeImaging");
-    p.put("^\\s*TotalInternalReflection", "TotalInternalReflection");
-    p.put("^\\s*FluorescenceLifetime", "FluorescenceLifetime");
-    p.put("^\\s*SpectralImaging", "SpectralImaging");
-    p.put("^\\s*FluorescenceCorrelationSpectroscopy", "FluorescenceCorrelationSpectroscopy");
-    p.put("^\\s*NearFieldScanningOpticalMicroscopy", "NearFieldScanningOpticalMicroscopy");
-    p.put("^\\s*SecondHarmonicGenerationImaging", "SecondHarmonicGenerationImaging");
-    p.put("^\\s*Other", "Other");
+    p.put("^\\s*WideField\\s*", "WideField");
+    p.put("^\\s*LaserScanningMicroscopy\\s*", "LaserScanningMicroscopy");
+    p.put("^\\s*LaserScanningConfocal\\s*", "LaserScanningConfocal");
+    p.put("^\\s*SpinningDiskConfocal\\s*", "SpinningDiskConfocal");
+    p.put("^\\s*SlitScanConfocal\\s*", "SlitScanConfocal");
+    p.put("^\\s*MultiPhotonMicroscopy\\s*", "MultiPhotonMicroscopy");
+    p.put("^\\s*StructuredIllumination\\s*", "StructuredIllumination");
+    p.put("^\\s*SingleMoleculeImaging\\s*", "SingleMoleculeImaging");
+    p.put("^\\s*TotalInternalReflection\\s*", "TotalInternalReflection");
+    p.put("^\\s*FluorescenceLifetime\\s*", "FluorescenceLifetime");
+    p.put("^\\s*SpectralImaging\\s*", "SpectralImaging");
+    p.put("^\\s*FluorescenceCorrelationSpectroscopy\\s*", "FluorescenceCorrelationSpectroscopy");
+    p.put("^\\s*NearFieldScanningOpticalMicroscopy\\s*", "NearFieldScanningOpticalMicroscopy");
+    p.put("^\\s*SecondHarmonicGenerationImaging\\s*", "SecondHarmonicGenerationImaging");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -86,7 +86,7 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
         return AcquisitionMode.fromString(v);
       }
