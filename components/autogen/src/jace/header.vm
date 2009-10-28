@@ -37,12 +37,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #set ($last = "")
 #foreach ($path in $q.files())
 #if ($last != "" && $q.isNewPackage($path, $last))
-using namespace jace::proxy::${q.namespace($last)};
+//using namespace jace::proxy::${q.namespace($last)};
 
 #end##if ($last != "" && $q.isNewPackage($path, $last))
 \#include "jace/proxy/${q.header($path)}"
 #set ($last = $path)
 #end##foreach $path
-using namespace jace::proxy::${q.namespace($last)};
+//using namespace jace::proxy::${q.namespace($last)};
 
 #endif
