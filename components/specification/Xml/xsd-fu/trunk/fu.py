@@ -112,6 +112,9 @@ DEFAULT_PACKAGE = "ome.xml.r2008"
 # The default template for enum class processing.
 ENUM_TEMPLATE = "templates/Enum.template"
 
+# The default template for enum handler class processing.
+ENUM_HANDLER_TEMPLATE = "templates/EnumHandler.template"
+
 # The default template for class processing.
 CLASS_TEMPLATE = "templates/Class.template"
 

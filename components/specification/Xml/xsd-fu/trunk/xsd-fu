@@ -26,6 +26,7 @@ Generate Java classes from an OME XML (http://www.ome-xml.org) XSD document.
 import logging
 import sys
 import os
+import re
 
 from fu import *
 
@@ -48,6 +49,7 @@ Available subcommands:
   metadata_retrieve
   metadata_aggregate
   enum_types
+  enum_handlers
   doc_gen
   tab_gen
   debug
@@ -130,6 +132,24 @@ def main(args):
 		classContent = template.generate(fu=fu, klass=obj).render()
 		f.write(classContent)
 		f.close()
+		
+def enum_value_name(value):
+	"""
+	Returns a valid Java enumeration name for an OME XML enumeration value.
+	"""
+	if re.match(r'^\d+', value):
+		value = value.replace("0", "zero")
+		value = value.replace("1", "one")
+		value = value.replace("2", "two")
+		value = value.replace("3", "three")
+		value = value.replace("4", "four")
+		value = value.replace("5", "five")
+		value = value.replace("6", "six")
+		value = value.replace("7", "seven")
+		value = value.replace("8", "eight")
+		value = value.replace("9", "nine")
+	value = value.replace("-", "")
+	return value.upper()
 
 def enumTypesMain(args):
 	"""
@@ -170,7 +190,53 @@ def enumTypesMain(args):
 			print "%s: %s" % (prop.name, prop.javaType)
 			path = os.path.join(outputDirectory, "%s.java" % prop.javaType)
 			f = open(path, "w")
-			classContent = template.generate(fu=fu, klass=prop).render()
+			classContent = template.generate(fu=fu, klass=prop,
+				enum_value_name=enum_value_name).render()
+			f.write(classContent)
+			f.close()
+
+def enumHandlersMain(args):
+	"""
+	Default main() that parses command line options and generates Java 
+	classes for enumeration handlers in an output directory.
+	"""
+	try:
+		options, args = getopt(args, "o:p:n:")
+	except GetoptError, (msg, opt):
+		mainUsage(msg)
+
+	if len(args) < 1:
+		mainUsage("Expecting at least one XSD file path!")
+
+	outputDirectory = None
+	package = DEFAULT_PACKAGE
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
+		if option == "-p":
+			package = argument
+		if option == "-n":
+			namespace = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
+
+	model = parseXmlSchema(args, namespace)
+	fu = TemplateInfo(outputDirectory, package)
+	template = NewTextTemplate(open(ENUM_HANDLER_TEMPLATE).read())
+	for obj in model.objects.values():
+		for prop in obj.properties.values():
+			if not prop.isEnumeration:
+				continue
+			print "%s: %s" % (prop.name, prop.javaType)
+			path = os.path.join(outputDirectory,
+			                    "%sHandler.java" % prop.javaType)
+			f = open(path, "w")
+			classContent = template.generate(fu=fu, klass=prop,
+				enum_value_name=enum_value_name).render()
 			f.write(classContent)
 			f.close()
 
@@ -429,6 +495,8 @@ if __name__ == '__main__':
 		metadataAggregateMain(sys.argv[2:])
 	elif a == "enum_types":
 		enumTypesMain(sys.argv[2:])
+	elif a == "enum_handlers":
+		enumHandlersMain(sys.argv[2:])
 	elif a == "doc_gen":
 		docGenMain(sys.argv[2:])
 	elif a == "tab_gen":
