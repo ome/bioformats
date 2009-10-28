@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums.handler;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import loci.formats.enums.Enumeration;
@@ -40,34 +41,41 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
   // -- Fields --
 
   /** Every Correction value must match one of these patterns. */
-  private static final String[] patterns = new String[] {
-    "^\\s*Pl.*Apo.*$",
-    "^\\s*Pl.*Flu.*$",
-    "^\\s*Sup.*Flu.*$",
-    "^\\s*Vio.*Corr.*$",
-    "^\\s*Achr.*Flu.*$",
-    "^\\s*Neo.*flu.*$",
-    "^\\s*Apo.*$"
-  };
+  private static final Hashtable<String, String> patterns = makePatterns();
+
+  private static Hashtable<String, String> makePatterns() {
+    Hashtable<String, String> p = new Hashtable<String, String>();
+    p.put("^\\s*Pl.*Apo.*$", "PlanApo");
+    p.put("^\\s*Pl.*Flu.*$", "PlanFluor");
+    p.put("^\\s*Sup.*Flu.*$", "SuperFluor");
+    p.put("^\\s*Vio.*Corr.*$", "VioletCorrected");
+    p.put("^\\s*Achr.*Flu.*$", "Achromat");
+    p.put("^\\s*Neo.*flu.*$", "Neofluar");
+    p.put("^\\s*Apo.*$", "Apo");
+    p.put("^\\s*UV.*$", "UV");
+    p.put("^\\s*Fluar.*$", "Fluar");
+    p.put("^\\s*Neo.*fluar.*$", "Neofluar");
+    p.put("^\\s*Pl.*Neo.*flu.*$", "PlanNeofluar");
+    p.put("[Oo]ther", "Other");
+    return p;
+  }
 
   // -- IEnumerationHandler API methods --
 
-  /* @see IEnumerationHandler#getEnumeration(List<T>, String) */
-  public <T extends Enumeration> T getEnumeration(List<T> enumerations,
-    String value) throws EnumerationException
+  /* @see IEnumerationHandler#getEnumeration(String) */
+  public <T extends Enumeration> T getEnumeration(String value)
+    throws EnumerationException
   {
-    for (String pattern : patterns) {
+    for (String pattern : patterns.keySet()) {
       if (value.matches(pattern)) {
-        for (T e : enumerations) {
-          if (e.toString().matches(pattern)) {
-            return e;
-          }
-        }
-        throw new EnumerationException(this.getClass().getName() +
-          " could not find enumeration for " + value);
+        String v = patterns.get(pattern);
+        // TODO : uncomment this once enum classes are committed
+        //Correction c = Correction.fromString(v);
+        //return c;
       }
     }
-    return null;
+    throw new EnumerationException(this.getClass().getName() +
+     " could not find enumeration for " + value);
   }
 
   /* @see IEnumerationHandler#getEntity() */

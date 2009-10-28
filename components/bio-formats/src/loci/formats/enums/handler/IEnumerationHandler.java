@@ -42,7 +42,7 @@ public interface IEnumerationHandler {
    * @param enumerations List of enumerations for this type.
    * @param value Value for which to find an enumeration.
    */
-  <T extends Enumeration> T getEnumeration(List<T> enumerations, String value)
+  <T extends Enumeration> T getEnumeration(String value)
     throws EnumerationException;
 
   /**
