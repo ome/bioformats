@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via JaceHeaderAutogen on Oct 2, 2009 8:39:17 AM CDT
+ * Created by curtis via JaceHeaderAutogen on Oct 28, 2009 2:24:12 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -59,6 +59,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/common/URLHandle.h"
 #include "jace/proxy/loci/common/XMLTools.h"
 #include "jace/proxy/loci/common/ZipHandle.h"
-using namespace jace::proxy::loci::common;
+//using namespace jace::proxy::loci::common;
 
 #endif

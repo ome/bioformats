@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Oct 8, 2009 11:52:54 PM CDT
+ * Created by curtis via JaceHeaderAutogen on Oct 28, 2009 2:24:12 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,7 +67,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/proxy/loci/formats/StatusListener.h"
 #include "jace/proxy/loci/formats/StatusReporter.h"
 #include "jace/proxy/loci/formats/UnknownFormatException.h"
-using namespace jace::proxy::loci::formats;
+#include "jace/proxy/loci/formats/WriterWrapper.h"
+//using namespace jace::proxy::loci::formats;
 
 #include "jace/proxy/loci/formats/cache/ByteArraySource.h"
 #include "jace/proxy/loci/formats/cache/Cache.h"
@@ -82,7 +83,7 @@ using namespace jace::proxy::loci::formats;
 #include "jace/proxy/loci/formats/cache/ICacheSource.h"
 #include "jace/proxy/loci/formats/cache/ICacheStrategy.h"
 #include "jace/proxy/loci/formats/cache/RectangleStrategy.h"
-using namespace jace::proxy::loci::formats::cache;
+//using namespace jace::proxy::loci::formats::cache;
 
 #include "jace/proxy/loci/formats/codec/Base64Codec.h"
 #include "jace/proxy/loci/formats/codec/BaseCodec.h"
@@ -110,12 +111,70 @@ using namespace jace::proxy::loci::formats::cache;
 #include "jace/proxy/loci/formats/codec/QTRLECodec.h"
 #include "jace/proxy/loci/formats/codec/RPZACodec.h"
 #include "jace/proxy/loci/formats/codec/ZlibCodec.h"
-using namespace jace::proxy::loci::formats::codec;
+//using namespace jace::proxy::loci::formats::codec;
+
+#include "jace/proxy/loci/formats/enums/AcquisitionMode.h"
+#include "jace/proxy/loci/formats/enums/ArcType.h"
+#include "jace/proxy/loci/formats/enums/Binning.h"
+#include "jace/proxy/loci/formats/enums/ContrastMethod.h"
+#include "jace/proxy/loci/formats/enums/Correction.h"
+#include "jace/proxy/loci/formats/enums/DetectorType.h"
+#include "jace/proxy/loci/formats/enums/DimensionOrder.h"
+#include "jace/proxy/loci/formats/enums/Enumeration.h"
+#include "jace/proxy/loci/formats/enums/EnumerationException.h"
+#include "jace/proxy/loci/formats/enums/EnumerationProvider.h"
+#include "jace/proxy/loci/formats/enums/ExperimentType.h"
+#include "jace/proxy/loci/formats/enums/FilamentType.h"
+#include "jace/proxy/loci/formats/enums/FilterType.h"
+#include "jace/proxy/loci/formats/enums/FontFamily.h"
+#include "jace/proxy/loci/formats/enums/FontStyle.h"
+#include "jace/proxy/loci/formats/enums/IEnumerationProvider.h"
+#include "jace/proxy/loci/formats/enums/IlluminationType.h"
+#include "jace/proxy/loci/formats/enums/Immersion.h"
+#include "jace/proxy/loci/formats/enums/LaserMedium.h"
+#include "jace/proxy/loci/formats/enums/LaserType.h"
+#include "jace/proxy/loci/formats/enums/LineCap.h"
+#include "jace/proxy/loci/formats/enums/Marker.h"
+#include "jace/proxy/loci/formats/enums/Medium.h"
+#include "jace/proxy/loci/formats/enums/MicrobeamManipulationType.h"
+#include "jace/proxy/loci/formats/enums/MicroscopeType.h"
+#include "jace/proxy/loci/formats/enums/NamingConvention.h"
+#include "jace/proxy/loci/formats/enums/PixelType.h"
+#include "jace/proxy/loci/formats/enums/Pulse.h"
+//using namespace jace::proxy::loci::formats::enums;
+
+#include "jace/proxy/loci/formats/enums/handler/AcquisitionModeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/ArcTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/BinningEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/ContrastMethodEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/CorrectionEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/DetectorTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/DimensionOrderEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/ExperimentTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/FilamentTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/FilterTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/FontFamilyEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/FontStyleEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/IEnumerationHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/IlluminationTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/ImmersionEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/LaserMediumEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/LaserTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/LineCapEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/MarkerEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/MediumEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/MicrobeamManipulationTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/MicroscopeTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/NamingConventionEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/PixelTypeEnumHandler.h"
+#include "jace/proxy/loci/formats/enums/handler/PulseEnumHandler.h"
+//using namespace jace::proxy::loci::formats::enums::handler;
 
 #include "jace/proxy/loci/formats/gui/AWTImageTools.h"
 #include "jace/proxy/loci/formats/gui/AWTTiffTools.h"
 #include "jace/proxy/loci/formats/gui/BufferedImageReader.h"
 #include "jace/proxy/loci/formats/gui/BufferedImageSource.h"
+#include "jace/proxy/loci/formats/gui/BufferedImageWriter.h"
 #include "jace/proxy/loci/formats/gui/CacheComponent.h"
 #include "jace/proxy/loci/formats/gui/CacheIndicator.h"
 #include "jace/proxy/loci/formats/gui/ComboFileFilter.h"
@@ -136,7 +195,7 @@ using namespace jace::proxy::loci::formats::codec;
 #include "jace/proxy/loci/formats/gui/UnsignedIntColorModel.h"
 #include "jace/proxy/loci/formats/gui/XMLCellRenderer.h"
 #include "jace/proxy/loci/formats/gui/XMLWindow.h"
-using namespace jace::proxy::loci::formats::gui;
+//using namespace jace::proxy::loci::formats::gui;
 
 #include "jace/proxy/loci/formats/in/APLReader.h"
 #include "jace/proxy/loci/formats/in/APNGReader.h"
@@ -217,6 +276,7 @@ using namespace jace::proxy::loci::formats::gui;
 #include "jace/proxy/loci/formats/in/SDTReader.h"
 #include "jace/proxy/loci/formats/in/SEQReader.h"
 #include "jace/proxy/loci/formats/in/SVSReader.h"
+#include "jace/proxy/loci/formats/in/ScanrReader.h"
 #include "jace/proxy/loci/formats/in/SlidebookReader.h"
 #include "jace/proxy/loci/formats/in/TCSReader.h"
 #include "jace/proxy/loci/formats/in/TiffReader.h"
@@ -225,7 +285,7 @@ using namespace jace::proxy::loci::formats::gui;
 #include "jace/proxy/loci/formats/in/ZeissLSMReader.h"
 #include "jace/proxy/loci/formats/in/ZeissZVIReader.h"
 #include "jace/proxy/loci/formats/in/ZipReader.h"
-using namespace jace::proxy::loci::formats::in;
+//using namespace jace::proxy::loci::formats::in;
 
 #include "jace/proxy/loci/formats/meta/AggregateMetadata.h"
 #include "jace/proxy/loci/formats/meta/DummyMetadata.h"
@@ -235,7 +295,7 @@ using namespace jace::proxy::loci::formats::in;
 #include "jace/proxy/loci/formats/meta/MetadataConverter.h"
 #include "jace/proxy/loci/formats/meta/MetadataRetrieve.h"
 #include "jace/proxy/loci/formats/meta/MetadataStore.h"
-using namespace jace::proxy::loci::formats::meta;
+//using namespace jace::proxy::loci::formats::meta;
 
 #include "jace/proxy/loci/formats/ome/OMEXML2003FCMetadata.h"
 #include "jace/proxy/loci/formats/ome/OMEXML200706Metadata.h"
@@ -244,7 +304,7 @@ using namespace jace::proxy::loci::formats::meta;
 #include "jace/proxy/loci/formats/ome/OMEXMLMetadata.h"
 #include "jace/proxy/loci/formats/ome/OmeisException.h"
 #include "jace/proxy/loci/formats/ome/OmeisImporter.h"
-using namespace jace::proxy::loci::formats::ome;
+//using namespace jace::proxy::loci::formats::ome;
 
 #include "jace/proxy/loci/formats/out/APNGWriter.h"
 #include "jace/proxy/loci/formats/out/AVIWriter.h"
@@ -258,7 +318,7 @@ using namespace jace::proxy::loci::formats::ome;
 #include "jace/proxy/loci/formats/out/OMEXMLWriter.h"
 #include "jace/proxy/loci/formats/out/QTWriter.h"
 #include "jace/proxy/loci/formats/out/TiffWriter.h"
-using namespace jace::proxy::loci::formats::out;
+//using namespace jace::proxy::loci::formats::out;
 
 #include "jace/proxy/loci/formats/tiff/IFD.h"
 #include "jace/proxy/loci/formats/tiff/IFDList.h"
@@ -270,7 +330,7 @@ using namespace jace::proxy::loci::formats::out;
 #include "jace/proxy/loci/formats/tiff/TiffRational.h"
 #include "jace/proxy/loci/formats/tiff/TiffSaver.h"
 #include "jace/proxy/loci/formats/tiff/TiffTools.h"
-using namespace jace::proxy::loci::formats::tiff;
+//using namespace jace::proxy::loci::formats::tiff;
 
 #include "jace/proxy/loci/formats/tools/AmiraParameters.h"
 #include "jace/proxy/loci/formats/tools/CacheConsole.h"
@@ -283,6 +343,6 @@ using namespace jace::proxy::loci::formats::tiff;
 #include "jace/proxy/loci/formats/tools/TiffComment.h"
 #include "jace/proxy/loci/formats/tools/XMLIndent.h"
 #include "jace/proxy/loci/formats/tools/XMLValidate.h"
-using namespace jace::proxy::loci::formats::tools;
+//using namespace jace::proxy::loci::formats::tools;
 
 #endif

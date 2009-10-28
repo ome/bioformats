@@ -27,7 +27,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // for Bio-Formats C++ bindings
 #include "bio-formats.h"
-#include "loci-common.h"
+using jace::JNIException;
+using jace::proxy::java::io::IOException;
+using jace::proxy::java::lang::Boolean;
+using jace::proxy::java::lang::Integer;
+using jace::proxy::loci::formats::FormatException;
+using jace::proxy::loci::formats::FormatTools;
+using jace::proxy::loci::formats::ImageWriter;
+using jace::proxy::loci::formats::MetadataTools;
+using jace::proxy::loci::formats::meta::IMetadata;
 
 #include <iostream>
 using std::cout;
@@ -51,8 +59,8 @@ using std::string;
 /* Initializes the Java virtual machine. */
 void createJVM() {
   cout << "Creating JVM... ";
-  StaticVmLoader loader(JNI_VERSION_1_4);
-  OptionList list;
+  jace::StaticVmLoader loader(JNI_VERSION_1_4);
+  jace::OptionList list;
   list.push_back(jace::ClassPath(
     "jace-runtime.jar" + PATHSEP +
     "bio-formats.jar" + PATHSEP +
@@ -83,7 +91,7 @@ bool minWrite(int argc, const char *argv[]) {
 
   //byte[] img = new byte[w * h * FormatTools.getBytesPerPixel(pixelType)];
   int planeSize = w * h * FormatTools::getBytesPerPixel(pixelType);
-  JArray<JByte> img(planeSize); // pre-allocate buffer
+  ByteArray img(planeSize); // pre-allocate buffer
 
   // fill with random data
   for (int i=0; i<planeSize; i++) img[i] = rand();

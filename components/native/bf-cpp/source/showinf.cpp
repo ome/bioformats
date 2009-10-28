@@ -28,6 +28,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // for Bio-Formats C++ bindings
 #include "bio-formats.h"
 #include "loci-common.h"
+using jace::JNIException;
+using jace::proxy::java::io::IOException;
+using jace::proxy::java::lang::Object;
+using jace::proxy::java::lang::String;
+using jace::proxy::java::util::Hashtable;
+using jace::proxy::loci::common::XMLTools;
+using jace::proxy::loci::formats::ChannelFiller;
+using jace::proxy::loci::formats::ChannelMerger;
+using jace::proxy::loci::formats::ChannelSeparator;
+using jace::proxy::loci::formats::DimensionSwapper;
+using jace::proxy::loci::formats::FilePattern;
+using jace::proxy::loci::formats::FileStitcher;
+using jace::proxy::loci::formats::FormatException;
+using jace::proxy::loci::formats::FormatTools;
+using jace::proxy::loci::formats::IFormatHandler;
+using jace::proxy::loci::formats::IFormatReader;
+using jace::proxy::loci::formats::ImageReader;
+using jace::proxy::loci::formats::MetadataTools;
+using jace::proxy::loci::formats::meta::MetadataRetrieve;
+using jace::proxy::loci::formats::meta::MetadataStore;
+using jace::proxy::loci::formats::tools::StatusEchoer;
 
 #include <iostream>
 using std::cout;
@@ -92,8 +113,8 @@ StatusEchoer* status = NULL;
 /* Initializes the Java virtual machine. */
 void createJVM() {
   cout << "Creating JVM... ";
-  StaticVmLoader loader(JNI_VERSION_1_4);
-  OptionList list;
+  jace::StaticVmLoader loader(JNI_VERSION_1_4);
+  jace::OptionList list;
   list.push_back(jace::ClassPath(
     "jace-runtime.jar" + PATHSEP +
     "bio-formats.jar" + PATHSEP +

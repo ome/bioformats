@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "jace/JNIException.h"
 #include "jace/OptionList.h"
 #include "jace/StaticVmLoader.h"
-using namespace jace;
+//using namespace jace;
 
 #include "jace/proxy/types/JBoolean.h"
 #include "jace/proxy/types/JByte.h"
@@ -41,40 +41,40 @@ using namespace jace;
 #include "jace/proxy/types/JLong.h"
 #include "jace/proxy/types/JShort.h"
 #include "jace/proxy/types/JVoid.h"
-using namespace jace::proxy::types;
+//using namespace jace::proxy::types;
 
-typedef JArray<JBoolean> BooleanArray;
-typedef JArray<BooleanArray> BooleanArray2D;
-typedef JArray<BooleanArray2D> BooleanArray3D;
-typedef JArray<BooleanArray3D> BooleanArray4D;
-typedef JArray<JByte> ByteArray;
-typedef JArray<ByteArray> ByteArray2D;
-typedef JArray<ByteArray2D> ByteArray3D;
-typedef JArray<ByteArray3D> ByteArray4D;
-typedef JArray<JChar> CharArray;
-typedef JArray<CharArray> CharArray2D;
-typedef JArray<CharArray2D> CharArray3D;
-typedef JArray<CharArray3D> CharArray4D;
-typedef JArray<JDouble> DoubleArray;
-typedef JArray<DoubleArray> DoubleArray2D;
-typedef JArray<DoubleArray2D> DoubleArray3D;
-typedef JArray<DoubleArray3D> DoubleArray4D;
-typedef JArray<JFloat> FloatArray;
-typedef JArray<FloatArray> FloatArray2D;
-typedef JArray<FloatArray2D> FloatArray3D;
-typedef JArray<FloatArray3D> FloatArray4D;
-typedef JArray<JInt> IntArray;
-typedef JArray<IntArray> IntArray2D;
-typedef JArray<IntArray2D> IntArray3D;
-typedef JArray<IntArray3D> IntArray4D;
-typedef JArray<JLong> LongArray;
-typedef JArray<LongArray> LongArray2D;
-typedef JArray<LongArray2D> LongArray3D;
-typedef JArray<LongArray3D> LongArray4D;
-typedef JArray<JShort> ShortArray;
-typedef JArray<ShortArray> ShortArray2D;
-typedef JArray<ShortArray2D> ShortArray3D;
-typedef JArray<ShortArray3D> ShortArray4D;
+typedef jace::JArray<jace::proxy::types::JBoolean> BooleanArray;
+typedef jace::JArray<BooleanArray> BooleanArray2D;
+typedef jace::JArray<BooleanArray2D> BooleanArray3D;
+typedef jace::JArray<BooleanArray3D> BooleanArray4D;
+typedef jace::JArray<jace::proxy::types::JByte> ByteArray;
+typedef jace::JArray<ByteArray> ByteArray2D;
+typedef jace::JArray<ByteArray2D> ByteArray3D;
+typedef jace::JArray<ByteArray3D> ByteArray4D;
+typedef jace::JArray<jace::proxy::types::JChar> CharArray;
+typedef jace::JArray<CharArray> CharArray2D;
+typedef jace::JArray<CharArray2D> CharArray3D;
+typedef jace::JArray<CharArray3D> CharArray4D;
+typedef jace::JArray<jace::proxy::types::JDouble> DoubleArray;
+typedef jace::JArray<DoubleArray> DoubleArray2D;
+typedef jace::JArray<DoubleArray2D> DoubleArray3D;
+typedef jace::JArray<DoubleArray3D> DoubleArray4D;
+typedef jace::JArray<jace::proxy::types::JFloat> FloatArray;
+typedef jace::JArray<FloatArray> FloatArray2D;
+typedef jace::JArray<FloatArray2D> FloatArray3D;
+typedef jace::JArray<FloatArray3D> FloatArray4D;
+typedef jace::JArray<jace::proxy::types::JInt> IntArray;
+typedef jace::JArray<IntArray> IntArray2D;
+typedef jace::JArray<IntArray2D> IntArray3D;
+typedef jace::JArray<IntArray3D> IntArray4D;
+typedef jace::JArray<jace::proxy::types::JLong> LongArray;
+typedef jace::JArray<LongArray> LongArray2D;
+typedef jace::JArray<LongArray2D> LongArray3D;
+typedef jace::JArray<LongArray3D> LongArray4D;
+typedef jace::JArray<jace::proxy::types::JShort> ShortArray;
+typedef jace::JArray<ShortArray> ShortArray2D;
+typedef jace::JArray<ShortArray2D> ShortArray3D;
+typedef jace::JArray<ShortArray3D> ShortArray4D;
 
 #include "jace/proxy/java/lang/Boolean.h"
 #include "jace/proxy/java/lang/Byte.h"
@@ -85,17 +85,17 @@ typedef JArray<ShortArray3D> ShortArray4D;
 #include "jace/proxy/java/lang/Long.h"
 #include "jace/proxy/java/lang/Short.h"
 #include "jace/proxy/java/lang/String.h"
-using namespace jace::proxy::java::lang;
+//using namespace jace::proxy::java::lang;
 
-typedef JArray<String> StringArray;
-typedef JArray<StringArray> StringArray2D;
-typedef JArray<StringArray2D> StringArray3D;
-typedef JArray<StringArray3D> StringArray4D;
+typedef jace::JArray<jace::proxy::java::lang::String> StringArray;
+typedef jace::JArray<StringArray> StringArray2D;
+typedef jace::JArray<StringArray2D> StringArray3D;
+typedef jace::JArray<StringArray3D> StringArray4D;
 
 #include "jace/proxy/java/io/IOException.h"
-using namespace jace::proxy::java::io;
+//using namespace jace::proxy::java::io;
 
 #include "jace/proxy/java/util/Hashtable.h"
-using namespace jace::proxy::java::util;
+//using namespace jace::proxy::java::util;
 
 #endif
