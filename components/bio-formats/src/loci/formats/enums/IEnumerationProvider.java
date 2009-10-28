@@ -40,7 +40,8 @@ public interface IEnumerationProvider {
    * the latest OME-XML schema version.  If no enumeration corresponds to the
    * given value, null is returned.
    */
-  <T extends Enumeration> T getEnumeration(Class<T> type, String value);
+  <T extends Enumeration> T getEnumeration(Class<T> type, String value)
+    throws EnumerationException;
 
   /**
    * Retrieve an enumeration for the specified entity and value.
@@ -49,14 +50,15 @@ public interface IEnumerationProvider {
    * given value, null is returned.
    */
   <T extends Enumeration> T getEnumeration(Class<T> type, String value,
-    String schemaVersion);
+    String schemaVersion) throws EnumerationException;
 
   /**
    * Retrieves all of the enumerations for the specified entity.
    * @return The enumerations for the given entity, according to the latest
    * OME-XML schema version.
    */
-  <T extends Enumeration> List<T> getEnumerations(Class<T> type);
+  <T extends Enumeration> List<T> getEnumerations(Class<T> type)
+    throws EnumerationException;
 
   /**
    * Retrieves all of the enumerations for the specified entity.
@@ -64,6 +66,6 @@ public interface IEnumerationProvider {
    * OME-XML schema version.
    */
   <T extends Enumeration> List<T> getEnumerations(Class<T> type,
-    String schemaVersion);
+    String schemaVersion) throws EnumerationException;
 
 }

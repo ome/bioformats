@@ -23,10 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import loci.formats.MetadataTools;
+import loci.formats.enums.handler.HandlerFactory;
+import loci.formats.enums.handler.IEnumerationHandler;
 
 /**
  * Implementation of {@link loci.formats.enums.IEnumerationProvider} for
@@ -62,6 +64,7 @@ public class EnumerationProvider implements IEnumerationProvider {
    *   String)
    */
   public <T extends Enumeration> T getEnumeration(Class<T> entity, String value)
+    throws EnumerationException
   {
     return getEnumeration(entity, value, schema);
   }
@@ -71,14 +74,16 @@ public class EnumerationProvider implements IEnumerationProvider {
    *   String, String)
    */
   public <T extends Enumeration> T getEnumeration(Class<T> entity, String value,
-    String schemaVersion)
+    String schemaVersion) throws EnumerationException
   {
-    // TODO
-    return null;
+    IEnumerationHandler handler = HandlerFactory.getHandler(entity);
+    return (T) handler.getEnumeration(value);
   }
 
   /* @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class<T>) */
-  public <T extends Enumeration> List<T> getEnumerations(Class<T> entity) {
+  public <T extends Enumeration> List<T> getEnumerations(Class<T> entity)
+    throws EnumerationException
+  {
     return getEnumerations(entity, schema);
   }
 
@@ -87,10 +92,9 @@ public class EnumerationProvider implements IEnumerationProvider {
    *   String)
    */
   public <T extends Enumeration> List<T> getEnumerations(Class<T> entity,
-    String schemaVersion)
+    String schemaVersion) throws EnumerationException
   {
-    // TODO
-    return new ArrayList<T>();
+    return Arrays.asList(entity.getEnumConstants());
   }
 
 }
