@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * loci.formats.enums.Binning
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,36 +38,40 @@
 
 package loci.formats.enums;
 
-public enum ArcType
+public enum Binning
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  ONEXONE("1x1"), TWOXTWO("2x2"), FOURXFOUR("4x4"), EIGHTXEIGHT("8x8"), OTHER("Other");
   
-  private ArcType(String value)
+  private Binning(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static Binning fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("1x1".equals(value))
     {
-      return HG;
+      return ONEXONE;
     }
-    if ("Xe".equals(value))
+    if ("2x2".equals(value))
     {
-      return XE;
+      return TWOXTWO;
     }
-    if ("HgXe".equals(value))
+    if ("4x4".equals(value))
     {
-      return HGXE;
+      return FOURXFOUR;
+    }
+    if ("8x8".equals(value))
+    {
+      return EIGHTXEIGHT;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, Binning.class);
     throw new EnumerationException(s);
   }
 

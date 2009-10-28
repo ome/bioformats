@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * loci.formats.enums.FontStyle
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,36 +38,36 @@
 
 package loci.formats.enums;
 
-public enum ArcType
+public enum FontStyle
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  BOLD("Bold"), BOLDITALIC("BoldItalic"), ITALIC("Italic"), REGULAR("Regular");
   
-  private ArcType(String value)
+  private FontStyle(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static FontStyle fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("Bold".equals(value))
     {
-      return HG;
+      return BOLD;
     }
-    if ("Xe".equals(value))
+    if ("BoldItalic".equals(value))
     {
-      return XE;
+      return BOLDITALIC;
     }
-    if ("HgXe".equals(value))
+    if ("Italic".equals(value))
     {
-      return HGXE;
+      return ITALIC;
     }
-    if ("Other".equals(value))
+    if ("Regular".equals(value))
     {
-      return OTHER;
+      return REGULAR;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, FontStyle.class);
     throw new EnumerationException(s);
   }
 

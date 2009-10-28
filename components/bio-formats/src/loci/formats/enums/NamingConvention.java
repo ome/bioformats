@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * loci.formats.enums.NamingConvention
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,36 +38,28 @@
 
 package loci.formats.enums;
 
-public enum ArcType
+public enum NamingConvention
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  LETTER("letter"), NUMBER("number");
   
-  private ArcType(String value)
+  private NamingConvention(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static NamingConvention fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("letter".equals(value))
     {
-      return HG;
+      return LETTER;
     }
-    if ("Xe".equals(value))
+    if ("number".equals(value))
     {
-      return XE;
-    }
-    if ("HgXe".equals(value))
-    {
-      return HGXE;
-    }
-    if ("Other".equals(value))
-    {
-      return OTHER;
+      return NUMBER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, NamingConvention.class);
     throw new EnumerationException(s);
   }
 

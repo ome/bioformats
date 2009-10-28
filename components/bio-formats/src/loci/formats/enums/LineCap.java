@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * loci.formats.enums.LineCap
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,36 +38,32 @@
 
 package loci.formats.enums;
 
-public enum ArcType
+public enum LineCap
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  BUTT("Butt"), LINE("Line"), SQUARE("Square");
   
-  private ArcType(String value)
+  private LineCap(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static LineCap fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("Butt".equals(value))
     {
-      return HG;
+      return BUTT;
     }
-    if ("Xe".equals(value))
+    if ("Line".equals(value))
     {
-      return XE;
+      return LINE;
     }
-    if ("HgXe".equals(value))
+    if ("Square".equals(value))
     {
-      return HGXE;
-    }
-    if ("Other".equals(value))
-    {
-      return OTHER;
+      return SQUARE;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, LineCap.class);
     throw new EnumerationException(s);
   }
 

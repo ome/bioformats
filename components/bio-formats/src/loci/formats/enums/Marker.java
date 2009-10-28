@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * loci.formats.enums.Marker
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,36 +38,32 @@
 
 package loci.formats.enums;
 
-public enum ArcType
+public enum Marker
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  ARROW("Arrow"), CIRCLE("Circle"), SQUARE("Square");
   
-  private ArcType(String value)
+  private Marker(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static Marker fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("Arrow".equals(value))
     {
-      return HG;
+      return ARROW;
     }
-    if ("Xe".equals(value))
+    if ("Circle".equals(value))
     {
-      return XE;
+      return CIRCLE;
     }
-    if ("HgXe".equals(value))
+    if ("Square".equals(value))
     {
-      return HGXE;
-    }
-    if ("Other".equals(value))
-    {
-      return OTHER;
+      return SQUARE;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, Marker.class);
     throw new EnumerationException(s);
   }
 

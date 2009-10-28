@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * loci.formats.enums.PixelType
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,36 +38,64 @@
 
 package loci.formats.enums;
 
-public enum ArcType
+public enum PixelType
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  INT8("int8"), INT16("int16"), INT32("int32"), UINT8("uint8"), UINT16("uint16"), UINT32("uint32"), FLOAT("float"), BIT("bit"), DOUBLE("double"), COMPLEX("complex"), DOUBLECOMPLEX("double-complex");
   
-  private ArcType(String value)
+  private PixelType(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static PixelType fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("int8".equals(value))
     {
-      return HG;
+      return INT8;
     }
-    if ("Xe".equals(value))
+    if ("int16".equals(value))
     {
-      return XE;
+      return INT16;
     }
-    if ("HgXe".equals(value))
+    if ("int32".equals(value))
     {
-      return HGXE;
+      return INT32;
     }
-    if ("Other".equals(value))
+    if ("uint8".equals(value))
     {
-      return OTHER;
+      return UINT8;
+    }
+    if ("uint16".equals(value))
+    {
+      return UINT16;
+    }
+    if ("uint32".equals(value))
+    {
+      return UINT32;
+    }
+    if ("float".equals(value))
+    {
+      return FLOAT;
+    }
+    if ("bit".equals(value))
+    {
+      return BIT;
+    }
+    if ("double".equals(value))
+    {
+      return DOUBLE;
+    }
+    if ("complex".equals(value))
+    {
+      return COMPLEX;
+    }
+    if ("double-complex".equals(value))
+    {
+      return DOUBLECOMPLEX;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, PixelType.class);
     throw new EnumerationException(s);
   }
 
