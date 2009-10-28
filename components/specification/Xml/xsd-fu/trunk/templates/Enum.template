@@ -40,7 +40,7 @@ package ${fu.package};
 
 public enum ${klass.javaType}
 {
-  ${", ".join(['%s("%s")' % (value.upper(), value) for value in klass.possibleValues])};
+  ${", ".join(['%s("%s")' % (enum_value_name(value), value) for value in klass.possibleValues])};
   
   private ${klass.javaType}(String value)
   {
@@ -53,7 +53,7 @@ public enum ${klass.javaType}
 {% for value in klass.possibleValues %}\
     if ("${value}".equals(value))
     {
-      return ${value.upper()};
+      return ${enum_value_name(value).upper()};
     }
 {% end %}\
     String s = String.format("%s not a supported value of %s",
