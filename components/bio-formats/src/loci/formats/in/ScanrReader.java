@@ -66,6 +66,7 @@ public class ScanrReader extends FormatReader {
   private int wellRows, wellColumns;
   private int fieldRows, fieldColumns;
   private Vector<String> channelNames = new Vector<String>();
+  private Vector<String> wellLabels = new Vector<String>();
   private String plateName;
 
   private String[] tiffs;
@@ -103,7 +104,7 @@ public class ScanrReader extends FormatReader {
     Object s = ifd.getIFDValue(IFD.SOFTWARE);
     if (s == null) return false;
     String software = s instanceof String[] ? ((String[]) s)[0] : s.toString();
-    return software.equals("National Instruments IMAQ");
+    return software.trim().equals("National Instruments IMAQ");
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -141,6 +142,7 @@ public class ScanrReader extends FormatReader {
       fieldRows = fieldColumns = 0;
       wellRows = wellColumns = 0;
       metadataFiles.clear();
+      wellLabels.clear();
     }
   }
 
@@ -204,42 +206,74 @@ public class ScanrReader extends FormatReader {
     String xml = DataTools.readFile(id);
     XMLTools.parseXML(xml, new ScanrHandler());
 
-    int nChannels = getSizeC() == 0 ? 1 : getSizeC();
-    int nSlices = getSizeZ() == 0 ? 1 : getSizeZ();
-    int nTimepoints = getSizeT() == 0 ? 1 : getSizeT();
-    int nSeries = wellRows * wellColumns * fieldRows * fieldColumns;
+    Vector<String> uniqueRows = new Vector<String>();
+    Vector<String> uniqueColumns = new Vector<String>();
 
-    tiffs = new String[nChannels * nSlices * nTimepoints * nSeries];
+    for (String well : wellLabels) {
+      if (!Character.isLetter(well.charAt(0))) continue;
+      String row = well.substring(0, 1).trim();
+      String column = well.substring(1).trim();
+      if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
+      if (!uniqueColumns.contains(column) && column.length() > 0) {
+        uniqueColumns.add(column);
+      }
+    }
+
+    wellRows = uniqueRows.size();
+    wellColumns = uniqueColumns.size();
+
+    if (wellRows * wellColumns == 0) {
+      if (wellLabels.size() <= 96) {
+        wellColumns = 12;
+      }
+      else if (wellLabels.size() <= 384) {
+        wellColumns = 24;
+      }
+      wellRows = wellLabels.size() / wellColumns;
+      if (wellRows * wellColumns < wellLabels.size()) wellRows++;
+    }
+
+    int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
+    if (nChannels == 0) nChannels = 1;
+    int nSlices = getSizeZ() == 0 ? 1 : getSizeZ();
+    int nTimepoints = getSizeT();
+    int nWells = wellRows * wellColumns;
+    int nPos = fieldRows * fieldColumns;
+    if (nPos == 0) nPos = 1;
 
     // get list of TIFF files
 
     dir = new Location(dir, "data");
     list = dir.list(true);
+    if (nTimepoints == 0) {
+      nTimepoints = list.length / (nChannels * nWells * nPos * nSlices);
+      if (nTimepoints == 0) nTimepoints = 1;
+    }
+
+    tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
 
     int next = 0;
-    for (int i=0; i<nSeries; i++) {
-      int well = i / (fieldRows * fieldColumns);
-      String wellPos = String.valueOf(well + 1);
-      while (wellPos.length() < 5) wellPos = "0" + wellPos;
-      wellPos = "W" + wellPos;
+    for (int well=0; well<nWells; well++) {
+      String wellPos = getBlock(well + 1, "W");
 
-      for (int z=0; z<nSlices; z++) {
-        String zPos = String.valueOf(z);
-        while (zPos.length() < 5) zPos = "0" + zPos;
-        zPos = "Z" + zPos;
+      for (int pos=0; pos<nPos; pos++) {
+        String posPos = getBlock(pos + 1, "P");
 
-        for (int t=0; t<nTimepoints; t++) {
-          String tPos = String.valueOf(t);
-          while (tPos.length() < 5) tPos = "0" + tPos;
-          tPos = "T" + tPos;
+        for (int z=0; z<nSlices; z++) {
+          String zPos = getBlock(z, "Z");
 
-          for (int c=0; c<nChannels; c++) {
-            for (String file : list) {
-              if (file.indexOf(wellPos) != -1 && file.indexOf(zPos) != -1 &&
-                file.indexOf(tPos) != -1 &&
-                file.indexOf(channelNames.get(c)) != -1)
-              {
-                tiffs[next++] = new Location(dir, file).getAbsolutePath();
+          for (int t=0; t<nTimepoints; t++) {
+            String tPos = getBlock(t, "T");
+
+            for (int c=0; c<nChannels; c++) {
+              for (String file : list) {
+                if (file.indexOf(wellPos) != -1 && file.indexOf(zPos) != -1 &&
+                  file.indexOf(posPos) != -1 && file.indexOf(tPos) != -1 &&
+                  file.indexOf(channelNames.get(c)) != -1)
+                {
+                  tiffs[next++] = new Location(dir, file).getAbsolutePath();
+                  break;
+                }
               }
             }
           }
@@ -259,8 +293,8 @@ public class ScanrReader extends FormatReader {
 
     reader.close();
 
-    core = new CoreMetadata[nSeries];
-    for (int i=0; i<nSeries; i++) {
+    core = new CoreMetadata[nWells * nPos];
+    for (int i=0; i<getSeriesCount(); i++) {
       core[i] = new CoreMetadata();
       core[i].sizeC = nChannels;
       core[i].sizeZ = nSlices;
@@ -330,16 +364,10 @@ public class ScanrReader extends FormatReader {
         key = v;
       }
       else if (qName.equals("Val")) {
-        value = v;
+        value = v.trim();
         addGlobalMeta(key, value);
 
-        if (key.equals("custom column")) {
-          wellColumns = Integer.parseInt(value) / fieldColumns;
-        }
-        else if (key.equals("custom row")) {
-          wellRows = Integer.parseInt(value) / fieldRows;
-        }
-        else if (key.equals("columns/well")) {
+        if (key.equals("columns/well")) {
           fieldColumns = Integer.parseInt(value);
         }
         else if (key.equals("rows/well")) {
@@ -357,10 +385,17 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("plate name")) {
           plateName = value;
         }
-      }
-      else if (qName.equals("Dimsize")) {
-        if (key.equals("multiple_channel_typedef")) {
-          core[0].sizeC = Integer.parseInt(v);
+        else if (key.equals("idle")) {
+          int lastIndex = channelNames.size() - 1;
+          if (value.equals("0") &&
+            !channelNames.get(lastIndex).equals("Autofocus"))
+          {
+            core[0].sizeC++;
+          }
+          else channelNames.remove(lastIndex);
+        }
+        else if (key.equals("well selection table + cDNA")) {
+          wellLabels.add(value);
         }
       }
     }
@@ -371,6 +406,14 @@ public class ScanrReader extends FormatReader {
       this.qName = qName;
     }
 
+  }
+
+  // -- Helper methods --
+
+  private String getBlock(int index, String axis) {
+    String b = String.valueOf(index);
+    while (b.length() < 5) b = "0" + b;
+    return axis + b;
   }
 
 }
