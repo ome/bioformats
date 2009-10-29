@@ -165,9 +165,14 @@ public class OMETiffReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     lastPlane = no;
-    IFormatReader r = info[series][no].reader;
-    r.setId(info[series][no].id);
-    return r.openBytes(info[series][no].ifd, buf, x, y, w, h);
+    int i = info[series][no].ifd;
+    IFD ifd = ((MinimalTiffReader) info[series][no].reader).getIFDs().get(i);
+    RandomAccessInputStream s =
+      new RandomAccessInputStream(info[series][no].id);
+    TiffParser p = new TiffParser(s);
+    p.getSamples(ifd, buf, x, y, w, h);
+    s.close();
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -380,7 +385,7 @@ public class OMETiffReader extends FormatReader {
           else filename = normalizeFilename(dir, filename);
           IFormatReader r = readers.get(filename);
           if (r == null) {
-            r = new TiffReader();
+            r = new MinimalTiffReader();
             readers.put(filename, r);
           }
 
@@ -547,13 +552,6 @@ public class OMETiffReader extends FormatReader {
   }
 
   // -- Helper methods --
-
-  private IFormatReader getReader(int no) throws FormatException, IOException {
-    FormatTools.checkPlaneNumber(this, no);
-    IFormatReader r = info[series][no].reader;
-    r.setId(info[series][no].id);
-    return r;
-  }
 
   private String normalizeFilename(String dir, String name) {
      File file = new File(dir, name);
