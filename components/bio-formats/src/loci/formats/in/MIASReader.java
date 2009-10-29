@@ -932,22 +932,29 @@ public class MIASReader extends FormatReader {
     String overlayTiff) throws FormatException, IOException
   {
     if (!parseMasks) return 0;
-    int nOverlays = 3;
-    for (int i=0; i<nOverlays; i++) {
-      store.setMaskX("0", series, roi + i, 0);
-      store.setMaskY("0", series, roi + i, 0);
-      store.setMaskWidth(String.valueOf(getSizeX()), series, roi + i, 0);
-      store.setMaskHeight(String.valueOf(getSizeY()), series, roi + i, 0);
-      store.setMaskPixelsBigEndian(
-        new Boolean(!isLittleEndian()), series, roi + i, 0);
-      store.setMaskPixelsSizeX(new Integer(getSizeX()), series, roi + i, 0);
-      store.setMaskPixelsSizeY(new Integer(getSizeY()), series, roi + i, 0);
-      store.setMaskPixelsExtendedPixelType("bit", series, roi + i, 0);
-
-      String id = MetadataTools.createLSID("Mask", series, roi, 0);
+    int nOverlays = 0;
+    for (int i=0; i<3; i++) {
+      String id = MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
       overlayFiles.put(id, overlayTiff);
       overlayPlanes.put(id, new Integer(i));
-      populateMaskPixels(series, roi, 0);
+
+      boolean validMask = populateMaskPixels(series, roi + nOverlays, 0);
+      if (validMask) {
+        store.setMaskX("0", series, roi + nOverlays, 0);
+        store.setMaskY("0", series, roi + nOverlays, 0);
+        store.setMaskWidth(
+          String.valueOf(getSizeX()), series, roi + nOverlays, 0);
+        store.setMaskHeight(
+          String.valueOf(getSizeY()), series, roi + nOverlays, 0);
+        store.setMaskPixelsBigEndian(
+          new Boolean(!isLittleEndian()), series, roi + nOverlays, 0);
+        store.setMaskPixelsSizeX(
+          new Integer(getSizeX()), series, roi + nOverlays, 0);
+        store.setMaskPixelsSizeY(
+          new Integer(getSizeY()), series, roi + nOverlays, 0);
+        store.setMaskPixelsExtendedPixelType("bit", series, roi + nOverlays, 0);
+        nOverlays++;
+      }
     }
     return nOverlays;
   }
@@ -957,8 +964,10 @@ public class MIASReader extends FormatReader {
   /**
    * Populate the MaskPixels.BinData attribute for the Mask identified by the
    * given Image index, ROI index, and Shape index.
+   * @return true if the mask was populated successfully.
    */
-  public void populateMaskPixels(int imageIndex, int roiIndex, int shapeIndex)
+  public boolean populateMaskPixels(int imageIndex, int roiIndex,
+    int shapeIndex)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
@@ -968,7 +977,7 @@ public class MIASReader extends FormatReader {
     String maskFile = overlayFiles.get(id);
     if (maskFile == null) {
       warnDebug("Could not find an overlay file matching " + id);
-      return;
+      return false;
     }
 
     MinimalTiffReader r = new MinimalTiffReader();
@@ -1022,6 +1031,8 @@ public class MIASReader extends FormatReader {
         shapeIndex);
     }
     else debug("Did not populate MaskPixels.BinData for " + id);
+
+    return validMask;
   }
 
   /**
