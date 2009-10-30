@@ -706,7 +706,7 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("C", "").trim();
           try {
             // this is the camera temperature, not the environment temperature
-            //store.setImagingEnvironmentTemperature(new Float(value), 0);
+            //store.setImagingEnvironmentTemperature(new Double(value), 0);
           }
           catch (NumberFormatException e) {
             warn("Could not parse temperature '" + value + "'");
@@ -717,7 +717,9 @@ public class DeltavisionReader extends FormatReader {
           int space = value.indexOf(" ");
           if (space >= 0) value = value.substring(0, space);
           try {
-            store.setPlaneTimingDeltaT(new Float(value), 0, 0, currentImage);
+            if (currentImage < getImageCount()) {
+              store.setPlaneTimingDeltaT(new Float(value), 0, 0, currentImage);
+            }
           }
           catch (NumberFormatException e) {
             warn("Could not parse timestamp '" + value + "'");
@@ -761,9 +763,17 @@ public class DeltavisionReader extends FormatReader {
               warn("Could not parse stage coordinate '" + coords[i] + "'");
             }
 
-            if (i == 0) store.setStagePositionPositionX(p, 0, 0, currentImage);
-            if (i == 1) store.setStagePositionPositionY(p, 0, 0, currentImage);
-            if (i == 2) store.setStagePositionPositionZ(p, 0, 0, currentImage);
+            if (currentImage < getImageCount()) {
+              if (i == 0) {
+                store.setStagePositionPositionX(p, 0, 0, currentImage);
+              }
+              if (i == 1) {
+                store.setStagePositionPositionY(p, 0, 0, currentImage);
+              }
+              if (i == 2) {
+                store.setStagePositionPositionZ(p, 0, 0, currentImage);
+              }
+            }
           }
 
           currentImage++;

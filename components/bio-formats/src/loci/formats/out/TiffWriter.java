@@ -244,11 +244,14 @@ public class TiffWriter extends FormatWriter {
     initialized = false;
     lastOffset = 0;
     imageCounts = null;
-    isBigTiff = false;
   }
 
   // -- TiffWriter API methods --
 
+  /**
+   * Sets whether or not BigTIFF files should be written.
+   * This flag is not reset when close() is called.
+   */
   public void setBigTiff(boolean bigTiff) {
     FormatTools.assertId(currentId, false, 1);
     isBigTiff = bigTiff;
