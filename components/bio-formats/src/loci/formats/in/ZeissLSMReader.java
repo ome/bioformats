@@ -161,6 +161,8 @@ public class ZeissLSMReader extends FormatReader {
   private Vector<String> imageNames;
   private String binning;
 
+  private int totalROIs = 0;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -215,6 +217,7 @@ public class ZeissLSMReader extends FormatReader {
       zoom = 0;
       imageNames = null;
       binning = null;
+      totalROIs = 0;
     }
   }
 
@@ -226,6 +229,11 @@ public class ZeissLSMReader extends FormatReader {
     stream.readFully(check);
     return TiffTools.isValidHeader(check) ||
       (check[2] == 0x53 && check[3] == 0x74);
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -646,6 +654,8 @@ public class ZeissLSMReader extends FormatReader {
       parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
     }
 
+    totalROIs = 0;
+
     addSeriesMeta("ToolbarFlags", ras.readInt());
 
     int wavelengthOffset = ras.readInt();
@@ -1003,7 +1013,7 @@ public class ZeissLSMReader extends FormatReader {
 
     in.skipBytes(164);
 
-    for (int i=0; i<numberOfShapes; i++) {
+    for (int i=totalROIs; i<totalROIs+numberOfShapes; i++) {
       long offset = in.getFilePointer();
       int type = in.readInt();
       int blockLength = in.readInt();
@@ -1033,25 +1043,12 @@ public class ZeissLSMReader extends FormatReader {
       boolean moveable = in.readInt() == 0;
       in.skipBytes(34);
 
-      // populate shape attributes
-
-      store.setShapeFontFamily(fontName, series, 0, i);
-      store.setShapeFontSize(new Integer(fontHeight), series, 0, i);
-      store.setShapeFontStyle(fontItalic ? "normal" : "italic", series, 0, i);
-      store.setShapeFontWeight(String.valueOf(fontWeight), series, 0, i);
-      store.setShapeLocked(new Boolean(moveable), series, 0, i);
-      store.setShapeStrokeColor(String.valueOf(color), series, 0, i);
-      store.setShapeStrokeWidth(new Integer(lineWidth), series, 0, i);
-      store.setShapeTextDecoration(fontUnderlined ? "underline" :
-        fontStrikeout ? "line-through" : "normal", series, 0, i);
-      store.setShapeVisibility(new Boolean(enabled), series, 0, i);
-
       switch (type) {
         case TEXT:
           double x = in.readDouble();
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
-          store.setShapeText(text, series, 0, i);
+          store.setShapeText(text, series, i, 0);
           break;
         case LINE:
           in.skipBytes(4);
@@ -1060,10 +1057,10 @@ public class ZeissLSMReader extends FormatReader {
           double endX = in.readDouble();
           double endY = in.readDouble();
 
-          store.setLineX1(String.valueOf(startX), series, 0, i);
-          store.setLineY1(String.valueOf(startY), series, 0, i);
-          store.setLineX2(String.valueOf(endX), series, 0, i);
-          store.setLineY2(String.valueOf(endY), series, 0, i);
+          store.setLineX1(String.valueOf(startX), series, i, 0);
+          store.setLineY1(String.valueOf(startY), series, i, 0);
+          store.setLineX2(String.valueOf(endX), series, i, 0);
+          store.setLineY2(String.valueOf(endY), series, i, 0);
           break;
         case SCALE_BAR:
         case OPEN_ARROW:
@@ -1083,10 +1080,10 @@ public class ZeissLSMReader extends FormatReader {
           topX = Math.min(topX, bottomX);
           topY = Math.min(topY, bottomY);
 
-          store.setRectX(String.valueOf(topX), series, 0, i);
-          store.setRectY(String.valueOf(topY), series, 0, i);
-          store.setRectWidth(String.valueOf(width), series, 0, i);
-          store.setRectHeight(String.valueOf(height), series, 0, i);
+          store.setRectX(String.valueOf(topX), series, i, 0);
+          store.setRectY(String.valueOf(topY), series, i, 0);
+          store.setRectWidth(String.valueOf(width), series, i, 0);
+          store.setRectHeight(String.valueOf(height), series, i, 0);
 
           break;
         case ELLIPSE:
@@ -1134,13 +1131,13 @@ public class ZeissLSMReader extends FormatReader {
             double theta = Math.toDegrees(Math.atan(slope));
 
             store.setEllipseTransform("rotate(" + theta + " " + centerX +
-              " " + centerY + ")", series, 0, i);
+              " " + centerY + ")", series, i, 0);
           }
 
-          store.setEllipseCx(String.valueOf(centerX), series, 0, i);
-          store.setEllipseCy(String.valueOf(centerY), series, 0, i);
-          store.setEllipseRx(String.valueOf(rx), series, 0, i);
-          store.setEllipseRy(String.valueOf(ry), series, 0, i);
+          store.setEllipseCx(String.valueOf(centerX), series, i, 0);
+          store.setEllipseCy(String.valueOf(centerY), series, i, 0);
+          store.setEllipseRx(String.valueOf(rx), series, i, 0);
+          store.setEllipseRy(String.valueOf(ry), series, i, 0);
 
           break;
         case CIRCLE:
@@ -1153,9 +1150,9 @@ public class ZeissLSMReader extends FormatReader {
           double radius = Math.sqrt(Math.pow(curveX - centerX, 2) +
             Math.pow(curveY - centerY, 2));
 
-          store.setCircleCx(String.valueOf(centerX), series, 0, i);
-          store.setCircleCy(String.valueOf(centerY), series, 0, i);
-          store.setCircleR(String.valueOf(radius), series, 0, i);
+          store.setCircleCx(String.valueOf(centerX), series, i, 0);
+          store.setCircleCy(String.valueOf(centerY), series, i, 0);
+          store.setCircleR(String.valueOf(radius), series, i, 0);
 
           break;
         case CIRCLE_3POINT:
@@ -1185,9 +1182,9 @@ public class ZeissLSMReader extends FormatReader {
           double r = Math.sqrt(Math.pow(points[0][0] - cx, 2) +
             Math.pow(points[0][1] - cy, 2));
 
-          store.setCircleCx(String.valueOf(cx), series, 0, i);
-          store.setCircleCy(String.valueOf(cy), series, 0, i);
-          store.setCircleR(String.valueOf(r), series, 0, i);
+          store.setCircleCx(String.valueOf(cx), series, i, 0);
+          store.setCircleCy(String.valueOf(cy), series, i, 0);
+          store.setCircleR(String.valueOf(r), series, i, 0);
 
           break;
         case ANGLE:
@@ -1207,7 +1204,7 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
-          store.setPolylinePoints(p.toString(), series, 0, i);
+          store.setPolylinePoints(p.toString(), series, i, 0);
 
           break;
         case CLOSED_POLYLINE:
@@ -1230,9 +1227,9 @@ public class ZeissLSMReader extends FormatReader {
           }
 
           if (type == CLOSED_POLYLINE) {
-            store.setPolygonPoints(p.toString(), series, 0, i);
+            store.setPolygonPoints(p.toString(), series, i, 0);
           }
-          else store.setPolylinePoints(p.toString(), series, 0, i);
+          else store.setPolylinePoints(p.toString(), series, i, 0);
 
           break;
         case CLOSED_BEZIER:
@@ -1245,11 +1242,43 @@ public class ZeissLSMReader extends FormatReader {
               points[j][k] = in.readDouble();
             }
           }
+
+          p = new StringBuffer();
+          for (int j=0; j<points.length; j++) {
+            p.append(points[j][0]);
+            p.append(",");
+            p.append(points[j][1]);
+            if (j < points.length - 1) p.append(" ");
+          }
+
+          if (type == OPEN_BEZIER) {
+            store.setPolylinePoints(p.toString(), series, i, 0);
+          }
+          else store.setPolygonPoints(p.toString(), series, i, 0);
+
           break;
+        default:
+          i--;
+          numberOfShapes--;
+          continue;
       }
+
+      // populate shape attributes
+
+      store.setShapeFontFamily(fontName, series, i, 0);
+      store.setShapeFontSize(new Integer(fontHeight), series, i, 0);
+      store.setShapeFontStyle(fontItalic ? "normal" : "italic", series, i, 0);
+      store.setShapeFontWeight(String.valueOf(fontWeight), series, i, 0);
+      store.setShapeLocked(new Boolean(moveable), series, i, 0);
+      store.setShapeStrokeColor(String.valueOf(color), series, i, 0);
+      store.setShapeStrokeWidth(new Integer(lineWidth), series, i, 0);
+      store.setShapeTextDecoration(fontUnderlined ? "underline" :
+        fontStrikeout ? "line-through" : "normal", series, i, 0);
+      store.setShapeVisibility(new Boolean(enabled), series, i, 0);
 
       in.seek(offset + blockLength);
     }
+    totalROIs += numberOfShapes;
   }
 
   /** Parse a .mdb file and return a list of referenced .lsm files. */

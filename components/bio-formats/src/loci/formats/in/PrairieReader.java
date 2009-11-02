@@ -340,6 +340,7 @@ public class PrairieReader extends FormatReader {
       for (int i=0; i<listing.length; i++) {
         if (checkSuffix(listing[i], PRAIRIE_SUFFIXES)) {
           initFile(new Location(parent, listing[i]).getAbsolutePath());
+          return;
         }
       }
     }
