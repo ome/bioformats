@@ -65,8 +65,7 @@ public class LeicaHandler extends DefaultHandler {
 
   private MetadataStore store;
 
-  private int channel = 0;
-  private int nextLaser, nextChannel, nextDetector = -1;
+  private int nextChannel = 0;
   private Double zoom, pinhole;
   private Vector<Integer> detectorIndices;
   private String filterWheelName;
@@ -74,6 +73,9 @@ public class LeicaHandler extends DefaultHandler {
   private int nextROI = 0;
   private ROI roi;
   private boolean alternateCenter = false;
+
+  private boolean linkedInstruments = false;
+  private int detectorChannel = 0;
 
   private Vector<CoreMetadata> core;
 
@@ -178,7 +180,7 @@ public class LeicaHandler extends DefaultHandler {
       for (int c=0; c<nChannels; c++) {
         int index = c < detectorIndices.size() ?
           detectorIndices.get(c).intValue() : detectorIndices.size() - 1;
-        if (index < 0 || index >= nChannels || index > nextDetector) break;
+        if (index < 0 || index >= nChannels || index >= 0) break;
         String id = MetadataTools.createLSID("Detector", numDatasets, index);
         store.setDetectorSettingsDetector(id, numDatasets, c);
       }
@@ -190,15 +192,13 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Element")) {
       multiBands.clear();
-      nextLaser = 0;
-      nextDetector = -1;
       nextROI = 0;
 
       int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
 
       for (int c=0; c<detectorIndices.size(); c++) {
         int index = detectorIndices.get(c).intValue();
-        if (c >= nChannels || index >= nChannels || index > nextDetector) break;
+        if (c >= nChannels || index >= nChannels || index >= 0) break;
         String id = MetadataTools.createLSID("Detector", numDatasets, index);
         store.setDetectorSettingsDetector(id, numDatasets, index);
       }
@@ -211,7 +211,6 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("FilterSetting")) {
       nextChannel = 0;
-      nextFilter = 0;
     }
     else if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = true;
@@ -233,6 +232,9 @@ public class LeicaHandler extends DefaultHandler {
     Hashtable h = getSeriesHashtable(numDatasets);
     if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = false;
+    }
+    else if (qName.startsWith("LDM")) {
+      linkedInstruments = true;
     }
 
     if (!canParse) return;
@@ -270,8 +272,42 @@ public class LeicaHandler extends DefaultHandler {
       collection = elementName;
     }
     else if (qName.equals("Image")) {
+      if (!linkedInstruments) {
+        for (Detector d : detectors) {
+          if (detectorChannel < numChannels) {
+            String id = MetadataTools.createLSID(
+              "Detector", numDatasets, detectorChannel);
+            store.setDetectorID(id, numDatasets, detectorChannel);
+            store.setDetectorType(d.type, numDatasets, detectorChannel);
+            store.setDetectorModel(d.model, numDatasets, detectorChannel);
+            store.setDetectorZoom(d.zoom, numDatasets, detectorChannel);
+            store.setDetectorOffset(d.offset, numDatasets, detectorChannel);
+            store.setDetectorVoltage(d.voltage, numDatasets, detectorChannel);
+
+            if (d.active) {
+              store.setDetectorSettingsOffset(d.offset, numDatasets,
+                detectorChannel);
+              store.setDetectorSettingsDetector(
+                id, numDatasets, detectorChannel);
+            }
+
+            detectorChannel++;
+          }
+        }
+
+        for (int i=0; i<nextFilter; i++) {
+          String id = MetadataTools.createLSID("Filter", numDatasets, i);
+          if (i < numChannels) {
+            store.setLogicalChannelSecondaryEmissionFilter(
+              id, numDatasets, i);
+          }
+        }
+      }
+
       core.add(new CoreMetadata());
       numDatasets++;
+      linkedInstruments = false;
+      detectorChannel = 0;
       detectors.clear();
       lasers.clear();
       nextFilter = 0;
@@ -281,7 +317,6 @@ public class LeicaHandler extends DefaultHandler {
       String instrumentID = MetadataTools.createLSID("Instrument", numDatasets);
       store.setInstrumentID(instrumentID, numDatasets);
       store.setImageInstrumentRef(instrumentID, numDatasets);
-      channel = 0;
       numChannels = 0;
       extras = 1;
     }
@@ -519,7 +554,7 @@ public class LeicaHandler extends DefaultHandler {
         int nPlanes = coreMeta.imageCount / c;
         Double posX = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
-          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC) + channel;
+          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC);
           if (index >= nPlanes) continue;
           store.setStagePositionPositionX(posX, numDatasets, 0, index);
         }
@@ -530,7 +565,7 @@ public class LeicaHandler extends DefaultHandler {
         int nPlanes = coreMeta.imageCount / c;
         Double posY = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
-          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC) + channel;
+          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC);
           if (index >= nPlanes) continue;
           store.setStagePositionPositionY(posY, numDatasets, 0, index);
         }
@@ -541,7 +576,7 @@ public class LeicaHandler extends DefaultHandler {
         int nPlanes = coreMeta.imageCount / c;
         Double posZ = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
-          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC) + channel;
+          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC);
           if (index >= nPlanes) continue;
           store.setStagePositionPositionZ(posZ, numDatasets, 0, index);
         }
