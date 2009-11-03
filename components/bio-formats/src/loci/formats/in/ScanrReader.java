@@ -83,6 +83,11 @@ public class ScanrReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     String localName = new Location(name).getName();
@@ -341,6 +346,9 @@ public class ScanrReader extends FormatReader {
       store.setWellRow(new Integer(wellRow), 0, well);
 
       store.setWellSampleIndex(new Integer(i), 0, well, field);
+      String imageID = MetadataTools.createLSID("Image", i);
+      store.setWellSampleImageRef(imageID, 0, well, field);
+      store.setImageID(imageID, i);
 
       String name = "Well " + String.valueOf((char) ('A' + wellRow)) +
         (wellCol + 1) + ", Field " + (field + 1);
