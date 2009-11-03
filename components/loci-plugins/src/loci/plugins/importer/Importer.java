@@ -610,6 +610,7 @@ public class Importer {
           boolean needComposite = doMerge && (cSize > 3 || eight);
           int merge = (needComposite || !doMerge) ? 1 : cSize;
 
+          r.setSeries(i);
           // NB: ImageJ 1.39+ is required for VirtualStack
           BFVirtualStack virtualStackB = new BFVirtualStack(id,
             r, colorize, doMerge, options.isRecord());
