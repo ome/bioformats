@@ -56,251 +56,331 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 // BioFormatsImageIO
 //
 
-namespace itk
-{
+namespace itk {
 
-  BioFormatsImageIO::BioFormatsImageIO()
-  {
+  BioFormatsImageIO::BioFormatsImageIO() {
     DebugOn(); // NB: For debugging.
-    itkDebugMacro(<<"BioFormatsImageIO constuctor");
+    itkDebugMacro(<<"BioFormatsImageIO constructor");
     m_FileType = Binary;
 
-    // initialize the Java virtual machine
-    itkDebugMacro(<<"Creating JVM...");
-    jace::StaticVmLoader loader(JNI_VERSION_1_4);
-    jace::OptionList list;
-    list.push_back(jace::ClassPath(
-      "jace-runtime.jar:bio-formats.jar:loci_tools.jar"
-    ));
-    list.push_back(jace::CustomOption("-Xcheck:jni"));
-    list.push_back(jace::CustomOption("-Xmx256m"));
-    list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-    //list.push_back(jace::CustomOption("-verbose"));
-    //list.push_back(jace::CustomOption("-verbose:jni"));
-    jace::helper::createVm(loader, list, false);
-    itkDebugMacro(<<"JVM created.");
+    try {
+      // initialize the Java virtual machine
+      itkDebugMacro(<<"Creating JVM...");
+      jace::StaticVmLoader loader(JNI_VERSION_1_4);
+      jace::OptionList list;
+      list.push_back(jace::ClassPath(
+        "jace-runtime.jar:bio-formats.jar:loci_tools.jar"
+      ));
+      list.push_back(jace::CustomOption("-Xcheck:jni"));
+      list.push_back(jace::CustomOption("-Xmx256m"));
+      list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
+      //list.push_back(jace::CustomOption("-verbose"));
+      //list.push_back(jace::CustomOption("-verbose:jni"));
+      jace::helper::createVm(loader, list, false);
+      itkDebugMacro(<<"JVM created.");
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro(<<"Exception creating JVM: " << jniException.what());
+    }
 
-    itkDebugMacro(<<"Creating Bio-Formats objects...");
-    reader = new ChannelFiller;
-    writer = new ImageWriter;
-    itkDebugMacro(<<"Created reader and writer.");
-  }
+    try {
+      itkDebugMacro(<<"Creating Bio-Formats objects...");
+      reader = new ChannelFiller;
+      writer = new ImageWriter;
+      itkDebugMacro(<<"Created reader and writer.");
+    }
+    catch (FormatException& fe) {
+      //fe.printStackTrace();
+      itkDebugMacro(
+        <<"An unexpected Java format error occurred. " << fe.what());
+    }
+    catch (IOException& ioe) {
+      //ioe.printStackTrace();
+      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro(
+        <<"An unexpected JNI error occurred. " << jniException.what());
+    }
+    catch (std::exception& e) {
+      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+    }
+  } // end constructor
 
-  BioFormatsImageIO::~BioFormatsImageIO()
-  {
+  BioFormatsImageIO::~BioFormatsImageIO() {
     delete reader;
     delete writer;
-  }
+  } // end destructor
 
-  bool
-  BioFormatsImageIO::CanReadFile(const char* FileNameToRead)
-  {
-    itkDebugMacro(<<"BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead);
+  bool BioFormatsImageIO::CanReadFile(const char* FileNameToRead) {
+    itkDebugMacro(
+      <<"BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead);
     std::string filename(FileNameToRead);
 
-    if ( filename == "" )
-    {
+    if (filename == "") {
       itkExceptionMacro(<<"A FileName must be specified.");
       return false;
     }
 
-    // call Bio-Formats to check file type
-    bool isType = reader->isThisType(filename);
-    itkDebugMacro(<<"BioFormatsImageIO::CanReadFile: isType=" << isType);
-    return isType;
-  }
-
-  void
-  BioFormatsImageIO::ReadImageInformation()
-  {
-    itkDebugMacro(<<"BioFormatsImageIO::ReadImageInformation: m_FileName=" << m_FileName);
-
-    // attach OME metadata object
-    IMetadata omeMeta = MetadataTools::createOMEXMLMetadata();
-    reader->setMetadataStore(omeMeta);
-
-    // initialize dataset
-    itkDebugMacro(<<"Initializing...");
-    reader->setId(m_FileName);
-    itkDebugMacro(<<"Initialized.");
-
-    int seriesCount = reader->getSeriesCount();
-    itkDebugMacro(<<"\tSeriesCount = " << seriesCount);
-
-    // set ITK byte order
-    bool little = reader->isLittleEndian();
-    if (little) SetByteOrderToLittleEndian(); // m_ByteOrder
-    else SetByteOrderToBigEndian(); // m_ByteOrder
-
-    // set ITK component type
-    int pixelType = reader->getPixelType();
-    int bpp = FormatTools::getBytesPerPixel(pixelType);
-    itkDebugMacro(<<"\tBytes per pixel = " << bpp);
-    IOComponentType itkComponentType;
-    if (pixelType == FormatTools::UINT8())
-      itkComponentType = UCHAR;
-    else if (pixelType == FormatTools::INT8())
-      itkComponentType = CHAR;
-    else if (pixelType == FormatTools::UINT16())
-      itkComponentType = USHORT;
-    else if (pixelType == FormatTools::INT16())
-      itkComponentType = SHORT;
-    else if (pixelType == FormatTools::UINT32())
-      itkComponentType = UINT;
-    else if (pixelType == FormatTools::INT32())
-      itkComponentType = INT;
-    else if (pixelType == FormatTools::FLOAT())
-      itkComponentType = FLOAT;
-    else if (pixelType == FormatTools::DOUBLE())
-      itkComponentType = DOUBLE;
-    else
-      itkComponentType = UNKNOWNCOMPONENTTYPE;
-    SetComponentType(itkComponentType); // m_ComponentType
-    if (itkComponentType == UNKNOWNCOMPONENTTYPE)
-    {
-      itkExceptionMacro(<<"Unknown pixel type: " << pixelType);
+    bool isType = 0;
+    try {
+      // call Bio-Formats to check file type
+      isType = reader->isThisType(filename);
+      itkDebugMacro(<<"BioFormatsImageIO::CanReadFile: isType=" << isType);
     }
+    catch (FormatException& fe) {
+      //fe.printStackTrace();
+      itkDebugMacro(
+        <<"An unexpected Java format error occurred. " << fe.what());
+    }
+    catch (IOException& ioe) {
+      //ioe.printStackTrace();
+      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro(
+        <<"An unexpected JNI error occurred. " << jniException.what());
+    }
+    catch (std::exception& e) {
+      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+    }
+    return isType;
+  } // end CanReadFile function
 
-    // get pixel resolution and dimensional extents
-    int sizeX = reader->getSizeX();
-    int sizeY = reader->getSizeY();
-    int sizeZ = reader->getSizeZ();
-    int sizeC = reader->getSizeC();
-    int sizeT = reader->getSizeT();
-    int effSizeC = reader->getEffectiveSizeC();
-    int rgbChannelCount = reader->getRGBChannelCount();
-    int imageCount = reader->getImageCount();
+  void BioFormatsImageIO::ReadImageInformation() {
+    itkDebugMacro(
+      <<"BioFormatsImageIO::ReadImageInformation: m_FileName=" << m_FileName);
 
-    itkDebugMacro("Dimensional extents:" << std::endl
-      <<"\tSizeX = " << sizeX << std::endl
-      <<"\tSizeY = " << sizeY << std::endl
-      <<"\tSizeZ = " << sizeZ << std::endl
-      <<"\tSizeC = " << sizeC << std::endl
-      <<"\tSizeT = " << sizeT << std::endl
-      <<"\tRGB Channel Count = " << rgbChannelCount << std::endl
-      <<"\tEffective SizeC = " << rgbChannelCount << std::endl
-      <<"\tImage Count = " << imageCount);
+    try {
+      // attach OME metadata object
+      IMetadata omeMeta = MetadataTools::createOMEXMLMetadata();
+      reader->setMetadataStore(omeMeta);
 
-    int numDims = 2; // X and Y
-    if (sizeZ > 1) numDims++; // multiple focal planes
-    if (sizeT > 1) numDims++; // multiple time points
-    if (effSizeC > 1) numDims++; // multiple independent channels
-    SetNumberOfDimensions(numDims);
-    m_Dimensions[0] = sizeX;
-    m_Dimensions[1] = sizeY;
-    int dim = 2;
-    if (sizeZ > 1) m_Dimensions[dim++] = sizeZ;
-    if (sizeT > 1) m_Dimensions[dim++] = sizeT;
-    if (effSizeC > 1) m_Dimensions[dim++] = effSizeC;
+      // initialize dataset
+      itkDebugMacro(<<"Initializing...");
+      reader->setId(m_FileName);
+      itkDebugMacro(<<"Initialized.");
 
-    // set ITK pixel type
-    IOPixelType itkPixelType;
-    if (rgbChannelCount == 1)
-      itkPixelType = SCALAR;
-    else if (rgbChannelCount == 3)
-      itkPixelType = RGB;
-    else
-      itkPixelType = VECTOR;
-    SetPixelType(itkPixelType); // m_PixelType
-    SetNumberOfComponents(rgbChannelCount); // m_NumberOfComponents
+      int seriesCount = reader->getSeriesCount();
+      itkDebugMacro(<<"\tSeriesCount = " << seriesCount);
 
-    // get physical resolution
-    MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
-    double physX = retrieve.getDimensionsPhysicalSizeX(0, 0).doubleValue();
-    double physY = retrieve.getDimensionsPhysicalSizeY(0, 0).doubleValue();
-    m_Spacing[0] = physX;
-    m_Spacing[1] = physY;
-    if (imageCount > 1) m_Spacing[2] = 1;
+      // set ITK byte order
+      bool little = reader->isLittleEndian();
+      if (little) SetByteOrderToLittleEndian(); // m_ByteOrder
+      else SetByteOrderToBigEndian(); // m_ByteOrder
 
-    itkDebugMacro(<<"\tPhysicalSizeX = " << physX);
-    itkDebugMacro(<<"\tPhysicalSizeY = " << physY);
-  }
+      // set ITK component type
+      int pixelType = reader->getPixelType();
+      int bpp = FormatTools::getBytesPerPixel(pixelType);
+      itkDebugMacro(<<"\tBytes per pixel = " << bpp);
+      IOComponentType itkComponentType;
+      if (pixelType == FormatTools::UINT8())
+        itkComponentType = UCHAR;
+      else if (pixelType == FormatTools::INT8())
+        itkComponentType = CHAR;
+      else if (pixelType == FormatTools::UINT16())
+        itkComponentType = USHORT;
+      else if (pixelType == FormatTools::INT16())
+        itkComponentType = SHORT;
+      else if (pixelType == FormatTools::UINT32())
+        itkComponentType = UINT;
+      else if (pixelType == FormatTools::INT32())
+        itkComponentType = INT;
+      else if (pixelType == FormatTools::FLOAT())
+        itkComponentType = FLOAT;
+      else if (pixelType == FormatTools::DOUBLE())
+        itkComponentType = DOUBLE;
+      else
+        itkComponentType = UNKNOWNCOMPONENTTYPE;
+      SetComponentType(itkComponentType); // m_ComponentType
+      if (itkComponentType == UNKNOWNCOMPONENTTYPE)
+      {
+        itkExceptionMacro(<<"Unknown pixel type: " << pixelType);
+      }
 
-  void
-  BioFormatsImageIO::Read(void* pData)
-  {
+      // get pixel resolution and dimensional extents
+      int sizeX = reader->getSizeX();
+      int sizeY = reader->getSizeY();
+      int sizeZ = reader->getSizeZ();
+      int sizeC = reader->getSizeC();
+      int sizeT = reader->getSizeT();
+      int effSizeC = reader->getEffectiveSizeC();
+      int rgbChannelCount = reader->getRGBChannelCount();
+      int imageCount = reader->getImageCount();
+
+      itkDebugMacro("Dimensional extents:" << std::endl
+        <<"\tSizeX = " << sizeX << std::endl
+        <<"\tSizeY = " << sizeY << std::endl
+        <<"\tSizeZ = " << sizeZ << std::endl
+        <<"\tSizeC = " << sizeC << std::endl
+        <<"\tSizeT = " << sizeT << std::endl
+        <<"\tRGB Channel Count = " << rgbChannelCount << std::endl
+        <<"\tEffective SizeC = " << rgbChannelCount << std::endl
+        <<"\tImage Count = " << imageCount);
+
+      int numDims = 2; // X and Y
+      if (sizeZ > 1) numDims++; // multiple focal planes
+      if (sizeT > 1) numDims++; // multiple time points
+      if (effSizeC > 1) numDims++; // multiple independent channels
+      SetNumberOfDimensions(numDims);
+      m_Dimensions[0] = sizeX;
+      m_Dimensions[1] = sizeY;
+      int dim = 2;
+      if (sizeZ > 1) m_Dimensions[dim++] = sizeZ;
+      if (sizeT > 1) m_Dimensions[dim++] = sizeT;
+      if (effSizeC > 1) m_Dimensions[dim++] = effSizeC;
+
+      // set ITK pixel type
+      IOPixelType itkPixelType;
+      if (rgbChannelCount == 1)
+        itkPixelType = SCALAR;
+      else if (rgbChannelCount == 3)
+        itkPixelType = RGB;
+      else
+        itkPixelType = VECTOR;
+      SetPixelType(itkPixelType); // m_PixelType
+      SetNumberOfComponents(rgbChannelCount); // m_NumberOfComponents
+
+      // get physical resolution
+      MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
+      double physX = retrieve.getDimensionsPhysicalSizeX(0, 0).doubleValue();
+      double physY = retrieve.getDimensionsPhysicalSizeY(0, 0).doubleValue();
+      m_Spacing[0] = physX;
+      m_Spacing[1] = physY;
+      if (imageCount > 1) m_Spacing[2] = 1;
+
+      itkDebugMacro(<<"\tPhysicalSizeX = " << physX);
+      itkDebugMacro(<<"\tPhysicalSizeY = " << physY);
+    }
+    catch (FormatException& fe) {
+      //fe.printStackTrace();
+      itkDebugMacro(
+        <<"An unexpected Java format error occurred. " << fe.what());
+    }
+    catch (IOException& ioe) {
+      //ioe.printStackTrace();
+      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro(
+        <<"An unexpected JNI error occurred. " << jniException.what());
+    }
+    catch (std::exception& e) {
+      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+    }
+  } // end ReadImageInformation function
+
+  void BioFormatsImageIO::Read(void* pData) {
     char* data = (char*) pData;
     itkDebugMacro(<<"BioFormatsImageIO::Read");
 
-    int pixelType = reader->getPixelType();
-    int bpp = FormatTools::getBytesPerPixel(pixelType);
-    int rgbChannelCount = reader->getRGBChannelCount();
+    try {
+      int pixelType = reader->getPixelType();
+      int bpp = FormatTools::getBytesPerPixel(pixelType);
+      int rgbChannelCount = reader->getRGBChannelCount();
 
-    itkDebugMacro(<<"Pixel type code = " << pixelType);
-    itkDebugMacro(<<"Bytes per pixel = " << bpp);
+      itkDebugMacro(<<"Pixel type code = " << pixelType);
+      itkDebugMacro(<<"Bytes per pixel = " << bpp);
 
-    // check IO region to identify the planar extents desired
-    ImageIORegion region = GetIORegion();
-    int regionDim = region.GetImageDimension();
-    int xIndex = region.GetIndex(0);
-    int xCount = region.GetSize(0);
-    int yIndex = region.GetIndex(1);
-    int yCount = region.GetSize(1);
-    int pIndex = 0, pCount = 1;
-    if (regionDim > 2) {
-      pIndex = region.GetIndex(2);
-      pCount = region.GetSize(2);
+      // check IO region to identify the planar extents desired
+      ImageIORegion region = GetIORegion();
+      int regionDim = region.GetImageDimension();
+      int xIndex = region.GetIndex(0);
+      int xCount = region.GetSize(0);
+      int yIndex = region.GetIndex(1);
+      int yCount = region.GetSize(1);
+      int pIndex = 0, pCount = 1;
+      if (regionDim > 2) {
+        pIndex = region.GetIndex(2);
+        pCount = region.GetSize(2);
+      }
+      int bytesPerSubPlane = xCount * yCount * bpp * rgbChannelCount;
+
+      itkDebugMacro("Region extents:" << std::endl
+        <<"\tRegion dimension = " << regionDim << std::endl
+        <<"\tX index = " << xIndex << std::endl
+        <<"\tX count = " << xCount << std::endl
+        <<"\tY index = " << yIndex << std::endl
+        <<"\tY count = " << yCount << std::endl
+        <<"\tPlane index = " << pIndex << std::endl
+        <<"\tPlane count = " << pCount << std::endl
+        <<"\tBytes per plane = " << bytesPerSubPlane);
+
+      int p = 0;
+      ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
+      for (int no=pIndex; no<pIndex+pCount; no++) {
+        int imageCount = reader->getImageCount();
+        itkDebugMacro(<<"Reading image plane " << no <<
+          " (" << (no - pIndex + 1) << "/" << pCount <<
+          " of " << imageCount << " available planes)");
+        reader->openBytes(no, buf, xIndex, yIndex, xCount, yCount);
+        for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
+      }
+
+      reader->close();
     }
-    int bytesPerSubPlane = xCount * yCount * bpp * rgbChannelCount;
-
-    itkDebugMacro("Region extents:" << std::endl
-      <<"\tRegion dimension = " << regionDim << std::endl
-      <<"\tX index = " << xIndex << std::endl
-      <<"\tX count = " << xCount << std::endl
-      <<"\tY index = " << yIndex << std::endl
-      <<"\tY count = " << yCount << std::endl
-      <<"\tPlane index = " << pIndex << std::endl
-      <<"\tPlane count = " << pCount << std::endl
-      <<"\tBytes per plane = " << bytesPerSubPlane);
-
-    int p = 0;
-    ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
-    for (int no=pIndex; no<pIndex+pCount; no++)
-    {
-      int imageCount = reader->getImageCount();
-      itkDebugMacro(<<"Reading image plane " << no <<
-        " (" << (no - pIndex + 1) << "/" << pCount <<
-        " of " << imageCount << " available planes)");
-      reader->openBytes(no, buf, xIndex, yIndex, xCount, yCount);
-      for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
+    catch (FormatException& fe) {
+      //fe.printStackTrace();
+      itkDebugMacro(
+        <<"An unexpected Java format error occurred. " << fe.what());
     }
-
-    reader->close();
+    catch (IOException& ioe) {
+      //ioe.printStackTrace();
+      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro(
+        <<"An unexpected JNI error occurred. " << jniException.what());
+    }
+    catch (std::exception& e) {
+      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+    }
     itkDebugMacro(<<"Done.");
   } // end Read function
 
-  bool
-  BioFormatsImageIO::CanWriteFile(const char* name)
-  {
+  bool BioFormatsImageIO::CanWriteFile(const char* name) {
     itkDebugMacro(<<"BioFormatsImageIO::CanWriteFile: name=" << name);
     std::string filename(name);
 
-    if ( filename == "" )
-    {
+    if (filename == "") {
       itkExceptionMacro(<<"A FileName must be specified.");
       return false;
     }
 
-    // call Bio-Formats to check file type
-    ImageWriter writer;
-    bool isType = writer.isThisType(filename);
-    itkDebugMacro(<<"BioFormatsImageIO::CanWriteFile: isType=" << isType);
-
+    bool isType = 0;
+    try {
+      // call Bio-Formats to check file type
+      ImageWriter writer;
+      isType = writer.isThisType(filename);
+      itkDebugMacro(<<"BioFormatsImageIO::CanWriteFile: isType=" << isType);
+    }
+    catch (FormatException& fe) {
+      //fe.printStackTrace();
+      itkDebugMacro(
+        <<"An unexpected Java format error occurred. " << fe.what());
+    }
+    catch (IOException& ioe) {
+      //ioe.printStackTrace();
+      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro(
+        <<"An unexpected JNI error occurred. " << jniException.what());
+    }
+    catch (std::exception& e) {
+      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+    }
     return isType;
-  }
+  } // end CanWriteFile function
 
-  void
-  BioFormatsImageIO::WriteImageInformation()
-  {
+  void BioFormatsImageIO::WriteImageInformation() {
     itkDebugMacro(<<"BioFormatsImageIO::WriteImageInformation");
     // NB: Nothing to do.
-  }
+  } // end WriteImageInformation function
 
-  void
-  BioFormatsImageIO::Write(const void* buffer)
-  {
+  void BioFormatsImageIO::Write(const void* buffer) {
     itkDebugMacro(<<"BioFormatsImageIO::Write");
     // CTR TODO - implement Write function
   } // end Write function
 
-} // end NAMESPACE ITK
+} // end namespace itk

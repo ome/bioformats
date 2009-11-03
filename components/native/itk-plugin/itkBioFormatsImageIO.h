@@ -36,7 +36,10 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 
 // for Bio-Formats C++ bindings
 #include "bio-formats.h"
+using jace::JNIException;
+using jace::proxy::java::io::IOException;
 using jace::proxy::loci::formats::ChannelFiller;
+using jace::proxy::loci::formats::FormatException;
 using jace::proxy::loci::formats::FormatTools;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
