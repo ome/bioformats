@@ -443,7 +443,7 @@ public class NikonReader extends BaseTiffReader {
 
     original = ifds.get(0);
     if (cfaPattern != null) {
-      original.put(new Integer(IFD.COLOR_MAP), (int[]) cfaPattern);
+      original.putIFDValue(IFD.COLOR_MAP, (int[]) cfaPattern);
     }
     ifds.set(0, original);
 

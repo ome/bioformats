@@ -77,7 +77,7 @@ public class NikonTiffReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    Object software = ifd.get(new Integer(IFD.SOFTWARE));
+    String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     return software != null && software.toString().indexOf("EZ-C1") != -1;
   }
 

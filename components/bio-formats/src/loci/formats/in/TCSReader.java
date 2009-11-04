@@ -145,15 +145,9 @@ public class TCSReader extends FormatReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    String document = (String) ifd.get(new Integer(IFD.DOCUMENT_NAME));
+    String document = ifd.getIFDTextValue(IFD.DOCUMENT_NAME);
     if (document == null) document = "";
-    Object s = ifd.get(new Integer(IFD.SOFTWARE));
-    String software = null;
-    if (s instanceof String) software = (String) s;
-    else if (s instanceof String[]) {
-      String[] ss = (String[]) s;
-      if (ss.length > 0) software = ss[0];
-    }
+    String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     if (software == null) software = "";
     software = software.trim();
     return document.startsWith("CHANNEL") || software.startsWith("TCS");

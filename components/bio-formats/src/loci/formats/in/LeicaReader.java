@@ -394,7 +394,7 @@ public class LeicaReader extends FormatReader {
         int size = in.readInt();
         byte[] data = new byte[size];
         in.read(data);
-        ifd.put(new Integer(tag), data);
+        ifd.putIFDValue(tag, data);
         in.seek(pos);
         tag = in.readInt();
       }

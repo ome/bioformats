@@ -377,7 +377,7 @@ public class ZeissLSMReader extends FormatReader {
         // check that predictor is set to 1 if anything other
         // than LZW compression is used
         if (ifd.getCompression() != TiffCompression.LZW) {
-          ifd.put(new Integer(IFD.PREDICTOR), new Integer(1));
+          ifd.putIFDValue(IFD.PREDICTOR, 1);
         }
       }
 

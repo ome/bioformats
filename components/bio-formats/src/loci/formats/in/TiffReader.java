@@ -181,11 +181,9 @@ public class TiffReader extends BaseTiffReader {
   }
 
   private boolean checkCommentMetamorph(String comment) {
-    Object software = ifds.get(0).getIFDValue(IFD.SOFTWARE);
-    String check = software instanceof String ? (String) software :
-      software instanceof String[] ? ((String[]) software)[0] : null;
+    String software = ifds.get(0).getIFDTextValue(IFD.SOFTWARE);
     return comment != null && software != null &&
-      check.indexOf("MetaMorph") != -1;
+      software.indexOf("MetaMorph") != -1;
   }
 
   private void parseCommentImageJ(String comment)
@@ -268,7 +266,7 @@ public class TiffReader extends BaseTiffReader {
         for (int j=1; j<offsets.length; j++) {
           offsets[j] = offsets[j - 1] + stripByteCounts[j - 1];
         }
-        ifd.put(new Integer(IFD.STRIP_OFFSETS), offsets);
+        ifd.putIFDValue(IFD.STRIP_OFFSETS, offsets);
       }
 
       if (z * c * t == ifds.size()) {

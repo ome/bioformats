@@ -806,7 +806,7 @@ public class MetamorphReader extends BaseTiffReader {
           }
         }
 
-        temp.put(new Integer(IFD.STRIP_OFFSETS), newOffsets);
+        temp.putIFDValue(IFD.STRIP_OFFSETS, newOffsets);
 
         long[] newByteCounts = new long[stripsPerImage];
         if (stripsPerImage * i < stripByteCounts.length) {
@@ -816,7 +816,7 @@ public class MetamorphReader extends BaseTiffReader {
         else {
           Arrays.fill(newByteCounts, stripByteCounts[0]);
         }
-        temp.put(new Integer(IFD.STRIP_BYTE_COUNTS), newByteCounts);
+        temp.putIFDValue(IFD.STRIP_BYTE_COUNTS, newByteCounts);
 
         tempIFDs.add(temp);
       }

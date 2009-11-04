@@ -321,6 +321,30 @@ public class IFD extends HashMap<Integer, Object> {
     return (String) getIFDValue(tag, checkNull, String.class);
   }
 
+  /** Gets the given directory entry value as a string (regardless of type). */
+  public String getIFDTextValue(int tag) {
+    String value = null;
+    Object o = getIFDValue(tag);
+    if (o instanceof String[]) {
+      StringBuilder sb = new StringBuilder();
+      String[] s = (String[]) o;
+      for (int i=0; i<s.length; i++) {
+        sb.append(s[i]);
+        if (i < s.length - 1) sb.append("\n");
+      }
+      value = sb.toString();
+    }
+    else if (o != null) value = o.toString();
+
+    // sanitize line feeds
+    if (value != null) {
+      value = value.replaceAll("\r\n", "\n"); // CR-LF to LF
+      value = value.replaceAll("\r", "\n"); // CR to LF
+    }
+
+    return value;
+  }
+
   /**
    * Gets the given directory entry values in long format
    * from this IFD, performing some error checking.
@@ -424,22 +448,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Convenience method for obtaining the ImageDescription from this IFD. */
   public String getComment() {
-    // extract comment
-    Object o = getIFDValue(IMAGE_DESCRIPTION);
-    String comment = null;
-    if (o instanceof String) comment = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;
-      if (s.length > 0) comment = s[0];
-    }
-    else if (o != null) comment = o.toString();
-
-    if (comment != null) {
-      // sanitize line feeds
-      comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF
-      comment = comment.replaceAll("\r", "\n"); // CR to LF
-    }
-    return comment;
+    return getIFDTextValue(IMAGE_DESCRIPTION);
   }
 
   /** Returns the width of an image tile. */

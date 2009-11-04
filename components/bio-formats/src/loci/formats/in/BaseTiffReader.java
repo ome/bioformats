@@ -445,16 +445,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     IFD firstIFD = ifds.get(0);
 
     // populate Experimenter
-    String artist = null;
-    Object o = firstIFD.getIFDValue(IFD.ARTIST);
-    if (o instanceof String) artist = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;
-      for (int i=0; i<s.length; i++) {
-        artist += s[i];
-        if (i < s.length - 1) artist += "\n";
-      }
-    }
+    String artist = firstIFD.getIFDTextValue(IFD.ARTIST);
     if (artist != null) {
       String firstName = null, lastName = null;
       int ndx = artist.indexOf(" ");
@@ -463,7 +454,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         firstName = artist.substring(0, ndx);
         lastName = artist.substring(ndx + 1);
       }
-      String email = (String) firstIFD.getIFDValue(IFD.HOST_COMPUTER);
+      String email = firstIFD.getIFDTextValue(IFD.HOST_COMPUTER);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
       store.setExperimenterEmail(email, 0);
@@ -531,8 +522,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       stageY = y == null ? null : new Double(y.toString());
     }
     // populate Instrument
-    //String make = ifd.getIFDStringValue(IFD.MAKE, false);
-    //String model = ifd.getIFDStringValue(IFD.MODEL, false);
+    //String make = ifd.getIFDTextValue(IFD.MAKE);
+    //String model = ifd.getIFDTextValue(IFD.MODEL);
     //store.setInstrumentModel(model, 0);
     //store.setInstrumentManufacturer(make, 0);
   }
@@ -542,10 +533,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * @return the image creation date.
    */
   protected String getImageCreationDate() {
-    Object o = ifds.get(0).getIFDValue(IFD.DATE_TIME);
-    if (o instanceof String) return (String) o;
-    if (o instanceof String[]) return ((String[]) o)[0];
-    return null;
+    return ifds.get(0).getIFDTextValue(IFD.DATE_TIME);
   }
 
   // -- Internal FormatReader API methods - metadata convenience --
