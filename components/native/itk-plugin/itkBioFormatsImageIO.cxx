@@ -60,12 +60,12 @@ namespace itk {
 
   BioFormatsImageIO::BioFormatsImageIO() {
     DebugOn(); // NB: For debugging.
-    itkDebugMacro(<<"BioFormatsImageIO constructor");
+    itkDebugMacro("BioFormatsImageIO constructor");
     m_FileType = Binary;
 
     try {
       // initialize the Java virtual machine
-      itkDebugMacro(<<"Creating JVM...");
+      itkDebugMacro("Creating JVM...");
       jace::StaticVmLoader loader(JNI_VERSION_1_4);
       jace::OptionList list;
       list.push_back(jace::ClassPath(
@@ -77,33 +77,26 @@ namespace itk {
       //list.push_back(jace::CustomOption("-verbose"));
       //list.push_back(jace::CustomOption("-verbose:jni"));
       jace::helper::createVm(loader, list, false);
-      itkDebugMacro(<<"JVM created.");
+      itkDebugMacro("JVM created.");
     }
     catch (JNIException& jniException) {
-      itkDebugMacro(<<"Exception creating JVM: " << jniException.what());
+      itkDebugMacro("Exception creating JVM: " << jniException.what());
     }
 
     try {
-      itkDebugMacro(<<"Creating Bio-Formats objects...");
+      itkDebugMacro("Creating Bio-Formats objects...");
       reader = new ChannelFiller;
       writer = new ImageWriter;
-      itkDebugMacro(<<"Created reader and writer.");
+      itkDebugMacro("Created reader and writer.");
     }
-    catch (FormatException& fe) {
-      //fe.printStackTrace();
-      itkDebugMacro(
-        <<"An unexpected Java format error occurred. " << fe.what());
-    }
-    catch (IOException& ioe) {
-      //ioe.printStackTrace();
-      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    catch (Exception& e) {
+      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro(
-        <<"An unexpected JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred. " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred. " << e.what());
     }
   } // end constructor
 
@@ -114,11 +107,11 @@ namespace itk {
 
   bool BioFormatsImageIO::CanReadFile(const char* FileNameToRead) {
     itkDebugMacro(
-      <<"BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead);
+      "BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead);
     std::string filename(FileNameToRead);
 
     if (filename == "") {
-      itkExceptionMacro(<<"A FileName must be specified.");
+      itkDebugMacro("A FileName must be specified.");
       return false;
     }
 
@@ -126,30 +119,23 @@ namespace itk {
     try {
       // call Bio-Formats to check file type
       isType = reader->isThisType(filename);
-      itkDebugMacro(<<"BioFormatsImageIO::CanReadFile: isType=" << isType);
+      itkDebugMacro("BioFormatsImageIO::CanReadFile: isType=" << isType);
     }
-    catch (FormatException& fe) {
-      //fe.printStackTrace();
-      itkDebugMacro(
-        <<"An unexpected Java format error occurred. " << fe.what());
-    }
-    catch (IOException& ioe) {
-      //ioe.printStackTrace();
-      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    catch (Exception& e) {
+      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro(
-        <<"An unexpected JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred. " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred. " << e.what());
     }
     return isType;
   } // end CanReadFile function
 
   void BioFormatsImageIO::ReadImageInformation() {
     itkDebugMacro(
-      <<"BioFormatsImageIO::ReadImageInformation: m_FileName=" << m_FileName);
+      "BioFormatsImageIO::ReadImageInformation: m_FileName=" << m_FileName);
 
     try {
       // attach OME metadata object
@@ -157,12 +143,12 @@ namespace itk {
       reader->setMetadataStore(omeMeta);
 
       // initialize dataset
-      itkDebugMacro(<<"Initializing...");
+      itkDebugMacro("Initializing...");
       reader->setId(m_FileName);
-      itkDebugMacro(<<"Initialized.");
+      itkDebugMacro("Initialized.");
 
       int seriesCount = reader->getSeriesCount();
-      itkDebugMacro(<<"\tSeriesCount = " << seriesCount);
+      itkDebugMacro("\tSeriesCount = " << seriesCount);
 
       // set ITK byte order
       bool little = reader->isLittleEndian();
@@ -172,7 +158,7 @@ namespace itk {
       // set ITK component type
       int pixelType = reader->getPixelType();
       int bpp = FormatTools::getBytesPerPixel(pixelType);
-      itkDebugMacro(<<"\tBytes per pixel = " << bpp);
+      itkDebugMacro("\tBytes per pixel = " << bpp);
       IOComponentType itkComponentType;
       if (pixelType == FormatTools::UINT8())
         itkComponentType = UCHAR;
@@ -195,7 +181,7 @@ namespace itk {
       SetComponentType(itkComponentType); // m_ComponentType
       if (itkComponentType == UNKNOWNCOMPONENTTYPE)
       {
-        itkExceptionMacro(<<"Unknown pixel type: " << pixelType);
+        itkDebugMacro("Unknown pixel type: " << pixelType);
       }
 
       // get pixel resolution and dimensional extents
@@ -209,14 +195,14 @@ namespace itk {
       int imageCount = reader->getImageCount();
 
       itkDebugMacro("Dimensional extents:" << std::endl
-        <<"\tSizeX = " << sizeX << std::endl
-        <<"\tSizeY = " << sizeY << std::endl
-        <<"\tSizeZ = " << sizeZ << std::endl
-        <<"\tSizeC = " << sizeC << std::endl
-        <<"\tSizeT = " << sizeT << std::endl
-        <<"\tRGB Channel Count = " << rgbChannelCount << std::endl
-        <<"\tEffective SizeC = " << rgbChannelCount << std::endl
-        <<"\tImage Count = " << imageCount);
+        << "\tSizeX = " << sizeX << std::endl
+        << "\tSizeY = " << sizeY << std::endl
+        << "\tSizeZ = " << sizeZ << std::endl
+        << "\tSizeC = " << sizeC << std::endl
+        << "\tSizeT = " << sizeT << std::endl
+        << "\tRGB Channel Count = " << rgbChannelCount << std::endl
+        << "\tEffective SizeC = " << rgbChannelCount << std::endl
+        << "\tImage Count = " << imageCount);
 
       int numDims = 2; // X and Y
       if (sizeZ > 1) numDims++; // multiple focal planes
@@ -249,101 +235,137 @@ namespace itk {
       m_Spacing[1] = physY;
       if (imageCount > 1) m_Spacing[2] = 1;
 
-      itkDebugMacro(<<"\tPhysicalSizeX = " << physX);
-      itkDebugMacro(<<"\tPhysicalSizeY = " << physY);
+      itkDebugMacro("Physical resolution: " << physX << " x " << physY);
     }
-    catch (FormatException& fe) {
-      //fe.printStackTrace();
-      itkDebugMacro(
-        <<"An unexpected Java format error occurred. " << fe.what());
-    }
-    catch (IOException& ioe) {
-      //ioe.printStackTrace();
-      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    catch (Exception& e) {
+      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro(
-        <<"An unexpected JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred. " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred. " << e.what());
     }
   } // end ReadImageInformation function
 
   void BioFormatsImageIO::Read(void* pData) {
     char* data = (char*) pData;
-    itkDebugMacro(<<"BioFormatsImageIO::Read");
+    itkDebugMacro("BioFormatsImageIO::Read");
 
     try {
       int pixelType = reader->getPixelType();
       int bpp = FormatTools::getBytesPerPixel(pixelType);
       int rgbChannelCount = reader->getRGBChannelCount();
 
-      itkDebugMacro(<<"Pixel type code = " << pixelType);
-      itkDebugMacro(<<"Bytes per pixel = " << bpp);
+      itkDebugMacro("Pixel type:" << std::endl
+        << "Pixel type code = " << pixelType << std::endl
+        << "Bytes per pixel = " << bpp << std::endl
+        << "RGB channel count = " << rgbChannelCount);
 
       // check IO region to identify the planar extents desired
       ImageIORegion region = GetIORegion();
       int regionDim = region.GetImageDimension();
-      int xIndex = region.GetIndex(0);
-      int xCount = region.GetSize(0);
-      int yIndex = region.GetIndex(1);
-      int yCount = region.GetSize(1);
-      int pIndex = 0, pCount = 1;
-      if (regionDim > 2) {
-        pIndex = region.GetIndex(2);
-        pCount = region.GetSize(2);
+      int xStart = 0, xCount = 1;
+      int yStart = 0, yCount = 1;
+      int zStart = 0, zCount = 1;
+      int tStart = 0, tCount = 1;
+      int cStart = 0, cCount = 1;
+
+      int sizeZ = reader->getSizeZ();
+      int sizeT = reader->getSizeT();
+      int effSizeC = reader->getEffectiveSizeC();
+
+      int xIndex = 0, yIndex = 1, zIndex = 2, tIndex = 3, cIndex = 4;
+      if (sizeZ == 1) {
+        zIndex = -1;
+        tIndex--;
+        cIndex--;
+      }
+      if (sizeT == 1) {
+        tIndex = -1;
+        cIndex--;
+      }
+      if (effSizeC == 1) {
+        cIndex = -1;
+      }
+      for (int dim = 0; dim < regionDim; dim++) {
+        int index = region.GetIndex(dim);
+        int size = region.GetSize(dim);
+        if (dim == xIndex) {
+          xStart = index;
+          xCount = size;
+        }
+        else if (dim == yIndex) {
+          yStart = index;
+          yCount = size;
+        }
+        else if (dim == zIndex) {
+          zStart = index;
+          zCount = size;
+        }
+        else if (dim == tIndex) {
+          tStart = index;
+          tCount = size;
+        }
+        else if (dim == cIndex) {
+          cStart = index;
+          cCount = size;
+        }
       }
       int bytesPerSubPlane = xCount * yCount * bpp * rgbChannelCount;
 
       itkDebugMacro("Region extents:" << std::endl
-        <<"\tRegion dimension = " << regionDim << std::endl
-        <<"\tX index = " << xIndex << std::endl
-        <<"\tX count = " << xCount << std::endl
-        <<"\tY index = " << yIndex << std::endl
-        <<"\tY count = " << yCount << std::endl
-        <<"\tPlane index = " << pIndex << std::endl
-        <<"\tPlane count = " << pCount << std::endl
-        <<"\tBytes per plane = " << bytesPerSubPlane);
+        << "\tRegion dimension = " << regionDim << std::endl
+        << "\tX: start = " << xStart << ", count = " << xCount << std::endl
+        << "\tY: start = " << yStart << ", count = " << yCount << std::endl
+        << "\tZ: start = " << zStart << ", count = " << zCount << std::endl
+        << "\tT: start = " << tStart << ", count = " << tCount << std::endl
+        << "\tC: start = " << cStart << ", count = " << cCount << std::endl
+        << "\tBytes per plane = " << bytesPerSubPlane);
+
+      int imageCount = reader->getImageCount();
 
       int p = 0;
-      ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
-      for (int no=pIndex; no<pIndex+pCount; no++) {
-        int imageCount = reader->getImageCount();
-        itkDebugMacro(<<"Reading image plane " << no <<
-          " (" << (no - pIndex + 1) << "/" << pCount <<
-          " of " << imageCount << " available planes)");
-        reader->openBytes(no, buf, xIndex, yIndex, xCount, yCount);
-        for (int i=0; i<bytesPerSubPlane; i++) data[p++] = buf[i];
+      //ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
+      for (int c=cStart; c<cCount; c++) {
+        for (int t=tStart; t<tCount; t++) {
+          for (int z=zStart; z<zCount; z++) {
+            int no = reader->getIndex(z, c, t);
+            itkDebugMacro("Reading image plane " << no
+              << " (Z=" << z << ", T=" << t << ", C=" << c << ")"
+              << " of " << imageCount << " available planes)");
+            //reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
+            ByteArray buf = reader->openBytes(no,
+              xStart, yStart, xCount, yCount);
+            for (int i=0; i<bytesPerSubPlane; i++) {
+              itkDebugMacro("\tdata #" << i << " = " << buf[i]);
+              data[p++] = buf[i];
+            }
+          }
+        }
       }
 
       reader->close();
     }
-    catch (FormatException& fe) {
-      //fe.printStackTrace();
-      itkDebugMacro(
-        <<"An unexpected Java format error occurred. " << fe.what());
-    }
-    catch (IOException& ioe) {
-      //ioe.printStackTrace();
-      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    catch (Exception& e) {
+      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
       itkDebugMacro(
-        <<"An unexpected JNI error occurred. " << jniException.what());
+        "A JNI error occurred. " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred. " << e.what());
     }
-    itkDebugMacro(<<"Done.");
+    itkDebugMacro("Done.");
   } // end Read function
 
   bool BioFormatsImageIO::CanWriteFile(const char* name) {
-    itkDebugMacro(<<"BioFormatsImageIO::CanWriteFile: name=" << name);
+    itkDebugMacro("BioFormatsImageIO::CanWriteFile: name=" << name);
     std::string filename(name);
 
     if (filename == "") {
-      itkExceptionMacro(<<"A FileName must be specified.");
+      itkDebugMacro("A FileName must be specified.");
       return false;
     }
 
@@ -352,34 +374,27 @@ namespace itk {
       // call Bio-Formats to check file type
       ImageWriter writer;
       isType = writer.isThisType(filename);
-      itkDebugMacro(<<"BioFormatsImageIO::CanWriteFile: isType=" << isType);
+      itkDebugMacro("BioFormatsImageIO::CanWriteFile: isType=" << isType);
     }
-    catch (FormatException& fe) {
-      //fe.printStackTrace();
-      itkDebugMacro(
-        <<"An unexpected Java format error occurred. " << fe.what());
-    }
-    catch (IOException& ioe) {
-      //ioe.printStackTrace();
-      itkDebugMacro(<<"An unexpected Java I/O error occurred. " << ioe.what());
+    catch (Exception& e) {
+      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro(
-        <<"An unexpected JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred. " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro(<<"An unexpected C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred. " << e.what());
     }
     return isType;
   } // end CanWriteFile function
 
   void BioFormatsImageIO::WriteImageInformation() {
-    itkDebugMacro(<<"BioFormatsImageIO::WriteImageInformation");
+    itkDebugMacro("BioFormatsImageIO::WriteImageInformation");
     // NB: Nothing to do.
   } // end WriteImageInformation function
 
   void BioFormatsImageIO::Write(const void* buffer) {
-    itkDebugMacro(<<"BioFormatsImageIO::Write");
+    itkDebugMacro("BioFormatsImageIO::Write");
     // CTR TODO - implement Write function
   } // end Write function
 

@@ -35,11 +35,12 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #define H_ITK_IMAGE_IO_H
 
 // for Bio-Formats C++ bindings
-#include "bio-formats.h"
+#include "loci-common.h"
 using jace::JNIException;
-using jace::proxy::java::io::IOException;
+using jace::proxy::java::lang::Exception;
+using jace::proxy::loci::common::Log;
+#include "bio-formats.h"
 using jace::proxy::loci::formats::ChannelFiller;
-using jace::proxy::loci::formats::FormatException;
 using jace::proxy::loci::formats::FormatTools;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
