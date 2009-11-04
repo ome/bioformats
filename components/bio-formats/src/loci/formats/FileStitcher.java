@@ -924,12 +924,13 @@ public class FileStitcher implements IFormatReader {
 
     fp = findPattern(currentId);
 
-    reader.setId(fp.getFiles()[0]);
-    if (reader.fileGroupOption(fp.getFiles()[0]) == FormatTools.MUST_GROUP) {
+    if (reader.fileGroupOption(id) == FormatTools.MUST_GROUP) {
       // reader subclass is handling file grouping
       noStitch = true;
+      reader.setId(currentId);
       return;
     }
+    reader.setId(fp.getFiles()[0]);
 
     AxisGuesser guesser = new AxisGuesser(fp, reader.getDimensionOrder(),
       reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),

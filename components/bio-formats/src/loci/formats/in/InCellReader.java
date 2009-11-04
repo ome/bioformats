@@ -426,10 +426,16 @@ public class InCellReader extends FormatReader {
           store.setLogicalChannelName(channelNames.get(q), i, q);
         }
         if (q < emWaves.size()) {
-          store.setLogicalChannelEmWave(emWaves.get(q), i, q);
+          int wave = emWaves.get(q).intValue();
+          if (wave > 0) {
+            store.setLogicalChannelEmWave(emWaves.get(q), i, q);
+          }
         }
         if (q < exWaves.size()) {
-          store.setLogicalChannelExWave(exWaves.get(q), i, q);
+          int wave = exWaves.get(q).intValue();
+          if (wave > 0) {
+            store.setLogicalChannelExWave(exWaves.get(q), i, q);
+          }
         }
       }
     }
@@ -447,12 +453,17 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
+      int totalTimepoints =
+        oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
+      int timepoint = i % totalTimepoints;
+
+      int sampleIndex = field * totalTimepoints + timepoint;
 
       String imageID = MetadataTools.createLSID("Image", i);
-      store.setWellSampleIndex(new Integer(i), 0, well, field);
-      store.setWellSampleImageRef(imageID, 0, well, field);
-      store.setWellSamplePosX(posX.get(field), 0, well, field);
-      store.setWellSamplePosY(posY.get(field), 0, well, field);
+      store.setWellSampleIndex(new Integer(i), 0, well, sampleIndex);
+      store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
+      store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
+      store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
     }
 
     // populate ROI data
@@ -510,10 +521,12 @@ public class InCellReader extends FormatReader {
               int roiIndex = 0;
               double area = 0d;
 
+              if (cellIndex < 0) continue;
               String cell = values[cellIndex].trim();
 
               try {
                 roiIndex = Integer.parseInt(cell) - 1;
+                if (areaIndex < 0) continue;
                 area = Double.parseDouble(values[areaIndex].trim());
               }
               catch (NumberFormatException e) {
@@ -524,8 +537,12 @@ public class InCellReader extends FormatReader {
               double radius = Math.sqrt(area / Math.PI);
 
               // "Cell cg X", "Cell cg Y"
-              store.setCircleCx(values[xIndex].trim(), image, roiIndex, 0);
-              store.setCircleCy(values[yIndex].trim(), image, roiIndex, 0);
+              if (xIndex >= 0) {
+                store.setCircleCx(values[xIndex].trim(), image, roiIndex, 0);
+              }
+              if (yIndex >= 0) {
+                store.setCircleCy(values[yIndex].trim(), image, roiIndex, 0);
+              }
               store.setCircleR(String.valueOf(radius), image, roiIndex, 0);
 
               if (isMetadataCollected()) {
@@ -750,8 +767,8 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        store.setObjectiveNominalMagnification(new Integer(
-          (int) Float.parseFloat(attributes.getValue("magnification"))), 0, 0);
+        store.setObjectiveNominalMagnification(new Integer((int)
+          Double.parseDouble(attributes.getValue("magnification"))), 0, 0);
         store.setObjectiveLensNA(new Float(
           attributes.getValue("numerical_aperture")), 0, 0);
         store.setObjectiveImmersion("Unknown", 0, 0);

@@ -92,7 +92,7 @@ public class MetamorphReader extends BaseTiffReader {
   private double[] wave;
 
   private String binning;
-  private float zoom, stepSize;
+  private double zoom, stepSize;
   private Float exposureTime;
   private Vector<String> waveNames;
   private Vector<String> stageNames;
@@ -581,7 +581,7 @@ public class MetamorphReader extends BaseTiffReader {
       store.setDimensionsPhysicalSizeY(
         new Float(handler.getPixelSizeY()), i, 0);
       if (zDistances != null) {
-        stepSize = (float) zDistances[0];
+        stepSize = zDistances[0];
       }
       store.setDimensionsPhysicalSizeZ(new Float(stepSize), i, 0);
 
@@ -656,8 +656,8 @@ public class MetamorphReader extends BaseTiffReader {
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
-        Float deltaT = 0f;
-        Float exposureTime = 0f;
+        Float deltaT = new Float(0);
+        Float exposureTime = new Float(0);
 
         if (coords[2] > 0 && stks != null && lastFile >= 0 &&
           stks[i][lastFile] != null)
@@ -686,11 +686,11 @@ public class MetamorphReader extends BaseTiffReader {
           if (coords[2] < timestamps.size()) index = coords[2];
           String stamp = timestamps.get(index);
           long ms = DateTools.getTime(stamp, MEDIUM_DATE_FORMAT);
-          deltaT = new Float((ms - startDate) / 1000f);
+          deltaT = new Float((ms - startDate) / 1000.0);
         }
         else if (internalStamps != null && p < internalStamps.length) {
           long delta = internalStamps[p] - internalStamps[0];
-          deltaT = new Float(delta / 1000f);
+          deltaT = new Float(delta / 1000.0);
           if (coords[2] < exposureTimes.size()) index = coords[2];
         }
 
@@ -702,12 +702,10 @@ public class MetamorphReader extends BaseTiffReader {
         store.setPlaneTimingExposureTime(exposureTime, i, 0, p);
 
         if (stageX != null && p < stageX.length) {
-          store.setStagePositionPositionX(
-            new Float((float) stageX[p]), i, 0, p);
+          store.setStagePositionPositionX(new Float(stageX[p]), i, 0, p);
         }
         if (stageY != null && p < stageY.length) {
-          store.setStagePositionPositionY(
-            new Float((float) stageY[p]), i, 0, p);
+          store.setStagePositionPositionY(new Float(stageY[p]), i, 0, p);
         }
       }
     }
@@ -715,7 +713,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     store.setDetectorID(detectorID, 0, 0);
     store.setDetectorZoom(new Float(zoom), 0, 0);
-    if (handler != null && handler.getZoom() != 0f) {
+    if (handler != null && handler.getZoom() != 0) {
       store.setDetectorZoom(new Float(handler.getZoom()), 0, 0);
     }
     store.setDetectorType("Unknown", 0, 0);
@@ -743,7 +741,12 @@ public class MetamorphReader extends BaseTiffReader {
       parseUIC1Tags(uic1tagEntry.getValueOffset(),
         uic1tagEntry.getValueCount());
       in.seek(uic4tagEntry.getValueOffset());
+    }
+    catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
+    catch (NullPointerException exc) { traceDebug(exc); }
+    catch (IOException exc) { traceDebug(exc); }
 
+    try {
       // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
       IFD firstIFD = ifds.get(0);
@@ -821,7 +824,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
     catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
     catch (NullPointerException exc) { traceDebug(exc); }
-    catch (IOException exc) { traceDebug(exc); }
     catch (FormatException exc) { traceDebug(exc); }
 
     // parse (mangle) TIFF comment
@@ -939,6 +941,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     for (int i=0; i<mmPlanes; i++) {
       iAsString = intFormatMax(i, mmPlanes);
+      if (in.getFilePointer() + 8 > in.length()) break;
       zDistances[i] = readRational(in).doubleValue();
       addSeriesMeta("zDistance[" + iAsString + "]", zDistances[i]);
 
@@ -973,6 +976,7 @@ public class MetamorphReader extends BaseTiffReader {
   private void parseUIC4Tags(long uic4offset) throws IOException {
     long saveLoc = in.getFilePointer();
     in.seek(uic4offset);
+    if (in.getFilePointer() + 2 >= in.length()) return;
     short id = in.readShort();
     while (id != 0) {
       switch (id) {

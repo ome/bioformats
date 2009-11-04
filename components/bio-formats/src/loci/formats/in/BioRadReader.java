@@ -143,7 +143,7 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    Location parent = new Location(id).getParentFile();
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
     String[] list = parent.list();
     for (String f : list) {
       if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
@@ -497,11 +497,11 @@ public class BioRadReader extends FormatReader {
             }
             else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
               store.setObjectiveNominalMagnification(
-                new Integer((int) Double.parseDouble(value)), 0, 0);
+                new Integer((int) Float.parseFloat(value)), 0, 0);
             }
             else if (key.equals("LENS_MAGNIFICATION")) {
               store.setObjectiveNominalMagnification(
-                new Integer((int) Double.parseDouble(value)), 0, 0);
+                new Integer((int) Float.parseFloat(value)), 0, 0);
             }
             else if (key.startsWith("SETTING")) {
               if (key.indexOf("_DET_") != -1) {
@@ -598,7 +598,7 @@ public class BioRadReader extends FormatReader {
                 addGlobalMeta("Z Step Size", values[14]);
 
                 store.setObjectiveNominalMagnification(
-                  new Integer((int) Double.parseDouble(values[11])), 0, 0);
+                  new Integer((int) Float.parseFloat(values[11])), 0, 0);
                 store.setDimensionsPhysicalSizeZ(new Float(values[14]), 0, 0);
                 break;
               case 2:

@@ -96,10 +96,11 @@ public class ZeissZVIReader extends FormatReader {
 
   private Vector<RandomAccessInputStream> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  private float stageX = 0f, stageY = 0f;
+  private double stageX = 0, stageY = 0;
 
   private int[] channelColors;
   private int lastPlane;
+  private Vector<Integer> tiles = new Vector<Integer>();
 
   // -- Constructor --
 
@@ -275,6 +276,15 @@ public class ZeissZVIReader extends FormatReader {
               {
                 ii = row*tileColumns + (tileColumns - col - 1);
               }
+              if (!tiles.contains(new Integer(ii))) {
+                colOffset += tileW;
+                if (colOffset >= w) {
+                  colOffset = 0;
+                  rowOffset += tileH;
+                }
+                continue;
+              }
+              else ii = tiles.indexOf(new Integer(ii));
               ii *= count;
               ii += firstTile;
 
@@ -345,6 +355,7 @@ public class ZeissZVIReader extends FormatReader {
       stageX = stageY = 0;
       channelColors = null;
       lastPlane = 0;
+      tiles.clear();
     }
   }
 
@@ -500,6 +511,12 @@ public class ZeissZVIReader extends FormatReader {
 
     status("Populating metadata");
 
+    for (RandomAccessInputStream s : tagsToParse) {
+      s.order(true);
+      parseTags(-1, s, store);
+      s.close();
+    }
+
     core[0].sizeZ = zIndices.size();
     core[0].sizeT = tIndices.size();
     core[0].sizeC = cIndices.size();
@@ -521,11 +538,6 @@ public class ZeissZVIReader extends FormatReader {
 
     if (getSizeY() * tileRows != realHeight) tileRows++;
     if (getSizeX() * tileColumns != realWidth) tileColumns++;
-
-    while (totalTiles < tileRows * tileColumns && tileRows > 1) {
-      tileRows--;
-    }
-    if (tileRows > 0) tileColumns = totalTiles / tileRows;
 
     if (totalTiles <= 1) {
       tileRows = 1;
@@ -613,11 +625,6 @@ public class ZeissZVIReader extends FormatReader {
       store.setStagePositionPositionY(new Float(stageY), 0, 0, plane);
     }
 
-    for (RandomAccessInputStream s : tagsToParse) {
-      s.order(true);
-      parseTags(-1, s, store);
-      s.close();
-    }
     core[0].indexed = !isRGB() && channelColors != null;
 
     // link DetectorSettings to an actual Detector
@@ -722,22 +729,30 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.equals("ImageWidth")) {
           int v = Integer.parseInt(value);
-          if (getSizeX() == 0) {
+          if (getSizeX() == 0 || v < getSizeX()) {
             core[0].sizeX = v;
           }
           if (realWidth == 0 && v > realWidth) realWidth = v;
         }
         else if (key.equals("ImageHeight")) {
           int v = Integer.parseInt(value);
-          if (getSizeY() == 0) core[0].sizeY = v;
+          if (getSizeY() == 0 || v < getSizeY()) core[0].sizeY = v;
           if (realHeight == 0 || v > realHeight) realHeight = v;
         }
 
         if (cIndex != -1) key += " " + cIndex;
         addGlobalMeta(key, value);
 
+        if (key.startsWith("ImageTile")) {
+          if (!tiles.contains(new Integer(value))) {
+            tiles.add(new Integer(value));
+          }
+        }
+
         if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
-          firstImageTile = value;
+          if (firstImageTile == null) {
+            firstImageTile = value;
+          }
         }
         else if (key.equals("ImageTile Index 1")) secondImageTile = value;
         else if (key.startsWith("MultiChannel Color")) {
@@ -785,17 +800,17 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("BlackValue")) {
           if (cIndex != -1) {
-            // store.setGreyChannelBlackValue(new Float(value), 0);
+            // store.setGreyChannelBlackValue(new Double(value), 0);
           }
         }
         else if (key.startsWith("WhiteValue")) {
           if (cIndex != -1) {
-            // store.setGreyChannelWhiteValue(new Float(value), 0);
+            // store.setGreyChannelWhiteValue(new Double(value), 0);
           }
         }
         else if (key.startsWith("GammaValue")) {
           if (cIndex != -1) {
-            // store.setGreyChannelGammaValue(new Float(value), 0);
+            // store.setGreyChannelGammaValue(new Double(value), 0);
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
@@ -819,7 +834,7 @@ public class ZeissZVIReader extends FormatReader {
           store.setExperimenterOMEName("Unknown", 0);
         }
         else if (key.startsWith("Objective Magnification")) {
-          float mag = Float.parseFloat(value);
+          double mag = Double.parseDouble(value);
           store.setObjectiveNominalMagnification(new Integer((int) mag), 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
@@ -835,8 +850,8 @@ public class ZeissZVIReader extends FormatReader {
           for (int q=0; q<tokens.length; q++) {
             int slash = tokens[q].indexOf("/");
             if (slash != -1) {
-              int mag =
-                (int) Float.parseFloat(tokens[q].substring(0, slash - q));
+              int mag = (int)
+                Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
               store.setObjectiveLensNA(new Float(na), 0, 0);
@@ -948,7 +963,9 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       s.seek(nameBlock);
-      String roiName = DataTools.stripString(s.readString(s.readInt()));
+      int strlen = s.readInt();
+      if (strlen + s.getFilePointer() > s.length()) continue;
+      String roiName = DataTools.stripString(s.readString(strlen));
 
       s.seek(fontBlock);
       int fontLength = s.readInt();
@@ -1014,17 +1031,18 @@ public class ZeissZVIReader extends FormatReader {
     }
   }
 
-  private float getScaleUnit(String value) {
+  // TODO: this method is never called; eliminate?
+  private double getScaleUnit(String value) {
     int v = Integer.parseInt(value);
     switch (v) {
       case 72: // meters
-        return 1000000f;
+        return 1000000;
       case 77: // nanometers
-        return 0.001f;
+        return 0.001;
       case 81: // inches
-        return 25400f;
+        return 25400;
     }
-    return 1f;
+    return 1;
   }
 
   /** Return the string corresponding to the given ID. */
