@@ -83,9 +83,15 @@ public class Log {
 
   public void trace(String s) { trace(new Exception(s)); }
   public void trace(Throwable t) {
+    println(getStackTrace(t));
+  }
+
+  // -- Static utility methods --
+
+  public static String getStackTrace(Throwable t) {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     t.printStackTrace(new PrintStream(baos));
-    println(baos);
+    return baos.toString();
   }
 
 }
