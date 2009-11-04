@@ -55,6 +55,8 @@ public final class TiffCompression {
 
   // -- Constants --
 
+  // TODO: Investigate using Java 1.5 enum instead of int enumeration.
+  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
   public static final int UNCOMPRESSED = 1;
   public static final int CCITT_1D = 2;
   public static final int GROUP_3_FAX = 3;

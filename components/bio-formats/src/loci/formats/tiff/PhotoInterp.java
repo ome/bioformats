@@ -41,6 +41,8 @@ public final class PhotoInterp {
 
   // -- Constants --
 
+  // TODO: Investigate using Java 1.5 enum instead of int enumeration.
+  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
   public static final int WHITE_IS_ZERO = 0;
   public static final int BLACK_IS_ZERO = 1;
   public static final int RGB = 2;

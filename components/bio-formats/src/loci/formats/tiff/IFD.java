@@ -48,6 +48,9 @@ public class IFD extends HashMap<Integer, Object> {
 
   // -- Constants --
 
+  // TODO: Investigate using Java 1.5 enums instead of int enumerations.
+  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
+
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
   public static final int BIG_TIFF = 1;
