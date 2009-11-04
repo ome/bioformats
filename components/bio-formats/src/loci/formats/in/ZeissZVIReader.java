@@ -288,6 +288,14 @@ public class ZeissZVIReader extends FormatReader {
               ii *= count;
               ii += firstTile;
 
+              if (ii >= imageFiles.length) {
+                colOffset += tileW;
+                if (colOffset >= w) {
+                  colOffset = 0;
+                  rowOffset += tileH;
+                }
+                continue;
+              }
               RandomAccessInputStream s = poi.getDocumentStream(imageFiles[ii]);
               s.seek(offsets[ii]);
               int nread = s.read(tile);
