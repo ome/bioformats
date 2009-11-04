@@ -963,7 +963,9 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       s.seek(nameBlock);
-      String roiName = DataTools.stripString(s.readString(s.readInt()));
+      int strlen = s.readInt();
+      if (strlen + s.getFilePointer() > s.length()) continue;
+      String roiName = DataTools.stripString(s.readString(strlen));
 
       s.seek(fontBlock);
       int fontLength = s.readInt();

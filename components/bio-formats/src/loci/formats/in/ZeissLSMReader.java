@@ -822,7 +822,7 @@ public class ZeissLSMReader extends FormatReader {
     }
     int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
     if (nLogicalChannels == getSizeC()) {
-      splitPlanes = isRGB();
+      if (!splitPlanes) splitPlanes = isRGB();
       core[series].rgb = false;
       if (splitPlanes) core[series].imageCount *= getSizeC();
     }

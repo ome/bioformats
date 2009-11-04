@@ -426,10 +426,16 @@ public class InCellReader extends FormatReader {
           store.setLogicalChannelName(channelNames.get(q), i, q);
         }
         if (q < emWaves.size()) {
-          store.setLogicalChannelEmWave(emWaves.get(q), i, q);
+          int wave = emWaves.get(q).intValue();
+          if (wave > 0) {
+            store.setLogicalChannelEmWave(emWaves.get(q), i, q);
+          }
         }
         if (q < exWaves.size()) {
-          store.setLogicalChannelExWave(exWaves.get(q), i, q);
+          int wave = exWaves.get(q).intValue();
+          if (wave > 0) {
+            store.setLogicalChannelExWave(exWaves.get(q), i, q);
+          }
         }
       }
     }
@@ -447,12 +453,17 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i);
+      int totalTimepoints =
+        oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
+      int timepoint = i % totalTimepoints;
+
+      int sampleIndex = field * totalTimepoints + timepoint;
 
       String imageID = MetadataTools.createLSID("Image", i);
-      store.setWellSampleIndex(new Integer(i), 0, well, field);
-      store.setWellSampleImageRef(imageID, 0, well, field);
-      store.setWellSamplePosX(posX.get(field), 0, well, field);
-      store.setWellSamplePosY(posY.get(field), 0, well, field);
+      store.setWellSampleIndex(new Integer(i), 0, well, sampleIndex);
+      store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
+      store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
+      store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
     }
 
     // populate ROI data

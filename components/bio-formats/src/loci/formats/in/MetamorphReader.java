@@ -741,7 +741,12 @@ public class MetamorphReader extends BaseTiffReader {
       parseUIC1Tags(uic1tagEntry.getValueOffset(),
         uic1tagEntry.getValueCount());
       in.seek(uic4tagEntry.getValueOffset());
+    }
+    catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
+    catch (NullPointerException exc) { traceDebug(exc); }
+    catch (IOException exc) { traceDebug(exc); }
 
+    try {
       // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
       IFD firstIFD = ifds.get(0);
@@ -819,7 +824,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
     catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
     catch (NullPointerException exc) { traceDebug(exc); }
-    catch (IOException exc) { traceDebug(exc); }
     catch (FormatException exc) { traceDebug(exc); }
 
     // parse (mangle) TIFF comment
@@ -937,6 +941,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     for (int i=0; i<mmPlanes; i++) {
       iAsString = intFormatMax(i, mmPlanes);
+      if (in.getFilePointer() + 8 > in.length()) break;
       zDistances[i] = readRational(in).doubleValue();
       addSeriesMeta("zDistance[" + iAsString + "]", zDistances[i]);
 
@@ -971,6 +976,7 @@ public class MetamorphReader extends BaseTiffReader {
   private void parseUIC4Tags(long uic4offset) throws IOException {
     long saveLoc = in.getFilePointer();
     in.seek(uic4offset);
+    if (in.getFilePointer() + 2 >= in.length()) return;
     short id = in.readShort();
     while (id != 0) {
       switch (id) {

@@ -143,7 +143,7 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    Location parent = new Location(id).getParentFile();
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
     String[] list = parent.list();
     for (String f : list) {
       if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
