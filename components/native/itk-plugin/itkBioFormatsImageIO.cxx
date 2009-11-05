@@ -249,7 +249,6 @@ namespace itk {
   } // end ReadImageInformation function
 
   void BioFormatsImageIO::Read(void* pData) {
-    char* data = (char*) pData;
     itkDebugMacro("BioFormatsImageIO::Read");
 
     try {
@@ -325,8 +324,8 @@ namespace itk {
 
       int imageCount = reader->getImageCount();
 
-      jbyte* jData = (jbyte*) data;
-      //ByteArray buf(bytesPerPlane); // pre-allocate buffer
+      jbyte* jData = (jbyte*) pData;
+      ByteArray buf(bytesPerPlane); // pre-allocate buffer
       for (int c=cStart; c<cCount; c++) {
         for (int t=tStart; t<tCount; t++) {
           for (int z=zStart; z<zCount; z++) {
@@ -334,9 +333,7 @@ namespace itk {
             itkDebugMacro("Reading image plane " << no
               << " (Z=" << z << ", T=" << t << ", C=" << c << ")"
               << " of " << imageCount << " available planes)");
-            //reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
-            ByteArray buf = reader->openBytes(no,
-              xStart, yStart, xCount, yCount);
+            reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
 
             // copy raw byte array
             JNIEnv* env = jace::helper::attach();
