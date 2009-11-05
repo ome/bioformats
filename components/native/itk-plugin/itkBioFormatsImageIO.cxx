@@ -107,11 +107,11 @@ namespace itk {
 
   bool BioFormatsImageIO::CanReadFile(const char* FileNameToRead) {
     itkDebugMacro(
-      "BioFormatsImageIO::CanReadFile: FileNameToRead=" << FileNameToRead);
+      "BioFormatsImageIO::CanReadFile: FileNameToRead = " << FileNameToRead);
     std::string filename(FileNameToRead);
 
     if (filename == "") {
-      itkDebugMacro("A FileName must be specified.");
+      itkDebugMacro("A file name must be specified.");
       return false;
     }
 
@@ -119,7 +119,7 @@ namespace itk {
     try {
       // call Bio-Formats to check file type
       isType = reader->isThisType(filename);
-      itkDebugMacro("BioFormatsImageIO::CanReadFile: isType=" << isType);
+      itkDebugMacro("isType = " << isType);
     }
     catch (Exception& e) {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
@@ -135,7 +135,7 @@ namespace itk {
 
   void BioFormatsImageIO::ReadImageInformation() {
     itkDebugMacro(
-      "BioFormatsImageIO::ReadImageInformation: m_FileName=" << m_FileName);
+      "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
 
     try {
       // attach OME metadata object
@@ -148,7 +148,7 @@ namespace itk {
       itkDebugMacro("Initialized.");
 
       int seriesCount = reader->getSeriesCount();
-      itkDebugMacro("\tSeriesCount = " << seriesCount);
+      itkDebugMacro("Series count = " << seriesCount);
 
       // set ITK byte order
       bool little = reader->isLittleEndian();
@@ -158,7 +158,7 @@ namespace itk {
       // set ITK component type
       int pixelType = reader->getPixelType();
       int bpp = FormatTools::getBytesPerPixel(pixelType);
-      itkDebugMacro("\tBytes per pixel = " << bpp);
+      itkDebugMacro("Bytes per pixel = " << bpp);
       IOComponentType itkComponentType;
       if (pixelType == FormatTools::UINT8())
         itkComponentType = UCHAR;
@@ -235,7 +235,7 @@ namespace itk {
       m_Spacing[1] = physY;
       if (imageCount > 1) m_Spacing[2] = 1;
 
-      itkDebugMacro("Physical resolution: " << physX << " x " << physY);
+      itkDebugMacro("Physical resolution = " << physX << " x " << physY);
     }
     catch (Exception& e) {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
@@ -312,7 +312,7 @@ namespace itk {
           cCount = size;
         }
       }
-      int bytesPerSubPlane = xCount * yCount * bpp * rgbChannelCount;
+      int bytesPerPlane = xCount * yCount * bpp * rgbChannelCount;
 
       itkDebugMacro("Region extents:" << std::endl
         << "\tRegion dimension = " << regionDim << std::endl
@@ -321,12 +321,12 @@ namespace itk {
         << "\tZ: start = " << zStart << ", count = " << zCount << std::endl
         << "\tT: start = " << tStart << ", count = " << tCount << std::endl
         << "\tC: start = " << cStart << ", count = " << cCount << std::endl
-        << "\tBytes per plane = " << bytesPerSubPlane);
+        << "\tBytes per plane = " << bytesPerPlane);
 
       int imageCount = reader->getImageCount();
 
-      int p = 0;
-      //ByteArray buf(bytesPerSubPlane); // pre-allocate buffer
+      jbyte* jData = (jbyte*) data;
+      //ByteArray buf(bytesPerPlane); // pre-allocate buffer
       for (int c=cStart; c<cCount; c++) {
         for (int t=tStart; t<tCount; t++) {
           for (int z=zStart; z<zCount; z++) {
@@ -337,10 +337,12 @@ namespace itk {
             //reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
             ByteArray buf = reader->openBytes(no,
               xStart, yStart, xCount, yCount);
-            for (int i=0; i<bytesPerSubPlane; i++) {
-              itkDebugMacro("\tdata #" << i << " = " << buf[i]);
-              data[p++] = buf[i];
-            }
+
+            // copy raw byte array
+            JNIEnv* env = jace::helper::attach();
+            jbyteArray jArray = static_cast<jbyteArray>(buf.getJavaJniArray());
+            env->GetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
+            jData += bytesPerPlane;
           }
         }
       }
@@ -361,7 +363,7 @@ namespace itk {
   } // end Read function
 
   bool BioFormatsImageIO::CanWriteFile(const char* name) {
-    itkDebugMacro("BioFormatsImageIO::CanWriteFile: name=" << name);
+    itkDebugMacro("BioFormatsImageIO::CanWriteFile: name = " << name);
     std::string filename(name);
 
     if (filename == "") {
@@ -374,7 +376,7 @@ namespace itk {
       // call Bio-Formats to check file type
       ImageWriter writer;
       isType = writer.isThisType(filename);
-      itkDebugMacro("BioFormatsImageIO::CanWriteFile: isType=" << isType);
+      itkDebugMacro("isType = " << isType);
     }
     catch (Exception& e) {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
