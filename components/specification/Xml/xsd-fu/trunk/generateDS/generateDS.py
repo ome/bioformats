@@ -189,7 +189,7 @@ def set_type_constants(nameSpace):
         NameType, NCNameType, QNameType, NameTypes, \
         AnyAttributeType, SimpleTypeType, RestrictionType, \
         WhiteSpaceType, ListType, EnumerationType, UnionType, \
-        OtherSimpleTypes
+        OtherSimpleTypes, AppInfoType
     AttributeGroupType = nameSpace + 'attributeGroup'
     AttributeType = nameSpace + 'attribute'
     BooleanType = nameSpace + 'boolean'
@@ -285,6 +285,7 @@ def set_type_constants(nameSpace):
         nameSpace + 'unsignedLong',
         nameSpace + 'unsignedShort',
     )
+    AppInfoType = nameSpace + 'appinfo'
 
 
 
@@ -394,8 +395,18 @@ class XschemaElement(XschemaElementBase):
         self.name = name_val
         self.children = []
         self.optional = False
-        self.minOccurs = 1
-        self.maxOccurs = 1
+        if 'minOccurs' in self.attrs.keys():
+            self.minOccurs = self.attrs['minOccurs']
+            self.minOccurs = int(self.minOccurs)
+        else:
+            self.minOccurs = 1
+        if 'maxOccurs' in self.attrs.keys():
+            self.maxOccurs = self.attrs['maxOccurs']
+            if self.maxOccurs == 'unbounded':
+                self.maxOccurs = 99999
+            self.maxOccurs = int(self.maxOccurs)
+        else:
+            self.maxOccurs = 1
         self.complex = 0
         self.complexType = 0
         self.type = 'NoneType'
@@ -957,6 +968,7 @@ class XschemaHandler(handler.ContentHandler):
         self.inAttributeGroup = 0
         self.inSimpleType = 0
         self.inUnionType = 0
+        self.inAppInfo = 0
         # The last attribute we processed.
         self.lastAttribute = None
         # Simple types that exist in the global context and may be used to
@@ -1174,6 +1186,8 @@ class XschemaHandler(handler.ContentHandler):
             # fixlist
             if self.inSimpleType and self.inRestrictionType:
                 self.stack[-1].setListType(1)
+        elif name == AppInfoType:
+            self.inAppInfo = True
         logging.debug("Start element stack: %d (%r)" % (len(self.stack), self.stack))
 
     def endElement(self, name):
@@ -1254,8 +1268,12 @@ class XschemaHandler(handler.ContentHandler):
             # internal stack will not be unrolled correctly.
             self.inSimpleType = 1
             self.inListType = 0
+        elif name == AppInfoType:
+            self.inAppInfo = False
 
     def characters(self, chrs):
+        if self.inAppInfo:
+            self.stack[-1].appinfo = chrs
         if self.inElement:
             pass
         elif self.inComplexType:

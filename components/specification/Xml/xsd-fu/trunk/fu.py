@@ -212,6 +212,8 @@ class OMEModelProperty(object):
 	def _get_maxOccurs(self):
 		if self.isAttribute:
 			return 1
+		if self.delegate.choice is not None:
+			return self.delegate.choice.getMaxOccurs()
 		return self.delegate.getMaxOccurs()
 	maxOccurs = property(_get_maxOccurs,
 		doc="""The maximum number of occurances for this property.""")
@@ -221,6 +223,8 @@ class OMEModelProperty(object):
 			if self.delegate.getUse() == "optional":
 				return 0
 			return 1
+		if self.delegate.choice is not None:
+			return self.delegate.choice.getMinOccurs()
 		return self.delegate.getMinOccurs()
 	minOccurs = property(_get_minOccurs,
 		doc="""The minimum number of occurances for this property.""")
@@ -363,6 +367,10 @@ class OMEModelObject(object):
 		self.name = element.getName()
 		self.type = element.getType()
 		self.properties = dict()
+		if hasattr(element, 'appinfo') and element.appinfo == 'abstract':
+			self.isAbstract = True
+		else:
+			self.isAbstract = False
 	
 	def addAttribute(self, attribute):
 		"""

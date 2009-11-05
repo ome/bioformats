@@ -8,9 +8,7 @@
 {% end %}\
 \
 {% def setter(obj, prop, indexes) %}\
-	// ${repr(parents[obj.name])}
 	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[obj.name]}
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
@@ -23,6 +21,14 @@
 {% end %}\
 {% end %}\
 {% end %}\
+\
+{% python
+	def parent_object(name):
+		return model.getObjectByName(parents[name].keys()[0])
+
+	def sorted_properties(o):
+		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+%}
 \
 \
 /*
@@ -119,10 +125,25 @@ public interface MetadataStore
 	void setUUID(String uuid);
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
-{% if parents[o.name] is not None %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 
 	// ${o.name} property storage
+	// ${repr(parents[o.name])}
+	// Is multi path? ${is_multi_path[o.name]}
 
+{% if parent_object(o.name).isAbstract %}\
+{% for prop in sorted_properties(parent_object(o.name)) %}\
+{% choose %}\
+{% when prop.javaType.endswith("Node") %}\
+	// Ignoring ${prop.name} of parent abstract type
+{% end %}\
+{% otherwise %}\
+${setter(o, prop, indexes[o.name])}
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
 {% choose %}\
 {% when o.base == "Reference" %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
