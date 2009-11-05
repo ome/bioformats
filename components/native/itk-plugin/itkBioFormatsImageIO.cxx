@@ -93,10 +93,10 @@ namespace itk {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro("A JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred: " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro("A C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred: " << e.what());
     }
   } // end constructor
 
@@ -125,10 +125,10 @@ namespace itk {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro("A JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred: " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro("A C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred: " << e.what());
     }
     return isType;
   } // end CanReadFile function
@@ -241,10 +241,10 @@ namespace itk {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro("A JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred: " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro("A C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred: " << e.what());
     }
   } // end ReadImageInformation function
 
@@ -351,10 +351,10 @@ namespace itk {
     }
     catch (JNIException& jniException) {
       itkDebugMacro(
-        "A JNI error occurred. " << jniException.what());
+        "A JNI error occurred: " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro("A C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred: " << e.what());
     }
     itkDebugMacro("Done.");
   } // end Read function
@@ -379,10 +379,10 @@ namespace itk {
       itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
     }
     catch (JNIException& jniException) {
-      itkDebugMacro("A JNI error occurred. " << jniException.what());
+      itkDebugMacro("A JNI error occurred: " << jniException.what());
     }
     catch (std::exception& e) {
-      itkDebugMacro("A C++ error occurred. " << e.what());
+      itkDebugMacro("A C++ error occurred: " << e.what());
     }
     return isType;
   } // end CanWriteFile function
