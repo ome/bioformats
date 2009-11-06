@@ -65,7 +65,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
     if (comment == null) return false;
-    return comment.trim().startsWith("<MetaData>");
+    comment = comment.trim();
+    return comment.startsWith("<MetaData>") && comment.endsWith("</MetaData>");
   }
 
   // -- Internal FormatReader API methods --
@@ -138,7 +139,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       if (coords[2] < timestamps.size()) {
         String stamp = timestamps.get(coords[2]);
         long ms = DateTools.getTime(stamp, parse);
-        store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000f),
+        store.setPlaneTimingDeltaT(new Float((ms - startDate) / 1000.0),
           0, 0, i);
       }
       if (i < exposures.size()) {
