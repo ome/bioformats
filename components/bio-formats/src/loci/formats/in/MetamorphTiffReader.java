@@ -65,7 +65,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
     if (comment == null) return false;
-    return comment.trim().startsWith("<MetaData>");
+    comment = comment.trim();
+    return comment.startsWith("<MetaData>") && comment.endsWith("</MetaData>");
   }
 
   // -- Internal FormatReader API methods --
