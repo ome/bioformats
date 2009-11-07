@@ -223,6 +223,20 @@ public class SlidebookReader extends FormatReader {
         else {
           if ((fp % 2) == 1) fp -= 2;
           in.seek(fp);
+
+          // make sure there isn't another block nearby
+
+          String checkString = in.readString(64);
+          if (checkString.indexOf("II") != -1 ||
+            checkString.indexOf("MM") != -1)
+          {
+            int index = checkString.indexOf("II");
+            if (index == -1) index = checkString.indexOf("MM");
+            in.seek(fp + index - 4);
+            continue;
+          }
+          else in.seek(fp);
+
           pixelOffsets.add(new Long(fp));
           try {
             byte[] buf = new byte[8192];
