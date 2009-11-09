@@ -100,7 +100,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private int[] channelColors;
   private int lastPlane;
-  private Vector<Integer> tiles = new Vector<Integer>();
+  private Hashtable<Integer, Integer> tiles = new Hashtable<Integer, Integer>();
 
   // -- Constructor --
 
@@ -191,7 +191,6 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
     lastPlane = no;
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -255,6 +254,7 @@ public class ZeissZVIReader extends FormatReader {
         for (int col=0; col<tileColumns; col++) {
           int rowIndex = row * tileHeight;
           int colIndex = col * tileWidth;
+          int tileIndex = row * tileColumns + col;
 
           if ((rowIndex <= y && rowIndex + tileHeight >= y) ||
             (rowIndex > y && rowIndex <= y + h))
@@ -275,18 +275,28 @@ public class ZeissZVIReader extends FormatReader {
                 ((row % 2) == 0 && getRGBChannelCount() > 1))
               {
                 ii = row*tileColumns + (tileColumns - col - 1);
+                tileIndex = row * tileColumns + (tileColumns - col - 1);
               }
-              if (!tiles.contains(new Integer(ii))) {
+              Integer tileCount = tiles.get(new Integer(ii));
+              boolean valid = tileCount != null && tileCount.intValue() > no;
+              if (!valid) {
                 colOffset += tileW;
                 if (colOffset >= w) {
                   colOffset = 0;
                   rowOffset += tileH;
                 }
+                firstTile -= getImageCount();
                 continue;
               }
-              else ii = tiles.indexOf(new Integer(ii));
-              ii *= count;
-              ii += firstTile;
+              int p = ii;
+              for (int n=0; n<p; n++) {
+                if (tiles.containsKey(new Integer(n))) {
+                  ii += tiles.get(new Integer(n)).intValue();
+                }
+              }
+              if (firstTile > 0) ii += firstTile;
+              ii -= tileIndex;
+              ii += no;
 
               if (ii >= imageFiles.length) {
                 colOffset += tileW;
@@ -431,10 +441,10 @@ public class ZeissZVIReader extends FormatReader {
         RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
         int imageNum = getImageNumber(name, -1);
-        tagsToParse.add(s);
         if (imageNum == -1) {
           parseTags(imageNum, s, new DummyMetadata());
         }
+        else tagsToParse.add(s);
       }
       else if (dirName.equals("Shapes") && name.indexOf("Item") != -1) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
@@ -751,9 +761,13 @@ public class ZeissZVIReader extends FormatReader {
         if (cIndex != -1) key += " " + cIndex;
         addGlobalMeta(key, value);
 
-        if (key.startsWith("ImageTile")) {
-          if (!tiles.contains(new Integer(value))) {
-            tiles.add(new Integer(value));
+        if (key.startsWith("ImageTile") && !(store instanceof DummyMetadata)) {
+          if (!tiles.containsKey(new Integer(value))) {
+            tiles.put(new Integer(value), new Integer(1));
+          }
+          else {
+            int v = tiles.get(new Integer(value)).intValue() + 1;
+            tiles.put(new Integer(value), new Integer(v));
           }
         }
 
