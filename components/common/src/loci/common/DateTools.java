@@ -73,8 +73,14 @@ public final class DateTools {
     return ticks / 10000; // 100 ns = 0.0001 ms
   }
 
-  /** Converts the given timestamp into an ISO 8601 date. */
+  /** Converts the given timestamp into an ISO8601 date. */
   public static String convertDate(long stamp, int format) {
+    return convertDate(stamp, format, ISO8601_FORMAT);
+  }
+
+  /** Converts the given timestamp into a date string with the given format. */
+  public static String convertDate(long stamp, int format, String outputFormat)
+  {
     // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
     // dates than you will ever need (or want)
 
@@ -95,7 +101,7 @@ public final class DateTools {
         break;
     }
 
-    SimpleDateFormat fmt = new SimpleDateFormat(ISO8601_FORMAT);
+    SimpleDateFormat fmt = new SimpleDateFormat(outputFormat);
     StringBuffer sb = new StringBuffer();
 
     Date d = new Date(ms);
@@ -106,14 +112,27 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
+   * Delegates to {@link formatDate(String, String, boolean)}, with the
+   * 'lenient' flag set to false.
    *
    * @param date The date to format as ISO 8601.
    * @param format The date's input format.
    */
   public static String formatDate(String date, String format) {
+    return formatDate(date, format, false);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date The date to format as ISO 8601.
+   * @param form The date's input format.
+   * @param lenient Whether or not to leniently parse the date.
+   */
+  public static String formatDate(String date, String format, boolean lenient) {
     if (date == null) return null;
     SimpleDateFormat sdf = new SimpleDateFormat(format);
-    sdf.setLenient(false);
+    sdf.setLenient(lenient);
     Date d = sdf.parse(date, new ParsePosition(0));
     if (d == null) return null;
     sdf = new SimpleDateFormat(ISO8601_FORMAT);
@@ -122,13 +141,28 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
+   * Delegates to {@link formatDates(String, String[], boolean)}, with the
+   * 'lenient' flag set to false.
    *
    * @param date The date to format as ISO 8601.
    * @param formats The date's possible input formats.
    */
   public static String formatDate(String date, String[] formats) {
+    return formatDate(date, formats, false);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date The date to format as ISO 8601.
+   * @param formats The date's possible input formats.
+   * @param lenient Whether or not to leniently parse the date.
+   */
+  public static String formatDate(String date, String[] formats,
+    boolean lenient)
+  {
     for (int i=0; i<formats.length; i++) {
-      String result = formatDate(date, formats[i]);
+      String result = formatDate(date, formats[i], lenient);
       if (result != null) return result;
     }
     return null;
