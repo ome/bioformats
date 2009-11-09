@@ -270,7 +270,9 @@ public class FlexReader extends FormatReader {
         String mea = new Location(parent, file).getAbsolutePath();
         debug("  Found .mea file " + mea);
         initMeaFile(mea);
-        measurementFiles.add(thisFile.getAbsolutePath());
+        if (!measurementFiles.contains(thisFile.getAbsolutePath())) {
+          measurementFiles.add(thisFile.getAbsolutePath());
+        }
         return;
       }
     }
@@ -281,7 +283,9 @@ public class FlexReader extends FormatReader {
   private void initMeaFile(String id) throws FormatException, IOException {
     debug("initMeaFile(" + id + ")");
     Location file = new Location(id).getAbsoluteFile();
-    measurementFiles.add(file.getAbsolutePath());
+    if (!measurementFiles.contains(file.getAbsolutePath())) {
+      measurementFiles.add(file.getAbsolutePath());
+    }
 
     // parse the .mea file to get a list of .flex files
     MeaHandler handler = new MeaHandler();
@@ -306,7 +310,9 @@ public class FlexReader extends FormatReader {
       String[] files = findFiles(file, new String[] {RES_SUFFIX});
       if (files != null) {
         for (String f : files) {
-          measurementFiles.add(f);
+          if (!measurementFiles.contains(f)) {
+            measurementFiles.add(f);
+          }
         }
       }
     }
@@ -752,7 +758,9 @@ public class FlexReader extends FormatReader {
       debug("Returning file list:");
       for (String file : fileList) {
         debug("  " + file);
-        if (checkSuffix(file, MEASUREMENT_SUFFIXES)) {
+        if (checkSuffix(file, MEASUREMENT_SUFFIXES) &&
+          !measurementFiles.contains(file))
+        {
           measurementFiles.add(file);
         }
       }
@@ -845,7 +853,9 @@ public class FlexReader extends FormatReader {
     debug("Returning file list:");
     for (String file : fileList) {
       debug("  " + file);
-      if (checkSuffix(file, MEASUREMENT_SUFFIXES)) {
+      if (checkSuffix(file, MEASUREMENT_SUFFIXES) &&
+        !measurementFiles.contains(file))
+      {
         measurementFiles.add(file);
       }
     }
