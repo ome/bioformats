@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -59,12 +60,18 @@ public class FluoviewReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
+  /** Date format */
+  private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss.SSS";
+
   // -- Fields --
 
   /** Pixel dimensions for this file. */
   private double voxelX = 1, voxelY = 1, voxelZ = 1, voxelC = 1, voxelT = 1;
 
   private String dimensionOrder;
+  private String date = null;
+  private int timeIndex = -1;
+  private long[][] stamps = null;
 
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
@@ -147,6 +154,9 @@ public class FluoviewReader extends BaseTiffReader {
       gains = voltages = offsets = channelNames = lensNA = null;
       mag = detManu = objManu = comment = null;
       gamma = null;
+      date = null;
+      timeIndex = -1;
+      stamps = null;
     }
   }
 
@@ -229,7 +239,7 @@ public class FluoviewReader extends BaseTiffReader {
 
     // now we need to read the MMSTAMP data to determine dimension order
 
-    double[][] stamps = new double[8][ifds.size()];
+    stamps = new long[8][ifds.size()];
     for (int i=0; i<ifds.size(); i++) {
       s = ifds.get(i).getIFDShortArray(MMSTAMP, true);
       byte[] stamp = new byte[s.length];
@@ -239,9 +249,9 @@ public class FluoviewReader extends BaseTiffReader {
       }
       ras = new RandomAccessInputStream(stamp);
 
-      // each stamp is 8 doubles, representing the position on dimensions 3-10
+      // each stamp is 8 longs, representing the position on dimensions 3-10
       for (int j=0; j<8; j++) {
-        stamps[j][i] = ras.readDouble();
+        stamps[j][i] = ras.readLong() / 10000;
       }
     }
 
@@ -287,6 +297,7 @@ public class FluoviewReader extends BaseTiffReader {
           dimensionOrder += "T";
         }
         voxelT = voxel;
+        timeIndex = i - 2;
       }
       else {
         if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
@@ -329,72 +340,88 @@ public class FluoviewReader extends BaseTiffReader {
     channelNames = new String[getSizeC()];
     lensNA = new String[getSizeC()];
 
-    if (comment != null && comment.startsWith("[")) {
-      int start = comment.indexOf("[Acquisition Parameters]");
-      int end = comment.indexOf("[Acquisition Parameters End]");
-      if (start != -1 && end != -1 && end > start) {
-        String parms = comment.substring(start + 24, end).trim();
+    if (comment != null) {
+      // this is an INI-style comment, with one key/value pair per line
 
-        // this is an INI-style comment, with one key/value pair per line
-
-        StringTokenizer st = new StringTokenizer(parms, "\n");
-        while (st.hasMoreTokens()) {
-          String token = st.nextToken();
-          int eq = token.indexOf("=");
-          if (eq != -1) {
-            String key = token.substring(0, eq);
-            String value = token.substring(eq + 1);
-            addGlobalMeta(key, value);
-            if (key.startsWith("Gain Ch")) {
-              for (int i=0; i<gains.length; i++) {
-                if (gains[i] == null) {
-                  gains[i] = value;
-                  break;
-                }
+      StringTokenizer st = new StringTokenizer(comment, "\n");
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken();
+        int eq = token.indexOf("=");
+        if (eq != -1) {
+          String key = token.substring(0, eq);
+          String value = token.substring(eq + 1);
+          addGlobalMeta(key, value);
+          if (key.startsWith("Gain Ch")) {
+            for (int i=0; i<gains.length; i++) {
+              if (gains[i] == null) {
+                gains[i] = value;
+                break;
               }
             }
-            else if (key.startsWith("PMT Voltage Ch")) {
-              for (int i=0; i<voltages.length; i++) {
-                if (voltages[i] == null) {
-                  voltages[i] = value;
-                  break;
-                }
+          }
+          else if (key.startsWith("PMT Voltage Ch")) {
+            for (int i=0; i<voltages.length; i++) {
+              if (voltages[i] == null) {
+                voltages[i] = value;
+                break;
               }
             }
-            else if (key.startsWith("Offset Ch")) {
-              for (int i=0; i<offsets.length; i++) {
-                if (offsets[i] == null) {
-                  offsets[i] = value;
-                  break;
-                }
+          }
+          else if (key.startsWith("Offset Ch")) {
+            for (int i=0; i<offsets.length; i++) {
+              if (offsets[i] == null) {
+                offsets[i] = value;
+                break;
               }
             }
-            else if (key.equals("Magnification")) mag = value;
-            else if (key.equals("System Configuration")) detManu = value;
-            else if (key.equals("Objective Lens")) objManu = value;
-            else if (key.equals("Gamma")) gamma = new Double(value);
-            else if (key.startsWith("Channel ") && key.endsWith("Dye")) {
-              for (int i=0; i<channelNames.length; i++) {
-                if (channelNames[i] == null) {
-                  channelNames[i] = value;
-                  break;
-                }
+          }
+          else if (key.equals("Magnification")) mag = value;
+          else if (key.equals("System Configuration")) detManu = value;
+          else if (key.equals("Objective Lens")) objManu = value;
+          else if (key.equals("Gamma")) gamma = new Double(value);
+          else if (key.startsWith("Channel ") && key.endsWith("Dye")) {
+            for (int i=0; i<channelNames.length; i++) {
+              if (channelNames[i] == null) {
+                channelNames[i] = value;
+                break;
               }
             }
-            else if (key.startsWith("Confocal Aperture-Ch")) {
-              for (int i=0; i<lensNA.length; i++) {
-                if (lensNA[i] == null) {
-                  lensNA[i] = value.substring(0, value.length() - 2);
-                  break;
-                }
+          }
+          else if (key.startsWith("Confocal Aperture-Ch")) {
+            for (int i=0; i<lensNA.length; i++) {
+              if (lensNA[i] == null) {
+                lensNA[i] = value.substring(0, value.length() - 2);
+                break;
               }
             }
+          }
+          else if (key.equals("Date")) {
+            date = value;
+          }
+          else if (key.equals("Time")) {
+            date += " " + value;
+          }
+        }
+      }
+      if (date != null) {
+        date = DateTools.formatDate(date.trim(),
+          new String[] {"MM/dd/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss"}, true);
+        if (timeIndex >= 0 && date != null) {
+          long ms = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+          int nChars = String.valueOf(getImageCount()).length();
+          for (int i=0; i<getImageCount(); i++) {
+            int[] zct = getZCTCoords(i);
+            String key = String.format(
+              "Timestamp for Z=%2s, C=%2s, T=%2s", zct[0], zct[1], zct[2]);
+            long stamp = ms + stamps[timeIndex][i];
+            addGlobalMeta(key,
+              DateTools.convertDate(stamp, DateTools.UNIX, DATE_FORMAT));
           }
         }
       }
 
-      start = comment.indexOf("[Version Info]");
-      end = comment.indexOf("[Version Info End]");
+      int start = comment.indexOf("[Version Info]");
+      int end = comment.indexOf("[Version Info End]");
       if (start != -1 && end != -1 && end > start) {
         comment = comment.substring(start + 14, end).trim();
         start = comment.indexOf("=") + 1;
@@ -412,13 +439,25 @@ public class FluoviewReader extends BaseTiffReader {
     super.initMetadataStore();
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this, true);
 
     store.setImageDescription(comment, 0);
+    if (date != null) {
+      store.setImageCreationDate(date, 0);
+    }
 
     // link Instrument and Image
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
     store.setImageInstrumentRef(instrumentID, 0);
+
+    // populate timing data
+    if (timeIndex >= 0) {
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneTimingDeltaT(
+          new Double(stamps[timeIndex][i] / 1000.0), 0, 0, i);
+      }
+    }
 
     // populate Dimensions
     store.setDimensionsPhysicalSizeX(new Double(voxelX), 0, 0);
