@@ -1175,6 +1175,7 @@ public class NativeND2Reader extends FormatReader {
             String[] values = t.split(";");
             for (int q=0; q<values.length; q++) {
               int colon = values[q].indexOf(":");
+              if (colon < 0) continue;
               String nextKey = values[q].substring(0, colon).trim();
               String nextValue = values[q].substring(colon + 1).trim();
               if (nextKey.equals("Emission wavelength")) {
