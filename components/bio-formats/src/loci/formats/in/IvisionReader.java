@@ -218,9 +218,8 @@ public class IvisionReader extends FormatReader {
     }
 
     if (xmlFound) {
-      String xml =
-        in.readString((int) (in.length() - in.getFilePointer())).trim();
-      xml = xml.substring(0, xml.lastIndexOf(">") + 1);
+      String xml = in.readString((int) (in.length() - in.getFilePointer()));
+      xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf(">") + 1);
       IvisionHandler handler = new IvisionHandler();
       XMLTools.parseXML(xml, handler);
     }
