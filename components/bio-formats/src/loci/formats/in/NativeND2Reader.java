@@ -80,11 +80,11 @@ public class NativeND2Reader extends FormatReader {
 
   private Vector<Long> zs = new Vector<Long>();
   private Vector<Long> ts = new Vector<Long>();
-  private Vector<Double> tsT = new Vector<Double>();
+  private Vector<Float> tsT = new Vector<Float>();
 
   private int numSeries;
 
-  private float pixelSizeX, pixelSizeY, pixelSizeZ;
+  private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private String voltage, mag, na, objectiveModel, immersion, correction;
 
   private Vector<String> channelNames, modality, binning;
@@ -381,6 +381,10 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      if (getDimensionOrder().equals("T")) {
+        fieldIndex = 0;
+      }
+
       if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
         core[0].dimensionOrder = "C" + getDimensionOrder();
         fieldIndex++;
@@ -522,7 +526,7 @@ public class NativeND2Reader extends FormatReader {
           for (int plane=0; plane<getImageCount(); plane++) {
             // timestamps are stored in ms; we want them in seconds
             double time = in.readDouble() / 1000;
-            tsT.add(new Double(time));
+            tsT.add(new Float(time));
             addSeriesMeta("timestamp " + plane, time);
           }
         }
@@ -1006,10 +1010,10 @@ public class NativeND2Reader extends FormatReader {
     if (key == null || value == null) return;
     addGlobalMeta(key, value);
     if (key.endsWith("dCalibration")) {
-      pixelSizeX = Float.parseFloat(value);
+      pixelSizeX = Double.parseDouble(value);
       pixelSizeY = pixelSizeX;
     }
-    else if (key.endsWith("dZStep")) pixelSizeZ = Float.parseFloat(value);
+    else if (key.endsWith("dZStep")) pixelSizeZ = Double.parseDouble(value);
     else if (key.endsWith("Gain")) gain.add(new Float(value));
     else if (key.endsWith("dLampVoltage")) voltage = value;
     else if (key.endsWith("dObjectiveMag") && mag == null) mag = value;
@@ -1153,7 +1157,7 @@ public class NativeND2Reader extends FormatReader {
             else if (v[0].equals("Exposure")) {
               String[] s = v[1].trim().split(" ");
               try {
-                float time = Float.parseFloat(s[0]);
+                double time = Double.parseDouble(s[0]);
                 // TODO: check for other units
                 if (s[1].equals("ms")) time /= 1000;
                 exposureTime.add(new Float(time));
@@ -1165,12 +1169,13 @@ public class NativeND2Reader extends FormatReader {
             int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
             int last = v[0].indexOf(" ", space + 1);
             if (last == -1) last = v[0].length();
-            pixelSizeZ = Float.parseFloat(v[0].substring(space, last));
+            pixelSizeZ = Double.parseDouble(v[0].substring(space, last));
           }
           else if (v[0].equals("Line")) {
             String[] values = t.split(";");
             for (int q=0; q<values.length; q++) {
               int colon = values[q].indexOf(":");
+              if (colon < 0) continue;
               String nextKey = values[q].substring(0, colon).trim();
               String nextValue = values[q].substring(colon + 1).trim();
               if (nextKey.equals("Emission wavelength")) {
@@ -1180,7 +1185,7 @@ public class NativeND2Reader extends FormatReader {
                 exWave.add(new Integer(nextValue));
               }
               else if (nextKey.equals("Power")) {
-                power.add(new Integer((int) Float.parseFloat(nextValue)));
+                power.add(new Integer((int) Double.parseDouble(nextValue)));
               }
             }
           }
