@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.FileHandle;
 import loci.common.Location;
 import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
@@ -204,9 +205,6 @@ public class FlexReader extends FormatReader {
         q = (int) (q * factor);
         DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
       }
-    }
-    else {
-      System.arraycopy(bytes, 0, buf, 0, bytes.length);
     }
 
     return buf;
@@ -905,7 +903,8 @@ public class FlexReader extends FormatReader {
 
         wellNumber[currentWell][0] = row;
         wellNumber[currentWell][1] = col;
-        s = new RandomAccessInputStream(flexFiles[row][col]);
+        s =
+          new RandomAccessInputStream(new FileHandle(flexFiles[row][col], "r"));
         TiffParser tp = new TiffParser(s);
         ifds[row][col] = tp.getIFDs();
         s.close();

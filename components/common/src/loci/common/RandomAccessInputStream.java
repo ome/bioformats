@@ -126,14 +126,20 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     afp = 0;
   }
 
-  /** Constructs a random access stream around the given byte array. */
-  public RandomAccessInputStream(byte[] array) throws IOException {
-    // this doesn't use a file descriptor, so we don't need to add it to the
-    // file cache
-    raf = new ByteArrayHandle(array);
+  /** Constructs a random access stream around the given handle. */
+  public RandomAccessInputStream(IRandomAccess handle) throws IOException {
+    raf = handle;
     fp = 0;
     afp = 0;
     length = raf.length();
+    fileCache.put(this, true);
+    openFiles++;
+    if (openFiles > MAX_FILES) cleanCache();
+  }
+
+  /** Constructs a random access stream around the given byte array. */
+  public RandomAccessInputStream(byte[] array) throws IOException {
+    this(new ByteArrayHandle(array));
   }
 
   // -- RandomAccessInputStream API methods --
