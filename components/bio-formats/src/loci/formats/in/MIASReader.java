@@ -43,6 +43,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.BitWriter;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -1014,20 +1015,21 @@ public class MIASReader extends FormatReader {
       }
     }
 
-    // threshold the pixel data
+    // threshold and binary encode the pixel data
 
     boolean validMask = false;
+    BitWriter bits = new BitWriter(planes[index].length / 8);
     for (int p=0; p<planes[index].length; p++) {
+      bits.write(planes[index][p] == 0 ? 0 : 1, 1);
       if (planes[index][p] != 0) {
         validMask = true;
-        planes[index][p] = (byte) 1;
       }
     }
 
     if (validMask) {
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-      store.setMaskPixelsBinData(planes[index], imageIndex, roiIndex,
+      store.setMaskPixelsBinData(bits.toByteArray(), imageIndex, roiIndex,
         shapeIndex);
     }
     else debug("Did not populate MaskPixels.BinData for " + id);
