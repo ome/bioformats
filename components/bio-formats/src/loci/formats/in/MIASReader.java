@@ -43,6 +43,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.BitWriter;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -805,8 +806,8 @@ public class MIASReader extends FormatReader {
   private void populateROI(List<String> columns, String[] data, int series,
     int roi, int time, int z, MetadataStore store)
   {
-    float cx = Float.parseFloat(data[columns.indexOf("Col")]);
-    float cy = Float.parseFloat(data[columns.indexOf("Row")]);
+    double cx = Double.parseDouble(data[columns.indexOf("Col")]);
+    double cy = Double.parseDouble(data[columns.indexOf("Row")]);
 
     Integer tv = new Integer(time);
     Integer zv = new Integer(z);
@@ -822,7 +823,7 @@ public class MIASReader extends FormatReader {
     store.setCircleCx(data[columns.indexOf("Col")], series, roi, 0);
     store.setCircleCy(data[columns.indexOf("Row")], series, roi, 0);
 
-    float diam = Float.parseFloat(data[columns.indexOf("Cell Diam.")]);
+    double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     String radius = String.valueOf(diam / 2);
 
     store.setCircleR(radius, series, roi, 0);
@@ -884,7 +885,7 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          int mag = (int) Float.parseFloat(value);
+          int mag = (int) Double.parseDouble(value);
           store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
         }
         else if (key.startsWith("Mode_")) {
@@ -1014,20 +1015,21 @@ public class MIASReader extends FormatReader {
       }
     }
 
-    // threshold the pixel data
+    // threshold and binary encode the pixel data
 
     boolean validMask = false;
+    BitWriter bits = new BitWriter(planes[index].length / 8);
     for (int p=0; p<planes[index].length; p++) {
+      bits.write(planes[index][p] == 0 ? 0 : 1, 1);
       if (planes[index][p] != 0) {
         validMask = true;
-        planes[index][p] = (byte) 1;
       }
     }
 
     if (validMask) {
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-      store.setMaskPixelsBinData(planes[index], imageIndex, roiIndex,
+      store.setMaskPixelsBinData(bits.toByteArray(), imageIndex, roiIndex,
         shapeIndex);
     }
     else debug("Did not populate MaskPixels.BinData for " + id);
