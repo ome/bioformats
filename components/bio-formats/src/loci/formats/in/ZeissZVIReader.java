@@ -231,29 +231,22 @@ public class ZeissZVIReader extends FormatReader {
       int rowOffset = 0;
       int colOffset = 0;
 
-      int count = 1;
-      String dimOrder = getDimensionOrder();
-      for (int i=2; i<dimOrder.length(); i++) {
-        if (dimOrder.charAt(i) == 'Z') {
-          count *= getSizeZ();
-        }
-        else if (dimOrder.charAt(i) == 'T') {
-          count *= getSizeT();
-        }
-        else if (dimOrder.charAt(i) == 'C') {
-          count *= getEffectiveSizeC();
-          break;
-        }
-      }
-      int firstTile = (no / count) * count * tileRows * tileColumns +
-        (no % count);
+      int count = getImageCount();
 
       byte[] tile = new byte[tileWidth * tileHeight * pixel];
+
+      int channel = no % getEffectiveSizeC();
+      int plane = (no / getEffectiveSizeC()) * getEffectiveSizeC();
+      int scale = plane * tileRows * tileColumns + channel;
+      int firstTile =
+        firstImageTile == null ? 0 : Integer.parseInt(firstImageTile);
+      int prevIndex = -1;
 
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileColumns; col++) {
           int rowIndex = row * tileHeight;
           int colIndex = col * tileWidth;
+
           int tileIndex = row * tileColumns + col;
 
           if ((rowIndex <= y && rowIndex + tileHeight >= y) ||
@@ -271,32 +264,55 @@ public class ZeissZVIReader extends FormatReader {
                 tileHeight - tileY : y + h - rowIndex - tileY;
 
               int ii = row*tileColumns + col;
-              if (((row % 2) == 1 && getRGBChannelCount() == 1) ||
-                ((row % 2) == 0 && getRGBChannelCount() > 1))
-              {
+              if (((row % 2) == 1 && getRGBChannelCount() == 1)) {
                 ii = row*tileColumns + (tileColumns - col - 1);
-                tileIndex = row * tileColumns + (tileColumns - col - 1);
+                tileIndex -= col;
+                tileIndex += (tileColumns - col - 1);
+              }
+              else if (getRGBChannelCount() > 1) {
+                ii = (tileRows - row - 1) * tileColumns + 1;
+                if ((row % 2) == 0) {
+                  ii += col;
+                }
+                else {
+                  ii += (tileColumns - col - 1);
+                }
+                tileIndex = 0;
               }
               Integer tileCount = tiles.get(new Integer(ii));
-              boolean valid = tileCount != null && tileCount.intValue() > no;
+              boolean valid = tileCount != null;
               if (!valid) {
                 colOffset += tileW;
                 if (colOffset >= w) {
                   colOffset = 0;
                   rowOffset += tileH;
                 }
-                firstTile -= getImageCount();
                 continue;
               }
-              int p = ii;
-              for (int n=0; n<p; n++) {
-                if (tiles.containsKey(new Integer(n))) {
-                  ii += tiles.get(new Integer(n)).intValue();
+              if (getImageCount() > 1 && getEffectiveSizeC() == 1) {
+                int p = ii;
+                for (int n=0; n<p; n++) {
+                  if (tiles.containsKey(new Integer(n))) {
+                    ii += tiles.get(new Integer(n)).intValue();
+                  }
                 }
               }
-              if (firstTile > 0) ii += firstTile;
-              ii -= tileIndex;
-              ii += no;
+              ii *= getEffectiveSizeC();
+              if (getImageCount() > 1 && getEffectiveSizeC() == 1) {
+                ii -= tileIndex;
+              }
+              else if (getEffectiveSizeC() > 1) {
+                ii += scale;
+              }
+              if (getImageCount() == 1) ii -= firstTile;
+              if (getEffectiveSizeC() == 1) ii += no;
+
+              if (ii < 0) {
+                if (prevIndex < 0) ii = no;
+                else {
+                  ii = prevIndex + getImageCount();
+                }
+              }
 
               if (ii >= imageFiles.length) {
                 colOffset += tileW;
@@ -306,6 +322,13 @@ public class ZeissZVIReader extends FormatReader {
                 }
                 continue;
               }
+              if (((row % 2) == 1 && getRGBChannelCount() == 1) ||
+                ((row % 2) == 0 && getRGBChannelCount() > 1))
+              {
+                tileIndex -= (tileColumns - col - 1);
+                tileIndex += col;
+              }
+              prevIndex = ii;
               RandomAccessInputStream s = poi.getDocumentStream(imageFiles[ii]);
               s.seek(offsets[ii]);
               int nread = s.read(tile);
@@ -549,6 +572,31 @@ public class ZeissZVIReader extends FormatReader {
     if (isRGB()) core[0].sizeC *= 3;
 
     // calculate tile dimensions and number of tiles
+    Integer[] t = tiles.keySet().toArray(new Integer[0]);
+    Arrays.sort(t);
+    Vector<Integer> tmpOffsets = new Vector<Integer>();
+    Vector<String> tmpFiles = new Vector<String>();
+    int index = 0;
+    for (Integer key : t) {
+      int nTiles = tiles.get(key).intValue();
+      if (nTiles < getImageCount()) {
+        tiles.remove(key);
+      }
+      else {
+        for (int p=0; p<nTiles; p++) {
+          tmpOffsets.add(new Integer(offsets[index + p]));
+          tmpFiles.add(imageFiles[index + p]);
+        }
+      }
+      index += nTiles;
+    }
+
+    offsets = new int[tmpOffsets.size()];
+    for (int i=0; i<offsets.length; i++) {
+      offsets[i] = tmpOffsets.get(i).intValue();
+    }
+    imageFiles = tmpFiles.toArray(new String[tmpFiles.size()]);
+
     int totalTiles = offsets.length / getImageCount();
 
     tileRows = realHeight / getSizeY();
@@ -574,6 +622,7 @@ public class ZeissZVIReader extends FormatReader {
       core[0].sizeX = tileWidth * tileColumns;
       core[0].sizeY = tileHeight * tileRows;
     }
+
 
     core[0].dimensionOrder = "XY";
     if (isRGB()) core[0].dimensionOrder += "C";
