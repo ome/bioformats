@@ -1018,11 +1018,14 @@ public class MIASReader extends FormatReader {
     // threshold and binary encode the pixel data
 
     boolean validMask = false;
-    BitWriter bits = new BitWriter(planes[index].length / 8);
-    for (int p=0; p<planes[index].length; p++) {
-      bits.write(planes[index][p] == 0 ? 0 : 1, 1);
-      if (planes[index][p] != 0) {
-        validMask = true;
+    BitWriter bits = null;
+    if (planes.length > index) {
+      bits = new BitWriter(planes[index].length / 8);
+      for (int p=0; p<planes[index].length; p++) {
+        bits.write(planes[index][p] == 0 ? 0 : 1, 1);
+        if (planes[index][p] != 0) {
+          validMask = true;
+        }
       }
     }
 
