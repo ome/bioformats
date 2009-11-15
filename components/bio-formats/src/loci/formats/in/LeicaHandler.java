@@ -273,34 +273,39 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("Image")) {
       if (!linkedInstruments) {
+        int c = 0;
         for (Detector d : detectors) {
-          if (detectorChannel < numChannels) {
-            String id = MetadataTools.createLSID(
-              "Detector", numDatasets, detectorChannel);
-            store.setDetectorID(id, numDatasets, detectorChannel);
-            store.setDetectorType(d.type, numDatasets, detectorChannel);
-            store.setDetectorModel(d.model, numDatasets, detectorChannel);
-            store.setDetectorZoom(d.zoom, numDatasets, detectorChannel);
-            store.setDetectorOffset(d.offset, numDatasets, detectorChannel);
-            store.setDetectorVoltage(d.voltage, numDatasets, detectorChannel);
+          String id = MetadataTools.createLSID(
+            "Detector", numDatasets, detectorChannel);
+          store.setDetectorID(id, numDatasets, detectorChannel);
+          store.setDetectorType(d.type, numDatasets, detectorChannel);
+          store.setDetectorModel(d.model, numDatasets, detectorChannel);
+          store.setDetectorZoom(d.zoom, numDatasets, detectorChannel);
+          store.setDetectorOffset(d.offset, numDatasets, detectorChannel);
+          store.setDetectorVoltage(d.voltage, numDatasets, detectorChannel);
 
+          if (c < numChannels) {
             if (d.active) {
-              store.setDetectorSettingsOffset(d.offset, numDatasets,
-                detectorChannel);
-              store.setDetectorSettingsDetector(
-                id, numDatasets, detectorChannel);
+              store.setDetectorSettingsOffset(d.offset, numDatasets, c);
+              store.setDetectorSettingsDetector(id, numDatasets, c);
+              c++;
             }
-
-            detectorChannel++;
           }
+          detectorChannel++;
         }
 
+        int filter = 0;
         for (int i=0; i<nextFilter; i++) {
-          String id = MetadataTools.createLSID("Filter", numDatasets, i);
-          if (i < numChannels) {
+          while (filter < detectors.size() && !detectors.get(filter).active) {
+            filter++;
+          }
+          if (filter >= detectors.size() || filter >= numChannels) break;
+          String id = MetadataTools.createLSID("Filter", numDatasets, filter);
+          if (i < numChannels && detectors.get(filter).active) {
             store.setLogicalChannelSecondaryEmissionFilter(
               id, numDatasets, i);
           }
+          filter++;
         }
       }
 
@@ -644,6 +649,8 @@ public class LeicaHandler extends DefaultHandler {
             nextFilter);
           store.setTransmittanceRangeCutOut(new Integer(m.cutOut), numDatasets,
             nextFilter);
+          /* debug */ System.out.println("(648) linking " + filter + " to " +
+            nextChannel);
           store.setLogicalChannelSecondaryEmissionFilter(filter, numDatasets,
             nextChannel);
           nextFilter++;
