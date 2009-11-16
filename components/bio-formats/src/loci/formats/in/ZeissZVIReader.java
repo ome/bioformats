@@ -920,7 +920,7 @@ public class ZeissZVIReader extends FormatReader {
           String[] tokens = value.split(" ");
           for (int q=0; q<tokens.length; q++) {
             int slash = tokens[q].indexOf("/");
-            if (slash != -1) {
+            if (slash != -1 && slash - q > 0) {
               int mag = (int)
                 Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
