@@ -924,7 +924,7 @@ public class FileStitcher implements IFormatReader {
 
     fp = findPattern(currentId);
 
-    if (reader.fileGroupOption(id) == FormatTools.MUST_GROUP && !patternIds) {
+    if (reader.fileGroupOption(id) == FormatTools.MUST_GROUP) {
       // reader subclass is handling file grouping
       noStitch = true;
       reader.setId(currentId);
