@@ -924,11 +924,15 @@ public class FileStitcher implements IFormatReader {
 
     fp = findPattern(currentId);
 
-    if (reader.fileGroupOption(id) == FormatTools.MUST_GROUP) {
+    if (reader.fileGroupOption(id) == FormatTools.MUST_GROUP && !patternIds) {
       // reader subclass is handling file grouping
       noStitch = true;
       reader.setId(currentId);
       return;
+    }
+
+    if (!fp.isValid()) {
+      throw new FormatException("Invalid file pattern: " + fp.getPattern());
     }
     reader.setId(fp.getFiles()[0]);
 

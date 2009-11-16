@@ -278,6 +278,10 @@ public class Importer {
         if (!statusOk(status)) return;
         id = options.getId();
         if (id == null) id = currentFile;
+        FilePattern fp = new FilePattern(id);
+        if (!fp.isValid()) {
+          id = currentFile;
+        }
       }
       else debug("no need to prompt for file pattern");
 
@@ -610,6 +614,7 @@ public class Importer {
           boolean needComposite = doMerge && (cSize > 3 || eight);
           int merge = (needComposite || !doMerge) ? 1 : cSize;
 
+          r.setSeries(i);
           // NB: ImageJ 1.39+ is required for VirtualStack
           BFVirtualStack virtualStackB = new BFVirtualStack(id,
             r, colorize, doMerge, options.isRecord());
