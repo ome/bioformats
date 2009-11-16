@@ -954,6 +954,9 @@ public class MIASReader extends FormatReader {
         store.setMaskPixelsSizeY(
           new Integer(getSizeY()), series, roi + nOverlays, 0);
         store.setMaskPixelsExtendedPixelType("bit", series, roi + nOverlays, 0);
+
+        String color = String.valueOf(0xff000000 | (0xff << (8 * (2 - i))));
+        store.setShapeStrokeColor(color, series, roi + nOverlays, 0);
         nOverlays++;
       }
     }
