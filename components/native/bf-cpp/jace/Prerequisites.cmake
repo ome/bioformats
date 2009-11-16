@@ -22,12 +22,6 @@
 # CMake build file for cross-platform location of prerequisite libraries,
 # including Boost Thread and Java's jni.h.
 
-if(WIN32)
-cmake_minimum_required(VERSION 2.8)
-else(WIN32)
-cmake_minimum_required(VERSION 2.6)
-endif(WIN32)
-
 ### search for prerequisite libraries ###
 
 message(STATUS "")
