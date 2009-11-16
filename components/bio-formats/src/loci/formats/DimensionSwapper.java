@@ -265,7 +265,9 @@ public class DimensionSwapper extends ReaderWrapper {
   public void setId(String id) throws FormatException, IOException {
     String oldFile = getCurrentFile();
     super.setId(id);
-    if (!id.equals(oldFile) || outputOrder == null) {
+    if (!id.equals(oldFile) || outputOrder == null ||
+      outputOrder.length != getSeriesCount())
+    {
       outputOrder = new String[getSeriesCount()];
     }
   }
