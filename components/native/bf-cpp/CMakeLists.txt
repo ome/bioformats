@@ -40,6 +40,8 @@ cmake_minimum_required(VERSION 2.6.4)
 
 project(bfcpp)
 
+include(jace/Prerequisites.cmake)
+
 add_subdirectory(jace)
 
 ### build Bio-Formats C++ bindings ###

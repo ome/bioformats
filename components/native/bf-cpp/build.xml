@@ -131,7 +131,17 @@ the Subversion repository using the command:
   <target name="gen-makefile" depends="check-jace, gen-proxies"
     description="generate build system for Bio-Formats C++ bindings">
     <mkdir dir="${build.dir}"/>
+    <if>
+      <isset property="isWindows"/>
+      <then>
+        <property name="cmake.generator" value="${cmake.generator.windows}"/>
+      </then>
+      <else>
+        <property name="cmake.generator" value="${cmake.generator.other}"/>
+      </else>
+    </if>
     <exec executable="cmake" dir="${build.dir}" failonerror="true">
+      <arg value="-G${cmake.generator}"/>
       <arg value="-DJACE_DIR=${jace.home}"/>
       <arg value=".."/>
     </exec>
@@ -146,9 +156,9 @@ the Subversion repository using the command:
       <isset property="isWindows"/>
       <then>
         <copy file="${build.dir}/jace-runtime.jar"
-          todir="${build.dir}/debug"/>
+          todir="${build.dir}/Debug"/>
         <copy file="${build.dir}/loci_tools.jar"
-          todir="${build.dir}/debug"/>
+          todir="${build.dir}/Debug"/>
         <copy file="${build.dir}/jace-runtime.jar"
           todir="${build.dir}/release"/>
         <copy file="${build.dir}/loci_tools.jar"
@@ -171,6 +181,10 @@ the Subversion repository using the command:
 Please use Visual Studio to complete the build.
 In Visual Studio, press F7, or select
 "Build solution" from the "Build" menu.
+
+After the build is complete, you will need to
+copy jace.dll from ${build.dir}\jace\Debug to ${build.dir}\Debug
+before the executables will run.
 </echo>
       </then>
       <else>
