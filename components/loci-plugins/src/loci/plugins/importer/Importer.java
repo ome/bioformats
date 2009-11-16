@@ -278,6 +278,10 @@ public class Importer {
         if (!statusOk(status)) return;
         id = options.getId();
         if (id == null) id = currentFile;
+        FilePattern fp = new FilePattern(id);
+        if (!fp.isValid()) {
+          id = currentFile;
+        }
       }
       else debug("no need to prompt for file pattern");
 
