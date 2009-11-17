@@ -274,8 +274,19 @@ public class ImageInfo {
     if (map != null) Location.mapId(id, map);
     else if (preload) {
       RandomAccessInputStream f = new RandomAccessInputStream(id);
-      byte[] b = new byte[(int) f.length()];
-      f.read(b);
+      int len = (int) f.length();
+      LogTools.println("Caching " + len + " bytes:");
+      byte[] b = new byte[len];
+      int blockSize = 8 * 1024 * 1024; // 8 MB
+      int read = 0, left = len;
+      while (left > 0) {
+        int r = f.read(b, read, blockSize < left ? blockSize : left);
+        read += r;
+        left -= r;
+        float ratio = (float) read / len;
+        int p = (int) (100 * ratio);
+        LogTools.println("\tRead " + read + " bytes (" + p + "% complete)");
+      }
       f.close();
       ByteArrayHandle file = new ByteArrayHandle(b);
       Location.mapFile(id, file);
