@@ -94,6 +94,7 @@ public class Location {
     if (id == null) return;
     if (filename == null) idMap.remove(id);
     else idMap.put(id, filename);
+    LogTools.debug("Location.mapId: " + id + " -> " + filename);
   }
 
   /** Maps the given id to the given random access handle. */
@@ -101,6 +102,7 @@ public class Location {
     if (id == null) return;
     if (ira == null) idMap.remove(id);
     else idMap.put(id, ira);
+    LogTools.debug("Location.mapFile: " + id + " -> " + ira);
   }
 
   /**
@@ -153,25 +155,28 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable)
     throws IOException
   {
-    File f = new File(getMappedId(id)).getAbsoluteFile();
-    if (getMappedFile(id) != null) return getMappedFile(id);
+    IRandomAccess handle = getMappedFile(id);
+    if (handle == null) {
+      String mapId = getMappedId(id);
+      File f = new File(mapId).getAbsoluteFile();
 
-    IRandomAccess handle = null;
-    if (id.startsWith("http://")) {
-      handle = new URLHandle(getMappedId(id), writable ? "w" : "r");
+      if (id.startsWith("http://")) {
+        handle = new URLHandle(mapId, writable ? "w" : "r");
+      }
+      else if (ZipHandle.isZipFile(id)) {
+        handle = new ZipHandle(mapId);
+      }
+      else if (GZipHandle.isGZipFile(id)) {
+        handle = new GZipHandle(mapId);
+      }
+      else if (BZip2Handle.isBZip2File(id)) {
+        handle = new BZip2Handle(mapId);
+      }
+      else {
+        handle = new FileHandle(f, writable ? "rw" : "r");
+      }
     }
-    else if (ZipHandle.isZipFile(id)) {
-      handle = new ZipHandle(getMappedId(id));
-    }
-    else if (GZipHandle.isGZipFile(id)) {
-      handle = new GZipHandle(getMappedId(id));
-    }
-    else if (BZip2Handle.isBZip2File(id)) {
-      handle = new BZip2Handle(getMappedId(id));
-    }
-    else {
-      handle = new FileHandle(f, writable ? "rw" : "r");
-    }
+    LogTools.debug("Location.getHandle: " + id + " -> " + handle);
     return handle;
   }
 
