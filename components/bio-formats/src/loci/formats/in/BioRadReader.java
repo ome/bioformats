@@ -95,6 +95,8 @@ public class BioRadReader extends FormatReader {
 
   public static final String[] PIC_SUFFIX = {"pic"};
 
+  public static final int LUT_LENGTH = 256;
+
   // -- Fields --
 
   private Vector<String> used;
@@ -103,6 +105,7 @@ public class BioRadReader extends FormatReader {
 
   private byte[][][] lut;
   private int lastChannel;
+  private boolean brokenNotes = false;
 
   private Vector<Note> noteStrings;
 
@@ -208,6 +211,7 @@ public class BioRadReader extends FormatReader {
       lastChannel = 0;
       noteStrings = null;
       offset = gain = null;
+      brokenNotes = false;
     }
   }
 
@@ -331,89 +335,8 @@ public class BioRadReader extends FormatReader {
     int nLasers = 0;
 
     // read notes
-    int noteCount = 0;
-    boolean brokenNotes = false;
-    while (notes) {
-      // read in note
 
-      Note n = new Note();
-      n.level = in.readShort();
-      notes = in.readInt() != 0;
-      n.num = in.readShort();
-      n.status = in.readShort();
-      n.type = in.readShort();
-      n.x = in.readShort();
-      n.y = in.readShort();
-      n.p = in.readString(80);
-
-      if (n.type < 0 || n.type >= NOTE_NAMES.length) {
-        notes = false;
-        brokenNotes = true;
-        break;
-      }
-
-      // be sure to remove binary data from the note text
-      int ndx = n.p.length();
-      for (int i=0; i<n.p.length(); i++) {
-        if (n.p.charAt(i) == 0) {
-          ndx = i;
-          break;
-        }
-      }
-
-      n.p = n.p.substring(0, ndx).trim();
-
-      String value = n.p.replaceAll("=", "");
-      Vector<String> v = new Vector<String>();
-      StringTokenizer t = new StringTokenizer(value, " ");
-      while (t.hasMoreTokens()) {
-        String token = t.nextToken().trim();
-        if (token.length() > 0) v.add(token);
-      }
-      String[] tokens = v.toArray(new String[v.size()]);
-      try {
-        if (tokens.length > 1) {
-          int noteType = Integer.parseInt(tokens[1]);
-
-          if (noteType == 2 && value.indexOf("AXIS_4") != -1) {
-            core[0].sizeZ = 1;
-            core[0].sizeT = getImageCount();
-            core[0].orderCertain = true;
-          }
-        }
-      }
-      catch (NumberFormatException e) { }
-
-      // add note to list
-      noteCount++;
-
-      noteStrings.add(n);
-    }
-
-    status("Reading color table");
-
-    // read color tables
-    int numLuts = 0;
-    lut = new byte[3][3][256];
-    boolean eof = false;
-    int next = 0;
-    while (!eof && numLuts < 3 && !brokenNotes) {
-      if (in.getFilePointer() + lut[numLuts][next].length <= in.length()) {
-        in.read(lut[numLuts][next++]);
-        if (next == 3) {
-          next = 0;
-          numLuts++;
-        }
-      }
-      else eof = true;
-      if (eof && numLuts == 0) lut = null;
-    }
-    if (brokenNotes) lut = null;
-
-
-    String message = numLuts + " color table" + (numLuts == 1 ? "" : "s") +
-      " present.";
-    debug(message, 2);
+    readNotes(in, true);
 
     status("Populating metadata");
 
@@ -454,8 +377,6 @@ public class BioRadReader extends FormatReader {
       }
     }
 
-    core[0].indexed = lut != null;
-
     // populate Pixels
 
     core[0].dimensionOrder = "XYCTZ";
@@ -463,11 +384,12 @@ public class BioRadReader extends FormatReader {
     int nextDetector = 0;
 
     boolean multipleFiles = false;
-    for (Note n : noteStrings) {
+    for (int noteIndex=0; noteIndex<noteStrings.size(); noteIndex++) {
+      Note n = noteStrings.get(noteIndex);
       switch (n.type) {
         case NOTE_TYPE_USER:
           // TODO : this should be an overlay
-          addGlobalMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteIndex, n.toString());
           break;
         case NOTE_TYPE_SCALEBAR:
           // TODO : this should be an overlay
@@ -475,7 +397,7 @@ public class BioRadReader extends FormatReader {
           // SCALEBAR = <length> <angle>
           // where <length> is the length of the scalebar in microns,
           // and <angle> is the angle in degrees
-          addGlobalMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteIndex, n.toString());
           break;
         case NOTE_TYPE_ARROW:
           // TODO : this should be an overlay
@@ -484,7 +406,7 @@ public class BioRadReader extends FormatReader {
           // where <lx> and <ly> define the arrow's bounding box,
           // <angle> is the angle in degrees and <fill> is either "Fill" or
           // "Outline"
-          addGlobalMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteIndex, n.toString());
           break;
         case NOTE_TYPE_VARIABLE:
           if (n.p.indexOf("=") >= 0) {
@@ -497,11 +419,11 @@ public class BioRadReader extends FormatReader {
             }
             else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
               store.setObjectiveNominalMagnification(
-                new Integer((int) Double.parseDouble(value)), 0, 0);
+                new Integer((int) Float.parseFloat(value)), 0, 0);
             }
             else if (key.equals("LENS_MAGNIFICATION")) {
               store.setObjectiveNominalMagnification(
-                new Integer((int) Double.parseDouble(value)), 0, 0);
+                new Integer((int) Float.parseFloat(value)), 0, 0);
             }
             else if (key.startsWith("SETTING")) {
               if (key.indexOf("_DET_") != -1) {
@@ -569,7 +491,7 @@ public class BioRadReader extends FormatReader {
             store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
           }
           else {
-            addGlobalMeta("Note #" + noteCount, n.toString());
+            addGlobalMeta("Note #" + noteIndex, n.toString());
           }
           break;
         case NOTE_TYPE_STRUCTURE:
@@ -598,7 +520,7 @@ public class BioRadReader extends FormatReader {
                 addGlobalMeta("Z Step Size", values[14]);
 
                 store.setObjectiveNominalMagnification(
-                  new Integer((int) Double.parseDouble(values[11])), 0, 0);
+                  new Integer((int) Float.parseFloat(values[11])), 0, 0);
                 store.setDimensionsPhysicalSizeZ(new Double(values[14]), 0, 0);
                 break;
               case 2:
@@ -609,11 +531,11 @@ public class BioRadReader extends FormatReader {
                 addGlobalMeta("Scan area width", values[4]);
                 addGlobalMeta("Scan area height", values[5]);
 
-                double width =
-                  Double.parseDouble(values[4]) - Double.parseDouble(values[2]);
+                float width =
+                  Float.parseFloat(values[4]) - Float.parseFloat(values[2]);
                 width /= getSizeX();
-                double height =
-                  Double.parseDouble(values[5]) - Double.parseDouble(values[3]);
+                float height =
+                  Float.parseFloat(values[5]) - Float.parseFloat(values[3]);
                 height /= getSizeY();
 
                 store.setDimensionsPhysicalSizeX(new Double(width), 0, 0);
@@ -814,7 +736,7 @@ public class BioRadReader extends FormatReader {
           break;
         default:
           // notes for display only
-          addGlobalMeta("Note #" + noteCount, n.toString());
+          addGlobalMeta("Note #" + noteIndex, n.toString());
       }
 
       // if the text of the note contains "AXIS", parse the text
@@ -931,6 +853,22 @@ public class BioRadReader extends FormatReader {
     }
     else picFiles = null;
 
+    status("Reading lookup tables");
+
+    lut = new byte[getEffectiveSizeC()][][];
+    for (int channel=0; channel<lut.length; channel++) {
+      int plane = getIndex(0, channel, 0);
+      String file =
+        picFiles == null ? currentId : picFiles[plane % picFiles.length];
+      debug("reading table for C = " + channel + " from " + file, 2);
+      RandomAccessInputStream s = new RandomAccessInputStream(file);
+      s.order(true);
+      readLookupTables(s);
+      s.close();
+      if (lut == null) break;
+    }
+    core[0].indexed = lut != null;
+
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName(name, 0);
@@ -968,6 +906,116 @@ public class BioRadReader extends FormatReader {
         store.setDetectorSettingsGain(detectorGain, 0, i);
       }
     }
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Read all of the note strings from the given file.  If the 'add' flag is
+   * set, the notes will be added to the 'noteStrings' list.
+   */
+  private void readNotes(RandomAccessInputStream s, boolean add)
+    throws IOException
+  {
+    s.seek(70);
+    int imageLen = getSizeX() * getSizeY();
+    if (picFiles == null) imageLen *= getImageCount();
+    else {
+      imageLen *= (getImageCount() / picFiles.length);
+    }
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    s.skipBytes(bpp * imageLen + 6);
+
+    boolean notes = true;
+    while (notes) {
+      // read in note
+
+      Note n = new Note();
+      n.level = s.readShort();
+      notes = s.readInt() != 0;
+      n.num = s.readShort();
+      n.status = s.readShort();
+      n.type = s.readShort();
+      n.x = s.readShort();
+      n.y = s.readShort();
+      n.p = s.readString(80);
+
+      if (n.type < 0 || n.type >= NOTE_NAMES.length) {
+        notes = false;
+        brokenNotes = true;
+        break;
+      }
+
+      if (!add) continue;
+
+      // be sure to remove binary data from the note text
+      int ndx = n.p.length();
+      for (int i=0; i<n.p.length(); i++) {
+        if (n.p.charAt(i) == 0) {
+          ndx = i;
+          break;
+        }
+      }
+
+      n.p = n.p.substring(0, ndx).trim();
+
+      String value = n.p.replaceAll("=", "");
+      Vector<String> v = new Vector<String>();
+      StringTokenizer t = new StringTokenizer(value, " ");
+      while (t.hasMoreTokens()) {
+        String token = t.nextToken().trim();
+        if (token.length() > 0) v.add(token);
+      }
+      String[] tokens = v.toArray(new String[v.size()]);
+      try {
+        if (tokens.length > 1) {
+          int noteType = Integer.parseInt(tokens[1]);
+
+          if (noteType == 2 && value.indexOf("AXIS_4") != -1) {
+            core[0].sizeZ = 1;
+            core[0].sizeT = getImageCount();
+            core[0].orderCertain = true;
+          }
+        }
+      }
+      catch (NumberFormatException e) { }
+
+      // add note to list
+      noteStrings.add(n);
+    }
+  }
+
+  /**
+   * Read all lookup tables from the given file into the 'lut' variable.
+   */
+  private void readLookupTables(RandomAccessInputStream s) throws IOException {
+    int channel = 0;
+    while (channel < lut.length && lut[channel] != null) channel++;
+    if (channel >= lut.length) return;
+
+    readNotes(s, false);
+
+    // read color tables
+    boolean eof = false;
+    int next = 0;
+    while (!eof && channel < lut.length && !brokenNotes) {
+      if (s.getFilePointer() + LUT_LENGTH <= s.length()) {
+        if (lut[channel] == null) {
+          lut[channel] = new byte[3][LUT_LENGTH];
+        }
+
+        s.read(lut[channel][next++]);
+        if (next == 3) {
+          next = 0;
+          channel++;
+        }
+      }
+      else eof = true;
+      if (eof && channel == 0) {
+        lut = null;
+      }
+    }
+    if (brokenNotes) lut = null;
   }
 
   // -- Helper classes --
