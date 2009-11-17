@@ -610,18 +610,28 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Re-open a file that has been closed */
   private void reopen() throws IOException {
-    String path = Location.getMappedId(file);
-    File f = new File(path).getAbsoluteFile();
-
-    raf = Location.getHandle(file);
-
+    String path; // file path corresponding to this location
+    File f; // absolute file on disk corresponding to this location
+    raf = Location.getMappedFile(file);
+    boolean createDIS = true;
+    if (raf == null) {
+      // no directly mapped IRandomAccess handle; create a handle
+      raf = Location.getHandle(file);
+      path = Location.getMappedId(file);
+      f = new File(path).getAbsoluteFile();
+    }
+    else {
+      // an IRandomAccess handle was directly mapped;
+      // assume it is superior and skip creation of the DIS
+      path = null;
+      f = null;
+    }
     if (raf == null) {
       throw new IOException("File not found: " + file);
     }
-
     length = raf.length();
 
-    if (f.exists()) {
+    if (f != null && f.exists()) {
       compressed = raf instanceof CompressedRandomAccess;
       BufferedInputStream bis = new BufferedInputStream(
         new FileInputStream(path), MAX_OVERHEAD);
