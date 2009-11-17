@@ -79,21 +79,20 @@ the Subversion repository using the command:
       <else>
         <mkdir dir="${proxies.dir}/include"/>
         <mkdir dir="${proxies.dir}/source"/>
-        <echo>Generating proxies (this may take several minutes)...</echo>
         <if>
           <isset property="isWindows"/>
           <then>
             <!-- Generate proxies for Visual C++ builds. -->
 
             <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
-            <java classname="jace.proxy.AutoProxy" fork="true"
-              output="${build.dir}/gen-proxies.log"><!-- reduce verbosity -->
+            <java classname="jace.proxy.AutoProxy" fork="true">
               <arg path="include"/>
               <arg path="source"/>
               <arg path="${proxies.dir}/include"/>
               <arg path="${proxies.dir}/source"/>
               <arg path="${proxies.cp}"/>
               <classpath>
+                <pathelement path="jace"/><!-- for logback.xml -->
                 <fileset dir="${jace.home}/release/lib">
                   <include name="*.jar"/>
                 </fileset>
@@ -106,14 +105,14 @@ the Subversion repository using the command:
             <!-- Generate proxies for GCC and other builds. -->
 
             <!-- NB: Need to fork or else Ant raises a cryptic exception. -->
-            <java classname="jace.proxy.AutoProxy" fork="true"
-              output="${build.dir}/gen-proxies.log"><!-- reduce verbosity -->
+            <java classname="jace.proxy.AutoProxy" fork="true">
               <arg path="include"/>
               <arg path="source"/>
               <arg path="${proxies.dir}/include"/>
               <arg path="${proxies.dir}/source"/>
               <arg path="${proxies.cp}"/>
               <classpath>
+                <pathelement path="jace"/><!-- for logback.xml -->
                 <fileset dir="${jace.home}/release/lib">
                   <include name="*.jar"/>
                 </fileset>

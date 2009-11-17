@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="RootConsoleAppender"
+    class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>trace</level>
+    </filter>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%m%n</pattern>
+    </layout>
+  </appender>
+  <root>
+    <level value="info"/>
+    <appender-ref ref="RootConsoleAppender"/>
+  </root>
+</configuration>
