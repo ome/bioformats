@@ -465,9 +465,6 @@ public class InCellReader extends FormatReader {
       store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
       store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
     }
-
-    // populate ROI data
-    parseTextROIs(store);
   }
 
   // -- Helper methods --
@@ -483,84 +480,6 @@ public class InCellReader extends FormatReader {
     int wellRow = well / (lastCol - firstCol + 1);
     int wellCol = well % (lastCol - firstCol + 1);
     return (wellRow + firstRow) * wellCols + wellCol + firstCol;
-  }
-
-  /**
-   * If a .txt file is present, parse ROI data and place it in the
-   * given MetadataStore.
-   */
-  private void parseTextROIs(MetadataStore store) throws IOException {
-    if (metadataFiles == null) return;
-    for (String file : metadataFiles) {
-      if (file.toLowerCase().endsWith(".txt")) {
-        String[] lines = DataTools.readFile(file).split("\n");
-        String[] skipRow = null, columns = null, values = null;
-        String well = null, prevWell = null;
-        int xIndex = -1, yIndex = -1;
-        int cellIndex = -1, wellIndex = -1;
-        int areaIndex = -1;
-        int image = 0;
-        for (String line : lines) {
-          values = line.split("\t");
-          if (values.length > 2) {
-            if (skipRow == null) skipRow = values;
-            else if (columns == null) {
-              columns = values;
-              xIndex = DataTools.indexOf(columns, "Cell cg X");
-              yIndex = DataTools.indexOf(columns, "Cell cg Y");
-              wellIndex = DataTools.indexOf(columns, "Well");
-              cellIndex = DataTools.indexOf(columns, "Cell");
-              areaIndex = DataTools.indexOf(columns, "Nuc Area");
-            }
-            else {
-              // assume that rows are sorted by well
-              if (wellIndex == -1) continue;
-              well = values[wellIndex].trim();
-              if (!well.equals(prevWell) && prevWell != null) image++;
-
-              int roiIndex = 0;
-              double area = 0d;
-
-              if (cellIndex < 0) continue;
-              String cell = values[cellIndex].trim();
-
-              try {
-                roiIndex = Integer.parseInt(cell) - 1;
-                if (areaIndex < 0) continue;
-                area = Double.parseDouble(values[areaIndex].trim());
-              }
-              catch (NumberFormatException e) {
-                break;
-              }
-
-              // calculate the radius of the ROI, since it's not given
-              double radius = Math.sqrt(area / Math.PI);
-
-              // "Cell cg X", "Cell cg Y"
-              if (xIndex >= 0) {
-                store.setCircleCx(values[xIndex].trim(), image, roiIndex, 0);
-              }
-              if (yIndex >= 0) {
-                store.setCircleCy(values[yIndex].trim(), image, roiIndex, 0);
-              }
-              store.setCircleR(String.valueOf(radius), image, roiIndex, 0);
-
-              if (isMetadataCollected()) {
-                setSeries(image);
-                for (int col=2; col<values.length; col++) {
-                  addSeriesMeta("Cell #" + cell + " " + columns[col],
-                    values[col].trim());
-                }
-              }
-              prevWell = well;
-            }
-          }
-        }
-
-        break;
-      }
-    }
-    setSeries(0);
   }
 
   // -- Helper classes --
