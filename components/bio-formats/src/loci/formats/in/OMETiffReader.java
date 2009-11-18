@@ -166,7 +166,11 @@ public class OMETiffReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     lastPlane = no;
     int i = info[series][no].ifd;
-    IFD ifd = ((MinimalTiffReader) info[series][no].reader).getIFDs().get(i);
+    MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
+    if (r.getCurrentFile() == null) {
+      r.setId(info[series][no].id);
+    }
+    IFD ifd = r.getIFDs().get(i);
     RandomAccessInputStream s =
       new RandomAccessInputStream(info[series][no].id);
     TiffParser p = new TiffParser(s);
