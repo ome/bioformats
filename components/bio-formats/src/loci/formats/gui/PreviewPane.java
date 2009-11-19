@@ -200,84 +200,95 @@ public class PreviewPane extends JPanel
       try { Thread.sleep(100); }
       catch (InterruptedException exc) { LogTools.trace(exc); }
 
-      final String id = loadId;
-      if (id == lastId) continue;
-      if (id != null && lastId != null) {
-        String[] files = reader.getUsedFiles();
-        boolean found = false;
-        for (int i=0; i<files.length; i++) {
-          if (id.equals(files[i])) {
-            found = true;
-            lastId = id;
-            break;
+      try { // catch-all for unanticipated exceptions
+        final String id = loadId;
+        if (id == lastId) continue;
+        if (id != null && lastId != null) {
+          String[] files = reader.getUsedFiles();
+          boolean found = false;
+          for (int i=0; i<files.length; i++) {
+            if (id.equals(files[i])) {
+              found = true;
+              lastId = id;
+              break;
+            }
           }
+          if (found) continue;
         }
-        if (found) continue;
-      }
-      lastId = id;
+        lastId = id;
 
-      icon = null;
-      iconText = id == null ? "" : "Reading...";
-      formatText = resText = zctText = typeText = "";
-      iconTip = id;
-      formatTip = resTip = zctTip = typeTip = "";
+        icon = null;
+        iconText = id == null ? "" : "Reading...";
+        formatText = resText = zctText = typeText = "";
+        iconTip = id;
+        formatTip = resTip = zctTip = typeTip = "";
 
-      if (id == null) {
+        if (id == null) {
+          SwingUtilities.invokeLater(refresher);
+          continue;
+        }
+
+        try { reader.setId(id); }
+        catch (FormatException exc) {
+          LogTools.traceDebug(exc);
+          boolean badFormat = exc.getMessage().startsWith("Unknown file format");
+          iconText = "Unsupported " + (badFormat ? "format" : "file");
+          formatText = resText = "";
+          SwingUtilities.invokeLater(refresher);
+          lastId = null;
+          continue;
+        }
+        catch (IOException exc) {
+          LogTools.traceDebug(exc);
+          iconText = "Unsupported file";
+          formatText = resText = "";
+          SwingUtilities.invokeLater(refresher);
+          lastId = null;
+          continue;
+        }
+        if (id != loadId) {
+          SwingUtilities.invokeLater(refresher);
+          continue;
+        }
+
+        icon = id == null ? null : new ImageIcon(makeImage("Loading..."));
+        iconText = "";
+        String format = reader.getFormat();
+        formatText = format;
+        formatTip = format;
+        resText = reader.getSizeX() + " x " + reader.getSizeY();
+        zctText = reader.getSizeZ() + "Z x " +
+          reader.getSizeT() + "T x " + reader.getSizeC() + "C";
+        typeText = reader.getRGBChannelCount() + " x " +
+          FormatTools.getPixelTypeString(reader.getPixelType());
         SwingUtilities.invokeLater(refresher);
-        continue;
-      }
 
-      try { reader.setId(id); }
-      catch (FormatException exc) {
-        LogTools.traceDebug(exc);
-        boolean badFormat = exc.getMessage().startsWith("Unknown file format");
-        iconText = "Unsupported " + (badFormat ? "format" : "file");
-        formatText = resText = "";
+        // open middle image thumbnail
+        int z = reader.getSizeZ() / 2;
+        int t = reader.getSizeT() / 2;
+        int ndx = reader.getIndex(z, 0, t);
+        BufferedImage thumb = null;
+        try { thumb = reader.openThumbImage(ndx); }
+        catch (FormatException exc) {
+          LogTools.traceDebug(exc);
+        }
+        catch (IOException exc) {
+          LogTools.traceDebug(exc);
+        }
+        icon = new ImageIcon(thumb == null ? makeImage("Failed") : thumb);
+        iconText = "";
+
         SwingUtilities.invokeLater(refresher);
-        lastId = null;
-        continue;
       }
-      catch (IOException exc) {
-        LogTools.traceDebug(exc);
-        iconText = "Unsupported file";
-        formatText = resText = "";
+      catch (Exception exc) {
+        LogTools.trace(exc);
+        icon = null;
+        iconText = "Thumbnail failure";
+        formatText = resText = zctText = typeText = "";
+        iconTip = loadId;
+        formatTip = resTip = zctTip = typeTip = "";
         SwingUtilities.invokeLater(refresher);
-        lastId = null;
-        continue;
       }
-      if (id != loadId) {
-        SwingUtilities.invokeLater(refresher);
-        continue;
-      }
-
-      icon = id == null ? null : new ImageIcon(makeImage("Loading..."));
-      iconText = "";
-      String format = reader.getFormat();
-      formatText = format;
-      formatTip = format;
-      resText = reader.getSizeX() + " x " + reader.getSizeY();
-      zctText = reader.getSizeZ() + "Z x " +
-        reader.getSizeT() + "T x " + reader.getSizeC() + "C";
-      typeText = reader.getRGBChannelCount() + " x " +
-        FormatTools.getPixelTypeString(reader.getPixelType());
-      SwingUtilities.invokeLater(refresher);
-
-      // open middle image thumbnail
-      int z = reader.getSizeZ() / 2;
-      int t = reader.getSizeT() / 2;
-      int ndx = reader.getIndex(z, 0, t);
-      BufferedImage thumb = null;
-      try { thumb = reader.openThumbImage(ndx); }
-      catch (FormatException exc) {
-        LogTools.traceDebug(exc);
-      }
-      catch (IOException exc) {
-        LogTools.traceDebug(exc);
-      }
-      icon = new ImageIcon(thumb == null ? makeImage("Failed") : thumb);
-      iconText = "";
-
-      SwingUtilities.invokeLater(refresher);
     }
   }
 

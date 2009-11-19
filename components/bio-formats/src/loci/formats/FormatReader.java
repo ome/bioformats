@@ -470,12 +470,16 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC() {
     // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT
-    return getImageCount() / (getSizeZ() * getSizeT());
+    int sizeZT = getSizeZ() * getSizeT();
+    if (sizeZT == 0) return 0;
+    return getImageCount() / sizeZT;
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
   public int getRGBChannelCount() {
-    return getSizeC() / getEffectiveSizeC();
+    int effSizeC = getEffectiveSizeC();
+    if (effSizeC == 0) return 0;
+    return getSizeC() / effSizeC;
   }
 
   /* @see IFormatReader#isIndexed() */
@@ -520,8 +524,9 @@ public abstract class FormatReader extends FormatHandler
     if (core[series].thumbSizeX == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
-      int thumbSizeX =
-        sx > sy ? THUMBNAIL_DIMENSION : sx * THUMBNAIL_DIMENSION / sy;
+      int thumbSizeX = 0;
+      if (sx > sy) thumbSizeX = THUMBNAIL_DIMENSION;
+      else if (sy > 0) thumbSizeX = sx * THUMBNAIL_DIMENSION / sy;
       if (thumbSizeX == 0) thumbSizeX = 1;
       return thumbSizeX;
     }
@@ -534,8 +539,9 @@ public abstract class FormatReader extends FormatHandler
     if (core[series].thumbSizeY == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
-      int thumbSizeY =
-        sy > sx ? THUMBNAIL_DIMENSION : sy * THUMBNAIL_DIMENSION / sx;
+      int thumbSizeY = 1;
+      if (sy > sx) thumbSizeY = THUMBNAIL_DIMENSION;
+      else if (sx > 0) thumbSizeY = sy * THUMBNAIL_DIMENSION / sx;
       if (thumbSizeY == 0) thumbSizeY = 1;
       return thumbSizeY;
     }

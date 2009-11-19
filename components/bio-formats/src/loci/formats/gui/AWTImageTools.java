@@ -1093,6 +1093,7 @@ public final class AWTImageTools {
    * Converts the given BufferedImage into an image with unsigned pixel data.
    */
   public static BufferedImage makeUnsigned(BufferedImage img) {
+    if (img == null) return null;
     int pixelType = getPixelType(img);
     boolean signed = FormatTools.isSigned(pixelType);
     boolean fp = FormatTools.isFloatingPoint(pixelType);
@@ -1647,7 +1648,8 @@ public final class AWTImageTools {
 
   /** Gets a color model for the given number of color components. */
   public static ColorModel makeColorModel(int c, int dataType) {
-    return new ComponentColorModel(makeColorSpace(c),
+    ColorSpace cs = makeColorSpace(c);
+    return cs == null ? null : new ComponentColorModel(cs,
       c == 4, false, ColorModel.TRANSLUCENT, dataType);
   }
 

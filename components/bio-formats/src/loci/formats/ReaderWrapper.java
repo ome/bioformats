@@ -188,11 +188,17 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   public int getEffectiveSizeC() {
-    return getImageCount() / (getSizeZ() * getSizeT());
+    return reader.getEffectiveSizeC();
+    //int sizeZT = getSizeZ() * getSizeT();
+    //if (sizeZT == 0) return 0;
+    //return getImageCount() / sizeZT;
   }
 
   public int getRGBChannelCount() {
-    return getSizeC() / getEffectiveSizeC();
+    return reader.getRGBChannelCount();
+    //int effSizeC = getEffectiveSizeC();
+    //if (effSizeC == 0) return 0;
+    //return getSizeC() / effSizeC;
   }
 
   public boolean isIndexed() {
