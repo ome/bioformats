@@ -159,7 +159,7 @@ public class ConsoleManager extends LogicManager implements OutputListener {
   /** Adds data-related GUI components to VisBio. */
   private void doGUI() {
     bio.setSplashStatus("Initializing console windows");
-    out = new OutputConsole("Output Console");
+    out = new OutputConsole("Output Console", "output.log");
     err = new OutputConsole("Error Console", "errors.log");
 
     origOut = System.out;
