@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -75,6 +76,18 @@ public class POITools {
   }
 
   // -- Document retrieval methods --
+
+  public InputStream getInputStream(String name)
+    throws FormatException, IOException
+  {
+    setupFile(name);
+    try {
+      return (InputStream) r.getVar(makeVarName("dis"));
+    }
+    catch (ReflectException e) {
+      throw new FormatException(e);
+    }
+  }
 
   public RandomAccessInputStream getDocumentStream(String name)
     throws FormatException, IOException

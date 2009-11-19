@@ -927,7 +927,10 @@ public class FileStitcher implements IFormatReader {
     if (reader.fileGroupOption(id) == FormatTools.MUST_GROUP) {
       // reader subclass is handling file grouping
       noStitch = true;
-      reader.setId(currentId);
+      if (patternIds && fp.isValid()) {
+        reader.setId(fp.getFiles()[0]);
+      }
+      else reader.setId(currentId);
       return;
     }
 
@@ -935,6 +938,10 @@ public class FileStitcher implements IFormatReader {
       throw new FormatException("Invalid file pattern: " + fp.getPattern());
     }
     reader.setId(fp.getFiles()[0]);
+    if (reader.getUsedFiles().length > 1) {
+      noStitch = true;
+      return;
+    }
 
     AxisGuesser guesser = new AxisGuesser(fp, reader.getDimensionOrder(),
       reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
