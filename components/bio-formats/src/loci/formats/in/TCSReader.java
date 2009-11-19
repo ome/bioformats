@@ -375,6 +375,15 @@ public class TCSReader extends FormatReader {
     core[0].indexed = tiffReaders[0].isIndexed();
 
     if (isRGB()) core[0].imageCount /= (getSizeC() / channelCount);
+    if (getSizeZ() * getSizeT() * getEffectiveSizeC() !=
+      (ifds.size() * tiffReaders.length))
+    {
+      core[0].sizeZ = 1;
+      int c = getEffectiveSizeC();
+      if (c == 0) c = 1;
+      core[0].sizeT = (ifds.size() * tiffReaders.length) / c;
+      core[0].imageCount = getSizeT() * c;
+    }
 
     MetadataTools.populatePixels(store, this, true);
 

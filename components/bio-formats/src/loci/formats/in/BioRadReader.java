@@ -146,7 +146,8 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    Location parent = new Location(id).getAbsoluteFile().getParentFile();
+    Location thisFile = new Location(id).getAbsoluteFile();
+    Location parent = thisFile.getParentFile();
     String[] list = parent.list();
     for (String f : list) {
       if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
@@ -531,11 +532,11 @@ public class BioRadReader extends FormatReader {
                 addGlobalMeta("Scan area width", values[4]);
                 addGlobalMeta("Scan area height", values[5]);
 
-                float width =
-                  Float.parseFloat(values[4]) - Float.parseFloat(values[2]);
+                double width =
+                  Double.parseDouble(values[4]) - Double.parseDouble(values[2]);
                 width /= getSizeX();
-                float height =
-                  Float.parseFloat(values[5]) - Float.parseFloat(values[3]);
+                double height =
+                  Double.parseDouble(values[5]) - Double.parseDouble(values[3]);
                 height /= getSizeY();
 
                 store.setDimensionsPhysicalSizeX(new Double(width), 0, 0);
@@ -759,10 +760,8 @@ public class BioRadReader extends FormatReader {
         if (values.length > 2) {
           switch (axisType) {
             case 1:
-              String dx = values[2];
-              String dy = values[3];
-              addGlobalMeta(key + " distance (X) in microns", dx);
-              addGlobalMeta(key + " distance (Y) in microns", dy);
+              addGlobalMeta(key + " distance (X) in microns", values[2]);
+              addGlobalMeta(key + " distance (Y) in microns", values[3]);
               break;
             case 3:
               addGlobalMeta(key + " angle (X) in degrees", values[2]);
@@ -790,7 +789,6 @@ public class BioRadReader extends FormatReader {
               addGlobalMeta(key + " RGB type (X)", values[2]);
               addGlobalMeta(key + " RGB type (Y)", values[3]);
 
-              // NB: This logic has not been tested, so it may be broken.
               if (key.equals("AXIS_4")) {
                 // this is a single section multi-channel dataset
                 core[0].sizeC = getImageCount();
@@ -852,6 +850,10 @@ public class BioRadReader extends FormatReader {
       else core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
     }
     else picFiles = null;
+
+    if (getEffectiveSizeC() != getSizeC() && !isRGB()) {
+      core[0].sizeC = 1;
+    }
 
     status("Reading lookup tables");
 
@@ -929,6 +931,11 @@ public class BioRadReader extends FormatReader {
     boolean notes = true;
     while (notes) {
       // read in note
+
+      if (s.getFilePointer() >= s.length()) {
+        brokenNotes = true;
+        break;
+      }
 
       Note n = new Note();
       n.level = s.readShort();

@@ -189,8 +189,20 @@ public final class ImageTools {
   public static byte[] splitChannels(byte[] array, int index, int c, int bytes,
     boolean reverse, boolean interleaved)
   {
+    return splitChannels(array, null, index, c, bytes, reverse, interleaved);
+  }
+
+  /**
+   * Splits the given multi-channel array into a 2D array.
+   * The "reverse" parameter is false if channels are in RGB order, true if
+   * channels are in BGR order.  If the 'rtn' parameter is not null, the
+   * specified channel will be copied into 'rtn'.
+   */
+  public static byte[] splitChannels(byte[] array, byte[] rtn, int index, int c,
+    int bytes, boolean reverse, boolean interleaved)
+  {
     if (c == 1) return array;
-    byte[] rtn = new byte[array.length / c];
+    if (rtn == null) rtn = new byte[array.length / c];
 
     if (reverse) index = c - index - 1;
 

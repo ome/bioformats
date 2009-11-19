@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -39,6 +41,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.POITools;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
@@ -233,8 +236,6 @@ public class ZeissZVIReader extends FormatReader {
 
       int count = getImageCount();
 
-      byte[] tile = new byte[tileWidth * tileHeight * pixel];
-
       int channel = no % getEffectiveSizeC();
       int plane = (no / getEffectiveSizeC()) * getEffectiveSizeC();
       int scale = plane * tileRows * tileColumns + channel;
@@ -289,7 +290,9 @@ public class ZeissZVIReader extends FormatReader {
                 }
                 continue;
               }
-              if (getImageCount() > 1 && getEffectiveSizeC() == 1) {
+              int c = getEffectiveSizeC();
+              if (c > 1) c = 2 - (tileRows % 2);
+              if (getImageCount() > 1 && c == 1) {
                 int p = ii;
                 for (int n=0; n<p; n++) {
                   if (tiles.containsKey(new Integer(n))) {
@@ -297,15 +300,15 @@ public class ZeissZVIReader extends FormatReader {
                   }
                 }
               }
-              ii *= getEffectiveSizeC();
-              if (getImageCount() > 1 && getEffectiveSizeC() == 1) {
+              ii *= c;
+              if (getImageCount() > 1 && c == 1) {
                 ii -= tileIndex;
               }
-              else if (getEffectiveSizeC() > 1) {
+              else if (c > 1) {
                 ii += scale;
               }
               if (getImageCount() == 1) ii -= firstTile;
-              if (getEffectiveSizeC() == 1) ii += no;
+              if (c == 1) ii += no;
 
               if (ii < 0) {
                 if (prevIndex < 0) ii = no;
@@ -329,29 +332,30 @@ public class ZeissZVIReader extends FormatReader {
                 tileIndex += col;
               }
               prevIndex = ii;
-              RandomAccessInputStream s = poi.getDocumentStream(imageFiles[ii]);
-              s.seek(offsets[ii]);
-              int nread = s.read(tile);
+              InputStream s = poi.getInputStream(imageFiles[ii]);
+              s.skip(offsets[ii]);
 
-              if (isJPEG) {
-                tile = new JPEGCodec().decompress(tile, options);
+              if (isJPEG || isZlib) {
+                byte[] tile = new byte[s.available()];
+                s.read(tile);
+                Codec codec = isJPEG ? new JPEGCodec() : new ZlibCodec();
+                s = new ByteArrayInputStream(codec.decompress(tile, options));
               }
-              else if (isZlib) {
-                tile = new ZlibCodec().decompress(tile, options);
-              }
-              s.close();
 
-              int actualRowsInTile = tile.length / (tileWidth * pixel);
+              int actualRowsInTile =
+                (tileWidth * tileHeight * pixel) / (tileWidth * pixel);
               int blankRows = tileHeight - actualRowsInTile;
               tileH -= blankRows;
 
               for (int r=tileY; r<tileY + tileH; r++) {
-                int src = pixel * (r * tileWidth + tileX);
                 int dest =
                   pixel * (w * (rowOffset + r - tileY + blankRows) + colOffset);
                 int len = pixel * tileW;
-                System.arraycopy(tile, src, buf, dest, len);
+                s.skip(pixel * tileX);
+                s.read(buf, dest, len);
+                s.skip(pixel * (tileWidth - tileW - tileX));
               }
+              s.close();
 
               colOffset += tileW;
               if (colOffset >= w) {
@@ -572,30 +576,32 @@ public class ZeissZVIReader extends FormatReader {
     if (isRGB()) core[0].sizeC *= 3;
 
     // calculate tile dimensions and number of tiles
-    Integer[] t = tiles.keySet().toArray(new Integer[0]);
-    Arrays.sort(t);
-    Vector<Integer> tmpOffsets = new Vector<Integer>();
-    Vector<String> tmpFiles = new Vector<String>();
-    int index = 0;
-    for (Integer key : t) {
-      int nTiles = tiles.get(key).intValue();
-      if (nTiles < getImageCount()) {
-        tiles.remove(key);
-      }
-      else {
-        for (int p=0; p<nTiles; p++) {
-          tmpOffsets.add(new Integer(offsets[index + p]));
-          tmpFiles.add(imageFiles[index + p]);
+    if (isTiled) {
+      Integer[] t = tiles.keySet().toArray(new Integer[0]);
+      Arrays.sort(t);
+      Vector<Integer> tmpOffsets = new Vector<Integer>();
+      Vector<String> tmpFiles = new Vector<String>();
+      int index = 0;
+      for (Integer key : t) {
+        int nTiles = tiles.get(key).intValue();
+        if (nTiles < getImageCount()) {
+          tiles.remove(key);
         }
+        else {
+          for (int p=0; p<nTiles; p++) {
+            tmpOffsets.add(new Integer(offsets[index + p]));
+            tmpFiles.add(imageFiles[index + p]);
+          }
+        }
+        index += nTiles;
       }
-      index += nTiles;
-    }
 
-    offsets = new int[tmpOffsets.size()];
-    for (int i=0; i<offsets.length; i++) {
-      offsets[i] = tmpOffsets.get(i).intValue();
+      offsets = new int[tmpOffsets.size()];
+      for (int i=0; i<offsets.length; i++) {
+        offsets[i] = tmpOffsets.get(i).intValue();
+      }
+      imageFiles = tmpFiles.toArray(new String[tmpFiles.size()]);
     }
-    imageFiles = tmpFiles.toArray(new String[tmpFiles.size()]);
 
     int totalTiles = offsets.length / getImageCount();
 
