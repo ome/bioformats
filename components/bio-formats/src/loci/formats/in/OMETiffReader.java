@@ -496,8 +496,8 @@ public class OMETiffReader extends FormatReader {
           core[s].orderCertain = true;
           int photo = firstIFD.getPhotometricInterpretation();
           core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
-          if (samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
-            (core[s].sizeC % samples) != 0)
+          if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
+            (core[s].sizeC % samples) != 0) || core[s].sizeC == 1)
           {
             core[s].sizeC *= samples;
           }
