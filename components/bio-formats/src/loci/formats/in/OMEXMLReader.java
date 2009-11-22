@@ -126,6 +126,9 @@ public class OMEXMLReader extends FormatReader {
     for (int i=0; i<series; i++) {
       index += core[i].imageCount;
     }
+    if (index >= binDataOffsets.size()) {
+      index = binDataOffsets.size() - 1;
+    }
 
     long offset = binDataOffsets.get(index).longValue();
     long length = binDataLengths.get(index).longValue();
@@ -144,8 +147,19 @@ public class OMEXMLReader extends FormatReader {
       if (r <= 0) throw new IOException("Cannot read from input stream");
       n += r;
       String checkString = new String(check);
-      if (checkString.indexOf("<Bin") != -1) {
-        int idx = checkString.indexOf("<Bin") + 4;
+      int pos = 0;
+      while (checkString.indexOf("BinData", pos) != -1 &&
+        pos < checkString.length() && pos >= 0)
+      {
+        int idx = checkString.indexOf("BinData", pos) + 7;
+        pos = idx + 1;
+        boolean foundBeginning = false;
+        int openBracket = idx;
+        while (!foundBeginning && openBracket >= 1) {
+          openBracket--;
+          foundBeginning = checkString.charAt(openBracket) == '<';
+        }
+        if (checkString.charAt(openBracket + 1) == '/') continue;
         foundBinData = true;
         in.seek(in.getFilePointer() - n + idx);
         while (true) {
@@ -155,8 +169,9 @@ public class OMEXMLReader extends FormatReader {
           }
           if (r == '>') break;
         }
+        if (foundBinData) break;
       }
-      else {
+      if (!foundBinData) {
         System.arraycopy(check, check.length - overlap, check, 0, overlap);
         n = overlap;
       }
