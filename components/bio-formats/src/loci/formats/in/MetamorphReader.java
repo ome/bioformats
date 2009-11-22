@@ -1062,6 +1062,7 @@ public class MetamorphReader extends BaseTiffReader {
     String thedate, thetime;
     long lastOffset;
     for (int i=0; i<uic1count; i++) {
+      if (in.getFilePointer() >= in.length()) break;
       currentID = in.readInt();
       valOrOffset = in.readInt();
       lastOffset = in.getFilePointer();
