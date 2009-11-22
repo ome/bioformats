@@ -74,6 +74,18 @@ public class MinimalTiffReader extends FormatReader {
     super(name, suffixes);
   }
 
+  // -- MinimalTiffReader API methods --
+
+  /** Gets the list of IFDs associated with the current TIFF's image planes. */
+  public IFDList getIFDs() {
+    return ifds;
+  }
+
+  /** Gets the list of IFDs associated with the current TIFF's thumbnails. */
+  public IFDList getThumbnailIFDs() {
+    return thumbnailIFDs;
+  }
+
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -230,7 +242,7 @@ public class MinimalTiffReader extends FormatReader {
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       boolean thumbnail = ifd.getIFDIntValue(IFD.NEW_SUBFILE_TYPE) == 1 &&
-        (ifds.size() > 1 || ifd.get(new Integer(IFD.IMAGE_WIDTH)) == null);
+        (ifds.size() > 1 || ifd.getIFDValue(IFD.IMAGE_WIDTH) == null);
       if (thumbnail) thumbs.add(ifd);
       else v.add(ifd);
     }

@@ -165,9 +165,18 @@ public class OMETiffReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     lastPlane = no;
-    IFormatReader r = info[series][no].reader;
-    r.setId(info[series][no].id);
-    return r.openBytes(info[series][no].ifd, buf, x, y, w, h);
+    int i = info[series][no].ifd;
+    MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
+    if (r.getCurrentFile() == null) {
+      r.setId(info[series][no].id);
+    }
+    IFD ifd = r.getIFDs().get(i);
+    RandomAccessInputStream s =
+      new RandomAccessInputStream(info[series][no].id);
+    TiffParser p = new TiffParser(s);
+    p.getSamples(ifd, buf, x, y, w, h);
+    s.close();
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -380,7 +389,7 @@ public class OMETiffReader extends FormatReader {
           else filename = normalizeFilename(dir, filename);
           IFormatReader r = readers.get(filename);
           if (r == null) {
-            r = new TiffReader();
+            r = new MinimalTiffReader();
             readers.put(filename, r);
           }
 
@@ -487,8 +496,8 @@ public class OMETiffReader extends FormatReader {
           core[s].orderCertain = true;
           int photo = firstIFD.getPhotometricInterpretation();
           core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
-          if (samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
-            (core[s].sizeC % samples) != 0)
+          if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
+            (core[s].sizeC % samples) != 0) || core[s].sizeC == 1)
           {
             core[s].sizeC *= samples;
           }
@@ -547,13 +556,6 @@ public class OMETiffReader extends FormatReader {
   }
 
   // -- Helper methods --
-
-  private IFormatReader getReader(int no) throws FormatException, IOException {
-    FormatTools.checkPlaneNumber(this, no);
-    IFormatReader r = info[series][no].reader;
-    r.setId(info[series][no].id);
-    return r;
-  }
 
   private String normalizeFilename(String dir, String name) {
      File file = new File(dir, name);
