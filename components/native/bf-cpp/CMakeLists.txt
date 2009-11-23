@@ -36,13 +36,26 @@
 
 # CMake build file for the Bio-Formats C++ bindings.
 
-cmake_minimum_required(VERSION 2.6.4)
+if(WIN32)
+  cmake_minimum_required(VERSION 2.8)
+else(WIN32)
+  cmake_minimum_required(VERSION 2.6)
+endif(WIN32)
 
 project(bfcpp)
 
 include(jace/Prerequisites.cmake)
 
 add_subdirectory(jace)
+
+message(STATUS "-- Jace:")
+set(JACE_DIR NOTFOUND CACHE PATH
+  "The path to toplevel directory of your Jace checkout")
+if(IS_DIRECTORY "${JACE_DIR}")
+  message(STATUS "jace root     : ${JACE_DIR}")
+else(IS_DIRECTORY "${JACE_DIR}")
+  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
+endif(IS_DIRECTORY "${JACE_DIR}")
 
 ### build Bio-Formats C++ bindings ###
 

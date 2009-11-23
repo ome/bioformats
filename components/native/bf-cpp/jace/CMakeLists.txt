@@ -22,9 +22,9 @@
 # CMake build file for Jace C++ code.
 
 if(WIN32)
-cmake_minimum_required(VERSION 2.8)
+  cmake_minimum_required(VERSION 2.8)
 else(WIN32)
-cmake_minimum_required(VERSION 2.6)
+  cmake_minimum_required(VERSION 2.6)
 endif(WIN32)
 
 project(jace)
