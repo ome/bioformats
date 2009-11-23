@@ -9,17 +9,14 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 345 fields documented below:
-  * The file format itself supports 64 of them (18%).
-  * Of those, Bio-Formats fully or partially converts 64 (100%).
+  * The file format itself supports 66 of them (19%).
+  * Of those, Bio-Formats fully or partially converts 61 (92%).
 
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats InCell 1000 format reader:
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cx
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cy
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: ID
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: R
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Transform
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Pixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Detector Detector]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Detector Detector]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Detector Detector]: Type
@@ -31,6 +28,7 @@ Bio-Formats InCell 1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Experiment Experiment]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Experiment Experiment]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: CreationDate
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ID
@@ -40,6 +38,7 @@ Bio-Formats InCell 1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Instrument Instrument]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: EmWave
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: ExWave
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: Correction
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Objective Objective]: ID
@@ -58,8 +57,6 @@ Bio-Formats InCell 1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeX - since r3414
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeY - since r3414
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r3414
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: HashSHA1
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheC
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheZ
@@ -79,7 +76,18 @@ Bio-Formats InCell 1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: Index
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: PosX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: PosY
-=== Total supported: 64 ===
+=== Total supported: 61 ===
+
+== Unsupported fields ==
+For one reason or another, the
+Bio-Formats InCell 1000 format reader
+does not support these fields:
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cx
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cy
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: R
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Transform
+=== Total unsupported: 5 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the InCell 1000
@@ -87,8 +95,6 @@ format. However, our knowledge of the format may be incomplete due to
 lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Arc Arc]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: ColorDomain
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Pixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Contact Contact]: Experimenter
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dataset Dataset]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dataset Dataset]: ExperimenterRef
@@ -158,7 +164,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: AcquiredPixels
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimenterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: GroupRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: AirPressure
@@ -197,7 +202,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: IlluminationType
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: LightSource
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: Mode
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: NdFilter
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: OTF
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_LogicalChannel LogicalChannel]: PhotometricInterpretation
@@ -242,6 +246,8 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: Medium
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: D
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: HashSHA1
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ExternalIdentifier
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ID
@@ -366,4 +372,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: Timepoint
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSampleRef WellSampleRef]: ID
-=== Total unknown or missing: 281 ===
+=== Total unknown or missing: 279 ===

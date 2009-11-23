@@ -9,12 +9,14 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 345 fields documented below:
-  * The file format itself supports 29 of them (8%).
-  * Of those, Bio-Formats fully or partially converts 29 (100%).
+  * The file format itself supports 30 of them (8%).
+  * Of those, Bio-Formats fully or partially converts 30 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats Metamorph TIFF format reader:
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Pixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Experimenter Experimenter]: Email
@@ -24,6 +26,7 @@ Bio-Formats Metamorph TIFF format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Experimenter Experimenter]: LastName
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Experimenter Experimenter]: OMEName
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: CreationDate
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ImagingEnvironment ImagingEnvironment]: Temperature
@@ -37,14 +40,12 @@ Bio-Formats Metamorph TIFF format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeX - since r3700
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeY - since r3700
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r3700
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: HashSHA1 - since r4254
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: ID - since r4254
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheC - since r4254
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheT - since r4254
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheZ - since r4254
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheC
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheT
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: DeltaT - since r4254
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: ExposureTime - since r4254
-=== Total supported: 29 ===
+=== Total supported: 30 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the Metamorph TIFF
@@ -52,8 +53,6 @@ format. However, our knowledge of the format may be incomplete due to
 lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Arc Arc]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: ColorDomain
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Pixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cx
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cy
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: ID
@@ -130,7 +129,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: AcquiredPixels
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimenterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: GroupRef
@@ -228,6 +226,8 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: RefractiveIndex
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: D
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: HashSHA1
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ColumnNamingConvention
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ExternalIdentifier
@@ -366,4 +366,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: PosY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSample WellSample]: Timepoint
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_WellSampleRef WellSampleRef]: ID
-=== Total unknown or missing: 316 ===
+=== Total unknown or missing: 315 ===

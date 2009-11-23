@@ -15,6 +15,8 @@ Of the 345 fields documented below:
 == Supported fields ==
 These fields are fully supported by the
 Bio-Formats Image Cytometry Standard format reader:
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Pixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Detector Detector]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Detector Detector]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_DetectorRef DetectorSettings]: Detector
@@ -24,9 +26,9 @@ Bio-Formats Image Cytometry Standard format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: PhysicalSizeZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: TimeIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: WaveIncrement
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: WaveStart
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Experimenter Experimenter]: LastName
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: CreationDate
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: InstrumentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: Name
@@ -56,8 +58,6 @@ Bio-Formats Image Cytometry Standard format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeX - since r629
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeY - since r629
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Pixels]: SizeZ - since r629
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: HashSHA1
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheC
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: TheZ
@@ -72,8 +72,6 @@ format. However, our knowledge of the format may be incomplete due to
 lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Arc Arc]: Type
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: ColorDomain
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Index
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ChannelComponent ChannelComponent]: Pixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cx
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: Cy
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Circle Circle]: ID
@@ -103,6 +101,7 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dichroic Dichroic]: LotNumber
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dichroic Dichroic]: Manufacturer
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Dichroic Dichroic]: Model
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Pixels Dimensions]: WaveStart
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_DisplayOptions DisplayOptions]: Display
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_DisplayOptions DisplayOptions]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_DisplayOptions DisplayOptions]: Zoom
@@ -147,7 +146,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Group Group]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: AcquiredPixels
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: DefaultPixels
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: ExperimenterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Image Image]: GroupRef
@@ -229,6 +227,8 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_ObjectiveRef ObjectiveSettings]: RefractiveIndex
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: D
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Path Path]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: HashSHA1
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plane Plane]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: DeltaT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_PlaneTiming PlaneTiming]: ExposureTime
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2008-09/ome.xsd.html#element_Plate Plate]: ColumnNamingConvention
