@@ -657,7 +657,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     int closed = 0;
     int ndx = 0;
 
-    while (closed < toClose) {
+    while (closed < toClose && ndx < files.length) {
       if (!this.equals(files[ndx]) && files[ndx].file != null &&
         Boolean.TRUE.equals(fileCache.get(files[ndx])))
       {
