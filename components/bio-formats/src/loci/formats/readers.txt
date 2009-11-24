@@ -99,6 +99,7 @@ loci.formats.in.GelReader             # gel
 loci.formats.in.ImarisTiffReader      # ims
 loci.formats.in.FlexReader            # flex [LuraWave]
 loci.formats.in.SVSReader             # svs
+loci.formats.in.ImaconReader          # fff
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.MIASReader            # tif
