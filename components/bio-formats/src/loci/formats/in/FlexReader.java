@@ -261,9 +261,11 @@ public class FlexReader extends FormatReader {
   /** Initialize the dataset from a .res file. */
   private void initResFile(String id) throws FormatException, IOException {
     debug("initResFile(" + id + ")");
+    status("Initializing .res file");
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
     debug("  Looking for an .mea file in " + parent.getAbsolutePath());
+    status("Looking for corresponding .mea file");
     String[] list = parent.list();
     for (String file : list) {
       if (checkSuffix(file, MEA_SUFFIX)) {
@@ -282,6 +284,7 @@ public class FlexReader extends FormatReader {
   /** Initialize the dataset from a .mea file. */
   private void initMeaFile(String id) throws FormatException, IOException {
     debug("initMeaFile(" + id + ")");
+    status("Initializing .mea file");
     Location file = new Location(id).getAbsoluteFile();
     if (!measurementFiles.contains(file.getAbsolutePath())) {
       measurementFiles.add(file.getAbsolutePath());
@@ -289,12 +292,15 @@ public class FlexReader extends FormatReader {
 
     // parse the .mea file to get a list of .flex files
     MeaHandler handler = new MeaHandler();
+    status("Reading contents of .mea file");
     String xml = DataTools.readFile(id);
+    status("Parsing XML from .mea file");
     XMLTools.parseXML(xml, handler);
 
     Vector<String> flex = handler.getFlexFiles();
     if (flex.size() == 0) {
       debug("Could not build .flex list from .mea.");
+      status("Building list of valid .flex files");
       String[] files = findFiles(file);
       if (files != null) {
         for (String f : files) {
@@ -307,6 +313,7 @@ public class FlexReader extends FormatReader {
       }
     }
     else {
+      status("Looking for corresponding .res file");
       String[] files = findFiles(file, new String[] {RES_SUFFIX});
       if (files != null) {
         for (String f : files) {
@@ -326,10 +333,12 @@ public class FlexReader extends FormatReader {
 
   private void initFlexFile(String id) throws FormatException, IOException {
     debug("initFlexFile(" + id + ")");
+    status("Initializing .flex file");
     boolean doGrouping = true;
 
     Location currentFile = new Location(id).getAbsoluteFile();
 
+    status("Storing well indices");
     try {
       String name = currentFile.getName();
       int[] well = getWell(name);
@@ -341,6 +350,7 @@ public class FlexReader extends FormatReader {
       doGrouping = false;
     }
 
+    status("Looking for other .flex files");
     if (!isGroupFiles()) doGrouping = false;
 
     if (isGroupFiles()) {
@@ -362,6 +372,7 @@ public class FlexReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
+    status("Making sure that all .flex files are valid");
     Vector<String> flex = new Vector<String>();
     if (doGrouping) {
       // group together .flex files that are in the same directory
@@ -392,6 +403,7 @@ public class FlexReader extends FormatReader {
   }
 
   private void populateMetadataStore(MetadataStore store) {
+    status("Populating MetadataStore");
     MetadataTools.populatePixels(store, this, true);
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -521,6 +533,7 @@ public class FlexReader extends FormatReader {
     boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
+    status("Parsing .flex file (well " + (wellRow + 'A') + (wellCol + 1) + ")");
     debug("Parsing .flex file associated with well row " + wellRow +
       ", column " + wellCol);
     if (flexFiles[wellRow][wellCol] == null) return;
@@ -554,11 +567,14 @@ public class FlexReader extends FormatReader {
     Vector<String> f = new Vector<String>();
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
+    status("Parsing XML in .flex file");
     XMLTools.parseXML(xml.getBytes(), handler);
 
     if (firstFile) populateCoreMetadata(wellRow, wellCol, n);
 
     int totalPlanes = getSeriesCount() * getImageCount();
+
+    status("Populating pixel scaling factors");
 
     // verify factor count
     int nsize = n.size();
@@ -610,6 +626,7 @@ public class FlexReader extends FormatReader {
     Vector<String> imageNames)
     throws FormatException
   {
+    status("Populating core metadata");
     debug("Populating core metadata for well row " + wellRow + ", column " +
       wellCol);
     if (getSizeC() == 0 && getSizeT() == 0) {
@@ -719,6 +736,8 @@ public class FlexReader extends FormatReader {
 
     debug("findFiles(" + baseFile.getAbsolutePath() + ")");
 
+    status("Looking for files that are in the same dataset as " +
+      baseFile.getAbsolutePath());
     Vector<String> fileList = new Vector<String>();
 
     Location plateDir = baseFile.getParentFile();
@@ -865,6 +884,7 @@ public class FlexReader extends FormatReader {
   private void groupFiles(String[] fileList, MetadataStore store)
     throws FormatException, IOException
   {
+    status("Grouping together files in the same dataset");
     HashMap<String, String> v = new HashMap<String, String>();
     for (String file : fileList) {
       int[] well = getWell(file);
@@ -906,6 +926,7 @@ public class FlexReader extends FormatReader {
         wellNumber[currentWell][0] = row;
         wellNumber[currentWell][1] = col;
         s = new RandomAccessInputStream(flexFiles[row][col]);
+        status("Parsing IFDs for well " + (row + 'A') + (col + 1));
         TiffParser tp = new TiffParser(s);
         ifds[row][col] = tp.getIFDs();
         s.close();
