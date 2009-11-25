@@ -337,6 +337,16 @@ public class IFD extends HashMap<Integer, Object> {
       }
       value = sb.toString();
     }
+    else if (o instanceof short[]) {
+      StringBuffer sb = new StringBuffer();
+      for (short s : ((short[]) o)) {
+        if (!Character.isISOControl((char) s)) {
+          sb.append((char) s);
+        }
+        else sb.append("\n");
+      }
+      value = sb.toString();
+    }
     else if (o != null) value = o.toString();
 
     // sanitize line feeds
@@ -825,6 +835,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Prints the contents of this IFD. */
   public void printIFD() {
+    if (!LogTools.isDebug()) return;
     StringBuffer sb = new StringBuffer();
     sb.append("IFD directory entry values:");
 
