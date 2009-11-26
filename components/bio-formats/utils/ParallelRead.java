@@ -4,6 +4,8 @@
 
 import java.io.File;
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 
 /**
  * Reads all files in given directory in parallel,
@@ -23,6 +25,8 @@ public class ParallelRead implements Runnable {
   public void run() {
     try {
       ImageReader r = new ImageReader();
+      IMetadata meta = MetadataTools.createOMEXMLMetadata();
+      r.setMetadataStore(meta);
       r.setId(id);
       System.out.println(Thread.currentThread().getName() +
         ": id=" + id +
@@ -30,7 +34,8 @@ public class ParallelRead implements Runnable {
         ", sizeY=" + r.getSizeY() +
         ", sizeZ=" + r.getSizeZ() +
         ", sizeT=" + r.getSizeT() +
-        ", sizeC=" + r.getSizeC());
+        ", sizeC=" + r.getSizeC() +
+        ", imageName=" + meta.getImageName(0));
       r.close();
     }
     catch (Exception exc) {
