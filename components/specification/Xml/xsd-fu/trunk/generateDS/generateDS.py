@@ -432,6 +432,8 @@ class XschemaElement(XschemaElementBase):
         # The parent choice for the current element.
         self.choice = None
         self.listType = 0
+        # If the element is a choice element or not.
+        self.choiceType = 0
 
     def addChild(self, element):
         self.children.append(element)
@@ -1021,7 +1023,8 @@ class XschemaHandler(handler.ContentHandler):
                 SubstitutionGroups[headName].append(substituteName)
             if name == ComplexTypeType:
                 element.complexType = 1
-            if self.inChoice and self.currentChoice:
+            if self.inChoice and self.currentChoice \
+               and self.stack[-1].choiceType:
                 element.choice = self.currentChoice
             self.stack.append(element)
         elif name == ComplexTypeType:
@@ -1036,6 +1039,7 @@ class XschemaHandler(handler.ContentHandler):
             self.inSequence = 1
         elif name == ChoiceType:
             self.currentChoice = XschemaElement(attrs)
+            self.currentChoice.choiceType = 1
             self.inChoice = 1
         elif name == AttributeType:
             self.inAttribute = 1

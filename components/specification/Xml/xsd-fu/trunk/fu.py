@@ -283,7 +283,7 @@ class OMEModelProperty(object):
 					except KeyError:
 						pass
 			raise ModelProcessingError, \
-				"Unable to find Java type for %s" % self.type
+				"Unable to find %s Java type for %s" % (self.name, self.type)
 	javaType = property(_get_javaType, doc="""The property's Java type.""")
 
 	def _get_metadataStoreType(self):
