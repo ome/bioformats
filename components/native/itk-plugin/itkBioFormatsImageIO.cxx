@@ -245,9 +245,11 @@ namespace itk {
       SetNumberOfComponents(rgbChannelCount); // m_NumberOfComponents
 
       // get physical resolution
-      MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
-      double physX = retrieve.getDimensionsPhysicalSizeX(0, 0).doubleValue();
-      double physY = retrieve.getDimensionsPhysicalSizeY(0, 0).doubleValue();
+      double physX = 1, physY = 1;
+      // CTR - avoid invalid memory access error on some systems (OS X 10.5)
+      //MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
+      //physX = retrieve.getDimensionsPhysicalSizeX(0, 0).doubleValue();
+      //physY = retrieve.getDimensionsPhysicalSizeY(0, 0).doubleValue();
       m_Spacing[0] = physX;
       m_Spacing[1] = physY;
       if (imageCount > 1) m_Spacing[2] = 1;
