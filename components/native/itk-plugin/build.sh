@@ -2,6 +2,8 @@
 
 # Simple script to build ITK plugin on Linux and Mac OS X systems.
 
+set -e
+
 # locate ITK
 if [ -e "$ITK_DIR/ITKConfig.cmake" ]
 then
