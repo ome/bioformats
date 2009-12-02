@@ -55,9 +55,9 @@ public class LegacyQTTools {
     "QuickTime for Java is required to read some QuickTime files. " +
     "Please install QuickTime for Java from http://www.apple.com/quicktime/";
 
-  public static final String MAC_64BIT_JVM_MSG =
-    "QuickTime for Java is not supported on Mac OS X with a 64-bit JVM. " +
-    "Please invoke the 32-bit JVM to utilize QTJava functionality.";
+  public static final String JVM_64BIT_MSG =
+    "QuickTime for Java is not supported with a 64-bit JVM. " +
+    "Please invoke the 32-bit JVM (-d32) to utilize QTJava functionality.";
 
   public static final String EXPIRED_QT_MSG =
     "Your version of QuickTime for Java has expired. " +
@@ -119,8 +119,8 @@ public class LegacyQTTools {
   /** Flag indicating QuickTime for Java is not installed. */
   protected boolean noQT = false;
 
-  /** Flag indicating Mac OS X 64-bit JVM (does not support QTJava). */
-  protected boolean mac64BitJVM = false;
+  /** Flag indicating 64-bit JVM (does not support QTJava). */
+  protected boolean jvm64Bit = false;
 
   /** Flag indicating QuickTime for Java has expired. */
   protected boolean expiredQT = false;
@@ -134,12 +134,11 @@ public class LegacyQTTools {
   protected void initClass() {
     if (initialized) return;
 
-    String os = System.getProperty("os.name");
     String arch = System.getProperty("os.arch");
-    if ("Mac OS X".equals(os) && "x86_64".equals(arch)) {
-      // QTJava is not supported on Mac OS X 64-bit Java; don't even try
+    if (arch != null && arch.indexOf("64") >= 0) {
+      // QTJava is not supported on 64-bit Java; don't even try
       noQT = true;
-      mac64BitJVM = true;
+      jvm64Bit = true;
       initialized = true;
       return;
     }
@@ -204,10 +203,10 @@ public class LegacyQTTools {
     return !noQT;
   }
 
-  /** Whether this JVM is 64-bit running on Mac OS X. */
-  public boolean isMac64BitJVM() {
+  /** Whether this JVM is 64-bit. */
+  public boolean isJVM64Bit() {
     if (!initialized) initClass();
-    return mac64BitJVM;
+    return jvm64Bit;
   }
 
   /** Whether QuickTime for Java has expired. */
@@ -218,7 +217,7 @@ public class LegacyQTTools {
 
   /** Gets the QuickTime for Java version number. */
   public String getQTVersion() {
-    if (isMac64BitJVM()) return "Not available";
+    if (isJVM64Bit()) return "Not available";
     else if (isQTExpired()) return "Expired";
     else if (!canDoQT()) return "Missing";
     else {
@@ -316,7 +315,7 @@ public class LegacyQTTools {
 
   /** Checks whether QTJava is available, throwing an exception if not. */
   public void checkQTLibrary() throws MissingLibraryException {
-    if (isMac64BitJVM()) throw new MissingLibraryException(MAC_64BIT_JVM_MSG);
+    if (isJVM64Bit()) throw new MissingLibraryException(JVM_64BIT_MSG);
     if (isQTExpired()) throw new MissingLibraryException(EXPIRED_QT_MSG);
     if (!canDoQT()) throw new MissingLibraryException(NO_QT_MSG);
   }
