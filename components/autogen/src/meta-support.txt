@@ -1,0 +1,1854 @@
+#
+# meta-support.txt
+#
+
+# LOCI autogen package for programmatically generating source code.
+# Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# This file documents the metadata support for each file format that
+# Bio-Formats can handle. Default value for unlisted properties is Missing,
+# indicating that the property cannot be represented in the format, or our
+# knowledge regarding the property regarding this format is incomplete.
+
+# To define the status of a property, use the syntax:
+#
+#     Entity.Property = Status [Comment]
+#
+# "Status" is one of Yes, No, Partial or Missing.
+# There is usually no need to specify Missing status, as it is the default.
+#
+# "Comment" is optional extra text for specifying further details, such as
+# when the status changed. This value can include a revision, a ticket, a
+# datestamp or any other appropriate information.
+#
+# As a shortcut for every property of a given entity, you can write:
+#
+#     Entity [Comment]
+#
+# Examples:
+#
+#     Dimensions = Yes since r2351
+#     Objective.NominalMagnification = Yes added on 2008 Jan 8
+#     ImagingEnvironment.Temperature = Partial see ticket #167 for details
+
+[APLReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[APNGReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r647
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ARFReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[AVIReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r657
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[AliconaReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Voltage = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.CalibratedMagnification = Yes
+Objective.Correction = Yes
+Objective.WorkingDistance = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r1645
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[AmiraReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[AnalyzeReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[BMPReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r698
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[BioRadReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.Gain = Yes
+Detector.ID = Yes
+Detector.Offset = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+DisplayChannel = No
+DisplayOptions = No
+Experiment.Type = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+LogicalChannel = No
+LogicalChannel.SamplesPerPixel = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r631
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[CellomicsReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[DeltavisionReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.Model = Yes
+Detector.Type = Yes
+Detector.ID = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.ReadOutRate = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+ImagingEnvironment.Temperature = No
+Instrument.ID = Yes
+LightSourceSettings.Wavelength = No
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.NdFilter = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Manufacturer = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r638
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+StagePosition = Yes
+
+[DicomReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel = No
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r920
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[EPSReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r994
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[FEIReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r4057
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[FV1000Reader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Circle.Cx = Yes
+Circle.Cy = Yes
+Circle.R = Yes
+Detector.Gain = Yes
+Detector.ID = Yes
+Detector.Offset = No
+Detector.Type = Yes
+Detector.Voltage = Yes
+DetectorSettings = No
+DetectorSettings.Detector = Yes
+Dichroic.Model = Yes
+Dichroic.ID = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Ellipse.Cx = Yes
+Ellipse.Cy = Yes
+Ellipse.Rx = Yes
+Ellipse.Ry = Yes
+Ellipse.Transform = Yes
+Filter.ID = Yes
+Filter.Model = Yes
+FilterSet.Dichroic = Yes
+FilterSet.ID = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LightSource.ID = Yes
+LightSourceSettings.LightSource = Yes
+LightSourceSettings.Wavelength = Yes
+Line.Transform = Yes
+Line.X1 = Yes
+Line.X2 = Yes
+Line.Y1 = Yes
+Line.Y2 = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.FilterSet = Yes
+LogicalChannel.IlluminationType = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.SecondaryEmissionFilter = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+Objective.WorkingDistance = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r871
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+Point.Cx = Yes
+Point.Cy = Yes
+Polygon.Points = Yes
+Polygon.Transform = Yes
+Polyline.Points = Yes
+Polyline.Transform = Yes
+Rect.Height = Yes
+Rect.Transform = Yes
+Rect.Width = Yes
+Rect.X = Yes
+Rect.Y = Yes
+ROI.T0 = Yes
+ROI.T1 = Yes
+ROI.Z0 = Yes
+ROI.Z1 = Yes
+Shape.FontFamily = Yes
+Shape.FontSize = Yes
+Shape.StrokeColor = Yes
+Shape.StrokeWidth = Yes
+Shape.Text = Yes
+Shape.TheT = Yes
+Shape.TheZ = Yes
+TransmittanceRange.CutIn = Yes
+TransmittanceRange.CutOut = Yes
+
+[FakeReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[FitsReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2595
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[FlexReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+Dichroic.ID = Yes
+Dichroic.Model = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = No
+Filter.FilterWheel = Yes
+Filter.ID = Yes
+Filter.Model = Yes
+FilterSet.EmFilter = Yes
+FilterSet.ExFilter = Yes
+FilterSet.Dichroic = Yes
+FilterSet.ID = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = No
+Image.ID = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LightSource.ID = Yes
+LightSourceSettings.LightSource = Yes
+LogicalChannel.FilterSet = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.CalibratedMagnification = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r2711
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.ExternalIdentifier = Yes
+Plate.Name = Yes
+Plate.RowNamingConvention = Yes
+StagePosition = Yes
+Well.Column = Yes
+Well.Row = Yes
+WellSample.ImageRef = Yes
+WellSample.Index = Yes
+WellSample.PosX = Yes
+WellSample.PosY = Yes
+
+[FluoviewReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Manufacturer = Yes
+Detector.Type = Yes
+DetectorSettings = No
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+DetectorSettings.Voltage = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Dimensions.WaveIncrement = Yes
+DisplayChannel = No
+Experimenter = No
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.CalibratedMagnification = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Manufacturer = No
+Objective.Model = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r639
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming.DeltaT = Yes
+
+[GIFReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r647
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[GatanReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+DisplayChannel = No
+Image.DefaultPixels = Yes
+LogicalChannel.Mode = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r646
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[GelReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r879
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ICSReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Dimensions.WaveIncrement = Yes
+Experimenter.LastName = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r629
+Objective.CalibratedMagnification = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.WorkingDistance = Yes
+ObjectiveSettings.Objective = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+StagePosition = Yes
+
+[IPLabReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.TimeIncrement = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r609
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming.DeltaT = Yes
+ROI = No
+
+[IPWReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r646
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ImarisHDFReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+DetectorSettings.Gain = No
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel = No
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3309
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ImarisReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Dimensions.WaveIncrement = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.CalibratedMagnification = No
+Pixels = Yes since r879
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ImarisTiffReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r1712
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ImprovisionTiffReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Experimenter = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2937
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[InCellReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Circle = No
+Detector.ID = Yes
+Detector.Model = Yes
+Detector.Type = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experiment.ID = Yes
+Experiment.Type = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.ExperimentRef = Yes
+Image.ID = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+ImagingEnvironment.Temperature = Yes
+Instrument.ID = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Manufacturer = Yes
+Objective.NominalMagnification = Yes
+ObjectiveSettings.Objective = Yes
+ObjectiveSettings.RefractiveIndex = Yes
+Pixels = Yes since r3414
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.RowNamingConvention = Yes
+Plate.Name = Yes
+Plate.WellOriginX = Yes
+Plate.WellOriginY = Yes
+StagePosition = Yes
+Well.Column = Yes
+Well.Row = Yes
+WellSample.Index = Yes
+WellSample.ImageRef = Yes
+WellSample.PosX = Yes
+WellSample.PosY = Yes
+
+[IvisionReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+Dimensions.TimeIncrement = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.NominalMagnification = Yes
+ObjectiveSettings.Objective = Yes
+ObjectiveSettings.RefractiveIndex = Yes
+
+[JPEG2000Reader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[JPEGReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r647
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[KhorosReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2831
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[L2DReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LightSource.ID = Yes
+LogicalChannel.LightSource = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Microscope.Model = Yes
+Microscope.Type = Yes
+Pixels = Yes since r3763
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[LIFReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Model = Yes
+Detector.Offset = Yes
+Detector.Type = Yes
+Detector.Voltage = Yes
+Detector.Zoom = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Filter.ID = Yes
+Filter.Model = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LightSource.ID = Yes
+LightSource.Power = Yes
+LightSourceSettings.Attenuation = Yes
+LightSourceSettings.LightSource = Yes
+Line.X1 = Yes
+Line.X2 = Yes
+Line.Y1 = Yes
+Line.Y2 = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.SecondaryEmissionFilter = Yes
+Microscope.Model = Yes
+Microscope.Type = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+Objective.SerialNumber = Yes
+ObjectiveSettings.Objective = Yes
+ObjectiveSettings.RefractiveIndex = Yes
+Pixels = Yes since r867
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Polygon.Points = Yes
+Rect.Height = Yes
+Rect.Width = Yes
+Rect.X = Yes
+Rect.Y = Yes
+Shape.FontFamily = Yes
+Shape.FontSize = Yes
+Shape.StrokeColor = Yes
+Shape.StrokeWidth = Yes
+Shape.Text = Yes
+StagePosition = Yes
+TransmittanceRange.CutIn = Yes
+TransmittanceRange.CutOut = Yes
+
+[LIMReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3198
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[LeicaReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Offset = Yes
+Detector.Type = Yes
+Detector.Voltage = Yes
+DetectorSettings.Detector = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Dimensions.WaveIncrement = Yes
+DisplayOptions = No
+Filter.ID = Yes
+Filter.Model = Yes
+Image.CreationDate = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.SecondaryEmissionFilter = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+Objective.SerialNumber = Yes
+ObjectiveSettings.Objective = Yes
+ObjectiveSettings.RefractiveIndex = Yes
+Pixels = Yes since r639
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+StagePosition = Yes
+TransmittanceRange.CutIn = Yes
+TransmittanceRange.CutOut = Yes
+
+[LiFlimReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Polygon.Points = Yes
+
+[MIASReader]
+ChannelComponent = Yes
+Circle.Cx = Yes
+Circle.Cy = Yes
+Circle.R = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experiment.ID = Yes
+Experiment.Type = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.ExperimentRef = Yes
+Image.ID = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.Name = Yes
+Mask.Height = Yes
+Mask.Width = Yes
+Mask.X = Yes
+Mask.Y = Yes
+MaskPixels.BigEndian = Yes
+MaskPixels.BinData = Yes
+MaskPixels.ExtendedPixelType = Yes
+MaskPixels.SizeX = Yes
+MaskPixels.SizeY = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming.ExposureTime = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.ExternalIdentifier = Yes
+Plate.Name = Yes
+Plate.RowNamingConvention = Yes
+ROI.T0 = Yes
+ROI.T1 = Yes
+ROI.Z0 = Yes
+ROI.Z1 = Yes
+Shape.StrokeColor = Yes
+Shape.Text = Yes
+Shape.TheT = Yes
+Shape.TheZ = Yes
+Well.Column = Yes
+Well.Row = Yes
+WellSample.ImageRef = Yes
+WellSample.Index = Yes
+
+[MINCReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[MNGReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r1844
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[MRCReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r1806
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[MRWReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[MetamorphReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Missing
+Detector.Zoom = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.ReadOutRate = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Experimenter = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+ImagingEnvironment.Temperature = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+LightSource.ID = Yes
+LightSourceSettings.LightSource = Yes
+LightSourceSettings.Wavelength = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r639
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+
+[MetamorphTiffReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.Name = Yes
+ImagingEnvironment.Temperature = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3700
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes since r4254
+
+[MicromanagerReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Manufacturer = Yes
+Detector.Model = Yes
+Detector.Type = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Voltage = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+ImagingEnvironment.Temperature = Yes
+Instrument.ID = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2384
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+
+[NAFReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r4059
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[NativeND2Reader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Model = Yes
+Detector.Type = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.ReadOutRate = Yes
+DetectorSettings.Voltage = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+ImagingEnvironment.Temperature = Yes
+Instrument.ID = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Mode = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.CalibratedMagnification = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r1777
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Polyline.Points = Yes
+Rect.Height = Yes
+Rect.Width = Yes
+Rect.X = Yes
+Rect.Y = Yes
+Shape.FontFamily = Yes
+Shape.FontSize = Yes
+Shape.FontStyle = Yes
+Shape.FontWeight = Yes
+Shape.Locked = Yes
+Shape.StrokeColor = Yes
+Shape.StrokeWidth = Yes
+Shape.Text = Yes
+Shape.TextDecoration = Yes
+Shape.Visibility = Yes
+
+[NRRDReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2625
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[NiftiReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[NikonReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r869
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[NikonTiffReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.Gain = Yes
+Detector.Type = Yes
+Dichroic.ID = Yes
+Dichroic.Model = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Experimenter = Yes
+Filter.ID = Yes
+Filter.Model = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LightSource.ID = Yes
+LightSource.Model = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.NominalMagnification = Yes
+Objective.WorkingDistance = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r869
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[OMETiffReader]
+Arc = Yes
+ChannelComponent = Yes
+Circle = Yes
+Contact = Yes
+Dataset = Yes
+DatasetRef = Yes
+Detector = Yes
+DetectorSettings = Yes
+Dichroic = Yes
+Dimensions = Yes
+DisplayOptions = Yes
+Ellipse = Yes
+EmFilter = Yes
+ExFilter = Yes
+Experiment = Yes
+Experimenter = Yes
+ExperimenterMembership = Yes
+Filament = Yes
+Filter = Yes
+FilterSet = Yes
+Group = Yes
+GroupRef = Yes
+Image = Yes
+ImagingEnvironment = Yes
+Instrument = Yes
+Laser = Yes
+LightSource = Yes
+LightSourceRef = Yes
+LightSourceSettings = Yes
+Line = Yes
+LogicalChannel = Yes
+Mask = Yes
+MaskPixels = Yes
+MicrobeamManipulation = Yes
+MicrobeamManipulationRef = Yes
+Microscope = Yes
+ObjectiveSettings = Yes
+Objective = Yes
+OTF = Yes
+Path = Yes
+Pixels = Yes since r2943
+Plane = Yes
+PlaneTiming = Yes
+Plate = Yes
+PlateRef = Yes
+Point = Yes
+Polygon = Yes
+Polyline = Yes
+Project = Yes
+ProjectRef = Yes
+Pump = Yes
+Reagent = Yes
+Rect = Yes
+Region = Yes
+ROI = Yes
+RoiLink = Yes
+ROIRef = Yes
+Screen = Yes
+ScreenAcquisition = Yes
+ScreenRef = Yes
+Shape = Yes
+StageLabel = Yes
+StagePosition = Yes
+Thumbnail = Yes
+TiffData = Yes
+TransmittanceRange = Yes
+Well = Yes
+WellSample = Yes
+WellSampleRef = Yes
+
+[OMEXMLReader]
+Arc = Yes
+ChannelComponent = Yes
+Circle = Yes
+Contact = Yes
+Dataset = Yes
+DatasetRef = Yes
+Detector = Yes
+DetectorSettings = Yes
+Dichroic = Yes
+Dimensions = Yes
+DisplayOptions = Yes
+Ellipse = Yes
+EmFilter = Yes
+ExFilter = Yes
+Experiment = Yes
+Experimenter = Yes
+ExperimenterMembership = Yes
+Filament = Yes
+Filter = Yes
+FilterSet = Yes
+Group = Yes
+GroupRef = Yes
+Image = Yes
+ImagingEnvironment = Yes
+Instrument = Yes
+Laser = Yes
+LightSource = Yes
+LightSourceRef = Yes
+LightSourceSettings = Yes
+Line = Yes
+LogicalChannel = Yes
+MaskPixels = Yes
+Mask = Yes
+MicrobeamManipulation = Yes
+MicrobeamManipulationRef = Yes
+Microscope = Yes
+Objective = Yes
+ObjectiveSettings = Yes
+OTF = Yes
+Path = Yes
+Pixels = Yes since r667
+Plane = Yes
+PlaneTiming = Yes
+Plate = Yes
+PlateRef = Yes
+Point = Yes
+Polygon = Yes
+Polyline = Yes
+Project = Yes
+ProjectRef = Yes
+Pump = Yes
+Reagent = Yes
+Rect = Yes
+Region = Yes
+ROI = Yes
+RoiLink = Yes
+ROIRef = Yes
+Screen = Yes
+ScreenAcquisition = Yes
+ScreenRef = Yes
+Shape = Yes
+StageLabel = Yes
+StagePosition = Yes
+Thumbnail = Yes
+TiffData = Yes
+TransmittanceRange = Yes
+Well = Yes
+WellSample = Yes
+WellSampleRef = Yes
+
+[OpenlabRawReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r879
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[OpenlabReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r659
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+StagePosition = Yes
+
+[PCIReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3148
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+
+[PCXReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3727
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[PGMReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2595
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[PSDReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3202
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[PerkinElmerReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r639
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+StageLabel = No
+StagePosition = Yes
+
+[PictReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r764
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[PrairieReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+Laser.Power = No
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r1996
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[NativeQTReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r658
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[SDTReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r958
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[SEQReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r638
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[SVSReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r3528
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ScanrReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+Image.ID = Yes
+Image.Name = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+Plate.ColumnNamingConvention = Yes
+Plate.Name = Yes
+Plate.RowNamingConvention = Yes
+Well.Column = Yes
+Well.Row = Yes
+WellSample.ImageRef = Yes
+WellSample.Index = Yes
+
+[SlidebookReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Image.DefaultPixels = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.NdFilter = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.Model = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r1519
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[TCSReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Model = Yes
+Detector.Offset = Yes
+Detector.Type = Yes
+Detector.Voltage = Yes
+Detector.Zoom = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Filter.ID = Yes
+Filter.Model = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+Laser.Wavelength = Yes
+LightSource.ID = Yes
+LightSource.Power = Yes
+LightSourceSettings.Attenuation = Yes
+LightSourceSettings.LightSource = Yes
+Line.X1 = Yes
+Line.X2 = Yes
+Line.Y1 = Yes
+Line.Y2 = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SamplesPerPixel = Yes
+LogicalChannel.SecondaryEmissionFilter = Yes
+Microscope.Model = Yes
+Microscope.Type = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = Yes
+Objective.NominalMagnification = Yes
+Objective.SerialNumber = Yes
+ObjectiveSettings.Objective = Yes
+ObjectiveSettings.RefractiveIndex = Yes
+Pixels = Yes since r867
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Polygon.Points = Yes
+Rect.Height = Yes
+Rect.Width = Yes
+Rect.X = Yes
+Rect.Y = Yes
+Shape.FontFamily = Yes
+Shape.FontSize = Yes
+Shape.StrokeColor = Yes
+Shape.StrokeWidth = Yes
+Shape.Text = Yes
+StagePosition = Yes
+TransmittanceRange.CutIn = Yes
+TransmittanceRange.CutOut = Yes
+
+[TiffReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Experimenter = Yes
+Image.DefaultPixels = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r636
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[TillVisionReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Dimensions.WaveIncrement = Yes
+Experiment.Type = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming.ExposureTime = Yes
+
+[VisitechReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Image.DefaultPixels = Yes
+Image.Name = Yes
+LogicalChannel.SamplesPerPixel = Yes
+Pixels = Yes since r2925
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[ZeissLSMReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Circle.Cx = Yes
+Circle.Cy = Yes
+Circle.R = Yes
+Detector.AmplificationGain = Yes
+Detector.Gain = Yes
+Detector.ID = Yes
+Detector.Zoom = Yes
+DetectorSettings.Binning = Yes
+DetectorSettings.Detector = Yes
+Dichroic.ID = Yes
+Dichroic.Model = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Dimensions.TimeIncrement = Yes
+Ellipse.Cx = Yes
+Ellipse.Cy = Yes
+Ellipse.Rx = Yes
+Ellipse.Ry = Yes
+Ellipse.Transform = Yes
+Experimenter = No
+Filter.ID = Yes
+Filter.Model = Yes
+Filter.Type = Yes
+FilterSet.Dichroic = Yes
+FilterSet.ID = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Laser.LaserMedium = Yes
+Laser.Type = Yes
+LightSource.ID = Yes
+Line.X1 = Yes
+Line.X2 = Yes
+Line.Y1 = Yes
+Line.Y2 = Yes
+LogicalChannel.DefaultPixels = Yes
+LogicalChannel.Name = Yes
+LogicalChannel.PinholeSize = Yes
+LogicalChannel.SecondaryEmissionFilter = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.Iris = Yes
+Objective.LensNA = Yes
+Objective.Model = No
+Objective.NominalMagnification = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r646
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Polygon.Points = Yes
+Polyline.Points = Yes
+Rect.Height = Yes
+Rect.Width = Yes
+Rect.X = Yes
+Rect.Y = Yes
+Shape.FontFamily = Yes
+Shape.FontSize = Yes
+Shape.FontStyle = Yes
+Shape.FontWeight = Yes
+Shape.Locked = Yes
+Shape.StrokeColor = Yes
+Shape.StrokeWidth = Yes
+Shape.Text = Yes
+Shape.TextDecoration = Yes
+Shape.Visibility = Yes
+TransmittanceRange.CutIn = Yes
+TransmittanceRange.CutOut = Yes
+
+[ZeissZVIReader]
+ChannelComponent.Index = Yes
+ChannelComponent.Pixels = Yes
+Detector.ID = Yes
+Detector.Type = Yes
+DetectorSettings.Detector = Yes
+DetectorSettings.Gain = Yes
+DetectorSettings.Offset = Yes
+Dimensions.PhysicalSizeX = Yes
+Dimensions.PhysicalSizeY = Yes
+Dimensions.PhysicalSizeZ = Yes
+Ellipse.Cx = Yes
+Ellipse.Cy = Yes
+Ellipse.Rx = Yes
+Ellipse.Ry = Yes
+Experimenter.FirstName = Yes
+Experimenter.Institution = Yes
+Experimenter.LastName = Yes
+Image.CreationDate = Yes
+Image.DefaultPixels = Yes
+Image.Description = Yes
+Image.InstrumentRef = Yes
+Instrument.ID = Yes
+Line.X1 = Yes
+Line.X2 = Yes
+Line.Y1 = Yes
+Line.Y2 = Yes
+LogicalChannel.DefaultPixels = Yes
+LogicalChannel.EmWave = Yes
+LogicalChannel.ExWave = Yes
+LogicalChannel.Name = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.LensNA = Yes
+Objective.Model = No
+Objective.NominalMagnification = Yes
+Objective.WorkingDistance = Yes
+ObjectiveSettings.Objective = Yes
+Pixels = Yes since r656
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+PlaneTiming = Yes
+Shape.FontFamily = Yes
+Shape.Text = Yes
+StagePosition.PositionX = Yes
+StagePosition.PositionY = Yes
+Polyline.Points = Yes
+Polygon.Points = Yes
+Rect.Height = Yes
+Rect.Width = Yes
+Rect.X = Yes
+Rect.Y = Yes

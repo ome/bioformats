@@ -1,0 +1,68 @@
+<!--
+build.xml
+
+Ant build file for LOCI code generators.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="autogen" default="jar" basedir=".">
+  <description>Build file for LOCI code generators</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/components/java.xml"/>
+  <property file="build.properties"/>
+
+  <target name="gen-meta" depends="compile"
+    description="generate code for Bio-Formats metadata classes">
+    <java classname="${component.main-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.meta-dir}"/>
+  </target>
+
+  <target name="gen-bf-ice" depends="compile"
+    description="generate code for Bio-Formats Ice framework">
+    <java classname="${component.main-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.ice-dir}">
+      <arg value="-ice"/>
+    </java>
+  </target>
+
+  <target name="gen-meta-support" depends="compile"
+    description="generate docs for Bio-Formats metadata support">
+    <if>
+      <isset property="omexml.version"/>
+      <then>
+        <java classname="${component.meta-support-class}"
+          classpath="${classes.dir}:${component.runtime-cp}"
+          fork="true" dir="${component.meta-support-dir}">
+            <arg value="${omexml.version}"/>
+        </java>
+      </then>
+      <else>
+<echo>
+Please set the omexml.version property to match
+the latest release of the OME-XML schema. E.g.:
+  ant -Domexml.version=2008-09 gen-meta-support
+</echo>
+      </else>
+    </if>
+  </target>
+
+  <target name="gen-bf-cpp" depends="compile"
+    description="generate header for Bio-Formats C++ bindings">
+    <java classname="${component.jace-header-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.jace-header-dir}">
+      <arg value="bio-formats"/>
+      <arg value="${root.dir}/components/bio-formats/src"/>
+    </java>
+    <java classname="${component.jace-header-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.jace-header-dir}">
+      <arg value="loci-common"/>
+      <arg value="${root.dir}/components/common/src"/>
+    </java>
+  </target>
+
+</project>
