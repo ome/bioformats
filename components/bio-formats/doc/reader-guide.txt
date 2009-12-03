@@ -14,10 +14,11 @@ boolean isThisType(byte[]) :
   the first byte of the file.  Return true if the file can be read; false if
   not (or if there is no way of checking).
 
-String[] getUsedFiles() throws FormatException, IOException :
+String[] getSeriesUsedFiles() throws FormatException, IOException :
   You only need to override this if your format uses multiple files in a single
   dataset.  This method should return a list of all the files associated with
-  the given file name (i.e. every file needed to display the current dataset).
+  the given file name and the current series (i.e. every file needed to display
+  the current series).
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
   It is recommended that the first line of this method be
   "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
@@ -35,16 +36,6 @@ byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOExce
   bytes will generally be truncated. It is recommended that the first line of
   this method be "FormatTools.assertId(currentId, true, 1)" - this ensures that
   the file name is non-null.
-
-BufferedImage openImage(int, int, int, int, int) throws FormatException, IOException :
-  Basically the same as openBytes, but returns a java.awt.image.BufferedImage
-  instead of a byte array.  In general, the easiest way to implement this is
-  by getting the corresponding byte array from openBytes, then returning
-  loci.formats.ImageTools.makeImage(byte[], int width, int height, int
-  numberOfChannels, boolean isInterleaved, int bytesPerPixel, boolean
-  isLittleEndian). It is recommended that the first line of this method be
-  "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
-  is non-null.
 
 protected void initFile(String) throws FormatException, IOException :
   The majority of the file parsing logic should be placed in this method.  The
@@ -101,23 +92,21 @@ and Location.getMappedId(String).
   File-like operations on URLs.  It is highly recommended that you use this
   instead of File.  See the javadoc for additional information.
 
-- loci.formats.DataTools provides a number of methods for converting bytes to
+- loci.common.DataTools provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
   directly from a RandomAccessInputStream (or other DataInput implementation).
 
 - loci.formats.ImageTools provides several methods for manipulating
-  java.awt.image.BufferedImage objects.  In particular, it can create
-  BufferedImages from primitive type arrays, resize images, split RGB images
-  into 3 grayscale images, and so on.  Consult the source or javadoc for more
-  information.
+  primitive type arrays that represent images. Consult the source or javadoc
+  for more information.
 
 - If your reader relies on third-party code which may not be available to all
   users, it is strongly suggested that you access this code only through a
-  loci.formats.ReflectedUniverse object.  For an example of how this works,
-  see loci.formats.in.ZeissZVIReader.
+  loci.common.ReflectedUniverse object.  For an example of how this works,
+  see loci.formats.POITools.
 
 - Several common image compression types are supported through subclasses of
-  loci.formats.BaseCompressor.  These include JPEG, LZW, LZO, Base64, ZIP and
+  loci.formats.codec.BaseCodec.  These include JPEG, LZW, LZO, Base64, ZIP and
   RLE (PackBits).
 
 - Debugging statements can be added using FormatHandler.debug(String).
@@ -159,14 +148,14 @@ and Location.getMappedId(String).
     -series             Set the series number (for container file formats).
     -map                Specify file on disk to which name should be mapped.
 
-- If you wish to test using TestNG, loci.formats.test.ReaderTest provides
+- If you wish to test using TestNG, loci.tests.testng.FormatReaderTest provides
   several basic tests that work with all Bio-Formats readers.  See the
-  ReaderTest source code for additional information.
+  FormatReaderTest source code for additional information.
 
 - For more details, please look at the source code and javadocs.  Studying
   existing readers is probably the best way to get a feel for the API; I would
   recommend first looking at loci.formats.in.ImarisReader (this is the most
-  straightforward one).  loci.formats.in.LIFReader and ZeissZVIReader are also
+  straightforward one).  loci.formats.in.LIFReader and InCellReader are also
   good references that show off some of the nicer features of Bio-Formats.
 
 If you have questions about Bio-Formats, please contact:
