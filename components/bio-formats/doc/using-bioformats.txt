@@ -32,13 +32,8 @@ on the reader instance, passing in the name of the file to read.  Some formats
 allow multiple series (5D image stacks) per file; in this case you may wish to
 call setSeries(int) to change which series is being read.
 
-Raw pixels are always retrieved one plane at a time.  Planes can be returned
-either in a byte array, or in a java.awt.image.BufferedImage (using
-openBytes(int) and openImage(int) respectively).  It is entirely
-up to you which method to use, as the pixel values are always identical.
-In general, BufferedImages are more convenient for viewer applications and
-applications that don't need to perform computations on pixel data, while byte
-arrays are better for applications that perform pixel manipulations.
+Raw pixels are always retrieved one plane at a time.  Planes are returned
+as raw byte arrays, using one of the openBytes methods.
 
 Core metadata is the general term for anything that might be needed to work with
 the planes in a file.  A list of core metadata fields is given below, with the
@@ -83,6 +78,8 @@ provides a few extras to make file reading more flexible.
   reader in the constructor, and manipulate the results somehow, for
   convenience. Using them is similar to the java.io InputStream/OutputStream
   model: just layer whichever functionality you need by nesting the wrappers.
+  + BufferedImageReader extends IFormatReader, and allows pixel data to be
+    returned as BufferedImages instead of raw byte arrays.
   + FileStitcher extends IFormatReader, and uses advanced pattern
     matching heuristics to group files that belong to the same dataset.
   + ChannelSeparator extends IFormatReader, and makes sure that
@@ -96,10 +93,10 @@ provides a few extras to make file reading more flexible.
     for retrieving the minimum and maximum pixel values for each channel.
   + DimensionSwapper extends IFormatReader, and provides an API
     for changing the dimension order of a file.
-- ImageTools provides a number of methods for manipulating BufferedImages and
-  primitive type arrays.  In particular, there are methods to split and merge
-  channels in a BufferedImage/array, as well as converting to a specific data
-  type (e.g. convert short data to byte data).
+- ImageTools and loci.formats.gui.AWTImageTools provide a number of methods for
+  manipulating BufferedImages and primitive type arrays.  In particular, there
+  are methods to split and merge channels in a BufferedImage/array, as well as
+  converting to a specific data type (e.g. convert short data to byte data).
 
                                 Writing Files
                                ---------------
@@ -125,14 +122,6 @@ the same writer and output settings (compression, frames per second, etc.),
 and is especially useful for formats that do not support multiple images per
 file.
 
-A word of warning: IFormatWriter.saveImage(Image, boolean) accepts
-generic java.awt.Images, and converts them to a BufferedImage under the hood.
-The problem is that not all formats support all types of data (e.g. JPEG
-does not support 16-bit data).  To prevent the possibility of corrupt or
-invalid files, it is important to check that the Image you supply to saveImage()
-is supported.  This can be done using the isSupportedType and getPixelTypes
-methods of IFormatWriter.
-
 Please see the Movie Stitcher (loci.apps.stitcher) for an example of how
 to write files using Bio-Formats.
 
@@ -140,19 +129,6 @@ to write files using Bio-Formats.
                    -----------------------------------------
 
 Following is a list of known oddities.
-
-o IFormatWriter accepts Image objects (not just BufferedImages); yet all
-  writers convert the Image to a BufferedImage.  You can still pass in a
-  BufferedImage, but you are free to pass in any Image object.
-
-o All readers have another openBytes method that takes a pre-allocated byte
-  array, but there is no corresponding method for openImage.  The
-  rationale behind pre-allocated byte arrays is (1) array allocation takes
-  a relatively long time; and (2) pre-allocation avoids memory spikes on the
-  heap.  The reason there isn't something similar for openImage (i.e., a method
-  that takes a pre-allocated BufferedImage) is that it's kind of a pain to
-  implement, and no one has cared so far.  If you want this method, we can work
-  towards adding it.
 
 o Importing multi-file formats (Leica LEI, PerkinElmer, FV1000 OIF, ICS, and
   Prairie TIFF) can fail if any of the files are renamed.  There are

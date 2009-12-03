@@ -50,9 +50,6 @@ MicroManager:
 ND2:
   - any files acquired with most recent NIS Elements
 
-Olympus CellR (APL):
-  - any
-
 Openlab LIFF:
   - 32 bit integer data
 
@@ -81,7 +78,3 @@ Volocity MVD2:
   - anything - please specify dimensions and which version of Volocity was
     used
 
-Zeiss ZVI:
-  - JPEG compressed
-  - tiled
-  - 2+ GB files
