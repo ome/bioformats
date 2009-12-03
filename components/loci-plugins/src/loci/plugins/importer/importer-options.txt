@@ -108,6 +108,14 @@ info = <b>Group files with similar names</b> - \
   planes of the dataset.
 default = false
 
+[ungroupFiles]
+type = boolean
+label = Open_files individually
+info = <b>Open files individually</b> - \
+  Treats each file as an individual file, instead of attempting to group \
+  it together with other files that belong to a larger dataset.
+default = false
+
 [id]
 type = string
 label = Open

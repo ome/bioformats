@@ -55,6 +55,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_FIRST           = "firstTime";
   public static final String KEY_FORCE_THUMBS    = "forceThumbnails";
   public static final String KEY_GROUP_FILES     = "groupFiles";
+  public static final String KEY_UNGROUP_FILES   = "ungroupFiles";
   public static final String KEY_ID              = "id";
   public static final String KEY_LOCATION        = "location";
   public static final String KEY_MERGE_CHANNELS  = "mergeChannels";
@@ -193,6 +194,11 @@ public class ImporterOptions extends OptionsList {
   public String getGroupFilesInfo() { return getInfo(KEY_GROUP_FILES); }
   public boolean isGroupFiles() { return isSet(KEY_GROUP_FILES); }
   public void setGroupFiles(boolean b) { setValue(KEY_GROUP_FILES, b); }
+
+  // ungroupFiles
+  public String getUngroupFilesInfo() { return getInfo(KEY_UNGROUP_FILES); }
+  public boolean isUngroupFiles() { return isSet(KEY_UNGROUP_FILES); }
+  public void setUngroupFiles(boolean b) { setValue(KEY_UNGROUP_FILES, b); }
 
   // id
   public String getIdInfo() { return getInfo(KEY_ID); }

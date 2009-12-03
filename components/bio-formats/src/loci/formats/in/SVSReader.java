@@ -85,6 +85,8 @@ public class SVSReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
+    ifds = tiffParser.getIFDs();
+
     core = new CoreMetadata[ifds.size()];
 
     pixelSize = new float[core.length];

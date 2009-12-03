@@ -112,7 +112,9 @@ public class L2DReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.add(currentId);
-    files.addAll(metadataFiles[getSeries()]);
+    if (metadataFiles != null && getSeries() < metadataFiles.length) {
+      files.addAll(metadataFiles[getSeries()]);
+    }
     if (!noPixels) files.addAll(tiffs[series]);
     return files.toArray(new String[files.size()]);
   }
@@ -137,7 +139,7 @@ public class L2DReader extends FormatReader {
     // NB: This format cannot be imported using omebf.
     // See Trac ticket #266 for details.
 
-    if (!checkSuffix(id, "l2d")) {
+    if (!checkSuffix(id, "l2d") && isGroupFiles()) {
       // find the corresponding .l2d file
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       parent = parent.getParentFile();
@@ -149,6 +151,23 @@ public class L2DReader extends FormatReader {
         }
       }
       throw new FormatException("Could not find .l2d file");
+    }
+    else if (!isGroupFiles()) {
+      super.initFile(id);
+
+      tiffs = new Vector[1];
+      tiffs[0] = new Vector<String>();
+      tiffs[0].add(id);
+
+      TiffReader r = new TiffReader();
+      r.setMetadataStore(getMetadataStore());
+      r.setId(id);
+      core = r.getCoreMetadata();
+      metadataStore = r.getMetadataStore();
+      metadata = r.getMetadata();
+      r.close();
+      reader = new MinimalTiffReader();
+      return;
     }
 
     super.initFile(id);

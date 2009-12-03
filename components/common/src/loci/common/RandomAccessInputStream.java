@@ -520,6 +520,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       return ARRAY;
     }
 
+    // case 1:
+    // file is larger than 2 GB, so automatically use the RAF
+
+    if (length() > Integer.MAX_VALUE && raf != null) {
+      raf.seek(afp);
+      return RAF;
+    }
+
     // ensure that the DIS' file pointer is actually equal to fp before
     // we try to read from the DIS
     if (dis != null) {

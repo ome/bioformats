@@ -79,6 +79,7 @@ public class ImporterDialog extends OptionsDialog
   protected Checkbox cropBox;
   protected Checkbox customColorizeBox;
   protected Checkbox groupFilesBox;
+  protected Checkbox ungroupFilesBox;
   protected Checkbox mergeChannelsBox;
   protected Checkbox openAllSeriesBox;
   protected Checkbox recordBox;
@@ -121,6 +122,7 @@ public class ImporterDialog extends OptionsDialog
     addCheckbox(gd, ImporterOptions.KEY_CROP);
     addCheckbox(gd, ImporterOptions.KEY_CUSTOM_COLORIZE);
     addCheckbox(gd, ImporterOptions.KEY_GROUP_FILES);
+    addCheckbox(gd, ImporterOptions.KEY_UNGROUP_FILES);
     addCheckbox(gd, ImporterOptions.KEY_MERGE_CHANNELS);
     addCheckbox(gd, ImporterOptions.KEY_OPEN_ALL_SERIES);
     addCheckbox(gd, ImporterOptions.KEY_QUIET); // NB: invisible
@@ -170,23 +172,24 @@ public class ImporterDialog extends OptionsDialog
       cropBox           = boxes.get(3);
       customColorizeBox = boxes.get(4);
       groupFilesBox     = boxes.get(5);
-      mergeChannelsBox  = boxes.get(6);
-      openAllSeriesBox  = boxes.get(7);
-      //quietBox        = boxes.get(8);
-      recordBox         = boxes.get(9);
-      showMetadataBox   = boxes.get(10);
-      showOMEXMLBox     = boxes.get(11);
-      showROIsBox       = boxes.get(12);
-      specifyRangesBox  = boxes.get(13);
-      splitZBox         = boxes.get(14);
-      splitTBox         = boxes.get(15);
-      splitCBox         = boxes.get(16);
+      ungroupFilesBox   = boxes.get(6);
+      mergeChannelsBox  = boxes.get(7);
+      openAllSeriesBox  = boxes.get(8);
+      //quietBox        = boxes.get(9);
+      recordBox         = boxes.get(10);
+      showMetadataBox   = boxes.get(11);
+      showOMEXMLBox     = boxes.get(12);
+      showROIsBox       = boxes.get(13);
+      specifyRangesBox  = boxes.get(14);
+      splitZBox         = boxes.get(15);
+      splitTBox         = boxes.get(16);
+      splitCBox         = boxes.get(17);
       stackFormatChoice = choices.get(0);
       stackFormatLabel  = labels.get(0);
       stackOrderChoice  = choices.get(1);
       stackOrderLabel   = labels.get(1);
-      swapDimsBox       = boxes.get(17);
-      virtualBox        = boxes.get(18);
+      swapDimsBox       = boxes.get(18);
+      virtualBox        = boxes.get(19);
     }
     verifyOptions(null);
 
@@ -198,6 +201,7 @@ public class ImporterDialog extends OptionsDialog
     infoTable.put(cropBox, options.getCropInfo());
     infoTable.put(customColorizeBox, options.getCustomColorizeInfo());
     infoTable.put(groupFilesBox, options.getGroupFilesInfo());
+    infoTable.put(ungroupFilesBox, options.getUngroupFilesInfo());
     infoTable.put(mergeChannelsBox, options.getMergeChannelsInfo());
     infoTable.put(openAllSeriesBox, options.getOpenAllSeriesInfo());
     infoTable.put(recordBox, options.getRecordInfo());
@@ -228,6 +232,7 @@ public class ImporterDialog extends OptionsDialog
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Dataset organization | Memory management
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "3dlu, pref, " +
       // Color options        | Split into separate windows
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Information
@@ -257,6 +262,8 @@ public class ImporterDialog extends OptionsDialog
     builder.addSeparator("Dataset organization", cc.xyw(1, row, 3));
     row += 2;
     builder.add(groupFilesBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(ungroupFilesBox, xyw(cc, 1, row, 3));
     row += 2;
     builder.add(swapDimsBox, xyw(cc, 1, row, 3));
     row += 2;
@@ -294,7 +301,7 @@ public class ImporterDialog extends OptionsDialog
     builder.add(specifyRangesBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.add(cropBox, xyw(cc, 5, row, 1));
-    row += 2;
+    row += 4;
     builder.addSeparator("Split into separate windows", cc.xy(5, row));
     row += 2;
     builder.add(splitCBox, xyw(cc, 5, row, 1));
@@ -326,6 +333,7 @@ public class ImporterDialog extends OptionsDialog
     options.setCrop(gd.getNextBoolean());
     options.setCustomColorize(gd.getNextBoolean());
     options.setGroupFiles(gd.getNextBoolean());
+    options.setUngroupFiles(gd.getNextBoolean());
     options.setMergeChannels(gd.getNextBoolean());
     options.setOpenAllSeries(gd.getNextBoolean());
     options.setQuiet(gd.getNextBoolean()); // NB: invisible
@@ -399,6 +407,7 @@ public class ImporterDialog extends OptionsDialog
     boolean cropEnabled = cropBox.isEnabled();
     boolean customColorizeEnabled = customColorizeBox.isEnabled();
     boolean groupFilesEnabled = groupFilesBox.isEnabled();
+    boolean ungroupFilesEnabled = ungroupFilesBox.isEnabled();
     boolean mergeChannelsEnabled = mergeChannelsBox.isEnabled();
     boolean openAllSeriesEnabled = openAllSeriesBox.isEnabled();
     boolean recordEnabled = recordBox.isEnabled();
@@ -419,6 +428,7 @@ public class ImporterDialog extends OptionsDialog
     boolean isCrop = cropBox.getState();
     boolean isCustomColorize = customColorizeBox.getState();
     boolean isGroupFiles = groupFilesBox.getState();
+    boolean isUngroupFiles = ungroupFilesBox.getState();
     boolean isMergeChannels = mergeChannelsBox.getState();
     boolean isOpenAllSeries = openAllSeriesBox.getState();
     boolean isRecord = recordBox.getState();
@@ -486,6 +496,9 @@ public class ImporterDialog extends OptionsDialog
     groupFilesEnabled = !options.isOME() && !options.isOMERO();
     if (!groupFilesEnabled) isGroupFiles = false;
     else if (src == stackFormatChoice && isStackBrowser) isGroupFiles = true;
+
+    // ungroupFilesBox
+    // NB: no other options affect ungroupFilesBox
 
     // swapDimsBox
     // NB: no other options affect swapDimsBox
@@ -561,6 +574,7 @@ public class ImporterDialog extends OptionsDialog
     cropBox.setEnabled(cropEnabled);
     customColorizeBox.setEnabled(customColorizeEnabled);
     groupFilesBox.setEnabled(groupFilesEnabled);
+    ungroupFilesBox.setEnabled(ungroupFilesEnabled);
     mergeChannelsBox.setEnabled(mergeChannelsEnabled);
     openAllSeriesBox.setEnabled(openAllSeriesEnabled);
     recordBox.setEnabled(recordEnabled);
@@ -581,6 +595,7 @@ public class ImporterDialog extends OptionsDialog
     cropBox.setState(isCrop);
     customColorizeBox.setState(isCustomColorize);
     groupFilesBox.setState(isGroupFiles);
+    ungroupFilesBox.setState(isUngroupFiles);
     mergeChannelsBox.setState(isMergeChannels);
     openAllSeriesBox.setState(isOpenAllSeries);
     recordBox.setState(isRecord);
@@ -606,6 +621,7 @@ public class ImporterDialog extends OptionsDialog
         cropBox,
         customColorizeBox,
         groupFilesBox,
+        ungroupFilesBox,
         mergeChannelsBox,
         openAllSeriesBox,
         recordBox,

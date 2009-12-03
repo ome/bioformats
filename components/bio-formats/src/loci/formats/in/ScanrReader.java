@@ -177,7 +177,7 @@ public class ScanrReader extends FormatReader {
     super.initFile(id);
 
     // make sure we have the .xml file
-    if (!checkSuffix(id, "xml")) {
+    if (!checkSuffix(id, "xml") && isGroupFiles()) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       if (checkSuffix(id, "tif")) {
         parent = parent.getParentFile();
@@ -194,6 +194,19 @@ public class ScanrReader extends FormatReader {
         throw new FormatException("Could not find " + XML_FILE + " in " +
           parent.getAbsolutePath());
       }
+    }
+    else if (!isGroupFiles() && checkSuffix(id, "tif")) {
+      TiffReader r = new TiffReader();
+      r.setMetadataStore(getMetadataStore());
+      r.setId(id);
+      core = r.getCoreMetadata();
+      metadata = r.getMetadata();
+      metadataStore = r.getMetadataStore();
+      r.close();
+      tiffs = new String[] {id};
+      reader = new MinimalTiffReader();
+
+      return;
     }
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
@@ -291,6 +304,25 @@ public class ScanrReader extends FormatReader {
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
+
+    // we strongly suspect that ScanR incorrectly records the
+    // signedness of the pixels
+
+    switch (pixelType) {
+      case FormatTools.INT8:
+        pixelType = FormatTools.UINT8;
+        break;
+      case FormatTools.UINT8:
+        pixelType = FormatTools.INT8;
+        break;
+      case FormatTools.INT16:
+        pixelType = FormatTools.UINT16;
+        break;
+      case FormatTools.UINT16:
+        pixelType = FormatTools.INT16;
+        break;
+    }
+
     boolean rgb = reader.isRGB();
     boolean interleaved = reader.isInterleaved();
     boolean indexed = reader.isIndexed();

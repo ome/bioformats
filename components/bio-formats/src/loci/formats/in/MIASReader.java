@@ -235,11 +235,13 @@ public class MIASReader extends FormatReader {
       files.addAll(Arrays.asList(f));
     }
 
-    for (AnalysisFile file : analysisFiles) {
-      if (file.plate <= 0 && (file.well == getSeries() || file.well < 0 ||
-        wellNumber[getSeries()] == file.well))
-      {
-        files.add(file.filename);
+    if (analysisFiles != null) {
+      for (AnalysisFile file : analysisFiles) {
+        if (file.plate <= 0 && (file.well == getSeries() || file.well < 0 ||
+          wellNumber[getSeries()] == file.well))
+        {
+          files.add(file.filename);
+        }
       }
     }
 
@@ -280,6 +282,25 @@ public class MIASReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     debug("MIASReader.initFile(" + id + ")");
     super.initFile(id);
+
+    if (!isGroupFiles()) {
+      tiffs = new String[][] {{id}};
+      readers = new MinimalTiffReader[1][1];
+      readers[0][0] = new MinimalTiffReader();
+
+      TiffReader r = new TiffReader();
+      r.setMetadataStore(getMetadataStore());
+      r.setId(tiffs[0][0]);
+      core = r.getCoreMetadata();
+      metadata = r.getMetadata();
+      metadataStore = r.getMetadataStore();
+      r.close();
+
+      tileRows = 1;
+      tileCols = 1;
+
+      return;
+    }
 
     analysisFiles = new Vector<AnalysisFile>();
 

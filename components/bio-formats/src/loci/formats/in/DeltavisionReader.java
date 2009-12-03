@@ -460,8 +460,8 @@ public class DeltavisionReader extends FormatReader {
     ndFilters = new Double[sizeC];
 
     // if matching log file exists, extract key/value pairs from it
-    boolean logFound = parseLogFile(store);
-    parseDeconvolutionLog(store);
+    boolean logFound = isGroupFiles() ? parseLogFile(store) : false;
+    if (isGroupFiles()) parseDeconvolutionLog(store);
 
     // Run through every image and fill in the
     // Extended Header information array for that image

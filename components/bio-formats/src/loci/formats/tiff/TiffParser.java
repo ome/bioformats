@@ -288,16 +288,19 @@ public class TiffParser {
       in.seek(offset + baseOffset + bytesPerEntry * i);
       int tag = in.readShort() & 0xffff;
       int type = in.readShort() & 0xffff;
-      // BigTIFF case is a slight hack
+      // BigTIFF case is a slight hack because the count could be
+      // greater than Integer.MAX_VALUE
       int count = bigTiff ? (int) (in.readLong() & 0xffffffff) : in.readInt();
+      int bpe = IFD.getIFDTypeLength(type);
 
       LogTools.debug("getIFDs: read " + IFD.getIFDTagName(tag) +
         " (type=" + IFD.getIFDTypeName(type) + "; count=" + count + ")");
-      if (count < 0) return null; // invalid data
+      if (count < 0 || bpe <= 0) {
+        // invalid data
+        in.skipBytes(bytesPerEntry - 4 - (bigTiff ? 8 : 4));
+        continue;
+      }
       Object value = null;
-
-      int bpe = IFD.getIFDTypeLength(type);
-      if (bpe <= 0) return null; // invalid data
 
       if (count > threshhold / bpe) {
         long pointer = getNextOffset(bigTiff, 0);

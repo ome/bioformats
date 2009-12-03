@@ -75,7 +75,7 @@ public class PrairieReader extends FormatReader {
   private String[] files;
 
   /** Helper reader for opening images */
-  private MinimalTiffReader tiff;
+  private TiffReader tiff;
 
   /** Names of the associated XML files */
   private String xmlFile, cfgFile;
@@ -167,12 +167,15 @@ public class PrairieReader extends FormatReader {
     if (noPixels) {
       return new String[] {xmlFile, cfgFile};
     }
-    if (files == null) files = new String[0];
-    String[] s = new String[files.length + 2];
-    System.arraycopy(files, 0, s, 0, files.length);
-    s[files.length] = xmlFile;
-    s[files.length + 1] = cfgFile;
-    return s;
+    Vector<String> s = new Vector<String>();
+    if (files != null) {
+      for (String file : files) {
+        s.add(file);
+      }
+    }
+    if (xmlFile != null) s.add(xmlFile);
+    if (cfgFile != null) s.add(cfgFile);
+    return s.toArray(new String[s.size()]);
   }
 
   /**
@@ -212,6 +215,10 @@ public class PrairieReader extends FormatReader {
 
     if (metadata == null) metadata = new Hashtable();
     if (core == null) core = new CoreMetadata[] {new CoreMetadata()};
+    if (tiff == null) {
+      tiff = new TiffReader();
+      tiff.setMetadataStore(getMetadataStore());
+    }
 
     if (checkSuffix(id, PRAIRIE_SUFFIXES)) {
       // we have been given the XML file that lists TIFF files (best case)
@@ -219,7 +226,6 @@ public class PrairieReader extends FormatReader {
       if (checkSuffix(id, XML_SUFFIX)) {
         status("Parsing XML");
         super.initFile(id);
-        tiff = new MinimalTiffReader();
         xmlFile = id;
         readXML = true;
       }
@@ -331,17 +337,26 @@ public class PrairieReader extends FormatReader {
     else {
       // we have been given a TIFF file - reinitialize with the proper XML file
 
-      status("Finding XML file");
+      if (isGroupFiles()) {
+        status("Finding XML file");
 
-      Location file = new Location(id);
-      file = file.getAbsoluteFile();
-      Location parent = file.getParentFile();
-      String[] listing = parent.list();
-      for (int i=0; i<listing.length; i++) {
-        if (checkSuffix(listing[i], PRAIRIE_SUFFIXES)) {
-          initFile(new Location(parent, listing[i]).getAbsolutePath());
-          return;
+        Location file = new Location(id);
+        file = file.getAbsoluteFile();
+        Location parent = file.getParentFile();
+        String[] listing = parent.list();
+        for (int i=0; i<listing.length; i++) {
+          if (checkSuffix(listing[i], PRAIRIE_SUFFIXES)) {
+            initFile(new Location(parent, listing[i]).getAbsolutePath());
+            return;
+          }
         }
+      }
+      else {
+        files = new String[] {id};
+        tiff.setId(files[0]);
+        core = tiff.getCoreMetadata();
+        metadataStore = tiff.getMetadataStore();
+        metadata = tiff.getMetadata();
       }
     }
     if (currentId == null) currentId = id;

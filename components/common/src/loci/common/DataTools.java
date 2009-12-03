@@ -736,6 +736,17 @@ public final class DataTools {
 
   // -- Strings --
 
+  /** Convert byte array to a hexadecimal string. */
+  public static String getHexString(byte[] b) {
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<b.length; i++) {
+      String a = Integer.toHexString(b[i] & 0xff);
+      if (a.length() == 1) sb.append("0");
+      sb.append(a);
+    }
+    return sb.toString();
+  }
+
   /** Remove null bytes from a string. */
   public static String stripString(String toStrip) {
     StringBuffer s = new StringBuffer();

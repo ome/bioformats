@@ -54,7 +54,7 @@ public class LeicaHandler extends DefaultHandler {
   private Stack<String> nameStack = new Stack<String>();
 
   private String elementName, collection;
-  private int count = 0, numChannels, extras;
+  private int count = 0, numChannels, extras = 1;
 
   private Vector<String> lutNames;
   private Vector<Double> xPos, yPos, zPos;
@@ -122,7 +122,10 @@ public class LeicaHandler extends DefaultHandler {
 
       if (extras > 1) {
         if (coreMeta.sizeZ == 1) coreMeta.sizeZ = extras;
-        else coreMeta.sizeT *= extras;
+        else {
+          if (coreMeta.sizeT == 0) coreMeta.sizeT = extras;
+          else coreMeta.sizeT *= extras;
+        }
       }
 
       if (coreMeta.sizeX == 0 && coreMeta.sizeY == 0) {

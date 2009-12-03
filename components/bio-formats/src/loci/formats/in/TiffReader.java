@@ -146,18 +146,23 @@ public class TiffReader extends BaseTiffReader {
 
     // check for another file with the same name
 
-    Location currentFile = new Location(currentId).getAbsoluteFile();
-    String currentName = currentFile.getName();
-    Location directory = currentFile.getParentFile();
-    String[] files = directory.list(true);
-    for (String file : files) {
-      String name = file;
-      if (name.indexOf(".") != -1) name = name.substring(0, name.indexOf("."));
+    if (isGroupFiles()) {
+      Location currentFile = new Location(currentId).getAbsoluteFile();
+      String currentName = currentFile.getName();
+      Location directory = currentFile.getParentFile();
+      String[] files = directory.list(true);
+      for (String file : files) {
+        String name = file;
+        if (name.indexOf(".") != -1) {
+          name = name.substring(0, name.indexOf("."));
+        }
 
-      if (currentName.startsWith(name) && checkSuffix(name, COMPANION_SUFFIXES))
-      {
-        companionFile = new Location(directory, file).getAbsolutePath();
-        break;
+        if (currentName.startsWith(name) &&
+          checkSuffix(name, COMPANION_SUFFIXES))
+        {
+          companionFile = new Location(directory, file).getAbsolutePath();
+          break;
+        }
       }
     }
 

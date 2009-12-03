@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
@@ -343,38 +344,36 @@ public class BioRadReader extends FormatReader {
 
     // look for companion metadata files
 
-    Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-    String[] list = parent.list(true);
-    Arrays.sort(list);
-
     Vector<String> pics = new Vector<String>();
 
-    for (int i=0; i<list.length; i++) {
-      if (list[i].endsWith("lse.xml")) {
-        String path =
-          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath();
-        RandomAccessInputStream raw = new RandomAccessInputStream(path);
-        used.add(path);
-        byte[] xml = new byte[(int) raw.length()];
-        raw.read(xml);
-        raw.close();
+    if (isGroupFiles()) {
+      Location parent =
+        new Location(currentId).getAbsoluteFile().getParentFile();
+      String parentPath = parent.getAbsolutePath();
+      String[] list = parent.list(true);
+      Arrays.sort(list);
 
-        DefaultHandler handler = new BioRadHandler();
-        XMLTools.parseXML(xml, handler);
+      for (int i=0; i<list.length; i++) {
+        if (list[i].endsWith("lse.xml")) {
+          String path = new Location(parentPath, list[i]).getAbsolutePath();
+          used.add(path);
+          String xml = DataTools.readFile(path);
 
-        used.remove(currentId);
-        for (int q=0; q<list.length; q++) {
-          if (checkSuffix(list[q], PIC_SUFFIX)) {
-            path =
-              new Location(parent.getAbsolutePath(), list[q]).getAbsolutePath();
-            pics.add(path);
-            if (!used.contains(path)) used.add(path);
+          DefaultHandler handler = new BioRadHandler();
+          XMLTools.parseXML(xml, handler);
+
+          used.remove(currentId);
+          for (int q=0; q<list.length; q++) {
+            if (checkSuffix(list[q], PIC_SUFFIX)) {
+              path = new Location(parentPath, list[q]).getAbsolutePath();
+              pics.add(path);
+              if (!used.contains(path)) used.add(path);
+            }
           }
         }
-      }
-      else if (list[i].endsWith("data.raw")) {
-        used.add(
-          new Location(parent.getAbsolutePath(), list[i]).getAbsolutePath());
+        else if (list[i].endsWith("data.raw")) {
+          used.add(new Location(parentPath, list[i]).getAbsolutePath());
+        }
       }
     }
 

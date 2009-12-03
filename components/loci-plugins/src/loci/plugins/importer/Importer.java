@@ -244,6 +244,7 @@ public class Importer {
     boolean showMetadata = options.isShowMetadata();
     boolean showOMEXML = options.isShowOMEXML();
     boolean groupFiles = options.isGroupFiles();
+    boolean ungroupFiles = options.isUngroupFiles();
     boolean concatenate = options.isConcatenate();
     boolean specifyRanges = options.isSpecifyRanges();
     boolean cropOnImport = options.doCrop();
@@ -264,6 +265,7 @@ public class Importer {
       base.setMetadataFiltered(true);
       base.setNormalized(true);
       base.setOriginalMetadataPopulated(true);
+      base.setGroupFiles(!ungroupFiles);
       base.setId(id);
 
       int pixelType = base.getPixelType();

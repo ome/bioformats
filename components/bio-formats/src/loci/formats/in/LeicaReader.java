@@ -250,7 +250,7 @@ public class LeicaReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> v = new Vector<String>();
-    v.add(leiFilename);
+    if (leiFilename != null) v.add(leiFilename);
     if (!noPixels) {
       v.addAll(files[getSeries()]);
     }
@@ -291,7 +291,7 @@ public class LeicaReader extends FormatReader {
     debug("LeicaReader.initFile(" + id + ")");
     close();
 
-    if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
+    if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && isGroupFiles()) {
       // need to find the associated .lei file
       if (ifds == null) super.initFile(id);
 
@@ -349,6 +349,23 @@ public class LeicaReader extends FormatReader {
         }
       }
       throw new FormatException("LEI file not found.");
+    }
+    else if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && !isGroupFiles()) {
+      super.initFile(id);
+      TiffReader r = new TiffReader();
+      r.setMetadataStore(getMetadataStore());
+      r.setId(id);
+
+      core = r.getCoreMetadata();
+      metadata = r.getMetadata();
+      metadataStore = r.getMetadataStore();
+      r.close();
+
+      files = new Vector[] {new Vector()};
+      files[0].add(id);
+      tiff = new MinimalTiffReader();
+
+      return;
     }
 
     // parse the LEI file
