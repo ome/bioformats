@@ -121,7 +121,7 @@ the CVS repository by following the instructions at:
         <exec executable="cmd" dir="${build.dir}" failonerror="true">
           <arg value="/c"/>
           <arg value="start"/>
-          <arg value="bf-itk.sln"/>
+          <arg value="BioFormatsImageIO.sln"/>
         </exec>
 <echo>
 Please use Visual Studio to complete the build.

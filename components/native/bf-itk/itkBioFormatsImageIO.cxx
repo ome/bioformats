@@ -48,8 +48,8 @@ For more information about the ITK Plugin IO mechanism, see:
 http://www.itk.org/Wiki/Plugin_IO_mechanisms
 */
 
-// Special thanks to Alex Gouaillard, Sebastien Barre, Luis Ibanez
-// and Jim Miller for fixes and suggestions.
+// Special thanks to Alex Gouaillard, Sebastien Barre,
+// Luis Ibanez and Jim Miller for fixes and suggestions.
 
 #include <fstream>
 
@@ -221,17 +221,27 @@ namespace itk {
         << "\tEffective SizeC = " << rgbChannelCount << std::endl
         << "\tImage Count = " << imageCount);
 
+      // NB: Always return 5D, to be unambiguous.
+      int numDims = 5;
+      /*
       int numDims = 2; // X and Y
       if (sizeZ > 1) numDims++; // multiple focal planes
       if (sizeT > 1) numDims++; // multiple time points
       if (effSizeC > 1) numDims++; // multiple independent channels
+      */
+
       SetNumberOfDimensions(numDims);
       m_Dimensions[0] = sizeX;
       m_Dimensions[1] = sizeY;
+      /*
       int dim = 2;
       if (sizeZ > 1) m_Dimensions[dim++] = sizeZ;
       if (sizeT > 1) m_Dimensions[dim++] = sizeT;
       if (effSizeC > 1) m_Dimensions[dim++] = effSizeC;
+      */
+      m_Dimensions[2] = sizeZ;
+      m_Dimensions[3] = sizeT;
+      m_Dimensions[4] = effSizeC;
 
       // set ITK pixel type
       IOPixelType itkPixelType;
