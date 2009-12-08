@@ -219,6 +219,7 @@ public class NativeND2Reader extends FormatReader {
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
+      status("Searching for blocks");
 
       isJPEG = false;
       in.seek(0);
@@ -233,29 +234,25 @@ public class NativeND2Reader extends FormatReader {
       Vector<Long> customDataOffsets = new Vector<Long>();
       Vector<int[]> customDataLengths = new Vector<int[]>();
 
-      while (in.getFilePointer() < in.length() - 1 &&
-        in.getFilePointer() >= 0)
+      // search for blocks
+      byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
+      final String sig = new String(sigBytes);
+      while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
-        int b1 = in.read();
-        int b2 = in.read();
-        int b3 = in.read();
-        int b4 = in.read();
-        while (b1 != -38 || b2 != -50 || b3 != -66 || b4 != 10) {
-          if (in.getFilePointer() >= in.length() - 1) break;
-          b1 = b2;
-          b2 = b3;
-          b3 = b4;
-          b4 = in.read();
-        }
-        if (in.getFilePointer() >= in.length() - 1) break;
+        in.findString(false, 1024, sig); // empirically, 1KB blocks work well
+        if (in.getFilePointer() > in.length() - 24) break;
 
         int lenOne = in.readInt();
         int lenTwo = in.readInt();
         int len = lenOne + lenTwo;
         in.skipBytes(4);
 
+        long fp = in.getFilePointer();
         String blockType = in.readString(12);
-        long fp = in.getFilePointer() - 12;
+
+        int percent = (int) (100 * fp / in.length());
+        status("Parsing block '" + blockType + "' " + percent + "%");
+
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
         in.skipBytes(skip);
