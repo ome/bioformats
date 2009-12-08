@@ -196,4 +196,19 @@ public abstract class DelegateReader extends FormatReader {
     }
   }
 
+  // -- StatusReporter API methods --
+
+  /* @see StatusReporter#addStatusListener(StatusListener) */
+  public void addStatusListener(StatusListener l) {
+    nativeReader.addStatusListener(l);
+    legacyReader.addStatusListener(l);
+  }
+
+  /* @see StatusReporter#removeStatusListener(StatusListener) */
+  public void removeStatusListener(StatusListener l) {
+    nativeReader.removeStatusListener(l);
+    legacyReader.removeStatusListener(l);
+  }
+
+
 }
