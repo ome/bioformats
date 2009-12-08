@@ -463,9 +463,11 @@ public class AVIReader extends FormatReader {
                 if (type.substring(2).equals("db") ||
                   type.substring(2).equals("dc"))
                 {
-                  offsets.add(new Long(in.getFilePointer()));
-                  lengths.add(new Long(size));
-                  in.skipBytes(size);
+                  if (size > 0) {
+                    offsets.add(new Long(in.getFilePointer()));
+                    lengths.add(new Long(size));
+                    in.skipBytes(size);
+                  }
                 }
 
                 spos = in.getFilePointer();
