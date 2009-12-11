@@ -58,6 +58,7 @@ public class APNGWriter extends FormatWriter {
   private int numFrames = 0;
   private long numFramesPointer = 0;
   private int nextSequenceNumber;
+  private boolean littleEndian;
 
   // -- Constructor --
 
@@ -76,8 +77,11 @@ public class APNGWriter extends FormatWriter {
     }
     MetadataRetrieve meta = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(meta, series);
-    int bytesPerPixel = FormatTools.getBytesPerPixel(
-      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0)));
+    int pixelType =
+      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+    int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+    boolean signed = FormatTools.isSigned(pixelType);
+    littleEndian = !meta.getPixelsBigEndian(0, 0);
 
     boolean indexed = getColorModel() instanceof IndexColorModel;
     Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
@@ -135,7 +139,7 @@ public class APNGWriter extends FormatWriter {
       writePLTE();
 
       // write IDAT chunk
-      writePixels("IDAT", buf, width, height, nChannels);
+      writePixels("IDAT", buf, width, height, nChannels, signed);
       initialized = true;
     }
     else {
@@ -143,7 +147,7 @@ public class APNGWriter extends FormatWriter {
       writeFCTL(width, height);
 
       // write fdAT chunk
-      writePixels("fdAT", buf, width, height, nChannels);
+      writePixels("fdAT", buf, width, height, nChannels, signed);
     }
 
     numFrames++;
@@ -250,7 +254,7 @@ public class APNGWriter extends FormatWriter {
   }
 
   private void writePixels(String chunk, byte[] stream, int width, int height,
-    int sizeC) throws IOException
+    int sizeC, boolean signed) throws IOException
   {
     ByteArrayOutputStream s = new ByteArrayOutputStream();
     s.write(chunk.getBytes());
@@ -268,12 +272,18 @@ public class APNGWriter extends FormatWriter {
         System.arraycopy(stream, i * rowLen, rowBuf, 0, rowLen);
       }
       else {
+        int max = (int) Math.pow(2, bytesPerPixel * 8 - 1);
         for (int col=0; col<width; col++) {
           for (int c=0; c<sizeC; c++) {
-            for (int q=0; q<bytesPerPixel; q++) {
-              rowBuf[(col * sizeC + c) * bytesPerPixel + q] =
-                stream[c * planeSize + (i * width + col) * bytesPerPixel + q];
+            int offset = c * planeSize + (i * width + col) * bytesPerPixel;
+            int pixel = DataTools.bytesToInt(stream, offset, bytesPerPixel,
+              littleEndian);
+            if (signed) {
+              if (pixel < max) pixel += max;
+              else pixel -= max;
             }
+            int output = (col * sizeC + c) * bytesPerPixel;
+            DataTools.unpackBytes(pixel, rowBuf, output, bytesPerPixel, false);
           }
         }
       }
