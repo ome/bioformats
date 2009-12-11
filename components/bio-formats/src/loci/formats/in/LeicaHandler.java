@@ -487,9 +487,13 @@ public class LeicaHandler extends DefaultHandler {
 
       if (attribute.equals("NumericalAperture")) {
         store.setObjectiveLensNA(new Double(variant), numDatasets, 0);
+        store.setObjectiveCorrection("Unknown", numDatasets, 0);
+        store.setObjectiveImmersion("Unknown", numDatasets, 0);
       }
       else if (attribute.equals("OrderNumber")) {
         store.setObjectiveSerialNumber(variant, numDatasets, 0);
+        store.setObjectiveCorrection("Unknown", numDatasets, 0);
+        store.setObjectiveImmersion("Unknown", numDatasets, 0);
       }
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
@@ -533,20 +537,23 @@ public class LeicaHandler extends DefaultHandler {
           }
         }
 
+        String immersion = "Unknown";
         if (tokens.hasMoreTokens()) {
-          String immersion = tokens.nextToken();
+          immersion = tokens.nextToken();
           if (immersion == null || immersion.trim().equals("")) {
             immersion = "Unknown";
           }
-          store.setObjectiveImmersion(immersion, numDatasets, 0);
         }
+        store.setObjectiveImmersion(immersion, numDatasets, 0);
+
+        String correction = "Unknown";
         if (tokens.hasMoreTokens()) {
-          String correction = tokens.nextToken();
+          correction = tokens.nextToken();
           if (correction == null || correction.trim().equals("")) {
             correction = "Unknown";
           }
-          store.setObjectiveCorrection(correction, numDatasets, 0);
         }
+        store.setObjectiveCorrection("Unknown", numDatasets, 0);
 
         store.setObjectiveModel(model.toString().trim(), numDatasets, 0);
       }
@@ -705,7 +712,7 @@ public class LeicaHandler extends DefaultHandler {
 
       if (l.intensity > 0) lasers.add(l);
     }
-    else if (qName.equals("TimeStamp")) {
+    else if (qName.equals("TimeStamp") && numDatasets >= 0) {
       long high = Long.parseLong(attributes.getValue("HighInteger"));
       long low = Long.parseLong(attributes.getValue("LowInteger"));
 
