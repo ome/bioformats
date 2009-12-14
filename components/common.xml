@@ -19,6 +19,10 @@ Type "ant -p" for a list of targets.
 
   <!-- Internal build targets -->
 
+  <target name="init-title">
+    <echo>----------=========== ${component.name} ===========----------</echo>
+  </target>
+
   <target name="init-timestamp">
     <tstamp>
       <format property="DATE" pattern="d MMMMM yyyy"/>
