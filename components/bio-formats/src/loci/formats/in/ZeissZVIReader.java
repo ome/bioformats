@@ -281,7 +281,8 @@ public class ZeissZVIReader extends FormatReader {
                 tileIndex = 0;
               }
               Integer tileCount = tiles.get(new Integer(ii));
-              boolean valid = tileCount != null;
+              boolean valid =
+                tileCount != null && tileCount.intValue() == getImageCount();
               if (!valid) {
                 colOffset += tileW;
                 if (colOffset >= w) {
@@ -291,8 +292,8 @@ public class ZeissZVIReader extends FormatReader {
                 continue;
               }
               int c = getEffectiveSizeC();
-              if (c > 1) c = 2 - (tileRows % 2);
-              if (getImageCount() > 1 && c == 1) {
+              int cPos = getDimensionOrder().indexOf("C");
+              if (getImageCount() > 1 && (cPos > 2 || c == 1)) {
                 int p = ii;
                 for (int n=0; n<p; n++) {
                   if (tiles.containsKey(new Integer(n))) {
@@ -300,15 +301,15 @@ public class ZeissZVIReader extends FormatReader {
                   }
                 }
               }
-              ii *= c;
-              if (getImageCount() > 1 && c == 1) {
+              if (getImageCount() > 1 && cPos > 2) {
                 ii -= tileIndex;
               }
-              else if (c > 1) {
+              else if (cPos == 2) {
+                ii *= c;
                 ii += scale;
               }
               if (getImageCount() == 1) ii -= firstTile;
-              if (c == 1) ii += no;
+              if (cPos > 2) ii += no;
 
               if (ii < 0) {
                 if (prevIndex < 0) ii = no;
