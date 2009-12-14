@@ -34,23 +34,23 @@ Type "ant -p" for a list of targets.
         <loadfile property="svn.entries" srcFile="${basedir}/.svn/entries"/>
 
         <propertyregex property="svn.revision"
-          input="${svn.entries}" regexp="([^\n]*\n){4}" select="\1"/>
+          input="${svn.entries}" regexp="([^\n]*\n){3}([^\n]*)" select="\2"/>
         <echo>SVN revision: ${svn.revision}</echo>
 
         <propertyregex property="svn.url"
-          input="${svn.entries}" regexp="([^\n]*\n){5}" select="\1"/>
+          input="${svn.entries}" regexp="([^\n]*\n){4}([^\n]*)" select="\2"/>
         <echo>SVN url: ${svn.url}</echo>
 
         <propertyregex property="svn.root"
-          input="${svn.entries}" regexp="([^\n]*\n){6}" select="\1"/>
+          input="${svn.entries}" regexp="([^\n]*\n){5}([^\n]*)" select="\2"/>
         <echo>SVN root: ${svn.root}</echo>
 
         <propertyregex property="svn.date"
-          input="${svn.entries}" regexp="([^\n]*\n){10}" select="\1"/>
+          input="${svn.entries}" regexp="([^\n]*\n){9}([^\n]*)" select="\2"/>
         <echo>SVN last changed date: ${svn.date}</echo>
 
         <propertyregex property="svn.changed"
-          input="${svn.entries}" regexp="([^\n]*\n){11}" select="\1"/>
+          input="${svn.entries}" regexp="([^\n]*\n){10}([^\n]*)" select="\2"/>
         <echo>SVN last changed revision: ${svn.changed}</echo>
 
         <propertyregex property="release.version" defaultValue="trunk"
