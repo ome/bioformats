@@ -141,7 +141,7 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-timestamp, init-revision, init-release, init-manifest-cp">
+    depends="init-timestamp, init-svn, init-manifest-cp">
     <echo>----------=========== ${component.name} ===========----------</echo>
   </target>
 
@@ -176,8 +176,12 @@ your FindBugs installation's lib directory. E.g.:
         <filter token="date" value="${DATE}"/>
         <filter token="year" value="${YEAR}"/>
         <filter token="svn.revision" value="${svn.revision}"/>
-        <filter token="visbio.version" value="${visbio.version}"/>
+        <filter token="svn.url" value="${svn.url}"/>
+        <filter token="svn.root" value="${svn.root}"/>
+        <filter token="svn.date" value="${svn.date}"/>
+        <filter token="svn.changed" value="${svn.changed}"/>
         <filter token="release.version" value="${release.version}"/>
+        <filter token="visbio.version" value="${visbio.version}"/>
       </filterset>
     </copy>
     <!-- copy resources to classes folder -->

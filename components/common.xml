@@ -26,56 +26,42 @@ Type "ant -p" for a list of targets.
     </tstamp>
   </target>
 
-  <target name="init-revision">
-    <!-- determine SVN revision number -->
+  <target name="init-svn">
+    <!-- determine SVN and version statistics -->
     <if>
-      <isset property="svn.revision"/>
+      <isset property="svn.log"/>
       <else>
-        <!--
-        Thanks to Chris Collins for this code snippet:
-          http://ccollins.wordpress.com/2008/01/30/
-            getting-subversion-revision-in-ant/
-        -->
-        <exec executable="svn" outputproperty="svn.log"
-          failifexecutionfails="false">
-          <arg line="info &quot;${basedir}&quot;"/>
-        </exec>
-        <if>
-          <isset property="svn.log"/>
-          <then>
-            <propertyregex property="svn.revision"
-              input="${svn.log}" select="\1">
-              <regexp pattern="Revision: ([0-9]*)"/>
-            </propertyregex>
-            <!--<echo>SVN revision: ${svn.revision}</echo>-->
-          </then>
-        </if>
-      </else>
-    </if>
-  </target>
+        <loadfile property="svn.entries" srcFile="${basedir}/.svn/entries"/>
 
-  <target name="init-release">
-    <exec executable="svn" outputproperty="release.version"
-      failifexecutionfails="false">
-      <arg line="info &quot;${basedir}&quot;"/>
-    </exec>
-    <if>
-      <isset property="release.version"/>
-      <then>
+        <propertyregex property="svn.revision"
+          input="${svn.entries}" regexp="([^\n]*\n){4}" select="\1"/>
+        <echo>SVN revision: ${svn.revision}</echo>
+
+        <propertyregex property="svn.url"
+          input="${svn.entries}" regexp="([^\n]*\n){5}" select="\1"/>
+        <echo>SVN url: ${svn.url}</echo>
+
         <propertyregex property="svn.root"
-          input="${release.version}" select="\1">
-          <regexp pattern="Repository Root: (.*)"/>
-        </propertyregex>
+          input="${svn.entries}" regexp="([^\n]*\n){6}" select="\1"/>
+        <echo>SVN root: ${svn.root}</echo>
+
+        <propertyregex property="svn.date"
+          input="${svn.entries}" regexp="([^\n]*\n){10}" select="\1"/>
+        <echo>SVN last changed date: ${svn.date}</echo>
+
+        <propertyregex property="svn.changed"
+          input="${svn.entries}" regexp="([^\n]*\n){11}" select="\1"/>
+        <echo>SVN last changed revision: ${svn.changed}</echo>
+
+        <propertyregex property="release.version" defaultValue="trunk"
+          input="${svn.url}" regexp=".*/branches/([^/]*).*"
+          replace="dev \1"/>
         <propertyregex property="release.version" override="true"
-          input="${release.version}" select="\1">
-          <regexp pattern="URL: ${svn.root}/(.*)/components/(.*)"/>
-        </propertyregex>
-        <propertyregex property="release.version" override="true"
-          input="${release.version}" regexp="branches/(.*)" replace="stable \1"
-          defaultValue="trunk"/>
-        <echo>Release version: ${release.version}</echo><!--TEMP-->
-        <!--<echo>Release version: ${release.version}</echo>-->
-      </then>
+          defaultValue="${release.version}"
+          input="${svn.url}" regexp=".*/tags/loci-tools-([^/]*).*"
+          replace="stable \1"/>
+        <echo>Release version: ${release.version}</echo>
+      </else>
     </if>
   </target>
 
