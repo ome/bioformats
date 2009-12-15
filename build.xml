@@ -507,6 +507,11 @@ Apache XML-RPC
     </javadoc>
   </target>
 
+  <target name="docs-zip" depends="docs"
+    description="generate a Zip containing the Javadocs">
+    <zip destfile="${artifact.dir}/bio-formats-javadocs.zip" basedir="${merged-docs.dir}"/>
+  </target>
+
   <target name="copy-jars">
     <!-- copy third party JARs into artifacts folder -->
     <!-- necessary for runtime classpath dependencies to function properly -->
