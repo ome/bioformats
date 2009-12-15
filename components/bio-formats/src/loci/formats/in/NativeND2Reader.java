@@ -162,7 +162,7 @@ public class NativeND2Reader extends FormatReader {
     }
     else {
       // plane is not compressed
-      int scanlinePad = getSizeX() % 2 == 0 ? 0 : 1; // round up to even width
+      int scanlinePad = getSizeX() % 2; // round up to even width
       readPlane(in, x, y, w, h, scanlinePad, buf);
     }
 
