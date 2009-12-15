@@ -92,6 +92,13 @@ public interface IFormatReader extends IFormatHandler {
   int getPixelType();
 
   /**
+   * Gets the number of valid bits per pixel.  The number of valid bits per
+   * pixel is always less than or equal to the number of bits per pixel
+   * that correspond to {@link getPixelType()}.
+   */
+  int getBitsPerPixel();
+
+  /**
    * Gets the effective size of the C dimension, guaranteeing that
    * getEffectiveSizeC() * getSizeZ() * getSizeT() == getImageCount()
    * regardless of the result of isRGB().

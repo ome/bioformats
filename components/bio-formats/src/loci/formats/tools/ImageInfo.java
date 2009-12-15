@@ -415,6 +415,7 @@ public class ImageInfo {
       int sizeC = reader.getSizeC();
       int sizeT = reader.getSizeT();
       int pixelType = reader.getPixelType();
+      int validBits = reader.getBitsPerPixel();
       int effSizeC = reader.getEffectiveSizeC();
       int rgbChanCount = reader.getRGBChannelCount();
       boolean indexed = reader.isIndexed();
@@ -497,6 +498,7 @@ public class ImageInfo {
         (orderCertain ? " (certain)" : " (uncertain)"));
       LogTools.println("\tPixel type = " +
         FormatTools.getPixelTypeString(pixelType));
+      LogTools.println("\tValid bits per pixel = " + validBits);
       LogTools.println("\tMetadata complete = " + metadataComplete);
       LogTools.println("\tThumbnail series = " + thumbnail);
       if (doMeta) {

@@ -233,6 +233,11 @@ public class ImageReader implements IFormatReader {
     return getReader().getPixelType();
   }
 
+  /* @see IFormatReader#getBitsPerPixel() */
+  public int getBitsPerPixel() {
+    return getReader().getBitsPerPixel();
+  }
+
   /* @see IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC() {
     return getReader().getEffectiveSizeC();

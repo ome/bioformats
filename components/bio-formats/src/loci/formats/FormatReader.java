@@ -489,6 +489,16 @@ public abstract class FormatReader extends FormatHandler
     return core[series].pixelType;
   }
 
+  /* @see IFormatReader#getBitsPerPixel() */
+  public int getBitsPerPixel() {
+    FormatTools.assertId(currentId, true, 1);
+    if (core[series].bitsPerPixel == 0) {
+      core[series].bitsPerPixel =
+        FormatTools.getBytesPerPixel(getPixelType()) * 8;
+    }
+    return core[series].bitsPerPixel;
+  }
+
   /* @see IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC() {
     // NB: by definition, imageCount == effectiveSizeC * sizeZ * sizeT

@@ -551,14 +551,56 @@ public class OpenlabReader extends FormatReader {
           core[i].sizeC = 3;
           core[i].interleaved = version == 5;
           break;
-        case MAC_16_GREYS:
         case DEEP_GREY_9:
+          core[i].bitsPerPixel = 9;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
         case DEEP_GREY_10:
+          core[i].bitsPerPixel = 10;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
         case DEEP_GREY_11:
+          core[i].bitsPerPixel = 11;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
         case DEEP_GREY_12:
+          core[i].bitsPerPixel = 12;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
         case DEEP_GREY_13:
+          core[i].bitsPerPixel = 13;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
         case DEEP_GREY_14:
+          core[i].bitsPerPixel = 14;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
         case DEEP_GREY_15:
+          core[i].bitsPerPixel = 15;
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          core[i].interleaved = false;
+          break;
+        case MAC_16_GREYS:
         case DEEP_GREY_16:
           core[i].pixelType = FormatTools.UINT16;
           core[i].rgb = false;

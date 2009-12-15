@@ -813,6 +813,9 @@ public class FV1000Reader extends FormatReader {
           else if (key.equals("PinholeDiameter")) {
             pinholeSize = value;
           }
+          else if (key.equals("ValidBitCounts")) {
+            core[0].bitsPerPixel = Integer.parseInt(value);
+          }
         }
       }
     }

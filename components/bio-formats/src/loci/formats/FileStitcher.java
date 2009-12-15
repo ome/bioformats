@@ -307,6 +307,12 @@ public class FileStitcher implements IFormatReader {
     return noStitch ? reader.getPixelType() : core[getSeries()].pixelType;
   }
 
+  /* @see IFormatReader#getBitsPerPixel() */
+  public int getBitsPerPixel() {
+    FormatTools.assertId(currentId, true, 2);
+    return noStitch ? reader.getBitsPerPixel() : core[getSeries()].bitsPerPixel;
+  }
+
   /* @see IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC() {
     FormatTools.assertId(currentId, true, 2);

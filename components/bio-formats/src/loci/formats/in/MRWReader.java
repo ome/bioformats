@@ -172,7 +172,7 @@ public class MRWReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("AliconaReader.initFile(" + id + ")");
+    debug("MRW.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
@@ -251,6 +251,7 @@ public class MRWReader extends FormatReader {
     core[0].sizeZ = 1;
     core[0].sizeT = 1;
     core[0].interleaved = true;
+    core[0].bitsPerPixel = dataSize;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

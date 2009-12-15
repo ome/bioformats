@@ -68,6 +68,9 @@ public class CoreMetadata {
    */
   public int pixelType;
 
+  /** Number of valid bits per pixel. */
+  public int bitsPerPixel;
+
   /** Total number of images. */
   public int imageCount;
 

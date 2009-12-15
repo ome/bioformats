@@ -555,8 +555,12 @@ public class DicomReader extends FormatReader {
     }
     if (imagesPerFile == 0) imagesPerFile = 1;
 
+    core[0].bitsPerPixel = bitsPerPixel;
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
-    if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
+    if (bitsPerPixel == 24 || bitsPerPixel == 48) {
+      bitsPerPixel /= 3;
+      core[0].bitsPerPixel /= 3;
+    }
 
     switch (bitsPerPixel) {
       case 8:

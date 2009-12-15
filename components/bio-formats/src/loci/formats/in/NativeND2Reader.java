@@ -461,6 +461,7 @@ public class NativeND2Reader extends FormatReader {
         int y = getSizeY();
         int c = getSizeC();
         int pixelType = getPixelType();
+        int bitsPerPixel = getBitsPerPixel();
         boolean rgb = isRGB();
         String order = getDimensionOrder();
         core = new CoreMetadata[offsets.length];
@@ -470,6 +471,7 @@ public class NativeND2Reader extends FormatReader {
           core[i].sizeY = y;
           core[i].sizeC = c == 0 ? 1 : c;
           core[i].pixelType = pixelType;
+          core[i].bitsPerPixel = bitsPerPixel;
           core[i].rgb = rgb;
           core[i].sizeZ = 1;
           core[i].dimensionOrder = order;
@@ -492,6 +494,7 @@ public class NativeND2Reader extends FormatReader {
           core[i].sizeT = getSizeT() == 0 ? 1 : getSizeT();
           core[i].imageCount = getImageCount();
           core[i].pixelType = getPixelType();
+          core[i].bitsPerPixel = getBitsPerPixel();
           core[i].dimensionOrder = getDimensionOrder();
         }
       }
@@ -1067,6 +1070,9 @@ public class NativeND2Reader extends FormatReader {
           }
         }
       }
+    }
+    else if (key.endsWith("uiBpcSignificant")) {
+      core[0].bitsPerPixel = Integer.parseInt(value);
     }
     else if (key.equals("VirtualComponents")) {
       if (getSizeC() == 0) {

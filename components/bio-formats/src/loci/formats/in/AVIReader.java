@@ -523,7 +523,10 @@ public class AVIReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
-    if (bmpBitsPerPixel <= 8) core[0].pixelType = FormatTools.UINT8;
+    if (bmpBitsPerPixel <= 8) {
+      core[0].pixelType = FormatTools.UINT8;
+      core[0].bitsPerPixel = bmpBitsPerPixel;
+    }
     else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
     else if (bmpBitsPerPixel == 32) core[0].pixelType = FormatTools.UINT32;
     else if (bmpBitsPerPixel == 24) core[0].pixelType = FormatTools.UINT8;

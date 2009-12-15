@@ -187,6 +187,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getPixelType();
   }
 
+  public int getBitsPerPixel() {
+    return reader.getBitsPerPixel();
+  }
+
   public int getEffectiveSizeC() {
     //return reader.getEffectiveSizeC();
     int sizeZT = getSizeZ() * getSizeT();

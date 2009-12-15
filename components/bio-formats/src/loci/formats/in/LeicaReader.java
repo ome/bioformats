@@ -725,6 +725,7 @@ public class LeicaReader extends FormatReader {
           core[i].dimensionOrder = "XY";
 
           resolution = stream.readInt();
+          core[i].bitsPerPixel = resolution;
           addSeriesMeta("Real world resolution", resolution);
           addSeriesMeta("Maximum voxel intensity", getString(stream, true));
           addSeriesMeta("Minimum voxel intensity", getString(stream, true));

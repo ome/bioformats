@@ -1588,6 +1588,11 @@ public class ZeissLSMReader extends FormatReader {
         if (metadataKeys.get(key) != null) {
           addSeriesMeta(prefix + " " + metadataKeys.get(key),
             blockData.get(key));
+
+          if (metadataKeys.get(key).equals("Bits Per Sample")) {
+            core[getSeries()].bitsPerPixel =
+              Integer.parseInt(blockData.get(key).toString());
+          }
         }
       }
       addGlobalMeta(prefix + " Acquire", new Boolean(acquire));

@@ -423,6 +423,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
     core[0].pixelType = firstIFD.getPixelType();
+    core[0].bitsPerPixel = bps;
   }
 
   /**

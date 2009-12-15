@@ -873,6 +873,9 @@ public class MetamorphReader extends BaseTiffReader {
             double exposure = Double.parseDouble(value);
             exposureTime = new Double(exposure / 1000);
           }
+          else if (key.equals("Bit Depth")) {
+            core[0].bitsPerPixel = Integer.parseInt(value);
+          }
         }
       }
 

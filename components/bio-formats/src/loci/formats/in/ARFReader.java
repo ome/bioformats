@@ -125,6 +125,7 @@ public class ARFReader extends FormatReader {
     else if (bitsPerPixel > 8) core[0].pixelType = FormatTools.UINT16;
     else core[0].pixelType = FormatTools.UINT8;
 
+    core[0].bitsPerPixel = bitsPerPixel;
     core[0].imageCount = numImages;
     core[0].dimensionOrder = "XYCZT";
     core[0].orderCertain = true;

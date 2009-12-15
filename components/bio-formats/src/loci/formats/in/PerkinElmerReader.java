@@ -760,6 +760,9 @@ public class PerkinElmerReader extends FormatReader {
       else if (key.equals("Origin Z")) {
         originZ = Double.parseDouble(value);
       }
+      else if (key.equals("SubfileType X")) {
+        core[0].bitsPerPixel = Integer.parseInt(value);
+      }
     }
     catch (NumberFormatException exc) {
       traceDebug(exc);
