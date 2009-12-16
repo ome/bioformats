@@ -359,8 +359,14 @@ public class ScanrReader extends FormatReader {
       }
     }
 
-    store.setPlateRowNamingConvention("A", 0);
-    store.setPlateColumnNamingConvention("1", 0);
+    if (wellRows > 26) {
+      store.setPlateRowNamingConvention("1", 0);
+      store.setPlateColumnNamingConvention("A", 0);
+    }
+    else {
+      store.setPlateRowNamingConvention("A", 0);
+      store.setPlateColumnNamingConvention("1", 0);
+    }
     store.setPlateName(plateName, 0);
 
     int nFields = fieldRows * fieldColumns;
@@ -382,8 +388,12 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + String.valueOf((char) ('A' + wellRow)) +
-        (wellCol + 1) + ", Field " + (field + 1);
+      String row =
+        String.valueOf(wellRows > 26 ? wellRow + 1 : (char) ('A' + wellRow));
+      String col =
+        String.valueOf(wellRows > 26 ? (char) ('A' + wellCol) : wellCol + 1);
+      String name = "Well " + row + col + ", Field " + (field + 1) +
+        " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
     }
 
