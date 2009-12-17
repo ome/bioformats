@@ -870,11 +870,14 @@ public class MetamorphReader extends BaseTiffReader {
             if (value.indexOf("=") != -1) {
               value = value.substring(value.indexOf("=") + 1).trim();
             }
-            else if (value.indexOf(" ") != -1) {
+            if (value.indexOf(" ") != -1) {
               value = value.substring(0, value.indexOf(" "));
             }
-            double exposure = Double.parseDouble(value);
-            exposureTime = new Double(exposure / 1000);
+            try {
+              double exposure = Double.parseDouble(value);
+              exposureTime = new Double(exposure / 1000);
+            }
+            catch (NumberFormatException e) { }
           }
           else if (key.equals("Bit Depth")) {
             core[0].bitsPerPixel = Integer.parseInt(value);
