@@ -867,7 +867,10 @@ public class MetamorphReader extends BaseTiffReader {
           String value = line.substring(colon + 2);
           addSeriesMeta(key, value);
           if (key.equals("Exposure")) {
-            if (value.indexOf(" ") != -1) {
+            if (value.indexOf("=") != -1) {
+              value = value.substring(value.indexOf("=") + 1).trim();
+            }
+            else if (value.indexOf(" ") != -1) {
               value = value.substring(0, value.indexOf(" "));
             }
             double exposure = Double.parseDouble(value);
