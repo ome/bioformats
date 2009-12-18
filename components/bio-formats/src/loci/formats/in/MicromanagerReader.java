@@ -390,6 +390,34 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
+    if (tiffs.size() == 0) {
+      Vector<String> uniqueZ = new Vector<String>();
+      Vector<String> uniqueC = new Vector<String>();
+      Vector<String> uniqueT = new Vector<String>();
+
+      Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
+      String[] files = dir.list(true);
+      Arrays.sort(files);
+      for (String f : files) {
+        if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
+          blocks = f.split("_");
+          if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
+          if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
+          if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
+
+          tiffs.add(new Location(dir, f).getAbsolutePath());
+        }
+      }
+
+      core[0].sizeZ = uniqueZ.size();
+      core[0].sizeC = uniqueC.size();
+      core[0].sizeT = uniqueT.size();
+
+      if (tiffs.size() == 0) {
+        throw new FormatException("Could not find TIFF files.");
+      }
+    }
+
     tiffReader.setId(tiffs.get(0));
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
