@@ -385,6 +385,12 @@ public class ZeissLSMReader extends FormatReader {
       for (int i=1; i<ifds.size(); i++) {
         long[] stripOffsets = ifds.get(i).getStripOffsets();
         long[] previousStripOffsets = ifds.get(i - 1).getStripOffsets();
+
+        if (stripOffsets == null || previousStripOffsets == null) {
+          throw new FormatException(
+            "Strip offsets are missing; this is an invalid file.");
+        }
+
         boolean neededAdjustment = false;
         for (int j=0; j<stripOffsets.length; j++) {
           if (stripOffsets[j] < previousStripOffsets[j]) {
