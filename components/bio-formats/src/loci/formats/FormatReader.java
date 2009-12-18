@@ -128,6 +128,10 @@ public abstract class FormatReader extends FormatHandler
       }
     }
 
+    if (new Location(id).length() == 0) {
+      throw new FormatException("This file is invalid, as it has length 0.");
+    }
+
     series = 0;
     close();
     currentId = id;

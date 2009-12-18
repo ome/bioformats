@@ -583,6 +583,10 @@ public class PerkinElmerReader extends FormatReader {
 
     status("Populating metadata");
 
+    if (files.length == 0) {
+      throw new FormatException("TIFF files not found.");
+    }
+
     if (isTiff) {
       tiff.setId(files[0]);
       core[0].pixelType = tiff.getPixelType();
