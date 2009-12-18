@@ -104,6 +104,11 @@ public class ZipHandle extends CompressedRandomAccess {
     return stream;
   }
 
+  /** Returns the number of entries. */
+  public int getEntryCount() {
+    return zip.size();
+  }
+
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#close() */

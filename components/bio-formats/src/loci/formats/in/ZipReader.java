@@ -103,6 +103,10 @@ public class ZipReader extends FormatReader {
     reader.setMetadataStore(getMetadataStore());
 
     ZipHandle zip = new ZipHandle(id);
+    if (zip.getEntryCount() > 1) {
+      throw new FormatException(
+        "Zip files that contain more than one file are not supported.");
+    }
     String name = zip.getEntryName();
     Location.mapFile(name, zip);
     reader.setId(name);
