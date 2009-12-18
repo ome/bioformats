@@ -260,7 +260,12 @@ public class OMEXMLReader extends FormatReader {
     compression = new Vector<String>();
 
     DefaultHandler handler = new OMEXMLHandler();
-    XMLTools.parseXML(in, handler);
+    try {
+      XMLTools.parseXML(in, handler);
+    }
+    catch (IOException e) {
+      throw new FormatException("Malformed OME-XML", e);
+    }
 
     if (binDataOffsets.size() == 0) {
       throw new FormatException("Pixel data not found");
