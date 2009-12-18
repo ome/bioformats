@@ -128,7 +128,10 @@ public abstract class FormatReader extends FormatHandler
       }
     }
 
-    if (new Location(id).length() == 0) {
+    RandomAccessInputStream s = new RandomAccessInputStream(id);
+    long length = s.length();
+    s.close();
+    if (length == 0) {
       throw new FormatException("This file is invalid, as it has length 0.");
     }
 

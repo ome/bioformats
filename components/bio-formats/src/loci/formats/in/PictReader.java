@@ -32,7 +32,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.ByteVector;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
@@ -62,6 +64,9 @@ public class PictReader extends FormatReader {
   private static final int PICT_9A = 0x9a;
   private static final int PICT_END = 0xff;
   private static final int PICT_LONGCOMMENT = 0xa1;
+  private static final int PICT_JPEG = 0x18;
+  private static final int PICT_TYPE_1 = 0xa9f;
+  private static final int PICT_TYPE_2 = 0x9190;
 
   /** Table used in expanding pixels that use less than 8 bits. */
   private static final byte[] EXPANSION_TABLE = new byte[256 * 8];
@@ -93,6 +98,7 @@ public class PictReader extends FormatReader {
   protected LegacyQTTools qtTools = new LegacyQTTools();
 
   private boolean legacy = false;
+  private Vector<Long> jpegOffsets = new Vector<Long>();
 
   // -- Constructor --
 
@@ -124,6 +130,30 @@ public class PictReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (jpegOffsets.size() > 0) {
+      ByteVector v = new ByteVector();
+      in.seek(jpegOffsets.get(0));
+      byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
+      in.read(b);
+      RandomAccessInputStream s = new RandomAccessInputStream(b);
+      for (long jpegOffset : jpegOffsets) {
+        s.seek(jpegOffset - jpegOffsets.get(0));
+
+        CodecOptions options = new CodecOptions();
+        options.interleaved = isInterleaved();
+        options.littleEndian = isLittleEndian();
+
+        v.add(new JPEGCodec().decompress(s, options));
+      }
+
+      s = new RandomAccessInputStream(v.toByteArray());
+      readPlane(s, x, y, w, h, buf);
+      s.close();
+
+      return buf;
+    }
+
     if (legacy || strips.size() == 0) {
       in.seek(512);
       byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];
@@ -205,6 +235,7 @@ public class PictReader extends FormatReader {
       versionOne = false;
       lookup = null;
       legacy = false;
+      jpegOffsets.clear();
     }
   }
 
@@ -258,7 +289,10 @@ public class PictReader extends FormatReader {
       in.skipBytes(6);
       int pixelsPerInchX = in.readInt();
       int pixelsPerInchY = in.readInt();
-      in.skipBytes(12);
+      in.skipBytes(4);
+      core[0].sizeY = in.readShort();
+      core[0].sizeX = in.readShort();
+      in.skipBytes(4);
     }
     else throw new FormatException("Invalid PICT file");
 
@@ -270,7 +304,7 @@ public class PictReader extends FormatReader {
         if ((in.getFilePointer() & 0x1L) != 0) {
           in.skipBytes(1);
         }
-        opcode = in.readShort();
+        opcode = in.readShort() & 0xffff;
       }
     }
     while (drivePictDecoder(opcode));
@@ -316,9 +350,30 @@ public class PictReader extends FormatReader {
         break;
       case PICT_END: // end of PICT
         return false;
+      case PICT_TYPE_1:
+      case PICT_TYPE_2:
+        x = in.read();
+        in.skipBytes(x);
+        break;
+      case PICT_JPEG:
+        jpegOffsets.add(in.getFilePointer() + 2);
+        core[0].sizeC = 3;
+        core[0].rgb = true;
+        while ((in.readShort() & 0xffff) != 0xffd9 &&
+          in.getFilePointer() < in.length());
+        while (in.getFilePointer() < in.length()) {
+          while ((in.readShort() & 0xffff) != 0xffd8 &&
+            in.getFilePointer() < in.length());
+          if (in.getFilePointer() < in.length()) {
+            jpegOffsets.add(in.getFilePointer() - 2);
+          }
+        }
+        core[0].interleaved = true;
+        break;
       default:
         if (opcode < 0) {
-          throw new FormatException("Invalid opcode: " + opcode);
+          //throw new FormatException("Invalid opcode: " + opcode);
+          warn("Invalid opcode: " + opcode);
         }
     }
 
