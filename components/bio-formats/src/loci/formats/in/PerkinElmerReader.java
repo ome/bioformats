@@ -550,7 +550,10 @@ public class PerkinElmerReader extends FormatReader {
         else if (tokens[j + 1].trim().equals("Slice Z positions")) {
           for (int q=j + 2; q<tokens.length; q++) {
             if (!tokens[q].trim().equals("")) {
-              zPositions.add(new Double(tokens[q].trim()));
+              try {
+                zPositions.add(new Double(tokens[q].trim()));
+              }
+              catch (NumberFormatException e) { }
             }
           }
         }
