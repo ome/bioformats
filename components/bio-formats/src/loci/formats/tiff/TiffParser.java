@@ -316,6 +316,8 @@ public class TiffParser {
           " array elements for tag " + tag);
       }
 
+      if (count < 0 || count > in.length()) break;
+
       if (type == IFD.BYTE) {
         // 8-bit unsigned integer
         if (count == 1) value = new Short(in.readByte());
@@ -447,9 +449,17 @@ public class TiffParser {
           value = doubles;
         }
       }
-      if (value != null) ifd.put(new Integer(tag), value);
+      if (value != null && !ifd.containsKey(new Integer(tag))) {
+        ifd.put(new Integer(tag), value);
+      }
     }
     in.seek(offset + baseOffset + bytesPerEntry * numEntries);
+
+    if (!(ifd.get(IFD.IMAGE_WIDTH) instanceof Number) ||
+      !(ifd.get(IFD.IMAGE_LENGTH) instanceof Number))
+    {
+      return null;
+    }
 
     return ifd;
   }
