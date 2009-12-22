@@ -288,16 +288,19 @@ public class TiffParser {
       in.seek(offset + baseOffset + bytesPerEntry * i);
       int tag = in.readShort() & 0xffff;
       int type = in.readShort() & 0xffff;
-      // BigTIFF case is a slight hack
+      // BigTIFF case is a slight hack because the count could be
+      // greater than Integer.MAX_VALUE
       int count = bigTiff ? (int) (in.readLong() & 0xffffffff) : in.readInt();
+      int bpe = IFD.getIFDTypeLength(type);
 
       LogTools.debug("getIFDs: read " + IFD.getIFDTagName(tag) +
         " (type=" + IFD.getIFDTypeName(type) + "; count=" + count + ")");
-      if (count < 0) return null; // invalid data
+      if (count < 0 || bpe <= 0) {
+        // invalid data
+        in.skipBytes(bytesPerEntry - 4 - (bigTiff ? 8 : 4));
+        continue;
+      }
       Object value = null;
-
-      int bpe = IFD.getIFDTypeLength(type);
-      if (bpe <= 0) return null; // invalid data
 
       if (count > threshhold / bpe) {
         long pointer = getNextOffset(bigTiff, 0);
@@ -312,6 +315,8 @@ public class TiffParser {
         LogTools.debug("getIFDs: truncated " + (oldCount - count) +
           " array elements for tag " + tag);
       }
+
+      if (count < 0 || count > in.length()) break;
 
       if (type == IFD.BYTE) {
         // 8-bit unsigned integer
@@ -444,9 +449,17 @@ public class TiffParser {
           value = doubles;
         }
       }
-      if (value != null) ifd.put(new Integer(tag), value);
+      if (value != null && !ifd.containsKey(new Integer(tag))) {
+        ifd.put(new Integer(tag), value);
+      }
     }
     in.seek(offset + baseOffset + bytesPerEntry * numEntries);
+
+    if (!(ifd.get(IFD.IMAGE_WIDTH) instanceof Number) ||
+      !(ifd.get(IFD.IMAGE_LENGTH) instanceof Number))
+    {
+      return null;
+    }
 
     return ifd;
   }
