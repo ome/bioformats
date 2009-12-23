@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.tiff;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.LogTools;
@@ -127,6 +129,19 @@ public class TiffParser {
    * If 'skipThumbnails' is set to true, thumbnail IFDs will not be returned.
    */
   public IFDList getIFDs(boolean skipThumbnails) throws IOException {
+    return getIFDs(skipThumbnails, true);
+  }
+
+  /**
+   * Gets all IFDs within the TIFF file, or null
+   * if the input source is not a valid TIFF file.
+   * If 'skipThumbnails' is set to true, thumbnail IFDs will not be returned.
+   * If 'fillInEntries' is set to true, IFD entry values that are stored at
+   * an arbitrary offset will be read.
+   */
+  public IFDList getIFDs(boolean skipThumbnails, boolean fillInEntries)
+    throws IOException
+  {
     // check TIFF header
     Boolean result = checkHeader();
     if (result == null) return null;
@@ -144,7 +159,7 @@ public class TiffParser {
     // read in IFDs
     IFDList ifds = new IFDList();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-      IFD ifd = getIFD(ifdNum, offset, bigTiff);
+      IFD ifd = getIFD(ifdNum, offset, bigTiff, fillInEntries);
       if (ifd == null || ifd.size() <= 2) break;
       Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
@@ -266,6 +281,17 @@ public class TiffParser {
   public IFD getIFD(long ifdNum, long offset, boolean bigTiff)
     throws IOException
   {
+    return getIFD(ifdNum, offset, bigTiff, true);
+  }
+
+  /**
+   * Gets the IFD stored at the given offset.
+   * If 'fillInEntries' is set to true, IFD entry values that are stored at
+   * an arbitrary offset will be read.
+   */
+  public IFD getIFD(long ifdNum, long offset, boolean bigTiff,
+    boolean fillInEntries) throws IOException
+  {
     IFD ifd = new IFD();
 
     // save little-endian flag to internal LITTLE_ENDIAN tag
@@ -302,157 +328,33 @@ public class TiffParser {
       }
       Object value = null;
 
+      long pointer = in.getFilePointer();
+
       if (count > threshhold / bpe) {
-        long pointer = getNextOffset(bigTiff, 0);
-        LogTools.debug("getIFDs: seeking to offset: " + pointer);
-        in.seek(pointer);
+        pointer = getNextOffset(bigTiff, 0);
       }
+
       long inputLen = in.length();
-      long inputPointer = in.getFilePointer();
-      if (count * bpe + inputPointer > inputLen) {
+      if (count * bpe + pointer > inputLen) {
         int oldCount = count;
-        count = (int) ((inputLen - inputPointer) / bpe);
+        count = (int) ((inputLen - pointer) / bpe);
         LogTools.debug("getIFDs: truncated " + (oldCount - count) +
           " array elements for tag " + tag);
       }
-
       if (count < 0 || count > in.length()) break;
 
-      if (type == IFD.BYTE) {
-        // 8-bit unsigned integer
-        if (count == 1) value = new Short(in.readByte());
-        else {
-          byte[] bytes = new byte[count];
-          in.readFully(bytes);
-          // bytes are unsigned, so use shorts
-          short[] shorts = new short[count];
-          for (int j=0; j<count; j++) shorts[j] = (short) (bytes[j] & 0xff);
-          value = shorts;
-        }
-      }
-      else if (type == IFD.ASCII) {
-        // 8-bit byte that contain a 7-bit ASCII code;
-        // the last byte must be NUL (binary zero)
-        byte[] ascii = new byte[count];
-        in.read(ascii);
+      TiffIFDEntry entry = new TiffIFDEntry(tag, type, count, pointer);
 
-        // count number of null terminators
-        int nullCount = 0;
-        for (int j=0; j<count; j++) {
-          if (ascii[j] == 0 || j == count - 1) nullCount++;
-        }
+      if (pointer != in.getFilePointer() && !fillInEntries) {
+        value = entry;
+      }
+      else value = getIFDValue(entry);
 
-        // convert character array to array of strings
-        String[] strings = nullCount == 1 ? null : new String[nullCount];
-        String s = null;
-        int c = 0, ndx = -1;
-        for (int j=0; j<count; j++) {
-          if (ascii[j] == 0) {
-            s = new String(ascii, ndx + 1, j - ndx - 1);
-            ndx = j;
-          }
-          else if (j == count - 1) {
-            // handle non-null-terminated strings
-            s = new String(ascii, ndx + 1, j - ndx);
-          }
-          else s = null;
-          if (strings != null && s != null) strings[c++] = s;
-        }
-        value = strings == null ? (Object) s : strings;
-      }
-      else if (type == IFD.SHORT) {
-        // 16-bit (2-byte) unsigned integer
-        if (count == 1) value = new Integer(in.readShort() & 0xffff);
-        else {
-          int[] shorts = new int[count];
-          for (int j=0; j<count; j++) {
-            shorts[j] = in.readShort() & 0xffff;
-          }
-          value = shorts;
-        }
-      }
-      else if (type == IFD.LONG || type == IFD.IFD) {
-        // 32-bit (4-byte) unsigned integer
-        if (count == 1) value = new Long(in.readInt());
-        else {
-          long[] longs = new long[count];
-          for (int j=0; j<count; j++) longs[j] = in.readInt();
-          value = longs;
-        }
-      }
-      else if (type == IFD.LONG8 || type == IFD.SLONG8 || type == IFD.IFD8) {
-        if (count == 1) value = new Long(in.readLong());
-        else {
-          long[] longs = new long[count];
-          for (int j=0; j<count; j++) longs[j] = in.readLong();
-          value = longs;
-        }
-      }
-      else if (type == IFD.RATIONAL || type == IFD.SRATIONAL) {
-        // Two LONGs or SLONGs: the first represents the numerator
-        // of a fraction; the second, the denominator
-        if (count == 1) value = new TiffRational(in.readInt(), in.readInt());
-        else {
-          TiffRational[] rationals = new TiffRational[count];
-          for (int j=0; j<count; j++) {
-            rationals[j] = new TiffRational(in.readInt(), in.readInt());
-          }
-          value = rationals;
-        }
-      }
-      else if (type == IFD.SBYTE || type == IFD.UNDEFINED) {
-        // SBYTE: An 8-bit signed (twos-complement) integer
-        // UNDEFINED: An 8-bit byte that may contain anything,
-        // depending on the definition of the field
-        if (count == 1) value = new Byte(in.readByte());
-        else {
-          byte[] sbytes = new byte[count];
-          in.read(sbytes);
-          value = sbytes;
-        }
-      }
-      else if (type == IFD.SSHORT) {
-        // A 16-bit (2-byte) signed (twos-complement) integer
-        if (count == 1) value = new Short(in.readShort());
-        else {
-          short[] sshorts = new short[count];
-          for (int j=0; j<count; j++) sshorts[j] = in.readShort();
-          value = sshorts;
-        }
-      }
-      else if (type == IFD.SLONG) {
-        // A 32-bit (4-byte) signed (twos-complement) integer
-        if (count == 1) value = new Integer(in.readInt());
-        else {
-          int[] slongs = new int[count];
-          for (int j=0; j<count; j++) slongs[j] = in.readInt();
-          value = slongs;
-        }
-      }
-      else if (type == IFD.FLOAT) {
-        // Single precision (4-byte) IEEE format
-        if (count == 1) value = new Float(in.readFloat());
-        else {
-          float[] floats = new float[count];
-          for (int j=0; j<count; j++) floats[j] = in.readFloat();
-          value = floats;
-        }
-      }
-      else if (type == IFD.DOUBLE) {
-        // Double precision (8-byte) IEEE format
-        if (count == 1) value = new Double(in.readDouble());
-        else {
-          double[] doubles = new double[count];
-          for (int j=0; j<count; j++) {
-            doubles[j] = in.readDouble();
-          }
-          value = doubles;
-        }
-      }
       if (value != null && !ifd.containsKey(new Integer(tag))) {
         ifd.put(new Integer(tag), value);
       }
     }
+
     in.seek(offset + baseOffset + bytesPerEntry * numEntries);
 
     if (!(ifd.get(IFD.IMAGE_WIDTH) instanceof Number) ||
@@ -462,6 +364,148 @@ public class TiffParser {
     }
 
     return ifd;
+  }
+
+  /** Fill in IFD entries that are stored at an arbitrary offset. */
+  public void fillInIFD(IFD ifd) throws IOException {
+    Vector<TiffIFDEntry> entries = new Vector<TiffIFDEntry>();
+    for (Object key : ifd.keySet()) {
+      if (ifd.get(key) instanceof TiffIFDEntry) {
+        entries.add((TiffIFDEntry) ifd.get(key));
+      }
+    }
+
+    TiffIFDEntry[] e = entries.toArray(new TiffIFDEntry[entries.size()]);
+    Arrays.sort(e);
+
+    for (TiffIFDEntry entry : e) {
+      ifd.put(new Integer(entry.getTag()), getIFDValue(entry));
+    }
+  }
+
+  /** Retrieve the value corresponding to the given TiffIFDEntry. */
+  public Object getIFDValue(TiffIFDEntry entry) throws IOException {
+    int type = entry.getType();
+    int count = entry.getValueCount();
+    long offset = entry.getValueOffset();
+
+    if (offset != in.getFilePointer()) {
+      in.seek(offset);
+    }
+
+    if (type == IFD.BYTE) {
+      // 8-bit unsigned integer
+      if (count == 1) return new Short(in.readByte());
+      byte[] bytes = new byte[count];
+      in.readFully(bytes);
+      // bytes are unsigned, so use shorts
+      short[] shorts = new short[count];
+      for (int j=0; j<count; j++) shorts[j] = (short) (bytes[j] & 0xff);
+      return shorts;
+    }
+    else if (type == IFD.ASCII) {
+      // 8-bit byte that contain a 7-bit ASCII code;
+      // the last byte must be NUL (binary zero)
+      byte[] ascii = new byte[count];
+      in.read(ascii);
+
+      // count number of null terminators
+      int nullCount = 0;
+      for (int j=0; j<count; j++) {
+        if (ascii[j] == 0 || j == count - 1) nullCount++;
+      }
+
+      // convert character array to array of strings
+      String[] strings = nullCount == 1 ? null : new String[nullCount];
+      String s = null;
+      int c = 0, ndx = -1;
+      for (int j=0; j<count; j++) {
+        if (ascii[j] == 0) {
+          s = new String(ascii, ndx + 1, j - ndx - 1);
+          ndx = j;
+        }
+        else if (j == count - 1) {
+          // handle non-null-terminated strings
+          s = new String(ascii, ndx + 1, j - ndx);
+        }
+        else s = null;
+        if (strings != null && s != null) strings[c++] = s;
+      }
+      return strings == null ? (Object) s : strings;
+    }
+    else if (type == IFD.SHORT) {
+      // 16-bit (2-byte) unsigned integer
+      if (count == 1) return new Integer(in.readShort() & 0xffff);
+      int[] shorts = new int[count];
+      for (int j=0; j<count; j++) {
+        shorts[j] = in.readShort() & 0xffff;
+      }
+      return shorts;
+    }
+    else if (type == IFD.LONG || type == IFD.IFD) {
+      // 32-bit (4-byte) unsigned integer
+      if (count == 1) return new Long(in.readInt());
+      long[] longs = new long[count];
+      for (int j=0; j<count; j++) longs[j] = in.readInt();
+      return longs;
+    }
+    else if (type == IFD.LONG8 || type == IFD.SLONG8 || type == IFD.IFD8) {
+      if (count == 1) return new Long(in.readLong());
+      long[] longs = new long[count];
+      for (int j=0; j<count; j++) longs[j] = in.readLong();
+      return longs;
+    }
+    else if (type == IFD.RATIONAL || type == IFD.SRATIONAL) {
+      // Two LONGs or SLONGs: the first represents the numerator
+      // of a fraction; the second, the denominator
+      if (count == 1) return new TiffRational(in.readInt(), in.readInt());
+      TiffRational[] rationals = new TiffRational[count];
+      for (int j=0; j<count; j++) {
+        rationals[j] = new TiffRational(in.readInt(), in.readInt());
+      }
+      return rationals;
+    }
+    else if (type == IFD.SBYTE || type == IFD.UNDEFINED) {
+      // SBYTE: An 8-bit signed (twos-complement) integer
+      // UNDEFINED: An 8-bit byte that may contain anything,
+      // depending on the definition of the field
+      if (count == 1) return new Byte(in.readByte());
+      byte[] sbytes = new byte[count];
+      in.read(sbytes);
+      return sbytes;
+    }
+    else if (type == IFD.SSHORT) {
+      // A 16-bit (2-byte) signed (twos-complement) integer
+      if (count == 1) return new Short(in.readShort());
+      short[] sshorts = new short[count];
+      for (int j=0; j<count; j++) sshorts[j] = in.readShort();
+      return sshorts;
+    }
+    else if (type == IFD.SLONG) {
+      // A 32-bit (4-byte) signed (twos-complement) integer
+      if (count == 1) return new Integer(in.readInt());
+      int[] slongs = new int[count];
+      for (int j=0; j<count; j++) slongs[j] = in.readInt();
+      return slongs;
+    }
+    else if (type == IFD.FLOAT) {
+      // Single precision (4-byte) IEEE format
+      if (count == 1) return new Float(in.readFloat());
+      float[] floats = new float[count];
+      for (int j=0; j<count; j++) floats[j] = in.readFloat();
+      return floats;
+    }
+    else if (type == IFD.DOUBLE) {
+      // Double precision (8-byte) IEEE format
+      if (count == 1) return new Double(in.readDouble());
+      double[] doubles = new double[count];
+      for (int j=0; j<count; j++) {
+        doubles[j] = in.readDouble();
+      }
+      return doubles;
+    }
+
+    return null;
   }
 
   /** Convenience method for obtaining a stream's first ImageDescription. */
@@ -579,6 +623,7 @@ public class TiffParser {
     long numTileRows = ifd.getTilesPerColumn();
     long numTileCols = ifd.getTilesPerRow();
 
+    int photoInterp = ifd.getPhotometricInterpretation();
     int planarConfig = ifd.getPlanarConfiguration();
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
@@ -605,6 +650,26 @@ public class TiffParser {
     LogTools.debug("reading image data (samplesPerPixel=" +
       samplesPerPixel + "; numSamples=" + numSamples + ")");
 
+    int compression = ifd.getCompression();
+
+    // special case: if we only need one tile, and that tile doesn't need
+    // any special handling, then we can just read it directly and return
+    if ((x % tileWidth) == 0 && (y % tileLength) == 0 && width == tileWidth &&
+      height == tileLength && samplesPerPixel == 1 &&
+      (ifd.getBitsPerSample()[0] % 8) == 0 &&
+      photoInterp != PhotoInterp.WHITE_IS_ZERO &&
+      photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
+      compression == TiffCompression.UNCOMPRESSED)
+    {
+      long[] stripOffsets = ifd.getStripOffsets();
+      long[] stripByteCounts = ifd.getStripByteCounts();
+
+      int tile = (int) ((y / tileLength) * numTileCols + (x / tileWidth));
+      in.seek(stripOffsets[tile]);
+      in.read(buf, 0, (int) Math.min(buf.length, stripByteCounts[tile]));
+      return buf;
+    }
+
     long nrows = numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
@@ -628,10 +693,12 @@ public class TiffParser {
       cachedTileBuffer = new byte[bufferSize];
     }
 
+    Region tileBounds = new Region(0, 0, (int) tileWidth, (int) tileLength);
+
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
-        Region tileBounds = new Region(col * (int) tileWidth,
-          (int) (row * tileLength), (int) tileWidth, (int) tileLength);
+        tileBounds.x = col * (int) tileWidth;
+        tileBounds.y = row * (int) tileLength;
 
         if (!imageBounds.intersects(tileBounds)) continue;
 

@@ -113,6 +113,7 @@ public class FlexReader extends FormatReader {
 
   private String plateName, plateBarcode;
   private int nRows = 0, nCols = 0;
+  private RandomAccessInputStream firstStream;
 
   /**
    * List of .flex files belonging to this dataset.
@@ -183,27 +184,30 @@ public class FlexReader extends FormatReader {
     }
 
     IFD ifd = ifds[wellRow][wellCol].get(imageNumber);
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(flexFiles[wellRow][wellCol]);
+    RandomAccessInputStream s = (wellRow == 0 && wellCol == 0) ? firstStream :
+      new RandomAccessInputStream(
+        new FileHandle(flexFiles[wellRow][wellCol], "r"));
     TiffParser tp = new TiffParser(s);
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
 
     // expand pixel values with multiplication by factor[no]
-    byte[] bytes = tp.getSamples(ifd, buf, x, y, w, h);
-    s.close();
+    tp.getSamples(ifd, buf, x, y, w, h);
+    if (wellRow != 0 || wellCol != 0) s.close();
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int num = bytes.length / bpp;
+    int num = buf.length / bpp;
 
     double factor = factors[wellRow][wellCol][imageNumber];
 
     if (factor != 1d || nBytes != bpp) {
       for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? bytes[i] & 0xff :
-          DataTools.bytesToInt(bytes, i * bpp, bpp, isLittleEndian());
-        q = (int) (q * factor);
-        DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
+        int q = nBytes == 1 ? buf[i] & 0xff :
+          DataTools.bytesToInt(buf, i * bpp, bpp, isLittleEndian());
+        if (q != 0) {
+          q = (int) (q * factor);
+          DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
+        }
       }
     }
 
@@ -233,6 +237,8 @@ public class FlexReader extends FormatReader {
       flexFiles = null;
       ifds = null;
       wellNumber = null;
+      if (firstStream != null) firstStream.close();
+      firstStream = null;
     }
   }
 
@@ -923,12 +929,15 @@ public class FlexReader extends FormatReader {
 
         wellNumber[currentWell][0] = row;
         wellNumber[currentWell][1] = col;
+
         s =
           new RandomAccessInputStream(new FileHandle(flexFiles[row][col], "r"));
+        if (currentWell == 0) firstStream = s;
         status("Parsing IFDs for well " + (row + 'A') + (col + 1));
         TiffParser tp = new TiffParser(s);
-        ifds[row][col] = tp.getIFDs();
-        s.close();
+        ifds[row][col] = tp.getIFDs(false, false);
+        ifds[row][col].set(0, tp.getFirstIFD());
+        if (currentWell != 0) s.close();
 
         parseFlexFile(currentWell, row, col, firstFile, store);
         if (firstFile) firstFile = false;
