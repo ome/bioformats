@@ -136,10 +136,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     long exifOffset = firstIFD.getIFDLongValue(IFD.EXIF, false, 0);
     if (exifOffset != 0) {
       IFD exif = tiffParser.getIFD(1, exifOffset);
-
-      for (Integer key : exif.keySet()) {
-        int k = key.intValue();
-        addGlobalMeta(getExifTagName(k), exif.get(key));
+      if (exif != null) {
+        for (Integer key : exif.keySet()) {
+          int k = key.intValue();
+          addGlobalMeta(getExifTagName(k), exif.get(key));
+        }
       }
     }
 
