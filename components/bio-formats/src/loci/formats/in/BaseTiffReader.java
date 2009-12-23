@@ -136,10 +136,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     long exifOffset = firstIFD.getIFDLongValue(IFD.EXIF, false, 0);
     if (exifOffset != 0) {
       IFD exif = tiffParser.getIFD(1, exifOffset);
-
-      for (Integer key : exif.keySet()) {
-        int k = key.intValue();
-        addGlobalMeta(getExifTagName(k), exif.get(key));
+      if (exif != null) {
+        for (Integer key : exif.keySet()) {
+          int k = key.intValue();
+          addGlobalMeta(getExifTagName(k), exif.get(key));
+        }
       }
     }
 
@@ -423,7 +424,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
     core[0].pixelType = firstIFD.getPixelType();
-    core[0].bitsPerPixel = bps;
   }
 
   /**
@@ -446,7 +446,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     IFD firstIFD = ifds.get(0);
 
     // populate Experimenter
-    String artist = firstIFD.getIFDTextValue(IFD.ARTIST);
+    String artist = null;
+    Object o = firstIFD.getIFDValue(IFD.ARTIST);
+    if (o instanceof String) artist = (String) o;
+    else if (o instanceof String[]) {
+      String[] s = (String[]) o;
+      for (int i=0; i<s.length; i++) {
+        artist += s[i];
+        if (i < s.length - 1) artist += "\n";
+      }
+    }
     if (artist != null) {
       String firstName = null, lastName = null;
       int ndx = artist.indexOf(" ");
@@ -455,7 +464,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         firstName = artist.substring(0, ndx);
         lastName = artist.substring(ndx + 1);
       }
-      String email = firstIFD.getIFDTextValue(IFD.HOST_COMPUTER);
+      String email = (String) firstIFD.getIFDValue(IFD.HOST_COMPUTER);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
       store.setExperimenterEmail(email, 0);
@@ -487,8 +496,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       IFD.X_RESOLUTION, false);
     TiffRational yResolution = firstIFD.getIFDRationalValue(
       IFD.Y_RESOLUTION, false);
-    double pixX = xResolution == null ? 0.0 : 1 / xResolution.doubleValue();
-    double pixY = yResolution == null ? 0.0 : 1 / yResolution.doubleValue();
+    float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
+    float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
 
     switch (resolutionUnit) {
       case 2:
@@ -510,21 +519,19 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // populate StageLabel
     Object x = firstIFD.getIFDValue(IFD.X_POSITION);
     Object y = firstIFD.getIFDValue(IFD.Y_POSITION);
-    Double stageX;
-    Double stageY;
+    Float stageX;
+    Float stageY;
     if (x instanceof TiffRational) {
-      TiffRational tx = (TiffRational) x;
-      TiffRational ty = (TiffRational) y;
-      stageX = x == null ? null : new Double(tx.doubleValue());
-      stageY = y == null ? null : new Double(ty.doubleValue());
+      stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
+      stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
     }
     else {
-      stageX = x == null ? null : new Double(x.toString());
-      stageY = y == null ? null : new Double(y.toString());
+      stageX = x == null ? null : new Float((String) x);
+      stageY = y == null ? null : new Float((String) y);
     }
     // populate Instrument
-    //String make = ifd.getIFDTextValue(IFD.MAKE);
-    //String model = ifd.getIFDTextValue(IFD.MODEL);
+    //String make = ifd.getIFDStringValue(IFD.MAKE, false);
+    //String model = ifd.getIFDStringValue(IFD.MODEL, false);
     //store.setInstrumentModel(model, 0);
     //store.setInstrumentManufacturer(make, 0);
   }
@@ -534,7 +541,10 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * @return the image creation date.
    */
   protected String getImageCreationDate() {
-    return ifds.get(0).getIFDTextValue(IFD.DATE_TIME);
+    Object o = ifds.get(0).getIFDValue(IFD.DATE_TIME);
+    if (o instanceof String) return (String) o;
+    if (o instanceof String[]) return ((String[]) o)[0];
+    return null;
   }
 
   // -- Internal FormatReader API methods - metadata convenience --
