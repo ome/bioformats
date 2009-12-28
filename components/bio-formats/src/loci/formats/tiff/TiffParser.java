@@ -179,6 +179,36 @@ public class TiffParser {
     return ifds;
   }
 
+  /** Gets the offsets to every IFD in the file. */
+  public long[] getIFDOffsets() throws IOException {
+    // check TIFF header
+    Boolean result = checkHeader();
+    if (result == null) return null;
+
+    in.seek(2);
+    boolean bigTiff = in.readShort() == TiffConstants.BIG_TIFF_MAGIC_NUMBER;
+    int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
+      TiffConstants.BYTES_PER_ENTRY;
+
+    Vector<Long> offsets = new Vector<Long>();
+    long offset = getFirstOffset(bigTiff);
+    while (true) {
+      in.seek(offset);
+      offsets.add(offset);
+      int nEntries = in.readShort();
+      in.skipBytes(nEntries * bytesPerEntry);
+      offset = getNextOffset(bigTiff, offset);
+      if (offset <= 0 || offset >= in.length()) break;
+    }
+
+    long[] f = new long[offsets.size()];
+    for (int i=0; i<f.length; i++) {
+      f[i] = offsets.get(i).longValue();
+    }
+
+    return f;
+  }
+
   /**
    * Gets the first IFD within the TIFF file, or null
    * if the input source is not a valid TIFF file.

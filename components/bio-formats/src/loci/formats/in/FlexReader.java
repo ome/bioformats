@@ -44,6 +44,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffParser;
 
 import org.xml.sax.Attributes;
@@ -122,6 +123,7 @@ public class FlexReader extends FormatReader {
   private String[][] flexFiles;
 
   private IFDList[][] ifds;
+  private long[][][] offsets;
 
   /** Specifies the row and column index into 'flexFiles' for a given well. */
   private int[][] wellNumber;
@@ -174,14 +176,15 @@ public class FlexReader extends FormatReader {
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
     int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
 
-    int imageNumber = getImageCount() * pos[0] + no;
-
     int wellRow = wellNumber[pos[1]][0];
     int wellCol = wellNumber[pos[1]][1];
     if (wellCount == 1) {
       wellRow = 0;
       wellCol = 0;
     }
+
+    int imageNumber = offsets[wellRow][wellCol] == null ?
+      getImageCount() * pos[0] + no : 0;
 
     IFD ifd = ifds[wellRow][wellCol].get(imageNumber);
     RandomAccessInputStream s = (wellRow == 0 && wellCol == 0) ? firstStream :
@@ -190,12 +193,23 @@ public class FlexReader extends FormatReader {
     TiffParser tp = new TiffParser(s);
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() * nBytes;
 
-    // expand pixel values with multiplication by factor[no]
-    tp.getSamples(ifd, buf, x, y, w, h);
+    // read pixels from the file
+    if (ifd.getCompression() != TiffCompression.UNCOMPRESSED || nBytes != bpp) {
+      tp.getSamples(ifd, buf, x, y, w, h);
+    }
+    else {
+      int index = getImageCount() * pos[0] + no;
+      long offset = index == offsets[wellRow][wellCol].length - 1 ?
+        s.length() : offsets[wellRow][wellCol][index + 1];
+      s.seek(offset - planeSize);
+      readPlane(s, x, y, w, h, buf);
+    }
     if (wellRow != 0 || wellCol != 0) s.close();
 
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    // expand pixel values with multiplication by factor[no]
     int num = buf.length / bpp;
 
     double factor = factors[wellRow][wellCol][imageNumber];
@@ -236,6 +250,7 @@ public class FlexReader extends FormatReader {
       nRows = nCols = 0;
       flexFiles = null;
       ifds = null;
+      offsets = null;
       wellNumber = null;
       if (firstStream != null) firstStream.close();
       firstStream = null;
@@ -515,17 +530,21 @@ public class FlexReader extends FormatReader {
   }
 
   /**
-   * Returns the IFDs of the first well that has data. May not be
+   * Returns the number of planes in the first well that has data. May not be
    * <code>[0][0]</code> as the acquisition may have been column or row offset.
-   * @return List of the first well's IFDs.
    */
-  private IFDList firstWellIfds() {
+  private int firstWellPlanes() {
     for (int i = 0; i < ifds.length; i++) {
       for (int j = 0; j < ifds[i].length; j++) {
-        if (ifds[i][j] != null) return ifds[i][j];
+        if (ifds[i][j] != null) {
+          if (offsets[i][j] != null) {
+            return offsets[i][j].length;
+          }
+          return ifds[i][j].size();
+        }
       }
     }
-    return null;
+    return 0;
   }
 
   /**
@@ -669,13 +688,17 @@ public class FlexReader extends FormatReader {
 
     IFDList ifdList = ifds[wellRow][wellCol];
     IFD ifd = ifdList.get(0);
+    int nPlanes = ifdList.size();
+    if (offsets[wellRow][wellCol] != null) {
+      nPlanes = offsets[wellRow][wellCol].length;
+    }
 
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    if (getImageCount() * fieldCount != ifdList.size()) {
-      core[0].imageCount = ifdList.size() / fieldCount;
+    if (getImageCount() * fieldCount != nPlanes) {
+      core[0].imageCount = nPlanes / fieldCount;
       core[0].sizeZ = 1;
       core[0].sizeC = 1;
-      core[0].sizeT = ifdList.size() / fieldCount;
+      core[0].sizeT = nPlanes / fieldCount;
     }
     core[0].sizeX = (int) ifd.getImageWidth();
     core[0].sizeY = (int) ifd.getImageLength();
@@ -915,6 +938,7 @@ public class FlexReader extends FormatReader {
     flexFiles = new String[nRows][nCols];
     ifds = new IFDList[nRows][nCols];
     factors = new double[nRows][nCols][];
+    offsets = new long[nRows][nCols][];
     wellCount = v.size();
     wellNumber = new int[wellCount][2];
 
@@ -935,8 +959,17 @@ public class FlexReader extends FormatReader {
         if (currentWell == 0) firstStream = s;
         status("Parsing IFDs for well " + (row + 'A') + (col + 1));
         TiffParser tp = new TiffParser(s);
-        ifds[row][col] = tp.getIFDs(false, false);
-        ifds[row][col].set(0, tp.getFirstIFD());
+        IFD firstIFD = tp.getFirstIFD();
+        if (firstIFD.getCompression() != TiffCompression.UNCOMPRESSED) {
+          ifds[row][col] = tp.getIFDs(false, false);
+          ifds[row][col].set(0, firstIFD);
+        }
+        else {
+          offsets[row][col] = tp.getIFDOffsets();
+          ifds[row][col] = new IFDList();
+          ifds[row][col].add(firstIFD);
+        }
+
         if (currentWell != 0) s.close();
 
         parseFlexFile(currentWell, row, col, firstFile, store);
@@ -1039,7 +1072,7 @@ public class FlexReader extends FormatReader {
       }
       else if ("Image".equals(parentQName)) {
         if (fieldCount == 0) fieldCount = 1;
-        int nImages = firstWellIfds().size() / fieldCount;
+        int nImages = firstWellPlanes() / fieldCount;
         if (nImages == 0) nImages = 1; // probably a manually altered dataset
         int currentSeries = (nextImage - 1) / nImages;
         currentSeries += well * fieldCount;
@@ -1165,7 +1198,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Field")) {
         parentQName = qName;
         int fieldNo = Integer.parseInt(attributes.getValue("No"));
-        if (fieldNo > fieldCount && fieldCount < firstWellIfds().size()) {
+        if (fieldNo > fieldCount && fieldCount < firstWellPlanes()) {
           fieldCount++;
         }
       }
