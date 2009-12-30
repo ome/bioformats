@@ -650,6 +650,12 @@ public class TiffParser {
     int samplesPerPixel = ifd.getSamplesPerPixel();
     long tileWidth = ifd.getTileWidth();
     long tileLength = ifd.getTileLength();
+    if (tileLength <= 0) {
+      LogTools.debug("Tile length is " + tileLength +
+        "; setting it to " + height);
+      tileLength = height;
+    }
+
     long numTileRows = ifd.getTilesPerColumn();
     long numTileCols = ifd.getTilesPerRow();
 
