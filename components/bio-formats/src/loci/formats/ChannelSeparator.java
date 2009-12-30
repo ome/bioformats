@@ -155,25 +155,58 @@ public class ChannelSeparator extends ReaderWrapper {
       int source = no / c;
       int channel = no % c;
       int series = getSeries();
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
       if (source != lastImageIndex || series != lastImageSeries ||
         x != lastImageX || y != lastImageY || w != lastImageWidth ||
         h != lastImageHeight)
       {
-        lastImage = reader.openBytes(source, x, y, w, h);
-        lastImageIndex = source;
-        lastImageSeries = series;
-        lastImageX = x;
-        lastImageY = y;
-        lastImageWidth = w;
-        lastImageHeight = h;
+        int strips = 1;
+
+        // check how big the original image is; if it's larger than the
+        // available memory, we will need to split it into strips
+
+        Runtime rt = Runtime.getRuntime();
+        long availableMemory = rt.freeMemory();
+
+        if (availableMemory < FormatTools.getPlaneSize(reader)) {
+          strips = (int) Math.sqrt(h);
+        }
+
+        int stripHeight = h / strips;
+        int lastStripHeight = stripHeight + (h - (stripHeight * strips));
+        byte[] strip = strips == 1 ? buf : new byte[stripHeight * w * bpp];
+        for (int i=0; i<strips; i++) {
+          lastImage =
+            reader.openBytes(source, x, y + i * stripHeight, w, stripHeight);
+          lastImageIndex = source;
+          lastImageSeries = series;
+          lastImageX = x;
+          lastImageY = y + i * stripHeight;
+          lastImageWidth = w;
+          lastImageHeight = stripHeight;
+
+          if (strips != 1 && lastStripHeight != stripHeight && i == strips - 1)
+          {
+            strip = new byte[lastStripHeight * w * bpp];
+          }
+
+          ImageTools.splitChannels(lastImage, strip, channel, c, bpp,
+            false, isInterleaved());
+          if (strips != 1) {
+            System.arraycopy(strip, 0, buf, i * stripHeight * w * bpp,
+              strip.length);
+          }
+        }
+      }
+      else {
+        ImageTools.splitChannels(lastImage, buf, channel, c, bpp,
+          false, isInterleaved());
       }
 
-      ImageTools.splitChannels(lastImage, buf, channel, c,
-        FormatTools.getBytesPerPixel(getPixelType()), false, isInterleaved());
       return buf;
     }
-    else return reader.openBytes(no, buf, x, y, w, h);
+    return reader.openBytes(no, buf, x, y, w, h);
   }
 
   /* @see IFormatReader#close(boolean) */

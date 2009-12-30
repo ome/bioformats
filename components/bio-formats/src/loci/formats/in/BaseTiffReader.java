@@ -400,9 +400,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     put("BitsPerSample", bps);
     put("NumberOfChannels", numC);
 
-    // TIFF comment
-    String comment = firstIFD.getComment();
-
     int samples = firstIFD.getSamplesPerPixel();
     core[0].rgb = samples > 1 || photo == PhotoInterp.RGB;
     core[0].interleaved = false;
@@ -446,16 +443,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     IFD firstIFD = ifds.get(0);
 
     // populate Experimenter
-    String artist = null;
-    Object o = firstIFD.getIFDValue(IFD.ARTIST);
-    if (o instanceof String) artist = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;
-      for (int i=0; i<s.length; i++) {
-        artist += s[i];
-        if (i < s.length - 1) artist += "\n";
-      }
-    }
+    String artist = firstIFD.getIFDTextValue(IFD.ARTIST);
+
     if (artist != null) {
       String firstName = null, lastName = null;
       int ndx = artist.indexOf(" ");
@@ -464,13 +453,13 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         firstName = artist.substring(0, ndx);
         lastName = artist.substring(ndx + 1);
       }
-      String email = (String) firstIFD.getIFDValue(IFD.HOST_COMPUTER);
+      String email = firstIFD.getIFDStringValue(IFD.HOST_COMPUTER, false);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
       store.setExperimenterEmail(email, 0);
     }
 
-    // format the creation date to ISO 8061
+    // format the creation date to ISO 8601
 
     String creationDate = getImageCreationDate();
     String date = DateTools.formatDate(creationDate, DATE_FORMATS);
@@ -515,25 +504,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     store.setDimensionsPhysicalSizeX(new Double(pixX), 0, 0);
     store.setDimensionsPhysicalSizeY(new Double(pixY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Double(0), 0, 0);
-
-    // populate StageLabel
-    Object x = firstIFD.getIFDValue(IFD.X_POSITION);
-    Object y = firstIFD.getIFDValue(IFD.Y_POSITION);
-    Float stageX;
-    Float stageY;
-    if (x instanceof TiffRational) {
-      stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
-      stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
-    }
-    else {
-      stageX = x == null ? null : new Float((String) x);
-      stageY = y == null ? null : new Float((String) y);
-    }
-    // populate Instrument
-    //String make = ifd.getIFDStringValue(IFD.MAKE, false);
-    //String model = ifd.getIFDStringValue(IFD.MODEL, false);
-    //store.setInstrumentModel(model, 0);
-    //store.setInstrumentManufacturer(make, 0);
   }
 
   /**

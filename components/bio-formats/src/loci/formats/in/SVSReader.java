@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -33,7 +32,6 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
-import loci.formats.tiff.TiffParser;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -68,8 +66,7 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    TiffParser tp = new TiffParser(in);
-    tp.getSamples(ifds.get(series), buf, x, y, w, h);
+    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h);
     return buf;
   }
 
@@ -95,15 +92,16 @@ public class SVSReader extends BaseTiffReader {
       core[i] = new CoreMetadata();
 
       String comment = ifds.get(i).getComment();
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        StringTokenizer tokens = new StringTokenizer(st.nextToken(), "|");
-        while (tokens.hasMoreTokens()) {
-          String t = tokens.nextToken();
+      String[] lines = comment.split("\n");
+      String[] tokens;
+      String key, value;
+      for (String line : lines) {
+        tokens = line.split("|");
+        for (String t : tokens) {
           if (t.indexOf("=") == -1) addGlobalMeta("Comment", t);
           else {
-            String key = t.substring(0, t.indexOf("=")).trim();
-            String value = t.substring(t.indexOf("=") + 1).trim();
+            key = t.substring(0, t.indexOf("=")).trim();
+            value = t.substring(t.indexOf("=") + 1).trim();
             addSeriesMeta(key, value);
             if (key.equals("MPP")) pixelSize[i] = Float.parseFloat(value);
           }
