@@ -497,6 +497,9 @@ public class SlidebookReader extends FormatReader {
       if (getSizeZ() == 0) core[i].sizeZ = 1;
       int nPlanes = getSizeZ() * getSizeC();
       core[i].sizeT = (int) (pixels / (getSizeX() * getSizeY() * nPlanes));
+      while (getSizeX() * getSizeY() * nPlanes * getSizeT() > pixels) {
+        core[i].sizeT--;
+      }
       if (getSizeT() == 0) core[i].sizeT = 1;
       core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
