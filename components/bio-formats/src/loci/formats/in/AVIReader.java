@@ -97,9 +97,12 @@ public class AVIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 4;
+    final int blockLen = 12;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.readString(blockLen).startsWith(AVI_MAGIC_STRING);
+    String type = in.readString(4);
+    stream.skipBytes(4);
+    String format = in.readString(4);
+    return type.equals(AVI_MAGIC_STRING) && format.equals("AVI ");
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
