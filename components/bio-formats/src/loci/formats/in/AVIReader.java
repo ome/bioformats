@@ -99,9 +99,9 @@ public class AVIReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 12;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    String type = in.readString(4);
+    String type = stream.readString(4);
     stream.skipBytes(4);
-    String format = in.readString(4);
+    String format = stream.readString(4);
     return type.equals(AVI_MAGIC_STRING) && format.equals("AVI ");
   }
 
