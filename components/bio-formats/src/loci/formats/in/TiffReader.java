@@ -221,7 +221,7 @@ public class TiffReader extends BaseTiffReader {
       else if (token.startsWith("slices=")) z = value;
       else if (token.startsWith("frames=")) t = value;
     }
-    if (z * c * t == c) {
+    if (z * c * t == c && isRGB()) {
       t = getImageCount();
     }
     core[0].dimensionOrder = "XYCZT";
