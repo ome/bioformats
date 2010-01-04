@@ -37,12 +37,11 @@ Alternately, you can add the library to MATLAB's static class path:
 %}
 
 % to work with Evotec Flex, fill in your LuraWave license code
-%javaaddpath('lwf_jsdk2.6.jar');
+%javaaddpath(fullfile(fileparts(mfilename('fullpath')),'lwf_jsdk2.6.jar'));
 %java.lang.System.setProperty('lurawave.license', 'xxxxxx-xxxxxxx');
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
-% comment the following line if you are using a stable release
 r = loci.formats.gui.BufferedImageReader(r);
 
 % uncomment the following line to enable grouping of similarly
@@ -65,6 +64,7 @@ for s = 1:numSeries
         fprintf('.');
         img = r.openImage(i - 1);
         % convert Java BufferedImage to MATLAB image
+        %pix = img.getData.getPixels(0, 0, w, h, []);
         pix = img.getData.getDataBuffer().getData();
         arr = reshape(pix, shape)';
         % build an informative title for our figure
