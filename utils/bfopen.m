@@ -15,16 +15,19 @@ This method is ~1.5x-2.5x slower than Bio-Formats's command line showinf
 tool (MATLAB R14 vs. java 1.6.0_03), due to overhead from reshaping arrays
 and converting pixel types.
 
-Thanks to Ville Rantanen for his performance improvements and ideas.
-Thanks to Brett Shoelson of The MathWorks for his excellent suggestions.
-Thanks to Martin Offterdinger and Tony Collins for additional feedback.
+Thanks to all who offered suggestions and improvements:
+    * Ville Rantanen
+    * Brett Shoelson
+    * Martin Offterdinger
+    * Tony Collins
+    * Cris Luengo
 
 Internet Explorer sometimes erroneously renames the Bio-Formats library
 to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
 %}
 
 % load the Bio-Formats library into the MATLAB environment
-javaaddpath('loci_tools.jar');
+javaaddpath(fullfile(fileparts(mfilename('fullpath')),'loci_tools.jar'));
 %{
 Alternately, you can add the library to MATLAB's static class path:
     1. Type "edit classpath.txt" at the MATLAB prompt.
@@ -62,7 +65,7 @@ for s = 1:numSeries
         fprintf('.');
         img = r.openImage(i - 1);
         % convert Java BufferedImage to MATLAB image
-        pix = img.getData.getPixels(0, 0, w, h, []);
+        pix = img.getData.getDataBuffer().getData();
         arr = reshape(pix, shape)';
         % build an informative title for our figure
         label = id;
