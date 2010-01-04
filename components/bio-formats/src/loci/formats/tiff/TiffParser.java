@@ -276,7 +276,7 @@ public class TiffParser {
       }
 
       // Parse the entry's "ValueOffset"
-      long valueOffset = getNextOffset(bigTiff, offset);
+      long valueOffset = getNextOffset(bigTiff, 0);
 
       return new TiffIFDEntry(entryTag, entryType, valueCount, valueOffset);
     }
