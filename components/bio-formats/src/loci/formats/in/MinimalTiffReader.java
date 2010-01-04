@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -203,6 +204,58 @@ public class MinimalTiffReader extends FormatReader {
 
     lastPlane = no;
     tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
+
+    boolean halfFloat = getPixelType() == FormatTools.FLOAT &&
+      ifds.get(0).getBitsPerSample()[0] == 16;
+    boolean halfDouble = getPixelType() == FormatTools.DOUBLE &&
+      ifds.get(0).getBitsPerSample()[0] == 24;
+
+    if (halfFloat || halfDouble) {
+      int nPixels = getSizeX() * getSizeY() * getRGBChannelCount();
+      int nBytes = halfFloat ? 2 : 4;
+      int mantissaBits = halfFloat ? 10 : 16;
+      int exponentBits = halfFloat ? 5 : 7;
+      int maxExponent = (int) Math.pow(2, exponentBits) - 1;
+      int bits = (nBytes * 8) - 1;
+      int newMantissaBits = halfFloat ? 23 : 52;
+
+      byte[] newBuf = new byte[buf.length];
+      for (int i=0; i<nPixels; i++) {
+        int v =
+          DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
+        int sign = v >> bits;
+        int exponent =
+          (v >> mantissaBits) & (int) (Math.pow(2, exponentBits + 1) - 1);
+        int mantissa = v & (int) (Math.pow(2, mantissaBits + 1) - 1);
+
+        if (exponent == 0) {
+          if (mantissa != 0) {
+            while ((mantissa & (int) Math.pow(2, mantissaBits)) == 0) {
+              mantissa <<= 1;
+              exponent--;
+            }
+            exponent++;
+            mantissa &= (int) (Math.pow(2, mantissaBits + 1) - 1);
+            exponent += (int) Math.pow(2, nBytes * 4 - 1) - 1 - bits;
+          }
+        }
+        else if (exponent == maxExponent) {
+          exponent = (int) Math.pow(2, nBytes * 4) - 1;
+        }
+        else {
+          exponent += (int) Math.pow(2, nBytes * 4 - 1) - 1 - bits;
+        }
+
+        mantissa <<= (newMantissaBits - mantissaBits);
+
+        int value =
+          (sign << maxExponent) | (exponent << newMantissaBits) | mantissa;
+        DataTools.unpackBytes(value, newBuf, i * nBytes * 2, nBytes * 2,
+          isLittleEndian());
+      }
+      System.arraycopy(newBuf, 0, buf, 0, newBuf.length);
+    }
+
     return buf;
   }
 

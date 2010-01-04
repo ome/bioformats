@@ -580,13 +580,16 @@ public class IFD extends HashMap<Integer, Object> {
     int bitFormat = getIFDIntValue(SAMPLE_FORMAT);
 
     while (bps % 8 != 0) bps++;
-    if (bps == 24) bps = 32;
+    if (bps == 24 && bitFormat != 3) bps = 32;
 
-    if (bitFormat == 3) return FormatTools.FLOAT;
     switch (bps) {
       case 16:
+        if (bitFormat == 3) return FormatTools.FLOAT;
         return bitFormat == 2 ? FormatTools.INT16 : FormatTools.UINT16;
+      case 24:
+        return FormatTools.DOUBLE;
       case 32:
+        if (bitFormat == 3) return FormatTools.FLOAT;
         return bitFormat == 2 ? FormatTools.INT32 : FormatTools.UINT32;
       default:
         return bitFormat == 2 ? FormatTools.INT8 : FormatTools.UINT8;
