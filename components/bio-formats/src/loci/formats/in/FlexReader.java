@@ -45,6 +45,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
 import org.xml.sax.Attributes;
@@ -185,20 +186,25 @@ public class FlexReader extends FormatReader {
 
     int imageNumber = offsets[wellRow][wellCol] == null ?
       getImageCount() * pos[0] + no : 0;
+    IFD ifd = offsets[wellRow][wellCol] == null ?
+      ifds[wellRow][wellCol].get(imageNumber) : ifds[0][0].get(0);
 
-    IFD ifd = ifds[wellRow][wellCol].get(imageNumber);
     RandomAccessInputStream s = (wellRow == 0 && wellCol == 0) ? firstStream :
       new RandomAccessInputStream(
         new FileHandle(flexFiles[wellRow][wellCol], "r"));
-    TiffParser tp = new TiffParser(s);
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() * nBytes;
+    double factor = 1d;
 
     // read pixels from the file
-    if (ifd.getCompression() != TiffCompression.UNCOMPRESSED || nBytes != bpp) {
+    if (ifd.getCompression() != TiffCompression.UNCOMPRESSED || nBytes != bpp ||
+      offsets[wellRow][wellCol] == null)
+    {
+      TiffParser tp = new TiffParser(s);
       tp.getSamples(ifd, buf, x, y, w, h);
+      factor = factors[wellRow][wellCol][imageNumber];
     }
     else {
       int index = getImageCount() * pos[0] + no;
@@ -206,13 +212,12 @@ public class FlexReader extends FormatReader {
         s.length() : offsets[wellRow][wellCol][index + 1];
       s.seek(offset - planeSize);
       readPlane(s, x, y, w, h, buf);
+      factor = factors[0][0][index];
     }
     if (wellRow != 0 || wellCol != 0) s.close();
 
     // expand pixel values with multiplication by factor[no]
     int num = buf.length / bpp;
-
-    double factor = factors[wellRow][wellCol][imageNumber];
 
     if (factor != 1d || nBytes != bpp) {
       for (int i=num-1; i>=0; i--) {
@@ -534,12 +539,17 @@ public class FlexReader extends FormatReader {
    * <code>[0][0]</code> as the acquisition may have been column or row offset.
    */
   private int firstWellPlanes() {
+    for (int i=0; i<offsets.length; i++) {
+      for (int j=0; j<offsets[i].length; j++) {
+        if (offsets[i][j] != null) {
+          return offsets[i][j].length;
+        }
+      }
+    }
+
     for (int i = 0; i < ifds.length; i++) {
       for (int j = 0; j < ifds[i].length; j++) {
         if (ifds[i][j] != null) {
-          if (offsets[i][j] != null) {
-            return offsets[i][j].length;
-          }
           return ifds[i][j].size();
         }
       }
@@ -556,7 +566,8 @@ public class FlexReader extends FormatReader {
     boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
-    status("Parsing .flex file (well " + (wellRow + 'A') + (wellCol + 1) + ")");
+    status("Parsing .flex file (well " +
+      ((char) (wellRow + 'A')) + (wellCol + 1) + ")");
     debug("Parsing .flex file associated with well row " + wellRow +
       ", column " + wellCol);
     if (flexFiles[wellRow][wellCol] == null) return;
@@ -583,6 +594,17 @@ public class FlexReader extends FormatReader {
 
     // parse factors from XML
     debug("Parsing XML from " + flexFiles[wellRow][wellCol]);
+
+    int nOffsets = offsets[wellRow][wellCol] != null ?
+      offsets[wellRow][wellCol].length : 0;
+
+    int oldWellRow = wellRow;
+    int oldWellCol = wellCol;
+
+    if (wellRow >= ifds.length || wellCol >= ifds[wellRow].length) {
+      wellRow = 0;
+      wellCol = 0;
+    }
     IFD ifd = ifds[wellRow][wellCol].get(0);
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX, true));
 
@@ -593,7 +615,7 @@ public class FlexReader extends FormatReader {
     status("Parsing XML in .flex file");
     XMLTools.parseXML(xml.getBytes(), handler);
 
-    if (firstFile) populateCoreMetadata(wellRow, wellCol, n);
+    if (firstFile) populateCoreMetadata(oldWellRow, oldWellCol, n);
 
     int totalPlanes = getSeriesCount() * getImageCount();
 
@@ -649,9 +671,8 @@ public class FlexReader extends FormatReader {
     Vector<String> imageNames)
     throws FormatException
   {
-    status("Populating core metadata");
-    debug("Populating core metadata for well row " + wellRow + ", column " +
-      wellCol);
+    status("Populating core metadata for well row " + wellRow +
+      ", column " + wellCol);
     if (getSizeC() == 0 && getSizeT() == 0) {
       Vector<String> uniqueChannels = new Vector<String>();
       for (int i=0; i<imageNames.size(); i++) {
@@ -686,7 +707,8 @@ public class FlexReader extends FormatReader {
     // adjust dimensions if the number of IFDs doesn't match the number
     // of reported images
 
-    IFDList ifdList = ifds[wellRow][wellCol];
+    IFDList ifdList = wellRow < ifds.length && wellCol < ifds[wellRow].length ?
+      ifds[wellRow][wellCol] : ifds[0][0];
     IFD ifd = ifdList.get(0);
     int nPlanes = ifdList.size();
     if (offsets[wellRow][wellCol] != null) {
@@ -936,43 +958,84 @@ public class FlexReader extends FormatReader {
       " columns of wells.");
 
     flexFiles = new String[nRows][nCols];
-    ifds = new IFDList[nRows][nCols];
-    factors = new double[nRows][nCols][];
     offsets = new long[nRows][nCols][];
     wellCount = v.size();
     wellNumber = new int[wellCount][2];
 
     RandomAccessInputStream s = null;
     boolean firstFile = true;
+    boolean compressed = false;
+    int nOffsets = 1;
 
     int currentWell = 0;
     for (int row=0; row<nRows; row++) {
       for (int col=0; col<nCols; col++) {
         flexFiles[row][col] = v.get(row + "," + col);
-        if (flexFiles[row][col] == null) continue;
+        if (flexFiles[row][col] == null) {
+          continue;
+        }
 
         wellNumber[currentWell][0] = row;
         wellNumber[currentWell][1] = col;
 
-        s =
-          new RandomAccessInputStream(new FileHandle(flexFiles[row][col], "r"));
+        s = new RandomAccessInputStream(
+          new FileHandle(flexFiles[row][col], "r"));
         if (currentWell == 0) firstStream = s;
-        status("Parsing IFDs for well " + (row + 'A') + (col + 1));
         TiffParser tp = new TiffParser(s);
-        IFD firstIFD = tp.getFirstIFD();
-        if (firstIFD.getCompression() != TiffCompression.UNCOMPRESSED) {
-          ifds[row][col] = tp.getIFDs(false, false);
-          ifds[row][col].set(0, firstIFD);
+
+        if (compressed || firstFile) {
+          status("Parsing IFDs for well " + ((char) (row + 'A')) + (col + 1));
+          IFD firstIFD = tp.getFirstIFD();
+          compressed =
+            firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+
+          if (compressed) {
+            if (ifds == null) {
+              ifds = new IFDList[nRows][nCols];
+              factors = new double[nRows][nCols][];
+            }
+            ifds[row][col] = tp.getIFDs(false, false);
+            ifds[row][col].set(0, firstIFD);
+            parseFlexFile(currentWell, row, col, firstFile, store);
+          }
+          else {
+            // if the pixel data is uncompressed, we can assume that
+            // the pixel data for image #0 is located immediately before
+            // IFD #1; as a result, we only need to parse the first IFD
+            if (ifds == null) {
+              ifds = new IFDList[1][1];
+              factors = new double[1][1][];
+            }
+            offsets[row][col] = tp.getIFDOffsets();
+            nOffsets = offsets[row][col].length;
+            ifds[0][0] = new IFDList();
+            ifds[0][0].add(firstIFD);
+            parseFlexFile(currentWell, row, col, firstFile, store);
+          }
         }
         else {
-          offsets[row][col] = tp.getIFDOffsets();
-          ifds[row][col] = new IFDList();
-          ifds[row][col].add(firstIFD);
+          // retrieve the offsets to each IFD, instead of parsing
+          // all of the IFDs
+          status("Retrieving IFD offsets for well " +
+            ((char) (row + 'A')) + (col + 1));
+          offsets[row][col] = new long[nOffsets];
+
+          // Assume that all IFDs after the first are evenly spaced.
+          // TiffParser.getIFDOffsets() could be used instead, but is
+          // substantially slower.
+          tp.checkHeader();
+          offsets[row][col][0] = tp.getFirstOffset();
+          if (offsets[row][col].length > 1) {
+            s.seek(offsets[row][col][0]);
+            s.skipBytes(s.readShort() * TiffConstants.BYTES_PER_ENTRY);
+            offsets[row][col][1] = s.readInt();
+            int size = FormatTools.getPlaneSize(this) + 174;
+            for (int i=2; i<offsets[row][col].length; i++) {
+              offsets[row][col][i] =  offsets[row][col][i - 1] + size;
+            }
+          }
         }
-
         if (currentWell != 0) s.close();
-
-        parseFlexFile(currentWell, row, col, firstFile, store);
         if (firstFile) firstFile = false;
         currentWell++;
       }
