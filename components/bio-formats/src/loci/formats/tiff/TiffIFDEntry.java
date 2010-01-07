@@ -34,7 +34,7 @@ package loci.formats.tiff;
  *
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffIFDEntry {
+public class TiffIFDEntry implements Comparable {
 
   /** The <i>Tag</i> that identifies the field. */
   private int tag;
@@ -81,5 +81,20 @@ public class TiffIFDEntry {
    * @return the entry's <i>ValueOffset</i> value.
    */
   public long getValueOffset() { return valueOffset; }
+
+  public String toString() {
+    return "tag = " + tag + ", type = " + type + ", count = " + valueCount +
+      ", offset = " + valueOffset;
+  }
+
+  // -- Comparable API methods --
+
+  public int compareTo(Object o) {
+    if (!(o instanceof TiffIFDEntry)) return 1;
+    long offset = ((TiffIFDEntry) o).getValueOffset();
+
+    if (offset == getValueOffset()) return 0;
+    return offset < getValueOffset() ? 1 : -1;
+  }
 
 }

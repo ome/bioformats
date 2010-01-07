@@ -48,6 +48,9 @@ public class IFD extends HashMap<Integer, Object> {
 
   // -- Constants --
 
+  // TODO: Investigate using Java 1.5 enums instead of int enumerations.
+  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
+
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
   public static final int BIG_TIFF = 1;
@@ -321,6 +324,40 @@ public class IFD extends HashMap<Integer, Object> {
     return (String) getIFDValue(tag, checkNull, String.class);
   }
 
+  /** Gets the given directory entry value as a string (regardless of type). */
+  public String getIFDTextValue(int tag) {
+    String value = null;
+    Object o = getIFDValue(tag);
+    if (o instanceof String[]) {
+      StringBuilder sb = new StringBuilder();
+      String[] s = (String[]) o;
+      for (int i=0; i<s.length; i++) {
+        sb.append(s[i]);
+        if (i < s.length - 1) sb.append("\n");
+      }
+      value = sb.toString();
+    }
+    else if (o instanceof short[]) {
+      StringBuffer sb = new StringBuffer();
+      for (short s : ((short[]) o)) {
+        if (!Character.isISOControl((char) s)) {
+          sb.append((char) s);
+        }
+        else sb.append("\n");
+      }
+      value = sb.toString();
+    }
+    else if (o != null) value = o.toString();
+
+    // sanitize line feeds
+    if (value != null) {
+      value = value.replaceAll("\r\n", "\n"); // CR-LF to LF
+      value = value.replaceAll("\r", "\n"); // CR to LF
+    }
+
+    return value;
+  }
+
   /**
    * Gets the given directory entry values in long format
    * from this IFD, performing some error checking.
@@ -424,22 +461,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Convenience method for obtaining the ImageDescription from this IFD. */
   public String getComment() {
-    // extract comment
-    Object o = getIFDValue(IMAGE_DESCRIPTION);
-    String comment = null;
-    if (o instanceof String) comment = (String) o;
-    else if (o instanceof String[]) {
-      String[] s = (String[]) o;
-      if (s.length > 0) comment = s[0];
-    }
-    else if (o != null) comment = o.toString();
-
-    if (comment != null) {
-      // sanitize line feeds
-      comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF
-      comment = comment.replaceAll("\r", "\n"); // CR to LF
-    }
-    return comment;
+    return getIFDTextValue(IMAGE_DESCRIPTION);
   }
 
   /** Returns the width of an image tile. */
@@ -558,13 +580,16 @@ public class IFD extends HashMap<Integer, Object> {
     int bitFormat = getIFDIntValue(SAMPLE_FORMAT);
 
     while (bps % 8 != 0) bps++;
-    if (bps == 24) bps = 32;
+    if (bps == 24 && bitFormat != 3) bps = 32;
 
-    if (bitFormat == 3) return FormatTools.FLOAT;
     switch (bps) {
       case 16:
+        if (bitFormat == 3) return FormatTools.FLOAT;
         return bitFormat == 2 ? FormatTools.INT16 : FormatTools.UINT16;
+      case 24:
+        return FormatTools.DOUBLE;
       case 32:
+        if (bitFormat == 3) return FormatTools.FLOAT;
         return bitFormat == 2 ? FormatTools.INT32 : FormatTools.UINT32;
       default:
         return bitFormat == 2 ? FormatTools.INT8 : FormatTools.UINT8;
@@ -813,6 +838,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Prints the contents of this IFD. */
   public void printIFD() {
+    if (!LogTools.isDebug()) return;
     StringBuffer sb = new StringBuffer();
     sb.append("IFD directory entry values:");
 

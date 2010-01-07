@@ -126,14 +126,20 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     afp = 0;
   }
 
-  /** Constructs a random access stream around the given byte array. */
-  public RandomAccessInputStream(byte[] array) throws IOException {
-    // this doesn't use a file descriptor, so we don't need to add it to the
-    // file cache
-    raf = new ByteArrayHandle(array);
+  /** Constructs a random access stream around the given handle. */
+  public RandomAccessInputStream(IRandomAccess handle) throws IOException {
+    raf = handle;
     fp = 0;
     afp = 0;
     length = raf.length();
+    fileCache.put(this, true);
+    openFiles++;
+    if (openFiles > MAX_FILES) cleanCache();
+  }
+
+  /** Constructs a random access stream around the given byte array. */
+  public RandomAccessInputStream(byte[] array) throws IOException {
+    this(new ByteArrayHandle(array));
   }
 
   // -- RandomAccessInputStream API methods --
@@ -220,17 +226,36 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
    *   terminating sequence is found.
    */
   public String findString(String... terminators) throws IOException {
-    return findString(DEFAULT_BLOCK_SIZE, terminators);
+    return findString(true, DEFAULT_BLOCK_SIZE, terminators);
   }
 
   /**
-   * Reads a string ending with one of the given terminating substrings,
-   * using the specified block size for buffering.
+   * Reads or skips a string ending with
+   * one of the given terminating substrings.
    *
+   * @param saveString Whether to collect the string from the current file
+   *   pointer to the terminating bytes, and return it. If false, returns null.
    * @param terminators The strings for which to search.
-   * @param blockSize The block size to use when reading bytes in chunks.
    *
-   * @throws IOException If the maximum search length (512 MB) is exceeded.
+   * @throws IOException If saveString flag is set
+   *   and the maximum search length (512 MB) is exceeded.
+   *
+   * @return The string from the initial position through the end of the
+   *   terminating sequence, or through the end of the stream if no
+   *   terminating sequence is found, or null if saveString flag is unset.
+   */
+  public String findString(boolean saveString, String... terminators)
+    throws IOException
+  {
+    return findString(saveString, DEFAULT_BLOCK_SIZE, terminators);
+  }
+
+  /**
+   * Reads a string ending with one of the given terminating
+   * substrings, using the specified block size for buffering.
+   *
+   * @param blockSize The block size to use when reading bytes in chunks.
+   * @param terminators The strings for which to search.
    *
    * @return The string from the initial position through the end of the
    *   terminating sequence, or through the end of the stream if no
@@ -239,20 +264,61 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   public String findString(int blockSize, String... terminators)
     throws IOException
   {
+    return findString(true, blockSize, terminators);
+  }
+
+  /**
+   * Reads or skips a string ending with one of the given terminating
+   * substrings, using the specified block size for buffering.
+   *
+   * @param saveString Whether to collect the string from the current file
+   *   pointer to the terminating bytes, and return it. If false, returns null.
+   * @param blockSize The block size to use when reading bytes in chunks.
+   * @param terminators The strings for which to search.
+   *
+   * @throws IOException If saveString flag is set
+   *   and the maximum search length (512 MB) is exceeded.
+   *
+   * @return The string from the initial position through the end of the
+   *   terminating sequence, or through the end of the stream if no
+   *   terminating sequence is found, or null if saveString flag is unset.
+   */
+  public String findString(boolean saveString, int blockSize,
+    String... terminators) throws IOException
+  {
     StringBuilder out = new StringBuilder();
     long startPos = getFilePointer();
+    long bytesDropped = 0;
     long inputLen = length();
     long maxLen = inputLen - startPos;
-    if (maxLen > MAX_SEARCH_SIZE) maxLen = MAX_SEARCH_SIZE;
+    boolean tooLong = saveString && maxLen > MAX_SEARCH_SIZE;
+    if (tooLong) maxLen = MAX_SEARCH_SIZE;
     boolean match = false;
+    int maxTermLen = 0;
+    for (String term : terminators) {
+      int len = term.length();
+      if (len > maxTermLen) maxTermLen = len;
+    }
 
     InputStreamReader in = new InputStreamReader(this);
     char[] buf = new char[blockSize];
-    int i = 0;
-    while (i < maxLen) {
-      long pos = startPos + i;
+    long loc = 0;
+    while (loc < maxLen) {
+      long pos = startPos + loc;
       int num = blockSize;
       if (pos + blockSize > inputLen) num = (int) (inputLen - pos);
+
+      // if we're not saving the string, drop any old, unnecessary output
+      if (!saveString) {
+        int outLen = out.length();
+        if (outLen >= maxTermLen) {
+          int dropIndex = outLen - maxTermLen + 1;
+          String last = out.substring(dropIndex, outLen);
+          out.setLength(0);
+          out.append(last);
+          bytesDropped += dropIndex;
+        }
+      }
 
       // read block from stream
       int r = in.read(buf, 0, blockSize);
@@ -261,39 +327,37 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       // append block to output
       out.append(buf, 0, r);
 
-      // check output
-      int[] indices = new int[terminators.length];
+      // check output, returning smallest possible string
+      int min = Integer.MAX_VALUE, tagLen = 0;
       for (int t=0; t<terminators.length; t++) {
-        int tagLen = terminators[t].length();
-        indices[t] = out.indexOf(terminators[t], i == 0 ? 0 : i - tagLen);
-        if (!match) {
-          match = indices[t] >= 0;
+        int len = terminators[t].length();
+        int start = (int) (loc - bytesDropped - len);
+        int value = out.indexOf(terminators[t], start < 0 ? 0 : start);
+        if (value >= 0 && value < min) {
+          match = true;
+          min = value;
+          tagLen = len;
         }
       }
-
-      // return smallest possible string
 
       if (match) {
-        int min = Integer.MAX_VALUE;
-        int minIndex = Integer.MAX_VALUE;
-        for (int t=0; t<indices.length; t++) {
-          if (indices[t] >= 0 && indices[t] < min) {
-            min = indices[t];
-            minIndex = t;
-          }
+        // reset stream to proper location
+        seek(startPos + bytesDropped + min + tagLen);
+
+        // trim output string
+        if (saveString) {
+          out.setLength(min + tagLen);
+          return out.toString();
         }
-        int tagLen = terminators[minIndex].length();
-        seek(startPos + min + tagLen); // reset stream to proper location
-        out.setLength(min + tagLen); // trim output
-        break;
+        else return null;
       }
 
-      i += r;
+      loc += r;
     }
 
-    if (!match) throw new IOException("Maximum search length reached.");
-
-    return out.toString();
+    // no match
+    if (tooLong) throw new IOException("Maximum search length reached.");
+    return null;
   }
 
   // -- DataInput API methods --
@@ -514,6 +578,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       return ARRAY;
     }
 
+    // case 1:
+    // file is larger than 2 GB, so automatically use the RAF
+
+    if (length() > Integer.MAX_VALUE && raf != null) {
+      raf.seek(afp);
+      return RAF;
+    }
+
     // ensure that the DIS' file pointer is actually equal to fp before
     // we try to read from the DIS
     if (dis != null) {
@@ -604,18 +676,28 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Re-open a file that has been closed */
   private void reopen() throws IOException {
-    String path = Location.getMappedId(file);
-    File f = new File(path).getAbsoluteFile();
-
-    raf = Location.getHandle(file);
-
+    String path; // file path corresponding to this location
+    File f; // absolute file on disk corresponding to this location
+    raf = Location.getMappedFile(file);
+    boolean createDIS = true;
+    if (raf == null) {
+      // no directly mapped IRandomAccess handle; create a handle
+      raf = Location.getHandle(file);
+      path = Location.getMappedId(file);
+      f = new File(path).getAbsoluteFile();
+    }
+    else {
+      // an IRandomAccess handle was directly mapped;
+      // assume it is superior and skip creation of the DIS
+      path = null;
+      f = null;
+    }
     if (raf == null) {
       throw new IOException("File not found: " + file);
     }
-
     length = raf.length();
 
-    if (f.exists()) {
+    if (f != null && f.exists()) {
       compressed = raf instanceof CompressedRandomAccess;
       BufferedInputStream bis = new BufferedInputStream(
         new FileInputStream(path), MAX_OVERHEAD);
@@ -641,7 +723,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     int closed = 0;
     int ndx = 0;
 
-    while (closed < toClose) {
+    while (closed < toClose && ndx < files.length) {
       if (!this.equals(files[ndx]) && files[ndx].file != null &&
         Boolean.TRUE.equals(fileCache.get(files[ndx])))
       {
