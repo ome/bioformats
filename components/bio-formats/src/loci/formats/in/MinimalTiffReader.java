@@ -103,7 +103,15 @@ public class MinimalTiffReader extends FormatReader {
     if (bits[0] <= 8) {
       int[] colorMap =
         lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
-      if (colorMap == null) return null;
+      if (colorMap == null) {
+        // it's possible that the LUT is only present in the first IFD
+        if (lastPlane != 0) {
+          lastIFD = ifds.get(0);
+          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
+          if (colorMap == null) return null;
+        }
+        else return null;
+      }
 
       byte[][] table = new byte[3][colorMap.length / 3];
       int next = 0;
@@ -127,7 +135,15 @@ public class MinimalTiffReader extends FormatReader {
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap =
         lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
-      if (colorMap == null || colorMap.length < 65536 * 3) return null;
+      if (colorMap == null || colorMap.length < 65536 * 3) {
+        // it's possible that the LUT is only present in the first IFD
+        if (lastPlane != 0) {
+          lastIFD = ifds.get(0);
+          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
+          if (colorMap == null || colorMap.length < 65536 * 3) return null;
+        }
+        else return null;
+      }
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
       for (int i=0; i<table.length; i++) {
@@ -327,6 +343,10 @@ public class MinimalTiffReader extends FormatReader {
     if (isIndexed()) {
       core[0].sizeC = 1;
       core[0].rgb = false;
+      for (IFD ifd : ifds) {
+        ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
+          PhotoInterp.RGB_PALETTE);
+      }
     }
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
     core[0].falseColor = false;
