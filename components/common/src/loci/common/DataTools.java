@@ -611,7 +611,7 @@ public final class DataTools {
   }
 
   /** Translates an array of double values into an array of byte values. */
-  public static byte[] doublesToBytes(long[] values, boolean little) {
+  public static byte[] doublesToBytes(double[] values, boolean little) {
     byte[] v = new byte[values.length * 8];
     for (int i=0; i<values.length; i++) {
       unpackBytes(Double.doubleToLongBits(values[i]), v, i * 8, 8, little);
