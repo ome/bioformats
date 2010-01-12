@@ -177,14 +177,14 @@ public class ChannelSeparator extends ReaderWrapper {
         int lastStripHeight = stripHeight + (h - (stripHeight * strips));
         byte[] strip = strips == 1 ? buf : new byte[stripHeight * w * bpp];
         for (int i=0; i<strips; i++) {
-          lastImage =
-            reader.openBytes(source, x, y + i * stripHeight, w, stripHeight);
+          lastImage = reader.openBytes(source, x, y + i * stripHeight, w,
+            i == strips - 1 ? lastStripHeight : stripHeight);
           lastImageIndex = source;
           lastImageSeries = series;
           lastImageX = x;
           lastImageY = y + i * stripHeight;
           lastImageWidth = w;
-          lastImageHeight = stripHeight;
+          lastImageHeight = i == strips - 1 ? lastStripHeight : stripHeight;
 
           if (strips != 1 && lastStripHeight != stripHeight && i == strips - 1)
           {
