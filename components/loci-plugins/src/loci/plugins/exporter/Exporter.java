@@ -32,6 +32,7 @@ import ij.Macro;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
+import ij.measure.Calibration;
 import ij.plugin.frame.Recorder;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -265,6 +266,13 @@ public class Exporter {
       if (store.getLogicalChannelSamplesPerPixel(0, 0) == null) {
         store.setLogicalChannelSamplesPerPixel(new Integer(channels), 0, 0);
       }
+
+      Calibration cal = imp.getCalibration();
+
+      store.setDimensionsPhysicalSizeX(new Double(cal.pixelWidth), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Double(cal.pixelHeight), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(cal.pixelDepth), 0, 0);
+      store.setDimensionsTimeIncrement(new Double(cal.frameInterval), 0, 0);
 
       if (imp.getImageStackSize() !=
         imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
