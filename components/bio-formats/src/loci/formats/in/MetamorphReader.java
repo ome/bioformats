@@ -98,6 +98,7 @@ public class MetamorphReader extends BaseTiffReader {
   private Vector<String> stageNames;
   private long[] internalStamps;
   private double[] zDistances, stageX, stageY;
+  private double zStart;
 
   private int mmPlanes; //number of metamorph planes
 
@@ -654,6 +655,8 @@ public class MetamorphReader extends BaseTiffReader {
       int lastFile = -1;
       IFD lastIFD = null;
 
+      double distance = zStart;
+
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
         Double deltaT = new Double(0);
@@ -706,6 +709,11 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (stageY != null && p < stageY.length) {
           store.setStagePositionPositionY(new Double(stageY[p]), i, 0, p);
+        }
+        if (p < zDistances.length) {
+          if (zDistances[p] != 0d) distance += zDistances[p];
+          else distance += zDistances[0];
+          store.setStagePositionPositionZ(new Double(distance), i, 0, p);
         }
       }
     }
@@ -1029,8 +1037,11 @@ public class MetamorphReader extends BaseTiffReader {
     for (int i=0; i<mmPlanes; i++) {
       pos = intFormatMax(i, mmPlanes);
       for (int q=0; q<labels.length; q++) {
-        addSeriesMeta(labels[q] + "[" + pos + "]",
-          readRational(in).doubleValue());
+        double v = readRational(in).doubleValue();
+        if (labels[q].equals("absoluteZ") && i == 0) {
+          zStart = v;
+        }
+        addSeriesMeta(labels[q] + "[" + pos + "]", v);
       }
     }
   }
@@ -1161,6 +1172,18 @@ public class MetamorphReader extends BaseTiffReader {
           int yBin = in.readInt();
           binning = xBin + "x" + yBin;
           value = binning;
+          break;
+        case 40:
+          if (valOrOffset != 0) {
+            in.seek(valOrOffset);
+            readRationals(new String[] {"absoluteZ"});
+          }
+          break;
+        case 41:
+          if (valOrOffset != 0) {
+            in.seek(valOrOffset);
+            readAbsoluteZValid();
+          }
           break;
       }
       addSeriesMeta(key, value);
