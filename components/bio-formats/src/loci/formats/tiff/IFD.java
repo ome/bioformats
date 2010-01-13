@@ -647,7 +647,14 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public int getCompression() throws FormatException {
-    return getIFDIntValue(COMPRESSION, false, TiffCompression.UNCOMPRESSED);
+    int compression = getIFDIntValue(COMPRESSION,
+      false, TiffCompression.UNCOMPRESSED);
+
+    // HACK - Some TIFFs erroneously use Compression=0
+    // instead of Compression=1 for uncompressed data.
+    if (compression == 0) compression = TiffCompression.UNCOMPRESSED;
+
+    return compression;
   }
 
   /**
