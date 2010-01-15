@@ -299,13 +299,13 @@
 	</xsl:template>
 
 	<!-- Default processing -->
-	<xsl:template match="@*|node()">
+	<xsl:template match="@*|node()" priority="1">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="text()|processing-instruction()|comment()">
+	<xsl:template match="text()|processing-instruction()|comment()" priority="0">
 		<xsl:copy>
 			<xsl:apply-templates select="node()"/>
 		</xsl:copy>
