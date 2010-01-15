@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2010 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 19, 2009 10:56:59 PM EDT
+ * Created by melissa via MetadataAutogen on Jan 15, 2010 2:15:58 PM CST
  *
  *-----------------------------------------------------------------------------
  */

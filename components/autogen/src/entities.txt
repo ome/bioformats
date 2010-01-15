@@ -209,7 +209,7 @@ description = number of timepoints
 [Pixels PixelType]
 type = String
 description = the pixel type
-enumeration = {"int8", "uint8", "int16", "uint16", "int32", "uint32", "float"}
+enumeration = {"int8", "uint8", "int16", "uint16", "int32", "uint32", "float", "double"}
 
 [Pixels PixelType 2003FC]
 enumeration = {"int8", "int16", "int32", "Uint8", "Uint16", "Uint32", "float"}
