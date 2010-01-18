@@ -81,6 +81,8 @@ public class TCSReader extends FormatReader {
   private long datestamp;
   private String xmlFile;
 
+  private double voxelX, voxelY, voxelZ;
+
   // -- Constructor --
 
   public TCSReader() {
@@ -248,7 +250,9 @@ public class TCSReader extends FormatReader {
 
     IFDList ifds = tiffParser.getIFDs();
     String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME, false);
-    datestamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+    if (date != null) {
+      datestamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+    }
 
     groupFiles();
     tiffReaders = new TiffReader[tiffs.size()];
@@ -305,12 +309,12 @@ public class TCSReader extends FormatReader {
       ch[i] = Integer.parseInt(s);
       if (ch[i] > channelCount) channelCount = ch[i];
 
-      String n = document.substring(index + 6,
-        document.indexOf(" ", index + 6)).trim();
+      int space = document.indexOf(" ", index + 6);
+      if (space < 0) continue;
+      String n = document.substring(index + 6, space).trim();
       idx[i] = Integer.parseInt(n);
 
-      date = document.substring(document.indexOf(" ", index + 6),
-        document.indexOf("FORMAT")).trim();
+      date = document.substring(space, document.indexOf("FORMAT")).trim();
       stamp[i] = DateTools.getTime(date, DATE_FORMAT);
     }
 
@@ -363,8 +367,29 @@ public class TCSReader extends FormatReader {
       for (String line : lines) {
         if (!line.startsWith("[")) {
           int eq = line.indexOf("=");
+          if (eq < 0) continue;
           String key = line.substring(0, eq).trim();
           String value = line.substring(eq + 1).trim();
+
+          if (key.equals("VoxelSizeX")) {
+            try {
+              voxelX = Double.parseDouble(value);
+            }
+            catch (NumberFormatException e) { }
+          }
+          else if (key.equals("VoxelSizeY")) {
+            try {
+              voxelY = Double.parseDouble(value);
+            }
+            catch (NumberFormatException e) { }
+          }
+          else if (key.equals("VoxelSizeZ")) {
+            try {
+              voxelZ = Double.parseDouble(value);
+            }
+            catch (NumberFormatException e) { }
+          }
+
           addGlobalMeta(key, value);
         }
       }
@@ -424,6 +449,10 @@ public class TCSReader extends FormatReader {
         MetadataTools.setDefaultCreationDate(store, id, i);
       }
     }
+
+    store.setDimensionsPhysicalSizeX(new Double(voxelX), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(voxelY), 0, 0);
+    store.setDimensionsPhysicalSizeZ(new Double(voxelZ), 0, 0);
   }
 
   // -- Helper methods --
@@ -462,12 +491,14 @@ public class TCSReader extends FormatReader {
         IFD ifd = tp.getIFDs().get(0);
 
         String date = ifd.getIFDStringValue(IFD.DATE_TIME, false);
-        long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+        if (date != null) {
+          long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
 
-        rais.close();
-        String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
-        if (software != null && software.trim().startsWith("TCS")) {
-          timestamps.put(file, new Long(stamp));
+          rais.close();
+          String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
+          if (software != null && software.trim().startsWith("TCS")) {
+            timestamps.put(file, new Long(stamp));
+          }
         }
       }
     }
