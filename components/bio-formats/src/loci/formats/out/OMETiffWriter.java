@@ -89,7 +89,7 @@ public class OMETiffWriter extends TiffWriter {
 
       // generate UUID and add to OME element
       String filename = new Location(currentId).getName();
-      String uuid = getUUID(filename);
+      String uuid = "urn:uuid:" + getUUID(filename);
       omeMeta.setUUID(uuid);
 
       for (int series=0; series<omeMeta.getImageCount(); series++) {
