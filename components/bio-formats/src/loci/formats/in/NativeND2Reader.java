@@ -916,15 +916,18 @@ public class NativeND2Reader extends FormatReader {
       for (int n=0; n<getImageCount(); n++) {
         if (i < posX.size()) {
           store.setStagePositionPositionX(posX.get(i), i, 0, n);
-          addSeriesMeta("X position for position #" + (i + 1), posX.get(i));
+          addSeriesMeta("X position", posX.get(i));
+          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
         }
         if (i < posY.size()) {
           store.setStagePositionPositionY(posY.get(i), i, 0, n);
-          addSeriesMeta("Y position for position #" + (i + 1), posY.get(i));
+          addSeriesMeta("Y position" + (i + 1), posY.get(i));
+          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
         }
         if (i < posZ.size()) {
           store.setStagePositionPositionZ(posZ.get(i), i, 0, n);
-          addSeriesMeta("Z position for position #" + (i + 1), posZ.get(i));
+          addSeriesMeta("Z position" + (i + 1), posZ.get(i));
+          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
         }
 
       }
