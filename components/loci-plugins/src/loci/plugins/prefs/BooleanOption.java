@@ -90,6 +90,10 @@ public class BooleanOption extends Option {
   public void parseOption(String arg) {
     String s = Macro.getValue(arg, key, null);
     if (s != null) value = s.equalsIgnoreCase("true");
+    else if (label != null) {
+      s = Macro.getValue(arg, label, null);
+      if (s != null) value = s.equalsIgnoreCase("true");
+    }
   }
 
   /* @see Option#loadOption() */
