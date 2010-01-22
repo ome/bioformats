@@ -221,19 +221,18 @@ public class MinimalTiffReader extends FormatReader {
     lastPlane = no;
     tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
 
-    boolean halfFloat = getPixelType() == FormatTools.FLOAT &&
+    boolean float16 = getPixelType() == FormatTools.FLOAT &&
       ifds.get(0).getBitsPerSample()[0] == 16;
-    boolean halfDouble = getPixelType() == FormatTools.DOUBLE &&
+    boolean float24 = getPixelType() == FormatTools.FLOAT &&
       ifds.get(0).getBitsPerSample()[0] == 24;
 
-    if (halfFloat || halfDouble) {
+    if (float16 || float24) {
       int nPixels = getSizeX() * getSizeY() * getRGBChannelCount();
-      int nBytes = halfFloat ? 2 : 4;
-      int mantissaBits = halfFloat ? 10 : 16;
-      int exponentBits = halfFloat ? 5 : 7;
+      int nBytes = float16 ? 2 : 3;
+      int mantissaBits = float16 ? 10 : 16;
+      int exponentBits = float16 ? 5 : 7;
       int maxExponent = (int) Math.pow(2, exponentBits) - 1;
       int bits = (nBytes * 8) - 1;
-      int newMantissaBits = halfFloat ? 23 : 52;
 
       byte[] newBuf = new byte[buf.length];
       for (int i=0; i<nPixels; i++) {
@@ -241,8 +240,8 @@ public class MinimalTiffReader extends FormatReader {
           DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
         int sign = v >> bits;
         int exponent =
-          (v >> mantissaBits) & (int) (Math.pow(2, exponentBits + 1) - 1);
-        int mantissa = v & (int) (Math.pow(2, mantissaBits + 1) - 1);
+          (v >> mantissaBits) & (int) (Math.pow(2, exponentBits) - 1);
+        int mantissa = v & (int) (Math.pow(2, mantissaBits) - 1);
 
         if (exponent == 0) {
           if (mantissa != 0) {
@@ -251,23 +250,21 @@ public class MinimalTiffReader extends FormatReader {
               exponent--;
             }
             exponent++;
-            mantissa &= (int) (Math.pow(2, mantissaBits + 1) - 1);
-            exponent += (int) Math.pow(2, nBytes * 4 - 1) - 1 - bits;
+            mantissa &= (int) (Math.pow(2, mantissaBits) - 1);
+            exponent += 127 - (Math.pow(2, exponentBits - 1) - 1);
           }
         }
         else if (exponent == maxExponent) {
-          exponent = (int) Math.pow(2, nBytes * 4) - 1;
+          exponent = 255;
         }
         else {
-          exponent += (int) Math.pow(2, nBytes * 4 - 1) - 1 - bits;
+          exponent += 127 - (Math.pow(2, exponentBits - 1) - 1);
         }
 
-        mantissa <<= (newMantissaBits - mantissaBits);
+        mantissa <<= (23 - mantissaBits);
 
-        int value =
-          (sign << maxExponent) | (exponent << newMantissaBits) | mantissa;
-        DataTools.unpackBytes(value, newBuf, i * nBytes * 2, nBytes * 2,
-          isLittleEndian());
+        int value = (sign << 31) | (exponent << 23) | mantissa;
+        DataTools.unpackBytes(value, newBuf, i * 4, 4, isLittleEndian());
       }
       System.arraycopy(newBuf, 0, buf, 0, newBuf.length);
     }

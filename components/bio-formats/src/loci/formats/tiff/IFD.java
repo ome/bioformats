@@ -587,6 +587,7 @@ public class IFD extends HashMap<Integer, Object> {
         if (bitFormat == 3) return FormatTools.FLOAT;
         return bitFormat == 2 ? FormatTools.INT16 : FormatTools.UINT16;
       case 24:
+        return FormatTools.FLOAT;
       case 64:
         return FormatTools.DOUBLE;
       case 32:
