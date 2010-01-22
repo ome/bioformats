@@ -36,6 +36,7 @@ import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.plugins.util.ImagePlusReader;
@@ -258,6 +259,13 @@ public class LociFunctions extends MacroFunctions {
 
   // -- LociFunctions API methods - additional methods --
 
+  public void getFormat(String id, String[] format)
+    throws FormatException, IOException
+  {
+    ImageReader reader = new ImageReader();
+    format[0] = reader.getFormat(id);
+  }
+
   public void setId(String id) throws FormatException, IOException {
     r.setId(id);
   }
@@ -317,6 +325,8 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("");
       IJ.write("-= Usable any time =-");
       IJ.write("");
+      IJ.write("Ext.getFormat(id, format)");
+      IJ.write("-- Retrieves the file format of the given id (filename).");
       IJ.write("Ext.setId(id)");
       IJ.write("-- Initializes the given id (filename).");
       IJ.write("Ext.isThisType(name, thisType)");
