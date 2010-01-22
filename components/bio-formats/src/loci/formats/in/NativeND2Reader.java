@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.text.DecimalFormatSymbols;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -808,13 +809,13 @@ public class NativeND2Reader extends FormatReader {
         parseKeyAndValue(qName, value, prevRuntype);
       }
       else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
-        posX.add(new Double(value));
+        posX.add(new Double(sanitizeDouble(value)));
       }
       else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
-        posY.add(new Double(value));
+        posY.add(new Double(sanitizeDouble(value)));
       }
       else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
-        posZ.add(new Double(value));
+        posZ.add(new Double(sanitizeDouble(value)));
       }
       else if (qName.startsWith("item_")) {
         int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
@@ -852,7 +853,7 @@ public class NativeND2Reader extends FormatReader {
         rois.add(roi);
       }
       else if (qName.equals("dPinholeRadius")) {
-        pinholeSize = new Double(value);
+        pinholeSize = new Double(sanitizeDouble(value));
         addGlobalMeta("Pinhole size", value);
       }
       else {
@@ -978,12 +979,17 @@ public class NativeND2Reader extends FormatReader {
 
     // populate DetectorSettings
     if (voltage != null) {
+      voltage = sanitizeDouble(voltage);
       store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
     }
 
     // populate Objective
-    if (na != null) store.setObjectiveLensNA(new Double(na), 0, 0);
+    if (na != null) {
+      na = sanitizeDouble(na);
+      store.setObjectiveLensNA(new Double(na), 0, 0);
+    }
     if (mag != null) {
+      mag = sanitizeDouble(mag);
       store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
     }
     if (objectiveModel != null) {
@@ -1060,11 +1066,13 @@ public class NativeND2Reader extends FormatReader {
     if (key == null || value == null) return;
     addGlobalMeta(key, value);
     if (key.endsWith("dCalibration")) {
-      pixelSizeX = Double.parseDouble(value);
+      pixelSizeX = Double.parseDouble(sanitizeDouble(value));
       pixelSizeY = pixelSizeX;
     }
-    else if (key.endsWith("dZStep")) pixelSizeZ = Double.parseDouble(value);
-    else if (key.endsWith("Gain")) gain.add(new Double(value));
+    else if (key.endsWith("dZStep")) {
+      pixelSizeZ = Double.parseDouble(sanitizeDouble(value));
+    }
+    else if (key.endsWith("Gain")) gain.add(new Double(sanitizeDouble(value)));
     else if (key.endsWith("dLampVoltage")) voltage = value;
     else if (key.endsWith("dObjectiveMag") && mag == null) mag = value;
     else if (key.endsWith("dObjectiveNA")) na = value;
@@ -1088,14 +1096,14 @@ public class NativeND2Reader extends FormatReader {
       if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
     }
     else if (key.endsWith("dTimeMSec")) {
-      long v = (long) Double.parseDouble(value);
+      long v = (long) Double.parseDouble(sanitizeDouble(value));
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
         addGlobalMeta("number of timepoints", ts.size());
       }
     }
     else if (key.endsWith("dZPos")) {
-      long v = (long) Double.parseDouble(value);
+      long v = (long) Double.parseDouble(sanitizeDouble(value));
       if (!zs.contains(new Long(v))) {
         zs.add(new Long(v));
       }
@@ -1201,16 +1209,16 @@ public class NativeND2Reader extends FormatReader {
             else if (v[0].equals("Readout Speed")) {
               int last = v[1].lastIndexOf(" ");
               if (last != -1) v[1] = v[1].substring(0, last);
-              speed.add(new Double(v[1]));
+              speed.add(new Double(sanitizeDouble(v[1])));
             }
             else if (v[0].equals("Temperature")) {
               String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
-              temperature.add(new Double(temp));
+              temperature.add(new Double(sanitizeDouble(temp)));
             }
             else if (v[0].equals("Exposure")) {
               String[] s = v[1].trim().split(" ");
               try {
-                double time = Double.parseDouble(s[0]);
+                double time = Double.parseDouble(sanitizeDouble(s[0]));
                 // TODO: check for other units
                 if (s[1].equals("ms")) time /= 1000;
                 exposureTime.add(new Double(time));
@@ -1222,7 +1230,8 @@ public class NativeND2Reader extends FormatReader {
             int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
             int last = v[0].indexOf(" ", space + 1);
             if (last == -1) last = v[0].length();
-            pixelSizeZ = Double.parseDouble(v[0].substring(space, last));
+            pixelSizeZ =
+              Double.parseDouble(sanitizeDouble(v[0].substring(space, last)));
           }
           else if (v[0].equals("Line")) {
             String[] values = t.split(";");
@@ -1238,6 +1247,7 @@ public class NativeND2Reader extends FormatReader {
                 exWave.add(new Integer(nextValue));
               }
               else if (nextKey.equals("Power")) {
+                nextValue = sanitizeDouble(nextValue);
                 power.add(new Integer((int) Double.parseDouble(nextValue)));
               }
             }
@@ -1245,6 +1255,15 @@ public class NativeND2Reader extends FormatReader {
         }
       }
     }
+  }
+
+  private String sanitizeDouble(String value) {
+    char separator = new DecimalFormatSymbols().getDecimalSeparator();
+    if (value.indexOf(separator) == -1) {
+      char usedSeparator = separator == '.' ? ',' : '.';
+      value = value.replace(usedSeparator, separator);
+    }
+    return value;
   }
 
 }
