@@ -67,6 +67,7 @@ loci.formats.in.TillVisionReader      # vws
 loci.formats.in.ARFReader             # arf
 loci.formats.in.CellomicsReader       # c01
 loci.formats.in.LiFlimReader          # fli
+loci.formats.in.TargaReader           # tga
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
