@@ -101,6 +101,7 @@ loci.formats.in.ImarisTiffReader      # ims
 loci.formats.in.FlexReader            # flex [LuraWave]
 loci.formats.in.SVSReader             # svs
 loci.formats.in.ImaconReader          # fff
+loci.formats.in.LEOReader             # sxm
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.MIASReader            # tif
