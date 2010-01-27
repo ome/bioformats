@@ -20,34 +20,26 @@
 	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2009-09"
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" 
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" 
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" 
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
-	<!-- Using the svn location for import  -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/STD.xsd"/>
+	<!-- Using the svn location for import  
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ROI.xsd"/>
-	<!-- Using the local directory location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09" schemaLocation="STD.xsd"/>
+	-->	
+	<!-- Using the local directory location for import -->
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" schemaLocation="CA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" schemaLocation="SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="SA.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09" schemaLocation="ROI.xsd"/>
-	-->	
-
+	<!--  -->
+	
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
 	<xsd:annotation>
@@ -80,8 +72,6 @@
 				<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="STD:SemanticTypeDefinitions" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -214,7 +204,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ROI:ROIRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
@@ -1003,7 +992,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ProjectRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="CA:CustomAttributes" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
