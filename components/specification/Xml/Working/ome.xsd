@@ -3,7 +3,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2002-2009 Open Microscopy Environment
+	# Copyright (C) 2002-2010 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -53,9 +53,9 @@
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema September 2009
+			OME XML Schema September 2010
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright 2002 - 2009 OME. All rights reserved.
+			Copyright 2002 - 2010 OME. All rights reserved.
 		</xsd:documentation>
 	</xsd:annotation>
 
@@ -197,7 +197,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							A description for the image.
+							A description for the image. [plane text multi-line string]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>
@@ -271,27 +271,27 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:attribute>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeZ" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeC" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeT" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
-					<xsd:documentation>Dimensional size of pixel data array</xsd:documentation>
+					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeX" use="optional" type="xsd:float">
@@ -314,7 +314,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>
 						TimeIncrement is used for time series that have a global 
 						timing specification instead of per-timepoint timing info.
-						For example in a video stream.  The unit is seconds.
+						For example in a video stream.  The unit is seconds[s].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -344,56 +344,56 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="TheZ" use="required" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Z-section this plane is for.
+						The Z-section this plane is for. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TheT" use="required" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The timepoint this plane is for.
+						The timepoint this plane is for. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TheC" use="required" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The channel this plane is for.
+						The channel this plane is for. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute> 
 			<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						Units are seconds since the beginning of the experiment
+						Units are seconds since the beginning of the experiment [s]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						Units are seconds
+						Units are seconds [s]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the stage. Units are in the microscope reference frame.
+						The X position of the stage. [units are in the microscope reference frame]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the stage. Units are in the microscope reference frame.
+						The Y position of the stage. [units are in the microscope reference frame]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Z position of the stage. Units are in the microscope reference frame.
+						The Z position of the stage. [units are in the microscope reference frame]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -435,7 +435,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The number of samples the detector takes to form each pixel value.
-						The SamplesPerPixel attribute is the number of channel components in the logical channel.
+						The SamplesPerPixel attribute is the number of channel components in the logical channel. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -480,7 +480,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>
 						The optional PinholeSize attribute allows specifying adjustable 
 						pin hole diameters for confocal microscopes (units microns[um]).
-						TODO - units Airy disks?
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -548,21 +547,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The Fluor attribute is used for fluorescence images.
-						This is the name of the fluorophore used to produce this channel
+						This is the name of the fluorophore used to produce this channel [plain text string]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="NDFilter" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The NDfilter attribute is used to specify (in O.D. units) the combined effect of any neutral density filters used.
+						The NDfilter attribute is used to specify the combined effect of any neutral density filters used. [units optical density expressed as a PercentFraction] 
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>	
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by.
+						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by. [units MISSING]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -570,7 +569,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						A color used render this channel - encoded as RGBA
-						The default value "4294967295" is #FFFFFFFF so solid white
+						The default value "4294967295" is #FFFFFFFF so solid white 
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -624,7 +623,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
-						Default is 0 (the first IFD).
+						Default is 0 (the first IFD). [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -632,7 +631,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
-						Default is 0 (the first Z position).
+						Default is 0 (the first Z position). [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -640,7 +639,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the T position of the image plane at the specified IFD. Indexed from 0.
-						Default is 0 (the first T position).
+						Default is 0 (the first T position). [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -648,7 +647,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
-						Default is 0 (the first C position).
+						Default is 0 (the first C position). [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -657,7 +656,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
 						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
-						file, unless an IFD is specified, in which case the default is 1.	
+						file, unless an IFD is specified, in which case the default is 1. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -674,21 +673,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="X" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the stage label.
+						The X position of the stage label. [units are in the microscope reference frame]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the stage label.
+						The Y position of the stage label. [units are in the microscope reference frame]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Z" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Z position of the stage label.
+						The Z position of the stage label. [units are in the microscope reference frame]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -822,21 +821,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The OpticalAxisAveraged is a boolean specifying whether or not 
-						optical axis averaging was done.
+						optical axis averaging was done. [flag]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						The width of the OTF.
+						The width of the OTF. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						The height of the OTF.
+						The height of the OTF. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -855,28 +854,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Temperature" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Temperature is in Celsius.
+						The Temperature is in Celsius[C].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="AirPressure" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						AirPressure is in millibars.
+						AirPressure is in millibars[mbar].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Humidity" use="optional" type="PercentFraction">
 				<xsd:annotation>
 					<xsd:documentation>
-						Humidity as a percent-fraction from 0.0 to 1.0.
+						Humidity as a percent-fraction from 0.0 to 1.0 [%].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CO2Percent" use="optional" type="PercentFraction">
 				<xsd:annotation>
 					<xsd:documentation>
-						CO2Percent as a percent-fractions from 0.0 to 1.0.
+						CO2Percent as a percent-fractions from 0.0 to 1.0 [%].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -898,7 +897,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							A description for the project.
+							A description for the project. [plane text multi-line string]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>
@@ -928,7 +927,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							A description for the group.
+							A description for the group. [plane text multi-line string]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>
@@ -992,7 +991,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							A description for the dataset.
+							A description for the dataset. [plane text multi-line string]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>
@@ -1032,7 +1031,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							A description for the experiment.
+							A description for the experiment. [plane text multi-line string]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>
@@ -1100,27 +1099,27 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
 			<xsd:attribute name="DisplayName" use="required" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>This is the only required name field.</xsd:documentation>
+					<xsd:documentation>This is the only required name field. [plain text string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="FirstName" use="optional" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>First name, sometime called christian name or given name or forename</xsd:documentation>
+					<xsd:documentation>First name, sometime called christian name or given name or forename. [plain text string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="MiddleName" use="optional" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>Any other names.</xsd:documentation>
+					<xsd:documentation>Any other names. [plain text string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="LastName" use="optional" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>A person's last name sometimes called surname or family name.</xsd:documentation>
+					<xsd:documentation>A person's last name sometimes called surname or family name. [plain text string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Email" use="optional" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>A person's email address.</xsd:documentation>
+					<xsd:documentation>A person's email address. [valid email address as string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Institution" use="optional" type="xsd:string">
@@ -1130,13 +1129,13 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						The organizing structure that people belong to other than groups.  A university, or company, etc.
 						We do not specify a department element, and do not mean for Institution to be used in this way.
 						We simply wish to say XXX at YYY.  Where YYY has a better chance of being tied to a geographically fixed location
-						and of being more recognizable than a group of experimenters. 
+						and of being more recognizable than a group of experimenters. [plain text string]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="UserName" use="optional" type="xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense).</xsd:documentation>
+					<xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense). [plain text string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -1154,28 +1153,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					The manufacturer of the component. 
+					The manufacturer of the component. [plain text string]
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="Model" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					The Model of the component. 
+					The Model of the component. [plain text string]
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="SerialNumber" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					The serial number of the component.
+					The serial number of the component. [plain text string]
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="LotNumber" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					The lot number of the component.
+					The lot number of the component. [plain text string]
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
@@ -1308,21 +1307,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								The numerical aperture of the lens expressed as a floating point (real) number.
-								Expected range 0.02 - 1.5
+								Expected range 0.02 - 1.5 [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:integer">
 						<xsd:annotation>
 							<xsd:documentation>
-								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.
+								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="CalibratedMagnification" use="optional"  type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens.
+								The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1336,7 +1335,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Iris" use="optional" type="xsd:boolean">
 						<xsd:annotation>
 							<xsd:documentation>
-								Records whether or not the objective was fitted with an Iris. 
+								Records whether or not the objective was fitted with an Iris. [flag]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1357,28 +1356,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Gain for this detector, as a float. 
+								The Detector Gain for this detector, as a float. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector (e.g. PMT voltage) as a float.
+								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Offset. 
+								The Detector Offset. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. 
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1386,7 +1385,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								Gain applied to the detector signal. 
-								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. 
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1509,7 +1508,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="FilterWheel" use="optional" type="xsd:string" >
 						<xsd:annotation>
 							<xsd:documentation>
-								A filter 'wheel' in OME can refer to any arrangement of filters in a filter holder of any shape. It could, for example, be a filter slider.
+								A filter 'wheel' in OME can refer to any arrangement of filters in a filter holder of any shape. It could, for example, be a filter slider. [plain text string]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1521,11 +1520,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="TransmittanceRange"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				CutIn Units: nanometres[nm],
-				CutOut Units: nanometres[nm],
-				CutInTolerance Units: nanometres[nm],
-				CutOutTolerance Units: nanometres[nm],
-				Transmittance Units: PercentFraction
+				This records the range of wavelengths that are transmitted by the filter. It also records the maximum amount of light transmitted.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1560,7 +1555,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" >
 				<xsd:annotation>
 					<xsd:documentation>
-						The amount of light the filter transmits at a maximum as a percentage.
+						The amount of light the filter transmits at a maximum as a percentage. [%]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1610,7 +1605,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Power" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The light-source power.
+								The light-source power. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1718,14 +1713,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="FrequencyMultiplication" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						FrequencyMultiplication that may be specified.
+						FrequencyMultiplication that may be specified. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Tuneable" use="optional" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
-						Whether or not the laser is Tuneable
+						Whether or not the laser is Tuneable [flag]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1749,7 +1744,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PockelCell" use="optional" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
-						If true the laser has a PockelCell to rotate the polarization of the beam.
+						If true the laser has a PockelCell to rotate the polarization of the beam. [flag]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1757,7 +1752,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The is the rate in Hz at which the laser pulses if 
-						the Pulse type is 'Repetitive'
+						the Pulse type is 'Repetitive'. hertz[Hz]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1997,14 +1992,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Attenuation" use="optional" type="PercentFraction">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Attenuation of the light source.
+								The Attenuation of the light source. [%]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Wavelength of the light source.
+								The Wavelength of the light source. nanometres[nm]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2027,21 +2022,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Offset of the detector.
+								The Offset of the detector. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Gain of the detector.
+								The Gain of the detector. [units MISSING]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector.
+								The Voltage of the detector. volts[V]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2050,7 +2045,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							<xsd:documentation>
 								The speed at which the detector can count pixels. 
 								Units of ReadOutRate is MHz. This is the bytes per second that 
-								can be read from the detector (like a baud rate). 
+								can be read from the detector (like a baud rate). megahertz[MHz]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2061,11 +2056,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
-							<xsd:annotation>
-								<xsd:documentation>
-									Predefined list of values for the number of pixels that can be combined to form larger pixels.
-								</xsd:documentation>
-							</xsd:annotation>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="1x1"/>
 								<xsd:enumeration value="2x2"/>
@@ -2096,7 +2086,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							<xsd:documentation>
 								The CorrectionCollar is it normal an adjustable ring on the 
 								objective. Each has an arbitrary scale on it so the values 
-								is unit-less.
+								is unit-less. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2121,7 +2111,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								The RefractiveIndex is that of the immersion medium. This is
-								a ratio so it also unit-less.
+								a ratio so it also unit-less. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
