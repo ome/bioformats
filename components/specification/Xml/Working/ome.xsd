@@ -53,7 +53,7 @@
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema September 2010
+			OME XML Schema April 2010
 			Author:  Ilya G. Goldberg, Andrew J Patterson
 			Copyright 2002 - 2010 OME. All rights reserved.
 		</xsd:documentation>
@@ -561,7 +561,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by. [units MISSING]
+						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1356,7 +1356,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Gain for this detector, as a float. [units MISSING]
+								The Detector Gain for this detector, as a float. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1370,14 +1370,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Offset. [units MISSING]
+								The Detector Offset. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units MISSING]
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1385,7 +1385,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								Gain applied to the detector signal. 
-								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units MISSING]
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1605,7 +1605,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Power" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The light-source power. [units MISSING]
+								The light-source power. units milliwatts[mW]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2022,14 +2022,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Offset of the detector. [units MISSING]
+								The Offset of the detector. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Gain of the detector. [units MISSING]
+								The Gain of the detector. [units none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
