@@ -55,8 +55,28 @@
 					</xsd:element>
 				</xsd:choice>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the ROI. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ROIID"/>
+			<xsd:attribute name="Name" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Name identifies the ROI to the user. [plane text string]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -71,7 +91,6 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="OME:ChannelRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="Line" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Rectangle" minOccurs="1" maxOccurs="1"/>
@@ -82,35 +101,67 @@
 					<xsd:element ref="Path" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Label" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the ROI. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 			</xsd:sequence>
+			<xsd:attribute name="Name" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Name identifies the Shape to the user. [plane text string]
+					</xsd:documentation>
+				</xsd:annotation>		
+			</xsd:attribute>
 			<xsd:attribute name="Fill" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The colour of the fill.
+						The colour of the fill - encoded as RGBA
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FillRule" use="optional" type="xsd:string"/>
+			<xsd:attribute name="FillRule" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The colour of the stroke.
+						The colour of the stroke  - encoded as RGBA
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The width of the stroke in pixels
+						The width of the stroke [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string"/>
+			<xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						MISSING
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="LineCap" use="optional">
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							The shape of the end of the line.
+							The shape of the end of the line. [enumeration]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
@@ -122,12 +173,11 @@
 			</xsd:attribute>
 			<xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
 			<xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
-			<xsd:attribute name="Text" use="optional" type="xsd:string"/>
 			<xsd:attribute name="FontFamily" use="optional">
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							The font family used to draw the text.
+							The font family used to draw the text. [enumeration]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
@@ -141,7 +191,7 @@
 			<xsd:attribute name="FontSize" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						Size of the font in points
+						Size of the font [units points]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -149,7 +199,7 @@
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							The style applied to the text.
+							The style applied to the text.  [enumeration]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
@@ -165,7 +215,7 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The z-section the ROI applies to. If not specified then 
-						the ROI applies to all the z-sections of the image.
+						the ROI applies to all the z-sections of the image. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -173,7 +223,15 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The timepoint the ROI applies to. If not specified then 
-						the ROI applies to all the timepoints of the image.
+						the ROI applies to all the timepoints of the image. [units none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TheC" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						The channel the ROI applies to. If not specified then 
+						the ROI applies to all the channels of the image. [units none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -205,28 +263,28 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X value of the left edge or the rectangle.
+								The X value of the left edge or the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The y value of the top edge or the rectangle.
+								The y value of the top edge or the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Width" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The width of the rectangle.
+								The width of the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Height" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The height of the rectangle. 
+								The height of the rectangle. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -249,14 +307,14 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the left side of the image.
+								The X coordinate of the left side of the image. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the top side of the image.
+								The Y coordinate of the top side of the image. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -268,14 +326,14 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the point.
+								The X coordinate of the point. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the point.
+								The Y coordinate of the point. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -293,28 +351,28 @@
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the center of the ellipse.
+								The X coordinate of the center of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the center of the ellipse.
+								The Y coordinate of the center of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="RadiusX" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The horizontal radius of the ellipse.
+								The horizontal radius of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="RadiusY" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The vertical radius of the ellipse.
+								The vertical radius of the ellipse. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -331,28 +389,28 @@
 					<xsd:attribute name="X1" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the start of the line.
+								The X coordinate of the start of the line. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y1" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the start of the line.
+								The Y coordinate of the start of the line. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="X2" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The X coordinate of the end of the line.
+								The X coordinate of the end of the line. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Y2" use="required" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Y coordinate of the end of the line.
+								The Y coordinate of the end of the line. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -381,7 +439,7 @@
 						<xsd:annotation>
 							<xsd:documentation>
 								Indicates if the shape is closed with an extra 
-								line form the end point back to the start point.
+								line form the end point back to the start point. [flag]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -409,8 +467,8 @@
 								V = vertical lineto (absolute)
 								C = curveto (absolute)
 								S = smooth curveto (absolute)
-								Q = quadratic Belzier curve (absolute)
-								T = smooth quadratic Belzier curveto (absolute)
+								Q = quadratic Bezier curve (absolute)
+								T = smooth quadratic Bezier curveto (absolute)
 								A = elliptical Arc (absolute)
 								Z = closepath
 								
@@ -420,8 +478,8 @@
 								v = vertical lineto (relative)
 								c = curveto (relative)
 								s = smooth curveto (relative)
-								q = quadratic Belzier curve (relative)
-								t = smooth quadratic Belzier curveto (relative)
+								q = quadratic Bezier curve (relative)
+								t = smooth quadratic Bezier curveto (relative)
 								a = elliptical Arc (relative)
 								z = closepath
 							</xsd:documentation>
@@ -458,7 +516,7 @@
 							<xsd:documentation>
 								This defines the X coordinate of the current 
 								text position of the first character in the 
-								string.
+								string. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -467,7 +525,7 @@
 							<xsd:documentation>
 								This defines the X coordinate of the current 
 								text position of the first character in the 
-								string.
+								string. [units pixels]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -499,7 +557,7 @@
 	<xsd:simpleType name="Marker"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				Shape of marker on the end of a line.
+				Shape of marker on the end of a line. [enumeration]
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
