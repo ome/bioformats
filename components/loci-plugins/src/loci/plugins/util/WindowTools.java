@@ -170,6 +170,11 @@ public final class WindowTools {
   }
 
   /** Reports the given exception with stack trace in an ImageJ error dialog. */
+  public static void reportException(Throwable t, boolean quiet) {
+    reportException(t, quiet, null);
+  }
+
+  /** Reports the given exception with stack trace in an ImageJ error dialog. */
   public static void reportException(Throwable t, boolean quiet, String msg) {
     IJ.showStatus("");
     if (!quiet) {

@@ -35,7 +35,7 @@ import loci.formats.IFormatReader;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/LociPrefs.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/LociPrefs.java">SVN</a></dd></dl>
  */
-public class LociPrefs {
+public final class LociPrefs {
 
   // -- Constants --
 
