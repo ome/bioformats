@@ -636,7 +636,9 @@ public final class AWTImageTools {
     }
 
     SampleModel model;
-    if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1) {
+    if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1 &&
+      !(buffer instanceof UnsignedIntBuffer))
+    {
       int[] bitMasks = new int[c];
       for (int i=0; i<c; i++) {
         bitMasks[i] = 0xff << ((c - i - 1) * 8);
@@ -678,7 +680,8 @@ public final class AWTImageTools {
         b.setData(raster);
       }
     }
-    else if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1)
+    else if (c > 2 && type == DataBuffer.TYPE_INT && buffer.getNumBanks() == 1
+      && !(buffer instanceof UnsignedIntBuffer))
     {
       if (c == 3) {
         b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);

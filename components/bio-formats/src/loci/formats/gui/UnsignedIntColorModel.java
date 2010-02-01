@@ -25,7 +25,11 @@ package loci.formats.gui;
 
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
@@ -75,7 +79,13 @@ public class UnsignedIntColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#createCompatibleWritableRaster(int, int) */
   public WritableRaster createCompatibleWritableRaster(int w, int h) {
-    return helper.createCompatibleWritableRaster(w, h);
+    int[] bandOffsets = new int[nChannels];
+    for (int i=0; i<nChannels; i++) bandOffsets[i] = i;
+
+    SampleModel m = new ComponentSampleModel(DataBuffer.TYPE_INT, w, h,
+      nChannels, w * nChannels, bandOffsets);
+    DataBuffer db = new DataBufferInt(w * h, nChannels);
+    return Raster.createWritableRaster(m, db, null);
   }
 
   /* @see java.awt.image.ColorModel#getAlpha(int) */
@@ -146,12 +156,9 @@ public class UnsignedIntColorModel extends ColorModel {
 
   private int getComponent(int pixel, int index) {
     long v = pixel & 0xffffffffL;
-    if (nChannels == 1) {
-      double f = v / (Math.pow(2, 32) - 1);
-      return (int) (255 * f);
-    }
-    int shift = (nChannels - index) * 8;
-    return (int) (v & (0xff << shift)) >> shift;
+    double f = (double) v / (Math.pow(2, 32) - 1);
+    f *= 255;
+    return (int) f;
   }
 
   private static int[] makeBitArray(int nChannels, int nBits) {
