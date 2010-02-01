@@ -522,6 +522,16 @@ public class FV1000Reader extends FormatReader {
           if (key.equals("AxisCode")) code[ndx] = value;
           else if (key.equals("MaxSize")) size[ndx] = value;
           else if (key.equals("EndPosition")) pixelSize[ndx] = value;
+          else if (key.equals("StartPosition")) {
+            if (pixelSize[ndx] != null) {
+              double pix = Double.parseDouble(pixelSize[ndx]);
+              double v = Double.parseDouble(value);
+              pixelSize[ndx] = String.valueOf(pix - v);
+            }
+            else {
+              pixelSize[ndx] = value;
+            }
+          }
         }
         else if ((prefix + key).equals(
           "[Reference Image Parameter] - ImageDepth"))
@@ -871,11 +881,11 @@ public class FV1000Reader extends FormatReader {
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        pixelSizeZ = (pixel.doubleValue() / getSizeZ()) / 1000;
+        pixelSizeZ = Math.abs((pixel.doubleValue() / getSizeZ()) / 1000);
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
-        pixelSizeT = (pixel.doubleValue() / getSizeT()) / 1000;
+        pixelSizeT = Math.abs((pixel.doubleValue() / getSizeT()) / 1000);
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
@@ -1008,6 +1018,17 @@ public class FV1000Reader extends FormatReader {
       if (pixelSizeY != null) {
         store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
       }
+      if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
+        pixelSizeZ == Double.POSITIVE_INFINITY)
+      {
+        pixelSizeZ = 0d;
+      }
+      if (pixelSizeT == Double.NEGATIVE_INFINITY ||
+        pixelSizeT == Double.POSITIVE_INFINITY)
+      {
+        pixelSizeT = 0d;
+      }
+
       store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), i, 0);
       store.setDimensionsTimeIncrement(new Double(pixelSizeT), i, 0);
 
