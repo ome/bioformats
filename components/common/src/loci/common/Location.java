@@ -216,6 +216,7 @@ public class Location {
         return null;
       }
     }
+    if (file == null) return null;
     String[] f = file.list();
     if (f == null) return null;
     for (String file : f) {

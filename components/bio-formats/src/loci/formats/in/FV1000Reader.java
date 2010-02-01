@@ -155,7 +155,8 @@ public class FV1000Reader extends FormatReader {
       }
 
       Location oif = new Location(parent.getParentFile(), path);
-      return oif.exists() && !oif.isDirectory();
+      return oif.exists() && !oif.isDirectory() &&
+        checkSuffix(oif.getAbsolutePath(), "oif");
     }
     catch (NullPointerException e) { }
     return false;

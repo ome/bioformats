@@ -659,7 +659,9 @@ public class DicomReader extends FormatReader {
       int instanceNumber = Integer.parseInt(originalInstance) - 1;
       if (instanceNumber == 0) fileList.get(s).add(currentId);
       else {
-        while (instanceNumber > fileList.get(s).size()) fileList.get(s).add(null);
+        while (instanceNumber > fileList.get(s).size()) {
+          fileList.get(s).add(null);
+        }
         fileList.get(s).add(currentId);
       }
 
@@ -673,10 +675,12 @@ public class DicomReader extends FormatReader {
 
       directory = directory.getParentFile();
       String[] subdirs = directory.list(true);
-      for (String subdir : subdirs) {
-        Location f = new Location(directory, subdir).getAbsoluteFile();
-        if (!f.isDirectory()) continue;
-        scanDirectory(f, true);
+      if (subdirs != null) {
+        for (String subdir : subdirs) {
+          Location f = new Location(directory, subdir).getAbsoluteFile();
+          if (!f.isDirectory()) continue;
+          scanDirectory(f, true);
+        }
       }
 
       Integer[] keys = fileList.keySet().toArray(new Integer[0]);
@@ -1070,6 +1074,7 @@ public class DicomReader extends FormatReader {
     if (patternFiles == null) patternFiles = new String[0];
     Arrays.sort(patternFiles);
     String[] files = dir.list(true);
+    if (files == null) return;
     Arrays.sort(files);
     for (int i=0; i<files.length; i++) {
       String file = new Location(dir, files[i]).getAbsolutePath();
