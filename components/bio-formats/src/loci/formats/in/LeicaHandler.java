@@ -384,9 +384,11 @@ public class LeicaHandler extends DefaultHandler {
           if (coreMeta.sizeY != 0) {
             if (coreMeta.sizeZ == 1) {
               coreMeta.sizeZ = len;
+              bytesPerAxis.put(new Integer(nBytes), "Z");
             }
             else if (coreMeta.sizeT == 1) {
               coreMeta.sizeT = len;
+              bytesPerAxis.put(new Integer(nBytes), "T");
             }
           }
           else {
@@ -402,11 +404,12 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
+            bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
             coreMeta.sizeZ = len;
+            bytesPerAxis.put(new Integer(nBytes), "Z");
           }
-          bytesPerAxis.put(new Integer(nBytes), "Z");
           break;
         case 4: // T axis
           if (coreMeta.sizeY == 0) {
@@ -415,11 +418,12 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeT = 1;
             physicalSizeY = physicalSize.doubleValue();
             store.setDimensionsPhysicalSizeY(physicalSize, numDatasets, 0);
+            bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
             coreMeta.sizeT = len;
+            bytesPerAxis.put(new Integer(nBytes), "T");
           }
-          bytesPerAxis.put(new Integer(nBytes), "T");
           break;
         default:
           extras *= len;
