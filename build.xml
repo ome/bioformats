@@ -1163,7 +1163,7 @@ Apache XML-RPC
   <!-- Tool collections -->
 
   <target name="tools" depends="copy-jars, jar-common,
-    jar-jai, jar-poi-loci, jar-mdbtools,
+    jar-flow, jar-jai, jar-poi-loci, jar-mdbtools,
     jar-ome-xml, jar-formats, jar-loci-plugins"
     description="create JAR file encompassing several LOCI tools">
     <echo>----------=========== loci_tools ===========----------</echo>
