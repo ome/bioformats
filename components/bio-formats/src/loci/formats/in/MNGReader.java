@@ -50,7 +50,7 @@ import loci.formats.meta.MetadataStore;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MNGReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MNGReader.java">SVN</a></dd></dl>
  */
-public class MNGReader extends FormatReader {
+public class MNGReader extends BIFormatReader {
 
   // -- Constants --
 
@@ -79,18 +79,6 @@ public class MNGReader extends FormatReader {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     return stream.readLong() == MNG_MAGIC_BYTES;
-  }
-
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    BufferedImage data = (BufferedImage) openPlane(no, x, y, w, h);
-    byte[] tmp = AWTImageTools.getBytes(data, true);
-    System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
-    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
@@ -134,13 +122,6 @@ public class MNGReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) offsets = lengths = null;
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
-    return BufferedImage.class;
   }
 
   // -- Internal FormatReader API methods --

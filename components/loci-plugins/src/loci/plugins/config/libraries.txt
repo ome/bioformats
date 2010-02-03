@@ -183,6 +183,13 @@ url = http://www.unidata.ucar.edu/software/decoders/
 license = LGPL
 notes = Used by the NetCDF Java library.
 
+[Java Advanced Imaging]
+type = Java library
+class = javax.media.jai.JAI
+url = https://jai.dev.java.net/
+license = JRL/JDL
+notes = Core JAI library for reading certain kinds of TIFF files.
+
 [JAI Image I/O Tools - Java wrapper]
 type = Java library
 class = com.sun.medialib.codec.jiio.Constants

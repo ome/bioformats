@@ -54,7 +54,7 @@ import loci.formats.meta.MetadataStore;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/LegacyQTReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/LegacyQTReader.java">SVN</a></dd></dl>
  */
-public class LegacyQTReader extends FormatReader {
+public class LegacyQTReader extends BIFormatReader {
 
   // -- Fields --
 
@@ -79,18 +79,6 @@ public class LegacyQTReader extends FormatReader {
   }
 
   // -- IFormatReader API methods --
-
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    BufferedImage data = (BufferedImage) openPlane(no, x, y, w, h);
-    byte[] tmp = AWTImageTools.getBytes(data, false);
-    System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
-    return buf;
-  }
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
   public Object openPlane(int no, int x, int y, int w, int h)
@@ -131,13 +119,6 @@ public class LegacyQTReader extends FormatReader {
       times = null;
       image = null;
     }
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
-    return BufferedImage.class;
   }
 
   // -- Internal FormatReader API methods --

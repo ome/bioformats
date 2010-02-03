@@ -1,5 +1,5 @@
 //
-// ND2Widgets.java
+// TiffDelegateWidgets.java
 //
 
 /*
@@ -36,15 +36,15 @@ import javax.swing.JCheckBox;
 import loci.plugins.util.LociPrefs;
 
 /**
- * Custom widgets for configuring Bio-Formats ND2 support.
+ * Custom widgets for configuring Bio-Formats TIFF support.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/config/ND2Widgets.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/config/ND2Widgets.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/config/TiffDelegateWidgets.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/config/TiffDelegateWidgets.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class ND2Widgets implements IFormatWidgets, ItemListener {
+public class TiffDelegateWidgets implements IFormatWidgets, ItemListener {
 
   // -- Fields --
 
@@ -53,12 +53,13 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
 
   // -- Constructor --
 
-  public ND2Widgets() {
-    boolean nikon = Prefs.get(LociPrefs.PREF_ND2_NIKON, false);
+  public TiffDelegateWidgets() {
+    boolean imageIO = Prefs.get(LociPrefs.PREF_TIFF_IMAGEIO, false);
 
-    String legacyLabel = "Nikon";
+    String legacyLabel = "JAI";
     JCheckBox legacyBox = new JCheckBox(
-      "Use Nikon's ND2 library instead of native ND2 support", nikon);
+      "Use JAI library instead of native TIFF support",
+      imageIO);
     legacyBox.addItemListener(this);
 
     labels = new String[] {legacyLabel};
@@ -79,7 +80,7 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
 
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    Prefs.set(LociPrefs.PREF_ND2_NIKON, box.isSelected());
+    Prefs.set(LociPrefs.PREF_TIFF_IMAGEIO, box.isSelected());
   }
 
 }

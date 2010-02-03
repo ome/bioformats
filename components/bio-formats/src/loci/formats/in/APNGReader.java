@@ -55,7 +55,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class APNGReader extends FormatReader {
+public class APNGReader extends BIFormatReader {
 
   // -- Constants --
 
@@ -89,24 +89,6 @@ public class APNGReader extends FormatReader {
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut;
-  }
-
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
-    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    BufferedImage data = (BufferedImage) openPlane(no, x, y, w, h);
-    byte[][] t = AWTImageTools.getPixelBytes(data, false);
-
-    for (int c=0; c<t.length; c++) {
-      System.arraycopy(t[c], 0, buf, c * t[c].length, t[c].length);
-    }
-
-    return buf;
   }
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
@@ -196,13 +178,6 @@ public class APNGReader extends FormatReader {
       frameCoordinates = null;
       blocks = null;
     }
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
-    return BufferedImage.class;
   }
 
   // -- Internal FormatReader methods --

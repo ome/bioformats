@@ -158,6 +158,8 @@ public class PictReader extends FormatReader {
       in.seek(512);
       byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];
       in.read(pix);
+      // CTR: CHECK: Could we use AWTImageTools.getBytes here instead?
+      // See loci.formats.in.BIFormatReader.openBytes for an example.
       byte[][] b = AWTImageTools.getPixelBytes(
         AWTImageTools.makeBuffered(qtTools.pictToImage(pix)),
         isLittleEndian());

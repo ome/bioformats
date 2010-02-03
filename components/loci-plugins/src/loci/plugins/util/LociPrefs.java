@@ -46,6 +46,7 @@ public final class LociPrefs {
   public static final String PREF_PICT_QTJAVA = "bioformats.pict.qtjava";
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
+  public static final String PREF_TIFF_IMAGEIO = "bioformats.tiff.imageio";
 
   // -- Constructor --
 
@@ -79,6 +80,10 @@ public final class LociPrefs {
 
   public static boolean isSDTIntensity() {
     return Prefs.get(PREF_SDT_INTENSITY, false);
+  }
+
+  public static boolean isTiffImageIO() {
+    return Prefs.get(PREF_TIFF_IMAGEIO, false);
   }
 
   // -- Helper methods --

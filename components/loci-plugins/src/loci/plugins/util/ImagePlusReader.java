@@ -46,6 +46,7 @@ import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
 import loci.formats.in.SDTReader;
+import loci.formats.in.TiffDelegateReader;
 
 /**
  * Utility methods for working with ImagePlus objects.
@@ -99,6 +100,7 @@ public class ImagePlusReader extends ReaderWrapper {
     boolean pictQTJava = LociPrefs.isPictQTJava();
     boolean qtQTJava = LociPrefs.isQTQTJava();
     boolean sdtIntensity = LociPrefs.isSDTIntensity();
+    boolean tiffImageIO = LociPrefs.isTiffImageIO();
     IFormatReader[] r = reader.getReaders();
     for (int i=0; i<r.length; i++) {
       if (r[i] instanceof ND2Reader) {
@@ -116,6 +118,10 @@ public class ImagePlusReader extends ReaderWrapper {
       else if (r[i] instanceof SDTReader) {
         SDTReader sdt = (SDTReader) r[i];
         sdt.setIntensity(sdtIntensity);
+      }
+      else if (r[i] instanceof TiffDelegateReader) {
+        TiffDelegateReader tiff = (TiffDelegateReader) r[i];
+        tiff.setLegacy(tiffImageIO);
       }
     }
 

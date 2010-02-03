@@ -117,7 +117,7 @@ loci.formats.in.NikonTiffReader       # tif
 loci.formats.in.OMETiffReader         # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
-loci.formats.in.TiffReader            # tif, tiff
+loci.formats.in.TiffDelegateReader    # tif, tiff
 
 # non-TIFF readers with slow isThisType
 loci.formats.in.OpenlabReader         # liff
