@@ -723,6 +723,7 @@ public class TiffParser {
     int bufferSizeSamplesPerPixel = samplesPerPixel;
     if (ifd.getPlanarConfiguration() == 2) bufferSizeSamplesPerPixel = 1;
     int bpp = ifd.getBytesPerSample()[0];
+    if (bpp == 3) bpp = 4;
     int bufferSize = (int) tileWidth * (int) tileLength *
       bufferSizeSamplesPerPixel * bpp;
     if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
@@ -792,15 +793,21 @@ public class TiffParser {
   {
     BitBuffer bb = new BitBuffer(bytes);
 
+    long imageWidth = ifd.getTileWidth();
+    long imageLength = ifd.getTileLength();
     int numBytes = ifd.getBytesPerSample()[0];
-    int realBytes = numBytes;
     if (numBytes == 3) numBytes++;
 
     int bitsPerSample = ifd.getBitsPerSample()[0];
+    int nSamples = ((bytes.length - startIndex) * 8) / bitsPerSample;
     boolean littleEndian = ifd.isLittleEndian();
     int photoInterp = ifd.getPhotometricInterpretation();
 
-    for (int j=0; j<bytes.length / realBytes; j++) {
+    int skipBits = (int) (8 - ((imageWidth * bitsPerSample) % 8));
+    if (skipBits == 8) skipBits = 0;
+    nSamples -= (int) ((imageLength * skipBits) / bitsPerSample);
+
+    for (int j=0; j<nSamples; j++) {
       int value = bb.getBits(bitsPerSample);
       if (littleEndian) value = DataTools.swap(value) >> (32 - bitsPerSample);
 
@@ -809,6 +816,10 @@ public class TiffParser {
       }
       else if (photoInterp == PhotoInterp.CMYK) {
         value = Integer.MAX_VALUE - value;
+      }
+
+      if ((j % imageWidth) == imageWidth - 1) {
+        bb.skipBits(skipBits);
       }
 
       if (numBytes*(startIndex + j) < samples.length) {
@@ -849,7 +860,7 @@ public class TiffParser {
       startIndex + "; totalBits=" + totalBits +
       "; numBytes=" + bytes.length + ")");
 
-    long imageWidth = ifd.getImageWidth();
+    long imageWidth = ifd.getTileWidth();
 
     int bps0 = bitsPerSample[0];
     int numBytes = ifd.getBytesPerSample()[0];
@@ -889,6 +900,9 @@ public class TiffParser {
       return;
     }
 
+    int skipBits = (int) (8 - ((imageWidth * bps0 * nChannels) % 8));
+    if (skipBits == 8) skipBits = 0;
+
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<nChannels; i++) {
         int index = numBytes * (j * nChannels + i);
@@ -906,9 +920,12 @@ public class TiffParser {
             (photoInterp != PhotoInterp.CFA_ARRAY &&
             photoInterp != PhotoInterp.RGB_PALETTE))
           {
-            s = (short) (bb.getBits(bps0) & 0xffff);
-            if ((ndx % imageWidth) == imageWidth - 1 && bps0 < 8) {
-              bb.skipBits((imageWidth * bps0 * sampleCount) % 8);
+            try {
+              s = (short) (bb.getBits(bps0) & 0xffff);
+            }
+            catch (ArrayIndexOutOfBoundsException e) { }
+            if ((ndx % imageWidth) == imageWidth - 1 && i == nChannels - 1) {
+              bb.skipBits(skipBits);
             }
           }
 
@@ -998,8 +1015,9 @@ public class TiffParser {
             v = Integer.MAX_VALUE - v;
           }
           if (ndx*numBytes >= nSamples) break;
-          DataTools.unpackBytes(v, samples, i*nSamples + ndx*numBytes,
-            numBytes, littleEndian);
+          int length = numBytes == 3 ? 4 : numBytes;
+          DataTools.unpackBytes(v, samples, i*nSamples + ndx*length,
+            length, littleEndian);
         } // end else
       }
     }

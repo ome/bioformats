@@ -148,14 +148,7 @@ public class MinimalTiffReader extends FormatReader {
       int next = 0;
       for (int i=0; i<table.length; i++) {
         for (int j=0; j<table[0].length; j++) {
-          if (isLittleEndian()) {
-            table[i][j] = (short) (colorMap[next++] & 0xffff);
-          }
-          else {
-            int n = colorMap[next++];
-            table[i][j] =
-              (short) (((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
-          }
+          table[i][j] = (short) ((colorMap[next++] >> 8) & 0xffff);
         }
       }
       return table;
