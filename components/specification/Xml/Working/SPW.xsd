@@ -81,6 +81,7 @@
 				</xsd:element>
 				<xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="PlateAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PlateID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
@@ -272,7 +273,6 @@
 						</xsd:complexContent>
 					</xsd:complexType>
 				</xsd:element>
-				<xsd:element ref="ScreenAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required">
@@ -325,13 +325,13 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="ScreenAcquisition"> <!-- top level definition -->
+	<xsd:element name="PlateAcquisition"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				ScreenAcquisition is used to describe a single acquisition run for a screen.
-				Since Screens are abstract, this object is used to record the set of images
-				acquired in a single acquisition run.  The Images for this run are linked
-				to ScreenAcquisition through WellSample.
+				PlateAcquisition is used to describe a single acquisition run for a plate.
+				This object is used to record the set of images acquired in a single 
+				acquisition run. The Images for this run are linked to PlateAcquisition 
+				through WellSample.
 			</xsd:documentation>
 		</xsd:annotation>	  
 		<xsd:complexType>
@@ -339,7 +339,7 @@
 				<xsd:element ref="WellSampleRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="ScreenAcquisitionID"/>
+			<xsd:attribute name="ID" use="required" type="PlateAcquisitionID"/>
 			<xsd:attribute name="EndTime" use="optional" type="xsd:dateTime">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -357,9 +357,9 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:simpleType name="ScreenAcquisitionID">
+	<xsd:simpleType name="PlateAcquisitionID">
 		<xsd:restriction base="OME:LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ScreenAcquisition:\S+)|(ScreenAcquisition:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:PlateAcquisition:\S+)|(PlateAcquisition:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -474,6 +474,15 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The time-point at which the image started to be collected
+					</xsd:documentation>
+				</xsd:annotation>	  
+			</xsd:attribute>
+			<xsd:attribute name="Index" use="optional" type="xsd:nonNegativeInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Index provides an ordering to the WellSamples. In the user
+						interface the displayed value of the index will be calculated
+						modulo the number of PlateAcquisitions
 					</xsd:documentation>
 				</xsd:annotation>	  
 			</xsd:attribute>
