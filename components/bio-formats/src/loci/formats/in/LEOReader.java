@@ -24,14 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-import loci.formats.tiff.IFD;
 
 /**
  * LEOReader is the file format reader for LEO EM files.

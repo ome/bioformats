@@ -27,8 +27,8 @@ package loci.plugins.util;
 
 import java.io.IOException;
 
-import loci.formats.IFormatReader;
 import loci.formats.DimensionSwapper;
+import loci.formats.IFormatReader;
 
 /**
  * TODO
