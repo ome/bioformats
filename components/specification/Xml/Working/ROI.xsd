@@ -76,7 +76,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
+			<xsd:attribute name="Namespace" use="optional" type="xsd:anyURI"></xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 	
