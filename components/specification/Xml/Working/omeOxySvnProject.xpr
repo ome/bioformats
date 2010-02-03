@@ -1,11 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project version="11.1">
     <meta>
         <filters directoryPatterns="" filePatterns=""
             positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized>
+            <serialized version="11.1">
                 <map>
+                    <entry>
+                        <String xml:space="preserve">allow.dt.page.setting.to.override.general.settings</String>
+                        <Boolean xml:space="preserve">true</Boolean>
+                    </entry>
+                    <entry>
+                        <String xml:space="preserve">editor.page.association</String>
+                        <editorPageAssociation-array>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/xml</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/xsd</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/html</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/wsdl</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/xsl</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/nrl</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/nvdl</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/xproc</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/rng</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                            <editorPageAssociation>
+                                <field name="contentType">
+                                    <String xml:space="preserve">text/sch</String>
+                                </field>
+                                <field name="editorPage">
+                                    <String xml:space="preserve">Text</String>
+                                </field>
+                            </editorPageAssociation>
+                        </editorPageAssociation-array>
+                    </entry>
+                    <entry>
+                        <String xml:space="preserve">key.editor.pages.option.pane.group</String>
+                        <Boolean xml:space="preserve">true</Boolean>
+                    </entry>
                     <entry>
                         <String xml:space="preserve">scenario.associations</String>
                         <scenarioAssociation-array>
@@ -385,7 +478,7 @@
                                     <String xml:space="preserve">pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <String xml:space="preserve">Built-in (Apache FOP)</String>
+                                    <String xml:space="preserve">Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
                                     <String xml:space="preserve"></String>
@@ -607,8 +700,18 @@
                                 <field name="xsltParams">
                                     <list>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">draft.mode</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">no</String>
@@ -699,24 +802,54 @@
                                 <field name="xsltParams">
                                     <list>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">draft.mode</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">no</String>
                                     </field>
                                     </transformationParameter>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">paper.type</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">A4</String>
                                     </field>
                                     </transformationParameter>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">fop.extensions</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">1</String>
@@ -807,32 +940,72 @@
                                 <field name="xsltParams">
                                     <list>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">draft.mode</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">no</String>
                                     </field>
                                     </transformationParameter>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">paper.type</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">A4</String>
                                     </field>
                                     </transformationParameter>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">fop.extensions</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">0</String>
                                     </field>
                                     </transformationParameter>
                                     <transformationParameter>
-                                    <field name="name">
+                                    <field name="paramDescription">
+                                    <paramDescriptor>
+                                    <field name="localName">
                                     <String xml:space="preserve">fop1.extensions</String>
+                                    </field>
+                                    <field name="prefix">
+                                    <null/>
+                                    </field>
+                                    <field name="namespace">
+                                    <null/>
+                                    </field>
+                                    </paramDescriptor>
                                     </field>
                                     <field name="value">
                                     <String xml:space="preserve">1</String>
@@ -950,7 +1123,7 @@
                                     <String xml:space="preserve">pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <String xml:space="preserve">Built-in (Apache FOP)</String>
+                                    <String xml:space="preserve">Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
                                     <String xml:space="preserve"></String>
@@ -1707,18 +1880,11 @@
         <folder path="../../../Java/xslt/"/>
         <folder path="../Validator/Backend/samples/"/>
         <folder path="../../Xslt/"/>
-        <file name="AnalysisChain.xsd"/>
-        <file name="AnalysisModule.xsd"/>
         <file name="BinaryFile.xsd"/>
-        <file name="CA.xsd"/>
-        <file name="CLI.xsd"/>
-        <file name="DataHistory.xsd"/>
-        <file name="MLI.xsd"/>
         <file name="ome.xsd"/>
         <file name="OMERO.xsd"/>
         <file name="ROI.xsd"/>
         <file name="SA.xsd"/>
         <file name="SPW.xsd"/>
-        <file name="STD.xsd"/>
     </projectTree>
 </project>

@@ -3,7 +3,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2003-2009 Open Microscopy Environment
+	# Copyright (C) 2003-2010 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -18,8 +18,8 @@
 -->
 <xsd:schema 
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
-	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
+	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version = "1"
 	elementFormDefault = "qualified">
