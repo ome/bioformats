@@ -881,11 +881,11 @@ public class FV1000Reader extends FormatReader {
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        pixelSizeZ = Math.abs((pixel.doubleValue() / getSizeZ()) / 1000);
+        pixelSizeZ = Math.abs((pixel.doubleValue() / (getSizeZ() - 1)) / 1000);
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
-        pixelSizeT = Math.abs((pixel.doubleValue() / getSizeT()) / 1000);
+        pixelSizeT = Math.abs((pixel.doubleValue() / (getSizeT() - 1)) / 1000);
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
