@@ -1,5 +1,5 @@
 //
-// loci-common.h
+// flow-cytometry.h
 //
 
 /*
@@ -46,36 +46,14 @@ your combined work must be distributed under the terms of the GPL.
  *-----------------------------------------------------------------------------
  */
 
-#ifndef LOCI_COMMON_H
-#define LOCI_COMMON_H
+#ifndef FLOW_CYTOMETRY_H
+#define FLOW_CYTOMETRY_H
 
 #include "jace.h"
 
-#include "jace/proxy/loci/common/BZip2Handle.h"
-#include "jace/proxy/loci/common/ByteArrayHandle.h"
-#include "jace/proxy/loci/common/CBZip2InputStream.h"
-#include "jace/proxy/loci/common/CRC.h"
-#include "jace/proxy/loci/common/CompressedRandomAccess.h"
-#include "jace/proxy/loci/common/DataTools.h"
-#include "jace/proxy/loci/common/DateTools.h"
-#include "jace/proxy/loci/common/FileHandle.h"
-#include "jace/proxy/loci/common/GZipHandle.h"
-#include "jace/proxy/loci/common/HandleException.h"
-#include "jace/proxy/loci/common/IRandomAccess.h"
-#include "jace/proxy/loci/common/IniList.h"
-#include "jace/proxy/loci/common/IniParser.h"
-#include "jace/proxy/loci/common/IniTable.h"
-#include "jace/proxy/loci/common/Location.h"
-#include "jace/proxy/loci/common/Log.h"
-#include "jace/proxy/loci/common/LogTools.h"
-#include "jace/proxy/loci/common/RandomAccessInputStream.h"
-#include "jace/proxy/loci/common/RandomAccessOutputStream.h"
-#include "jace/proxy/loci/common/ReflectException.h"
-#include "jace/proxy/loci/common/ReflectedUniverse.h"
-#include "jace/proxy/loci/common/Region.h"
-#include "jace/proxy/loci/common/URLHandle.h"
-#include "jace/proxy/loci/common/XMLTools.h"
-#include "jace/proxy/loci/common/ZipHandle.h"
-//using namespace jace::proxy::loci::common;
+#include "jace/proxy/loci/apps/flow/Detector.h"
+#include "jace/proxy/loci/apps/flow/FlowCytometry.h"
+#include "jace/proxy/loci/apps/flow/Particle.h"
+//using namespace jace::proxy::loci::apps::flow;
 
 #endif
