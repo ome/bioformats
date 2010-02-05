@@ -49,7 +49,11 @@ public class MRCReader extends FormatReader {
   private static final String[] TYPES =
     {"mono", "tilt", "tilts", "lina", "lins"};
 
-  private static final String[] MRC_SUFFIXES = {"mrc", "rec", "st", "ali"};
+  // NB: Unfortunately, we cannot just look for "MAP " at offset 0xd0, which
+  // works for modern .mrc files, because older IMOD versions did not put that
+  // there, according to: http://bio3d.colorado.edu/imod/doc/mrc_format.txt
+
+  private static final String[] MRC_SUFFIXES = {"mrc", "st", "ali"};
 
   // -- Fields --
 
