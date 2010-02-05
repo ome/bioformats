@@ -47,7 +47,9 @@ public class MRCReader extends FormatReader {
   // -- Constants --
 
   private static final String[] TYPES =
-    new String[] {"mono", "tilt", "tilts", "lina", "lins"};
+    {"mono", "tilt", "tilts", "lina", "lins"};
+
+  private static final String[] MRC_SUFFIXES = {"mrc", "rec", "st", "ali"};
 
   // -- Fields --
 
@@ -64,7 +66,7 @@ public class MRCReader extends FormatReader {
 
   /** Constructs a new MRC reader. */
   public MRCReader() {
-    super("Medical Research Council", "mrc");
+    super("Medical Research Council", MRC_SUFFIXES);
     domains = new String[] {FormatTools.MEDICAL_DOMAIN, FormatTools.LM_DOMAIN};
   }
 
