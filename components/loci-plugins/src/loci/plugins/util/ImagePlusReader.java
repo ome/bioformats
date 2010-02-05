@@ -41,6 +41,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageTools;
+import loci.formats.MinMaxCalculator;
 import loci.formats.ReaderWrapper;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
@@ -55,7 +56,7 @@ import loci.formats.in.TiffDelegateReader;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusReader.java">SVN</a></dd></dl>
  */
-public class ImagePlusReader extends ReaderWrapper {
+public class ImagePlusReader extends MinMaxCalculator {
 
   // -- Utility methods --
 

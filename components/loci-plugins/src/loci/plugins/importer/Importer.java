@@ -601,8 +601,9 @@ public class Importer {
     imp.setOpenAsHyperStack(hyper);
     int nSlices = imp.getNSlices();
     int nFrames = imp.getNFrames();
+
     if (options.isAutoscale() && !options.isVirtual()) {
-      ImagePlusTools.adjustColorRange(imp);
+      ImagePlusTools.adjustColorRange(imp, r);
     }
     else if (!(imp.getProcessor() instanceof ColorProcessor)) {
       // ImageJ may autoscale the images anyway, so we need to manually

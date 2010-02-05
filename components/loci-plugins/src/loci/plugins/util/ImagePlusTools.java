@@ -34,7 +34,11 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import java.io.IOException;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
+import loci.formats.MinMaxCalculator;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -166,15 +170,35 @@ public final class ImagePlusTools {
    * Adjusts the color range of the given image stack
    * to match its global minimum and maximum.
    */
-  public static void adjustColorRange(ImagePlus imp) {
+  public static void adjustColorRange(ImagePlus imp, IFormatReader r) {
     ImageStack s = imp.getStack();
     double min = Double.MAX_VALUE;
     double max = Double.MIN_VALUE;
-    for (int i=0; i<s.getSize(); i++) {
-      ImageProcessor p = s.getProcessor(i + 1);
-      p.resetMinAndMax();
-      if (p.getMin() < min) min = p.getMin();
-      if (p.getMax() > max) max = p.getMax();
+
+    if (r instanceof MinMaxCalculator) {
+      for (int c=0; c<r.getSizeC(); c++) {
+        try {
+          Double cMin = ((MinMaxCalculator) r).getChannelGlobalMinimum(c);
+          Double cMax = ((MinMaxCalculator) r).getChannelGlobalMaximum(c);
+
+          if (cMin != null && cMin.doubleValue() < min) {
+            min = cMin.doubleValue();
+          }
+          if (cMax != null && cMax.doubleValue() > max) {
+            max = cMax.doubleValue();
+          }
+        }
+        catch (FormatException e) { }
+        catch (IOException e) { }
+      }
+    }
+    if (min == Double.MAX_VALUE && max == Double.MIN_VALUE) {
+      for (int i=0; i<s.getSize(); i++) {
+        ImageProcessor p = s.getProcessor(i + 1);
+        p.resetMinAndMax();
+        if (p.getMin() < min) min = p.getMin();
+        if (p.getMax() > max) max = p.getMax();
+      }
     }
 
     ImageProcessor p = imp.getProcessor();
