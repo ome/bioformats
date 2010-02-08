@@ -60,12 +60,38 @@ for s = 1:numSeries
     shape = [w h];
     numImages = r.getImageCount();
     imageList = cell(numImages, 2);
+    colorMaps = cell(numImages);
     for i = 1:numImages
         fprintf('.');
         img = r.openImage(i - 1);
+
+        % retrieve color map data
+        nBytes = loci.formats.FormatTools.getBytesPerPixel(r.getPixelType());
+        if nBytes == 1
+          colorMaps{s, i} = r.get8BitLookupTable()';
+        else
+          colorMaps{s, i} = r.get16BitLookupTable()';
+        end
+
+        newMap = zeros(size(colorMaps{s, i}, 1), size(colorMaps{s, i}, 2));
+        for (row = 1:size(colorMaps{s, i}, 1))
+           for (col = 1:size(colorMaps{s, i}, 2))
+              newMap(row, col) = colorMaps{s, i}(row, col);
+              if newMap(row, col) < 0
+                  newMap(row, col) = newMap(row, col) + power(2, nBytes * 8);
+              end
+              newMap(row, col) = newMap(row, col) / (power(2, nBytes * 8) - 1);
+           end
+        end
+        colorMaps{s, i} = newMap;
+
         % convert Java BufferedImage to MATLAB image
-        %pix = img.getData.getPixels(0, 0, w, h, []);
-        pix = img.getData.getDataBuffer().getData();
+        pix = img.getData.getPixels(0, 0, w, h, []);
+
+        % TODO: determine how best to retrieve pixel data
+        % Retrieving pixels through the data buffer is faster for large
+        % images, but does not handle signed/unsigned type casting.
+        %pix = img.getData.getDataBuffer().getData();
         arr = reshape(pix, shape)';
         % build an informative title for our figure
         label = id;
@@ -111,6 +137,7 @@ for s = 1:numSeries
     % save images and metadata into our master series list
     result{s, 1} = imageList;
     result{s, 2} = metadataList;
+    result{s, 3} = colorMaps;
     fprintf('\n');
 end
 toc
@@ -138,8 +165,13 @@ series1_label3 = series1{3, 2};
 % ...etc.
 
 % plot the 1st series's 1st image plane in a new figure
+series1_colorMaps = data{1, 3};
 figure('Name', series1_label1);
-colormap(gray);
+if isempty(series1_colorMaps{1})
+  colormap(gray);
+else
+  colormap(series1_colorMaps{1});
+end
 imagesc(series1_plane1);
 
 % Or if you have the image processing toolbox, you could use:
