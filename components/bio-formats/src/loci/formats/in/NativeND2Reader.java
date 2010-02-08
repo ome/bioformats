@@ -88,6 +88,7 @@ public class NativeND2Reader extends FormatReader {
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private Double pinholeSize;
   private String voltage, mag, na, objectiveModel, immersion, correction;
+  private String refractiveIndex;
 
   private Vector<String> channelNames, modality, binning;
   private Vector<Double> speed, gain, temperature, exposureTime;
@@ -98,6 +99,8 @@ public class NativeND2Reader extends FormatReader {
   private String cameraModel;
 
   private int fieldIndex;
+
+  private long xOffset, yOffset, zOffset;
 
   // -- Constructor --
 
@@ -185,6 +188,7 @@ public class NativeND2Reader extends FormatReader {
 
       pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
       voltage = mag = na = objectiveModel = immersion = correction = null;
+      refractiveIndex = null;
       channelNames = null;
       binning = null;
       speed = null;
@@ -200,6 +204,7 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = 0;
       rois = null;
       pinholeSize = null;
+      xOffset = yOffset = zOffset = 0;
     }
   }
 
@@ -277,6 +282,18 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("CustomData|A")) {
           customDataOffsets.add(new Long(fp));
           customDataLengths.add(new int[] {lenOne, lenTwo});
+        }
+        else if (blockType.startsWith("CustomData|Z")) {
+          int nDoubles = (lenOne + lenTwo) / 8;
+          zOffset = fp + 8 * (nDoubles - imageOffsets.size());
+        }
+        else if (blockType.startsWith("CustomData|X")) {
+          int nDoubles = (lenOne + lenTwo) / 8;
+          xOffset = fp + 8 * (nDoubles - imageOffsets.size());
+        }
+        else if (blockType.startsWith("CustomData|Y")) {
+          int nDoubles = (lenOne + lenTwo) / 8;
+          yOffset = fp + 8 * (nDoubles - imageOffsets.size());
         }
       }
 
@@ -540,6 +557,25 @@ public class NativeND2Reader extends FormatReader {
           }
         }
         setSeries(0);
+      }
+
+      if (posX.size() == 0 && xOffset != 0) {
+        in.seek(xOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          posX.add(new Double(in.readDouble()));
+        }
+      }
+      if (posY.size() == 0 && yOffset != 0) {
+        in.seek(yOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          posY.add(new Double(in.readDouble()));
+        }
+      }
+      if (posZ.size() == 0 && zOffset != 0) {
+        in.seek(zOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          posZ.add(new Double(in.readDouble()));
+        }
       }
 
       populateMetadataStore();
@@ -915,20 +951,24 @@ public class NativeND2Reader extends FormatReader {
         }
       }
       for (int n=0; n<getImageCount(); n++) {
-        if (i < posX.size()) {
-          store.setStagePositionPositionX(posX.get(i), i, 0, n);
-          addSeriesMeta("X position", posX.get(i));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
+        int index = i * getImageCount() + n;
+        if (index >= posX.size()) index = i;
+        if (index < posX.size()) {
+          store.setStagePositionPositionX(posX.get(index), i, 0, n);
+          addSeriesMeta("X position " + (i + 1), posX.get(index));
+          addGlobalMeta("X position for position #" + (i + 1), posX.get(index));
         }
-        if (i < posY.size()) {
-          store.setStagePositionPositionY(posY.get(i), i, 0, n);
-          addSeriesMeta("Y position" + (i + 1), posY.get(i));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
+        if (index < posY.size()) {
+          store.setStagePositionPositionY(posY.get(index), i, 0, n);
+          addSeriesMeta("Y position " + (i + 1), posY.get(index));
+          addGlobalMeta("Y position for position #" + (i + 1), posY.get(index));
         }
-        if (i < posZ.size()) {
-          store.setStagePositionPositionZ(posZ.get(i), i, 0, n);
-          addSeriesMeta("Z position" + (i + 1), posZ.get(i));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
+        if (index < posZ.size()) {
+          store.setStagePositionPositionZ(posZ.get(index), i, 0, n);
+          String key =
+            "Z position for position #" + (i + 1) + ", plane #" + (n + 1);
+          addSeriesMeta(key, posZ.get(index));
+          addGlobalMeta(key, posZ.get(index));
         }
 
       }
@@ -1003,8 +1043,17 @@ public class NativeND2Reader extends FormatReader {
     // link Objective to Image
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
+
+    if (refractiveIndex != null) {
+      refractiveIndex = sanitizeDouble(refractiveIndex);
+    }
+
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setObjectiveSettingsObjective(objectiveID, i);
+      if (refractiveIndex != null) {
+        store.setObjectiveSettingsRefractiveIndex(
+          new Double(refractiveIndex), i);
+      }
     }
 
     setSeries(0);
@@ -1076,6 +1125,7 @@ public class NativeND2Reader extends FormatReader {
     else if (key.endsWith("dLampVoltage")) voltage = value;
     else if (key.endsWith("dObjectiveMag") && mag == null) mag = value;
     else if (key.endsWith("dObjectiveNA")) na = value;
+    else if (key.endsWith("dRefractIndex1")) refractiveIndex = value;
     else if (key.equals("sObjective") || key.equals("wsObjectiveName")) {
       String[] tokens = value.split(" ");
       int magIndex = -1;
@@ -1225,6 +1275,10 @@ public class NativeND2Reader extends FormatReader {
               }
               catch (NumberFormatException e) { }
             }
+            else if (v[0].equals("{Pinhole Size}")) {
+              pinholeSize = new Double(sanitizeDouble(v[1]));
+              addGlobalMeta("Pinhole size", v[1]);
+            }
           }
           else if (v[0].startsWith("- Step")) {
             int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
@@ -1251,6 +1305,11 @@ public class NativeND2Reader extends FormatReader {
                 power.add(new Integer((int) Double.parseDouble(nextValue)));
               }
             }
+          }
+          else if (v.length > 1) {
+            v[0] = v[0].replace('{', ' ');
+            v[0] = v[0].replace('}', ' ');
+            addGlobalMeta(v[0].trim(), v[1]);
           }
         }
       }
