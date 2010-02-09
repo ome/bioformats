@@ -272,13 +272,27 @@ public final class TiffCompression {
 
   /** Performs in-place differencing according to the given predictor value. */
   public static void difference(byte[] input, int[] bitsPerSample,
-    long width, int planarConfig, int predictor) throws FormatException
+    long width, int planarConfig, int predictor, boolean little)
+    throws FormatException
   {
     if (predictor == 2) {
       LogTools.debug("performing horizontal differencing");
-      for (int b=input.length-1; b>=0; b--) {
-        if (b / bitsPerSample.length % width == 0) continue;
-        input[b] -= input[b - bitsPerSample.length];
+
+      if (bitsPerSample[0] <= 16) {
+        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, little);
+        for (int i=s.length-1; i>=0; i--){
+          if (i / bitsPerSample.length % width == 0) continue;
+          s[i] -= s[i - bitsPerSample.length];
+        }
+        for (int i=0; i<s.length; i++) {
+          DataTools.unpackBytes(s[i], input, i*2, 2, little);
+        }
+      }
+      else if (bitsPerSample[0] <= 8) {
+        for (int b=input.length-1; b>=0; b--) {
+          if (b / bitsPerSample.length % width == 0) continue;
+          input[b] -= input[b - bitsPerSample.length];
+        }
       }
     }
     else if (predictor != 1) {

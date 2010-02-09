@@ -159,6 +159,7 @@ public class TiffWriter extends FormatWriter {
     int type =
       FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
+    boolean signed = FormatTools.isSigned(type);
 
     int plane = width * height * c * bytesPerPixel;
     if (plane > buf.length) {
@@ -180,6 +181,9 @@ public class TiffWriter extends FormatWriter {
 
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
+    if (signed) {
+      ifd.put(new Integer(IFD.SAMPLE_FORMAT), 2);
+    }
 
     if (!isBigTiff) {
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);

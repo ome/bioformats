@@ -180,12 +180,13 @@ public final class AWTTiffTools {
     // compress strips according to given differencing and compression schemes
     int planarConfig = ifd.getPlanarConfiguration();
     int predictor = ifd.getIFDIntValue(IFD.PREDICTOR, false, 1);
+    ifd.putIFDValue(IFD.PREDICTOR, predictor);
 
     byte[][] strips = new byte[stripsPerImage][];
     for (int i=0; i<stripsPerImage; i++) {
       strips[i] = stripBuf[i].toByteArray();
       TiffCompression.difference(strips[i],
-        bps, width, planarConfig, predictor);
+        bps, width, planarConfig, predictor, little);
       strips[i] = TiffCompression.compress(strips[i], ifd);
     }
 
