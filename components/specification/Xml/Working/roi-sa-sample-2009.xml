@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ome:OME
+	xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
+	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:sa="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
+	xmlns:roi="http://www.openmicroscopy.org/Schemas/ROI/2009-09" 
+	xmlns:omero="http://www.openmicroscopy.org/Schemas/OMERO/2009-09" 
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
+	<ome:Image ID="Image:1" Name="Name92" >
+		<ome:AcquiredDate>2008-03-04T14:17:43.0Z</ome:AcquiredDate>
+		<ome:Pixels ID="Pixels:a" DimensionOrder="XYZCT" Type="int8" SizeX="2" SizeY="2" SizeZ="2" SizeC="2" SizeT="2">
+			<bf:BinData  BigEndian="false" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</ome:Pixels>
+		<roi:ROIRef ID="ROI:1"/>
+		<sa:AnnotationRef ID="Annotation:5"/>
+	</ome:Image>
+	<sa:StructuredAnnotations>
+		<!-- 
+			
+			NOTE: The structure of this file has been updated to make it
+			valid under 2009-09 but the ideas and concepts as around the
+			use of the annotations are out of date.
+			
+		-->
+		<sa:FileAnnotation ID="Annotation:1" Namespace="sample:ome:omero:attachment:file">
+			<bf:BinaryFile FileName="file.txt" Size="123" MIMEType="text/plain">
+				<bf:BinData BigEndian="false" Length="12">ZGVmYXVsdA==</bf:BinData>
+			</bf:BinaryFile>
+		</sa:FileAnnotation>
+		<sa:FileAnnotation ID="Annotation:2" Namespace="sample:ome:omero:attachment:file">
+			<bf:BinaryFile FileName="report.pdf" Size="123" MIMEType="application/pdf">
+				<bf:External href="file:roi-sample-annotations/report.pdf" SHA1="0123456789abcd0123456789abcd0123456789ab"/>
+			</bf:BinaryFile>
+		</sa:FileAnnotation>
+		<sa:XMLAnnotation ID="Annotation:3" Namespace="sample:ome:omero:insight:roi:svg">
+			<sa:Value>
+				<omero:ROIDisplay
+					fill-opacity="0.25098039215686274" fill-rule="evenodd"
+					stroke="#c4c4c4" stroke-dashoffset="0" stroke-linecap="butt"
+					stroke-linejoin="miter" stroke-miterlimit="3"
+					stroke-opacity="0.7686274509803922" stroke-width="1"
+				/>				
+			</sa:Value>
+		</sa:XMLAnnotation>
+		<sa:XMLAnnotation ID="Annotation:4" Namespace="sample:ome:omero:insight:roi:svg">
+			<sa:Value>
+				<omero:ROIDisplay
+					fill="#c4c4c4" fill-opacity="0.7686274509803922"
+					font-family="Verdana" font-size="12" font-style="normal" 
+					font-variant="normal" font-weight="normal"
+				/>
+			</sa:Value>
+		</sa:XMLAnnotation>
+		<sa:ListAnnotation ID="Annotation:5" Namespace="sample:ome:omero:xml:list">
+			<sa:AnnotationRef ID="Annotation:1"/>
+			<sa:AnnotationRef ID="Annotation:2"/>
+			<sa:AnnotationRef ID="Annotation:6"/>
+			<sa:AnnotationRef ID="Annotation:7"/>
+			<sa:AnnotationRef ID="Annotation:9"/>
+			<sa:AnnotationRef ID="Annotation:10"/>
+			<sa:AnnotationRef ID="Annotation:11"/>
+			<sa:AnnotationRef ID="Annotation:12"/>
+			<sa:AnnotationRef ID="Annotation:13"/>
+			<sa:AnnotationRef ID="Annotation:14"/>
+		</sa:ListAnnotation>
+		<sa:BooleanAnnotation ID="Annotation:6" Namespace="sample:ome:omero:render:noise-filter">
+			<sa:Value>true</sa:Value>
+		</sa:BooleanAnnotation>
+		<sa:DoubleAnnotation ID="Annotation:7" Namespace="sample:ome:omero:render:gamma">
+			<sa:Value>4.2</sa:Value>
+		</sa:DoubleAnnotation>
+		<sa:ListAnnotation ID="Annotation:8" Namespace="sample:ome:omero:roi:svg-list">
+			<sa:AnnotationRef ID="Annotation:3"/>
+			<sa:AnnotationRef ID="Annotation:4"/>
+		</sa:ListAnnotation>
+		<sa:LongAnnotation ID="Annotation:9" Namespace="sample:ome:omero:render:cut-off-min">
+			<sa:Value>42</sa:Value>
+		</sa:LongAnnotation>
+		<sa:LongAnnotation ID="Annotation:10" Namespace="sample:ome:omero:render:cut-off-max">
+			<sa:Value>204</sa:Value>
+		</sa:LongAnnotation>
+		<sa:StringAnnotation ID="Annotation:11" Namespace="sample:ome:omero:attachment:url">
+			<sa:Value>http://www.ome-xml.org/</sa:Value>
+		</sa:StringAnnotation>
+		<sa:TimestampAnnotation ID="Annotation:12" Namespace="sample:ome:omero:insight:last-viewed">
+			<sa:Value>2008-03-04T14:17:43.0Z</sa:Value>
+		</sa:TimestampAnnotation>
+		<sa:StringAnnotation ID="Annotation:13" Namespace="sample:ome:omero:tag:taglist">
+			<sa:Value>"good image" "jcb paper" "Figure 1"</sa:Value>
+		</sa:StringAnnotation>
+		<sa:XMLAnnotation ID="Annotation:14" Namespace="sample:ome:omero:profile">
+			<sa:Value>
+				<omero:ProfileSet>
+					<omero:ImageProfile origin="User">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:InstrumentRef ID="Instrument:1"/>
+						<ome:ObjectiveSettings ID="Objective:1"/>
+					</omero:ImageProfile>
+					<omero:ImageProfile origin="File">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:InstrumentRef ID="Instrument:1"/>
+						<ome:ObjectiveSettings ID="Objective:2"/>
+					</omero:ImageProfile>
+					<omero:ChannelProfile origin="User">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:LightSourceSettings ID="LightSource:1"/>
+						<ome:OTFRef ID="OTF:1"/>
+						<ome:DetectorSettings ID="Detector:1"/>
+						<ome:FilterSetRef ID="FilterSet:1"/>
+					</omero:ChannelProfile>
+					<omero:ChannelProfile origin="File">
+						<omero:Name></omero:Name>
+						<omero:Description></omero:Description>
+						<ome:LightSourceSettings ID="LightSource:1"/>
+						<ome:OTFRef ID="OTF:1"/>
+						<ome:DetectorSettings ID="Detector:1"/>
+						<ome:FilterSetRef ID="FilterSet:1"/>
+					</omero:ChannelProfile>
+				</omero:ProfileSet>
+			</sa:Value>
+		</sa:XMLAnnotation>
+	</sa:StructuredAnnotations>
+	<roi:ROI ID="ROI:1">
+		<roi:Union>
+			<roi:Shape ID="Shape:1" Transform="matrix(1 2 3 4 5 6)">
+				<ome:ChannelRef ID="Channel:1"/>
+				<ome:ChannelRef ID="Channel:2"/>
+				<roi:Point X="1" Y="2"/>
+			</roi:Shape>
+			<roi:Shape ID="Shape:2" Transform="matrix(1 2 3 4 5 6)">
+				<roi:Ellipse X="1" Y="2" RadiusX="5" RadiusY="5"/>
+			</roi:Shape>
+			<roi:Shape ID="Shape:3" Transform="matrix(1 2 3 4 5 6)">
+				<roi:Ellipse X="1" Y="2" RadiusX="3" RadiusY="4"/>
+			</roi:Shape>
+			<roi:Shape ID="Shape:4" TheT="1" Transform="matrix(1 2 3 4 5 6)">
+				<roi:Line X1="1" X2="2" Y1="3" Y2="4"/>
+			</roi:Shape>
+			<roi:Shape ID="Shape:5" TheZ="1" Transform="matrix(1 2 3 4 5 6)">
+				<roi:Rectangle X="1" Y="2" Width="3" Height="4"/>
+			</roi:Shape>
+			<roi:Shape ID="Shape:6" TheT="1" TheZ="1" Transform="matrix(1 2 3 4 5 6)">
+				<roi:Mask X="1" Y="2">
+					<bf:BinData  BigEndian="false" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+				</roi:Mask>
+			</roi:Shape>
+			<roi:Shape ID="Shape:7">
+				<roi:Polyline Closed="true" Points="582.551,70.325 542.271,81.118 512.783,51.631 523.576,11.351 563.856,0.558 593.344,30.045 "/>
+			</roi:Shape>
+			<roi:Shape ID="Shape:8">
+				<roi:Polyline Points="582.551,70.325 542.271,81.118 512.783,51.631 523.576,11.351 563.856,0.558 593.344,30.045 "/>
+			</roi:Shape>
+		</roi:Union>
+		<sa:AnnotationRef ID="Annotation:8"/>
+	</roi:ROI>
+</ome:OME>
+
