@@ -68,6 +68,7 @@ loci.formats.in.ARFReader             # arf
 loci.formats.in.CellomicsReader       # c01
 loci.formats.in.LiFlimReader          # fli
 loci.formats.in.TargaReader           # tga
+loci.formats.in.OxfordInstrumentsReader # top
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
@@ -79,6 +80,7 @@ loci.formats.in.ICSReader             # ics, ids
 loci.formats.in.PerkinElmerReader     # rec, ano, csv, htm, tim, zpo, 2, 3, ...
 loci.formats.in.AmiraReader           # am, amiramesh, grey, hx, labels, ...
 loci.formats.in.ScanrReader           # dat, xml, tif
+loci.formats.in.BDReader              # exp, tif
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
@@ -115,6 +117,7 @@ loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
 loci.formats.in.OMETiffReader         # tif
+loci.formats.in.PhotoshopTiffReader   # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
