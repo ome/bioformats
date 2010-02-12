@@ -334,8 +334,13 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("Ext.setId(id)");
       IJ.write("-- Initializes the given id (filename).");
       IJ.write("Ext.isThisType(name, thisType)");
+      IJ.write("-- True if Bio-Formats recognizes the given file as a");
+      IJ.write("-- supported image file format; if necessary, will ");
+      IJ.write("-- examine the file contents to decide for sure.");
+      IJ.write("Ext.isThisTypeFast(name, thisType)");
       IJ.write("-- True if Bio-Formats recognizes the given filename as a");
-      IJ.write("-- supported image file format.");
+      IJ.write("-- supported image file format; will decide based on file");
+      IJ.write("-- extension only, without examining file contents.");
       IJ.write("Ext.isMetadataComplete(complete)");
       IJ.write("-- True if Bio-Formats completely parses the current");
       IJ.write("-- dataset's file format. If this function returns false,");
