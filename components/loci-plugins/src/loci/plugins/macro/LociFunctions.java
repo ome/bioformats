@@ -274,6 +274,10 @@ public class LociFunctions extends MacroFunctions {
     thisType[0] = r.isThisType(name) ? "true" : "false";
   }
 
+  public void isThisTypeFast(String name, String[] thisType) {
+    thisType[0] = r.isThisType(name, false) ? "true" : "false";
+  }
+
   public void getSeriesName(String[] seriesName) {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     seriesName[0] = retrieve.getImageName(r.getSeries());
