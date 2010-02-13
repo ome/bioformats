@@ -70,6 +70,7 @@ loci.formats.in.LiFlimReader          # fli
 loci.formats.in.TargaReader           # tga
 loci.formats.in.OxfordInstrumentsReader # top
 loci.formats.in.VGSAMReader           # dti
+loci.formats.in.HISReader             # his
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
