@@ -77,6 +77,16 @@ public class SignedShortBuffer extends DataBuffer {
 
   // -- DataBuffer API methods --
 
+  /* @see java.awt.image.DataBufferShort#getData() */
+  public short[] getData() {
+    return helper.getData();
+  }
+
+  /* @see java.awt.image.DataBufferShort#getData(int) */
+  public short[] getData(int bank) {
+    return helper.getData(bank);
+  }
+
   /* @see java.awt.image.DataBufferShort#getElem(int, int) */
   public int getElem(int bank, int i) {
     return helper.getElem(bank, i);
