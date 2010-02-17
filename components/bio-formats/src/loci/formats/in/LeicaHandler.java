@@ -329,7 +329,7 @@ public class LeicaHandler extends DefaultHandler {
       extras = 1;
     }
     else if (qName.equals("Attachment")) {
-      if (attributes.getValue("Name").equals("ContextDescription")) {
+      if ("ContextDescription".equals(attributes.getValue("Name"))) {
         store.setImageDescription(attributes.getValue("Content"), numDatasets);
       }
     }
@@ -337,7 +337,8 @@ public class LeicaHandler extends DefaultHandler {
       count++;
       numChannels++;
       lutNames.add(attributes.getValue("LUTName"));
-      int bytes = Integer.parseInt(attributes.getValue("BytesInc"));
+      String bytesInc = attributes.getValue("BytesInc");
+      int bytes = bytesInc == null ? 0 : Integer.parseInt(bytesInc);
       if (bytes > 0) {
         bytesPerAxis.put(new Integer(bytes), "C");
       }
@@ -432,6 +433,7 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("ScannerSettingRecord")) {
       String id = attributes.getValue("Identifier");
+      if (id == null) id = "";
 
       if (id.equals("SystemType")) {
         store.setMicroscopeModel(value, numDatasets);
@@ -502,7 +504,8 @@ public class LeicaHandler extends DefaultHandler {
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
           Detector d = new Detector();
-          d.channel = Integer.parseInt(attributes.getValue("Data"));
+          String data = attributes.getValue("data");
+          d.channel = data == null ? 0 : Integer.parseInt(data);
           d.type = "PMT";
           d.model = object;
           d.active = variant.equals("Active");
@@ -625,16 +628,19 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("Detector")) {
-      Double gain = new Double(attributes.getValue("Gain"));
-      Double offset = new Double(attributes.getValue("Offset"));
-      boolean active = attributes.getValue("IsActive").equals("1");
+      String v = attributes.getValue("Gain");
+      Double gain = v == null ? null : new Double(v);
+      v = attributes.getValue("Offset");
+      Double offset = v == null ? null : new Double(v);
+      boolean active = "1".equals(attributes.getValue("IsActive"));
 
       if (active) {
         // find the corresponding MultiBand and Detector
         MultiBand m = null;
         Detector detector = null;
         Laser laser = lasers.size() == 0 ? null : lasers.get(lasers.size() - 1);
-        int channel = Integer.parseInt(attributes.getValue("Channel"));
+        String c = attributes.getValue("Channel");
+        int channel = c == null ? 0 : Integer.parseInt(c);
 
         for (MultiBand mb : multiBands) {
           if (mb.channel == channel) {
@@ -701,8 +707,10 @@ public class LeicaHandler extends DefaultHandler {
     }
     else if (qName.equals("LaserLineSetting")) {
       Laser l = new Laser();
-      l.index = Integer.parseInt(attributes.getValue("LineIndex"));
-      int qualifier = Integer.parseInt(attributes.getValue("Qualifier"));
+      String lineIndex = attributes.getValue("LineIndex");
+      String qual = attributes.getValue("Qualifier");
+      l.index = lineIndex == null ? 0 : Integer.parseInt(lineIndex);
+      int qualifier = qual == null ? 0 : Integer.parseInt(qual);
       l.index += (2 - (qualifier / 10));
       if (l.index < 0) l.index = 0;
       l.id = MetadataTools.createLSID("LightSource", numDatasets, l.index);
@@ -712,13 +720,16 @@ public class LeicaHandler extends DefaultHandler {
       store.setLaserType("Unknown", numDatasets, l.index);
       store.setLaserLaserMedium("Unknown", numDatasets, l.index);
 
-      l.intensity = Double.parseDouble(attributes.getValue("IntensityDev"));
+      String intensity = attributes.getValue("IntensityDev");
+      l.intensity = intensity == null ? 0d : Double.parseDouble(intensity);
 
       if (l.intensity > 0) lasers.add(l);
     }
     else if (qName.equals("TimeStamp") && numDatasets >= 0) {
-      long high = Long.parseLong(attributes.getValue("HighInteger"));
-      long low = Long.parseLong(attributes.getValue("LowInteger"));
+      String stampHigh = attributes.getValue("HighInteger");
+      String stampLow = attributes.getValue("LowInteger");
+      long high = stampHigh == null ? 0 : Long.parseLong(stampHigh);
+      long low = stampLow == null ? 0 : Long.parseLong(stampLow);
 
       long ms = DateTools.getMillisFromTicks(high, low);
       if (count == 0) {
