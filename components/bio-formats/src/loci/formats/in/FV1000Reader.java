@@ -1029,6 +1029,8 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 0d;
       }
 
+      if (getSizeZ() == 1) pixelSizeZ = 0d;
+      if (getSizeT() == 1) pixelSizeT = 0d;
       store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), i, 0);
       store.setDimensionsTimeIncrement(new Double(pixelSizeT), i, 0);
 
