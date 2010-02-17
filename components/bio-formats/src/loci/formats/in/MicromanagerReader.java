@@ -325,7 +325,7 @@ public class MicromanagerReader extends FormatReader {
           else if (key.equals(cameraRef + "-CameraID")) detectorID = value;
           else if (key.equals(cameraRef + "-CameraName")) detectorModel = value;
           else if (key.equals(cameraRef + "-Gain")) {
-            gain = Integer.parseInt(value);
+            gain = (int) Double.parseDouble(value);
           }
           else if (key.equals(cameraRef + "-Name")) {
             detectorManufacturer = value;
