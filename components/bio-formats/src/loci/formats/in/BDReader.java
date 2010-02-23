@@ -315,7 +315,11 @@ public class BDReader extends FormatReader {
       store.setWellColumn(col, 0, i);
       store.setWellRow(row.charAt(0)-'A', 0, i);
 
-      store.setWellSampleIndex(new Integer(i), 0, i, 1);
+      store.setWellSampleIndex(new Integer(i), 0, i, 0);
+
+      String imageID = MetadataTools.creatLSID("Image", i);
+      store.setWellSampleImageRef(imageID, 0, i, 0);
+      store.setImageID(imageID, i);
       store.setImageName(name, i);
     }
   }
