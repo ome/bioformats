@@ -317,7 +317,7 @@ public class BDReader extends FormatReader {
 
       store.setWellSampleIndex(new Integer(i), 0, i, 0);
 
-      String imageID = MetadataTools.creatLSID("Image", i);
+      String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleImageRef(imageID, 0, i, 0);
       store.setImageID(imageID, i);
       store.setImageName(name, i);
