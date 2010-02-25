@@ -590,6 +590,7 @@ public class ImporterOptions extends OptionsList {
   /** Initializes the ImagePlusReader derived value. */
   private void initializeReader() throws FormatException, IOException {
     if (isGroupFiles()) baseReader = new FileStitcher(baseReader, true);
+    baseReader.setId(getId());
     if (isVirtual() || !isMergeChannels() ||
       FormatTools.getBytesPerPixel(baseReader.getPixelType()) != 1)
     {
