@@ -170,7 +170,12 @@ public class OMETiffReader extends FormatReader {
     if (r.getCurrentFile() == null) {
       r.setId(info[series][no].id);
     }
-    IFD ifd = r.getIFDs().get(i);
+    IFDList ifdList = r.getIFDs();
+    if (i <= ifdList.size()) {
+      throw new FormatException(
+        "Error untangling IFDs; the OME-TIFF file may be malformed.");
+    }
+    IFD ifd = ifdList.get(i);
     RandomAccessInputStream s =
       new RandomAccessInputStream(info[series][no].id);
     TiffParser p = new TiffParser(s);
