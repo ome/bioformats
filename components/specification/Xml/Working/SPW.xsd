@@ -136,10 +136,17 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="DefaultSample" use="optional" type="xsd:integer">
+			<xsd:attribute name="Rows" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The DefaultSample
+						The number of rows in the plate 
+					</xsd:documentation>
+				</xsd:annotation>		
+			</xsd:attribute>
+			<xsd:attribute name="Columns" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						The number of columns in the plate 
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -226,7 +233,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:simpleType name="ReagentID">
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Reagent:\S+)|(Reagent:\S+)"/>
@@ -336,23 +343,44 @@
 		</xsd:annotation>	  
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the PlateAcquisition.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="WellSampleRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PlateAcquisitionID"/>
+			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="EndTime" use="optional" type="xsd:dateTime">
 				<xsd:annotation>
 					<xsd:documentation>
 						Time when the last image of this acquisition was collected
 					</xsd:documentation>
-				</xsd:annotation>	  
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="StartTime" use="optional" type="xsd:dateTime">
 				<xsd:annotation>
 					<xsd:documentation>
 						Time when the first image of this acquisition was collected
 					</xsd:documentation>
-				</xsd:annotation>	  
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WellSampleCount" use="optional" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:documentation>
+						This is only used to speed up user interaction by stoping 
+						the reading of every well sample.
+					</xsd:documentation>
+				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
@@ -372,7 +400,7 @@
 				The origin for the row and column identifiers is the top left corner of the plate starting at zero.
 				i.e The top left well of a plate is index (0,0)
 			</xsd:documentation>
-		</xsd:annotation> 
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
@@ -387,7 +415,7 @@
 						with the first column of cells being column zero. i.e top left is (0,0)
 						The combination of Row, Column has to be unique for each well in a plate.
 					</xsd:documentation>
-				</xsd:annotation>	  
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Row" use="required" type="xsd:nonNegativeInteger">
 				<xsd:annotation>
@@ -396,21 +424,21 @@
 						with the first row of wells being row zero. i.e top left is (0,0)
 						The combination of Row, Column has to be unique for each well in a plate.
 					</xsd:documentation>
-				</xsd:annotation>		  
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ExternalDescription" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						A description of the externally defined identifier for this plate.
 				   </xsd:documentation>
-				</xsd:annotation>				  
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ExternalIdentifier" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						The ExternalIdentifier attribute may contain a reference to an external database.
 					</xsd:documentation>
-				</xsd:annotation>			
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Status" use="optional" type="xsd:string">
 				<xsd:annotation>
@@ -475,16 +503,7 @@
 					<xsd:documentation>
 						The time-point at which the image started to be collected
 					</xsd:documentation>
-				</xsd:annotation>	  
-			</xsd:attribute>
-			<xsd:attribute name="Index" use="optional" type="xsd:nonNegativeInteger">
-				<xsd:annotation>
-					<xsd:documentation>
-						The Index provides an ordering to the WellSamples. In the user
-						interface the displayed value of the index will be calculated
-						modulo the number of PlateAcquisitions
-					</xsd:documentation>
-				</xsd:annotation>	  
+				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
