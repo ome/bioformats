@@ -85,12 +85,15 @@ public class GatanReader extends FormatReader {
   private double gamma, mag, voltage;
   private String info;
 
+  private boolean adjustEndianness = true;
+
   // -- Constructor --
 
   /** Constructs a new Gatan reader. */
   public GatanReader() {
     super("Gatan Digital Micrograph", "dm3");
     domains = new String[] {FormatTools.EM_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
@@ -154,13 +157,18 @@ public class GatanReader extends FormatReader {
     status("Reading tags");
 
     in.skipBytes(4);
-    core[0].littleEndian = in.readInt() == 1;
-    in.order(!isLittleEndian());
+    core[0].littleEndian = in.readInt() != 1;
+    in.order(isLittleEndian());
 
     // TagGroup instance
 
     in.skipBytes(2);
     int numTags = in.readInt();
+    if (numTags > in.length()) {
+      core[0].littleEndian = !isLittleEndian();
+      in.order(isLittleEndian());
+      adjustEndianness = false;
+    }
     debug("tags (" + numTags + ") {");
     parseTags(numTags, null, "  ");
     debug("}");
@@ -272,6 +280,7 @@ public class GatanReader extends FormatReader {
     throws FormatException, IOException
   {
     for (int i=0; i<numTags; i++) {
+      if (in.getFilePointer() >= in.length()) break;
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)
       int length = in.readShort();
 
@@ -296,10 +305,10 @@ public class GatanReader extends FormatReader {
         if (skip != 623191333) warn("Skip mismatch: " + skip);
         if (n == 1) {
           if ("Dimensions".equals(parent) && labelString.length() == 0) {
-            in.order(!in.isLittleEndian());
+            if (adjustEndianness) in.order(!in.isLittleEndian());
             if (i == 0) core[0].sizeX = in.readInt();
             else if (i == 1) core[0].sizeY = in.readInt();
-            in.order(!in.isLittleEndian());
+            if (adjustEndianness) in.order(!in.isLittleEndian());
           }
           else value = String.valueOf(readValue(dataType));
         }
@@ -347,6 +356,7 @@ public class GatanReader extends FormatReader {
               final int[] jumps = {4, 7, 5, 9};
               for (int j=0; j<jumps.length; j++) {
                 in.skipBytes(jumps[j]);
+                if (in.getFilePointer() >= in.length()) return;
                 b = in.readByte();
                 if (b == GROUP || b == VALUE) break;
               }
@@ -434,14 +444,14 @@ public class GatanReader extends FormatReader {
       case UINT:
         return in.readInt();
       case FLOAT:
-        in.order(!in.isLittleEndian());
+        if (adjustEndianness) in.order(!in.isLittleEndian());
         float f = in.readFloat();
-        in.order(!in.isLittleEndian());
+        if (adjustEndianness) in.order(!in.isLittleEndian());
         return f;
       case DOUBLE:
-        in.order(!in.isLittleEndian());
+        if (adjustEndianness) in.order(!in.isLittleEndian());
         double dbl = in.readDouble();
-        in.order(!in.isLittleEndian());
+        if (adjustEndianness) in.order(!in.isLittleEndian());
         return dbl;
       case BYTE:
       case UBYTE:

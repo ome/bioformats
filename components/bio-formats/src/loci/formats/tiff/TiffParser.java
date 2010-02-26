@@ -986,6 +986,9 @@ public class TiffParser {
               int idx = (int) (r * imageWidth + c);
 
               if (idx < nSamples) {
+                if (reference == null) {
+                  reference = new int[] {0, 0, 0, 0, 0, 0};
+                }
                 int y = (bytes[lumaIndex] & 0xff) - reference[0];
                 int cb = (bytes[chromaIndex] & 0xff) - reference[2];
                 int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];

@@ -41,6 +41,7 @@ loci.formats.in.IvisionReader         # ipm
 loci.formats.in.DeltavisionReader     # dv, r3d
 loci.formats.in.MRCReader             # mrc, st, ali
 loci.formats.in.GatanReader           # dm3
+loci.formats.in.GatanDM2Reader        # dm2
 loci.formats.in.ImarisReader          # ims
 loci.formats.in.OpenlabRawReader      # raw
 loci.formats.in.OMEXMLReader          # ome
