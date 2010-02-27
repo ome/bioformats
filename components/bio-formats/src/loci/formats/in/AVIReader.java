@@ -509,7 +509,11 @@ public class AVIReader extends FormatReader {
     core[0].sizeT = getImageCount();
     core[0].littleEndian = true;
     core[0].interleaved = bmpBitsPerPixel != 16;
-    if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
+    if (bmpBitsPerPixel == 32) {
+      core[0].sizeC = 4;
+      core[0].rgb = true;
+    }
+    else if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
       core[0].rgb =
         (bmpBitsPerPixel > 8 || (bmpCompression != 0)) && lut == null;
       core[0].sizeC = isRGB() ? 3 : 1;
@@ -519,14 +523,15 @@ public class AVIReader extends FormatReader {
         (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
       core[0].rgb = getSizeC() > 1;
     }
-    core[0].dimensionOrder = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
+    core[0].dimensionOrder = isRGB() ? "XYCTZ" : "XYTCZ";
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
     if (bmpBitsPerPixel <= 8) core[0].pixelType = FormatTools.UINT8;
     else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
-    else if (bmpBitsPerPixel == 32) core[0].pixelType = FormatTools.UINT32;
-    else if (bmpBitsPerPixel == 24) core[0].pixelType = FormatTools.UINT8;
+    else if (bmpBitsPerPixel == 24 || bmpBitsPerPixel == 32) {
+      core[0].pixelType = FormatTools.UINT8;
+    }
     else {
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
