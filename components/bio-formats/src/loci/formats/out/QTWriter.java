@@ -193,7 +193,7 @@ public class QTWriter extends FormatWriter {
       warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = samples == null ? 1 : samples.intValue();
-    int pad = (4 - (width % 4)) % 4;
+    int pad = nChannels > 1 ? 0 : (4 - (width % 4)) % 4;
 
     if (!initialized) {
       initialized = true;
@@ -536,7 +536,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeShort(out, 0, false); // flags
       DataTools.writeInt(out, 1, false); // number of entries in the table
       DataTools.writeInt(out, numWritten, false); // number of planes
-      DataTools.writeInt(out, (timeScale / fps), false); // frames per second
+      DataTools.writeInt(out, fps, false); // frames per second
 
       // -- write stsc atom --
 

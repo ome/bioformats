@@ -554,7 +554,7 @@ public class NativeQTReader extends FormatReader {
           }
         }
         else if (atomType.equals("stts")) {
-          in.skipBytes(10);
+          in.skipBytes(12);
           int fps = in.readInt();
           addGlobalMeta("Frames per second", fps);
         }
