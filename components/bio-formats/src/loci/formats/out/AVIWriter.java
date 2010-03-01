@@ -370,7 +370,7 @@ public class AVIWriter extends FormatWriter {
         // biYPelsPerMeter - vertical resolution in pixels per meter
         DataTools.writeInt(out, 0, true);
 
-        int nColors = lut == null ? 0 : 256;
+        int nColors = (int) Math.pow(2, bitsPerPixel);
         DataTools.writeInt(out, nColors, true);
 
         // biClrImportant - specifies that the first x colors of the color table
