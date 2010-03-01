@@ -72,6 +72,7 @@ loci.formats.in.TargaReader           # tga
 loci.formats.in.OxfordInstrumentsReader # top
 loci.formats.in.VGSAMReader           # dti
 loci.formats.in.HISReader             # his
+loci.formats.in.WATOPReader           # wat
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
