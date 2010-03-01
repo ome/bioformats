@@ -200,6 +200,7 @@ public class NativeQTReader extends FormatReader {
 
     // determine whether we need to strip out any padding bytes
 
+    int bytes = bitsPerPixel < 40 ? bitsPerPixel / 8 : (bitsPerPixel - 32) / 8;
     int pad = (4 - (getSizeX() % 4)) % 4;
     if (codec.equals("mjpb")) pad = 0;
 
@@ -212,12 +213,10 @@ public class NativeQTReader extends FormatReader {
     }
 
     if (pad > 0) {
-      int bytes = bitsPerPixel < 40 ? bitsPerPixel / 8 :
-        (bitsPerPixel - 32) / 8;
-      t = new byte[prevPixels.length - getSizeY()*pad*bytes];
+      t = new byte[prevPixels.length - getSizeY()*pad];
 
       for (int row=0; row<getSizeY(); row++) {
-        System.arraycopy(prevPixels, bytes * row * (getSizeX() + pad), t,
+        System.arraycopy(prevPixels, row * (bytes * getSizeX() + pad), t,
           row * getSizeX() * bytes, getSizeX() * bytes);
       }
     }
