@@ -213,7 +213,7 @@ public class QTWriter extends FormatWriter {
       out = new RandomAccessOutputStream(currentId);
       created = (int) System.currentTimeMillis();
       numWritten = 0;
-      numBytes = buf.length;
+      numBytes = buf.length + pad * height;
       byteCountOffset = 8;
 
       if (out.length() == 0) {
@@ -233,14 +233,14 @@ public class QTWriter extends FormatWriter {
         numBytes = (int) DataTools.read4UnsignedBytes(in, false) - 8;
         in.close();
 
-        numWritten = numBytes / buf.length;
-        numBytes += buf.length;
+        numWritten = numBytes / (buf.length + pad * height);
+        numBytes += (buf.length + pad * height);
 
         out.seek(byteCountOffset);
         DataTools.writeInt(out, numBytes + 8, false);
 
         for (int i=0; i<numWritten; i++) {
-          offsets.add(new Integer(16 + i * buf.length));
+          offsets.add(new Integer(16 + i * (buf.length + pad * height)));
         }
 
         out.seek(out.length());
@@ -253,7 +253,7 @@ public class QTWriter extends FormatWriter {
     else {
       // update the number of pixel bytes written
       int planeOffset = numBytes;
-      numBytes += buf.length;
+      numBytes += (buf.length + pad * height);
       out.seek(byteCountOffset);
       DataTools.writeInt(out, numBytes + 8, false);
 
@@ -284,7 +284,14 @@ public class QTWriter extends FormatWriter {
       }
     }
 
-    out.write(buf);
+    int rowLen = buf.length / height;
+    for (int row=0; row<height; row++) {
+      out.write(buf, row * rowLen, rowLen);
+      for (int i=0; i<pad; i++) {
+        out.writeByte(0);
+      }
+    }
+
     numWritten++;
 
     if (last) {
