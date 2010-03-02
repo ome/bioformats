@@ -54,7 +54,7 @@ public class QTWriter extends FormatWriter {
   /** Value indicating Motion JPEG-B codec. */
   public static final int CODEC_MOTION_JPEG_B = 1835692130;
 
-  /** Value indicating Cinepack codec. */
+  /** Value indicating Cinepak codec. */
   public static final int CODEC_CINEPAK = 1668704612;
 
   /** Value indicating Animation codec. */
@@ -198,7 +198,7 @@ public class QTWriter extends FormatWriter {
     if (!initialized) {
       initialized = true;
       setCodec();
-      if (codec != 0) {
+      if (codec != CODEC_RAW) {
         needLegacy = true;
         legacy.setCodec(codec);
         legacy.setMetadataRetrieve(getMetadataRetrieve());
