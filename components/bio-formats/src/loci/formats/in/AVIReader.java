@@ -507,7 +507,6 @@ public class AVIReader extends FormatReader {
 
     core[0].imageCount = offsets.size();
 
-    core[0].indexed = lut != null;
     core[0].sizeZ = 1;
     core[0].sizeT = getImageCount();
     core[0].littleEndian = true;
@@ -517,8 +516,7 @@ public class AVIReader extends FormatReader {
       core[0].rgb = true;
     }
     else if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
-      core[0].rgb =
-        (bmpBitsPerPixel > 8 || (bmpCompression != 0)) && lut == null;
+      core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0);
       core[0].sizeC = isRGB() ? 3 : 1;
     }
     else {
@@ -529,6 +527,7 @@ public class AVIReader extends FormatReader {
     core[0].dimensionOrder = isRGB() ? "XYCTZ" : "XYTCZ";
     core[0].falseColor = false;
     core[0].metadataComplete = true;
+    core[0].indexed = lut != null && !isRGB();
 
     if (bmpBitsPerPixel <= 8) {
       core[0].pixelType = FormatTools.UINT8;

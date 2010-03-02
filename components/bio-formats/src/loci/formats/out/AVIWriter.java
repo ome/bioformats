@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.out;
 
 import java.awt.image.IndexColorModel;
-import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -56,7 +55,6 @@ public class AVIWriter extends FormatWriter {
   private int planesWritten = 0;
 
   private int bytesPerPixel;
-  private File file;
   private int xDim, yDim, zDim, tDim, xPad;
   private int microSecPerFrame;
 
@@ -144,7 +142,7 @@ public class AVIWriter extends FormatWriter {
       frameOffset = 48;
       frameOffset2 = 35 * 4;
       savestrfSize = 42 * 4;
-      savestrnPos = savestrfSize + 44 + (bytesPerPixel == 1 ? 4 * 256 : 0);
+      savestrnPos = savestrfSize + 44 + 1024;
       saveJUNKsignature = savestrnPos + 24;
       saveLIST2Size = 4088;
       savemovi = 4092;
@@ -157,8 +155,8 @@ public class AVIWriter extends FormatWriter {
       dataSignature[2] = 100; // d
       dataSignature[3] = 98; // b
 
-      tDim = 1;
-      zDim = 1;
+      tDim = meta.getPixelsSizeZ(series, 0).intValue();
+      zDim = meta.getPixelsSizeT(series, 0).intValue();
       yDim = meta.getPixelsSizeY(series, 0).intValue();
       xDim = meta.getPixelsSizeX(series, 0).intValue();
 
@@ -362,7 +360,6 @@ public class AVIWriter extends FormatWriter {
         // 0L for BI_RGB, uncompressed data as bitmap
         DataTools.writeShort(out, (short) bitsPerPixel, true);
 
-        //writeInt(bytesPerPixel * xDim * yDim * zDim * tDim); // biSizeImage #
         DataTools.writeInt(out, 0, true); // biSizeImage #
         DataTools.writeInt(out, 0, true); // biCompression - compression type
         // biXPelsPerMeter - horizontal resolution in pixels
@@ -370,7 +367,7 @@ public class AVIWriter extends FormatWriter {
         // biYPelsPerMeter - vertical resolution in pixels per meter
         DataTools.writeInt(out, 0, true);
 
-        int nColors = (int) Math.pow(2, bitsPerPixel);
+        int nColors = 256;
         DataTools.writeInt(out, nColors, true);
 
         // biClrImportant - specifies that the first x colors of the color table
@@ -404,8 +401,7 @@ public class AVIWriter extends FormatWriter {
         }
 
         out.seek(savestrfSize);
-        DataTools.writeInt(out,
-          (int) (savestrnPos - (savestrfSize + 4)), true);
+        DataTools.writeInt(out, (int) (savestrnPos - (savestrfSize + 4)), true);
         out.seek(savestrnPos);
 
         // Use strn to provide zero terminated text string describing the stream
