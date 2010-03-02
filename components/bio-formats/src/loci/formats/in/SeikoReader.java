@@ -1,5 +1,5 @@
 //
-// SMCameraReader.java
+// SeikoReader.java
 //
 
 /*
@@ -34,48 +34,29 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
- * SMCameraReader is the file format reader for SM camera files.
+ * SeikoReader is the file format reader for Seiko .xqd/.xqf files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/SMCameraReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/SMCameraReader.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/SeikoReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/SeikoReader.java">SVN</a></dd></dl>
  */
-public class SMCameraReader extends FormatReader {
+public class SeikoReader extends FormatReader {
 
   // -- Constants --
 
-  private static final byte[] SMC_MAGIC = new byte[] {
-    0, 0, 0, 0, 2, 0, 0, 5, (byte) 0xc9, (byte) 0x88, 0, 5, (byte) 0xcb,
-    (byte) 0x88, 0, 0
-  };
-
-  private static final int HEADER_SIZE = 548;
+  private static final int HEADER_SIZE = 2944;
 
   // -- Fields --
 
   // -- Constructor --
 
-  /** Constructs a new SM camera reader. */
-  public SMCameraReader() {
-    super("SM Camera", "");
+  /** Constructs a new Seiko reader. */
+  public SeikoReader() {
+    super("Seiko", new String[] {"xqd", "xqf"});
     domains = new String[] {FormatTools.SEM_DOMAIN};
-    suffixSufficient = false;
-    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 16;
-    if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    byte[] magic = new byte[blockLen];
-    stream.read(magic);
-    for (int i=0; i<magic.length; i++) {
-      if (magic[i] != SMC_MAGIC[i]) return false;
-    }
-    return true;
-  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -94,27 +75,42 @@ public class SMCameraReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("SMCameraReader.initFile(" + id + ")");
+    debug("SeikoReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    core[0].littleEndian = true;
+    in.order(isLittleEndian());
 
-    in.seek(524);
+    in.seek(40);
 
-    core[0].sizeY = in.readShort();
-    in.skipBytes(6);
+    String comment = in.readCString();
+
+    in.seek(156);
+
+    double xSize = in.readFloat();
+    in.skipBytes(4);
+    double ySize = in.readFloat();
+
+    in.skipBytes(1234);
+
     core[0].sizeX = in.readShort();
-    core[0].pixelType = FormatTools.UINT8;
+    core[0].sizeY = in.readShort();
+
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = 1;
     core[0].imageCount = 1;
     core[0].dimensionOrder = "XYZCT";
-    core[0].littleEndian = false;
+    core[0].pixelType = FormatTools.UINT16;
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
+
+    store.setImageDescription(comment, 0);
+    store.setDimensionsPhysicalSizeX(new Double(xSize), 0, 0);
+    store.setDimensionsPhysicalSizeY(new Double(ySize), 0, 0);
   }
 
 }
