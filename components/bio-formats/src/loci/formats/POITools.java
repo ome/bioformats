@@ -50,8 +50,8 @@ public class POITools {
 
   private static final String NO_POI_MSG =
     "Jakarta POI is required to read Compix SimplePCI, Fluoview FV1000 OIB, " +
-    "ImagePro IPW, and Zeiss ZVI files.  Please obtain poi-loci.jar from " +
-    "http://loci.wisc.edu/ome/formats.html";
+    "ImagePro IPW, and Zeiss ZVI files. Please obtain poi-loci.jar from " +
+    FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   // -- Fields --
 

@@ -55,9 +55,10 @@ public class LegacyND2Reader extends FormatReader {
   private static final int SWEPT_FIELD_CONFOCAL = 4;
   private static final int MULTI_PHOTON = 5;
 
-  private static final String NO_NIKON_MSG =
-    "Nikon ND2 library not found.  Please see " +
-    "http://loci.wisc.edu/ome/formats.html for details.";
+  private static final String URL_NIKON_ND2 =
+    "http://www.loci.wisc.edu/bio-formats-format/nikon-nis-elements-nd2";
+  private static final String NO_NIKON_MSG = "Nikon ND2 library not found. " +
+    "Please see " + URL_NIKON_ND2 + " for details.";
 
   // -- Static initializers --
 

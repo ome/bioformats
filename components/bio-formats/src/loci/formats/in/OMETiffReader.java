@@ -39,6 +39,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.IMetadata;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -47,14 +48,19 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * OMETiffReader is the file format reader for
- * <a href="http://www.loci.wisc.edu/ome/ome-tiff-spec.html">OME-TIFF</a>
- * files.
+ * <a href="http://ome-xml.org/wiki/OmeTiff">OME-TIFF</a> files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OMETiffReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OMETiffReader.java">SVN</a></dd></dl>
  */
 public class OMETiffReader extends FormatReader {
+
+  // -- Constants --
+
+  private static final String NO_OME_XML_MSG =
+    "ome-xml.jar is required to read OME-TIFF files.  " +
+    "Please download it from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   // -- Fields --
 
@@ -91,9 +97,7 @@ public class OMETiffReader extends FormatReader {
     IMetadata meta = MetadataTools.createOMEXMLMetadata(xml);
 
     if (meta == null) {
-      throw new FormatException("ome-xml.jar is required to read OME-TIFF " +
-        "files.  Please download it from " +
-        "http://loci.wisc.edu/ome/formats-library.html");
+      throw new MissingLibraryException(NO_OME_XML_MSG);
     }
 
     if (meta.getRoot() == null) {
@@ -232,9 +236,7 @@ public class OMETiffReader extends FormatReader {
     debug(xml, 3);
 
     if (meta == null) {
-      throw new FormatException("ome-xml.jar is required to read OME-TIFF " +
-        "files.  Please download it from " +
-        "http://loci.wisc.edu/ome/formats-library.html");
+      throw new MissingLibraryException(NO_OME_XML_MSG);
     }
 
     if (meta.getRoot() == null) {

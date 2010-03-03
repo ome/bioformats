@@ -571,7 +571,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         "converting biological file formats." +
         "<br>Copyright (C) 2005-@year@ " +
         "UW-Madison LOCI and Glencoe Software, Inc." +
-        "<br><i>http://www.loci.wisc.edu/ome/formats.html</i>" +
+        "<br><i>" + FormatTools.URL_BIO_FORMATS + "</i>" +
         "<br>Revision @svn.revision@, built @date@";
       ImageIcon bioFormatsLogo = new ImageIcon(
           IFormatHandler.class.getResource("bio-formats-logo.png"));

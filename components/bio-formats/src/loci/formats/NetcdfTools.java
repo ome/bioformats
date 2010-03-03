@@ -47,10 +47,10 @@ public class NetcdfTools {
   // -- Constants --
 
   private static final String NO_NETCDF_MSG =
-    "NetCDF is required to read NetCDF/HDF variants.  Please obtain " +
-    "the necessary JAR files from http://loci.wisc.edu/ome/formats.html.\n" +
-    "Required JAR files are netcdf-4.0.jar, bufr-1.1.00.jar, grib-5.1.03.jar " +
-    ", and slf4j-jdk14.jar.";
+    "NetCDF is required to read NetCDF/HDF variants.  Please obtain the " +
+    "necessary JAR files from " + FormatTools.URL_BIO_FORMATS_LIBRARIES +
+    ".\nRequired JAR files are " +
+    "netcdf-4.0.jar, bufr-1.1.00.jar, grib-5.1.03.jar, and slf4j-jdk14.jar.";
 
   // -- Fields --
 

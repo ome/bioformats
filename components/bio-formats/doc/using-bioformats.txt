@@ -12,7 +12,7 @@ http://hudson.openmicroscopy.org.uk/job/LOCI/javadoc/);
 the notes that follow will make more sense when you see the API.
 
 For a complete list of supported formats, see the Bio-Formats home page:
-http://www.loci.wisc.edu/ome/formats.html
+http://www.loci.wisc.edu/software/bio-formats
 
                               Basic File Reading
                              --------------------

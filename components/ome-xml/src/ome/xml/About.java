@@ -49,7 +49,7 @@ public final class About {
     System.out.println("OME-XML Java library, " +
       "revision @svn.revision@, built @date@");
     System.out.println("Copyright 2005-@year@ Open Microscopy Environment");
-    System.out.println("http://www.loci.wisc.edu/ome/ome-xml-java.html");
+    System.out.println("http://ome-xml.org/wiki/OmeXmlJava");
     System.out.println("Authors: Curtis Rueden, Chris Allan");
   }
 

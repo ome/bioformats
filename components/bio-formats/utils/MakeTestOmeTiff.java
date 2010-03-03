@@ -435,7 +435,7 @@ public class MakeTestOmeTiff {
       "contains crucial dimensional parameters and other important metadata. " +
       "Please edit cautiously (if at all), and back up the original data " +
       "before doing so. For more information, see the OME-TIFF web site: " +
-      "http://loci.wisc.edu/ome/ome-tiff.html. -->\n" +
+      "http://ome-xml.org/wiki/OmeTiff. -->\n" +
       "<OME xmlns=\"" + schemaPath + "\" " +
       "xmlns:bf=\"http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09\" " +
       "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +

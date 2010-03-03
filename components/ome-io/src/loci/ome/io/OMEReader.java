@@ -58,7 +58,8 @@ public class OMEReader extends FormatReader {
   private static final String NO_OME_JAVA =
     "OME-Java not found. " +
     "Please download OME-Java from " +
-    "http://www.loci.wisc.edu/ome/ome-java.html";
+    "http://www.openmicroscopy.org/" +
+    "site/support/legacy/ome-server/developer/java-api";
 
   // -- Fields --
 

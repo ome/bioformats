@@ -56,7 +56,7 @@ public final class About implements PlugIn {
       "<br>" +
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +
-      "<br><i>http://www.loci.wisc.edu/ome/ome-plugins.html</i>";
+      "<br><i>http://ome-xml.org/wiki/OmePlugins</i>";
     ImageIcon omeLogo = new ImageIcon(
       OMEReader.class.getResource("ome-logo.png"));
     JOptionPane.showMessageDialog(null, msg, "OME Plugins for ImageJ",

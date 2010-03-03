@@ -62,9 +62,9 @@ public class OMEXMLReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_OME_JAVA_MSG =
+  private static final String NO_OME_XML_MSG =
     "The Java OME-XML library is required to read OME-XML files. Please " +
-    "obtain ome-xml.jar from http://loci.wisc.edu/ome/formats.html";
+    "obtain ome-xml.jar from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   // -- Static fields --
 
@@ -250,7 +250,7 @@ public class OMEXMLReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     debug("OMEXMLReader.initFile(" + id + ")");
-    if (noOME) throw new MissingLibraryException(NO_OME_JAVA_MSG);
+    if (noOME) throw new MissingLibraryException(NO_OME_XML_MSG);
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
@@ -276,9 +276,7 @@ public class OMEXMLReader extends FormatReader {
     IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata(omexml);
 
     if (omexmlMeta == null) {
-      throw new FormatException("ome-xml.jar is required to read " +
-        "OME-XML files. Please download it from " +
-        "http://loci.wisc.edu/ome/formats-library.html");
+      throw new MissingLibraryException(NO_OME_XML_MSG);
     }
 
     hasSPW = omexmlMeta.getPlateCount() > 0;

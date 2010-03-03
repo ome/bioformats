@@ -58,11 +58,11 @@ public final class About implements PlugIn {
       "<br>" +
       "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
       "<br>Authors: Melissa Linkert, Curtis Rueden" +
-      "<br><i>http://www.loci.wisc.edu/ome/formats-imagej.html</i>" +
+      "<br><i>http://www.loci.wisc.edu/bio-formats/imagej</i>" +
       "<br>" +
       "<br><b>Data Browser</b>" +
       "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
-      "<br><i>http://www.loci.wisc.edu/ome/browser.html</i>" +
+      "<br><i>http://www.loci.wisc.edu/software/data-browser</i>" +
       "<br>" +
       "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
       "<br>Author: Melissa Linkert";

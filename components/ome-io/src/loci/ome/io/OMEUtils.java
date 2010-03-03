@@ -45,11 +45,12 @@ public class OMEUtils {
 
   private static final String NO_OMERO_MSG = "OMERO client libraries not " +
     "found.  Please obtain omero-common.jar and omero-client.jar from " +
-    "http://www.loci.wisc.edu/ome/formats.html";
+    "http://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
 
   private static final String NO_OME_MSG = "OME-Java library not found.  " +
-    "Please obtain ome-java.jar from http://www.openmicroscopy.org/site/" +
-    "documents/data-management/ome-server/developer/java-api";
+    "Please obtain ome-java.jar from " +
+    "http://www.openmicroscopy.org/" +
+    "site/support/legacy/ome-server/developer/java-api";
 
   // -- Static fields --
 

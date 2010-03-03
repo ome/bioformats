@@ -116,7 +116,7 @@ notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
 type = ImageJ plugin
 class = loci.plugins.About
 version = bfVersion
-url = http://www.loci.wisc.edu/ome/formats-imagej.html
+url = http://www.loci.wisc.edu/bio-formats/imagej
 license = GPL
 notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
         the Bio-Formats Importer, Bio-Formats Exporter,
@@ -127,7 +127,7 @@ notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
 type = ImageJ plugin
 class = loci.plugins.ome.About
 version = omeVersion
-url = http://www.loci.wisc.edu/ome/ome-plugins.html
+url = http://ome-xml.org/wiki/OmePlugins
 license = GPL
 notes = OME Plugins for ImageJ: a collection of ImageJ plugins including
         the Download from OME and Upload to OME plugins.
@@ -154,7 +154,7 @@ notes = Optional plugin. If you have View5D installed, the Bio-Formats
 type = Java library
 class = loci.formats.IFormatReader
 version = bfVersion
-url = http://www.loci.wisc.edu/ome/formats.html
+url = http://www.loci.wisc.edu/software/bio-formats
 license = GPL
 notes = OME Bio-Formats package for reading and converting
         biological file formats.
@@ -163,7 +163,7 @@ notes = OME Bio-Formats package for reading and converting
 type = Java library
 class = loci.ome.io.OMEUtils
 version = omeVersion
-url = http://www.loci.wisc.edu/ome/ome-java.html
+url = http://www.openmicroscopy.org/site/support/legacy/ome-server/developer/java-api
 license = GPL
 notes = OME database I/O package for communicating with OME and OMERO servers.
 
@@ -171,7 +171,7 @@ notes = OME database I/O package for communicating with OME and OMERO servers.
 type = Java library
 class = loci.visbio.VisBio
 version = visbioVersion
-url = http://www.loci.wisc.edu/visbio/
+url = http://www.loci.wisc.edu/software/visbio/
 license = GPL
 notes = LOCI's biological visualization tool designed for easy visualization
         and analysis of multidimensional image data.
@@ -251,7 +251,7 @@ notes = Used by the NetCDF Java library.
 [OME-XML Java library]
 type = Java library
 class = ome.xml.OMEXMLNode
-url = http://www.loci.wisc.edu/ome/ome-xml-java.html
+url = http://ome-xml.org/wiki/OmeXmlJava
 license = LGPL
 notes = Used by Bio-Formats to work with OME-XML.
 
@@ -336,7 +336,7 @@ notes = Used for layout by the Data Browser plugin.
 [OME Notes]
 type = Java library
 class = loci.ome.notes.Notes
-url = http://www.loci.wisc.edu/ome/notes.html
+url = http://www.loci.wisc.edu/software/ome-notes
 license = GPL
 notes = OME Notes library for flexible organization and presentation
         of OME-XML metadata.

@@ -30,6 +30,7 @@ import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.MissingLibraryException;
 
 /**
@@ -45,7 +46,7 @@ public final class MDBParser {
 
   private static final String NO_MDB_MSG =
     "The Java port of MDB tools is required to read MDB files. Please " +
-    "obtain mdbtools-java.jar from http://loci.wisc.edu/ome/formats.html";
+    "obtain mdbtools-java.jar from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   // -- Static fields --
 

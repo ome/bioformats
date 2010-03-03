@@ -38,7 +38,7 @@ goto end
 echo Required JAR libraries not found. Please download:
 echo   loci_tools.jar
 echo from:
-echo   http://www.loci.wisc.edu/ome/formats.html
+echo   http://www.loci.wisc.edu/bio-formats/downloads
 echo as well as the OME Metadata Notebook JARs from:
 echo   http://www.loci.wisc.edu/software/daily/ome-editor.jar
 echo   http://www.loci.wisc.edu/software/daily/ome-java.jar

@@ -42,7 +42,7 @@ import loci.formats.meta.MetadataStore;
  */
 public final class FormatTools {
 
-  // -- Constants --
+  // -- Constants - pixel types --
 
   /** Identifies the <i>INT8</i> data type used to store pixel values. */
   public static final int INT8 = 0;
@@ -82,6 +82,8 @@ public final class FormatTools {
     pixelTypes[DOUBLE] = "double";
   }
 
+  // -- Constants - dimensional labels --
+
   /**
    * Identifies the <i>Channel</i> dimensional type,
    * representing a generic channel dimension.
@@ -118,6 +120,8 @@ public final class FormatTools {
    */
   public static final String FREQUENCY = "Frequency";
 
+  // -- Constants - miscellaneous --
+
   /** File grouping options. */
   public static final int MUST_GROUP = 0;
   public static final int CAN_GROUP = 1;
@@ -131,6 +135,8 @@ public final class FormatTools {
   public static final String Z_NUM = "%z";
   public static final String T_NUM = "%t";
 
+  // -- Constants - versioning --
+
   /** Current SVN revision. */
   public static final String SVN_REVISION = "@svn.revision@";
 
@@ -139,6 +145,8 @@ public final class FormatTools {
 
   /** Version number of this release. */
   public static final String VERSION = "4.2-DEV";
+
+  // -- Constants - domains --
 
   /** Identifies the high content screening domain. */
   public static final String HCS_DOMAIN = "High-Content Screening (HCS)";
@@ -188,6 +196,24 @@ public final class FormatTools {
     MEDICAL_DOMAIN, HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN,
     GRAPHICS_DOMAIN
   };
+
+  // -- Constants - web pages --
+
+  /** URL of Bio-Formats web page. */
+  public static final String URL_BIO_FORMATS =
+    "http://www.loci.wisc.edu/software/bio-formats";
+
+  /** URL of 'Bio-Formats as a Java Library' web page. */
+  public static final String URL_BIO_FORMATS_LIBRARIES =
+    "http://www.loci.wisc.edu/bio-formats/bio-formats-java-library";
+
+  /** URL of OME-TIFF web page. */
+  public static final String URL_OME_TIFF =
+    "http://ome-xml.org/wiki/OmeTiff";
+
+  /** URL of direct LOCI JAR downloads. */
+  public static final String URL_JAR_DOWNLOADS =
+    "http://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
 
   // -- Constructor --
 

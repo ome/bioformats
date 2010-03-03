@@ -52,7 +52,7 @@ public class OMETiffWriter extends TiffWriter {
     "contains crucial dimensional parameters and other important metadata. " +
     "Please edit cautiously (if at all), and back up the original data " +
     "before doing so. For more information, see the OME-TIFF web site: " +
-    "http://loci.wisc.edu/ome/ome-tiff.html. -->";
+    FormatTools.URL_OME_TIFF + ". -->";
 
   // -- Static fields --
 

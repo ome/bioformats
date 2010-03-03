@@ -45,6 +45,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 
@@ -64,7 +65,8 @@ public class JPEG2000Codec extends BaseCodec {
 
   private static final String NO_J2K_MSG =
     "The JAI Image I/O Tools are required to read JPEG-2000 files. Please " +
-    "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats-library.html";
+    "obtain jai_imageio.jar from " +
+    FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   private static final String J2K_READER =
     "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
