@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -66,7 +67,8 @@ public class ScanrReader extends FormatReader {
   private int wellRows, wellColumns;
   private int fieldRows, fieldColumns;
   private Vector<String> channelNames = new Vector<String>();
-  private Vector<String> wellLabels = new Vector<String>();
+  private Hashtable<String, Integer> wellLabels =
+    new Hashtable<String, Integer>();
   private String plateName;
 
   private String[] tiffs;
@@ -177,7 +179,7 @@ public class ScanrReader extends FormatReader {
     super.initFile(id);
 
     // make sure we have the .xml file
-    if (!checkSuffix(id, "xml")) {
+    if (!checkSuffix(id, "xml") && isGroupFiles()) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       if (checkSuffix(id, "tif")) {
         parent = parent.getParentFile();
@@ -195,6 +197,19 @@ public class ScanrReader extends FormatReader {
           parent.getAbsolutePath());
       }
     }
+    else if (!isGroupFiles() && checkSuffix(id, "tif")) {
+      TiffReader r = new TiffReader();
+      r.setMetadataStore(getMetadataStore());
+      r.setId(id);
+      core = r.getCoreMetadata();
+      metadata = r.getMetadata();
+      metadataStore = r.getMetadataStore();
+      r.close();
+      tiffs = new String[] {id};
+      reader = new MinimalTiffReader();
+
+      return;
+    }
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
     String[] list = dir.list(true);
@@ -208,13 +223,22 @@ public class ScanrReader extends FormatReader {
 
     // parse XML metadata
 
-    String xml = DataTools.readFile(id);
+    String xml = DataTools.readFile(id).trim();
+
+    // add the appropriate encoding, as some ScanR XML files use non-UTF8
+    // characters without specifying an encoding
+
+    if (xml.startsWith("<?")) {
+      xml = xml.substring(xml.indexOf("?>") + 2);
+    }
+    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + xml;
+
     XMLTools.parseXML(xml, new ScanrHandler());
 
     Vector<String> uniqueRows = new Vector<String>();
     Vector<String> uniqueColumns = new Vector<String>();
 
-    for (String well : wellLabels) {
+    for (String well : wellLabels.keySet()) {
       if (!Character.isLetter(well.charAt(0))) continue;
       String row = well.substring(0, 1).trim();
       String column = well.substring(1).trim();
@@ -248,8 +272,13 @@ public class ScanrReader extends FormatReader {
 
     // get list of TIFF files
 
-    dir = new Location(dir, "data");
-    list = dir.list(true);
+    Location dataDir = new Location(dir, "data");
+    list = dataDir.list(true);
+    if (list == null) {
+      // try to find the TIFFs in the current directory
+      list = dir.list(true);
+    }
+    else dir = dataDir;
     if (nTimepoints == 0) {
       nTimepoints = list.length / (nChannels * nWells * nPos * nSlices);
       if (nTimepoints == 0) nTimepoints = 1;
@@ -258,11 +287,18 @@ public class ScanrReader extends FormatReader {
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
 
     int next = 0;
+    String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
+    int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
-      String wellPos = getBlock(well + 1, "W");
+      Integer w = wellLabels.get(keys[well]);
+      int wellIndex = w == null ? well + 1 : w.intValue();
+
+      String wellPos = getBlock(wellIndex, "W");
+      int originalIndex = next;
 
       for (int pos=0; pos<nPos; pos++) {
         String posPos = getBlock(pos + 1, "P");
+        int posIndex = next;
 
         for (int z=0; z<nSlices; z++) {
           String zPos = getBlock(z, "Z");
@@ -283,14 +319,56 @@ public class ScanrReader extends FormatReader {
             }
           }
         }
+        if (posIndex != next) realPosCount++;
+      }
+      if (next == originalIndex) {
+        wellLabels.remove(keys[well]);
       }
     }
+
+    if (wellLabels.size() != nWells) {
+      uniqueRows.clear();
+      uniqueColumns.clear();
+      for (String well : wellLabels.keySet()) {
+        if (!Character.isLetter(well.charAt(0))) continue;
+        String row = well.substring(0, 1).trim();
+        String column = well.substring(1).trim();
+        if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
+        if (!uniqueColumns.contains(column) && column.length() > 0) {
+          uniqueColumns.add(column);
+        }
+      }
+
+      wellRows = uniqueRows.size();
+      wellColumns = uniqueColumns.size();
+      nWells = wellRows * wellColumns;
+    }
+    nPos = realPosCount;
 
     reader = new MinimalTiffReader();
     reader.setId(tiffs[0]);
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
+
+    // we strongly suspect that ScanR incorrectly records the
+    // signedness of the pixels
+
+    switch (pixelType) {
+      case FormatTools.INT8:
+        pixelType = FormatTools.UINT8;
+        break;
+      case FormatTools.UINT8:
+        pixelType = FormatTools.INT8;
+        break;
+      case FormatTools.INT16:
+        pixelType = FormatTools.UINT16;
+        break;
+      case FormatTools.UINT16:
+        pixelType = FormatTools.INT16;
+        break;
+    }
+
     boolean rgb = reader.isRGB();
     boolean interleaved = reader.isInterleaved();
     boolean indexed = reader.isIndexed();
@@ -327,8 +405,14 @@ public class ScanrReader extends FormatReader {
       }
     }
 
-    store.setPlateRowNamingConvention("A", 0);
-    store.setPlateColumnNamingConvention("1", 0);
+    if (wellRows > 26) {
+      store.setPlateRowNamingConvention("1", 0);
+      store.setPlateColumnNamingConvention("A", 0);
+    }
+    else {
+      store.setPlateRowNamingConvention("A", 0);
+      store.setPlateColumnNamingConvention("1", 0);
+    }
     store.setPlateName(plateName, 0);
 
     int nFields = fieldRows * fieldColumns;
@@ -350,8 +434,12 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + String.valueOf((char) ('A' + wellRow)) +
-        (wellCol + 1) + ", Field " + (field + 1);
+      String row =
+        String.valueOf(wellRows > 26 ? wellRow + 1 : (char) ('A' + wellRow));
+      String col =
+        String.valueOf(wellRows > 26 ? (char) ('A' + wellCol) : wellCol + 1);
+      String name = "Well " + row + col + ", Field " + (field + 1) +
+        " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
     }
 
@@ -362,6 +450,8 @@ public class ScanrReader extends FormatReader {
   class ScanrHandler extends DefaultHandler {
     private String key, value;
     private String qName;
+
+    private String wellIndex;
 
     // -- DefaultHandler API methods --
 
@@ -403,7 +493,12 @@ public class ScanrReader extends FormatReader {
           else channelNames.remove(lastIndex);
         }
         else if (key.equals("well selection table + cDNA")) {
-          wellLabels.add(value);
+          if (Character.isDigit(value.charAt(0))) {
+            wellIndex = value;
+          }
+          else {
+            wellLabels.put(value, new Integer(wellIndex));
+          }
         }
       }
     }
