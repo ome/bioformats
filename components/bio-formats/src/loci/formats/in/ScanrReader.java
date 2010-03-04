@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -66,7 +67,8 @@ public class ScanrReader extends FormatReader {
   private int wellRows, wellColumns;
   private int fieldRows, fieldColumns;
   private Vector<String> channelNames = new Vector<String>();
-  private Vector<String> wellLabels = new Vector<String>();
+  private Hashtable<String, Integer> wellLabels =
+    new Hashtable<String, Integer>();
   private String plateName;
 
   private String[] tiffs;
@@ -221,13 +223,22 @@ public class ScanrReader extends FormatReader {
 
     // parse XML metadata
 
-    String xml = DataTools.readFile(id);
+    String xml = DataTools.readFile(id).trim();
+
+    // add the appropriate encoding, as some ScanR XML files use non-UTF8
+    // characters without specifying an encoding
+
+    if (xml.startsWith("<?")) {
+      xml = xml.substring(xml.indexOf("?>") + 2);
+    }
+    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + xml;
+
     XMLTools.parseXML(xml, new ScanrHandler());
 
     Vector<String> uniqueRows = new Vector<String>();
     Vector<String> uniqueColumns = new Vector<String>();
 
-    for (String well : wellLabels) {
+    for (String well : wellLabels.keySet()) {
       if (!Character.isLetter(well.charAt(0))) continue;
       String row = well.substring(0, 1).trim();
       String column = well.substring(1).trim();
@@ -261,8 +272,13 @@ public class ScanrReader extends FormatReader {
 
     // get list of TIFF files
 
-    dir = new Location(dir, "data");
-    list = dir.list(true);
+    Location dataDir = new Location(dir, "data");
+    list = dataDir.list(true);
+    if (list == null) {
+      // try to find the TIFFs in the current directory
+      list = dir.list(true);
+    }
+    else dir = dataDir;
     if (nTimepoints == 0) {
       nTimepoints = list.length / (nChannels * nWells * nPos * nSlices);
       if (nTimepoints == 0) nTimepoints = 1;
@@ -271,11 +287,18 @@ public class ScanrReader extends FormatReader {
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
 
     int next = 0;
+    String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
+    int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
-      String wellPos = getBlock(well + 1, "W");
+      Integer w = wellLabels.get(keys[well]);
+      int wellIndex = w == null ? well + 1 : w.intValue();
+
+      String wellPos = getBlock(wellIndex, "W");
+      int originalIndex = next;
 
       for (int pos=0; pos<nPos; pos++) {
         String posPos = getBlock(pos + 1, "P");
+        int posIndex = next;
 
         for (int z=0; z<nSlices; z++) {
           String zPos = getBlock(z, "Z");
@@ -296,8 +319,31 @@ public class ScanrReader extends FormatReader {
             }
           }
         }
+        if (posIndex != next) realPosCount++;
+      }
+      if (next == originalIndex) {
+        wellLabels.remove(keys[well]);
       }
     }
+
+    if (wellLabels.size() != nWells) {
+      uniqueRows.clear();
+      uniqueColumns.clear();
+      for (String well : wellLabels.keySet()) {
+        if (!Character.isLetter(well.charAt(0))) continue;
+        String row = well.substring(0, 1).trim();
+        String column = well.substring(1).trim();
+        if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
+        if (!uniqueColumns.contains(column) && column.length() > 0) {
+          uniqueColumns.add(column);
+        }
+      }
+
+      wellRows = uniqueRows.size();
+      wellColumns = uniqueColumns.size();
+      nWells = wellRows * wellColumns;
+    }
+    nPos = realPosCount;
 
     reader = new MinimalTiffReader();
     reader.setId(tiffs[0]);
@@ -405,6 +451,8 @@ public class ScanrReader extends FormatReader {
     private String key, value;
     private String qName;
 
+    private String wellIndex;
+
     // -- DefaultHandler API methods --
 
     public void characters(char[] ch, int start, int length) {
@@ -445,7 +493,12 @@ public class ScanrReader extends FormatReader {
           else channelNames.remove(lastIndex);
         }
         else if (key.equals("well selection table + cDNA")) {
-          wellLabels.add(value);
+          if (Character.isDigit(value.charAt(0))) {
+            wellIndex = value;
+          }
+          else {
+            wellLabels.put(value, new Integer(wellIndex));
+          }
         }
       }
     }
