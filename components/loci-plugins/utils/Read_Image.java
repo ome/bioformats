@@ -2,12 +2,14 @@
 // Read_Image.java
 //
 
+import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import java.io.IOException;
 import loci.formats.ChannelSeparator;
 import loci.formats.FormatException;
@@ -30,14 +32,33 @@ public class Read_Image implements PlugIn {
       int width = r.getSizeX();
       int height = r.getSizeY();
       ImageStack stack = new ImageStack(width, height);
+      byte[][][] lookupTable = new byte[r.getSizeC()][][];
       for (int i=0; i<num; i++) {
         IJ.showStatus("Reading image plane #" + (i + 1) + "/" + num);
         ImageProcessor ip = r.openProcessors(i)[0];
         stack.addSlice("" + (i + 1), ip);
+        int channel = r.getZCTCoords(i)[1];
+        lookupTable[channel] = r.get8BitLookupTable();
       }
-      r.close();
       IJ.showStatus("Constructing image");
       ImagePlus imp = new ImagePlus(name, stack);
+
+      // apply color lookup tables, if present
+      // this requires ImageJ v1.39 or higher
+      if (r.isIndexed()) {
+        CompositeImage composite =
+          new CompositeImage(imp, CompositeImage.COLOR);
+        for (int c=0; c<r.getSizeC(); c++) {
+          composite.setPosition(c + 1, 1, 1);
+          LUT lut =
+            new LUT(lookupTable[c][0], lookupTable[c][1], lookupTable[c][2]);
+          composite.setChannelLut(lut);
+        }
+        composite.setPosition(1, 1, 1);
+        imp = composite;
+      }
+      r.close();
+
       imp.show();
       IJ.showStatus("");
     }
