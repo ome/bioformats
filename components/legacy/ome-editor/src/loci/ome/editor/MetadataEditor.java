@@ -70,6 +70,10 @@ public class MetadataEditor extends JFrame
 
   // -- Constants --
 
+  /** URL of OME Metadata Editor web page. */
+  public static final String URL_OME_METADATA_EDITOR =
+    "http://www.loci.wisc.edu/software/ome-metadata-editor";
+
   /** Key mask for use with keyboard shortcuts on this operating system. */
   public static final int MENU_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -525,7 +529,7 @@ public class MetadataEditor extends JFrame
         "Revision @svn.revision@, built @date@\n\n" +
         "The OME Metadata Editor is LOCI software written by\n" +
         "Christopher Peterson.\n" +
-        "http://www.loci.wisc.edu/software/#editor",
+        URL_OME_METADATA_EDITOR,
         "OME Metadata Editor", JOptionPane.INFORMATION_MESSAGE);
     }
     else if (cmd.startsWith("tabChange")) {

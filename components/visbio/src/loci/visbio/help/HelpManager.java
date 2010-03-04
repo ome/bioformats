@@ -63,6 +63,10 @@ public class HelpManager extends LogicManager {
 
   // -- Constants --
 
+  /** URL of VisBio web page. */
+  public static final String URL_VISBIO =
+    "http://www.loci.wisc.edu/software/visbio";
+
   /** String for displaying new data. */
   public static final String DISPLAY_DATA =
     "Ask about displaying new data objects";
@@ -235,8 +239,7 @@ public class HelpManager extends LogicManager {
   public void helpAbout() {
     String about = VisBio.TITLE + " " + VisBio.VERSION +
       (VisBio.DATE.equals("@da" + "te@") ? "" : (", built " + VisBio.DATE)) +
-      "\nWritten by " + VisBio.AUTHOR + "\n" +
-      "http://www.loci.wisc.edu/visbio/";
+      "\nWritten by " + VisBio.AUTHOR + "\n" + URL_VISBIO;
     JOptionPane.showMessageDialog(bio, about,
       "About VisBio", JOptionPane.INFORMATION_MESSAGE);
   }

@@ -56,6 +56,12 @@ import loci.plugins.util.ImagePlusTools;
  */
 public class LociFunctions extends MacroFunctions {
 
+  // -- Constants --
+
+  /** URL for LOCI Software Javadocs. */
+  public static final String URL_LOCI_SOFTWARE_JAVADOCS =
+    "http://hudson.openmicroscopy.org.uk/job/LOCI/javadoc/";
+
   // -- Fields --
 
   private ImagePlusReader r;
@@ -486,7 +492,7 @@ public class LociFunctions extends MacroFunctions {
       IJ.write("For more information, see the online Javadocs");
       IJ.write("for the loci.formats.IFormatReader and ");
       IJ.write("loci.formats.meta.MetadataRetrieve interfaces:");
-      IJ.write("http://www.loci.wisc.edu/software/docs/");
+      IJ.write(URL_LOCI_SOFTWARE_JAVADOCS);
     }
   }
 

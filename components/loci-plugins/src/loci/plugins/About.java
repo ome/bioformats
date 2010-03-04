@@ -41,6 +41,20 @@ import loci.formats.IFormatHandler;
  */
 public final class About implements PlugIn {
 
+  // -- Constants --
+
+  /** URL of LOCI Software web page. */
+  public static final String URL_LOCI_SOFTWARE =
+    "http://www.loci.wisc.edu/software";
+
+  /** URL of Bio-Formats ImageJ web page. */
+  public static final String URL_BIO_FORMATS_IMAGEJ =
+    "http://www.loci.wisc.edu/bio-formats/imagej";
+
+  /** URL of Data Browser web page. */
+  public static final String URL_DATA_BROWSER =
+    "http://www.loci.wisc.edu/software/data-browser";
+
   // -- PlugIn API methods --
 
   public void run(String arg) {
@@ -54,15 +68,15 @@ public final class About implements PlugIn {
       "LOCI Plugins for ImageJ, revision @svn.revision@, built @date@" +
       "<br>Release: @release.version@" +
       "<br>Copyright 2005-@year@ UW-Madison LOCI" +
-      "<br><i>http://www.loci.wisc.edu/software</i>" +
+      "<br><i>" + URL_LOCI_SOFTWARE + "</i>" +
       "<br>" +
       "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
       "<br>Authors: Melissa Linkert, Curtis Rueden" +
-      "<br><i>http://www.loci.wisc.edu/bio-formats/imagej</i>" +
+      "<br><i>" + URL_BIO_FORMATS_IMAGEJ + "</i>" +
       "<br>" +
       "<br><b>Data Browser</b>" +
       "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
-      "<br><i>http://www.loci.wisc.edu/software/data-browser</i>" +
+      "<br><i>" + URL_DATA_BROWSER + "</i>" +
       "<br>" +
       "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
       "<br>Author: Melissa Linkert";

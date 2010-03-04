@@ -40,6 +40,16 @@ import loci.ome.io.OMEReader;
  */
 public final class About implements PlugIn {
 
+  // -- Constants --
+
+  /** URL of LOCI Software web page. */
+  public static final String URL_LOCI_SOFTWARE =
+    "http://www.loci.wisc.edu/software";
+
+  /** URL of OME Plugins web page. */
+  public static final String URL_OME_PLUGINS =
+    "http://ome-xml.org/wiki/OmePlugins";
+
   // -- Runnable API methods --
 
   public void run(String arg) {
@@ -52,11 +62,11 @@ public final class About implements PlugIn {
     String msg = "<html>" +
       "OME Plugins for ImageJ, revision @svn.revision@, built @date@" +
       "<br>Copyright 2005-@year@ UW-Madison LOCI" +
-      "<br><i>http://www.loci.wisc.edu/software</i>" +
+      "<br><i>" + URL_LOCI_SOFTWARE + "</i>" +
       "<br>" +
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +
-      "<br><i>http://ome-xml.org/wiki/OmePlugins</i>";
+      "<br><i>" + URL_OME_PLUGINS + "</i>";
     ImageIcon omeLogo = new ImageIcon(
       OMEReader.class.getResource("ome-logo.png"));
     JOptionPane.showMessageDialog(null, msg, "OME Plugins for ImageJ",

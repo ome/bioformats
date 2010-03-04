@@ -52,15 +52,6 @@ import loci.formats.meta.MetadataStore;
  */
 public class OMEReader extends FormatReader {
 
-  // -- Constants --
-
-  /** Message to display if OME-Java is not found. */
-  private static final String NO_OME_JAVA =
-    "OME-Java not found. " +
-    "Please download OME-Java from " +
-    "http://www.openmicroscopy.org/" +
-    "site/support/legacy/ome-server/developer/java-api";
-
   // -- Fields --
 
   /** Authentication credentials. */
@@ -107,7 +98,7 @@ public class OMEReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
 
-    if (!hasOMEJava) throw new FormatException(NO_OME_JAVA);
+    if (!hasOMEJava) throw new FormatException(OMEUtils.NO_OME_MSG);
 
     credentials = new OMECredentials(id);
     id = String.valueOf(credentials.imageID);

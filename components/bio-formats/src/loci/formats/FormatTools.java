@@ -211,10 +211,6 @@ public final class FormatTools {
   public static final String URL_OME_TIFF =
     "http://ome-xml.org/wiki/OmeTiff";
 
-  /** URL of direct LOCI JAR downloads. */
-  public static final String URL_JAR_DOWNLOADS =
-    "http://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
-
   // -- Constructor --
 
   private FormatTools() { }

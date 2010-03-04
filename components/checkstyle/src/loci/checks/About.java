@@ -20,13 +20,21 @@ import javax.swing.JOptionPane;
  */
 public final class About {
 
+  /** URL of LOCI Software web page. */
+  public static final String URL_LOCI_SOFTWARE =
+    "http://www.loci.wisc.edu/software";
+
+  /** URL of Checkstyle web page. */
+  public static final String URL_CHECKSTYLE =
+    "http://checkstyle.sourceforge.net/";
+
   private About() { }
 
   public static void main(String[] args) {
     JOptionPane.showMessageDialog(null,
       "LOCI Checkstyle checks, revision @svn.revision@, built @date@\n" +
-      "Download Checkstyle from http://checkstyle.sourceforge.net/\n" +
-      "Download LOCI software from http://www.loci.wisc.edu/software/",
+      "Download Checkstyle from " + URL_CHECKSTYLE + "\n" +
+      "Download LOCI software from " + URL_LOCI_SOFTWARE,
       "LOCI Checkstyle checks", JOptionPane.INFORMATION_MESSAGE);
     System.exit(0);
   }

@@ -67,7 +67,7 @@ public class DataManager extends LogicManager {
 
   /** URL prefix for sample datasets. */
   protected static final String SAMPLE_PREFIX =
-    "http://www.loci.wisc.edu/software/visbio/data/";
+    "http://www.loci.wisc.edu/files/software/data/";
 
   /** Default resolution for low-resolution thumbnails. */
   protected static final int DEFAULT_THUMBNAIL_RESOLUTION = 96;

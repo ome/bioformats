@@ -39,18 +39,24 @@ import loci.common.ReflectedUniverse;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">SVN</a></dd></dl>
  */
-public class OMEUtils {
+public final class OMEUtils {
 
   // -- Constants --
 
-  private static final String NO_OMERO_MSG = "OMERO client libraries not " +
-    "found.  Please obtain omero-common.jar and omero-client.jar from " +
+  /** URL of OMERO JAR downloads. */
+  public static final String URL_OMERO_JARS =
     "http://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
 
-  private static final String NO_OME_MSG = "OME-Java library not found.  " +
-    "Please obtain ome-java.jar from " +
-    "http://www.openmicroscopy.org/" +
+  /** URL of OME-Java web page. */
+  public static final String URL_OME_JAVA = "http://www.openmicroscopy.org/" +
     "site/support/legacy/ome-server/developer/java-api";
+
+  static final String NO_OMERO_MSG = "OMERO client libraries not " +
+    "found.  Please obtain omero-common.jar and omero-client.jar from " +
+    URL_OMERO_JARS;
+
+  static final String NO_OME_MSG = "OME-Java library not found.  " +
+    "Please obtain ome-java.jar from " + URL_OME_JAVA;
 
   // -- Static fields --
 
@@ -100,7 +106,12 @@ public class OMEUtils {
   private static boolean omePixelsInitialized = false;
   private static boolean omeroPixelsInitialized = false;
 
-  // -- Utils API methods --
+  // -- Constructor --
+
+  /** Disallow instantiation of utility class. */
+  private OMEUtils() { }
+
+  // -- OMEUtils API methods --
 
   /** Login to an OME/OMERO server. */
   public static void login(OMECredentials credentials) throws ReflectException

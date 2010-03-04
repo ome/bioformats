@@ -57,6 +57,10 @@ public final class LibraryChecker {
   public static final String IMAGEJ_MSG =
     "Sorry, the LOCI plugins require ImageJ v" + IMAGEJ_VERSION + " or later.";
 
+  /** URL for LOCI Software web page. */
+  public static final String URL_LOCI_SOFTWARE =
+    "http://www.loci.wisc.edu/software";
+
   // -- Constructor --
 
   private LibraryChecker() { }
@@ -174,7 +178,7 @@ public final class LibraryChecker {
     sb.append("\nPlease download ");
     sb.append(them);
     sb.append(" from the LOCI website at");
-    sb.append("\n    http://www.loci.wisc.edu/software/");
+    sb.append("\n    " + URL_LOCI_SOFTWARE);
     sb.append("\nand place ");
     sb.append(them);
     sb.append(" in the ImageJ plugins folder.");

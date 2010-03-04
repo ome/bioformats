@@ -53,15 +53,6 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class OMEWriter extends FormatWriter {
 
-  // -- Constants --
-
-  /** Message to display if OME-Java is not found. */
-  private static final String NO_OME_JAVA =
-    "OME-Java not found. " +
-    "Please download OME-Java from " +
-    "http://www.openmicroscopy.org/" +
-    "site/support/legacy/ome-server/developer/java-api";
-
   // -- Static fields --
 
   private static boolean hasOMEJava = true;
@@ -139,7 +130,7 @@ public class OMEWriter extends FormatWriter {
     boolean last)
     throws FormatException, IOException
   {
-    if (!hasOMEJava) throw new FormatException(NO_OME_JAVA);
+    if (!hasOMEJava) throw new FormatException(OMEUtils.NO_OME_MSG);
     if (currentId != null && credentials == null) {
       // parse the ID string to get the server, user name and password
 
