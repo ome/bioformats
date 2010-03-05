@@ -584,7 +584,7 @@ public class TiffParser {
     long[] rowsPerStrip = ifd.getRowsPerStrip();
 
     int tileNumber = (int) (row * numTileCols + col);
-    if (stripByteCounts[tileNumber] == (rowsPerStrip[tileNumber] * tileWidth) &&
+    if (stripByteCounts[tileNumber] == (rowsPerStrip[0] * tileWidth) &&
       pixel > 1)
     {
       stripByteCounts[tileNumber] *= pixel;
