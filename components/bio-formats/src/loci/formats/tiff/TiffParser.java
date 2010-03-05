@@ -581,8 +581,15 @@ public class TiffParser {
 
     long[] stripOffsets = ifd.getStripOffsets();
     long[] stripByteCounts = ifd.getStripByteCounts();
+    long[] rowsPerStrip = ifd.getRowsPerStrip();
 
     int tileNumber = (int) (row * numTileCols + col);
+    if (stripByteCounts[tileNumber] == (rowsPerStrip[tileNumber] * tileWidth) &&
+      pixel > 1)
+    {
+      stripByteCounts[tileNumber] *= pixel;
+    }
+
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
@@ -701,6 +708,11 @@ public class TiffParser {
       long[] stripByteCounts = ifd.getStripByteCounts();
 
       int tile = (int) ((y / tileLength) * numTileCols + (x / tileWidth));
+
+      if (stripByteCounts[tile] == numSamples && pixel > 1) {
+        stripByteCounts[tile] *= pixel;
+      }
+
       in.seek(stripOffsets[tile]);
       in.read(buf, 0, (int) Math.min(buf.length, stripByteCounts[tile]));
       return buf;
