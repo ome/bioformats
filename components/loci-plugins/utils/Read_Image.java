@@ -43,23 +43,10 @@ public class Read_Image implements PlugIn {
       IJ.showStatus("Constructing image");
       ImagePlus imp = new ImagePlus(name, stack);
 
-      // apply color lookup tables, if present
-      // this requires ImageJ v1.39 or higher
-      if (r.isIndexed()) {
-        CompositeImage composite =
-          new CompositeImage(imp, CompositeImage.COLOR);
-        for (int c=0; c<r.getSizeC(); c++) {
-          composite.setPosition(c + 1, 1, 1);
-          LUT lut =
-            new LUT(lookupTable[c][0], lookupTable[c][1], lookupTable[c][2]);
-          composite.setChannelLut(lut);
-        }
-        composite.setPosition(1, 1, 1);
-        imp = composite;
-      }
+      ImagePlus colorizedImage = applyLookupTables(r, imp, lookupTable);
       r.close();
 
-      imp.show();
+      colorizedImage.show();
       IJ.showStatus("");
     }
     catch (FormatException exc) {
@@ -68,5 +55,25 @@ public class Read_Image implements PlugIn {
     catch (IOException exc) {
       IJ.error("Sorry, an error occurred: " + exc.getMessage());
     }
+  }
+
+  private ImagePlus applyLookupTables(IFormatReader r, ImagePlus imp,
+    byte[][][] lookupTable)
+  {
+    // apply color lookup tables, if present
+    // this requires ImageJ v1.39 or higher
+    if (r.isIndexed()) {
+      CompositeImage composite =
+        new CompositeImage(imp, CompositeImage.COLOR);
+      for (int c=0; c<r.getSizeC(); c++) {
+        composite.setPosition(c + 1, 1, 1);
+        LUT lut =
+          new LUT(lookupTable[c][0], lookupTable[c][1], lookupTable[c][2]);
+        composite.setChannelLut(lut);
+      }
+      composite.setPosition(1, 1, 1);
+      return composite;
+    }
+    return imp;
   }
 }
