@@ -12,15 +12,14 @@
 # the LOCI classes in your CLASSPATH, you can set the
 # LOCI_DEVEL environment variable to use them instead.
 
-PROG=loci.plugins.Importer
+PROG=loci.plugins.importer.Importer
 DIR=`dirname "$0"`
 
 if [ $LOCI_DEVEL ]
 then
   java -mx512m $PROG "$@"
-elif \
-  ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]) && \
-  [ -e "ij.jar" ]
+elif [ -e "$DIR/ij.jar" ] && \
+  ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ])
 then
   java -mx512m -cp \
     "$DIR/bio-formats.jar":"$DIR/loci_tools.jar":"$DIR/ij.jar" \
