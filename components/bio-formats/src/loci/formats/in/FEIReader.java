@@ -34,7 +34,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
- * FEIReader is the file format reader for FEI .img files.
+ * FEIReader is the file format reader for FEI and Philips .img files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/FEIReader.java">Trac</a>,
@@ -45,16 +45,17 @@ public class FEIReader extends FormatReader {
   // -- Constants --
 
   public static final String FEI_MAGIC_STRING = "XL";
+  private static final int INVALID_PIXELS = 112;
 
   // -- Fields --
 
-  private int originalWidth;
+  private int headerSize;
 
   // -- Constructor --
 
   /** Constructs a new FEI reader. */
   public FEIReader() {
-    super("FEI", "img");
+    super("FEI/Philips", "img");
     suffixSufficient = false;
     domains = new String[] {FormatTools.SEM_DOMAIN};
   }
@@ -76,16 +77,16 @@ public class FEIReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(1536);
+    in.seek(headerSize);
+
     byte[] segment = new byte[getSizeX() / 2];
-    int skip = (originalWidth / 2) - (getSizeX() / 2);
     // interlace frames - there are four rows of two columns
     int halfRow = getSizeX() / 2;
     for (int q=0; q<4; q++) {
       for (int row=q; row<h; row+=4) {
         for (int s=0; s<2; s++) {
           in.read(segment);
-          in.skipBytes(skip);
+          in.skipBytes(INVALID_PIXELS / 2);
           for (int col=s; col<w; col+=2) {
             buf[row*w + col] = segment[col / 2];
           }
@@ -99,7 +100,9 @@ public class FEIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (!fileOnly) originalWidth = 0;
+    if (!fileOnly) {
+      headerSize = 0;
+    }
   }
 
   // -- Internal FormatReader API methods --
@@ -109,26 +112,23 @@ public class FEIReader extends FormatReader {
     debug("FEIReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    in.order(true);
 
     status("Reading file header");
 
-    in.seek(0x51a);
-    in.order(true);
-    core[0].sizeX = in.readShort();
+    in.skipBytes(44);
+
+    float magnification = in.readFloat();
+    float kV = in.readFloat() / 1000;
+    float wd = in.readFloat();
+    in.skipBytes(12);
+    float spot = in.readFloat();
+
+    in.seek(514);
+    core[0].sizeX = in.readShort() - INVALID_PIXELS;
     core[0].sizeY = in.readShort();
-
-    originalWidth = getSizeX();
-
-    // FEI files can only be 1424x968 or 712x484
-
-    if (1424 < getSizeX()) {
-      core[0].sizeX = 1424;
-      core[0].sizeY = 968;
-    }
-    else {
-      core[0].sizeX = 712;
-      core[0].sizeY = 484;
-    }
+    in.skipBytes(4);
+    headerSize = in.readShort();
 
     // always one grayscale plane per file
 
