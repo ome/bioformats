@@ -104,6 +104,7 @@ public class ZeissZVIReader extends FormatReader {
   private int[] channelColors;
   private int lastPlane;
   private Hashtable<Integer, Integer> tiles = new Hashtable<Integer, Integer>();
+  private boolean isMeanderScan;
 
   // -- Constructor --
 
@@ -265,21 +266,30 @@ public class ZeissZVIReader extends FormatReader {
                 tileHeight - tileY : y + h - rowIndex - tileY;
 
               int ii = row*tileColumns + col;
-              if (((row % 2) == 1 && getRGBChannelCount() == 1)) {
-                ii = row*tileColumns + (tileColumns - col - 1);
-                tileIndex -= col;
-                tileIndex += (tileColumns - col - 1);
-              }
-              else if (getRGBChannelCount() > 1) {
-                ii = (tileRows - row - 1) * tileColumns + 1;
-                if ((row % 2) == 0) {
-                  ii += col;
+
+              if (isMeanderScan) {
+                if (((row % 2) == 1 && getRGBChannelCount() == 1)) {
+                  ii = row*tileColumns + (tileColumns - col - 1);
+                  tileIndex -= col;
+                  tileIndex += (tileColumns - col - 1);
                 }
-                else {
-                  ii += (tileColumns - col - 1);
+                else if (getRGBChannelCount() > 1) {
+                  ii = (tileRows - row - 1) * tileColumns + 1;
+                  if ((row % 2) == 0) {
+                    ii += col;
+                  }
+                  else {
+                    ii += (tileColumns - col - 1);
+                  }
+                  tileIndex = 0;
                 }
-                tileIndex = 0;
               }
+              else {
+                if (getRGBChannelCount() > 1) {
+                  ii = (tileRows - row - 1) * tileColumns + col + 1;
+                }
+              }
+
               Integer tileCount = tiles.get(new Integer(ii));
               boolean valid =
                 tileCount != null && tileCount.intValue() == getImageCount();
@@ -402,6 +412,7 @@ public class ZeissZVIReader extends FormatReader {
       channelColors = null;
       lastPlane = 0;
       tiles.clear();
+      isMeanderScan = false;
     }
   }
 
@@ -430,13 +441,14 @@ public class ZeissZVIReader extends FormatReader {
     });
     core[0].imageCount = 0;
 
-    for (int i=0; i<files.length; i++) {
-      String uname = files[i].toUpperCase();
+    for (String file : files) {
+      String uname = file.toUpperCase();
       uname = uname.substring(uname.indexOf(File.separator) + 1);
       if (uname.endsWith("CONTENTS") && (uname.startsWith("IMAGE") ||
-        uname.indexOf("ITEM") != -1) && poi.getFileSize(files[i]) > 1024)
+        uname.indexOf("ITEM") != -1) && poi.getFileSize(file) > 1024)
       {
-        if (getImageNumber(files[i], 0) >= getImageCount()) {
+        int imageNumber = getImageNumber(file, 0);
+        if (imageNumber >= getImageCount()) {
           core[0].imageCount++;
         }
       }
@@ -455,9 +467,7 @@ public class ZeissZVIReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    for (int i=0; i<files.length; i++) {
-      String name = files[i];
-
+    for (String name : files) {
       String relPath = name.substring(name.lastIndexOf(File.separator) + 1);
       if (!relPath.toUpperCase().equals("CONTENTS")) continue;
       String dirName = name.substring(0, name.lastIndexOf(File.separator));
@@ -551,6 +561,14 @@ public class ZeissZVIReader extends FormatReader {
         coordinates[imageNum][1] = cidx;
         coordinates[imageNum][2] = tidx;
         imageFiles[imageNum] = name;
+        s.close();
+      }
+      else if (dirName.equals("RectangleSetup")) {
+        RandomAccessInputStream s = poi.getDocumentStream(name);
+        s.order(true);
+        s.seek(88);
+        short magic = s.readShort();
+        isMeanderScan = magic < 5;
         s.close();
       }
     }
