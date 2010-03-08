@@ -259,22 +259,9 @@ public final class XMLTools {
   public static void parseXML(RandomAccessInputStream stream,
     DefaultHandler handler) throws IOException
   {
-    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
-    stream.readFully(b);
-    parseXML(b, handler);
-    b = null;
-  }
-
-  /**
-   * Parses the XML string from the given byte array into
-   * a list of key/value pairs using the specified XML handler.
-   */
-  public static void parseXML(byte[] xml, DefaultHandler handler)
-    throws IOException
-  {
     try {
       SAXParser parser = SAX_FACTORY.newSAXParser();
-      parser.parse(new ByteArrayInputStream(xml), handler);
+      parser.parse(stream, handler);
     }
     catch (ParserConfigurationException exc) {
       IOException e = new IOException();
@@ -285,8 +272,17 @@ public final class XMLTools {
       IOException e = new IOException();
       e.initCause(exc);
       throw e;
-
     }
+  }
+
+  /**
+   * Parses the XML string from the given byte array into
+   * a list of key/value pairs using the specified XML handler.
+   */
+  public static void parseXML(byte[] xml, DefaultHandler handler)
+    throws IOException
+  {
+    parseXML(new RandomAccessInputStream(xml), handler);
   }
 
   // -- XSLT --
