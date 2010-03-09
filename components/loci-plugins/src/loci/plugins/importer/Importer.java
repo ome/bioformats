@@ -42,10 +42,10 @@ import java.awt.Rectangle;
 import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.ReflectException;
@@ -92,7 +92,7 @@ public class Importer {
    */
   private LociImporter plugin;
 
-  private Vector imps = new Vector();
+  private ArrayList<ImagePlus> imps = new ArrayList<ImagePlus>();
   private String stackOrder = null;
 
   private IndexColorModel[] colorModels;
@@ -461,13 +461,13 @@ public class Importer {
       }
 
       if (options.isConcatenate()) {
-        Vector widths = new Vector();
-        Vector heights = new Vector();
-        Vector types = new Vector();
-        Vector newImps = new Vector();
+        ArrayList<Integer> widths = new ArrayList<Integer>();
+        ArrayList<Integer> heights = new ArrayList<Integer>();
+        ArrayList<Integer> types = new ArrayList<Integer>();
+        ArrayList<ImagePlus> newImps = new ArrayList<ImagePlus>();
 
         for (int j=0; j<imps.size(); j++) {
-          ImagePlus imp = (ImagePlus) imps.get(j);
+          ImagePlus imp = imps.get(j);
           int wj = imp.getWidth();
           int hj = imp.getHeight();
           int tj = imp.getBitDepth();
@@ -478,7 +478,7 @@ public class Importer {
             int tk = ((Integer) types.get(k)).intValue();
 
             if (wj == wk && hj == hk && tj == tk) {
-              ImagePlus oldImp = (ImagePlus) newImps.get(k);
+              ImagePlus oldImp = newImps.get(k);
               ImageStack is = oldImp.getStack();
               ImageStack newStack = imp.getStack();
               for (int s=0; s<newStack.getSize(); s++) {
@@ -486,7 +486,7 @@ public class Importer {
                   newStack.getProcessor(s + 1));
               }
               oldImp.setStack(oldImp.getTitle(), is);
-              newImps.setElementAt(oldImp, k);
+              newImps.set(k, oldImp);
               append = true;
               k = widths.size();
             }
@@ -534,8 +534,8 @@ public class Importer {
       if (options.showROIs()) {
         BF.debug("display ROIs");
 
-        ROIHandler.openROIs(options.getMetadata(),
-          (ImagePlus[]) imps.toArray(new ImagePlus[0]));
+        ImagePlus[] impsArray = imps.toArray(new ImagePlus[0]);
+        ROIHandler.openROIs(options.getMetadata(), impsArray);
       }
       else BF.debug("skip ROIs");
 
@@ -827,18 +827,14 @@ public class Importer {
 
   /** Returns a string with each key/value pair on its own line. */
   private String getMetadataString(Hashtable meta, String separator) {
-    Enumeration e = meta.keys();
-    Vector v = new Vector();
-    while (e.hasMoreElements()) v.add(e.nextElement());
-    String[] keys = new String[v.size()];
-    v.copyInto(keys);
-    Arrays.sort(keys);
+    ArrayList<String> keys = new ArrayList<String>(meta.keySet());
+    Collections.sort(keys);
 
     StringBuffer sb = new StringBuffer();
-    for (int i=0; i<keys.length; i++) {
-      sb.append(keys[i]);
+    for (String key : keys) {
+      sb.append(key);
       sb.append(separator);
-      sb.append(meta.get(keys[i]));
+      sb.append(meta.get(key));
       sb.append("\n");
     }
     return sb.toString();

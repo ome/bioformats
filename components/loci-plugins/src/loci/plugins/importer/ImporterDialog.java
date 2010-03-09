@@ -38,7 +38,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JEditorPane;
@@ -95,7 +95,7 @@ public class ImporterDialog extends OptionsDialog
   protected Checkbox swapDimsBox;
   protected Checkbox virtualBox;
 
-  protected Hashtable infoTable;
+  protected HashMap<Component, String> infoTable;
   protected JEditorPane infoPane;
 
   // -- Constructor --
@@ -194,7 +194,7 @@ public class ImporterDialog extends OptionsDialog
     verifyOptions(null);
 
     // associate information for each option
-    infoTable = new Hashtable();
+    infoTable = new HashMap<Component, String>();
     infoTable.put(autoscaleBox, options.getAutoscaleInfo());
     infoTable.put(colorizeBox, options.getColorizeInfo());
     infoTable.put(concatenateBox, options.getConcatenateInfo());

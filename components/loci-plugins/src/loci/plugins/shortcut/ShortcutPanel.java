@@ -35,7 +35,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -90,9 +90,9 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   static {
     // load list of LOCI plugins
     int index = -1;
-    Vector vNames = new Vector();
-    Vector vPlugins = new Vector();
-    Vector vArgs = new Vector();
+    ArrayList<String> vNames = new ArrayList<String>();
+    ArrayList<String> vPlugins = new ArrayList<String>();
+    ArrayList<String> vArgs = new ArrayList<String>();
 
     // read from configuration file
     try {
@@ -138,12 +138,9 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     }
 
     openerIndex = index;
-    names = new String[vNames.size()];
-    vNames.copyInto(names);
-    plugins = new String[vPlugins.size()];
-    vPlugins.copyInto(plugins);
-    args = new String[vArgs.size()];
-    vArgs.copyInto(args);
+    names = vNames.toArray(new String[0]);
+    plugins = vPlugins.toArray(new String[0]);
+    args = vArgs.toArray(new String[0]);
   }
 
   // -- Constructor --

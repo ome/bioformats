@@ -75,7 +75,7 @@ public final class LibraryChecker {
   }
 
   /** Checks for a required library. */
-  public static void checkLibrary(Library library, HashSet missing) {
+  public static void checkLibrary(Library library, HashSet<String> missing) {
     switch (library) {
       case BIO_FORMATS:
         checkLibrary("loci.common.RandomAccessInputStream",
@@ -111,7 +111,7 @@ public final class LibraryChecker {
    * (presumably to report it missing to the user).
    */
   public static void checkLibrary(String className,
-    String jarFile, HashSet missing)
+    String jarFile, HashSet<String> missing)
   {
     if (!checkClass(className)) missing.add(jarFile);
   }
@@ -165,7 +165,7 @@ public final class LibraryChecker {
    * Reports missing libraries in the given hash set to the user.
    * @return true iff no libraries are missing (the hash set is empty).
    */
-  public static boolean checkMissing(HashSet missing) {
+  public static boolean checkMissing(HashSet<String> missing) {
     int num = missing.size();
     if (num == 0) return true;
     StringBuffer sb = new StringBuffer();

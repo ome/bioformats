@@ -66,7 +66,7 @@ public class LociExporter implements PlugInFilter {
   /** Executes the plugin. */
   public void run(ImageProcessor ip) {
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
-    HashSet missing = new HashSet();
+    HashSet<String> missing = new HashSet<String>();
     LibraryChecker.checkLibrary(LibraryChecker.Library.BIO_FORMATS, missing);
     LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_XML, missing);
     if (!LibraryChecker.checkMissing(missing)) return;

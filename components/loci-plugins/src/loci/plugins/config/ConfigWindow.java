@@ -297,7 +297,7 @@ public class ConfigWindow extends JFrame
     log.println("-- Formats --");
     FormatEntry[] formats = null;
     try {
-      Class irClass = Class.forName("loci.formats.ImageReader");
+      Class<?> irClass = Class.forName("loci.formats.ImageReader");
       Object ir = irClass.newInstance();
       Method getClasses = irClass.getMethod("getReaders");
       Object[] readers = (Object[]) getClasses.invoke(ir);
@@ -329,7 +329,7 @@ public class ConfigWindow extends JFrame
 
     String qtVersion = null;
     try {
-      Class qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
+      Class<?> qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
       Object qtTools = qtToolsClass.newInstance();
       Method getQTVersion = qtToolsClass.getMethod("getQTVersion");
       qtVersion = (String) getQTVersion.invoke(qtTools);
@@ -341,7 +341,7 @@ public class ConfigWindow extends JFrame
 
     String clibIIOVersion = null;
     try {
-      Class jpegSpi = Class.forName(
+      Class<?> jpegSpi = Class.forName(
         "com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageReaderSpi");
       IIORegistry registry = IIORegistry.getDefaultInstance();
       Object jpeg = registry.getServiceProviderByClass(jpegSpi);
@@ -359,7 +359,7 @@ public class ConfigWindow extends JFrame
 
     String matlabVersion = null;
     try {
-      Class matlabClass = Class.forName("com.mathworks.jmi.Matlab");
+      Class<?> matlabClass = Class.forName("com.mathworks.jmi.Matlab");
       Object matlab = matlabClass.newInstance();
       Method eval = matlabClass.getMethod("eval", new Class[] {String.class});
 
@@ -611,10 +611,10 @@ public class ConfigWindow extends JFrame
     NoSuchFieldException, IllegalAccessException, NoSuchMethodException,
     InvocationTargetException
   {
-    Class utilClass = Class.forName("loci.plugins.util.LociPrefs");
+    Class<?> utilClass = Class.forName("loci.plugins.util.LociPrefs");
     Field field = utilClass.getField(fieldName);
     String key = field.get(null) + "." + entry.readerName;
-    Class prefsClass = Class.forName("ij.Prefs");
+    Class<?> prefsClass = Class.forName("ij.Prefs");
     Method method = prefsClass.getMethod(methodName, PARAMS);
     Object[] args = {key, value ? Boolean.TRUE : Boolean.FALSE};
     return method.invoke(null, args);

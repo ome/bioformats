@@ -53,7 +53,7 @@ public class FormatEntry implements Comparable {
 
   public FormatEntry(PrintWriter log, Object reader) {
     this.reader = reader;
-    Class readerClass = reader.getClass();
+    Class<?> readerClass = reader.getClass();
     String n = readerClass.getName();
     readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
     try {
@@ -93,20 +93,21 @@ public class FormatEntry implements Comparable {
 
   // -- Comparable API methods --
 
+  public int compareTo(Object o) {
+    return toString().compareTo(o.toString());
+  }
+
+  // -- Object API methods --
+
   public int hashCode() {
     return toString().hashCode();
   }
 
   public boolean equals(Object o) {
     if (o == null) return false;
-    return compareTo(o) == 0;
+    if (!(o instanceof FormatEntry)) return false;
+    return compareTo((FormatEntry) o) == 0;
   }
-
-  public int compareTo(Object o) {
-    return toString().compareTo(o.toString());
-  }
-
-  // -- Object API methods --
 
   public String toString() {
     return "<html>" + formatName;

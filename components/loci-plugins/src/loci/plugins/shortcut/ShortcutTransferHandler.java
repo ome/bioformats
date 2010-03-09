@@ -30,9 +30,9 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -86,14 +86,13 @@ public class ShortcutTransferHandler extends TransferHandler {
       }
       else if (fileIndex >= 0) {
         File f = (File) t.getTransferData(flavors[fileIndex]);
-        list = new Vector();
-        list.add(f);
+        list = Arrays.asList(f);
       }
       else if (stringIndex >= 0) {
         String s = (String) t.getTransferData(flavors[stringIndex]);
-        list = new Vector();
-        StringTokenizer st = new StringTokenizer(s);
-        while (st.hasMoreTokens()) list.add(st.nextToken());
+        list = Arrays.asList(s.split("[ \t\n\r\f]"));
+        //StringTokenizer st = new StringTokenizer(s);
+        //while (st.hasMoreTokens()) list.add(st.nextToken());
       }
       if (list == null) {
         // no compatible data flavors found
