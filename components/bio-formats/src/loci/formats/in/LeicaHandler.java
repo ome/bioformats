@@ -232,6 +232,7 @@ public class LeicaHandler extends DefaultHandler {
       nameStack.push(qName);
     }
 
+    int oldSeriesCount = numDatasets;
     Hashtable h = getSeriesHashtable(numDatasets);
     if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = false;
@@ -807,7 +808,7 @@ public class LeicaHandler extends DefaultHandler {
       multiBands.add(m);
     }
     else count = 0;
-    storeSeriesHashtable(numDatasets, h);
+    if (numDatasets == oldSeriesCount) storeSeriesHashtable(numDatasets, h);
   }
 
   // -- Helper methods --

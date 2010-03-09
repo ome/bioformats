@@ -337,7 +337,10 @@ public class LIFReader extends FormatReader {
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
-    XMLTools.parseXML(xml, handler);
+    try {
+      XMLTools.parseXML(xml, handler);
+    }
+    catch (IOException e) { }
 
     metadata = handler.getGlobalMetadata();
     Vector<String> lutNames = handler.getLutNames();
@@ -388,7 +391,10 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
     }
-    XMLTools.parseXML(xml, new LeicaHandler(store));
+    try {
+      XMLTools.parseXML(xml, new LeicaHandler(store));
+    }
+    catch (IOException e) { }
   }
 
 }
