@@ -855,11 +855,7 @@ public abstract class FormatReader extends FormatHandler
         }
       }
       setSeries(series);
-      Hashtable seriesMetadata = getSeriesMetadata();
-      Object[] keys = seriesMetadata.keySet().toArray();
-      for (Object key : keys) {
-        h.put(name + " " + key, seriesMetadata.get(key));
-      }
+      MetadataTools.merge(getSeriesMetadata(), h, name + " ");
     }
     setSeries(oldSeries);
     return h;

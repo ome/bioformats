@@ -26,6 +26,7 @@ package loci.formats;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
@@ -47,7 +48,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 /**
  * A utility class for working with metadata objects,
@@ -626,6 +626,16 @@ public final class MetadataTools {
     meta.keySet().toArray(keys);
     Arrays.sort(keys);
     return keys;
+  }
+
+  /**
+   * Merges the given lists of metadata, prepending the
+   * specified prefix for the destination keys.
+   */
+  public static void merge(Map src, Map dest, String prefix) {
+    for (Object key : src.keySet()) {
+      dest.put(prefix + key, src.get(key));
+    }
   }
 
   // -- Helper methods --
