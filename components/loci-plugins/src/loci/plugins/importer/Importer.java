@@ -166,44 +166,10 @@ public class Importer {
         IJ.showStatus("Populating metadata");
 
         // display standard metadata in a table in its own window
-        Hashtable meta = r.getMetadata();
-        //if (r.getSeriesCount() == 1) meta = r.getMetadata();
-        meta.put(options.getLocation(), options.getCurrentFile());
-        int digits = digits(r.getSeriesCount());
-        for (int i=0; i<r.getSeriesCount(); i++) {
-          if (!options.isSeriesOn(i)) continue;
-          r.setSeries(i);
-          //meta.putAll(r.getCoreMetadata().seriesMetadata[i]);
-
-          String s = options.getMetadata().getImageName(i);
-          if ((s == null || s.trim().length() == 0) && r.getSeriesCount() > 1) {
-            StringBuffer sb = new StringBuffer();
-            sb.append("Series ");
-            int zeroes = digits - digits(i + 1);
-            for (int j=0; j<zeroes; j++) sb.append(0);
-            sb.append(i + 1);
-            sb.append(" ");
-            s = sb.toString();
-          }
-          else s += " ";
-
-          final String pad = " "; // puts core values first when alphabetizing
-          meta.put(pad + s + "SizeX", new Integer(r.getSizeX()));
-          meta.put(pad + s + "SizeY", new Integer(r.getSizeY()));
-          meta.put(pad + s + "SizeZ", new Integer(r.getSizeZ()));
-          meta.put(pad + s + "SizeT", new Integer(r.getSizeT()));
-          meta.put(pad + s + "SizeC", new Integer(r.getSizeC()));
-          meta.put(pad + s + "IsRGB", new Boolean(r.isRGB()));
-          meta.put(pad + s + "PixelType",
-            FormatTools.getPixelTypeString(r.getPixelType()));
-          meta.put(pad + s + "LittleEndian", new Boolean(r.isLittleEndian()));
-          meta.put(pad + s + "DimensionOrder", r.getDimensionOrder());
-          meta.put(pad + s + "IsInterleaved", new Boolean(r.isInterleaved()));
-        }
+        ImporterMetadata meta = options.getOriginalMetadata();
 
         // sort metadata keys
-        String metaString = getMetadataString(meta, "\t");
-
+        String metaString = meta.getMetadataString("\t");
         SearchableWindow w = new SearchableWindow("Original Metadata - " +
           options.getIdName(), "Key\tValue", metaString, 400, 400);
         w.setVisible(true);
@@ -291,7 +257,7 @@ public class Importer {
         fi.directory = idDir;
 
         // place metadata key/value pairs in ImageJ's info field
-        String metadata = getMetadataString(r.getMetadata(), " = ");
+        String metadata = options.getOriginalMetadata().toString();
 
         long startTime = System.currentTimeMillis();
         long time = startTime;
@@ -729,16 +695,6 @@ public class Importer {
     }
   }
 
-  /** Computes the given value's number of digits. */
-  private int digits(int value) {
-    int digits = 0;
-    while (value > 0) {
-      value /= 10;
-      digits++;
-    }
-    return digits;
-  }
-
   /** Get an appropriate stack title, given the file name. */
   private String getTitle(IFormatReader r, String file, String series,
     boolean groupFiles)
@@ -823,21 +779,6 @@ public class Importer {
   private boolean statusOk(int status) {
     if (status == OptionsDialog.STATUS_CANCELED) plugin.canceled = true;
     return status == OptionsDialog.STATUS_OK;
-  }
-
-  /** Returns a string with each key/value pair on its own line. */
-  private String getMetadataString(Hashtable meta, String separator) {
-    ArrayList<String> keys = new ArrayList<String>(meta.keySet());
-    Collections.sort(keys);
-
-    StringBuffer sb = new StringBuffer();
-    for (String key : keys) {
-      sb.append(key);
-      sb.append(separator);
-      sb.append(meta.get(key));
-      sb.append("\n");
-    }
-    return sb.toString();
   }
 
   // -- Main method --

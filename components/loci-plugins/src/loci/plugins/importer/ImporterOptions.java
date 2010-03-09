@@ -132,11 +132,13 @@ public class ImporterOptions extends OptionsList {
 
   // -- Fields - derived values --
 
-  protected ImagePlusReader r;
   protected String idName;
   protected Location idLoc;
   protected IMetadata meta;
   protected String currentFile;
+
+  protected ImagePlusReader r;
+  protected ImporterMetadata importerMetadata;
 
   // series options
   protected boolean[] series;
@@ -253,6 +255,7 @@ public class ImporterOptions extends OptionsList {
     if (!promptRange()) return false;
     if (!promptCrop()) return false;
 
+    initializeMetadata();
     computeRangeCounts();
 
     return true;
@@ -441,9 +444,10 @@ public class ImporterOptions extends OptionsList {
 
   public String getIdName() { return idName; }
   public Location getIdLocation() { return idLoc; }
-  public ImagePlusReader getReader() { return r; }
   public IMetadata getMetadata() { return meta; }
   public String getCurrentFile() { return currentFile; }
+  public ImagePlusReader getReader() { return r; }
+  public ImporterMetadata getOriginalMetadata() { return importerMetadata; }
 
   // series options
   public int getCBegin(int s) { return cBegin[s]; }
@@ -599,6 +603,11 @@ public class ImporterOptions extends OptionsList {
     virtualReader = new VirtualReader(baseReader);
     r = new ImagePlusReader(virtualReader);
     r.setId(getId());
+  }
+
+  /** Initializes the ImporterMetadata derived value. */
+  private void initializeMetadata() {
+    importerMetadata = new ImporterMetadata(r, this);
   }
 
   /** Prompts for which series to import, if necessary. */
