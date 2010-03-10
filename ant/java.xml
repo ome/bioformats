@@ -8,8 +8,8 @@ Type "ant -p" for a list of targets.
 -->
 
 <project>
-  <property file="${root.dir}/components/java.properties"/>
-  <import file="${root.dir}/components/common.xml"/>
+  <property file="${root.dir}/ant/java.properties"/>
+  <import file="${root.dir}/ant/common.xml"/>
 
   <!-- Main build targets -->
 
@@ -19,7 +19,9 @@ Type "ant -p" for a list of targets.
       target="${component.java-version}"
       srcdir="${dest.dir}" destdir="${classes.dir}"
       classpath="${component.classpath}"
-      includes="${component.source}"/>
+      includes="${component.source}">
+      <!--<compilerarg value="-Xlint:unchecked"/>-->
+    </javac>
   </target>
 
   <target name="exec" depends="compile" description="execute package">
@@ -94,7 +96,9 @@ your FindBugs installation's lib directory. E.g.:
     </delete>
     <javac debug="true" deprecation="true" source="1.5" target="1.5"
       srcdir="${utils.dir}" includes="*.java"
-      classpath="${artifact.dir}/${component.jar}"/>
+      classpath="${artifact.dir}/${component.jar}">
+      <!--<compilerarg value="-Xlint:unchecked"/>-->
+    </javac>
   </target>
 
   <target name="docs" depends="compile"

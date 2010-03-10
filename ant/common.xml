@@ -8,8 +8,8 @@ Type "ant -p" for a list of targets.
 -->
 
 <project>
-  <import file="${root.dir}/global.xml"/>
-  <property file="${root.dir}/components/common.properties"/>
+  <import file="${root.dir}/ant/global.xml"/>
+  <property file="${root.dir}/ant/common.properties"/>
 
   <!-- Main build targets -->
 
@@ -39,23 +39,18 @@ Type "ant -p" for a list of targets.
 
         <propertyregex property="svn.revision"
           input="${svn.entries}" regexp="([^\n]*\n){3}([^\n]*)" select="\2"/>
-        <echo>SVN revision: ${svn.revision}</echo>
 
         <propertyregex property="svn.url"
           input="${svn.entries}" regexp="([^\n]*\n){4}([^\n]*)" select="\2"/>
-        <echo>SVN url: ${svn.url}</echo>
 
         <propertyregex property="svn.root"
           input="${svn.entries}" regexp="([^\n]*\n){5}([^\n]*)" select="\2"/>
-        <echo>SVN root: ${svn.root}</echo>
 
         <propertyregex property="svn.date"
           input="${svn.entries}" regexp="([^\n]*\n){9}([^\n]*)" select="\2"/>
-        <echo>SVN last changed date: ${svn.date}</echo>
 
         <propertyregex property="svn.changed"
           input="${svn.entries}" regexp="([^\n]*\n){10}([^\n]*)" select="\2"/>
-        <echo>SVN last changed revision: ${svn.changed}</echo>
 
         <propertyregex property="release.version" defaultValue="trunk"
           input="${svn.url}" regexp=".*/branches/([^/]*).*"
@@ -64,7 +59,6 @@ Type "ant -p" for a list of targets.
           defaultValue="${release.version}"
           input="${svn.url}" regexp=".*/tags/loci-tools-([^/]*).*"
           replace="stable \1"/>
-        <echo>Release version: ${release.version}</echo>
       </else>
     </if>
   </target>

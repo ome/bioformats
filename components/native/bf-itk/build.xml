@@ -11,7 +11,7 @@ Type "ant -p" for a list of targets.
     Build file for Bio-Formats ITK plugin
   </description>
   <property name="root.dir" location="../../.."/>
-  <import file="${root.dir}/components/common.xml"/>
+  <import file="${root.dir}/ant/common.xml"/>
   <property file="build.properties"/>
 
   <target name="check-jace">

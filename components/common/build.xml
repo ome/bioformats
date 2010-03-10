@@ -9,6 +9,6 @@ Type "ant -p"  for a list of targets.
 <project name="common" default="jar" basedir=".">
   <description>Common classes used by various LOCI projects</description>
   <property name="root.dir" location="../.."/>
-  <import file="${root.dir}/components/java.xml"/>
+  <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 </project>
