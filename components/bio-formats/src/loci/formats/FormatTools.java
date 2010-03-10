@@ -677,7 +677,7 @@ public final class FormatTools {
   /**
    * Checks that the given buffer size is large enough to hold a w * h
    * image as returned by the given reader.
-   * @throw FormatException if the buffer is too small
+   * @throws FormatException if the buffer is too small
    */
   public static void checkBufferSize(IFormatReader r, int len, int w, int h)
     throws FormatException

@@ -60,7 +60,7 @@ public class EnumerationProvider implements IEnumerationProvider {
   // -- IEnumerationProvider API methods --
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class<T>,
+   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class,
    *   String)
    */
   public <T extends Enumeration> T getEnumeration(Class<T> entity, String value)
@@ -70,7 +70,7 @@ public class EnumerationProvider implements IEnumerationProvider {
   }
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class<T>,
+   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class,
    *   String, String)
    */
   public <T extends Enumeration> T getEnumeration(Class<T> entity, String value,
@@ -80,7 +80,7 @@ public class EnumerationProvider implements IEnumerationProvider {
     return (T) handler.getEnumeration(value);
   }
 
-  /* @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class<T>) */
+  /* @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class) */
   public <T extends Enumeration> List<T> getEnumerations(Class<T> entity)
     throws EnumerationException
   {
@@ -88,7 +88,7 @@ public class EnumerationProvider implements IEnumerationProvider {
   }
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class<T>,
+   * @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class,
    *   String)
    */
   public <T extends Enumeration> List<T> getEnumerations(Class<T> entity,

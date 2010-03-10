@@ -39,7 +39,6 @@ public interface IEnumerationHandler {
 
   /**
    * Attempt to find an enumeration from a list of enumeration values.
-   * @param enumerations List of enumerations for this type.
    * @param value Value for which to find an enumeration.
    */
   Enumeration getEnumeration(String value) throws EnumerationException;

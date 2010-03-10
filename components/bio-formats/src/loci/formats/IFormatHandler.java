@@ -45,7 +45,7 @@ public interface IFormatHandler extends StatusReporter {
 
   /**
    * Returns the native data type of image planes for this reader, as returned
-   * by {@link IFormatReader#openPlane} or {@link IFormatWriter#saveData}.
+   * by {@link IFormatReader#openPlane} or {@link IFormatWriter#savePlane}.
    * For most readers this type will be a byte array; however, some readers
    * call external APIs that work with other types such as
    * {@link java.awt.image.BufferedImage}.

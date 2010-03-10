@@ -538,7 +538,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @return the image's bits per sample. The length of the array is equal to
    *   the number of samples per pixel.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getSamplesPerPixel(IFD)
+   * @see #getSamplesPerPixel()
    */
   public int[] getBitsPerSample() throws FormatException {
     int[] bitsPerSample = getIFDIntArray(BITS_PER_SAMPLE, false);

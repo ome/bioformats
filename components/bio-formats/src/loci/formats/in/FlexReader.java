@@ -1522,8 +1522,8 @@ public class FlexReader extends FormatReader {
    *
    * and call mapServer(String, String) accordingly.
    *
-   * @throw FormatException if configFile does not exist.
-   * @see mapServer(String, String)
+   * @throws FormatException if configFile does not exist.
+   * @see #mapServer(String, String)
    */
   public static void mapServersFromConfigurationFile(String configFile)
     throws FormatException, IOException

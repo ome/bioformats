@@ -94,7 +94,7 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Gets the number of valid bits per pixel.  The number of valid bits per
    * pixel is always less than or equal to the number of bits per pixel
-   * that correspond to {@link getPixelType()}.
+   * that correspond to {@link #getPixelType()}.
    */
   int getBitsPerPixel();
 
@@ -236,8 +236,8 @@ public interface IFormatReader extends IFormatHandler {
    * @param buf a pre-allocated buffer.
    * @param x X coordinate of the upper-left corner of the sub-image
    * @param y Y coordinate of the upper-left corner of the sub-image
-   * @param width of the sub-image
-   * @param height of the sub-image
+   * @param w width of the sub-image
+   * @param h height of the sub-image
    * @return the pre-allocated buffer <code>buf</code> for convenience.
    * @throws FormatException if there was a problem parsing the metadata of the
    *   file.
