@@ -133,6 +133,7 @@ loci.formats.in.PhotoshopTiffReader   # tif
 loci.formats.in.TiffDelegateReader    # tif, tiff
 
 # non-TIFF readers with slow isThisType
+loci.formats.in.BurleighReader        # img
 loci.formats.in.OpenlabReader         # liff
 loci.formats.in.DicomReader           # dcm, dicom
 loci.formats.in.SMCameraReader        # (no extension)
