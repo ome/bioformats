@@ -32,6 +32,7 @@ import java.util.Hashtable;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.plugins.util.SearchableWindow;
 
 /**
  * Helper class for storing original metadata key/value pairs.
@@ -59,7 +60,7 @@ public class ImporterMetadata extends HashMap<String, Object> {
       r.setSeries(i);
 
       // build prefix from image name and/or series number
-      String s = options.getMetadata().getImageName(i);
+      String s = options.getOMEMetadata().getImageName(i);
       if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
         StringBuffer sb = new StringBuffer();
         sb.append("Series ");
@@ -105,6 +106,15 @@ public class ImporterMetadata extends HashMap<String, Object> {
       sb.append("\n");
     }
     return sb.toString();
+  }
+
+  /** Displays the metadata in a searchable window. */
+  public void showMetadataWindow(String name) {
+    // sort metadata keys
+    String metaString = getMetadataString("\t");
+    SearchableWindow w = new SearchableWindow("Original Metadata - " + name,
+      "Key\tValue", metaString, 400, 400);
+    w.setVisible(true);
   }
 
   // -- Object API methods --

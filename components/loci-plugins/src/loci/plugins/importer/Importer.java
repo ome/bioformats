@@ -57,7 +57,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.XMLWindow;
-import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.IMetadata;
 import loci.plugins.Colorizer;
 import loci.plugins.LociImporter;
 import loci.plugins.prefs.OptionsDialog;
@@ -67,7 +67,6 @@ import loci.plugins.util.DataBrowser;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.ROIHandler;
-import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.VirtualImagePlus;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
@@ -153,13 +152,11 @@ public class Importer {
       }
       ImagePlusReader r = options.getReader();
 
-      // -- Step 3: prompt for more information as needed --
-
       BF.debug("analyze and read from data source");
 
       IJ.showStatus("Analyzing " + options.getIdName());
 
-      // -- Step 4: display metadata, if appropriate --
+      // -- Step 3: display metadata, if appropriate --
 
       if (options.isShowMetadata()) {
         BF.debug("display metadata");
@@ -167,12 +164,7 @@ public class Importer {
 
         // display standard metadata in a table in its own window
         ImporterMetadata meta = options.getOriginalMetadata();
-
-        // sort metadata keys
-        String metaString = meta.getMetadataString("\t");
-        SearchableWindow w = new SearchableWindow("Original Metadata - " +
-          options.getIdName(), "Key\tValue", metaString, 400, 400);
-        w.setVisible(true);
+        meta.showMetadataWindow(options.getIdName());
       }
       else BF.debug("skip metadata");
 
@@ -187,7 +179,8 @@ public class Importer {
           XMLWindow metaWindow =
             new XMLWindow("OME Metadata - " + options.getIdName());
           try {
-            metaWindow.setXML(MetadataTools.getOMEXML(options.getMetadata()));
+            String omeXML = MetadataTools.getOMEXML(options.getOMEMetadata());
+            metaWindow.setXML(omeXML);
             WindowTools.placeWindow(metaWindow);
             metaWindow.setVisible(true);
           }
@@ -213,26 +206,26 @@ public class Importer {
 
       if (options.isVirtual()) {
         int totalSeries = 0;
-        for (int i=0; i<r.getSeriesCount(); i++) {
-          if (options.isSeriesOn(i)) totalSeries++;
+        for (int s=0; s<r.getSeriesCount(); s++) {
+          if (options.isSeriesOn(s)) totalSeries++;
         }
         ((VirtualReader) r.getReader()).setRefCount(totalSeries);
       }
 
-      for (int i=0; i<r.getSeriesCount(); i++) {
-        if (!options.isSeriesOn(i)) continue;
-        r.setSeries(i);
+      for (int s=0; s<r.getSeriesCount(); s++) {
+        if (!options.isSeriesOn(s)) continue;
+        r.setSeries(s);
 
         boolean[] load = new boolean[r.getImageCount()];
-        int cBegin = options.getCBegin(i);
-        int cEnd = options.getCEnd(i);
-        int cStep = options.getCStep(i);
-        int zBegin = options.getZBegin(i);
-        int zEnd = options.getZEnd(i);
-        int zStep = options.getZStep(i);
-        int tBegin = options.getTBegin(i);
-        int tEnd = options.getTEnd(i);
-        int tStep = options.getTStep(i);
+        int cBegin = options.getCBegin(s);
+        int cEnd = options.getCEnd(s);
+        int cStep = options.getCStep(s);
+        int zBegin = options.getZBegin(s);
+        int zEnd = options.getZEnd(s);
+        int zStep = options.getZStep(s);
+        int tBegin = options.getTBegin(s);
+        int tEnd = options.getTEnd(s);
+        int tStep = options.getTStep(s);
         for (int c=cBegin; c<=cEnd; c+=cStep) {
           for (int z=zBegin; z<=zEnd; z+=zStep) {
             for (int t=tBegin; t<=tEnd; t+=tStep) {
@@ -256,9 +249,6 @@ public class Importer {
         fi.fileName = options.getIdName();
         fi.directory = idDir;
 
-        // place metadata key/value pairs in ImageJ's info field
-        String metadata = options.getOriginalMetadata().toString();
-
         long startTime = System.currentTimeMillis();
         long time = startTime;
 
@@ -267,7 +257,7 @@ public class Importer {
         ImageStack stackF = null; // for floating point images (32-bit)
         ImageStack stackO = null; // for all other images (24-bit RGB)
 
-        Rectangle cropRegion = options.getCropRegion(i);
+        Rectangle cropRegion = options.getCropRegion(s);
         int w = options.doCrop() ? cropRegion.width : r.getSizeX();
         int h = options.doCrop() ? cropRegion.height : r.getSizeY();
         int c = r.getRGBChannelCount();
@@ -280,10 +270,10 @@ public class Importer {
         }
         ((VirtualReader) r.getReader()).setOutputOrder(stackOrder);
 
-        options.getMetadata().setPixelsDimensionOrder(stackOrder, i, 0);
+        options.getOMEMetadata().setPixelsDimensionOrder(stackOrder, s, 0);
 
         // dump OME-XML to ImageJ's description field, if available
-        fi.description = MetadataTools.getOMEXML(options.getMetadata());
+        fi.description = MetadataTools.getOMEXML(options.getOMEMetadata());
 
         if (options.isVirtual()) {
           int cSize = r.getSizeC();
@@ -293,7 +283,7 @@ public class Importer {
           boolean needComposite = doMerge && (cSize > 3 || eight);
           int merge = (needComposite || !doMerge) ? 1 : cSize;
 
-          r.setSeries(i);
+          r.setSeries(s);
           // NB: ImageJ 1.39+ is required for VirtualStack
           BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
             r, options.isColorize(), doMerge, options.isRecord());
@@ -304,17 +294,17 @@ public class Importer {
               if (pos[1] > 0) continue;
               String label = constructSliceLabel(
                 new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]),
-                new ChannelMerger(r), options.getMetadata(), i,
-                options.getZCount(i), options.getCCount(i),
-                options.getTCount(i));
+                new ChannelMerger(r), options.getOMEMetadata(), s,
+                options.getZCount(s), options.getCCount(s),
+                options.getTCount(s));
               virtualStackB.addSlice(label);
             }
           }
           else {
             for (int j=0; j<r.getImageCount(); j++) {
               String label = constructSliceLabel(j, r,
-                options.getMetadata(), i, options.getZCount(i),
-                options.getCCount(i), options.getTCount(i));
+                options.getOMEMetadata(), s, options.getZCount(s),
+                options.getCCount(s), options.getTCount(s));
               virtualStackB.addSlice(label);
             }
           }
@@ -322,27 +312,25 @@ public class Importer {
         else {
           if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
 
-          for (int j=0; j<r.getImageCount(); j++) {
-            if (!load[j]) continue;
+          for (int i=0; i<r.getImageCount(); i++) {
+            if (!load[i]) continue;
 
             // limit message update rate
             long clock = System.currentTimeMillis();
             if (clock - time >= 100) {
               IJ.showStatus("Reading " +
-                (r.getSeriesCount() > 1 ? ("series " + (i + 1) + ", ") : "") +
-                "plane " + (j + 1) + "/" + total);
+                (r.getSeriesCount() > 1 ? ("series " + (s + 1) + ", ") : "") +
+                "plane " + (i + 1) + "/" + total);
               time = clock;
             }
             IJ.showProgress((double) q++ / total);
 
-            int ndx = j;
+            String label = constructSliceLabel(i, r,
+              options.getOMEMetadata(), s, options.getZCount(s),
+              options.getCCount(s), options.getTCount(s));
 
-            String label = constructSliceLabel(ndx, r,
-              options.getMetadata(), i, options.getZCount(i),
-              options.getCCount(i), options.getTCount(i));
-
-            // get image processor for jth plane
-            ImageProcessor[] p = r.openProcessors(ndx, cropRegion);
+            // get image processor for ith plane
+            ImageProcessor[] p = r.openProcessors(i, cropRegion);
             ImageProcessor ip = p[0];
             if (p.length > 1) {
               ip = ImagePlusTools.makeRGB(p).getProcessor();
@@ -352,7 +340,7 @@ public class Importer {
               return;
             }
 
-            int channel = r.getZCTCoords(ndx)[1];
+            int channel = r.getZCTCoords(i)[1];
             if (colorModels != null && p.length == 1) {
               colorModels[channel] = (IndexColorModel) ip.getColorModel();
             }
@@ -391,28 +379,10 @@ public class Importer {
         IJ.showStatus("Creating image");
         IJ.showProgress(1);
 
-        String seriesName = options.getMetadata().getImageName(i);
-
-        showStack(stackB, options.getCurrentFile(), seriesName,
-          options.getMetadata(), options.getCCount(i),
-          options.getZCount(i), options.getTCount(i),
-          r.getSizeZ(), r.getEffectiveSizeC(), r.getSizeT(),
-          fi, r, options, metadata, options.isWindowless());
-        showStack(stackS, options.getCurrentFile(), seriesName,
-          options.getMetadata(), options.getCCount(i),
-          options.getZCount(i), options.getTCount(i),
-          r.getSizeZ(), r.getEffectiveSizeC(), r.getSizeT(),
-          fi, r, options, metadata, options.isWindowless());
-        showStack(stackF, options.getCurrentFile(), seriesName,
-          options.getMetadata(), options.getCCount(i),
-          options.getZCount(i), options.getTCount(i),
-          r.getSizeZ(), r.getEffectiveSizeC(), r.getSizeT(),
-          fi, r, options, metadata, options.isWindowless());
-        showStack(stackO, options.getCurrentFile(), seriesName,
-          options.getMetadata(), options.getCCount(i),
-          options.getZCount(i), options.getTCount(i),
-          r.getSizeZ(), r.getEffectiveSizeC(), r.getSizeT(),
-          fi, r, options, metadata, options.isWindowless());
+        showStack(stackB, s, fi, options);
+        showStack(stackS, s, fi, options);
+        showStack(stackF, s, fi, options);
+        showStack(stackO, s, fi, options);
 
         long endTime = System.currentTimeMillis();
         double elapsed = (endTime - startTime) / 1000.0;
@@ -501,7 +471,7 @@ public class Importer {
         BF.debug("display ROIs");
 
         ImagePlus[] impsArray = imps.toArray(new ImagePlus[0]);
-        ROIHandler.openROIs(options.getMetadata(), impsArray);
+        ROIHandler.openROIs(options.getOMEMetadata(), impsArray);
       }
       else BF.debug("skip ROIs");
 
@@ -535,14 +505,24 @@ public class Importer {
    * Displays the given image stack according to
    * the specified parameters and import options.
    */
-  private void showStack(ImageStack stack, String file, String series,
-    MetadataRetrieve retrieve, int cCount, int zCount, int tCount,
-    int sizeZ, int sizeC, int sizeT, FileInfo fi, final IFormatReader r,
-    final ImporterOptions options, String metadata, boolean windowless)
-    throws FormatException, IOException
+  private void showStack(ImageStack stack, int series, FileInfo fi,
+    ImporterOptions options) throws FormatException, IOException
   {
     if (stack == null) return;
-    String title = getTitle(r, file, series, options.isGroupFiles());
+
+    String seriesName = options.getOMEMetadata().getImageName(series);
+    String file = options.getCurrentFile();
+    IMetadata meta = options.getOMEMetadata();
+    int cCount = options.getCCount(series);
+    int zCount = options.getZCount(series);
+    int tCount = options.getTCount(series);
+    IFormatReader r = options.getReader();
+    int sizeZ = r.getSizeZ();
+    int sizeC = r.getEffectiveSizeC();
+    int sizeT = r.getSizeT();
+    boolean windowless = options.isWindowless();
+
+    String title = getTitle(r, file, seriesName, options.isGroupFiles());
     ImagePlus imp = null;
     if (options.isVirtual()) {
       imp = new VirtualImagePlus(title, stack);
@@ -550,19 +530,17 @@ public class Importer {
     }
     else imp = new ImagePlus(title, stack);
 
+    // place metadata key/value pairs in ImageJ's info field
+    String metadata = options.getOriginalMetadata().toString();
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
-    ImagePlusTools.applyCalibration(retrieve, imp, r.getSeries());
+    ImagePlusTools.applyCalibration(meta, imp, r.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
-    displayStack(imp, r, options, windowless);
-  }
 
-  /** Displays the image stack using the appropriate plugin. */
-  private void displayStack(ImagePlus imp, IFormatReader r,
-    ImporterOptions options, boolean windowless)
-  {
+    // display the image stack using the appropriate plugin
+
     boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
     imp.setOpenAsHyperStack(hyper);
     int nSlices = imp.getNSlices();
@@ -696,7 +674,7 @@ public class Importer {
   }
 
   /** Get an appropriate stack title, given the file name. */
-  private String getTitle(IFormatReader r, String file, String series,
+  private String getTitle(IFormatReader r, String file, String seriesName,
     boolean groupFiles)
   {
     String[] used = r.getUsedFiles();
@@ -714,8 +692,10 @@ public class Importer {
         title = title.substring(title.lastIndexOf(File.separator) + 1);
       }
     }
-    if (series != null && !file.endsWith(series) && r.getSeriesCount() > 1) {
-      title += " - " + series;
+    if (seriesName != null && !file.endsWith(seriesName) &&
+      r.getSeriesCount() > 1)
+    {
+      title += " - " + seriesName;
     }
     if (title.length() > 128) {
       String a = title.substring(0, 62);
@@ -727,8 +707,7 @@ public class Importer {
 
   /** Constructs slice label. */
   private String constructSliceLabel(int ndx, IFormatReader r,
-    MetadataRetrieve retrieve, int series,
-    int zCount, int cCount, int tCount)
+    IMetadata meta, int series, int zCount, int cCount, int tCount)
   {
     r.setSeries(series);
     int[] zct = r.getZCTCoords(ndx);
@@ -767,7 +746,7 @@ public class Importer {
       sb.append(r.getSizeT());
     }
     // put image name at the end, in case it is long
-    String imageName = retrieve.getImageName(series);
+    String imageName = meta.getImageName(series);
     if (imageName != null && !imageName.trim().equals("")) {
       sb.append(" - ");
       sb.append(imageName);

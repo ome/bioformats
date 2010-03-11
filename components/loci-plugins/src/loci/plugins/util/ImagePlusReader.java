@@ -50,7 +50,7 @@ import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
 
 /**
- * Utility methods for working with ImagePlus objects.
+ * Bio-Formats reader for reading ImagePlus objects.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusReader.java">Trac</a>,
@@ -198,10 +198,9 @@ public class ImagePlusReader extends MinMaxCalculator {
     }
 
     // convert byte array to appropriate primitive array type
-    boolean isFloat = type == FormatTools.FLOAT || type == FormatTools.DOUBLE;
+    boolean isFloat = FormatTools.isFloatingPoint(type);
     boolean isLittle = isLittleEndian();
-    boolean isSigned = type == FormatTools.INT8 || type == FormatTools.INT16 ||
-      type == FormatTools.INT32;
+    boolean isSigned = FormatTools.isSigned(type);
 
     IndexColorModel cm = null;
     if (isIndexed()) {

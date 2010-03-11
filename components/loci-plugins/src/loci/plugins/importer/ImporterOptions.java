@@ -33,27 +33,15 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import loci.common.Location;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
-import loci.formats.ChannelSeparator;
 import loci.formats.FilePattern;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
-import loci.formats.IFormatReader;
-import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.prefs.OptionsList;
 import loci.plugins.prefs.StringOption;
 import loci.plugins.util.BF;
-import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.LibraryChecker;
-import loci.plugins.util.LociPrefs;
-import loci.plugins.util.VirtualReader;
-import loci.plugins.util.WindowTools;
 
 /**
  * Helper class for managing Bio-Formats Importer options.
@@ -132,13 +120,8 @@ public class ImporterOptions extends OptionsList {
 
   // -- Fields - derived values --
 
-  protected String idName;
-  protected Location idLoc;
-  protected IMetadata meta;
-  protected String currentFile;
-
-  protected ImagePlusReader r;
-  protected ImporterMetadata importerMetadata;
+  protected ImporterReader reader;
+  protected ImporterMetadata metadata;
 
   // series options
   protected boolean[] series;
@@ -153,8 +136,6 @@ public class ImporterOptions extends OptionsList {
 
   // -- Fields - internal --
 
-  private IFormatReader baseReader;
-  private VirtualReader virtualReader;
   private String[] seriesLabels;
 
   // -- Constructor --
@@ -221,15 +202,12 @@ public class ImporterOptions extends OptionsList {
    * @see ij.gui.GenericDialog
    */
   public boolean showDialogs() throws FormatException, IOException {
-    baseReader = null;
-    idName = null;
-    idLoc = null;
+    reader = null;
 
     if (!promptLocation()) return false;
     if (!promptId()) return false;
 
-    computeNameAndLocation();
-    createBaseReader();
+    reader = new ImporterReader(this);
 
     if (!promptOptions()) return false;
 
@@ -239,16 +217,11 @@ public class ImporterOptions extends OptionsList {
 
     IJ.showStatus("Analyzing " + getIdName());
 
-    baseReader.setMetadataFiltered(true);
-    baseReader.setOriginalMetadataPopulated(true);
-    baseReader.setGroupFiles(!isUngroupFiles());
-    baseReader.setId(getId());
-
-    currentFile = baseReader.getCurrentFile();
+    reader.prepareStuff();
 
     if (!promptFilePattern()) return false;
 
-    initializeReader();
+    reader.initializeReader();
 
     if (!promptSeries()) return false;
     if (!promptSwap()) return false;
@@ -435,19 +408,19 @@ public class ImporterOptions extends OptionsList {
   // windowless
   public String getWindowlessInfo() { return getInfo(KEY_WINDOWLESS); }
   public boolean isWindowless() {
-    if (baseReader != null && LociPrefs.isWindowless(baseReader)) return true;
+    if (reader != null && reader.isWindowless()) return true;
     return isSet(KEY_WINDOWLESS);
   }
   public void setWindowless(boolean b) { setValue(KEY_WINDOWLESS, b); }
 
   // -- ImporterOptions methods - derived values accessors --
 
-  public String getIdName() { return idName; }
-  public Location getIdLocation() { return idLoc; }
-  public IMetadata getMetadata() { return meta; }
-  public String getCurrentFile() { return currentFile; }
-  public ImagePlusReader getReader() { return r; }
-  public ImporterMetadata getOriginalMetadata() { return importerMetadata; }
+  public String getIdName() { return reader.idName; }
+  public Location getIdLocation() { return reader.idLoc; }
+  public String getCurrentFile() { return reader.currentFile; }
+  public ImagePlusReader getReader() { return reader.r; }
+  public IMetadata getOMEMetadata() { return reader.meta; }
+  public ImporterMetadata getOriginalMetadata() { return metadata; }
 
   // series options
   public int getCBegin(int s) { return cBegin[s]; }
@@ -468,92 +441,6 @@ public class ImporterOptions extends OptionsList {
   public Rectangle getCropRegion(int s) { return cropRegion[s]; }
 
   // -- Helper methods --
-
-  /** Initializes the idName and idLoc derived values. */
-  private void computeNameAndLocation() {
-    String id = getId();
-
-    idLoc = null;
-    idName = id;
-    if (isLocal()) {
-      idLoc = new Location(id);
-      idName = idLoc.getName();
-    }
-    else if (isOME() || isOMERO()) {
-      // NB: strip out username and password when opening from OME/OMERO
-      StringTokenizer st = new StringTokenizer(id, "?&");
-      StringBuffer idBuf = new StringBuffer();
-      int tokenCount = 0;
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        if (token.startsWith("username=") || token.startsWith("password=")) {
-          continue;
-        }
-        if (tokenCount == 1) idBuf.append("?");
-        else if (tokenCount > 1) idBuf.append("&");
-        idBuf.append(token);
-        tokenCount++;
-      }
-      idName = idBuf.toString();
-    }
-  }
-
-  /**
-   * Initializes an {@link loci.formats.IFormatReader}
-   * according to the current configuration.
-   */
-  private void createBaseReader() {
-    if (isLocal() || isHTTP()) {
-      if (!isQuiet()) IJ.showStatus("Identifying " + idName);
-      ImageReader reader = ImagePlusReader.makeImageReader();
-      try { baseReader = reader.getReader(getId()); }
-      catch (FormatException exc) {
-        WindowTools.reportException(exc, isQuiet(),
-          "Sorry, there was an error reading the file.");
-        return;
-      }
-      catch (IOException exc) {
-        WindowTools.reportException(exc, isQuiet(),
-          "Sorry, there was a I/O problem reading the file.");
-        return;
-      }
-    }
-    else if (isOMERO()) {
-      // NB: avoid dependencies on optional loci.ome.io package
-      try {
-        ReflectedUniverse ru = new ReflectedUniverse();
-        ru.exec("import loci.ome.io.OMEROReader");
-        baseReader = (IFormatReader) ru.exec("new OMEROReader()");
-      }
-      catch (ReflectException exc) {
-        WindowTools.reportException(exc, isQuiet(),
-          "Sorry, there was a problem constructing the OMERO I/O engine");
-        return;
-      }
-    }
-    else if (isOME()) {
-      // NB: avoid dependencies on optional loci.ome.io package
-      try {
-        ReflectedUniverse ru = new ReflectedUniverse();
-        ru.exec("import loci.ome.io.OMEReader");
-        baseReader = (IFormatReader) ru.exec("new OMEReader()");
-      }
-      catch (ReflectException exc) {
-        WindowTools.reportException(exc, isQuiet(),
-          "Sorry, there was a problem constructing the OME I/O engine");
-        return;
-      }
-    }
-    else {
-      WindowTools.reportException(null, isQuiet(),
-        "Sorry, there has been an internal error: unknown data source");
-    }
-    meta = MetadataTools.createOMEXMLMetadata();
-    baseReader.setMetadataStore(meta);
-
-    if (!isQuiet()) IJ.showStatus("");
-    baseReader.addStatusListener(new IJStatusEchoer());
-  }
 
   private boolean promptLocation() {
     LocationDialog dialog = new LocationDialog(this);
@@ -584,77 +471,63 @@ public class ImporterOptions extends OptionsList {
     if (dialog.showDialog() != OptionsDialog.STATUS_OK) return false;
 
     String id = getId();
-    if (id == null) id = currentFile;
+    if (id == null) id = reader.currentFile;
     FilePattern fp = new FilePattern(id);
-    if (!fp.isValid()) id = currentFile;
+    if (!fp.isValid()) id = reader.currentFile;
     setId(id); // CTR CHECK -- probably the wrong way to do this
     return true;
   }
 
-  /** Initializes the ImagePlusReader derived value. */
-  private void initializeReader() throws FormatException, IOException {
-    if (isGroupFiles()) baseReader = new FileStitcher(baseReader, true);
-    baseReader.setId(getId());
-    if (isVirtual() || !isMergeChannels() ||
-      FormatTools.getBytesPerPixel(baseReader.getPixelType()) != 1)
-    {
-      baseReader = new ChannelSeparator(baseReader);
-    }
-    virtualReader = new VirtualReader(baseReader);
-    r = new ImagePlusReader(virtualReader);
-    r.setId(getId());
-  }
-
   /** Initializes the ImporterMetadata derived value. */
   private void initializeMetadata() {
-    importerMetadata = new ImporterMetadata(r, this);
+    metadata = new ImporterMetadata(reader.r, this);
   }
 
   /** Prompts for which series to import, if necessary. */
   private boolean promptSeries() throws FormatException, IOException {
     // initialize series-related derived values
-    series = new boolean[r.getSeriesCount()];
+    series = new boolean[reader.r.getSeriesCount()];
     series[0] = true;
 
     // build descriptive label for each series
-    int seriesCount = r.getSeriesCount();
+    int seriesCount = reader.r.getSeriesCount();
     seriesLabels = new String[seriesCount];
     for (int i=0; i<seriesCount; i++) {
-      r.setSeries(i);
+      reader.r.setSeries(i);
       StringBuffer sb = new StringBuffer();
       sb.append("Series_");
       sb.append((i + 1));
       sb.append(": ");
-      String name = getMetadata().getImageName(i);
+      String name = getOMEMetadata().getImageName(i);
       if (name != null && name.length() > 0) {
         sb.append(name);
         sb.append(": ");
       }
-      sb.append(r.getSizeX());
+      sb.append(reader.r.getSizeX());
       sb.append(" x ");
-      sb.append(r.getSizeY());
+      sb.append(reader.r.getSizeY());
       sb.append("; ");
-      sb.append(r.getImageCount());
+      sb.append(reader.r.getImageCount());
       sb.append(" plane");
-      if (r.getImageCount() > 1) {
+      if (reader.r.getImageCount() > 1) {
         sb.append("s");
-        if (r.isOrderCertain()) {
+        if (reader.r.isOrderCertain()) {
           sb.append(" (");
           boolean first = true;
-          if (r.getEffectiveSizeC() > 1) {
-            sb.append(r.getEffectiveSizeC());
+          if (reader.r.getEffectiveSizeC() > 1) {
+            sb.append(reader.r.getEffectiveSizeC());
             sb.append("C");
             first = false;
           }
-          if (r.getSizeZ() > 1) {
+          if (reader.r.getSizeZ() > 1) {
             if (!first) sb.append(" x ");
-            sb.append(r.getSizeZ());
+            sb.append(reader.r.getSizeZ());
             sb.append("Z");
             first = false;
           }
-          if (r.getSizeT() > 1) {
+          if (reader.r.getSizeT() > 1) {
             if (!first) sb.append(" x ");
-            sb.append(r.getSizeT());
+            sb.append(reader.r.getSizeT());
             sb.append("T");
             first = false;
           }
@@ -667,7 +540,8 @@ public class ImporterOptions extends OptionsList {
 
     if (seriesCount > 1 && !openAllSeries() && !isViewNone()) {
       BF.debug("prompt for which series to import");
-      SeriesDialog dialog = new SeriesDialog(this, r, seriesLabels, series);
+      SeriesDialog dialog = new SeriesDialog(this,
+        reader.r, seriesLabels, series);
       if (dialog.showDialog() != OptionsDialog.STATUS_OK) return false;
     }
     else BF.debug("no need to prompt for series");
@@ -686,14 +560,14 @@ public class ImporterOptions extends OptionsList {
     }
     BF.debug("prompt for dimension swapping parameters");
 
-    SwapDialog dialog = new SwapDialog(this, virtualReader, series);
+    SwapDialog dialog = new SwapDialog(this, reader.virtualReader, series);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for the range of planes to import, if necessary. */
   private boolean promptRange() {
     // initialize range-related derived values
-    int seriesCount = r.getSeriesCount();
+    int seriesCount = reader.r.getSeriesCount();
     cBegin = new int[seriesCount];
     cEnd = new int[seriesCount];
     cStep = new int[seriesCount];
@@ -705,11 +579,11 @@ public class ImporterOptions extends OptionsList {
     tStep = new int[seriesCount];
 
     for (int i=0; i<seriesCount; i++) {
-      r.setSeries(i);
+      reader.r.setSeries(i);
       cBegin[i] = zBegin[i] = tBegin[i] = 0;
-      cEnd[i] = r.getEffectiveSizeC() - 1;
-      zEnd[i] = r.getSizeZ() - 1;
-      tEnd[i] = r.getSizeT() - 1;
+      cEnd[i] = reader.r.getEffectiveSizeC() - 1;
+      zEnd[i] = reader.r.getSizeZ() - 1;
+      tEnd[i] = reader.r.getSizeT() - 1;
       cStep[i] = zStep[i] = tStep[i] = 1;
     }
 
@@ -720,7 +594,7 @@ public class ImporterOptions extends OptionsList {
     }
     boolean needRange = false;
     for (int i=0; i<seriesCount; i++) {
-      if (series[i] && r.getImageCount() > 1) needRange = true;
+      if (series[i] && reader.r.getImageCount() > 1) needRange = true;
     }
     if (!needRange) {
       BF.debug("no need to prompt for planar ranges");
@@ -730,7 +604,7 @@ public class ImporterOptions extends OptionsList {
     IJ.showStatus("");
 
     RangeDialog dialog = new RangeDialog(this,
-      r, series, seriesLabels, cBegin, cEnd, cStep,
+      reader.r, series, seriesLabels, cBegin, cEnd, cStep,
       zBegin, zEnd, zStep, tBegin, tEnd, tStep);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
@@ -738,7 +612,7 @@ public class ImporterOptions extends OptionsList {
   /** Prompts for cropping details, if necessary. */
   private boolean promptCrop() {
     // initialize crop-related derived values
-    cropRegion = new Rectangle[r.getSeriesCount()];
+    cropRegion = new Rectangle[reader.r.getSeriesCount()];
     for (int i=0; i<cropRegion.length; i++) {
       if (series[i] && doCrop()) cropRegion[i] = new Rectangle();
     }
@@ -750,13 +624,13 @@ public class ImporterOptions extends OptionsList {
     BF.debug("prompt for cropping region");
 
     CropDialog dialog = new CropDialog(this,
-      r, seriesLabels, series, cropRegion);
+      reader.r, seriesLabels, series, cropRegion);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Initializes the cCount, zCount and tCount derived values. */
   private void computeRangeCounts() {
-    int seriesCount = r.getSeriesCount();
+    int seriesCount = reader.r.getSeriesCount();
     cCount = new int[seriesCount];
     zCount = new int[seriesCount];
     tCount = new int[seriesCount];
