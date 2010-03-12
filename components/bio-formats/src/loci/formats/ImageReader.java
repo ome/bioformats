@@ -131,7 +131,7 @@ public class ImageReader implements IFormatReader {
   {
     // NB: Check that we can generate a valid handle for the ID;
     // e.g., for files, this will throw an exception if the file is missing.
-    Location.getHandle(id);
+    Location.getHandle(id).close();
 
     if (!id.equals(currentId)) {
       // initialize file
