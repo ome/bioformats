@@ -318,9 +318,10 @@ public class Importer {
             // limit message update rate
             long clock = System.currentTimeMillis();
             if (clock - time >= 100) {
-              IJ.showStatus("Reading " +
-                (r.getSeriesCount() > 1 ? ("series " + (s + 1) + ", ") : "") +
-                "plane " + (i + 1) + "/" + total);
+              String sLabel = r.getSeriesCount() > 1 ?
+                ("series " + (s + 1) + ", ") : "";
+              String pLabel = "plane " + (i + 1) + "/" + total;
+              IJ.showStatus("Reading " + sLabel + pLabel);
               time = clock;
             }
             IJ.showProgress((double) q++ / total);

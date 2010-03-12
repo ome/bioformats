@@ -153,8 +153,8 @@ public class ImagePlusReader extends MinMaxCalculator {
 
   /**
    * Returns an array of ImageProcessors that represent the given slice.
-   * There is one ImageProcessor per RGB channel, i.e.
-   * length of returned array == getRGBChannelCount().
+   * There is one ImageProcessor per RGB channel;
+   * i.e., length of returned array == getRGBChannelCount().
    *
    * @param no Position of image plane.
    * @param crop Image cropping specifications, or null if no cropping
