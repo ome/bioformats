@@ -505,6 +505,18 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="Index" use="required" type="xsd:nonNegativeInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						This records the order of the well samples. Each 
+						index should be unique for a given plate but they do not
+						have to be sequential, there may be gaps if part of the 
+						dataset is missing. In the user interface the displayed 
+						value of the index will be calculated modulo the number 
+						of PlateAcquisitions for the plate.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
