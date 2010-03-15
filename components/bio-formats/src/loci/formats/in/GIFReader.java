@@ -185,10 +185,9 @@ public class GIFReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("GIFReader.initFile(" + id + ")");
     super.initFile(id);
 
-    status("Verifying GIF format");
+    LOGGER.info("Verifying GIF format");
 
     in = new RandomAccessInputStream(id);
     in.order(true);
@@ -201,7 +200,7 @@ public class GIFReader extends FormatReader {
       throw new FormatException("Not a valid GIF file.");
     }
 
-    status("Reading dimensions");
+    LOGGER.info("Reading dimensions");
 
     core[0].sizeX = in.readShort();
     core[0].sizeY = in.readShort();
@@ -229,7 +228,7 @@ public class GIFReader extends FormatReader {
       }
     }
 
-    status("Reading data blocks");
+    LOGGER.info("Reading data blocks");
 
     boolean done = false;
     while (!done) {
@@ -341,7 +340,7 @@ public class GIFReader extends FormatReader {
       }
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].sizeZ = 1;
     core[0].sizeC = 1;

@@ -65,10 +65,15 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
+
 import visad.DataReferenceImpl;
 import visad.Display;
 import visad.DisplayImpl;
@@ -433,7 +438,24 @@ public class FlowCytometry {
 
   public static void saveDataWithXML() throws FormatException, IOException {
     ImageWriter iw = new ImageWriter();
-    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
+
+    OMEXMLService service = null;
+    OMEXMLMetadata omexmlMeta = null;
+
+    Exception exc = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+      omexmlMeta = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException e) { exc = e; }
+    catch (ServiceException e) { exc = e; }
+
+    if (exc != null) {
+      IJ.log("Could not create OMEXMLMetadataStore: " + exc.getMessage());
+      exc = null;
+    }
+
     omexmlMeta.createRoot();
 
     omexmlMeta.setPixelsSizeX(new Integer(resolutionWidth), 0, 0);
@@ -447,13 +469,12 @@ public class FlowCytometry {
     omexmlMeta.setExperimenterFirstName(s_Name, 0);
 
     iw.setMetadataRetrieve(omexmlMeta);
-    MetadataTools.populateOriginalMetadata(omexmlMeta,
-      "Experiment", s_Experiment);
-    MetadataTools.populateOriginalMetadata(omexmlMeta, "Parameters", s_Params);
-    MetadataTools.populateOriginalMetadata(omexmlMeta, "Date", s_Date);
-    MetadataTools.populateOriginalMetadata(omexmlMeta,
+    service.populateOriginalMetadata(omexmlMeta, "Experiment", s_Experiment);
+    service.populateOriginalMetadata(omexmlMeta, "Parameters", s_Params);
+    service.populateOriginalMetadata(omexmlMeta, "Date", s_Date);
+    service.populateOriginalMetadata(omexmlMeta,
       "AreaValues", flattenVector(areaValues));
-    MetadataTools.populateOriginalMetadata(omexmlMeta,
+    service.populateOriginalMetadata(omexmlMeta,
       "IntensityValues", flattenVector(intensityValues));
 
     // setImageCreationDate, setImageName on OME-XML metadata

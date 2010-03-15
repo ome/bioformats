@@ -399,7 +399,6 @@ public class DicomReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("DicomReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
@@ -423,7 +422,7 @@ public class DicomReader extends FormatReader {
 
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
-    status("Verifying DICOM format");
+    LOGGER.info("Verifying DICOM format");
 
     in.seek(128);
     if (in.readString(4).equals("DICM")) {
@@ -435,7 +434,7 @@ public class DicomReader extends FormatReader {
     }
     else in.seek(0);
 
-    status("Reading tags");
+    LOGGER.info("Reading tags");
 
     long baseOffset = 0;
 
@@ -446,15 +445,15 @@ public class DicomReader extends FormatReader {
       if (in.getFilePointer() + 4 >= in.length()) {
         break;
       }
-      debug("Reading tag from " + in.getFilePointer());
+      LOGGER.debug("Reading tag from {}", in.getFilePointer());
       int tag = getNextTag(in);
 
       if (elementLength <= 0) continue;
 
       oddLocations = (location & 1) != 0;
 
-      debug("  tag=" + tag + " len=" + elementLength +
-        " fp=" + in.getFilePointer());
+      LOGGER.debug("  tag={} len={} fp=",
+        new Object[] {tag, elementLength, in.getFilePointer()});
 
       String s = null;
       switch (tag) {
@@ -590,7 +589,7 @@ public class DicomReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) * bpp;
 
-    status("Calculating image offsets");
+    LOGGER.info("Calculating image offsets");
 
     // calculate the offset to each plane
 
@@ -646,7 +645,7 @@ public class DicomReader extends FormatReader {
       else offsets[i] = baseOffset + plane*i;
     }
 
-    status("Building file list");
+    LOGGER.info("Building file list");
 
     if (fileList == null && originalInstance != null && originalDate != null &&
       originalTime != null && isGroupFiles())
@@ -700,7 +699,7 @@ public class DicomReader extends FormatReader {
       fileList.get(0).add(currentId);
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     if (fileList.size() > 1) {
       core = new CoreMetadata[fileList.size()];
@@ -1078,7 +1077,7 @@ public class DicomReader extends FormatReader {
     Arrays.sort(files);
     for (int i=0; i<files.length; i++) {
       String file = new Location(dir, files[i]).getAbsolutePath();
-      debug("Checking file " + file);
+      LOGGER.debug("Checking file {}", file);
       if (!files[i].equals(currentId) && !file.equals(currentId) &&
         isThisType(file) && Arrays.binarySearch(patternFiles, file) >= 0)
       {

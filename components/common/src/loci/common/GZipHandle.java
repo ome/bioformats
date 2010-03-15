@@ -30,10 +30,10 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 /**
- * CompressedRandomAccess implementation for reading from gzip-compressed files
+ * StreamHandle implementation for reading from gzip-compressed files
  * or byte arrays.  Instances of GZipHandle are read-only.
  *
- * @see CompressedRandomAccess
+ * @see StreamHandle
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/GZipHandle.java">Trac</a>,
@@ -41,10 +41,15 @@ import java.util.zip.GZIPInputStream;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class GZipHandle extends CompressedRandomAccess {
+public class GZipHandle extends StreamHandle {
 
   // -- Constructor --
 
+  /**
+   * Construct a new GZipHandle for the given file.
+   *
+   * @throws HandleException if the given file name is not a GZip file.
+   */
   public GZipHandle(String file) throws IOException {
     super();
     this.file = file;
@@ -67,38 +72,20 @@ public class GZipHandle extends CompressedRandomAccess {
   // -- GZipHandle API methods --
 
   /** Returns true if the given filename is a gzip file. */
-  public static boolean isGZipFile(String file) {
-    return file.toLowerCase().endsWith(".gz");
+  public static boolean isGZipFile(String file) throws IOException {
+    if (!file.toLowerCase().endsWith(".gz")) return false;
+
+    FileInputStream s = new FileInputStream(file);
+    byte[] b = new byte[2];
+    s.read(b);
+    s.close();
+    return DataTools.bytesToInt(b, true) == GZIPInputStream.GZIP_MAGIC;
   }
 
-  // -- IRandomAccess API methods --
+  // -- StreamHandle API methods --
 
-  /* @see IRandomAccess#seek(long) */
-  public void seek(long pos) throws IOException {
-    long diff = fp - pos;
-    fp = pos;
-    if (diff >= 0) {
-      int skipped = stream.skipBytes((int) diff);
-      while (skipped < diff) {
-        int n = stream.skipBytes((int) (diff - skipped));
-        if (n == 0) break;
-        skipped += n;
-      }
-    }
-    else {
-      resetStream();
-      int skipped = stream.skipBytes((int) fp);
-      while (skipped < fp) {
-        int n = stream.skipBytes((int) (fp - skipped));
-        if (n == 0) break;
-        skipped += n;
-      }
-    }
-  }
-
-  // -- Helper methods --
-
-  private void resetStream() throws IOException {
+  /* @see StreamHandle#resetStream() */
+  protected void resetStream() throws IOException {
     if (stream != null) stream.close();
     BufferedInputStream bis = new BufferedInputStream(
       new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);

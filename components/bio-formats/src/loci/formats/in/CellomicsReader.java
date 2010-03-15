@@ -89,12 +89,11 @@ public class CellomicsReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("CellomicsReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
     if (checkSuffix(id, "c01")) {
-      status("Decompressing file");
+      LOGGER.info("Decompressing file");
       in.seek(4);
       ZlibCodec codec = new ZlibCodec();
       byte[] file = codec.decompress(in, null);
@@ -102,7 +101,7 @@ public class CellomicsReader extends FormatReader {
 
       in = new RandomAccessInputStream(file);
     }
-    status("Reading header data");
+    LOGGER.info("Reading header data");
 
     in.order(true);
     in.skipBytes(4);
@@ -124,7 +123,7 @@ public class CellomicsReader extends FormatReader {
     int colorUsed = in.readInt();
     int colorImportant = in.readInt();
 
-    status("Populating metadata hashtable");
+    LOGGER.info("Populating metadata hashtable");
 
     addGlobalMeta("Image width", x);
     addGlobalMeta("Image height", y);
@@ -136,7 +135,7 @@ public class CellomicsReader extends FormatReader {
     addGlobalMeta("Color used", colorUsed);
     addGlobalMeta("Color important", colorImportant);
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     core[0].sizeX = x;
     core[0].sizeY = y;
@@ -158,7 +157,7 @@ public class CellomicsReader extends FormatReader {
         throw new FormatException("Unsupported bits per pixel: " + nBits);
     }
 
-    status("Populating metadata store");
+    LOGGER.info("Populating metadata store");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

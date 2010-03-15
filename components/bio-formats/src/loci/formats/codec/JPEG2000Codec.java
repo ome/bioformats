@@ -30,24 +30,17 @@ import java.awt.image.DataBufferUShort;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import loci.common.DataTools;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
+import loci.formats.services.JAIIIOService;
+import loci.formats.services.JAIIIOServiceImpl;
 
 /**
  * This class implements JPEG 2000 compression and decompression.
@@ -62,109 +55,6 @@ import loci.formats.gui.AWTImageTools;
 public class JPEG2000Codec extends BaseCodec {
 
   // -- Constants --
-
-  private static final String NO_J2K_MSG =
-    "The JAI Image I/O Tools are required to read JPEG-2000 files. Please " +
-    "obtain jai_imageio.jar from " +
-    FormatTools.URL_BIO_FORMATS_LIBRARIES;
-
-  private static final String J2K_READER =
-    "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader";
-
-  private static final String J2K_WRITER =
-    "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriter";
-
-  private static final String J2K_WRITER_PARAM =
-    "com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam";
-
-  private static final double QUALITY = 6;
-  private static int[] CODE_BLOCK_SIZE = { 64, 64 };
-
-  // -- Static fields --
-
-  private static boolean noJ2k = false;
-  private static ReflectedUniverse r = createReflectedUniverse();
-
-  private static void registerClass(String className) {
-    String spi = className + "Spi";
-    Class spiClass = null;
-    try {
-      spiClass = Class.forName(spi);
-    }
-    catch (ClassNotFoundException exc) {
-      LogTools.trace(exc);
-      noJ2k = true;
-      return;
-    }
-    catch (NoClassDefFoundError err) {
-      LogTools.trace(err);
-      noJ2k = true;
-      return;
-    }
-    catch (RuntimeException exc) {
-      // HACK: workaround for bug in Apache Axis2
-      String msg = exc.getMessage();
-      if (msg != null && msg.indexOf("ClassNotFound") < 0)
-        throw exc;
-      LogTools.trace(exc);
-      noJ2k = true;
-      return;
-    }
-    IIORegistry registry = IIORegistry.getDefaultInstance();
-    if (spiClass != null) {
-      Iterator providers = ServiceRegistry.lookupProviders(spiClass);
-      registry.registerServiceProviders(providers);
-    }
-  }
-
-  private static ReflectedUniverse createReflectedUniverse() {
-    // NB: ImageJ does not access the jai_imageio classes with the normal
-    // class loading scheme, and thus the necessary service provider stuff is
-    // not automatically registered. Instead, we register the J2KImageReader
-    // with the IIORegistry manually, merely so that we can obtain a
-    // J2KImageReaderSpi object from the IIORegistry's service provider lookup
-    // function, then use it to construct a J2KImageReader object directly.
-
-    ReflectedUniverse ru = null;
-    try {
-      // NB: the following comment facilitates dependency detection:
-      // import com.sun.media.imageioimpl.plugins.jpeg2000
-
-      // register J2KImageReader with IIORegistry
-      registerClass(J2K_READER);
-
-      if (noJ2k) {
-        throw new MissingLibraryException(
-          "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
-      }
-
-      IIORegistry registry = IIORegistry.getDefaultInstance();
-
-      // obtain J2KImageReaderSpi instance from IIORegistry
-      Class j2kSpiClass = Class.forName(J2K_READER + "Spi");
-      Object j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
-      ru = new ReflectedUniverse();
-
-      ru.exec("import " + J2K_READER);
-      ru.setVar("j2kSpi", j2kSpi);
-      ru.exec("j2kReader = new J2KImageReader(j2kSpi)");
-
-      // register J2KImageWriter with IIORegistry
-      registerClass(J2K_WRITER);
-      j2kSpiClass = Class.forName(J2K_WRITER + "Spi");
-      j2kSpi = registry.getServiceProviderByClass(j2kSpiClass);
-      ru.exec("import " + J2K_WRITER);
-      ru.exec("import " + J2K_WRITER_PARAM);
-      ru.exec("import javax.imageio.ImageWriteParam");
-      ru.setVar("j2kSpi", j2kSpi);
-      ru.exec("j2kWriter = new J2KImageWriter(j2kSpi)");
-    }
-    catch (Throwable t) {
-      noJ2k = true;
-      LogTools.trace(t);
-    }
-    return ru;
-  }
 
   // -- Codec API methods --
 
@@ -183,11 +73,6 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    if (r == null) {
-      throw new MissingLibraryException(
-        "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
-    }
-
     JPEG2000CodecOptions j2kOptions =
       JPEG2000CodecOptions.getDefaultOptions(options);
 
@@ -248,35 +133,23 @@ public class JPEG2000Codec extends BaseCodec {
         j2kOptions.width, j2kOptions.height, false, true, buffer);
     }
 
+    JAIIIOService service = null;
     try {
-      ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-
-      r.setVar("out", ios);
-      r.exec("j2kWriter.setOutput(out)");
-
-      r.setVar("iioImage", new IIOImage(img, null, null));
-      r.setVar("lossless", j2kOptions.lossless);
-      r.setVar("compressionType", "JPEG2000");
-      r.setVar("codeBlockSize", j2kOptions.codeBlockSize);
-      r.setVar("quality", j2kOptions.quality);
-      String filter = j2kOptions.lossless ?
-        "J2KImageWriteParam.FILTER_53" : "J2KImageWriteParam.FILTER_97";
-      //r.setVar("compressionFilter",options.filter);
-
-      r.exec("param = j2kWriter.getDefaultWriteParam()");
-      r.exec("param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT)");
-      r.exec("param.setCompressionType(compressionType)");
-      r.exec("param.setLossless(lossless)");
-      r.exec("param.setFilter(" + filter + ")");
-      r.exec("param.setCodeBlockSize(codeBlockSize)");
-      r.exec("param.setEncodingRate(quality)");
-      r.exec("j2kWriter.write(null, iioImage, param)");
-      ios.close();
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(JAIIIOService.class);
     }
-    catch (ReflectException e) {
-      throw new FormatException("Could not compress JPEG-2000 data.", e);
+    catch (DependencyException de) {
+      throw new MissingLibraryException(JAIIIOServiceImpl.NO_J2K_MSG, de);
+    }
+
+    try {
+      service.writeImage(out, img, j2kOptions.lossless,
+        j2kOptions.codeBlockSize, j2kOptions.quality);
     }
     catch (IOException e) {
+      throw new FormatException("Could not compress JPEG-2000 data.", e);
+    }
+    catch (ServiceException e) {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
     }
 
@@ -293,53 +166,46 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (r == null) {
-      throw new MissingLibraryException(
-        "Could not compress JPEG-2000 data.\n" + NO_J2K_MSG);
-    }
-
     if (options == null) {
       options = CodecOptions.getDefaultOptions();
     }
 
-    byte[][] single = null, half = null;
+    byte[][] single = null;
     BufferedImage b = null;
-    Exception exception = null;
     long fp = in.getFilePointer();
+    byte[] buf = null;
+    if (options.maxBytes == 0) {
+      buf = new byte[(int) (in.length() - fp)];
+    }
+    else {
+      buf = new byte[(int) (options.maxBytes - fp)];
+    }
+    in.read(buf);
+
+    JAIIIOService service = null;
     try {
-      byte[] buf = null;
-      if (options.maxBytes == 0) {
-        buf = new byte[(int) (in.length() - fp)];
-      }
-      else {
-        buf = new byte[(int) (options.maxBytes - fp)];
-      }
-      in.read(buf);
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(JAIIIOService.class);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(JAIIIOServiceImpl.NO_J2K_MSG, de);
+    }
 
+    try {
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
-      MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(bis);
-
-      r.setVar("mciis", mciis);
-      r.exec("j2kReader.setInput(mciis)");
-      r.setVar("zero", 0);
-      b = (BufferedImage) r.exec("j2kReader.read(zero)");
+      b = service.readImage(bis);
       single = AWTImageTools.getPixelBytes(b, options.littleEndian);
 
       bis.close();
-      mciis.close();
-      buf = null;
       b = null;
     }
-    catch (ReflectException exc) {
-      exception = exc;
-    }
-    catch (IOException exc) {
-      exception = exc;
-    }
-
-    if (exception != null) {
+    catch (IOException e) {
       throw new FormatException("Could not decompress JPEG2000 image. Please " +
-        "make sure that jai_imageio.jar is installed.", exception);
+        "make sure that jai_imageio.jar is installed.", e);
+    }
+    catch (ServiceException e) {
+      throw new FormatException("Could not decompress JPEG2000 image. Please " +
+        "make sure that jai_imageio.jar is installed.", e);
     }
 
     if (single.length == 1) return single[0];

@@ -100,7 +100,7 @@ public final class LibraryChecker {
         break;
       case FORMS:
         checkLibrary("com.jgoodies.forms.layout.FormLayout",
-          "forms-1.0.4.jar", missing);
+          "forms-1.3.0.jar", missing);
         break;
     }
   }

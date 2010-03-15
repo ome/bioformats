@@ -27,11 +27,17 @@ Contributed 2009 by the Center for BioImage Informatics, UCSB
 
 package loci.formats.tools;
 
-import loci.common.LogTools;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for printing a list of formats supported by Bio-Formats.
@@ -41,6 +47,9 @@ import loci.formats.ImageWriter;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/PrintFormatTable.java">SVN</a></dd></dl>
  */
 public class PrintFormatTable {
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(PrintFormatTable.class);
 
   public enum PrintStyles { TXT, XML, HTML }
 
@@ -153,6 +162,10 @@ public class PrintFormatTable {
   }
 
   public static void printSupportedFormats(String[] args) {
+    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
+
     PrintStyles printStyle = PrintStyles.TXT;
 
     boolean usage = false;
@@ -163,21 +176,20 @@ public class PrintFormatTable {
         else if (args[i].equals("-html")) printStyle = PrintStyles.HTML;
         else if (args[i].equals("-txt")) printStyle = PrintStyles.TXT;
         else {
-          LogTools.println("Warning: unknown flag: " + args[i] +
-            "; try -help for options");
+          LOGGER.warn("unknown flag: {}; try -help for options", args[i]);
         }
       }
     }
 
     if (usage) {
-      LogTools.println("Usage: formatlist [-html] [-txt] [-xml]");
-      LogTools.println("  -html: show formats in an HTML table");
-      LogTools.println("   -txt: show formats in plaintext (default)");
-      LogTools.println("   -xml: show formats as XML data");
+      LOGGER.info("Usage: formatlist [-html] [-txt] [-xml]");
+      LOGGER.info("  -html: show formats in an HTML table");
+      LOGGER.info("   -txt: show formats in plaintext (default)");
+      LOGGER.info("   -xml: show formats as XML data");
       return;
     }
 
-    LogTools.println(getHeader(printStyle));
+    LOGGER.info(getHeader(printStyle));
 
     // retrieve all of the file format readers and writers
     ImageReader baseReader = new ImageReader();
@@ -217,11 +229,11 @@ public class PrintFormatTable {
       }
 
       // display information about the format
-      LogTools.println(getFormatLine(printStyle, readerFormatName, read,
-        write, wmp, ext));
+      LOGGER.info(
+        getFormatLine(printStyle, readerFormatName, read, write, wmp, ext));
     }
 
-    LogTools.println(getFooter(printStyle));
+    LOGGER.info(getFooter(printStyle));
   }
 
   // -- Main method --

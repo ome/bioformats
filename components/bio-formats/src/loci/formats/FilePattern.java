@@ -29,7 +29,9 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.Location;
-import loci.common.LogTools;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FilePattern is a collection of methods for handling file patterns, a way of
@@ -50,6 +52,11 @@ import loci.common.LogTools;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FilePattern {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(FilePattern.class);
 
   // -- Fields --
 
@@ -582,7 +589,7 @@ public class FilePattern {
     if (args.length > 0) {
       // test file pattern detection based on the given file on disk
       Location file = new Location(args[0]);
-      LogTools.println("File = " + file.getAbsoluteFile());
+      LOGGER.debug("File = {}", file.getAbsoluteFile());
       pat = findPattern(file);
     }
     else {
@@ -603,19 +610,19 @@ public class FilePattern {
       }
       pat = findPattern(nameList[1], null, nameList);
     }
-    if (pat == null) LogTools.println("No pattern found.");
+    if (pat == null) LOGGER.debug("No pattern found.");
     else {
-      LogTools.println("Pattern = " + pat);
+      LOGGER.debug("Pattern = {}", pat);
       FilePattern fp = new FilePattern(pat);
       if (fp.isValid()) {
-        LogTools.println("Pattern is valid.");
-        LogTools.println("Files:");
+        LOGGER.debug("Pattern is valid.");
+        LOGGER.debug("Files:");
         String[] ids = fp.getFiles();
         for (int i=0; i<ids.length; i++) {
-          LogTools.println("  #" + i + ": " + ids[i]);
+          LOGGER.debug("  #{}: {}", i, ids[i]);
         }
       }
-      else LogTools.println("Pattern is invalid: " + fp.getErrorMessage());
+      else LOGGER.debug("Pattern is invalid: {}", fp.getErrorMessage());
     }
   }
 

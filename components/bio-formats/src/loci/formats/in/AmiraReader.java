@@ -103,7 +103,6 @@ public class AmiraReader extends FormatReader {
    * @see loci.formats.FormatReader#initFile(java.lang.String)
    */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("AmiraReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
@@ -112,14 +111,14 @@ public class AmiraReader extends FormatReader {
 
     // TODO: handle multiple streams
 
-    status("Populating metadata hashtable");
+    LOGGER.info("Populating metadata hashtable");
 
     addGlobalMeta("Image width", parameters.width);
     addGlobalMeta("Image height", parameters.height);
     addGlobalMeta("Number of planes", parameters.depth);
     addGlobalMeta("Bits per pixel", 8);
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     core[0].sizeX = parameters.width;
     core[0].sizeY = parameters.height;
@@ -153,7 +152,7 @@ public class AmiraReader extends FormatReader {
       System.err.println("Assuming data type is byte");
       core[0].pixelType = FormatTools.UINT8;
     }
-    status("Populating metadata store");
+    LOGGER.info("Populating metadata store");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

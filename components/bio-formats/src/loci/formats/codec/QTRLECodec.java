@@ -116,7 +116,7 @@ public class QTRLECodec extends BaseCodec {
       int rowPointer = start * line;
 
       for (int i=0; i<numLines; i++) {
-        skip = s.read();
+        skip = s.readUnsignedByte();
         if (skip < 0) skip += 256;
 
         if (options.previousImage != null) {
@@ -129,10 +129,10 @@ public class QTRLECodec extends BaseCodec {
 
         off = rowPointer + ((skip - 1) * bpp);
         while (true) {
-          rle = (byte) (s.read() & 0xff);
+          rle = (byte) (s.readUnsignedByte() & 0xff);
 
           if (rle == 0) {
-            skip = s.read();
+            skip = s.readUnsignedByte();
 
             if (options.previousImage != null) {
               try {

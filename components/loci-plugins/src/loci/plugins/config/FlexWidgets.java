@@ -33,7 +33,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import loci.formats.codec.LuraWaveCodec;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
+import loci.formats.services.LuraWaveService;
+import loci.formats.services.LuraWaveServiceImpl;
 
 /**
  * Custom widgets for configuring Bio-Formats Flex support.
@@ -56,9 +59,18 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
   // -- Constructor --
 
   public FlexWidgets() {
+    LuraWaveService service;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(LuraWaveService.class);
+    }
+    catch (DependencyException e) {
+      throw new RuntimeException(e);
+    }
+    
     // get license code from ImageJ preferences
-    String prefCode = Prefs.get(LuraWaveCodec.LICENSE_PROPERTY, null);
-    String propCode = System.getProperty(LuraWaveCodec.LICENSE_PROPERTY);
+    String prefCode = Prefs.get(LuraWaveServiceImpl.LICENSE_PROPERTY, null);
+    String propCode = service.getLicenseCode();
     String code = "";
     if (prefCode != null) code = prefCode;
     else if (propCode != null) code = null; // hidden code
@@ -99,7 +111,7 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
 
   private void documentUpdate(DocumentEvent e) {
     String code = licenseBox.getText();
-    Prefs.set(LuraWaveCodec.LICENSE_PROPERTY, code);
+    Prefs.set(LuraWaveServiceImpl.LICENSE_PROPERTY, code);
   }
 
 }

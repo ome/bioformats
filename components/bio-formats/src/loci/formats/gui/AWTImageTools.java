@@ -58,13 +58,15 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import loci.common.DataTools;
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class with convenience methods for manipulating images
@@ -90,6 +92,9 @@ public final class AWTImageTools {
 
   /** ImageObserver for working with AWT images. */
   protected static final Component OBS = new Container();
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(AWTImageTools.class);
 
   // -- Constructor --
 
@@ -434,7 +439,7 @@ public final class AWTImageTools {
     int type = FormatTools.pixelTypeFromString(pixelType);
     Integer nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0);
     if (nChannels == null) {
-      LogTools.warnDebug("SamplesPerPixel is null; it is assumed to be 1.");
+      LOGGER.warn("SamplesPerPixel is null; it is assumed to be 1.");
     }
     int channels = nChannels == null ? 1 : nChannels.intValue();
     boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
@@ -1716,6 +1721,28 @@ public final class AWTImageTools {
       return makeImage(s, img.getWidth(), img.getHeight(), signed);
     }
     return null;
+  }
+
+  /** Converts an IndexColorModel to a 2D byte array. */
+  public static byte[][] get8BitLookupTable(ColorModel model) {
+    if (!(model instanceof IndexColorModel)) return null;
+    IndexColorModel m = (IndexColorModel) model;
+    byte[][] lut = new byte[3][m.getMapSize()];
+    m.getReds(lut[0]);
+    m.getGreens(lut[1]);
+    m.getBlues(lut[2]);
+    return lut;
+  }
+
+  /** Convers an Index16ColorModel to a 2D short array. */
+  public static short[][] getLookupTable(ColorModel model) {
+    if (!(model instanceof Index16ColorModel)) return null;
+    Index16ColorModel m = (Index16ColorModel) model;
+    short[][] lut = new short[3][];
+    lut[0] = m.getReds();
+    lut[1] = m.getGreens();
+    lut[2] = m.getBlues();
+    return lut;
   }
 
 }

@@ -127,12 +127,11 @@ public class MNGReader extends BIFormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("MNGReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(false);
 
-    status("Verifying MNG format");
+    LOGGER.info("Verifying MNG format");
 
     offsets = new Vector[1];
     lengths = new Vector[1];
@@ -146,7 +145,7 @@ public class MNGReader extends BIFormatReader {
       throw new FormatException("Invalid MNG file.");
     }
 
-    status("Reading dimensions");
+    LOGGER.info("Reading dimensions");
 
     in.skipBytes(32);
 
@@ -154,7 +153,7 @@ public class MNGReader extends BIFormatReader {
     int maxIterations = 0;
     int currentIteration = 0;
 
-    status("Finding image offsets");
+    LOGGER.info("Finding image offsets");
 
     // read sequence of [len, code, value] tags
 
@@ -191,7 +190,7 @@ public class MNGReader extends BIFormatReader {
       in.seek(fp + len + 4);
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     // easiest way to get image dimensions is by opening the first plane
 

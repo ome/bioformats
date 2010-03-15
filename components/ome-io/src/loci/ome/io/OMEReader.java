@@ -26,7 +26,6 @@ package loci.ome.io;
 import java.io.IOException;
 import java.util.List;
 
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
@@ -81,7 +80,7 @@ public class OMEReader extends FormatReader {
       r.exec("import org.openmicroscopy.is.PixelsFactory");
     }
     catch (ReflectException e) {
-      LogTools.traceDebug(e);
+      LOGGER.debug("Could not find OME Java library", e);
       hasOMEJava = false;
     }
     return r;

@@ -35,8 +35,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for testing {@link loci.common.RandomAccessInputStream}'s
@@ -50,12 +56,17 @@ import loci.common.RandomAccessInputStream;
  */
 public class IOTester {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(IOTester.class);
+
   private static final String TAG = "<END>";
   private static final int SIZE = 50 * 1024 * 1024; // in bytes
   private static final long NUM_DOTS = 80;
 
   private static final String ALPHANUM =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
+  private ConsoleAppender appender;
+  private PatternLayout originalLayout;
 
   public byte[] createData() {
     // create random test data
@@ -67,15 +78,16 @@ public class IOTester {
     long middlePercent = 100L * middle / SIZE;
     long leftPercent = 100L * left / SIZE;
 
-    LogTools.println("Generating data: " + middle + " (" + middlePercent +
-      "%) alphanumeric + " + left + " (" + leftPercent + "%) binary");
+    LOGGER.info("Generating data: {} ({}%) alphanumeric + {} ({}%) binary",
+      new Object[] {middle, middlePercent, left, leftPercent});
 
+    appender.setLayout(new PatternLayout("%m"));
     long progress = 0;
     for (int i=0; i<data.length; i++) {
       // print dots to indicate progress
       long p = NUM_DOTS * i / data.length;
       if (p > progress) {
-        LogTools.print(".");
+        LOGGER.info(".");
         progress = p;
       }
       if (i < middle) {
@@ -93,13 +105,14 @@ public class IOTester {
         data[i] = (byte) TAG.charAt(i - middle);
       }
     }
-    LogTools.println();
+    appender.setLayout(originalLayout);
+    LOGGER.info("");
 
     return data;
   }
 
   public void saveData(String filename, byte[] data) throws IOException {
-    LogTools.println("Saving " + filename + "...");
+    LOGGER.info("Saving {}...", filename);
     FileOutputStream out = new FileOutputStream(filename);
     out.write(data);
     out.close();
@@ -107,7 +120,7 @@ public class IOTester {
 
   /** Searches for the divider tag using repeated readChar() calls. */
   public long testSequential(String filename) throws IOException {
-    LogTools.println("Searching for divider tag sequentially...");
+    LOGGER.info("Searching for divider tag sequentially...");
     long start = System.currentTimeMillis();
 
     RandomAccessInputStream in = new RandomAccessInputStream(filename);
@@ -134,14 +147,13 @@ public class IOTester {
     in.close();
 
     long end = System.currentTimeMillis();
-    LogTools.println("Search result: " + offset +
-      " -- in " + (end - start) + " ms");
+    LOGGER.info("Search result: {} -- in {} ms", offset, end - start);
     return offset;
   }
 
   /** Searches for the divider tag in blocks of the given size. */
   public long testBlock(String filename, int blockSize) throws IOException {
-    LogTools.println("Searching for divider in blocks of " + blockSize + "...");
+    LOGGER.info("Searching for divider in blocks of {}...", blockSize);
     long start = System.currentTimeMillis();
 
     RandomAccessInputStream in = new RandomAccessInputStream(filename);
@@ -149,18 +161,23 @@ public class IOTester {
     in.close();
 
     long end = System.currentTimeMillis();
-    LogTools.println("Search result: " + offset +
-      " -- in " + (end - start) + " ms");
+    LOGGER.info("Search result: {} -- in {} ms", offset, end - start);
     return offset;
   }
 
   public void deleteData(String filename) {
-    LogTools.println("Deleting " + filename);
+    LOGGER.info("Deleting {}", filename);
     File f = new File(filename);
     f.delete();
   }
 
   public void testIO() throws IOException {
+    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    originalLayout = new PatternLayout("%m%n");
+    appender = new ConsoleAppender(originalLayout);
+    root.addAppender(appender);
+
     String prefix = "IOTester";
     byte[] data = createData();
 

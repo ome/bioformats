@@ -70,7 +70,10 @@ import javax.swing.table.TableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
 import loci.common.ReflectedUniverse;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
@@ -81,10 +84,11 @@ import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.ome.OMEXML2003FCMetadata;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
-import loci.formats.tiff.TiffTools;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
 
@@ -397,7 +401,11 @@ public class MetadataPane extends JPanel
         if (originalTIFF.equals(file)) {
           //just rewrite image description of original file.
           xml = addTiffData(xml, file);
-          TiffSaver.overwriteComment(file.getAbsolutePath(), xml);
+          String path = file.getAbsolutePath();
+          TiffSaver saver = new TiffSaver(path);
+          RandomAccessInputStream in = new RandomAccessInputStream(path);
+          saver.overwriteComment(in, xml);
+          in.close();
         }
         else {
           //create the new tiff file.
@@ -460,7 +468,10 @@ public class MetadataPane extends JPanel
       }
 
       try {
-        IMetadata meta = MetadataTools.createOMEXMLMetadata();
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service =
+          (OMEXMLService) factory.getInstance(OMEXMLService.class);
+        IMetadata meta = service.createOMEXMLMetadata();
         writer.setMetadataRetrieve(meta);
         meta.setPixelsBigEndian(new Boolean(!reader.isLittleEndian()), 0, 0);
         meta.setPixelsDimensionOrder(reader.getDimensionOrder(), 0, 0);
@@ -613,7 +624,7 @@ public class MetadataPane extends JPanel
       DocumentBuilder db = docFact.newDocumentBuilder();
 
       // get TIFF comment without parsing out TiffData Elements
-      String comment = TiffTools.getComment(currentFile.getPath());
+      String comment = new TiffParser(currentFile.getPath()).getComment();
       ByteArrayInputStream bis = new ByteArrayInputStream(comment.getBytes());
       doc = db.parse((java.io.InputStream)bis);
       pixList = DOMUtil.findElementList("Pixels", doc);
@@ -743,7 +754,7 @@ public class MetadataPane extends JPanel
 
   public boolean checkOMETiff(File file) {
     try {
-      String comment = TiffTools.getComment(file.getPath());
+      String comment = new TiffParser(file.getPath()).getComment();
       OMENode testNode = new OMENode(comment);
     }
     catch (IOException exc) {
@@ -785,11 +796,12 @@ public class MetadataPane extends JPanel
    */
   public boolean setOMEXML(File file) {
     try {
-      DataInputStream in = new DataInputStream(new FileInputStream(file));
-      byte[] header = new byte[8];
-      in.readFully(header);
+      RandomAccessInputStream in =
+        new RandomAccessInputStream(file.getAbsolutePath());
+      TiffParser parser = new TiffParser(in);
       isOMETiff = false;
-      if (TiffTools.isValidHeader(header)) {
+
+      if (parser.isValidHeader()) {
         // TIFF file
         originalTIFF = file;
       }
@@ -913,14 +925,10 @@ public class MetadataPane extends JPanel
         }
         img = null;
         thumb = null;
-        String s = new String(header).trim();
-        if (s.startsWith("<?xml") || s.startsWith("<OME")) {
-          // raw OME-XML
-          in = new DataInputStream(new FileInputStream(file));
-          byte[] data = new byte[(int) file.length()];
-          in.readFully(data);
-          in.close();
-          setOMEXML(new String(data));
+
+        String xml = DataTools.readFile(file.getAbsolutePath());
+        if (xml.startsWith("<?xml") || xml.startsWith("<OME")) {
+          setOMEXML(xml);
         }
         else return false;
       }

@@ -36,11 +36,11 @@ import java.util.zip.ZipInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import loci.formats.FilePattern;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
 import loci.visbio.BioTask;
 import loci.visbio.LogicManager;
 import loci.visbio.PanelManager;
+import loci.visbio.StatusEvent;
+import loci.visbio.StatusListener;
 import loci.visbio.TaskManager;
 import loci.visbio.VisBioEvent;
 import loci.visbio.VisBioFrame;

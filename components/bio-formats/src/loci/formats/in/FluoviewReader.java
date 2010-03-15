@@ -171,7 +171,11 @@ public class FluoviewReader extends BaseTiffReader {
     // very similar, so it made more sense to merge the two formats into one
     // reader.
 
-    short[] s = ifds.get(0).getIFDShortArray(MMHEADER, true);
+    short[] s = ifds.get(0).getIFDShortArray(MMHEADER);
+    if (s == null) {
+      throw new FormatException("Invalid Fluoview/Andor TIFF. Tag " +
+        MMHEADER + " not found.");
+    }
     byte[] mmheader = new byte[s.length];
     for (int i=0; i<mmheader.length; i++) {
       mmheader[i] = (byte) s[i];
@@ -241,12 +245,13 @@ public class FluoviewReader extends BaseTiffReader {
 
     stamps = new long[8][ifds.size()];
     for (int i=0; i<ifds.size(); i++) {
-      s = ifds.get(i).getIFDShortArray(MMSTAMP, true);
+      s = ifds.get(i).getIFDShortArray(MMSTAMP);
       byte[] stamp = new byte[s.length];
       for (int j=0; j<s.length; j++) {
         stamp[j] = (byte) s[j];
         if (stamp[j] < 0) stamp[j]++;
       }
+      ras.close();
       ras = new RandomAccessInputStream(stamp);
 
       // each stamp is 8 longs, representing the position on dimensions 3-10
@@ -254,6 +259,7 @@ public class FluoviewReader extends BaseTiffReader {
         stamps[j][i] = ras.readLong() / 10000;
       }
     }
+    ras.close();
 
     // calculate the dimension order and axis sizes
 

@@ -33,9 +33,15 @@ package loci.tests;
 
 import java.io.IOException;
 
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for testing the accuracy of
@@ -49,15 +55,22 @@ import loci.formats.ImageReader;
  */
 public class SingularityTest {
 
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(SingularityTest.class);
+
   private static ImageReader reader = new ImageReader();
 
   public static void main(String[] args) throws FormatException, IOException {
+    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
+
     if (args.length < 1) {
-      LogTools.println("Usage: java.loci.tests.SingularityTest " +
-        "/path/to/input-file");
+      LOGGER.info("Usage: java.loci.tests.SingularityTest /path/to/input-file");
+      System.exit(1);
     }
 
-    LogTools.println("Testing " + args[0]);
+    LOGGER.info("Testing {}", args[0]);
 
     ImageReader reader = new ImageReader();
     boolean isSingleFile = reader.isSingleFile(args[0]);
@@ -66,16 +79,16 @@ public class SingularityTest {
     String[] usedFiles = reader.getUsedFiles();
 
     if (isSingleFile && usedFiles.length > 1) {
-      LogTools.println("  Used files list contains more than one file, " +
+      LOGGER.info("  Used files list contains more than one file, " +
         "but isSingleFile(String) returned true.");
-      LogTools.println("FAILURE");
+      LOGGER.info("FAILURE");
     }
     else if (!isSingleFile && usedFiles.length == 1) {
-      LogTools.println("  Used files list only contains one file, " +
+      LOGGER.info("  Used files list only contains one file, " +
         "but isSingleFile(String) returned false.");
-      LogTools.println("FAILURE");
+      LOGGER.info("FAILURE");
     }
-    else LogTools.println("SUCCESS");
+    else LOGGER.info("SUCCESS");
   }
 
 }

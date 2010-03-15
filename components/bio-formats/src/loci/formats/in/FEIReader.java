@@ -109,12 +109,11 @@ public class FEIReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("FEIReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    status("Reading file header");
+    LOGGER.info("Reading file header");
 
     in.skipBytes(44);
 

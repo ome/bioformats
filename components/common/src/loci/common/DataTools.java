@@ -23,12 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-
-import javax.xml.parsers.SAXParserFactory;
 
 /**
  * A utility class with convenience methods for
@@ -46,21 +42,7 @@ public final class DataTools {
 
   // -- Constants --
 
-  /** Factory for generating SAX parsers. */
-  public static final SAXParserFactory SAX_FACTORY =
-    SAXParserFactory.newInstance();
-
   // -- Static fields --
-
-  /**
-   * Persistent byte array for calling
-   * {@link java.io.DataInput#readFully(byte[], int, int)} efficiently.
-   */
-  private static ThreadLocal<byte[]> eightBytes = new ThreadLocal<byte[]>() {
-    protected synchronized byte[] initialValue() {
-      return new byte[8];
-    }
-  };
 
   // -- Constructor --
 
@@ -79,133 +61,6 @@ public final class DataTools {
     String data = in.readString(len);
     in.close();
     return data;
-  }
-
-  /** Reads 1 signed byte [-128, 127]. */
-  public static byte readSignedByte(DataInput in) throws IOException {
-    byte[] b = (byte[]) eightBytes.get();
-    in.readFully(b, 0, 1);
-    return b[0];
-  }
-
-  /** Reads 1 unsigned byte [0, 255]. */
-  public static short readUnsignedByte(DataInput in) throws IOException {
-    short q = readSignedByte(in);
-    if (q < 0) q += 256;
-    return q;
-  }
-
-  /** Reads 2 signed bytes [-32768, 32767]. */
-  public static short read2SignedBytes(DataInput in, boolean little)
-    throws IOException
-  {
-    byte[] b = (byte[]) eightBytes.get();
-    in.readFully(b, 0, 2);
-    return bytesToShort(b, little);
-  }
-
-  /** Reads 2 unsigned bytes [0, 65535]. */
-  public static int read2UnsignedBytes(DataInput in, boolean little)
-    throws IOException
-  {
-    int q = read2SignedBytes(in, little);
-    if (q < 0) q += 65536;
-    return q;
-  }
-
-  /** Reads 4 signed bytes [-2147483648, 2147483647]. */
-  public static int read4SignedBytes(DataInput in, boolean little)
-    throws IOException
-  {
-    byte[] b = (byte[]) eightBytes.get();
-    in.readFully(b, 0, 4);
-    return bytesToInt(b, little);
-  }
-
-  /** Reads 4 unsigned bytes [0, 4294967296]. */
-  public static long read4UnsignedBytes(DataInput in, boolean little)
-    throws IOException
-  {
-    long q = read4SignedBytes(in, little);
-    if (q < 0) q += 4294967296L;
-    return q;
-  }
-
-  /** Reads 8 signed bytes [-9223372036854775808, 9223372036854775807]. */
-  public static long read8SignedBytes(DataInput in, boolean little)
-    throws IOException
-  {
-    byte[] b = (byte[]) eightBytes.get();
-    in.readFully(b, 0, 8);
-    return bytesToLong(b, little);
-  }
-
-  /** Reads 4 bytes in single precision IEEE format. */
-  public static float readFloat(DataInput in, boolean little)
-    throws IOException
-  {
-    return Float.intBitsToFloat(read4SignedBytes(in, little));
-  }
-
-  /** Reads 8 bytes in double precision IEEE format. */
-  public static double readDouble(DataInput in, boolean little)
-    throws IOException
-  {
-    return Double.longBitsToDouble(read8SignedBytes(in, little));
-  }
-
-  // -- Data writing --
-
-  /** Writes a string to the given data output destination. */
-  public static void writeString(DataOutput out, String s)
-    throws IOException
-  {
-    byte[] b = s.getBytes("UTF-8");
-    out.write(b);
-  }
-
-  /** Writes a double to the given data output destination. */
-  public static void writeDouble(DataOutput out, double v, boolean little)
-    throws IOException
-  {
-    writeLong(out, Double.doubleToLongBits(v), little);
-  }
-
-  /** Writes a long to the given data output destination. */
-  public static void writeLong(DataOutput out, long v, boolean little)
-    throws IOException
-  {
-    for (int i=0; i<8; i++) {
-      int shift = little ? i * 8 : 64 - (i + 1) * 8;
-      out.write((int) ((v >>> shift) & 0xff));
-    }
-  }
-
-  /** Writes a float to the given data output destination. */
-  public static void writeFloat(DataOutput out, float v, boolean little)
-    throws IOException
-  {
-    writeInt(out, Float.floatToIntBits(v), little);
-  }
-
-  /** Writes an integer to the given data output destination. */
-  public static void writeInt(DataOutput out, int v, boolean little)
-    throws IOException
-  {
-    for (int i=0; i<4; i++) {
-      int shift = little ? i * 8 : 32 - (i + 1) * 8;
-      out.write((int) ((v >>> shift) & 0xff));
-    }
-  }
-
-  /** Writes a short to the given data output destination. */
-  public static void writeShort(DataOutput out, int v, boolean little)
-    throws IOException
-  {
-    for (int i=0; i<2; i++) {
-      int shift = little ? i * 8 : 16 - (i + 1) * 8;
-      out.write((int) ((v >>> shift) & 0xff));
-    }
   }
 
   // -- Word decoding - bytes to primitive types --

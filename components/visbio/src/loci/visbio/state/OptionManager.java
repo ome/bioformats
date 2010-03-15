@@ -42,7 +42,7 @@ import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * OptionManager is the manager encapsulating VisBio's options.

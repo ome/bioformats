@@ -174,7 +174,7 @@ public class MicromanagerReader extends FormatReader {
     super.initFile(id);
     tiffReader = new MinimalTiffReader();
 
-    status("Reading metadata file");
+    LOGGER.info("Reading metadata file");
 
     // find metadata.txt
 
@@ -192,7 +192,7 @@ public class MicromanagerReader extends FormatReader {
     String s = new String(meta);
     meta = null;
 
-    status("Finding image file names");
+    LOGGER.info("Finding image file names");
 
     // find the name of a TIFF file
     String baseTiff = null;
@@ -220,7 +220,7 @@ public class MicromanagerReader extends FormatReader {
     //
     // }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     Vector<Double> stamps = new Vector<Double>();
     voltage = new Vector<Double>();

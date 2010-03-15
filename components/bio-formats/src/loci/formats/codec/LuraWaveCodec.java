@@ -29,10 +29,13 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.MissingLibraryException;
+import loci.formats.services.LuraWaveService;
+import loci.formats.services.LuraWaveServiceImpl;
 
 /**
  * This class provides LuraWave decompression, using LuraWave's Java decoding
@@ -50,51 +53,33 @@ public class LuraWaveCodec extends BaseCodec {
 
   // -- Constants --
 
-  /** System property to check for the LuraWave license code. */
-  public static final String LICENSE_PROPERTY = "lurawave.license";
-
-  /** Message displayed if the LuraWave LWF decoder library is not found. */
-  public static final String NO_LURAWAVE_MSG =
-    "The LuraWave decoding library, lwf_jsdk2.6.jar, is required to decode " +
-    "this file.\r\nPlease make sure it is present in your classpath.";
-
-  /** Message to display if no LuraWave license code is given. */
-  public static final String NO_LICENSE_MSG =
-    "No LuraWave license code was specified.\r\nPlease set one in the " +
-    LICENSE_PROPERTY + " system property (e.g., with -D" + LICENSE_PROPERTY +
-    "=XXXX from the command line).";
-
-  /** Message to display if an invalid LuraWave license code is given. */
-  public static final String INVALID_LICENSE_MSG = "Invalid license code: ";
-
   // -- Static fields --
 
-  /** True iff the LuraWave decoding library is not available. */
-  protected static boolean noLuraWave;
+  // -- Fields --
 
-  /** License code for LuraWave decoding library. */
-  protected static String licenseCode;
-
-  /** Reflected universe for LuraWave decoding library calls. */
-  private static ReflectedUniverse r;
-
-  // -- Static initializer --
-
-  static {
-    r = new ReflectedUniverse();
-    try {
-      r.exec("import com.luratech.lwf.lwfDecoder");
-      r.setVar("-1", -1);
-      r.setVar("1", 1);
-      r.setVar("1024", 1024);
-      r.setVar("0", 0);
-    }
-    catch (ReflectException exc) {
-      noLuraWave = true;
-    }
-  }
+  private LuraWaveService service;
 
   // -- Codec API methods --
+
+  /**
+   * Initializes the LuraWave dependency service. This is called at the
+   * beginning of the {@link #decompress()} method to avoid having the
+   * constructor's method definition contain a checked exception.
+   * @throws FormatException If there is an error initializing LuraWave
+   * services.
+   */
+  private void initialize() throws FormatException {
+    if (service != null) {
+      return;
+    }
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(LuraWaveService.class);
+    }
+    catch (DependencyException e) {
+      throw new MissingLibraryException(LuraWaveServiceImpl.NO_LURAWAVE_MSG, e);
+    }
+  }
 
   /* @see Codec#compress(byte[], CodecOptions) */
   public byte[] compress(byte[] data, CodecOptions options)
@@ -121,53 +106,44 @@ public class LuraWaveCodec extends BaseCodec {
   public byte[] decompress(byte[] buf, CodecOptions options)
     throws FormatException
   {
-    if (noLuraWave) throw new MissingLibraryException(NO_LURAWAVE_MSG);
-    licenseCode = System.getProperty(LICENSE_PROPERTY);
-    if (licenseCode == null) throw new FormatException(NO_LICENSE_MSG);
-    r.setVar("stream",
-      new BufferedInputStream(new ByteArrayInputStream(buf), 4096));
+    initialize();
+    BufferedInputStream stream = 
+      new BufferedInputStream(new ByteArrayInputStream(buf), 4096);
     try {
-      r.setVar("licenseCode", licenseCode);
-      r.exec("lwf = new lwfDecoder(stream, null, licenseCode)");
+      service.initialize(stream);
     }
-    catch (ReflectException exc) {
-      throw new FormatException(INVALID_LICENSE_MSG + licenseCode, exc);
+    catch (DependencyException e) {
+      throw new FormatException(LuraWaveServiceImpl.NO_LICENSE_MSG, e);
+    }
+    catch (ServiceException e) {
+      throw new FormatException(LuraWaveServiceImpl.INVALID_LICENSE_MSG, e);
+    }
+    catch (IOException e) {
+      throw new FormatException(e);
     }
 
-    int w = 0, h = 0;
-
-    try {
-      w = ((Integer) r.exec("lwf.getWidth()")).intValue();
-      h = ((Integer) r.exec("lwf.getHeight()")).intValue();
-    }
-    catch (ReflectException exc) {
-      throw new FormatException("Could not retrieve image dimensions", exc);
-    }
+    int w = service.getWidth();
+    int h = service.getHeight();
 
     int nbits = 8 * (options.maxBytes / (w * h));
 
     if (nbits == 8) {
       byte[] image8 = new byte[w * h];
       try {
-        r.setVar("image8", image8);
-        r.exec("lwf.decodeToMemoryGray8(image8, -1, 1024, 0)");
+        service.decodeToMemoryGray8(image8, -1, 1024, 0);
       }
-      catch (ReflectException exc) {
-        throw new FormatException("Could not decode LuraWave data", exc);
+      catch (ServiceException e) {
+        throw new FormatException(LuraWaveServiceImpl.INVALID_LICENSE_MSG, e);
       }
       return image8;
     }
     else if (nbits == 16) {
       short[] image16 = new short[w * h];
       try {
-        r.setVar("image16", image16);
-        r.setVar("w", w);
-        r.setVar("h", h);
-        r.exec("lwf.decodeToMemoryGray16(image16, " +
-          "0, -1, 1024, 0, 1, w, 0, 0, w, h)");
+        service.decodeToMemoryGray16(image16, 0, -1, 1024, 0, 1, w, 0, 0, w, h);
       }
-      catch (ReflectException exc) {
-        throw new FormatException("Could not decode LuraWave data", exc);
+      catch (ServiceException e) {
+        throw new FormatException(LuraWaveServiceImpl.INVALID_LICENSE_MSG, e);
       }
 
       byte[] output = new byte[w * h * 2];

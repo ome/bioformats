@@ -28,7 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 
 /**
  * Indents XML to be more readable.

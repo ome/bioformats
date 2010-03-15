@@ -453,6 +453,11 @@ public class RecordedImageProcessor extends ImageProcessor {
     return proc.getAutoThreshold();
   }
 
+  public double getBackgroundValue() {
+    record("getBackgroundValue", null, (Class) null);
+    return proc.getBackgroundValue();
+  }
+
   public int getAutoThreshold(int[] histogram) {
     record("getAutoThreshold", histogram, int[].class);
     return proc.getAutoThreshold(histogram);

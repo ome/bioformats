@@ -31,19 +31,26 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelSeparator;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEReaderWriterService;
+import loci.formats.services.OMEXMLService;
 import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.LociPrefs;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Helper class for reading image data.
@@ -168,38 +175,50 @@ public class ImporterReader {
     }
     else if (options.isOMERO()) {
       // NB: avoid dependencies on optional loci.ome.io package
-      baseReader = createReader("loci.ome.io.OMEROReader");
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEReaderWriterService service =
+          factory.getInstance(OMEReaderWriterService.class);
+        baseReader = service.newOMEROReader();
+      }
+      catch (DependencyException exc) {
+        WindowTools.reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem constructing the OMERO I/O engine");
+      }
       if (baseReader == null) return;
     }
     else if (options.isOME()) {
       // NB: avoid dependencies on optional loci.ome.io package
-      baseReader = createReader("loci.ome.io.OMEReader");
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEReaderWriterService service =
+          factory.getInstance(OMEReaderWriterService.class);
+        baseReader = service.newOMEReader();
+      }
+      catch (DependencyException de) {
+        WindowTools.reportException(de, options.isQuiet(),
+          "Sorry, there was a problem constructing the OME I/O engine");
+      }
       if (baseReader == null) return;
     }
     else {
       WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
     }
-    meta = MetadataTools.createOMEXMLMetadata();
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      meta = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
     baseReader.setMetadataStore(meta);
 
     if (!options.isQuiet()) IJ.showStatus("");
-    baseReader.addStatusListener(new IJStatusEchoer());
-  }
 
-  /** Creates a reader of the given class, using the default constructor. */
-  private IFormatReader createReader(String className) {
-    Throwable t = null;
-    try {
-      Class<?> c = Class.forName(className);
-      return (IFormatReader) c.newInstance();
-    }
-    catch (ClassNotFoundException exc) { t = exc; }
-    catch (InstantiationException exc) { t = exc; }
-    catch (IllegalAccessException exc) { t = exc; }
-    WindowTools.reportException(t, options.isQuiet(),
-      "Sorry, there was a problem constructing a " + className + " instance");
-    return null;
+    Logger root = Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    root.addAppender(new IJStatusEchoer());
   }
 
 }

@@ -63,13 +63,16 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.AggregateMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -127,6 +130,7 @@ public class Notes extends JFrame implements ActionListener {
   private Vector thumb;
 
   private AggregateMetadata metadata;
+  private OMEXMLService service;
 
   // -- Constructor --
 
@@ -146,6 +150,12 @@ public class Notes extends JFrame implements ActionListener {
   /** Constructs a new main window with the given metadata and template. */
   public Notes(String template, AggregateMetadata store) {
     super("OME Notes");
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = (OMEXMLService) factory.getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException e) { e.printStackTrace(); }
+
     setupWindow();
 
     // load the appropriate template
@@ -445,9 +455,12 @@ public class Notes extends JFrame implements ActionListener {
         java.util.List delegates = metadata.getDelegates();
         String xml = null;
         for (int i=0; i<delegates.size(); i++) {
-          if (MetadataTools.isOMEXMLMetadata(delegates.get(i))) {
-            xml = MetadataTools.getOMEXML((MetadataRetrieve) delegates.get(i));
+          try {
+            if (service.isOMEXMLMetadata(delegates.get(i))) {
+              xml = service.getOMEXML((MetadataRetrieve) delegates.get(i));
+            }
           }
+          catch (ServiceException exc) { }
         }
         File f = new File(name);
         FileWriter writer = new FileWriter(f);
@@ -609,7 +622,10 @@ public class Notes extends JFrame implements ActionListener {
       RandomAccessInputStream s = new RandomAccessInputStream(currentFile);
       String xml = s.readString((int) s.length());
       s.close();
-      metadata.addDelegate(MetadataTools.createOMEXMLMetadata(xml));
+      try {
+        metadata.addDelegate(service.createOMEXMLMetadata(xml));
+      }
+      catch (ServiceException e) { }
     }
     else {
       // first look for a companion file
@@ -620,10 +636,16 @@ public class Notes extends JFrame implements ActionListener {
         RandomAccessInputStream s = new RandomAccessInputStream(currentFile);
         String xml = s.readString((int) s.length());
         s.close();
-        companionStore = MetadataTools.createOMEXMLMetadata(xml);
+        try {
+          companionStore = service.createOMEXMLMetadata(xml);
+        }
+        catch (ServiceException e) { }
       }
 
-      reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+      try {
+        reader.setMetadataStore(service.createOMEXMLMetadata());
+      }
+      catch (ServiceException e) { }
       reader.setId(currentFile);
       readerStore = reader.getMetadataStore();
 

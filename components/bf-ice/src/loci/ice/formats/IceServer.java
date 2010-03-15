@@ -28,7 +28,10 @@ import Ice.Object;
 import Ice.ObjectAdapter;
 import Ice.Util;
 
-import loci.common.LogTools;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  * Ice server for remote Bio-Formats functionality.
@@ -43,7 +46,9 @@ public class IceServer {
 
   public static void main(String[] args) {
     if (args.length > 0 && "-debug".equals(args[0])) debug = true;
-    if (debug) LogTools.setDebug(true);
+    Logger root = Logger.getRootLogger();
+    root.setLevel(debug ? Level.DEBUG : Level.INFO);
+    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
 
     int status = 0;
     Communicator ic = null;

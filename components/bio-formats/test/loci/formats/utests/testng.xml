@@ -1,0 +1,46 @@
+<suite name="BioFormats Unit Tests">
+    <test name="ServiceTests">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.JAIIIOServiceTest"/>
+            <class name="loci.formats.utests.LuraWaveServiceTest"/>
+            <class name="loci.formats.utests.MDBServiceTest"/>
+            <class name="loci.formats.utests.NetCDFServiceTest"/>
+            <class name="loci.formats.utests.OMEXMLServiceTest"/>
+            <class name="loci.formats.utests.POIServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+    <test name="ServiceFactory">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.ServiceFactoryTest"/>
+        </classes>
+        <packages/>
+    </test>
+    <test name="TIFFTests">
+        <groups>
+            <run>
+                <exclude name="tiffParserTests"/>
+            </run>
+        </groups>
+        <classes/>
+        <packages>
+            <package name="loci.formats.utests.tiff"/>
+        </packages>
+    </test>
+    <test name="BaseTIFFParserTest">
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.tiff.BaseTiffMock"/>
+        <classes>
+            <class name="loci.formats.utests.tiff.TiffParserTest"/>
+        </classes>
+    </test>
+    <test name="RGBTIFFParserTest">
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.tiff.RGBTiffMock"/>
+        <classes>
+            <class name="loci.formats.utests.tiff.TiffParserTest"/>
+        </classes>
+    </test>
+</suite>

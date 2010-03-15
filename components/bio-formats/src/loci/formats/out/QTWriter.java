@@ -26,7 +26,6 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
@@ -190,7 +189,7 @@ public class QTWriter extends FormatWriter {
       FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
     Integer samples = r.getLogicalChannelSamplesPerPixel(series, 0);
     if (samples == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = samples == null ? 1 : samples.intValue();
     int pad = nChannels > 1 ? 0 : (4 - (width % 4)) % 4;
@@ -219,10 +218,10 @@ public class QTWriter extends FormatWriter {
       if (out.length() == 0) {
         // -- write the first header --
 
-        DataTools.writeInt(out, 8, false);
+        out.writeInt(8);
         out.writeBytes("wide");
 
-        DataTools.writeInt(out, numBytes + 8, false);
+        out.writeInt(numBytes + 8);
         out.writeBytes("mdat");
       }
       else {
@@ -230,14 +229,14 @@ public class QTWriter extends FormatWriter {
 
         RandomAccessInputStream in = new RandomAccessInputStream(currentId);
         in.seek(byteCountOffset);
-        numBytes = (int) DataTools.read4UnsignedBytes(in, false) - 8;
+        numBytes = (int) (in.readInt() & 0xffffffff) - 8;
         in.close();
 
         numWritten = numBytes / (buf.length + pad * height);
         numBytes += (buf.length + pad * height);
 
         out.seek(byteCountOffset);
-        DataTools.writeInt(out, numBytes + 8, false);
+        out.write(numBytes + 8);
 
         for (int i=0; i<numWritten; i++) {
           offsets.add(new Integer(16 + i * (buf.length + pad * height)));
@@ -255,7 +254,7 @@ public class QTWriter extends FormatWriter {
       int planeOffset = numBytes;
       numBytes += (buf.length + pad * height);
       out.seek(byteCountOffset);
-      DataTools.writeInt(out, numBytes + 8, false);
+      out.writeInt(numBytes + 8);
 
       // write this plane's pixel data
       out.seek(out.length());
@@ -307,129 +306,129 @@ public class QTWriter extends FormatWriter {
       // -- write moov atom --
 
       int atomLength = 685 + 8*numWritten;
-      DataTools.writeInt(out, atomLength, false);
+      out.writeInt(atomLength);
       out.writeBytes("moov");
 
       // -- write mvhd atom --
 
-      DataTools.writeInt(out, 108, false);
+      out.writeInt(108);
       out.writeBytes("mvhd");
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, created, false); // creation time
-      DataTools.writeInt(out, (int) System.currentTimeMillis(), false);
-      DataTools.writeInt(out, timeScale, false); // time scale
-      DataTools.writeInt(out, duration, false); // duration
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(created); // creation time
+      out.writeInt((int) System.currentTimeMillis());
+      out.writeInt(timeScale); // time scale
+      out.writeInt(duration); // duration
       out.write(new byte[] {0, 1, 0, 0});  // preferred rate & volume
       out.write(new byte[] {0, -1, 0, 0, 0, 0, 0, 0, 0, 0}); // reserved
 
       // 3x3 matrix - tells reader how to rotate image
 
-      DataTools.writeInt(out, 1, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 1, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 16384, false);
+      out.writeInt(1);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(1);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(16384);
 
-      DataTools.writeShort(out, 0, false); // not sure what this is
-      DataTools.writeInt(out, 0, false); // preview duration
-      DataTools.writeInt(out, 0, false); // preview time
-      DataTools.writeInt(out, 0, false); // poster time
-      DataTools.writeInt(out, 0, false); // selection time
-      DataTools.writeInt(out, 0, false); // selection duration
-      DataTools.writeInt(out, 0, false); // current time
-      DataTools.writeInt(out, 2, false); // next track's id
+      out.writeShort(0); // not sure what this is
+      out.writeInt(0); // preview duration
+      out.writeInt(0); // preview time
+      out.writeInt(0); // poster time
+      out.writeInt(0); // selection time
+      out.writeInt(0); // selection duration
+      out.writeInt(0); // current time
+      out.writeInt(2); // next track's id
 
       // -- write trak atom --
 
       atomLength -= 116;
-      DataTools.writeInt(out, atomLength, false);
+      out.writeInt(atomLength);
       out.writeBytes("trak");
 
       // -- write tkhd atom --
 
-      DataTools.writeInt(out, 92, false);
-      DataTools.writeString(out, "tkhd");
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 15, false); // flags
+      out.writeInt(92);
+      out.writeBytes("tkhd");
+      out.writeShort(0); // version
+      out.writeShort(15); // flags
 
-      DataTools.writeInt(out, created, false); // creation time
-      DataTools.writeInt(out, (int) System.currentTimeMillis(), false);
-      DataTools.writeInt(out, 1, false); // track id
-      DataTools.writeInt(out, 0, false); // reserved
+      out.writeInt(created); // creation time
+      out.writeInt((int) System.currentTimeMillis());
+      out.writeInt(1); // track id
+      out.writeInt(0); // reserved
 
-      DataTools.writeInt(out, duration, false); // duration
-      DataTools.writeInt(out, 0, false); // reserved
-      DataTools.writeInt(out, 0, false); // reserved
-      DataTools.writeShort(out, 0, false); // reserved
+      out.writeInt(duration); // duration
+      out.writeInt(0); // reserved
+      out.writeInt(0); // reserved
+      out.writeShort(0); // reserved
 
-      DataTools.writeInt(out, 0, false); // unknown
+      out.writeInt(0); // unknown
 
       // 3x3 matrix - tells reader how to rotate the image
 
-      DataTools.writeInt(out, 1, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 1, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 0, false);
-      DataTools.writeInt(out, 16384, false);
+      out.writeInt(1);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(1);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(0);
+      out.writeInt(16384);
 
-      DataTools.writeInt(out, width, false); // image width
-      DataTools.writeInt(out, height, false); // image height
-      DataTools.writeShort(out, 0, false); // reserved
+      out.writeInt(width); // image width
+      out.writeInt(height); // image height
+      out.writeShort(0); // reserved
 
       // -- write edts atom --
 
-      DataTools.writeInt(out, 36, false);
+      out.writeInt(36);
       out.writeBytes("edts");
 
       // -- write elst atom --
 
-      DataTools.writeInt(out, 28, false);
+      out.writeInt(28);
       out.writeBytes("elst");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, 1, false); // number of entries in the table
-      DataTools.writeInt(out, duration, false); // duration
-      DataTools.writeShort(out, 0, false); // time
-      DataTools.writeInt(out, 1, false); // rate
-      DataTools.writeShort(out, 0, false); // unknown
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(1); // number of entries in the table
+      out.writeInt(duration); // duration
+      out.writeShort(0); // time
+      out.writeInt(1); // rate
+      out.writeShort(0); // unknown
 
       // -- write mdia atom --
 
       atomLength -= 136;
-      DataTools.writeInt(out, atomLength, false);
+      out.writeInt(atomLength);
       out.writeBytes("mdia");
 
       // -- write mdhd atom --
 
-      DataTools.writeInt(out, 32, false);
+      out.writeInt(32);
       out.writeBytes("mdhd");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, created, false); // creation time
-      DataTools.writeInt(out, (int) System.currentTimeMillis(), false);
-      DataTools.writeInt(out, timeScale, false); // time scale
-      DataTools.writeInt(out, duration, false); // duration
-      DataTools.writeShort(out, 0, false); // language
-      DataTools.writeShort(out, 0, false); // quality
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(created); // creation time
+      out.writeInt((int) System.currentTimeMillis());
+      out.writeInt(timeScale); // time scale
+      out.writeInt(duration); // duration
+      out.writeShort(0); // language
+      out.writeShort(0); // quality
 
       // -- write hdlr atom --
 
-      DataTools.writeInt(out, 58, false);
+      out.writeInt(58);
       out.writeBytes("hdlr");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
       out.writeBytes("mhlr");
       out.writeBytes("vide");
       out.writeBytes("appl");
@@ -439,28 +438,28 @@ public class QTWriter extends FormatWriter {
       // -- write minf atom --
 
       atomLength -= 98;
-      DataTools.writeInt(out, atomLength, false);
+      out.writeInt(atomLength);
       out.writeBytes("minf");
 
       // -- write vmhd atom --
 
-      DataTools.writeInt(out, 20, false);
+      out.writeInt(20);
       out.writeBytes("vmhd");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 1, false); // flags
-      DataTools.writeShort(out, 64, false); // graphics mode
-      DataTools.writeShort(out, 32768, false);  // opcolor 1
-      DataTools.writeShort(out, 32768, false);  // opcolor 2
-      DataTools.writeShort(out, 32768, false);  // opcolor 3
+      out.writeShort(0); // version
+      out.writeShort(1); // flags
+      out.writeShort(64); // graphics mode
+      out.writeShort(32768);  // opcolor 1
+      out.writeShort(32768);  // opcolor 2
+      out.writeShort(32768);  // opcolor 3
 
       // -- write hdlr atom --
 
-      DataTools.writeInt(out, 57, false);
+      out.writeInt(57);
       out.writeBytes("hdlr");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
       out.writeBytes("dhlr");
       out.writeBytes("alis");
       out.writeBytes("appl");
@@ -469,113 +468,112 @@ public class QTWriter extends FormatWriter {
 
       // -- write dinf atom --
 
-      DataTools.writeInt(out, 36, false);
+      out.writeInt(36);
       out.writeBytes("dinf");
 
       // -- write dref atom --
 
-      DataTools.writeInt(out, 28, false);
+      out.writeInt(28);
       out.writeBytes("dref");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeShort(out, 0, false); // version 2
-      DataTools.writeShort(out, 1, false); // flags 2
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeShort(0); // version 2
+      out.writeShort(1); // flags 2
       out.write(new byte[] {0, 0, 0, 12});
       out.writeBytes("alis");
-      DataTools.writeShort(out, 0, false); // version 3
-      DataTools.writeShort(out, 1, false); // flags 3
+      out.writeShort(0); // version 3
+      out.writeShort(1); // flags 3
 
       // -- write stbl atom --
 
       atomLength -= 121;
-      DataTools.writeInt(out, atomLength, false);
+      out.writeInt(atomLength);
       out.writeBytes("stbl");
 
       // -- write stsd atom --
 
-      DataTools.writeInt(out, 118, false);
+      out.writeInt(118);
       out.writeBytes("stsd");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, 1, false); // number of entries in the table
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(1); // number of entries in the table
       out.write(new byte[] {0, 0, 0, 102});
       out.writeBytes("raw "); // codec
       out.write(new byte[] {0, 0, 0, 0, 0, 0});  // reserved
-      DataTools.writeShort(out, 1, false); // data reference
-      DataTools.writeShort(out, 1, false); // version
-      DataTools.writeShort(out, 1, false); // revision
+      out.writeShort(1); // data reference
+      out.writeShort(1); // version
+      out.writeShort(1); // revision
       out.writeBytes("appl");
-      DataTools.writeInt(out, 0, false); // temporal quality
-      DataTools.writeInt(out, 768, false); // spatial quality
-      DataTools.writeShort(out, width, false); // image width
-      DataTools.writeShort(out, height, false); // image height
+      out.writeInt(0); // temporal quality
+      out.writeInt(768); // spatial quality
+      out.writeShort(width); // image width
+      out.writeShort(height); // image height
       out.write(new byte[] {0, 72, 0, 0}); // horizontal dpi
       out.write(new byte[] {0, 72, 0, 0}); // vertical dpi
-      DataTools.writeInt(out, 0, false); // data size
-      DataTools.writeShort(out, 1, false); // frames per sample
-      DataTools.writeShort(out, 12, false); // length of compressor name
+      out.writeInt(0); // data size
+      out.writeShort(1); // frames per sample
+      out.writeShort(12); // length of compressor name
       out.writeBytes("Uncompressed"); // compressor name
-      DataTools.writeInt(out, bitsPerPixel, false); // unknown
-      DataTools.writeInt(out, bitsPerPixel, false); // unknown
-      DataTools.writeInt(out, bitsPerPixel, false); // unknown
-      DataTools.writeInt(out, bitsPerPixel, false); // unknown
-      DataTools.writeInt(out, bitsPerPixel, false); // unknown
-      DataTools.writeShort(out, bitsPerPixel, false); // bits per pixel
-      DataTools.writeInt(out, 65535, false); // ctab ID
+      out.writeInt(bitsPerPixel); // unknown
+      out.writeInt(bitsPerPixel); // unknown
+      out.writeInt(bitsPerPixel); // unknown
+      out.writeInt(bitsPerPixel); // unknown
+      out.writeInt(bitsPerPixel); // unknown
+      out.writeShort(bitsPerPixel); // bits per pixel
+      out.writeInt(65535); // ctab ID
       out.write(new byte[] {12, 103, 97, 108}); // gamma
       out.write(new byte[] {97, 1, -52, -52, 0, 0, 0, 0}); // unknown
 
       // -- write stts atom --
 
-      DataTools.writeInt(out, 24, false);
+      out.writeInt(24);
       out.writeBytes("stts");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, 1, false); // number of entries in the table
-      DataTools.writeInt(out, numWritten, false); // number of planes
-      DataTools.writeInt(out, fps, false); // frames per second
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(1); // number of entries in the table
+      out.writeInt(numWritten); // number of planes
+      out.writeInt(fps); // frames per second
 
       // -- write stsc atom --
 
-      DataTools.writeInt(out, 28, false);
+      out.writeInt(28);
       out.writeBytes("stsc");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, 1, false); // number of entries in the table
-      DataTools.writeInt(out, 1, false); // chunk
-      DataTools.writeInt(out, 1, false); // samples
-      DataTools.writeInt(out, 1, false); // id
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(1); // number of entries in the table
+      out.writeInt(1); // chunk
+      out.writeInt(1); // samples
+      out.writeInt(1); // id
 
       // -- write stsz atom --
 
-      DataTools.writeInt(out, 20 + 4*numWritten, false);
+      out.writeInt(20 + 4*numWritten);
       out.writeBytes("stsz");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, 0, false); // sample size
-      DataTools.writeInt(out, numWritten, false); // number of planes
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(0); // sample size
+      out.writeInt(numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
         // sample size
-        DataTools.writeInt(out, channels*height*(width+pad)*bytesPerPixel,
-          false);
+        out.writeInt(channels * height * (width + pad) * bytesPerPixel);
       }
 
       // -- write stco atom --
 
-      DataTools.writeInt(out, 16 + 4*numWritten, false);
+      out.writeInt(16 + 4*numWritten);
       out.writeBytes("stco");
 
-      DataTools.writeShort(out, 0, false); // version
-      DataTools.writeShort(out, 0, false); // flags
-      DataTools.writeInt(out, numWritten, false); // number of planes
+      out.writeShort(0); // version
+      out.writeShort(0); // flags
+      out.writeInt(numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
         // write the plane offset
-        DataTools.writeInt(out, ((Integer) offsets.get(i)).intValue(), false);
+        out.writeInt(((Integer) offsets.get(i)).intValue());
       }
 
       out.close();

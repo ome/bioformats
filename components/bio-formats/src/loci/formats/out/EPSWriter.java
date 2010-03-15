@@ -73,7 +73,7 @@ public class EPSWriter extends FormatWriter {
       FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
     Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
     if (channels == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = channels == null ? 1 : channels.intValue();
 

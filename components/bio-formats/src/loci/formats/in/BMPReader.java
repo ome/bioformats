@@ -169,11 +169,10 @@ public class BMPReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("BMPReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Reading bitmap header");
+    LOGGER.info("Reading bitmap header");
 
     in.order(true);
 
@@ -256,7 +255,7 @@ public class BMPReader extends FormatReader {
 
     addGlobalMeta("Indexed color", palette != null);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].sizeC = bpp != 24 ? 1 : 3;
     if (bpp == 32) core[0].sizeC = 4;

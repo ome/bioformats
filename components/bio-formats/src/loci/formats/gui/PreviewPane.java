@@ -42,11 +42,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PreviewPane is a panel for use as a JFileChooser accessory, displaying
@@ -57,8 +57,13 @@ import loci.formats.StatusListener;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/gui/PreviewPane.java">SVN</a></dd></dl>
  */
 public class PreviewPane extends JPanel
-  implements PropertyChangeListener, Runnable, StatusListener
+  implements PropertyChangeListener, Runnable
 {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(PreviewPane.class);
 
   // -- Fields --
 
@@ -99,7 +104,6 @@ public class PreviewPane extends JPanel
 
     reader = new BufferedImageReader();
     reader.setNormalized(true);
-    reader.addStatusListener(this);
 
     // create view
     setBorder(new EmptyBorder(0, 10, 0, 10));
@@ -198,7 +202,7 @@ public class PreviewPane extends JPanel
   public void run() {
     while (loaderAlive) {
       try { Thread.sleep(100); }
-      catch (InterruptedException exc) { LogTools.trace(exc); }
+      catch (InterruptedException exc) { LOGGER.info("", exc); }
 
       try { // catch-all for unanticipated exceptions
         final String id = loadId;
@@ -230,8 +234,9 @@ public class PreviewPane extends JPanel
 
         try { reader.setId(id); }
         catch (FormatException exc) {
-          LogTools.traceDebug(exc);
-          boolean badFormat = exc.getMessage().startsWith("Unknown file format");
+          LOGGER.debug("Failed to initialize {}", id, exc);
+          boolean badFormat =
+            exc.getMessage().startsWith("Unknown file format");
           iconText = "Unsupported " + (badFormat ? "format" : "file");
           formatText = resText = "";
           SwingUtilities.invokeLater(refresher);
@@ -239,7 +244,7 @@ public class PreviewPane extends JPanel
           continue;
         }
         catch (IOException exc) {
-          LogTools.traceDebug(exc);
+          LOGGER.debug("Failed to initialize {}", id, exc);
           iconText = "Unsupported file";
           formatText = resText = "";
           SwingUtilities.invokeLater(refresher);
@@ -270,10 +275,12 @@ public class PreviewPane extends JPanel
         BufferedImage thumb = null;
         try { thumb = reader.openThumbImage(ndx); }
         catch (FormatException exc) {
-          LogTools.traceDebug(exc);
+          LOGGER.debug("Failed to read thumbnail #{} from {}",
+            new Object[] {ndx, id}, exc);
         }
         catch (IOException exc) {
-          LogTools.traceDebug(exc);
+          LOGGER.debug("Failed to read thumbnail #{} from {}",
+            new Object[] {ndx, id}, exc);
         }
         icon = new ImageIcon(thumb == null ? makeImage("Failed") : thumb);
         iconText = "";
@@ -281,7 +288,7 @@ public class PreviewPane extends JPanel
         SwingUtilities.invokeLater(refresher);
       }
       catch (Exception exc) {
-        LogTools.trace(exc);
+        LOGGER.info("", exc);
         icon = null;
         iconText = "Thumbnail failure";
         formatText = resText = zctText = typeText = "";
@@ -290,21 +297,6 @@ public class PreviewPane extends JPanel
         SwingUtilities.invokeLater(refresher);
       }
     }
-  }
-
-  // -- StatusListener API methods --
-
-  /** Updates label messages with loading progress information. */
-  public void statusUpdated(StatusEvent e) {
-    String msg = e.getStatusMessage();
-    if (msg == null) msg = "";
-    formatText = msg;
-    int val = e.getProgressValue();
-    int max = e.getProgressMaximum();
-    int percent = val < 0 || max <= 0 ? -1 : 100 * val / max;
-    String progress = percent < 0 ? "" : percent + "%";
-    resText = progress;
-    SwingUtilities.invokeLater(refresher);
   }
 
   // -- Helper methods --

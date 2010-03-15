@@ -26,7 +26,7 @@ public class EditTiffComment {
       String f = args[i];
       // read comment
       System.out.println("Reading " + f + " ");
-      String comment = TiffTools.getComment(f);
+      String comment = new TiffParser(f).getComment();
       // or if you already have the file open for random access, you can use:
       // RandomAccessInputStream fin = new RandomAccessInputStream(f);
       // TiffParser tiffParser = new TiffParser(fin);

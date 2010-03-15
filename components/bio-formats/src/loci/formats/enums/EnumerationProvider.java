@@ -26,9 +26,18 @@ package loci.formats.enums;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.enums.handler.HandlerFactory;
 import loci.formats.enums.handler.IEnumerationHandler;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
+import loci.formats.tools.ImageConverter;
 
 /**
  * Implementation of {@link loci.formats.enums.IEnumerationProvider} for
@@ -40,6 +49,11 @@ import loci.formats.enums.handler.IEnumerationHandler;
  */
 public class EnumerationProvider implements IEnumerationProvider {
 
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(EnumerationProvider.class);
+
   // -- Fields --
 
   /** OME-XML schema to use when retrieving enumerations, e.g. "2009-09". */
@@ -48,8 +62,10 @@ public class EnumerationProvider implements IEnumerationProvider {
   // -- Constructor --
 
   /** Construct a new EnumerationProvider using the latest supported schema. */
-  public EnumerationProvider() {
-    this(MetadataTools.getLatestVersion());
+  public EnumerationProvider() throws DependencyException {
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    this.schema = service.getLatestVersion();
   }
 
   /** Construct a new EnumerationProvider using the given schema version. */
@@ -60,8 +76,7 @@ public class EnumerationProvider implements IEnumerationProvider {
   // -- IEnumerationProvider API methods --
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class,
-   *   String)
+   * @see loci.formats.enums.IEnumerationProvider#getEnumeration(Class, String)
    */
   public <T extends Enumeration> T getEnumeration(Class<T> entity, String value)
     throws EnumerationException
@@ -88,8 +103,7 @@ public class EnumerationProvider implements IEnumerationProvider {
   }
 
   /**
-   * @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class,
-   *   String)
+   * @see loci.formats.enums.IEnumerationProvider#getEnumerations(Class, String)
    */
   public <T extends Enumeration> List<T> getEnumerations(Class<T> entity,
     String schemaVersion) throws EnumerationException

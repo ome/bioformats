@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package loci.tests;
 
 import java.util.Vector;
+import loci.common.services.DependencyException;
 import loci.formats.enums.*;
 
 /**
@@ -67,7 +68,7 @@ public class EnumTest {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws DependencyException {
     IEnumerationProvider provider = new EnumerationProvider();
     for (TestCase t : cases) {
       try {

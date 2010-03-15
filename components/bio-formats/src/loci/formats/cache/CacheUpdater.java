@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.cache;
 
-import loci.common.LogTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread responsible for updating the cache
@@ -34,6 +35,11 @@ import loci.common.LogTools;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/cache/CacheUpdater.java">SVN</a></dd></dl>
  */
 public class CacheUpdater extends Thread {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(CacheUpdater.class);
 
   // -- Fields --
 
@@ -60,7 +66,7 @@ public class CacheUpdater extends Thread {
       join();
     }
     catch (InterruptedException exc) {
-      LogTools.trace(exc);
+      LOGGER.info("Thread interrupted", exc);
     }
   }
 
@@ -76,7 +82,7 @@ public class CacheUpdater extends Thread {
       }
     }
     catch (CacheException e) {
-      LogTools.trace(e);
+      LOGGER.info("", e);
     }
   }
 

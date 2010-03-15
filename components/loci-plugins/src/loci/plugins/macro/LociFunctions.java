@@ -31,6 +31,9 @@ import ij.process.ImageProcessor;
 import java.awt.Rectangle;
 import java.io.IOException;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelSeparator;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -39,6 +42,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
 import loci.plugins.util.ImagePlusReader;
 import loci.plugins.util.ImagePlusTools;
 
@@ -71,7 +75,13 @@ public class LociFunctions extends MacroFunctions {
   public LociFunctions() {
     r = new ImagePlusReader(new ChannelSeparator(
       new FileStitcher(ImagePlusReader.makeImageReader(), true)));
-    r.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      r.setMetadataStore(service.createOMEXMLMetadata());
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
   }
 
   // -- LociFunctions API methods - loci.formats.IFormatReader --

@@ -42,8 +42,14 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import loci.common.LogTools;
 import loci.formats.gui.AWTImageTools;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for testing the {@link loci.formats.AWTImageTools#makeImage} methods.
@@ -55,6 +61,11 @@ import loci.formats.gui.AWTImageTools;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageTester extends JPanel implements WindowListener {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ImageTester.class);
 
   // -- Fields --
 
@@ -113,12 +124,18 @@ public class ImageTester extends JPanel implements WindowListener {
   // -- Main method --
 
   public static void main(String[] args) {
+    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    PatternLayout originalLayout = new PatternLayout("%m%n");
+    ConsoleAppender appender = new ConsoleAppender(originalLayout);
+    root.addAppender(appender);
+
     int[] chan = {1, 3, 4};
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int wpad = 50, hpad = 100;
     int w = (screen.width - wpad) / chan.length;
     int h = (screen.height - hpad) / 6; //9;
-    LogTools.println("Using images of size " + w + " x " + h);
+    LOGGER.info("Using images of size {} x {}", w, h);
     int size = w * h;
     BufferedImage[] bimg1 = new BufferedImage[chan.length];
     BufferedImage[] bimg2 = new BufferedImage[chan.length];
@@ -134,7 +151,7 @@ public class ImageTester extends JPanel implements WindowListener {
 //    BufferedImage[] iimg3 = new BufferedImage[chan.length];
     for (int q=0; q<chan.length; q++) {
       int c = chan[q];
-      LogTools.println("Building c=" + c + " images");
+      LOGGER.info("Building c={} images", c);
       byte[][] bdata1 = new byte[c][size];
       byte[] bdata2 = new byte[c * size];
       byte[] bdata3 = new byte[c * size];
@@ -185,17 +202,19 @@ public class ImageTester extends JPanel implements WindowListener {
 //      iimg3[q] = AWTImageTools.makeImage(idata3, w, h, c, false, signedInts);
     }
 
-    LogTools.println("Rows are: byte[][], byte[] (interleaved), " +
-      "byte[] (sequential)");
-    LogTools.println("  short[][], short[] (interleaved), " +
-      "short[] (sequential)");
-//    LogTools.println("  int[][], int[] (interleaved), int[] (sequential)");
-    LogTools.print("Columns are:");
+    LOGGER.info(
+      "Rows are: byte[][], byte[] (interleaved), byte[] (sequential)");
+    LOGGER.info("  short[][], short[] (interleaved), short[] (sequential)");
+//    LOGGER.info("  int[][], int[] (interleaved), int[] (sequential)\n");
+
+    appender.setLayout(new PatternLayout("%m"));
+    LOGGER.info("Columns are:");
     for (int q=0; q<chan.length; q++) {
-      if (q > 0) LogTools.print(",");
-      LogTools.print(" c=" + chan[q]);
+      if (q > 0) LOGGER.info(",");
+      LOGGER.info(" c={}", chan[q]);
     }
-    LogTools.println();
+    appender.setLayout(originalLayout);
+    LOGGER.info("");
 
     JFrame frame = new JFrame("ImageTester");
     BufferedImage[][] img = {

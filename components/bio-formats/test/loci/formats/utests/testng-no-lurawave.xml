@@ -1,0 +1,9 @@
+<suite name="Missing LuraWave Service Tests">
+    <test name="MissingLuraWaveService">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.MissingLuraWaveServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+</suite>

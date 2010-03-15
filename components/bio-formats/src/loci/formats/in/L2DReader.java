@@ -135,8 +135,6 @@ public class L2DReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("L2DReader.initFile(" + id + ")");
-
     // NB: This format cannot be imported using omebf.
     // See Trac ticket #266 for details.
 
@@ -318,8 +316,8 @@ public class L2DReader extends FormatReader {
       if (c != null) {
         String[] waves = c.split("[, ]");
         if (waves.length < getEffectiveSizeC()) {
-          debug("Expected " + getEffectiveSizeC() + " wavelengths; got " +
-            waves.length + " wavelengths.");
+          LOGGER.debug("Expected {} wavelengths; got {} wavelengths.",
+            getEffectiveSizeC(), waves.length);
         }
         for (int q=0; q<waves.length; q++) {
           String lightSourceID = MetadataTools.createLSID("LightSource", 0, q);

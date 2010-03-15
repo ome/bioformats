@@ -28,9 +28,11 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data structure for working with TIFF Image File Directories (IFDs).
@@ -48,52 +50,11 @@ public class IFD extends HashMap<Integer, Object> {
 
   // -- Constants --
 
-  // TODO: Investigate using Java 1.5 enums instead of int enumerations.
-  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
+  private static final Logger LOGGER = LoggerFactory.getLogger(IFD.class);
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
   public static final int BIG_TIFF = 1;
-
-  // IFD types
-  public static final int BYTE = 1;
-  public static final int ASCII = 2;
-  public static final int SHORT = 3;
-  public static final int LONG = 4;
-  public static final int RATIONAL = 5;
-  public static final int SBYTE = 6;
-  public static final int UNDEFINED = 7;
-  public static final int SSHORT = 8;
-  public static final int SLONG = 9;
-  public static final int SRATIONAL = 10;
-  public static final int FLOAT = 11;
-  public static final int DOUBLE = 12;
-  public static final int IFD = 13;
-  public static final int LONG8 = 16;
-  public static final int SLONG8 = 17;
-  public static final int IFD8 = 18;
-
-  private static final int[] BYTES_PER_ELEMENT = {
-    -1, //  0: invalid type
-    1,  //  1: BYTE
-    1,  //  2: ASCII
-    2,  //  3: SHORT
-    4,  //  4: LONG
-    8,  //  5: RATIONAL
-    1,  //  6: SBYTE
-    1,  //  7: UNDEFINED
-    2,  //  8: SSHORT
-    4,  //  9: SLONG
-    8,  // 10: SRATIONAL
-    4,  // 11: FLOAT
-    8,  // 12: DOUBLE
-    4,  // 13: IFD
-    -1, // 14: invalid type
-    -1, // 15: invalid type
-    8,  // 16: LONG8
-    8,  // 17: SLONG8
-    8   // 18: IFD8
-  };
 
   // IFD tags
   public static final int NEW_SUBFILE_TYPE = 254;
@@ -146,6 +107,7 @@ public class IFD extends HashMap<Integer, Object> {
   public static final int TILE_LENGTH = 323;
   public static final int TILE_OFFSETS = 324;
   public static final int TILE_BYTE_COUNTS = 325;
+  public static final int SUB_IFD = 330;
   public static final int INK_SET = 332;
   public static final int INK_NAMES = 333;
   public static final int NUMBER_OF_INKS = 334;
@@ -173,6 +135,61 @@ public class IFD extends HashMap<Integer, Object> {
   public static final int COPYRIGHT = 33432;
   public static final int EXIF = 34665;
 
+  /** EXIF tags. */
+  public static final int EXPOSURE_TIME = 33434;
+  public static final int F_NUMBER = 33437;
+  public static final int EXPOSURE_PROGRAM = 34850;
+  public static final int SPECTRAL_SENSITIVITY = 34852;
+  public static final int ISO_SPEED_RATINGS = 34855;
+  public static final int OECF = 34856;
+  public static final int EXIF_VERSION = 36864;
+  public static final int DATE_TIME_ORIGINAL = 36867;
+  public static final int DATE_TIME_DIGITIZED = 36868;
+  public static final int COMPONENTS_CONFIGURATION = 37121;
+  public static final int COMPRESSED_BITS_PER_PIXEL = 37122;
+  public static final int SHUTTER_SPEED_VALUE = 37377;
+  public static final int APERTURE_VALUE = 37378;
+  public static final int BRIGHTNESS_VALUE = 37379;
+  public static final int EXPOSURE_BIAS_VALUE = 37380;
+  public static final int MAX_APERTURE_VALUE = 37381;
+  public static final int SUBJECT_DISTANCE = 37382;
+  public static final int METERING_MODE = 37383;
+  public static final int LIGHT_SOURCE = 37384;
+  public static final int FLASH = 37385;
+  public static final int FOCAL_LENGTH = 37386;
+  public static final int MAKER_NOTE = 37500;
+  public static final int USER_COMMENT = 37510;
+  public static final int SUB_SEC_TIME = 37520;
+  public static final int SUB_SEC_TIME_ORIGINAL = 37521;
+  public static final int SUB_SEC_TIME_DIGITIZED = 37522;
+  public static final int FLASH_PIX_VERSION = 40960;
+  public static final int COLOR_SPACE = 40961;
+  public static final int PIXEL_X_DIMENSION = 40962;
+  public static final int PIXEL_Y_DIMENSION = 40963;
+  public static final int RELATED_SOUND_FILE = 40964;
+  public static final int FLASH_ENERGY = 41483;
+  public static final int SPATIAL_FREQUENCY_RESPONSE = 41484;
+  public static final int FOCAL_PLANE_X_RESOLUTION = 41486;
+  public static final int FOCAL_PLANE_Y_RESOLUTION = 41487;
+  public static final int FOCAL_PLANE_RESOLUTION_UNIT = 41488;
+  public static final int SUBJECT_LOCATION = 41492;
+  public static final int EXPOSURE_INDEX = 41493;
+  public static final int SENSING_METHOD = 41495;
+  public static final int FILE_SOURCE = 41728;
+  public static final int SCENE_TYPE = 41729;
+  public static final int CFA_PATTERN = 41730;
+  public static final int CUSTOM_RENDERED = 41985;
+  public static final int EXPOSURE_MODE = 41986;
+  public static final int WHITE_BALANCE = 41987;
+  public static final int DIGITAL_ZOOM_RATIO = 41988;
+  public static final int FOCAL_LENGTH_35MM_FILM = 41989;
+  public static final int SCENE_CAPTURE_TYPE = 41990;
+  public static final int GAIN_CONTROL = 41991;
+  public static final int CONTRAST = 41992;
+  public static final int SATURATION = 41993;
+  public static final int SHARPNESS = 41994;
+  public static final int SUBJECT_DISTANCE_RANGE = 41996;
+
   // -- Constructors --
 
   public IFD() {
@@ -187,14 +204,12 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Gets whether this is a BigTIFF IFD. */
   public boolean isBigTiff() throws FormatException {
-    return ((Boolean)
-      getIFDValue(BIG_TIFF, false, Boolean.class)).booleanValue();
+    return ((Boolean) getIFDValue(BIG_TIFF, Boolean.class)).booleanValue();
   }
 
   /** Gets whether the TIFF information in this IFD is little-endian. */
   public boolean isLittleEndian() throws FormatException {
-    return ((Boolean)
-      getIFDValue(LITTLE_ENDIAN, true, Boolean.class)).booleanValue();
+    return ((Boolean) getIFDValue(LITTLE_ENDIAN, Boolean.class)).booleanValue();
   }
 
   /** Gets the given directory entry value from this IFD. */
@@ -206,61 +221,53 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry value from this IFD,
    * performing some error checking.
    */
-  public Object getIFDValue(int tag, boolean checkNull,
-    Class checkClass) throws FormatException
-  {
+  public Object getIFDValue(int tag, Class checkClass) throws FormatException {
     Object value = get(new Integer(tag));
-    if (checkNull && value == null) {
-      throw new FormatException(
-        getIFDTagName(tag) + " directory entry not found");
-    }
-    if (checkClass != null && value != null &&
-      !checkClass.isInstance(value))
-    {
+    if (checkClass != null && value != null && !checkClass.isInstance(value)) {
       // wrap object in array of length 1, if appropriate
       Class cType = checkClass.getComponentType();
-      Object array = null;
+      Object array =
+        Array.newInstance(cType == null ? value.getClass() : cType, 1);
       if (cType == value.getClass()) {
-        array = Array.newInstance(value.getClass(), 1);
         Array.set(array, 0, value);
       }
-      if (cType == boolean.class && value instanceof Boolean) {
-        array = Array.newInstance(boolean.class, 1);
+      else if (cType == boolean.class && value instanceof Boolean) {
         Array.setBoolean(array, 0, ((Boolean) value).booleanValue());
       }
       else if (cType == byte.class && value instanceof Byte) {
-        array = Array.newInstance(byte.class, 1);
         Array.setByte(array, 0, ((Byte) value).byteValue());
       }
       else if (cType == char.class && value instanceof Character) {
-        array = Array.newInstance(char.class, 1);
         Array.setChar(array, 0, ((Character) value).charValue());
       }
       else if (cType == double.class && value instanceof Double) {
-        array = Array.newInstance(double.class, 1);
         Array.setDouble(array, 0, ((Double) value).doubleValue());
       }
       else if (cType == float.class && value instanceof Float) {
-        array = Array.newInstance(float.class, 1);
         Array.setFloat(array, 0, ((Float) value).floatValue());
       }
       else if (cType == int.class && value instanceof Integer) {
-        array = Array.newInstance(int.class, 1);
         Array.setInt(array, 0, ((Integer) value).intValue());
       }
       else if (cType == long.class && value instanceof Long) {
-        array = Array.newInstance(long.class, 1);
         Array.setLong(array, 0, ((Long) value).longValue());
       }
       else if (cType == short.class && value instanceof Short) {
-        array = Array.newInstance(short.class, 1);
         Array.setShort(array, 0, ((Short) value).shortValue());
       }
-      if (array != null) return array;
+      else {
+        try {
+          value = Array.get(value, 0);
+          if (checkClass.isInstance(value)) return value;
+        }
+        catch (IllegalArgumentException exc) { }
 
-      throw new FormatException(getIFDTagName(tag) +
-        " directory entry is the wrong type (got " +
-        value.getClass().getName() + ", expected " + checkClass.getName());
+        throw new FormatException(getIFDTagName(tag) +
+          " directory entry is the wrong type (got " +
+          value.getClass().getName() + ", expected " + checkClass.getName());
+      }
+
+      return array;
     }
     return value;
   }
@@ -269,11 +276,10 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry value in long format from this IFD,
    * performing some error checking.
    */
-  public long getIFDLongValue(int tag,
-    boolean checkNull, long defaultValue) throws FormatException
+  public long getIFDLongValue(int tag, long defaultValue) throws FormatException
   {
     long value = defaultValue;
-    Number number = (Number) getIFDValue(tag, checkNull, Number.class);
+    Number number = (Number) getIFDValue(tag, Number.class);
     if (number != null) value = number.longValue();
     return value;
   }
@@ -285,7 +291,7 @@ public class IFD extends HashMap<Integer, Object> {
   public int getIFDIntValue(int tag) {
     int value = -1;
     try {
-      value = getIFDIntValue(tag, false, -1);
+      value = getIFDIntValue(tag,  -1);
     }
     catch (FormatException exc) { }
     return value;
@@ -295,11 +301,9 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry value in int format from this IFD,
    * performing some error checking.
    */
-  public int getIFDIntValue(int tag,
-    boolean checkNull, int defaultValue) throws FormatException
-  {
+  public int getIFDIntValue(int tag, int defaultValue) throws FormatException {
     int value = defaultValue;
-    Number number = (Number) getIFDValue(tag, checkNull, Number.class);
+    Number number = (Number) getIFDValue(tag, Number.class);
     if (number != null) value = number.intValue();
     return value;
   }
@@ -308,20 +312,16 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry value in rational format from this IFD,
    * performing some error checking.
    */
-  public TiffRational getIFDRationalValue(int tag, boolean checkNull)
-    throws FormatException
-  {
-    return (TiffRational) getIFDValue(tag, checkNull, TiffRational.class);
+  public TiffRational getIFDRationalValue(int tag) throws FormatException {
+    return (TiffRational) getIFDValue(tag, TiffRational.class);
   }
 
   /**
    * Gets the given directory entry value as a string from this IFD,
    * performing some error checking.
    */
-  public String getIFDStringValue(int tag, boolean checkNull)
-    throws FormatException
-  {
-    return (String) getIFDValue(tag, checkNull, String.class);
+  public String getIFDStringValue(int tag) throws FormatException {
+    return (String) getIFDValue(tag, String.class);
   }
 
   /** Gets the given directory entry value as a string (regardless of type). */
@@ -362,10 +362,8 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry values in long format
    * from this IFD, performing some error checking.
    */
-  public long[] getIFDLongArray(int tag,
-    boolean checkNull) throws FormatException
-  {
-    Object value = getIFDValue(tag, checkNull, null);
+  public long[] getIFDLongArray(int tag) throws FormatException {
+    Object value = getIFDValue(tag);
     long[] results = null;
     if (value instanceof long[]) results = (long[]) value;
     else if (value instanceof Number) {
@@ -394,10 +392,8 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry values in int format
    * from this IFD, performing some error checking.
    */
-  public int[] getIFDIntArray(int tag,
-    boolean checkNull) throws FormatException
-  {
-    Object value = getIFDValue(tag, checkNull, null);
+  public int[] getIFDIntArray(int tag) throws FormatException {
+    Object value = getIFDValue(tag);
     int[] results = null;
     if (value instanceof int[]) results = (int[]) value;
     else if (value instanceof long[]) {
@@ -427,10 +423,8 @@ public class IFD extends HashMap<Integer, Object> {
    * Gets the given directory entry values in short format
    * from this IFD, performing some error checking.
    */
-  public short[] getIFDShortArray(int tag,
-    boolean checkNull) throws FormatException
-  {
-    Object value = getIFDValue(tag, checkNull, null);
+  public short[] getIFDShortArray(int tag) throws FormatException {
+    Object value = getIFDValue(tag);
     short[] results = null;
     if (value instanceof short[]) results = (short[]) value;
     else if (value instanceof int[]) {
@@ -466,15 +460,13 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Returns the width of an image tile. */
   public long getTileWidth() throws FormatException {
-    long tileWidth = getIFDLongValue(TILE_WIDTH, false, 0);
+    long tileWidth = getIFDLongValue(TILE_WIDTH, 0);
     return tileWidth == 0 ? getImageWidth() : tileWidth;
   }
 
   /** Returns the length of an image tile. */
-  public long getTileLength()
-    throws FormatException
-  {
-    long tileLength = getIFDLongValue(TILE_LENGTH, false, 0);
+  public long getTileLength() throws FormatException {
+    long tileLength = getIFDLongValue(TILE_LENGTH, 0);
     return tileLength == 0 ? getRowsPerStrip()[0] : tileLength;
   }
 
@@ -510,7 +502,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public long getImageWidth() throws FormatException {
-    long width = getIFDLongValue(IMAGE_WIDTH, true, 0);
+    long width = getIFDLongValue(IMAGE_WIDTH, 0);
     if (width > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageWidth > " + Integer.MAX_VALUE +
         " is not supported.");
@@ -524,7 +516,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public long getImageLength() throws FormatException {
-    long length = getIFDLongValue(IMAGE_LENGTH, true, 0);
+    long length = getIFDLongValue(IMAGE_LENGTH, 0);
     if (length > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageLength > " + Integer.MAX_VALUE +
         " is not supported.");
@@ -541,7 +533,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @see #getSamplesPerPixel()
    */
   public int[] getBitsPerSample() throws FormatException {
-    int[] bitsPerSample = getIFDIntArray(BITS_PER_SAMPLE, false);
+    int[] bitsPerSample = getIFDIntArray(BITS_PER_SAMPLE);
     if (bitsPerSample == null) bitsPerSample = new int[] {1};
 
     int samplesPerPixel = getSamplesPerPixel();
@@ -626,7 +618,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public int getSamplesPerPixel() throws FormatException {
-    return getIFDIntValue(SAMPLES_PER_PIXEL, false, 1);
+    return getIFDIntValue(SAMPLES_PER_PIXEL, 1);
   }
 
   /**
@@ -648,15 +640,9 @@ public class IFD extends HashMap<Integer, Object> {
    *
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public int getCompression() throws FormatException {
-    int compression = getIFDIntValue(COMPRESSION,
-      false, TiffCompression.UNCOMPRESSED);
-
-    // HACK - Some TIFFs erroneously use Compression=0
-    // instead of Compression=1 for uncompressed data.
-    if (compression == 0) compression = TiffCompression.UNCOMPRESSED;
-
-    return compression;
+  public TiffCompression getCompression() throws FormatException {
+    return TiffCompression.get(getIFDIntValue(
+        COMPRESSION, TiffCompression.UNCOMPRESSED.getCode()));
   }
 
   /**
@@ -677,10 +663,12 @@ public class IFD extends HashMap<Integer, Object> {
    *
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public int getPhotometricInterpretation() throws FormatException {
-    int photoInterp = getIFDIntValue(PHOTOMETRIC_INTERPRETATION, true, 0);
-    PhotoInterp.checkPI(photoInterp);
-    return photoInterp;
+  public PhotoInterp getPhotometricInterpretation() throws FormatException {
+    Object photo = getIFDValue(PHOTOMETRIC_INTERPRETATION);
+    if (photo instanceof PhotoInterp) return (PhotoInterp) photo;
+    int pi = photo instanceof Number ? ((Number) photo).intValue() :
+      ((int[]) photo)[0];
+    return PhotoInterp.get(pi);
   }
 
   /**
@@ -695,7 +683,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public int getPlanarConfiguration() throws FormatException {
-    int planarConfig = getIFDIntValue(PLANAR_CONFIGURATION, false, 1);
+    int planarConfig = getIFDIntValue(PLANAR_CONFIGURATION, 1);
     if (planarConfig != 1 && planarConfig != 2) {
       throw new FormatException("Sorry, PlanarConfiguration (" + planarConfig +
         ") not supported.");
@@ -715,9 +703,9 @@ public class IFD extends HashMap<Integer, Object> {
    */
   public long[] getStripOffsets() throws FormatException {
     int tag = isTiled() ? TILE_OFFSETS : STRIP_OFFSETS;
-    long[] offsets = getIFDLongArray(tag, false);
+    long[] offsets = getIFDLongArray(tag);
     if (isTiled() && offsets == null) {
-      offsets = getIFDLongArray(STRIP_OFFSETS, false);
+      offsets = getIFDLongArray(STRIP_OFFSETS);
     }
 
     if (isTiled()) return offsets;
@@ -742,9 +730,9 @@ public class IFD extends HashMap<Integer, Object> {
    */
   public long[] getStripByteCounts() throws FormatException {
     int tag = isTiled() ? TILE_BYTE_COUNTS : STRIP_BYTE_COUNTS;
-    long[] byteCounts = getIFDLongArray(tag, false);
+    long[] byteCounts = getIFDLongArray(tag);
     if (isTiled() && byteCounts == null) {
-      byteCounts = getIFDLongArray(STRIP_BYTE_COUNTS, false);
+      byteCounts = getIFDLongArray(STRIP_BYTE_COUNTS);
     }
     if (byteCounts == null) {
       // technically speaking, this shouldn't happen (since TIFF writers are
@@ -795,10 +783,7 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public long[] getRowsPerStrip() throws FormatException {
-    if (isTiled()) {
-      return new long[] {getImageLength()};
-    }
-    long[] rowsPerStrip = getIFDLongArray(ROWS_PER_STRIP, false);
+    long[] rowsPerStrip = getIFDLongArray(ROWS_PER_STRIP);
     if (rowsPerStrip == null) {
       // create a fake RowsPerStrip entry if one is not present
       return new long[] {getImageLength()};
@@ -847,49 +832,34 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Prints the contents of this IFD. */
   public void printIFD() {
-    if (!LogTools.isDebug()) return;
-    StringBuffer sb = new StringBuffer();
-    sb.append("IFD directory entry values:");
+    LOGGER.debug("IFD directory entry values:");
 
-    Integer[] tags = (Integer[]) keySet().toArray(new Integer[0]);
-    for (int entry=0; entry<tags.length; entry++) {
-      sb.append("\n\t");
-      sb.append(getIFDTagName(tags[entry].intValue()));
-      sb.append("=");
-      Object value = get(tags[entry]);
+    for (Integer tag : keySet()) {
+      Object value = get(tag);
+      String v = null;
       if ((value instanceof Boolean) || (value instanceof Number) ||
-        (value instanceof String))
+        (value instanceof String) || (value instanceof PhotoInterp) ||
+        (value instanceof TiffCompression))
       {
-        sb.append(value);
+        v = value.toString();
       }
       else {
         // this is an array of primitive types, Strings, or TiffRationals
         int nElements = Array.getLength(value);
+        v = "";
         for (int i=0; i<nElements; i++) {
-          sb.append(Array.get(value, i));
-          if (i < nElements - 1) sb.append(",");
+          v += Array.get(value, i);
+          if (i < nElements - 1) v += ",";
         }
       }
+      LOGGER.debug("\t{}={}", getIFDTagName(tag.intValue()), v);
     }
-    LogTools.debug(sb.toString());
   }
 
   // -- Utility methods --
 
   /** Gets the name of the IFD tag encoded by the given number. */
   public static String getIFDTagName(int tag) { return getFieldName(tag); }
-
-  /** Gets the name of the IFD type encoded by the given number. */
-  public static String getIFDTypeName(int type) { return getFieldName(type); }
-
-  /**
-   * Gets the length in bytes of the IFD type encoded by the given number.
-   * Returns -1 if the type is unknown.
-   */
-  public static int getIFDTypeLength(int type) {
-    if (type < 0 || type >= BYTES_PER_ELEMENT.length) return -1;
-    return BYTES_PER_ELEMENT[type];
-  }
 
   /**
    * This method uses reflection to scan the values of this class's

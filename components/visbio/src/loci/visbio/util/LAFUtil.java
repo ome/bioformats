@@ -29,9 +29,8 @@ import java.util.Vector;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
-import com.jgoodies.plaf.FontSizeHints;
-import com.jgoodies.plaf.LookUtils;
-import com.jgoodies.plaf.Options;
+import com.jgoodies.looks.LookUtils;
+import com.jgoodies.looks.Options;
 
 /**
  * LAFUtil contains useful functions relating to Look and Feel.
@@ -60,7 +59,6 @@ public final class LAFUtil {
     }
 
     UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-    Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
     Options.setDefaultIconSize(new Dimension(18, 18));
 
     if (!isMacLookAndFeel()) {

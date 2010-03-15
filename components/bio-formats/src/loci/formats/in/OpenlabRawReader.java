@@ -110,19 +110,18 @@ public class OpenlabRawReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("OpenlabRawReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
     // read the 12 byte file header
 
-    status("Verifying Openlab RAW format");
+    LOGGER.info("Verifying Openlab RAW format");
 
     if (!in.readString(4).equals("OLRW")) {
       throw new FormatException("Openlab RAW magic string not found.");
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     addGlobalMeta("Version", in.readInt());
 

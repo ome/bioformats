@@ -304,10 +304,9 @@ public class ICSReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ICSReader.initFile(" + id + ")");
     super.initFile(id);
 
-    status("Finding companion file");
+    LOGGER.info("Finding companion file");
 
     String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
@@ -329,7 +328,7 @@ public class ICSReader extends FormatReader {
     Location icsFile = new Location(icsId);
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
 
-    status("Checking file version");
+    LOGGER.info("Checking file version");
 
     // check if we have a v2 ICS file - means there is no companion IDS file
     RandomAccessInputStream f = new RandomAccessInputStream(icsId);
@@ -348,7 +347,7 @@ public class ICSReader extends FormatReader {
 
     currentIcsId = icsId;
 
-    status("Reading metadata");
+    LOGGER.info("Reading metadata");
 
     Double[] pixelSizes = null;
     String[] axes = null;
@@ -414,7 +413,7 @@ public class ICSReader extends FormatReader {
           doubleValue = new Double(v);
         }
         catch (NumberFormatException e) {
-          traceDebug(e);
+          LOGGER.debug("Could not parse double value '{}'", v, e);
         }
 
         if (k.equalsIgnoreCase("layout sizes")) {
@@ -425,7 +424,7 @@ public class ICSReader extends FormatReader {
               axisLengths[n] = Integer.parseInt(t.nextToken().trim());
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse axis length", e);
             }
           }
         }
@@ -451,7 +450,7 @@ public class ICSReader extends FormatReader {
               pixelSizes[n] = new Double(t.nextToken().trim());
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse pixel size", e);
             }
           }
         }
@@ -466,7 +465,7 @@ public class ICSReader extends FormatReader {
               emWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse emission wavelength", e);
             }
           }
         }
@@ -478,7 +477,7 @@ public class ICSReader extends FormatReader {
               exWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse excitation wavelength", e);
             }
           }
         }
@@ -519,7 +518,7 @@ public class ICSReader extends FormatReader {
             wavelengths.put(new Integer(laser), new Integer(v));
           }
           catch (NumberFormatException e) {
-            traceDebug(e);
+            LOGGER.debug("Could not parse wavelength", e);
           }
         }
         else if (k.equalsIgnoreCase("history objective type")) {
@@ -546,7 +545,7 @@ public class ICSReader extends FormatReader {
               pinholes.put(new Integer(channel++), new Double(pins[n]));
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse pinhole", e);
             }
           }
         }
@@ -559,7 +558,7 @@ public class ICSReader extends FormatReader {
               sizes[n] = Double.parseDouble(lengths[n].trim());
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse axis length", e);
             }
           }
         }
@@ -571,7 +570,7 @@ public class ICSReader extends FormatReader {
               stagePos[n] = new Double(positions[n]);
             }
             catch (NumberFormatException e) {
-              traceDebug(e);
+              LOGGER.debug("Could not parse stage position", e);
             }
           }
         }
@@ -603,7 +602,7 @@ public class ICSReader extends FormatReader {
 
     addGlobalMeta("history text", textBlock.toString());
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     core[0].rgb = false;
     core[0].dimensionOrder = "XY";
@@ -723,7 +722,7 @@ public class ICSReader extends FormatReader {
       getImageCount() * getRGBChannelCount();
     if (gzip && ((in.length() - in.getFilePointer()) < pixelDataSize)) {
       data = new byte[(int) (in.length() - in.getFilePointer())];
-      status("Decompressing pixel data");
+      LOGGER.info("Decompressing pixel data");
       in.read(data);
       byte[] buf = new byte[8192];
       ByteVector v = new ByteVector();
@@ -767,7 +766,7 @@ public class ICSReader extends FormatReader {
       throw new RuntimeException("Unknown pixel format: " + rFormat);
     }
 
-    status("Populating OME metadata");
+    LOGGER.info("Populating OME metadata");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

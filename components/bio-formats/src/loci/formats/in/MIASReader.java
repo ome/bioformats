@@ -181,6 +181,7 @@ public class MIASReader extends FormatReader {
     if (tileRows == 1 && tileCols == 1) {
       readers[getSeries()][no].setId(tiffs[getSeries()][no]);
       readers[getSeries()][no].openBytes(0, buf, x, y, w, h);
+      readers[getSeries()][no].close();
       return buf;
     }
 
@@ -280,7 +281,6 @@ public class MIASReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("MIASReader.initFile(" + id + ")");
     super.initFile(id);
 
     if (!isGroupFiles()) {
@@ -335,7 +335,7 @@ public class MIASReader extends FormatReader {
     // to find the top level experiment directory and work our way down to
     // determine how many plates and wells are present.
 
-    status("Building list of TIFF files");
+    LOGGER.info("Building list of TIFF files");
 
     Location baseFile = new Location(id).getAbsoluteFile();
     Location plate = baseFile.getParentFile().getParentFile();
@@ -422,7 +422,7 @@ public class MIASReader extends FormatReader {
 
     int nWells = wellDirectories.size();
 
-    debug("Found " + nWells + " wells.");
+    LOGGER.debug("Found {} wells.", nWells);
 
     readers = new MinimalTiffReader[nWells][];
     tiffs = new String[nWells][];
@@ -450,7 +450,7 @@ public class MIASReader extends FormatReader {
       }
 
       if (tmpFiles.size() == 0) {
-        debug("No TIFFs in well directory " + wells[j]);
+        LOGGER.debug("No TIFFs in well directory {}", wells[j]);
         // no TIFFs in the well directory, so there are probably channel
         // directories which contain the TIFFs
         for (String dir : tiffFiles) {
@@ -524,7 +524,7 @@ public class MIASReader extends FormatReader {
 
       Arrays.sort(tiffFiles);
       tiffs[j] = tiffFiles;
-      debug("Well " + j + " has " + tiffFiles.length + " files.");
+      LOGGER.debug("Well {} has {} files.", j, tiffFiles.length);
       readers[j] = new MinimalTiffReader[tiffFiles.length];
       for (int k=0; k<tiffFiles.length; k++) {
         readers[j][k] = new MinimalTiffReader();
@@ -533,7 +533,7 @@ public class MIASReader extends FormatReader {
 
     // Populate core metadata
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     int nSeries = tiffs.length;
 
@@ -593,7 +593,7 @@ public class MIASReader extends FormatReader {
 
     // Populate metadata hashtable
 
-    status("Populating metadata hashtable");
+    LOGGER.info("Populating metadata hashtable");
 
     if (resultFile != null && isMetadataCollected()) {
       String[] cols = null;
@@ -639,7 +639,7 @@ public class MIASReader extends FormatReader {
     // Populate MetadataStore
 
     if (isMetadataCollected()) {
-      status("Populating MetadataStore");
+      LOGGER.info("Populating MetadataStore");
 
       MetadataStore store =
         new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -670,7 +670,7 @@ public class MIASReader extends FormatReader {
           wellColumns = 24;
         }
         else {
-          warn("Could not determine the plate dimensions.");
+          LOGGER.warn("Could not determine the plate dimensions.");
           wellColumns = 24;
         }
       }
@@ -770,7 +770,7 @@ public class MIASReader extends FormatReader {
     TiffParser tp = new TiffParser(s);
     IFD ifd = tp.getFirstIFD();
     s.close();
-    int[] colorMap = ifd.getIFDIntArray(IFD.COLOR_MAP, false);
+    int[] colorMap = ifd.getIFDIntArray(IFD.COLOR_MAP);
     if (colorMap == null) return null;
 
     int nEntries = colorMap.length / 3;
@@ -870,6 +870,7 @@ public class MIASReader extends FormatReader {
     }
     byte[] buf = readers[well][tileIndex].openBytes(0, cachedTileBuffer,
       intersection.x, intersection.y, intersection.width, intersection.height);
+    readers[well][tileIndex].close();
     return buf;
   }
 
@@ -1001,7 +1002,7 @@ public class MIASReader extends FormatReader {
       MetadataTools.createLSID("Mask", imageIndex, roiIndex, shapeIndex);
     String maskFile = overlayFiles.get(id);
     if (maskFile == null) {
-      warnDebug("Could not find an overlay file matching " + id);
+      LOGGER.warn("Could not find an overlay file matching {}", id);
       return false;
     }
 
@@ -1023,6 +1024,7 @@ public class MIASReader extends FormatReader {
           bpp, false, r.isInterleaved());
       }
     }
+    r.close();
 
     for (int i=0; i<planes[0].length; i++) {
       boolean channelsEqual = true;
@@ -1059,7 +1061,7 @@ public class MIASReader extends FormatReader {
       store.setMaskPixelsBinData(bits.toByteArray(), imageIndex, roiIndex,
         shapeIndex);
     }
-    else debug("Did not populate MaskPixels.BinData for " + id);
+    else LOGGER.debug("Did not populate MaskPixels.BinData for {}", id);
 
     return validMask;
   }

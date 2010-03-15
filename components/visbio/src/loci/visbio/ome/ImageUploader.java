@@ -25,14 +25,16 @@ package loci.visbio.ome;
 
 import java.util.Vector;
 
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
 import loci.formats.gui.BufferedImageWriter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
 import loci.ome.io.OMEWriter;
+import loci.visbio.StatusEvent;
+import loci.visbio.StatusListener;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets
@@ -66,7 +68,12 @@ public class ImageUploader {
     try {
       OMEWriter writer = new OMEWriter();
       BufferedImageWriter biWriter = new BufferedImageWriter(writer);
-      MetadataStore store = MetadataTools.createOMEXMLMetadata();
+
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service =
+        (OMEXMLService) factory.getInstance(OMEXMLService.class);
+      MetadataStore store = service.createOMEXMLMetadata();
+
       store.setRoot(data.getOMEXMLRoot());
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
       writer.setMetadataRetrieve(retrieve);

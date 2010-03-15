@@ -227,9 +227,8 @@ public class PerkinElmerReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (currentId != null && (id.equals(currentId) || isUsedFile(id))) return;
 
-    status("Finding HTML companion file");
+    LOGGER.info("Finding HTML companion file");
 
-    debug("PerkinElmerReader.initFile(" + id + ")");
     // always init on the HTML file - this prevents complications with
     // initializing the image files
 
@@ -274,7 +273,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     ls = v.toArray(new String[0]);
 
-    status("Searching for all metadata companion files");
+    LOGGER.info("Searching for all metadata companion files");
 
     // check if we have any of the required header file types
 
@@ -327,7 +326,7 @@ public class PerkinElmerReader extends FormatReader {
           files[filesPt++] = workingDirPath + ls[i];
         }
         catch (NumberFormatException exc) {
-          traceDebug(exc);
+          LOGGER.debug("Failed to parse file extension", exc);
         }
       }
     }
@@ -339,7 +338,7 @@ public class PerkinElmerReader extends FormatReader {
 
     // determine the number of different extensions we have
 
-    status("Finding image files");
+    LOGGER.info("Finding image files");
 
     int extCount = 0;
     Vector<String> foundExts = new Vector<String>();
@@ -413,7 +412,7 @@ public class PerkinElmerReader extends FormatReader {
     // we always parse the .tim and .htm files if they exist, along with
     // either the .csv file or the .zpo file
 
-    status("Parsing metadata values");
+    LOGGER.info("Parsing metadata values");
 
     addUsedFile(workingDirPath, cfgFile);
     addUsedFile(workingDirPath, anoFile);
@@ -584,7 +583,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     if (files.length == 0) {
       throw new FormatException("TIFF files not found.");
@@ -630,7 +629,7 @@ public class PerkinElmerReader extends FormatReader {
 
     int calcCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
     if (files.length > getImageCount() || getImageCount() != calcCount) {
-      status("Removing extraneous files");
+      LOGGER.info("Removing extraneous files");
       String[] tmpFiles = files;
       int imageCount = (int) Math.min(getImageCount(), calcCount);
       files = new String[imageCount];
@@ -772,7 +771,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
     catch (NumberFormatException exc) {
-      traceDebug(exc);
+      LOGGER.debug("", exc);
     }
   }
 

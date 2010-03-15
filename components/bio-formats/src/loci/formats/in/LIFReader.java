@@ -30,7 +30,7 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -253,7 +253,6 @@ public class LIFReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("LIFReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     offsets = new Vector<Long>();
@@ -262,7 +261,7 @@ public class LIFReader extends FormatReader {
 
     // read the header
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     byte checkOne = in.readByte();
     in.skipBytes(2);
@@ -283,11 +282,11 @@ public class LIFReader extends FormatReader {
     int nc = in.readInt();
     String xml = DataTools.stripString(in.readString(nc * 2));
 
-    status("Finding image offsets");
+    LOGGER.info("Finding image offsets");
 
     while (in.getFilePointer() < in.length()) {
-      debug("Looking for a block at " + in.getFilePointer() + "; " +
-        offsets.size() + " blocks read");
+      LOGGER.debug("Looking for a block at {}; {} blocks read",
+        in.getFilePointer(), offsets.size());
       int check = in.readInt();
       if (check != LIF_MAGIC_BYTE) {
         throw new FormatException("Invalid Memory Block: found magic bytes " +
@@ -379,7 +378,7 @@ public class LIFReader extends FormatReader {
 
     // Populate metadata store
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

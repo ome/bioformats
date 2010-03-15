@@ -167,8 +167,6 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("DeltavisionReader.initFile(" + id + ")");
-
     if (checkSuffix(id, "dv.log")) {
       id = id.substring(0, id.lastIndexOf("."));
     }
@@ -183,7 +181,7 @@ public class DeltavisionReader extends FormatReader {
 
     // --- read in the image header data ---
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     in = new RandomAccessInputStream(id);
 
@@ -306,7 +304,7 @@ public class DeltavisionReader extends FormatReader {
 
     // --- populate core metadata ---
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     core[0].littleEndian = little;
     core[0].sizeX = sizeX;
@@ -359,7 +357,7 @@ public class DeltavisionReader extends FormatReader {
 
     // --- populate original metadata ---
 
-    status("Populating original metadata");
+    LOGGER.info("Populating original metadata");
 
     addGlobalMeta("ImageWidth", sizeX);
     addGlobalMeta("ImageHeight", sizeY);
@@ -422,7 +420,7 @@ public class DeltavisionReader extends FormatReader {
 
     // --- populate OME metadata ---
 
-    status("Populating OME metadata");
+    LOGGER.info("Populating OME metadata");
 
     MetadataTools.populatePixels(store, this, true);
 
@@ -452,7 +450,7 @@ public class DeltavisionReader extends FormatReader {
     // the division between header I/O, core metadata population,
     // original metadata population, and OME metadata population.
 
-    status("Reading extended header");
+    LOGGER.info("Reading extended header");
 
     setOffsetInfo(sequence, sizeZ, sizeC, sizeT);
     extHdrFields = new DVExtHdrFields[sizeZ][sizeC][sizeT];
@@ -577,7 +575,7 @@ public class DeltavisionReader extends FormatReader {
       return false;
     }
 
-    status("Parsing log file");
+    LOGGER.info("Parsing log file");
 
     String[] lines = DataTools.readFile(logFile).split("[\r\n]");
 
@@ -624,13 +622,13 @@ public class DeltavisionReader extends FormatReader {
                 new Integer(magnification), 0, 0);
             }
             catch (NumberFormatException e) {
-              warn("Could not parse magnification '" + magnification + "'");
+              LOGGER.warn("Could not parse magnification '{}'", magnification);
             }
             try {
               store.setObjectiveLensNA(new Double(na), 0, 0);
             }
             catch (NumberFormatException e) {
-              warn("Could not parse N.A. '" + na + "'");
+              LOGGER.warn("Could not parse N.A. '{}'", na);
             }
             if (tokens.length >= 2) {
               store.setObjectiveCorrection(tokens[1], 0, 0);
@@ -659,7 +657,8 @@ public class DeltavisionReader extends FormatReader {
               size = new Double(pixelSizes[q].trim());
             }
             catch (NumberFormatException e) {
-              warn("Could not parse pixel size '" + pixelSizes[q].trim() + "'");
+              LOGGER.warn("Could not parse pixel size '{}'",
+                pixelSizes[q].trim());
             }
             if (q == 0) store.setDimensionsPhysicalSizeX(size, 0, 0);
             if (q == 1) store.setDimensionsPhysicalSizeY(size, 0, 0);
@@ -688,7 +687,7 @@ public class DeltavisionReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            warn("Could not parse gain '" + value + "'");
+            LOGGER.warn("Could not parse gain '{}'", value);
           }
         }
         else if (key.equals("Speed")) {
@@ -700,7 +699,7 @@ public class DeltavisionReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            warn("Could not parse read-out rate '" + value + "'");
+            LOGGER.warn("Could not parse read-out rate '{}'", value);
           }
         }
         else if (key.equals("Temp Setting")) {
@@ -710,7 +709,7 @@ public class DeltavisionReader extends FormatReader {
             //store.setImagingEnvironmentTemperature(new Double(value), 0);
           }
           catch (NumberFormatException e) {
-            warn("Could not parse temperature '" + value + "'");
+            LOGGER.warn("Could not parse temperature '{}'", value);
           }
         }
         // Plane properties
@@ -723,7 +722,7 @@ public class DeltavisionReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            warn("Could not parse timestamp '" + value + "'");
+            LOGGER.warn("Could not parse timestamp '{}'", value);
           }
         }
         else if (key.equals("EM filter")) {
@@ -732,7 +731,7 @@ public class DeltavisionReader extends FormatReader {
             cIndex = getZCTCoords(currentImage)[1];
           }
           catch (IllegalArgumentException e) {
-            traceDebug(e);
+            LOGGER.debug("", e);
           }
           store.setLogicalChannelName(value, 0, cIndex);
         }
@@ -744,10 +743,10 @@ public class DeltavisionReader extends FormatReader {
             ndFilters[cIndex] = new Double(Math.pow(10, -1 * nd));
           }
           catch (NumberFormatException exc) {
-            warn("Could not parse ND filter '" + value + "'");
+            LOGGER.warn("Could not parse ND filter '{}'", value);
           }
           catch (IllegalArgumentException e) {
-            traceDebug(e);
+            LOGGER.debug("", e);
           }
         }
         else if (key.equals("Stage coordinates")) {
@@ -761,7 +760,7 @@ public class DeltavisionReader extends FormatReader {
               p = new Double(coords[i].trim());
             }
             catch (NumberFormatException e) {
-              warn("Could not parse stage coordinate '" + coords[i] + "'");
+              LOGGER.warn("Could not parse stage coordinate '{}'", coords[i]);
             }
 
             if (currentImage < getImageCount()) {
@@ -788,7 +787,7 @@ public class DeltavisionReader extends FormatReader {
           store.setImageCreationDate(date, 0);
         }
         else {
-          warn("Could not parse date '" + line + "'");
+          LOGGER.warn("Could not parse date '{}'", line);
         }
       }
     }
@@ -802,7 +801,7 @@ public class DeltavisionReader extends FormatReader {
     String base = getCurrentFile().substring(0, dot);
     if (!new Location(base + "_log.txt").exists()) return;
 
-    status("Parsing deconvolution log file");
+    LOGGER.info("Parsing deconvolution log file");
 
     deconvolutionLogFile = base + "_log.txt";
 
@@ -848,10 +847,10 @@ public class DeltavisionReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            warn("Could not parse Z position '" + values[0] + "'");
+            LOGGER.warn("Could not parse Z position '{}'", values[0]);
           }
           catch (IllegalArgumentException iae) {
-            traceDebug(iae);
+            LOGGER.debug("", iae);
           }
           line = s.readLine().trim();
         }
@@ -885,7 +884,7 @@ public class DeltavisionReader extends FormatReader {
             tt = Integer.parseInt(t) - 1;
           }
           catch (NumberFormatException e) {
-            warn("Could not parse timepoint '" + t + "'");
+            LOGGER.warn("Could not parse timepoint '{}'", t);
           }
           index = line.indexOf("wavelength\t") + 11;
           if (index > 10) {
@@ -894,7 +893,7 @@ public class DeltavisionReader extends FormatReader {
               cc = Integer.parseInt(c) - 1;
             }
             catch (NumberFormatException e) {
-              warn("Could not parse channel position '" + c + "'");
+              LOGGER.warn("Could not parse channel position '{}'", c);
             }
           }
         }
@@ -1026,7 +1025,7 @@ public class DeltavisionReader extends FormatReader {
         energyConvFactor = in.readFloat();
       }
       catch (IOException e) {
-        traceDebug(e);
+        LOGGER.debug("Could not parse extended header", e);
       }
     }
 

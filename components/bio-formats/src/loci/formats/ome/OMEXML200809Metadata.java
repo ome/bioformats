@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jan 15, 2010 2:15:58 PM CST
+ * Created by melissa via MetadataAutogen on Mar 15, 2010 2:19:27 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -35,9 +35,11 @@ import ome.xml.OMEXMLNode;
 import ome.xml.r200809.ome.*;
 import ome.xml.r200809.spw.*;
 import java.util.List;
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.codec.Base64Codec;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -51,7 +53,12 @@ import loci.formats.codec.Base64Codec;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class OMEXML200809Metadata extends OMEXMLMetadata {
+public class OMEXML200809Metadata extends AbstractOMEXMLMetadata {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger("OMEXML200809Metadata");
 
   // -- MetadataRetrieve API methods --
 
@@ -2621,10 +2628,10 @@ public class OMEXML200809Metadata extends OMEXMLMetadata {
     try {
       setRoot(ome.xml.OMEXMLFactory.newOMENode("2008-09"));
     }
-    catch (java.io.IOException exc) { LogTools.trace(exc); }
-    catch (org.xml.sax.SAXException exc) { LogTools.trace(exc); }
+    catch (java.io.IOException exc) { LOGGER.info("", exc); }
+    catch (org.xml.sax.SAXException exc) { LOGGER.info("", exc); }
     catch (javax.xml.parsers.ParserConfigurationException exc) {
-      LogTools.trace(exc);
+      LOGGER.info("", exc);
     }
   }
 

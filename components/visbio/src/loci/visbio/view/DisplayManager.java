@@ -43,7 +43,7 @@ import loci.visbio.util.XMLUtil;
 
 import org.w3c.dom.Element;
 
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * DisplayManager is the manager encapsulating VisBio's 2D and 3D displays.

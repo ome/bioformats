@@ -86,7 +86,7 @@ public class APNGWriter extends FormatWriter {
     boolean indexed = getColorModel() instanceof IndexColorModel;
     Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
     if (channels == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = channels == null ? 1 : channels.intValue();
     int width = meta.getPixelsSizeX(series, 0).intValue();

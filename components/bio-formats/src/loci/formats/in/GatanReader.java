@@ -137,12 +137,11 @@ public class GatanReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("GatanReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     pixelOffset = 0;
 
-    status("Verifying Gatan format");
+    LOGGER.info("Verifying Gatan format");
 
     core[0].littleEndian = false;
     pixelSizes = new Vector<String>();
@@ -154,7 +153,7 @@ public class GatanReader extends FormatReader {
       throw new FormatException("invalid header");
     }
 
-    status("Reading tags");
+    LOGGER.info("Reading tags");
 
     in.skipBytes(4);
     core[0].littleEndian = in.readInt() != 1;
@@ -169,11 +168,11 @@ public class GatanReader extends FormatReader {
       in.order(isLittleEndian());
       adjustEndianness = false;
     }
-    debug("tags (" + numTags + ") {");
+    LOGGER.debug("tags ({}) {", numTags);
     parseTags(numTags, null, "  ");
-    debug("}");
+    LOGGER.debug("}");
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].littleEndian = true;
 
@@ -300,9 +299,9 @@ public class GatanReader extends FormatReader {
         if (sb.length() > 32) {
           sb = sb.substring(0, 20) + "... (" + sb.length() + ")";
         }
-        debug(indent + i + ": n=" + n +
-          ", dataType=" + dataType + ", label=" + sb);
-        if (skip != 623191333) warn("Skip mismatch: " + skip);
+        LOGGER.debug("{}{}: n={}, dataType={}, label={}",
+          new Object[] {indent, i, n, dataType, sb});
+        if (skip != 623191333) LOGGER.warn("Skip mismatch: {}", skip);
         if (n == 1) {
           if ("Dimensions".equals(parent) && labelString.length() == 0) {
             if (adjustEndianness) in.order(!in.isLittleEndian());
@@ -316,7 +315,7 @@ public class GatanReader extends FormatReader {
           if (dataType == 18) { // this should always be true
             length = in.readInt();
           }
-          else warn("dataType mismatch: " + dataType);
+          else LOGGER.warn("dataType mismatch: {}", dataType);
           value = in.readString(length);
         }
         else if (n == 3) {
@@ -333,7 +332,7 @@ public class GatanReader extends FormatReader {
               else value = DataTools.stripString(in.readString(length * 2));
             }
           }
-          else warn("dataType mismatch: " + dataType);
+          else LOGGER.warn("dataType mismatch: {}", dataType);
         }
         else {
           // this is a normal struct of simple types
@@ -388,7 +387,7 @@ public class GatanReader extends FormatReader {
                 }
               }
             }
-            else warn("dataType mismatch: " + dataType);
+            else LOGGER.warn("dataType mismatch: {}", dataType);
           }
         }
       }
@@ -396,11 +395,13 @@ public class GatanReader extends FormatReader {
         labelString = in.readString(length);
         in.skipBytes(2);
         int num = in.readInt();
-        debug(indent + i + ": group (" + num + ") {");
+        LOGGER.debug("{}{}: group({}) {", new Object[] {indent, i, num});
         parseTags(num, labelString, indent + "  ");
-        debug(indent + "}");
+        LOGGER.debug("{}}", indent);
       }
-      else debug(indent + i + ": unknown type: " + type);
+      else {
+        LOGGER.debug("{}{}: unknown type: {}", new Object[] {indent, i, type});
+      }
 
       if (value != null) {
         addGlobalMeta(labelString, value);

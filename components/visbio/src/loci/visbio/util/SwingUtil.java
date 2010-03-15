@@ -59,7 +59,7 @@ import javax.swing.tree.TreePath;
 import loci.formats.ImageReader;
 import loci.formats.gui.GUITools;
 
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * SwingUtil contains useful Swing functions.

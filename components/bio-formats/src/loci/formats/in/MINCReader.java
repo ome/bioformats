@@ -28,13 +28,17 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.NetcdfTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.NetCDFService;
 
 /**
  * MINCReader is the file format reader for MINC MRI files.
@@ -47,7 +51,7 @@ public class MINCReader extends FormatReader {
 
   // -- Fields --
 
-  private NetcdfTools netcdf;
+  private NetCDFService netcdf;
   private byte[][][] pixelData;
 
   // -- Constructor --
@@ -93,17 +97,23 @@ public class MINCReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("MINCReader.initFile(" + id + ")");
     super.initFile(id);
 
-    netcdf = new NetcdfTools(id);
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      netcdf = factory.getInstance(NetCDFService.class);
+      netcdf.setFile(id);
+    }
+    catch (DependencyException e) {
+      throw new MissingLibraryException(e);
+    }
 
-    Vector variableList = netcdf.getVariableList();
+    Vector<String> variableList = netcdf.getVariableList();
 
     for (int i=0; i<variableList.size(); i++) {
       String variable = (String) variableList.get(i);
-      Hashtable attributes = netcdf.getVariableAttributes(variable);
-      String[] keys = (String[]) attributes.keySet().toArray(new String[0]);
+      Hashtable<String, Object> attributes = netcdf.getVariableAttributes(variable);
+      String[] keys = attributes.keySet().toArray(new String[0]);
       Arrays.sort(keys);
 
       for (int j=0; j<keys.length; j++) {
@@ -118,7 +128,12 @@ public class MINCReader extends FormatReader {
       }
     }
 
-    pixelData = (byte[][][]) netcdf.getVariableValue("/image");
+    try {
+      pixelData = (byte[][][]) netcdf.getVariableValue("/image");
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
 
     core[0].sizeX = netcdf.getDimension("/zspace");
     core[0].sizeY = netcdf.getDimension("/yspace");

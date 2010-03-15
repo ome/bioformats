@@ -23,7 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.tiff;
 
-import loci.formats.FormatException;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
+import loci.common.enumeration.CodedEnum;
+import loci.common.enumeration.EnumException;
 
 /**
  * Utility class for working with TIFF photometric interpretations.
@@ -37,111 +42,93 @@ import loci.formats.FormatException;
  * @author Melissa Linkert linkert at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  */
-public final class PhotoInterp {
+public enum PhotoInterp implements CodedEnum {
 
-  // -- Constants --
+  WHITE_IS_ZERO(0, "WhiteIsZero", "Monochrome"),
+  BLACK_IS_ZERO(1, "BlackIsZero", "Monochrome"),
+  RGB(2, "RGB", "RGB"),
+  RGB_PALETTE(3, "Palette", "Monochrome"),
+  TRANSPARENCY_MASK(4, "Transparency Mask", "RGB"),
+  CMYK(5, "CMYK", "CMYK"),
+  Y_CB_CR(6, "YCbCr", "RGB"),
+  CIE_LAB(8, "CIELAB", "RGB"),
+  CFA_ARRAY(32803, "Color Filter Array", "RGB");
 
-  // TODO: Investigate using Java 1.5 enum instead of int enumeration.
-  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
-  public static final int WHITE_IS_ZERO = 0;
-  public static final int BLACK_IS_ZERO = 1;
-  public static final int RGB = 2;
-  public static final int RGB_PALETTE = 3;
-  public static final int TRANSPARENCY_MASK = 4;
-  public static final int CMYK = 5;
-  public static final int Y_CB_CR = 6;
-  public static final int CIE_LAB = 8;
-  public static final int CFA_ARRAY = 32803;
+  /** Default luminance values for YCbCr data. */
+  public static final float LUMA_RED = 0.299f;
+  public static final float LUMA_GREEN = 0.587f;
+  public static final float LUMA_BLUE = 0.114f;
+
+  /** Code for the IFD type in the actual TIFF file. */
+  private int code;
+
+  /** Given name of the photometric interpretation. */
+  private String name;
+
+  /** Metadata type of the photometric interpretation. */
+  private String metadataType;
+
+  private static final Map<Integer,PhotoInterp> lookup =
+    new HashMap<Integer,PhotoInterp>();
+
+  /** Reverse lookup of code to IFD type enumerate value. */
+  static {
+    for(PhotoInterp v : EnumSet.allOf(PhotoInterp.class)) {
+      lookup.put(v.getCode(), v);
+    }
+  }
 
   // -- Constructor --
 
-  private PhotoInterp() { }
+  /**
+   * Default constructor.
+   * @param code Integer "code" for the photometric interpretation.
+   * @param name Given name of the photometric interpretation.
+   * @param metadataType Metadata type of the photometric interpretation.
+   */
+  private PhotoInterp(int code, String name, String metadataType) {
+    this.code = code;
+    this.name = name;
+    this.metadataType = metadataType;
+  }
 
   // -- PhotoInterp methods --
 
-  /** Returns the name of the given photometric interpretation. */
-  public static String getPIName(int photoInterp) {
-    switch (photoInterp) {
-      case WHITE_IS_ZERO:
-        return "WhiteIsZero";
-      case BLACK_IS_ZERO:
-        return "BlackIsZero";
-      case RGB:
-        return "RGB";
-      case RGB_PALETTE:
-        return "Palette";
-      case TRANSPARENCY_MASK:
-        return "Transparency Mask";
-      case CMYK:
-        return "CMYK";
-      case Y_CB_CR:
-        return "YCbCr";
-      case CIE_LAB:
-        return "CIELAB";
-      case CFA_ARRAY:
-        return "Color Filter Array";
+  /**
+   * Retrieves a photometric interpretation by reverse lookup of its "code".
+   * @param code The code to look up.
+   * @return The <code>PhotoInterp</code> instance for the
+   * <code>code</code> or <code>null</code> if it does not exist.
+   */
+  public static PhotoInterp get(int code) {
+    PhotoInterp toReturn = lookup.get(code);
+    if (toReturn == null) {
+      throw new EnumException("Unable to find PhotoInterp with code: " + code);
     }
-    return null;
+    return toReturn;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.common.CodedEnum#getCode()
+   */
+  public int getCode() {
+    return code;
   }
 
   /**
-   * Returns the metadata type for the given photometric interpretation.
-   *
-   * @return One of the following values:<ul>
-   *  <li>Monochrome</li>
-   *  <li>RGB</li>
-   * </ul>
+   * Retrieves the given name of the photometric interpretation. 
+   * @return See above.
    */
-  public static String getPIMeta(int photoInterp) {
-    switch (photoInterp) {
-      case WHITE_IS_ZERO:
-        return "Monochrome";
-      case BLACK_IS_ZERO:
-        return "Monochrome";
-      case RGB:
-        return "RGB";
-      case RGB_PALETTE:
-        return "Monochrome";
-      case TRANSPARENCY_MASK:
-        return "RGB";
-      case CMYK:
-        return "CMYK";
-      case Y_CB_CR:
-        return "RGB";
-      case CIE_LAB:
-        return "RGB";
-      case CFA_ARRAY:
-        return "RGB";
-    }
-    return null;
+  public String getName() {
+    return name;
   }
 
   /**
-   * Verifies that the given photometric interpretation is supported.
-   *
-   * @throws FormatException if the photometric interpretation
-   *   is unsupported or unknown.
+   * Retrieves the metadata type of the photometric interpretation.
+   * @return See above.
    */
-  public static void checkPI(int photoInterp) throws FormatException {
-    if (photoInterp == TRANSPARENCY_MASK) {
-      throw new FormatException(
-        "Sorry, Transparency Mask PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp == CIE_LAB) {
-      throw new FormatException(
-        "Sorry, CIELAB PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp != WHITE_IS_ZERO &&
-      photoInterp != BLACK_IS_ZERO &&
-      photoInterp != RGB &&
-      photoInterp != RGB_PALETTE &&
-      photoInterp != CMYK &&
-      photoInterp != Y_CB_CR &&
-      photoInterp != CFA_ARRAY)
-    {
-      throw new FormatException("Unknown PhotometricInterpretation (" +
-        photoInterp + ")");
-    }
+  public String getMetadataType() {
+    return metadataType;
   }
 
 }

@@ -32,13 +32,15 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.POITools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -60,7 +62,7 @@ public class PCIReader extends FormatReader {
   // -- Fields --
 
   private HashMap<Integer, String> imageFiles;
-  private POITools poi;
+  private POIService poi;
   private HashMap<Integer, Double> timestamps;
   private String creationDate;
   private int binning;
@@ -128,14 +130,20 @@ public class PCIReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("PCIReader.initFile(" + id + ")");
-
     super.initFile(id);
 
     imageFiles = new HashMap<Integer, String>();
     timestamps = new HashMap<Integer, Double>();
 
-    poi = new POITools(Location.getMappedId(currentId));
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(currentId));
 
     double scaleFactor = 1;
 

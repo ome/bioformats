@@ -176,13 +176,6 @@ license = GPL
 notes = LOCI's biological visualization tool designed for easy visualization
         and analysis of multidimensional image data.
 
-[BUFR Java Decoder]
-type = Java library
-class = ucar.bufr.BufrDump
-url = http://www.unidata.ucar.edu/software/decoders/
-license = LGPL
-notes = Used by the NetCDF Java library.
-
 [Java Advanced Imaging]
 type = Java library
 class = javax.media.jai.JAI
@@ -196,20 +189,6 @@ class = com.sun.medialib.codec.jiio.Constants
 url = https://jai-imageio.dev.java.net/
 license = BSD
 notes = Java wrapper for JAI Image I/O Tools native codecs.
-
-[JMagick]
-type = Java library
-class = magick.ImageMagick
-url = http://sourceforge.net/projects/jmagick/
-license = LGPL
-notes = Java wrapper for ImageMagick API.
-
-[GRIB Java Decoder]
-type = Java library
-class = ucar.grib.GribChecker
-url = http://www.unidata.ucar.edu/software/decoders/
-license = LGPL
-notes = Used by the NetCDF Java library.
 
 [JAI Image I/O Tools - Java codecs]
 type = Java library

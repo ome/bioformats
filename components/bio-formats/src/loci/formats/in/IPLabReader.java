@@ -110,11 +110,10 @@ public class IPLabReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("IPLabReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].littleEndian = in.readString(4).equals("iiii");
 
@@ -198,7 +197,7 @@ public class IPLabReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
-    status("Reading tags");
+    LOGGER.info("Reading tags");
 
     byte[] tagBytes = new byte[4];
     in.read(tagBytes);

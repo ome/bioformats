@@ -126,12 +126,11 @@ public class AliconaReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("AliconaReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
     // check that this is a valid AL3D file
-    status("Verifying Alicona format");
+    LOGGER.info("Verifying Alicona format");
     String magicString = in.readString(17);
     if (!magicString.trim().equals("AliconaImaging")) {
       throw new FormatException("Invalid magic string : " +
@@ -141,7 +140,7 @@ public class AliconaReader extends FormatReader {
     // now we read a series of tags
     // each one is 52 bytes - 20 byte key + 30 byte value + 2 byte CRLF
 
-    status("Reading tags");
+    LOGGER.info("Reading tags");
 
     int count = 2;
 
@@ -173,7 +172,7 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("WorkingDistance")) workingDistance = value;
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     numBytes = (int) (in.length() - textureOffset) /
       (getSizeX() * getSizeY() * getImageCount());

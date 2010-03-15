@@ -120,7 +120,6 @@ JNIEXPORT jint JNICALL Java_loci_formats_in_LegacyND2Reader_getChannels
   if (nd2File == NULL) return -1;
   int numDimensions = nd2File->GetDimensionCount();
   for (int i=0; i<numDimensions; i++) {
-    /* debug */ printf("dimension %d = %d\n", i, nd2File->GetSeqType(i));
     if (nd2File->GetSeqType(i) == nd2File->Wavelength) {
       return nd2File->GetSeqCount(i);
     }

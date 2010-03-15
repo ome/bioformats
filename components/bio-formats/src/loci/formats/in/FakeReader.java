@@ -26,7 +26,6 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.DataTools;
-import loci.common.LogTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -134,7 +133,6 @@ public class FakeReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("FakeReader.initFile(" + id + ")");
     super.initFile(id);
 
     String noExt = id.substring(0, id.lastIndexOf("."));
@@ -171,7 +169,7 @@ public class FakeReader extends FormatReader {
       }
       int equals = token.indexOf("=");
       if (equals < 0) {
-        LogTools.debug("Warning: ignoring token: " + token);
+        LOGGER.warn("ignoring token: {}", token);
         continue;
       }
       String key = token.substring(0, equals);

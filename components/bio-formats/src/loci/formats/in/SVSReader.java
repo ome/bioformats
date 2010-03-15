@@ -52,6 +52,7 @@ public class SVSReader extends BaseTiffReader {
   public SVSReader() {
     super("Aperio SVS", new String[] {"svs"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
+    suffixNecessary = true;
   }
 
   // -- IFormatReader API methods --
@@ -114,7 +115,7 @@ public class SVSReader extends BaseTiffReader {
 
     for (int s=0; s<core.length; s++) {
       IFD ifd = ifds.get(s);
-      int p = ifd.getPhotometricInterpretation();
+      PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
 

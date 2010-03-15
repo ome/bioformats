@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -63,10 +62,10 @@ public class PrintDomains {
         }
       }
       catch (FormatException e) {
-        LogTools.trace(e);
+        e.printStackTrace();
       }
       catch (IOException e) {
-        LogTools.trace(e);
+        e.printStackTrace();
       }
     }
 

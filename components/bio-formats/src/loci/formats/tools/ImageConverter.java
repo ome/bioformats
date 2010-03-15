@@ -27,7 +27,9 @@ import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
 import loci.common.Location;
-import loci.common.LogTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
@@ -38,10 +40,19 @@ import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
-import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
+import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
+import loci.formats.services.OMEXMLService;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ImageConverter is a utility class for converting a file between formats.
@@ -51,6 +62,11 @@ import loci.formats.out.TiffWriter;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/ImageConverter.java">SVN</a></dd></dl>
  */
 public final class ImageConverter {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ImageConverter.class);
 
   // -- Constructor --
 
@@ -62,6 +78,11 @@ public final class ImageConverter {
   public static boolean testConvert(IFormatWriter writer, String[] args)
     throws FormatException, IOException
   {
+    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%m%n"));
+    root.addAppender(appender);
+
     String in = null, out = null;
     String map = null;
     String compression = null;
@@ -71,7 +92,9 @@ public final class ImageConverter {
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
-          if (args[i].equals("-debug")) LogTools.setDebug(true);
+          if (args[i].equals("-debug")) {
+            root.setLevel(Level.DEBUG);
+          }
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-merge")) merge = true;
@@ -85,17 +108,14 @@ public final class ImageConverter {
             }
             catch (NumberFormatException exc) { }
           }
-          else LogTools.println("Ignoring unknown command flag: " + args[i]);
+          else LOGGER.warn("Ignoring unknown command flag: {}", args[i]);
         }
         else {
           if (in == null) in = args[i];
           else if (out == null) out = args[i];
-          else LogTools.println("Ignoring unknown argument: " + args[i]);
+          else LOGGER.warn("Ignoring unknown argument: {}", args[i]);
         }
       }
-    }
-    if (LogTools.isDebug()) {
-      LogTools.println("Debugging at level " + LogTools.getDebugLevel());
     }
     if (in == null || out == null) {
       String[] s = {
@@ -144,14 +164,14 @@ public final class ImageConverter {
         "",
         "Each file would have a single image plane."
       };
-      for (int i=0; i<s.length; i++) LogTools.println(s[i]);
+      for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
       return false;
     }
 
     if (map != null) Location.mapId(in, map);
 
     long start = System.currentTimeMillis();
-    LogTools.print(in + " ");
+    LOGGER.info(in);
     IFormatReader reader = new ImageReader();
     if (stitch) reader = new FileStitcher(reader);
     if (separate) reader = new ChannelSeparator(reader);
@@ -160,17 +180,24 @@ public final class ImageConverter {
 
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
-    MetadataStore store = MetadataTools.createOMEXMLMetadata();
-    if (store == null) LogTools.println("OME-XML Java library not found.");
-    else reader.setMetadataStore(store);
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      reader.setMetadataStore(service.createOMEXMLMetadata());
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+    }
+    catch (ServiceException se) {
+      throw new FormatException(se);
+    }
 
     reader.setId(in);
 
-    LogTools.print("[" + reader.getFormat() + "] -> " + out + " ");
-
-    store = reader.getMetadataStore();
-    MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
-    if (retrieve != null) writer.setMetadataRetrieve(retrieve);
+    MetadataStore store = reader.getMetadataStore();
+    if (store instanceof MetadataRetrieve) {
+      writer.setMetadataRetrieve((MetadataRetrieve) store);
+    }
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
@@ -183,7 +210,8 @@ public final class ImageConverter {
     }
 
     String format = writer.getFormat();
-    LogTools.print("[" + format + "] ");
+    LOGGER.info("[{}] -> {} [{}] ",
+      new Object[] {reader.getFormat(), out, format});
     long mid = System.currentTimeMillis();
 
     if (format.equals("OME-TIFF") &&
@@ -195,11 +223,12 @@ public final class ImageConverter {
       out.indexOf(FormatTools.T_NUM) > 0))
     {
       // FIXME
-      LogTools.println();
-      LogTools.println(
+      LOGGER.info(
         "Sorry, conversion to multiple OME-TIFF files is not yet supported.");
       return false;
     }
+
+    appender.setLayout(new PatternLayout("%m"));
 
     int total = 0;
     int num = writer.canDoStacks() ? reader.getSeriesCount() : 1;
@@ -227,22 +256,23 @@ public final class ImageConverter {
         boolean lastInSeries = i == numImages - 1;
         writer.saveBytes(buf, q, lastInSeries, q == last - 1 && lastInSeries);
         long e = System.currentTimeMillis();
-        LogTools.print(".");
+        LOGGER.info(".");
         read += m - s;
         write += e - m;
       }
     }
     writer.close();
     long end = System.currentTimeMillis();
-    LogTools.println(" [done]");
+    appender.setLayout(new PatternLayout("%m%n"));
+    LOGGER.info(" [done]");
 
     // output timing results
     float sec = (end - start) / 1000f;
     long initial = mid - start;
     float readAvg = (float) read / total;
     float writeAvg = (float) write / total;
-    LogTools.println(sec + "s elapsed (" +
-      readAvg + "+" + writeAvg + "ms per plane, " + initial + "ms overhead)");
+    LOGGER.info("{}s elapsed ({}+{}ms per plane, {}ms overhead)",
+      new Object[] {sec, readAvg, writeAvg, initial});
 
     return true;
   }

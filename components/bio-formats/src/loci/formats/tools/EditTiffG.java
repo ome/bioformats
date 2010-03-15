@@ -40,9 +40,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
-import loci.formats.tiff.TiffTools;
 
 /**
  * Provides a GUI for editing TIFF file comments.
@@ -132,7 +134,7 @@ public class EditTiffG extends JFrame implements ActionListener {
   public void openFile(File f) {
     try {
       String id = f.getAbsolutePath();
-      String xml = TiffTools.getComment(id);
+      String xml = new TiffParser(id).getComment();
       setXML(xml);
       file = f;
       setTitle(TITLE + " - " + id);
@@ -145,7 +147,13 @@ public class EditTiffG extends JFrame implements ActionListener {
   public void saveFile(File f) {
     try {
       String xml = getXML();
-      TiffSaver.overwriteComment(f.getAbsolutePath(), xml);
+      String path = f.getAbsolutePath();
+      RandomAccessInputStream in = new RandomAccessInputStream(path);
+      RandomAccessOutputStream out = new RandomAccessOutputStream(path);
+      TiffSaver saver = new TiffSaver(out);
+      saver.overwriteComment(in, xml);
+      in.close();
+      out.close();
     }
     catch (FormatException exc) {
       showError(exc);

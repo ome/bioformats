@@ -34,11 +34,13 @@ import java.net.URLClassLoader;
 import java.util.StringTokenizer;
 
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
 import loci.formats.FormatException;
 import loci.formats.MissingLibraryException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for working with QuickTime for Java.
@@ -50,6 +52,9 @@ import loci.formats.MissingLibraryException;
 public class LegacyQTTools {
 
   // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(LegacyQTTools.class);
 
   public static final String NO_QT_MSG =
     "QuickTime for Java is required to read some QuickTime files. " +
@@ -89,7 +94,7 @@ public class LegacyQTTools {
           new URL("file:/System/Library/Java/Extensions/QTJava.zip")
         };
       }
-      catch (MalformedURLException exc) { LogTools.trace(exc); }
+      catch (MalformedURLException exc) { LOGGER.info("", exc); }
       return paths == null ? null : new URLClassLoader(paths);
     }
 
@@ -103,7 +108,7 @@ public class LegacyQTTools {
         try {
           paths = new URL[] {f.toURL()};
         }
-        catch (MalformedURLException exc) { LogTools.trace(exc); }
+        catch (MalformedURLException exc) { LOGGER.info("", exc); }
         return paths == null ? null : new URLClassLoader(paths);
       }
     }
@@ -184,13 +189,13 @@ public class LegacyQTTools {
     }
     catch (Throwable t) {
       noQT = true;
-      LogTools.traceDebug(t);
+      LOGGER.debug("Could not find QuickTime for Java", t);
     }
     finally {
       if (needClose) {
         try { r.exec("QTSession.close()"); }
         catch (Throwable t) {
-          LogTools.traceDebug(t);
+          LOGGER.debug("Could not close QuickTime session", t);
         }
       }
       initialized = true;
@@ -227,7 +232,7 @@ public class LegacyQTTools {
         return qtMajor + "." + qtMinor;
       }
       catch (Throwable t) {
-        LogTools.traceDebug(t);
+        LOGGER.debug("Could not retrieve QuickTime for Java version", t);
         return "Error";
       }
     }
@@ -308,7 +313,9 @@ public class LegacyQTTools {
     }
     catch (ReflectException e) {
       try { r.exec("QTSession.close()"); }
-      catch (ReflectException exc) { LogTools.trace(exc); }
+      catch (ReflectException exc) {
+        LOGGER.info("Could not close QuickTime session", exc);
+      }
       throw new FormatException("PICT extraction failed", e);
     }
   }

@@ -26,16 +26,17 @@ package loci.common;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * CompressedRandomAccess implementation for reading from Zip-compressed files
+ * StreamHandle implementation for reading from Zip-compressed files
  * or byte arrays.  Instances of ZipHandle are read-only.
  *
- * @see CompressedRandomAccess
+ * @see StreamHandle
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/ZipHandle.java">Trac</a>,
@@ -43,7 +44,7 @@ import java.util.zip.ZipFile;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class ZipHandle extends CompressedRandomAccess {
+public class ZipHandle extends StreamHandle {
 
   // -- Fields --
 
@@ -52,6 +53,13 @@ public class ZipHandle extends CompressedRandomAccess {
 
   // -- Constructor --
 
+  /**
+   * Constructs a new ZipHandle corresponding to the given file.
+   *
+   * @throws HandleException if:
+   *   <li>The given file is not a Zip file.<br>
+   *   <li>The Zip file contains more than one entry.<br>
+   */
   public ZipHandle(String file) throws IOException {
     super();
     this.file = file;
@@ -83,15 +91,20 @@ public class ZipHandle extends CompressedRandomAccess {
     }
 
     length = entry.getSize();
-    stream = new DataInputStream(new BufferedInputStream(
-      zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
+    resetStream();
   }
 
   // -- ZipHandle API methods --
 
   /** Returns true if the given filename is a Zip file. */
-  public static boolean isZipFile(String file) {
-    return file.toLowerCase().endsWith(".zip");
+  public static boolean isZipFile(String file) throws IOException {
+    if (!file.toLowerCase().endsWith(".zip")) return false;
+
+    FileInputStream f = new FileInputStream(file);
+    byte[] b = new byte[2];
+    f.read(b);
+    f.close();
+    return new String(b).equals("PK");
   }
 
   /** Get the name of the first entry. */
@@ -118,26 +131,13 @@ public class ZipHandle extends CompressedRandomAccess {
     entry = null;
   }
 
-  /* @see IRandomAccess#seek(long) */
-  public void seek(long pos) throws IOException {
-    long oldFP = fp;
-    fp = pos;
-    if (fp > oldFP) {
-      long diff = fp - oldFP;
-      int skipped = stream.skipBytes((int) diff);
-      while (skipped < diff) {
-        skipped += stream.skipBytes((int) (diff - skipped));
-      }
-    }
-    else if (fp < oldFP) {
-      stream.close();
-      stream = new DataInputStream(new BufferedInputStream(
-        zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
-      int skipped = stream.skipBytes((int) fp);
-      while (skipped < fp) {
-        skipped += stream.skipBytes((int) (fp - skipped));
-      }
-    }
+  // -- StreamHandle API methods --
+
+  /* @see StreamHandle#resetStream() */
+  protected void resetStream() throws IOException {
+    if (stream != null) stream.close();
+    stream = new DataInputStream(new BufferedInputStream(
+     zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
   }
 
 }

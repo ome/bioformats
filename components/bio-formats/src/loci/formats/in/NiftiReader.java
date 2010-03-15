@@ -102,7 +102,7 @@ public class NiftiReader extends FormatReader {
       return isValid;
     }
     catch (FileNotFoundException e) { } // NB: No output for missing header.
-    catch (IOException e) { traceDebug(e); }
+    catch (IOException e) { LOGGER.debug("", e); }
     return false;
   }
 
@@ -170,11 +170,9 @@ public class NiftiReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("NiftiReader.initFile(" + id + ")");
-
     // the dataset has two files - we want the one ending in '.hdr'
     if (id.endsWith(".img")) {
-      status("Looking for header file");
+      LOGGER.info("Looking for header file");
       String header = id.substring(0, id.lastIndexOf(".")) + ".hdr";
       if (new Location(header).exists()) {
         setId(header);
@@ -203,7 +201,7 @@ public class NiftiReader extends FormatReader {
     in.order(little);
     pixelFile.order(little);
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     int fileSize = in.readInt();
 
@@ -331,7 +329,7 @@ public class NiftiReader extends FormatReader {
       }
     }
 
-    status("Populating metadata table");
+    LOGGER.info("Populating metadata table");
 
     for (int i=0; i<transform.length; i++) {
       String axis = i == 0 ? "X" : i == 1 ? "Y" : "Z";
@@ -378,7 +376,7 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Quaternion y parameter", quaternionY);
     addGlobalMeta("Quaternion z parameter", quaternionZ);
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     core[0].sizeX = x;
     core[0].sizeY = y;
@@ -436,7 +434,7 @@ public class NiftiReader extends FormatReader {
         throw new FormatException("Unsupported data type: " + dataType);
     }
 
-    status("Populating MetadataStore");
+    LOGGER.info("Populating MetadataStore");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

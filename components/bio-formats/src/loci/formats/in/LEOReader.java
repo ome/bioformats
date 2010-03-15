@@ -26,10 +26,13 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.DateTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * LEOReader is the file format reader for LEO EM files.
@@ -58,6 +61,16 @@ public class LEOReader extends BaseTiffReader {
   public LEOReader() {
     super("LEO", "sxm");
     domains = new String[] {FormatTools.EM_DOMAIN};
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    TiffParser parser = new TiffParser(stream);
+    IFD ifd = parser.getFirstIFD();
+    if (ifd == null) return false;
+    return ifd.containsKey(LEO_TAG);
   }
 
   // -- Internal BaseTiffReader API methods --

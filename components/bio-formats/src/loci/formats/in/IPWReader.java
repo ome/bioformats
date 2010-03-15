@@ -31,15 +31,18 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.POITools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -66,7 +69,7 @@ public class IPWReader extends FormatReader {
   private Hashtable<Integer, String> imageFiles;
 
   /** Helper reader - parses embedded files from the OLE document. */
-  private POITools poi;
+  private POIService poi;
 
   /** Image description. */
   private String description;
@@ -150,11 +153,19 @@ public class IPWReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("IPWReader.initFile(" + id + ")");
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-    poi = new POITools(Location.getMappedId(currentId));
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(currentId));
 
     imageFiles = new Hashtable<Integer, String>();
 
@@ -231,7 +242,7 @@ public class IPWReader extends FormatReader {
       }
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     RandomAccessInputStream stream =
       poi.getDocumentStream(imageFiles.get(new Integer(0)));

@@ -30,6 +30,7 @@ use constant {
   COMPILE   => 13, # compile-time classpath for each component
   RUNTIME   => 14, # runtime classpath for each component
   ECLIPSE   => 15, # Eclipse classpath for each component
+  VERSION   => 16, # version number for each library
 };
 
 # -- COMPONENT DEFINITIONS - ACTIVE --
@@ -322,25 +323,27 @@ ZZ
 my %antContrib = (
   NAME    => "ant-contrib",
   TITLE   => "Ant-Contrib",
-  JAR     => "ant-contrib-1.0b1.jar",
+  JAR     => "ant-contrib-1.0b3.jar",
   PACKAGE => "net.sf.antcontrib",
   LICENSE => "Apache",
   URL     => "http://ant-contrib.sourceforge.net/",
   NOTES   => <<ZZ,
 used by tools target to iterate over JAR files ("for" task)
 ZZ
+  VERSION => "1.0b3"
 );
 
 my %checkstyle = (
   NAME    => "checkstyle",
   TITLE   => "Checkstyle",
-  JAR     => "checkstyle-all-4.2.jar",
+  JAR     => "checkstyle-all-5.0.jar",
   PACKAGE => "com.puppycrawl.tools.checkstyle",
   LICENSE => "LGPL",
   URL     => "http://checkstyle.sourceforge.net/",
   NOTES   => <<ZZ,
 used by style Ant target to check source code style conventions
 ZZ
+  VERSION => "5.0"
 );
 
 my %commonsHTTPClient = (
@@ -353,6 +356,7 @@ my %commonsHTTPClient = (
   NOTES   => <<ZZ,
 required for OME-Java to communicate with OME servers
 ZZ
+  VERSION => "2.0-rc2"
 );
 
 my %commonsLogging = (
@@ -365,6 +369,7 @@ my %commonsLogging = (
   NOTES   => <<ZZ,
 used by OME-Java
 ZZ
+  VERSION => "1.0.3"
 );
 
 my %findbugs = (
@@ -377,18 +382,20 @@ my %findbugs = (
   NOTES   => <<ZZ,
 used by findbugs Ant target to check for program bugs
 ZZ
+  VERSION => "1.3.9"
 );
 
 my %forms = (
   NAME    => "forms",
   TITLE   => "JGoodies Forms",
-  JAR     => "forms-1.0.4.jar",
+  JAR     => "forms-1.3.0.jar",
   PACKAGE => "com.jgoodies.forms",
   LICENSE => "BSD",
   URL     => "http://www.jgoodies.com/freeware/forms/index.html",
   NOTES   => <<ZZ,
 used for layout by VisBio, Data Browser and OME Notes
 ZZ
+  VERSION => "1.3.0"
 );
 
 my %ice = (
@@ -401,6 +408,7 @@ my %ice = (
   NOTES   => <<ZZ,
 used by Bio-Formats Ice framework
 ZZ
+  VERSIOn => "3.3.1"
 );
 
 my %ij = (
@@ -414,6 +422,7 @@ my %ij = (
 used by LOCI plugins for ImageJ and OME plugins for ImageJ; bundled with VisBio
 to achieve ImageJ interconnectivity
 ZZ
+  VERSION => "1.43o"
 );
 
 my %jiio = (
@@ -427,6 +436,7 @@ my %jiio = (
 used by Bio-Formats via reflection for JPEG2000 support (ND2, JP2) and lossless
 JPEG decompression (DICOM)
 ZZ
+  VERSION => "1.1"
 );
 
 my %junit = (
@@ -439,6 +449,7 @@ my %junit = (
   NOTES   => <<ZZ,
 unit testing framework used for a few VisBio unit tests
 ZZ
+  VERSION => "3.8.2"
 );
 
 my %lma = (
@@ -454,16 +465,30 @@ Plotter
 ZZ
 );
 
+my %log4j = (
+  NAME    => "log4j",
+  TITLE   => "Apache log4j",
+  JAR     => "log4j-1.2.15.jar",
+  PACKAGE => "org.apache.log4j",
+  LICENSE => "Apache",
+  URL     => "http://logging.apache.org/log4j/",
+  NOTES   => <<ZZ,
+required by SLF4J implementation
+ZZ
+  VERSION => "1.2.15"
+);
+
 my %looks = (
   NAME    => "looks",
   TITLE   => "JGoodies Looks",
-  JAR     => "looks-1.2.2.jar",
-  PACKAGE => "com.jgoodies.plaf",
+  JAR     => "looks-2.3.1.jar",
+  PACKAGE => "com.jgoodies.looks",
   LICENSE => "BSD",
   URL     => "http://www.jgoodies.com/freeware/looks/index.html",
   NOTES   => <<ZZ,
 used for a nicer Look & Feel by VisBio and OME Metadata Editor
 ZZ
+  VERSION => "2.3.1"
 );
 
 my %netcdf = (
@@ -476,30 +501,7 @@ my %netcdf = (
   NOTES   => <<ZZ,
 used by Bio-Formats via reflection for HDF support (Imaris 5.5)
 ZZ
-);
-
-my %netcdfBufr = (
-  NAME    => "netcdf-bufr",
-  TITLE   => "BUFR Java Decoder",
-  JAR     => "bufr-1.1.00.jar",
-  PACKAGE => "ucar.bufr",
-  LICENSE => "LGPL",
-  URL     => "http://www.unidata.ucar.edu/software/netcdf-java/",
-  NOTES   => <<ZZ,
-used by NetCDF library
-ZZ
-);
-
-my %netcdfGrib = (
-  NAME    => "netcdf-grib",
-  TITLE   => "GRIB Java Decoder",
-  JAR     => "grib-5.1.03.jar",
-  PACKAGE => "ucar.grib",
-  LICENSE => "LGPL",
-  URL     => "http://www.unidata.ucar.edu/software/netcdf-java/",
-  NOTES   => <<ZZ,
-used by NetCDF library
-ZZ
+  VERSION => "4.0"
 );
 
 my %omeJava = (
@@ -531,50 +533,28 @@ ZZ
 my %omeroClient = (
   NAME    => "omero-client",
   TITLE   => "OMERO Client",
-  JAR     => "omero-client-4.0.3.jar",
+  JAR     => "omero-client-4.1.1.jar",
   PACKAGE => "ome.system",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
+  VERSION => "4.1.1"
 );
 
 my %omeroCommon = (
   NAME    => "omero-common",
   TITLE   => "OMERO Common",
-  JAR     => "omero-common-4.0.3.jar",
+  JAR     => "omero-common-4.1.1.jar",
   PACKAGE => "ome.api",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
+  VERSION => "4.1.1"
 );
-
-#my %omeroImporter = (
-#  NAME    => "omero-importer",
-#  TITLE   => "OMERO Importer",
-#  JAR     => "omero-importer-3.0-Beta3.jar",
-#  PACKAGE => "ome.formats",
-#  LICENSE => "GPL",
-#  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-#  NOTES   => <<ZZ,
-#used by OME I/O to connect to OMERO servers
-#ZZ
-#);
-
-#my %omeroModelPSQL = (
-#  NAME    => "omero-model-psql",
-#  TITLE   => "OMERO Model PostgreSQL",
-#  JAR     => "omero-model-psql-3.0-Beta3.jar",
-#  PACKAGE => "ome.model",
-#  LICENSE => "GPL",
-#  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-#  NOTES   => <<ZZ,
-#used by OME I/O to connect to OMERO servers
-#ZZ
-#);
 
 my %skinlf = (
   NAME    => "skinlf",
@@ -586,36 +566,52 @@ my %skinlf = (
   NOTES   => <<ZZ,
 not used (may be used in the future for flexible skinning)
 ZZ
+  VERSION => "6.7"
 );
 
-my %slf4j = (
+my %slf4j_api = (
   NAME    => "slf4j",
-  TITLE   => "Simple Logging Facade for Java",
-  JAR     => "slf4j-jdk14.jar",
+  TITLE   => "Simple Logging Facade for Java API",
+  JAR     => "slf4j-api-1.5.10.jar",
   PACKAGE => "org.slf4j",
   LICENSE => "BSD",
   URL     => "http://www.slf4j.org/",
   NOTES   => <<ZZ,
-used by NetCDF library
+used for all logging in loci.*
 ZZ
+  VERSION => "1.5.10"
+);
+
+my %slf4j_impl = (
+  NAME    => "slf4j",
+  TITLE   => "Simple Logging Facade for Java Binding",
+  JAR     => "slf4j-log4j12-1.5.10.jar",
+  PACKAGE => "org.slf4j",
+  LICENSE => "BSD",
+  URL     => "http://www.slf4j.org/",
+  NOTES   => <<ZZ,
+used for all logging in loci.*
+ZZ
+  VERSION => "1.5.10"
 );
 
 my %testng = (
   NAME    => "testng",
   TITLE   => "TestNG",
-  JAR     => "testng-5.7-jdk14.jar",
+  JAR     => "testng-5.11-jdk15.jar",
   PACKAGE => "org.testng",
   LICENSE => "Apache",
   URL     => "http://testng.org/",
   NOTES   => <<ZZ,
 testing framework used for LOCI software automated test suite
 ZZ
+  VERSION => "5.7"
 );
 
 my %velocity = (
   NAME    => "velocity",
   TITLE   => "Apache Velocity",
-  JAR     => "velocity-dep-1.5.jar",
+  JAR     => "velocity-1.6.3-dep.jar",
   PACKAGE => "org.apache.velocity",
   LICENSE => "Apache",
   URL     => "http://velocity.apache.org/",
@@ -623,6 +619,7 @@ my %velocity = (
 used to autogenerate the loci.formats.meta and loci.formats.ome Bio-Formats
 packages
 ZZ
+  VERSION => "1.6.3"
 );
 
 my %visad = (
@@ -648,6 +645,7 @@ my %xmlrpc = (
   NOTES   => <<ZZ,
 used by OME-Java library to communicate with OME servers
 ZZ
+  VERSION => "1.2-b1"
 );
 
 # -- DATA STRUCTURES --
@@ -701,17 +699,15 @@ my @libs = (
   \%jiio,
   \%junit,
   \%lma,
+  \%log4j,
   \%looks,
   \%netcdf,
-  \%netcdfBufr,
-  \%netcdfGrib,
-  \%slf4j,
+  \%slf4j_api,
+  \%slf4j_impl,
   \%omeJava,
   \%omeJavaDeprecated,
   \%omeroClient,
   \%omeroCommon,
-#  \%omeroImporter,
-#  \%omeroModelPSQL,
   \%skinlf,
   \%testng,
   \%velocity,
@@ -1132,12 +1128,12 @@ foreach my $l (@libs) {
 
 sub checkDirect {
   my ($package, $path) = @_;
-  return `find $path/src -name '*.java' | xargs grep -l "^import $package\\."`;
+  return `find $path -name '*.java' | xargs grep -l "^import $package\\."`;
 }
 
 sub checkReflect {
   my ($package, $path) = @_;
-  return `find $path/src -name '*.java' | xargs grep -l "import $package\\."`;
+  return `find $path -name '*.java' | xargs grep -l "import $package\\."`;
 }
 
 sub smartSplit {

@@ -32,20 +32,23 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.MDBService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
-import loci.formats.tiff.TiffTools;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -225,10 +228,8 @@ public class ZeissLSMReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    byte[] check = new byte[blockLen];
-    stream.readFully(check);
-    return TiffTools.isValidHeader(check) ||
-      (check[2] == 0x53 && check[3] == 0x74);
+    TiffParser parser = new TiffParser(stream);
+    return parser.isValidHeader() || stream.readShort() == 0x5374;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -300,10 +301,13 @@ public class ZeissLSMReader extends FormatReader {
     IFDList ifds = ifdsList.get(getSeries());
 
     if (splitPlanes && getSizeC() > 1) {
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
       int plane = no / getSizeC();
       int c = no % getSizeC();
-      byte[][] samples = tiffParser.getSamples(ifds.get(plane), x, y, w, h);
-      System.arraycopy(samples[c], 0, buf, 0, buf.length);
+
+      byte[] b = new byte[buf.length * getSizeC()];
+      tiffParser.getSamples(ifds.get(plane), b, x, y, w, h);
+      ImageTools.splitChannels(b, buf, c, getSizeC(), bpp, false, false);
     }
     else tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
     in.close();
@@ -314,7 +318,6 @@ public class ZeissLSMReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ZeissLSMReader.initFile(" + id + ")");
     super.initFile(id);
 
     if (!checkSuffix(id, MDB_SUFFIX) && isGroupFiles()) {
@@ -360,11 +363,11 @@ public class ZeissLSMReader extends FormatReader {
       core[i].littleEndian = s.read() == TiffConstants.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
-      ifdsList.set(i, new TiffParser(s).getIFDs(true));
+      ifdsList.set(i, new TiffParser(s).getNonThumbnailIFDs());
       s.close();
     }
 
-    status("Removing thumbnails");
+    LOGGER.info("Removing thumbnails");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -428,7 +431,7 @@ public class ZeissLSMReader extends FormatReader {
 
     tiffParser = new TiffParser(in);
 
-    int photo = ifd.getPhotometricInterpretation();
+    PhotoInterp photo = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();
 
     core[series].sizeX = (int) ifd.getImageWidth();
@@ -441,7 +444,7 @@ public class ZeissLSMReader extends FormatReader {
     core[series].sizeZ = getImageCount();
     core[series].sizeT = 1;
 
-    status("Reading LSM metadata for series #" + series);
+    LOGGER.info("Reading LSM metadata for series #{}", series);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -461,7 +464,11 @@ public class ZeissLSMReader extends FormatReader {
     store.setImageInstrumentRef(instrumentID, series);
 
     // get TIF_CZ_LSMINFO structure
-    short[] s = ifd.getIFDShortArray(ZEISS_ID, true);
+    short[] s = ifd.getIFDShortArray(ZEISS_ID);
+    if (s == null) {
+      throw new FormatException("Invalid Zeiss LSM file. Tag " +
+        ZEISS_ID + " not found.");
+    }
     byte[] cz = new byte[s.length];
     for (int i=0; i<s.length; i++) {
       cz[i] = (byte) s[i];
@@ -1288,18 +1295,30 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /** Parse a .mdb file and return a list of referenced .lsm files. */
-  private String[] parseMDB(String mdbFile) throws FormatException {
+  private String[] parseMDB(String mdbFile) throws FormatException, IOException
+  {
     Location mdb = new Location(mdbFile).getAbsoluteFile();
     Location parent = mdb.getParentFile();
-    Vector[] tables = MDBParser.parseDatabase(mdbFile);
+
+    MDBService mdbService = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      mdbService = factory.getInstance(MDBService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("MDB Tools Java library not found", de);
+    }
+
+    mdbService.initialize(mdbFile);
+    Vector<Vector<String[]>> tables = mdbService.parseDatabase();
     Vector<String> referencedLSMs = new Vector<String>();
 
-    for (int table=0; table<tables.length; table++) {
-      String[] columnNames = (String[]) tables[table].get(0);
+    for (Vector<String[]> table : tables) {
+      String[] columnNames = table.get(0);
       String tableName = columnNames[0];
 
-      for (int row=1; row<tables[table].size(); row++) {
-        String[] tableRow = (String[]) tables[table].get(row);
+      for (int row=1; row<table.size(); row++) {
+        String[] tableRow = table.get(row);
         for (int col=0; col<tableRow.length; col++) {
           String key = tableName + " " + columnNames[col + 1] + " " + row;
           if (currentId != null) {
@@ -1546,7 +1565,7 @@ public class ZeissLSMReader extends FormatReader {
         read();
       }
       catch (IOException e) {
-        traceDebug(e);
+        LOGGER.debug("Failed to read sub-block data", e);
       }
     }
 

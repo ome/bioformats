@@ -50,7 +50,7 @@ import visad.util.GUIFrame;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * HelpManager is the manager encapsulating VisBio's help window logic.

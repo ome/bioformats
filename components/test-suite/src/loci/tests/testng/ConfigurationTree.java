@@ -41,8 +41,10 @@ import java.util.StringTokenizer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import loci.common.LogTools;
 import loci.formats.FormatTools;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Stores configuration data about files in a directory structure.
@@ -52,6 +54,11 @@ import loci.formats.FormatTools;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/ConfigurationTree.java">SVN</a></dd></dl>
  */
 public class ConfigurationTree {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ConfigurationTree.class);
 
   // -- Fields --
 
@@ -121,8 +128,8 @@ public class ConfigurationTree {
 
       DefaultMutableTreeNode node = findNode(id, true);
       if (node == null) {
-        LogTools.println("Warning: config file '" +
-          configFile + "' has invalid filename on line " + count);
+        LOGGER.warn("config file '{}' has invalid filename on line {}",
+          configFile, count);
         continue;
       }
       Hashtable global = (Hashtable) node.getUserObject();
@@ -142,8 +149,8 @@ public class ConfigurationTree {
         if (left) {
           // begin series context
           if (local != null) {
-            LogTools.println("Warning: config file '" +
-              configFile + "' has unmatched [ on line " + count);
+            LOGGER.warn("config file '{}' has unmatched [ on line {}",
+              configFile, count);
           }
           local = new Hashtable();
         }
@@ -152,8 +159,8 @@ public class ConfigurationTree {
         if (token.equals("")) { } // ignore blank tokens
         else if (equals < 0) {
           // ignore invalid tokens
-          LogTools.println("Warning: config file '" + configFile +
-            "' has invalid token on line " + count + ": " + token);
+          LOGGER.warn("config file '{}' has invalid token on line {}: {}",
+            new Object[] {configFile, count, token});
         }
         else {
           // store key/value pair into the proper context
@@ -166,21 +173,23 @@ public class ConfigurationTree {
         if (right) {
           // end series context
           if (local == null) {
-            LogTools.println("Warning: config file '" +
-              configFile + "' has unmatched ] on line " + count);
+            LOGGER.warn("config file '{}' has unmatched ] on line {}",
+              configFile, count);
           }
           else {
             // save local context results
             String series = (String) local.get("series");
             if (series == null) {
-              LogTools.println("Warning: config file '" + configFile +
-                "' is missing a series number on line " + count);
+              LOGGER.warn(
+                "config file '{}' is missing a series number on line {}",
+                configFile, count);
             }
             else {
               int index = toInt(series);
               if (index < 0) {
-                LogTools.println("Warning: config file '" + configFile +
-                  "' has invalid series block on line " + count);
+                LOGGER.warn(
+                  "config file '{}' has invalid series block on line {}",
+                  configFile, count);
               }
               else getChild(node, index).setUserObject(local);
             }
@@ -206,8 +215,7 @@ public class ConfigurationTree {
   public void setSeries(int series) {
     if (pos == null) return; // file has no configuration
     if (series >= pos.getChildCount()) {
-      LogTools.println("Warning: invalid series for file '" +
-        currentId + "': " + series);
+      LOGGER.warn("invalid series for file '{}': {}", currentId, series);
       seriesTable = null;
       return;
     }

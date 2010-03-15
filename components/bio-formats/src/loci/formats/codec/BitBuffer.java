@@ -25,7 +25,8 @@ package loci.formats.codec;
 
 import java.util.Random;
 
-import loci.common.LogTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.
@@ -36,6 +37,10 @@ import loci.common.LogTools;
  * @author Eric Kjellman egkjellman at wisc.edu
  */
 public class BitBuffer {
+
+  // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(BitBuffer.class);
 
   /** Various bitmasks for the 0000xxxx side of a byte. */
   private static final int[] BACK_MASK = {
@@ -184,8 +189,8 @@ public class BitBuffer {
     int totallen = 0;
 
     Random r = new Random();
-    LogTools.println("Generating " + trials + " trials.");
-    LogTools.println("Writing to byte array");
+    LOGGER.info("Generating {} trials.", trials);
+    LOGGER.info("Writing to byte array");
     // we want the trials to be able to be all possible bit lengths.
     // r.nextInt() by itself is not sufficient... in 50000 trials it would be
     // extremely unlikely to produce bit strings of 1 bit.
@@ -206,15 +211,15 @@ public class BitBuffer {
     }
     BitBuffer bb = new BitBuffer(bw.toByteArray());
     int readint;
-    LogTools.println("Reading from BitBuffer");
+    LOGGER.info("Reading from BitBuffer");
     // Randomly skip or read bytes
     for (int i = 0; i < trials; i++) {
       int c = r.nextInt(100);
       if (c > 50) {
         readint = bb.getBits(len[i]);
         if (readint != nums[i]) {
-          LogTools.println("Error at #" + i + ": " + readint + " received, " +
-            nums[i] + " expected.");
+          LOGGER.info("Error at #{}: {} received, {} expected.",
+            new Object[] {i, readint, nums[i]});
         }
       }
       else {
@@ -222,13 +227,13 @@ public class BitBuffer {
       }
     }
     // Test reading past end of buffer.
-    LogTools.println("Testing end of buffer");
+    LOGGER.info("Testing end of buffer");
     bb = new BitBuffer(bw.toByteArray());
     // The total length could be mid byte. Add one byte to test.
     bb.skipBits(totallen + 8);
     int read = bb.getBits(1);
     if (-1 != read) {
-      LogTools.println("-1 expected at end of buffer, " + read + " received.");
+      LOGGER.info("-1 expected at end of buffer, {} received.", read);
     }
   }
 }

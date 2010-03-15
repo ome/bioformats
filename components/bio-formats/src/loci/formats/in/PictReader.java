@@ -158,11 +158,8 @@ public class PictReader extends FormatReader {
       in.seek(512);
       byte[] pix = new byte[(int) (in.length() - in.getFilePointer())];
       in.read(pix);
-      // CTR: CHECK: Could we use AWTImageTools.getBytes here instead?
-      // See loci.formats.in.BIFormatReader.openBytes for an example.
-      byte[][] b = AWTImageTools.getPixelBytes(
-        AWTImageTools.makeBuffered(qtTools.pictToImage(pix)),
-        isLittleEndian());
+      byte[][] b = AWTImageTools.getBytes(
+        AWTImageTools.makeBuffered(qtTools.pictToImage(pix)));
       pix = null;
       for (int i=0; i<b.length; i++) {
         System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
@@ -245,11 +242,10 @@ public class PictReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("PictReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].littleEndian = false;
 
@@ -327,7 +323,7 @@ public class PictReader extends FormatReader {
   private boolean drivePictDecoder(int opcode)
     throws FormatException, IOException
   {
-    debug("drivePictDecoder(" + opcode + ") @ " + in.getFilePointer());
+    LOGGER.debug("drivePictDecoder({}) @ {}", opcode, in.getFilePointer());
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
@@ -375,7 +371,7 @@ public class PictReader extends FormatReader {
       default:
         if (opcode < 0) {
           //throw new FormatException("Invalid opcode: " + opcode);
-          warn("Invalid opcode: " + opcode);
+          LOGGER.warn("Invalid opcode: {}", opcode);
         }
     }
 
@@ -410,7 +406,7 @@ public class PictReader extends FormatReader {
     throws FormatException, IOException
   {
     readImageHeader(opcode);
-    debug("handlePixmap(" + opcode + ")");
+    LOGGER.debug("handlePixmap({})", opcode);
 
     int pixelSize = in.readShort();
     int compCount = in.readShort();
@@ -462,7 +458,8 @@ public class PictReader extends FormatReader {
   private void handlePixmap(int rBytes, int pixelSize, int compCount)
     throws FormatException, IOException
   {
-    debug("handlePixmap(" + rBytes + ", " + pixelSize + ", " + compCount + ")");
+    LOGGER.debug("handlePixmap({}, {}, {})",
+      new Object[] {rBytes, pixelSize, compCount});
     int rawLen;
     byte[] buf;  // row raw bytes
     byte[] uBuf = null;  // row uncompressed data
@@ -497,7 +494,7 @@ public class PictReader extends FormatReader {
     }
 
     if (!compressed) {
-      debug("Pixel data is uncompressed (pixelSize=" + pixelSize + ").");
+      LOGGER.debug("Pixel data is uncompressed (pixelSize={}).", pixelSize);
       buf = new byte[bufSize];
       for (int row=0; row<getSizeY(); row++) {
         in.read(buf, 0, rBytes);
@@ -522,8 +519,8 @@ public class PictReader extends FormatReader {
       }
     }
     else {
-      debug("Pixel data is compressed (pixelSize=" +
-        pixelSize + "; compCount=" + compCount + ").");
+      LOGGER.debug("Pixel data is compressed (pixelSize={}; compCount={}).",
+        pixelSize, compCount);
       buf = new byte[bufSize + 1 + bufSize / 128];
       for (int row=0; row<getSizeY(); row++) {
         if (rBytes > 250) rawLen = in.readShort();
@@ -584,8 +581,8 @@ public class PictReader extends FormatReader {
   private void expandPixels(int bitSize, byte[] ib, byte[] ob, int outLen)
     throws FormatException
   {
-    debug("expandPixels(" + bitSize + ", " +
-      ib.length + ", " + ob.length + ", " + outLen + ")");
+    LOGGER.debug("expandPixels({}, {}, {}, {})",
+      new Object[] {bitSize, ib.length, ob.length, outLen});
     if (bitSize == 1) {
       int remainder = outLen % 8;
       int max = outLen / 8;
@@ -636,7 +633,7 @@ public class PictReader extends FormatReader {
 
   /** PackBits variant that outputs an int array. */
   private void unpackBits(byte[] ib, int[] ob) {
-    debug("unpackBits(...)");
+    LOGGER.debug("unpackBits(...)");
     int i = 0;
     int b;
     int rep;

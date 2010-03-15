@@ -28,12 +28,16 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
@@ -47,11 +51,22 @@ import loci.formats.ImageReader;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
+import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
+import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * ImageInfo is a utility class for reading a file
@@ -62,6 +77,10 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/ImageInfo.java">SVN</a></dd></dl>
  */
 public class ImageInfo {
+
+  // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
 
   // -- Fields --
 
@@ -96,8 +115,6 @@ public class ImageInfo {
   private DimensionSwapper dimSwapper;
   private BufferedImageReader biReader;
 
-  private StatusEchoer status;
-
   private String seriesLabel = null;
 
   private Double[] preGlobalMin = null, preGlobalMax = null;
@@ -105,9 +122,19 @@ public class ImageInfo {
   private Double[] prePlaneMin = null, prePlaneMax = null;
   private boolean preIsMinMaxPop = false;
 
+  private ConsoleAppender appender;
+  private PatternLayout originalLayout;
+  private PatternLayout altLayout = new PatternLayout("%m");
+
   // -- ImageInfo methods --
 
   public void parseArgs(String[] args) {
+    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    originalLayout = new PatternLayout("%m%n");
+    appender = new ConsoleAppender(originalLayout);
+    root.addAppender(appender);
+
     id = null;
     printVersion = false;
     pixels = true;
@@ -154,7 +181,9 @@ public class ImageInfo {
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
-        else if (args[i].equals("-debug")) LogTools.setDebug(true);
+        else if (args[i].equals("-debug")) {
+          root.setLevel(Level.DEBUG);
+        }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
         else if (args[i].equals("-crop")) {
@@ -165,10 +194,7 @@ public class ImageInfo {
           height = Integer.parseInt(st.nextToken());
         }
         else if (args[i].equals("-level")) {
-          try {
-            LogTools.setDebugLevel(Integer.parseInt(args[++i]));
-          }
-          catch (NumberFormatException exc) { }
+          root.setLevel(Level.TRACE);
         }
         else if (args[i].equals("-range")) {
           try {
@@ -191,11 +217,11 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
-        else LogTools.println("Ignoring unknown command flag: " + args[i]);
+        else LOGGER.warn("Ignoring unknown command flag: {}", args[i]);
       }
       else {
         if (id == null) id = args[i];
-        else LogTools.println("Ignoring unknown argument: " + args[i]);
+        else LOGGER.warn("Ignoring unknown argument: {}", args[i]);
       }
     }
   }
@@ -244,7 +270,7 @@ public class ImageInfo {
       "* = may result in loss of precision",
       ""
     };
-    for (int i=0; i<s.length; i++) LogTools.println(s[i]);
+    for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
   }
 
   public void createReader() {
@@ -255,16 +281,16 @@ public class ImageInfo {
         reader = (IFormatReader) c.newInstance();
       }
       catch (ClassNotFoundException exc) {
-        LogTools.println("Warning: unknown reader: " + format);
-        LogTools.traceDebug(exc);
+        LOGGER.warn("Unknown reader: {}", format);
+        LOGGER.debug("", exc);
       }
       catch (InstantiationException exc) {
-        LogTools.println("Warning: cannot instantiate reader: " + format);
-        LogTools.traceDebug(exc);
+        LOGGER.warn("Cannot instantiate reader: {}", format);
+        LOGGER.debug("", exc);
       }
       catch (IllegalAccessException exc) {
-        LogTools.println("Warning: cannot access reader: " + format);
-        LogTools.traceDebug(exc);
+        LOGGER.warn("Cannot access reader: {}", format);
+        LOGGER.debug("", exc);
       }
     }
     if (reader == null) reader = new ImageReader();
@@ -275,7 +301,7 @@ public class ImageInfo {
     else if (preload) {
       RandomAccessInputStream f = new RandomAccessInputStream(id);
       int len = (int) f.length();
-      LogTools.println("Caching " + len + " bytes:");
+      LOGGER.info("Caching {} bytes:", len);
       byte[] b = new byte[len];
       int blockSize = 8 * 1024 * 1024; // 8 MB
       int read = 0, left = len;
@@ -285,7 +311,7 @@ public class ImageInfo {
         left -= r;
         float ratio = (float) read / len;
         int p = (int) (100 * ratio);
-        LogTools.println("\tRead " + read + " bytes (" + p + "% complete)");
+        LOGGER.info("\tRead {} bytes ({}% complete)", read, p);
       }
       f.close();
       ByteArrayHandle file = new ByteArrayHandle(b);
@@ -296,25 +322,33 @@ public class ImageInfo {
   public void configureReaderPreInit() throws FormatException, IOException {
     if (omexml) {
       reader.setOriginalMetadataPopulated(true);
-      MetadataStore store =
-        MetadataTools.createOMEXMLMetadata(null, omexmlVersion);
-      if (store != null) reader.setMetadataStore(store);
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        reader.setMetadataStore(
+            service.createOMEXMLMetadata(null, omexmlVersion));
+      }
+      catch (DependencyException de) {
+        throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+      }
+      catch (ServiceException se) {
+        throw new FormatException(se);
+      }
     }
 
     // check file format
     if (reader instanceof ImageReader) {
       // determine format
       ImageReader ir = (ImageReader) reader;
-      LogTools.print("Checking file format ");
-      LogTools.println("[" + ir.getFormat(id) + "]");
+      LOGGER.info("Checking file format [{}]", ir.getFormat(id));
     }
     else {
       // verify format
-      LogTools.print("Checking " + reader.getFormat() + " format ");
-      LogTools.println(reader.isThisType(id) ? "[yes]" : "[no]");
+      LOGGER.info("Checking {} format [{}]", reader.getFormat(),
+        reader.isThisType(id) ? "yes" : "no");
     }
 
-    LogTools.println("Initializing reader");
+    LOGGER.info("Initializing reader");
     if (stitch) {
       reader = new FileStitcher(reader, true);
       String pat = FilePattern.findPattern(new Location(id));
@@ -331,9 +365,6 @@ public class ImageInfo {
     }
     reader = biReader = new BufferedImageReader(reader);
 
-    status = new StatusEchoer();
-    reader.addStatusListener(status);
-
     reader.close();
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
@@ -349,16 +380,15 @@ public class ImageInfo {
     if (!normalize && (reader.getPixelType() == FormatTools.FLOAT ||
       reader.getPixelType() == FormatTools.DOUBLE))
     {
-      LogTools.println("Warning: Java does not support " +
+      LOGGER.warn("Java does not support " +
         "display of unnormalized floating point data.");
-      LogTools.println("Please use the '-normalize' option " +
+      LOGGER.warn("Please use the '-normalize' option " +
         "to avoid receiving a cryptic exception.");
     }
 
     if (reader.isRGB() && reader.getRGBChannelCount() > 4) {
-      LogTools.println("Warning: Java does not support " +
-        "merging more than 4 channels.");
-      LogTools.println("Please use the '-separate' option " +
+      LOGGER.warn("Java does not support merging more than 4 channels.");
+      LOGGER.warn("Please use the '-separate' option " +
         "to avoid receiving a cryptic exception.");
     }
   }
@@ -367,11 +397,10 @@ public class ImageInfo {
     if (!doCore) return; // skip core metadata printout
 
     // read basic metadata
-    LogTools.println();
-    LogTools.println("Reading core metadata");
-    LogTools.println(stitch ?
-      "File pattern = " + id : "Filename = " + reader.getCurrentFile());
-    if (map != null) LogTools.println("Mapped filename = " + map);
+    LOGGER.info("\nReading core metadata");
+    LOGGER.info("{} = {}", stitch ? "File pattern" : "Filename",
+      stitch ? id : reader.getCurrentFile());
+    if (map != null) LOGGER.info("Mapped filename = {}", map);
     String[] used = reader.getUsedFiles();
     boolean usedValid = used != null && used.length > 0;
     if (usedValid) {
@@ -383,26 +412,26 @@ public class ImageInfo {
       }
     }
     if (!usedValid) {
-      LogTools.println(
-        "************ Warning: invalid used files list ************");
+      LOGGER.warn("************ invalid used files list ************");
     }
     if (used == null) {
-      LogTools.println("Used files = null");
+      LOGGER.info("Used files = null");
     }
     else if (used.length == 0) {
-      LogTools.println("Used files = []");
+      LOGGER.info("Used files = []");
     }
     else if (used.length > 1) {
-      LogTools.println("Used files:");
-      for (int u=0; u<used.length; u++) LogTools.println("\t" + used[u]);
+      LOGGER.info("Used files:");
+      for (int u=0; u<used.length; u++) LOGGER.info("\t{}", used[u]);
     }
     else if (!id.equals(used[0])) {
-      LogTools.println("Used files = [" + used[0] + "]");
+      LOGGER.info("Used files = [{}]", used[0]);
     }
     int seriesCount = reader.getSeriesCount();
-    LogTools.println("Series count = " + seriesCount);
+    LOGGER.info("Series count = {}", seriesCount);
     MetadataStore ms = reader.getMetadataStore();
-    MetadataRetrieve mr = MetadataTools.asRetrieve(ms);
+    MetadataRetrieve mr = ms instanceof MetadataRetrieve? (MetadataRetrieve) ms
+        : null;
     for (int j=0; j<seriesCount; j++) {
       reader.setSeries(j);
 
@@ -435,74 +464,77 @@ public class ImageInfo {
 
       // output basic metadata for series #i
       String seriesName = mr == null ? null : mr.getImageName(j);
-      LogTools.println("Series #" + j +
-        (seriesName == null ? "" : " -- " + seriesName) + ":");
-      LogTools.println("\tImage count = " + imageCount);
-      LogTools.print("\tRGB = " + rgb + " (" + rgbChanCount + ")");
-      if (merge) LogTools.print(" (merged)");
-      else if (separate) LogTools.print(" (separated)");
-      LogTools.println();
+      LOGGER.info("Series #{}{}{}:",
+        new Object[] {j, seriesName == null ? " " : " -- ",
+        seriesName == null ? "" : seriesName});
+      LOGGER.info("\tImage count = {}", imageCount);
+      LOGGER.info("\tRGB = {} ({}) {}", new Object[] {rgb, rgbChanCount,
+        merge ? "(merged)" : separate ? "(separated)" : ""});
       if (rgb != (rgbChanCount != 1)) {
-        LogTools.println("\t************ Warning: RGB mismatch ************");
+        LOGGER.warn("\t************ RGB mismatch ************");
       }
-      LogTools.println("\tInterleaved = " + interleaved);
-      LogTools.print("\tIndexed = " + indexed + " (" +
-        (falseColor ? "false" : "true") + " color");
+      LOGGER.info("\tInterleaved = {}", interleaved);
+
+      appender.setLayout(altLayout);
+
+      LOGGER.info("\tIndexed = {} ({} color", indexed, !falseColor);
       if (table8 != null) {
-        LogTools.print(", 8-bit LUT: " + table8.length + " x ");
-        LogTools.print(table8[0] == null ? "null" : "" + table8[0].length);
+        LOGGER.info(", 8-bit LUT: {} x ", table8.length);
+        LOGGER.info(table8[0] == null ? "null" : "" + table8[0].length);
       }
       if (table16 != null) {
-        LogTools.print(", 16-bit LUT: " + table16.length + " x ");
-        LogTools.print(table16[0] == null ? "null" : "" + table16[0].length);
+        LOGGER.info(", 16-bit LUT: {} x ", table16.length);
+        LOGGER.info(table16[0] == null ? "null" : "" + table16[0].length);
       }
-      LogTools.println(")");
+
+      appender.setLayout(originalLayout);
+      LOGGER.info(")");
       if (table8 != null && table16 != null) {
-        LogTools.println(
-          "\t************ Warning: multiple LUTs ************");
+        LOGGER.warn("\t************ multiple LUTs ************");
       }
-      LogTools.println("\tWidth = " + sizeX);
-      LogTools.println("\tHeight = " + sizeY);
-      LogTools.println("\tSizeZ = " + sizeZ);
-      LogTools.println("\tSizeT = " + sizeT);
-      LogTools.print("\tSizeC = " + sizeC);
+      LOGGER.info("\tWidth = {}", sizeX);
+      LOGGER.info("\tHeight = {}", sizeY);
+      LOGGER.info("\tSizeZ = {}", sizeZ);
+      LOGGER.info("\tSizeT = {}", sizeT);
+
+      appender.setLayout(altLayout);
+      LOGGER.info("\tSizeC = {}", sizeC);
       if (sizeC != effSizeC) {
-        LogTools.print(" (effectively " + effSizeC + ")");
+        LOGGER.info(" (effectively {})", effSizeC);
       }
       int cProduct = 1;
       if (cLengths.length == 1 && FormatTools.CHANNEL.equals(cTypes[0])) {
         cProduct = cLengths[0];
       }
       else {
-        LogTools.print(" (");
+        LOGGER.info(" (");
         for (int i=0; i<cLengths.length; i++) {
-          if (i > 0) LogTools.print(" x ");
-          LogTools.print(cLengths[i] + " " + cTypes[i]);
+          if (i > 0) LOGGER.info(" x ");
+          LOGGER.info("{} {}", cLengths[i], cTypes[i]);
           cProduct *= cLengths[i];
         }
-        LogTools.print(")");
+        LOGGER.info(")");
       }
-      LogTools.println();
+      appender.setLayout(originalLayout);
+      LOGGER.info("");
       if (cLengths.length == 0 || cProduct != sizeC) {
-        LogTools.println(
-          "\t************ Warning: C dimension mismatch ************");
+        LOGGER.warn("\t************ C dimension mismatch ************");
       }
       if (imageCount != sizeZ * effSizeC * sizeT) {
-        LogTools.println("\t************ Warning: ZCT mismatch ************");
+        LOGGER.info("\t************ ZCT mismatch ************");
       }
-      LogTools.println("\tThumbnail size = " +
-        thumbSizeX + " x " + thumbSizeY);
-      LogTools.println("\tEndianness = " +
-        (little ? "intel (little)" : "motorola (big)"));
-      LogTools.println("\tDimension order = " + dimOrder +
-        (orderCertain ? " (certain)" : " (uncertain)"));
-      LogTools.println("\tPixel type = " +
+      LOGGER.info("\tThumbnail size = {} x {}", thumbSizeX, thumbSizeY);
+      LOGGER.info("\tEndianness = {}",
+        little ? "intel (little)" : "motorola (big)");
+      LOGGER.info("\tDimension order = {} ({})", dimOrder,
+        orderCertain ? "certain" : "uncertain");
+      LOGGER.info("\tPixel type = {}",
         FormatTools.getPixelTypeString(pixelType));
-      LogTools.println("\tValid bits per pixel = " + validBits);
-      LogTools.println("\tMetadata complete = " + metadataComplete);
-      LogTools.println("\tThumbnail series = " + thumbnail);
+      LOGGER.info("\tValid bits per pixel = {}", validBits);
+      LOGGER.info("\tMetadata complete = {}", metadataComplete);
+      LOGGER.info("\tThumbnail series = {}", thumbnail);
       if (doMeta) {
-        LogTools.println("\t-----");
+        LOGGER.info("\t-----");
         int[] indices;
         if (imageCount > 6) {
           int q = imageCount / 2;
@@ -517,16 +549,18 @@ public class ImageInfo {
         else indices = new int[] {0};
         int[][] zct = new int[indices.length][];
         int[] indices2 = new int[indices.length];
+        appender.setLayout(altLayout);
         for (int i=0; i<indices.length; i++) {
           zct[i] = reader.getZCTCoords(indices[i]);
           indices2[i] = reader.getIndex(zct[i][0], zct[i][1], zct[i][2]);
-          LogTools.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
-            ", C " + zct[i][1] + ", T " + zct[i][2]);
+          LOGGER.info("\tPlane #{} <=> Z {}, C {}, T {}",
+            new Object[] {indices[i], zct[i][0], zct[i][1], zct[i][2]});
           if (indices[i] != indices2[i]) {
-            LogTools.println(" [mismatch: " + indices2[i] + "]");
+            LOGGER.info(" [mismatch: {}]\r\n", indices2[i]);
           }
-          else LogTools.println();
+          else LOGGER.info("\r\n");
         }
+        appender.setLayout(originalLayout);
       }
     }
   }
@@ -573,59 +607,62 @@ public class ImageInfo {
     boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated();
 
     // output min/max results
-    LogTools.println();
-    LogTools.println("Min/max values:");
+    LOGGER.info("\nMin/max values:");
     for (int c=0; c<sizeC; c++) {
-      LogTools.println("\tChannel " + c + ":");
-      LogTools.println("\t\tGlobal minimum = " +
-        globalMin[c] + " (initially " + preGlobalMin[c] + ")");
-      LogTools.println("\t\tGlobal maximum = " +
-        globalMax[c] + " (initially " + preGlobalMax[c] + ")");
-      LogTools.println("\t\tKnown minimum = " +
-        knownMin[c] + " (initially " + preKnownMin[c] + ")");
-      LogTools.println("\t\tKnown maximum = " +
-        knownMax[c] + " (initially " + preKnownMax[c] + ")");
+      LOGGER.info("\tChannel {}:", c);
+      LOGGER.info("\t\tGlobal minimum = {} (initially {})",
+        globalMin[c], preGlobalMin[c]);
+      LOGGER.info("\t\tGlobal maximum = {} (initially {})",
+        globalMax[c], preGlobalMax[c]);
+      LOGGER.info("\t\tKnown minimum = {} (initially {})",
+        knownMin[c], preKnownMin[c]);
+      LOGGER.info("\t\tKnown maximum = {} (initially {})",
+        knownMax[c], preKnownMax[c]);
     }
-    LogTools.print("\tFirst plane minimum(s) =");
-    if (planeMin == null) LogTools.print(" none");
+    appender.setLayout(altLayout);
+    LOGGER.info("\tFirst plane minimum(s) =");
+    if (planeMin == null) LOGGER.info(" none");
     else {
       for (int subC=0; subC<planeMin.length; subC++) {
-        LogTools.print(" " + planeMin[subC]);
+        LOGGER.info(" {}", planeMin[subC]);
       }
     }
-    LogTools.print(" (initially");
-    if (prePlaneMin == null) LogTools.print(" none");
+    LOGGER.info(" (initially");
+    if (prePlaneMin == null) LOGGER.info(" none");
     else {
       for (int subC=0; subC<prePlaneMin.length; subC++) {
-        LogTools.print(" " + prePlaneMin[subC]);
+        LOGGER.info(" {}", prePlaneMin[subC]);
       }
     }
-    LogTools.println(")");
-    LogTools.print("\tFirst plane maximum(s) =");
-    if (planeMax == null) LogTools.print(" none");
+    appender.setLayout(originalLayout);
+    LOGGER.info(")");
+    appender.setLayout(altLayout);
+    LOGGER.info("\tFirst plane maximum(s) =");
+    if (planeMax == null) LOGGER.info(" none");
     else {
       for (int subC=0; subC<planeMax.length; subC++) {
-        LogTools.print(" " + planeMax[subC]);
+        LOGGER.info(" {}", planeMax[subC]);
       }
     }
-    LogTools.print(" (initially");
-    if (prePlaneMax == null) LogTools.print(" none");
+    LOGGER.info(" (initially");
+    if (prePlaneMax == null) LOGGER.info(" none");
     else {
       for (int subC=0; subC<prePlaneMax.length; subC++) {
-        LogTools.print(" " + prePlaneMax[subC]);
+        LOGGER.info(" {}", prePlaneMax[subC]);
       }
     }
-    LogTools.println(")");
-    LogTools.println("\tMin/max populated = " +
-      isMinMaxPop + " (initially " + preIsMinMaxPop + ")");
+    appender.setLayout(originalLayout);
+    LOGGER.info(")");
+    LOGGER.info("\tMin/max populated = {} (initially {})",
+      isMinMaxPop, preIsMinMaxPop);
   }
 
   public void readPixels() throws FormatException, IOException {
     String seriesLabel = reader.getSeriesCount() > 1 ?
       (" series #" + series) : "";
-    LogTools.println();
-    LogTools.print("Reading" + seriesLabel + " pixel data ");
-    status.setVerbose(false);
+    LOGGER.info("");
+    appender.setLayout(altLayout);
+    LOGGER.info("Reading {} pixel data ", seriesLabel);
     int num = reader.getImageCount();
     if (start < 0) start = 0;
     if (start >= num) start = num - 1;
@@ -642,12 +679,11 @@ public class ImageInfo {
 
     int pixelType = reader.getPixelType();
 
-    LogTools.print("(" + start + "-" + end + ") ");
+    LOGGER.info("({}-{}) ", start, end);
     BufferedImage[] images = new BufferedImage[end - start + 1];
     long s2 = System.currentTimeMillis();
     boolean mismatch = false;
     for (int i=start; i<=end; i++) {
-      status.setEchoNext(true);
       if (!fastBlit) {
         images[i - start] = thumbs ? biReader.openThumbImage(i) :
           biReader.openImage(i, xCoordinate, yCoordinate, width, height);
@@ -698,92 +734,97 @@ public class ImageInfo {
       if (reader.isIndexed() && reader.get8BitLookupTable() == null &&
         reader.get16BitLookupTable() == null)
       {
-        LogTools.println();
-        LogTools.println("************ Warning: no LUT for plane #"
-          + i + " ************");
+        LOGGER.info("\r\n");
+        LOGGER.warn("************ no LUT for plane #{} ************", i);
       }
 
       // check for pixel type mismatch
       int pixType = AWTImageTools.getPixelType(images[i - start]);
       if (pixType != pixelType && pixType != pixelType + 1 && !fastBlit) {
         if (!mismatch) {
-          LogTools.println();
+          LOGGER.info("\r\n");
           mismatch = true;
         }
-        LogTools.println("\tPlane #" + i + ": pixel type mismatch: " +
-          FormatTools.getPixelTypeString(pixType) + "/" +
-          FormatTools.getPixelTypeString(pixelType));
+        LOGGER.info("\tPlane #{}: pixel type mismatch: {}/{}",
+          new Object[] {i, FormatTools.getPixelTypeString(pixType),
+          FormatTools.getPixelTypeString(pixelType)});
       }
       else {
         mismatch = false;
-        LogTools.print(".");
+        LOGGER.info(".");
       }
     }
     long e2 = System.currentTimeMillis();
-    if (!mismatch) LogTools.print(" ");
-    LogTools.println("[done]");
+    if (!mismatch) LOGGER.info(" ");
+    appender.setLayout(originalLayout);
+    LOGGER.info("[done]");
 
     // output timing results
     float sec2 = (e2 - s2) / 1000f;
     float avg = (float) (e2 - s2) / images.length;
-    LogTools.println(sec2 + "s elapsed (" + avg + "ms per plane)");
+    LOGGER.info("{}s elapsed ({}ms per plane)", sec2, avg);
 
     if (minmax) printMinMaxValues();
 
     // display pixels in image viewer
-    LogTools.println();
-    LogTools.println("Launching image viewer");
+    LOGGER.info("");
+    LOGGER.info("Launching image viewer");
     ImageViewer viewer = new ImageViewer();
     viewer.setImages(reader, images);
     viewer.setVisible(true);
   }
 
   public void printGlobalMetadata() {
-    LogTools.println();
-    LogTools.println("Reading global metadata");
+    LOGGER.info("");
+    LOGGER.info("Reading global metadata");
     Hashtable meta = reader.getGlobalMetadata();
     String[] keys = MetadataTools.keys(meta);
     for (String key : keys) {
-      LogTools.println(key + ": " + meta.get(key));
+      LOGGER.info("{}: {}", key,  meta.get(key));
     }
   }
 
   public void printOriginalMetadata() {
     String seriesLabel = reader.getSeriesCount() > 1 ?
       (" series #" + series) : "";
-    LogTools.println();
-    LogTools.println("Reading" + seriesLabel + " metadata");
+    LOGGER.info("");
+    LOGGER.info("Reading{} metadata", seriesLabel);
     Hashtable meta = reader.getSeriesMetadata();
     String[] keys = MetadataTools.keys(meta);
     for (int i=0; i<keys.length; i++) {
-      LogTools.print(keys[i] + ": ");
-      LogTools.println(meta.get(keys[i]));
+      LOGGER.info("{}: {}", keys[i], meta.get(keys[i]));
     }
   }
 
-  public void printOMEXML() {
-    LogTools.println();
+  public void printOMEXML() throws MissingLibraryException, ServiceException {
+    LOGGER.info("");
     MetadataStore ms = reader.getMetadataStore();
-    String version = MetadataTools.getOMEXMLVersion(ms);
-    if (version == null) LogTools.println("Generating OME-XML");
-    else {
-      LogTools.println("Generating OME-XML (schema version " + version + ")");
+    OMEXMLService service;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
     }
-    MetadataRetrieve mr = MetadataTools.asRetrieve(ms);
-    if (mr != null) {
-      String xml = MetadataTools.getOMEXML(mr);
-      LogTools.println(XMLTools.indentXML(xml, true));
-      MetadataTools.validateOMEXML(xml, true);
+    catch (DependencyException de) {
+      throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+    }
+    String version = service.getOMEXMLVersion(ms);
+    if (version == null) LOGGER.info("Generating OME-XML");
+    else {
+      LOGGER.info("Generating OME-XML (schema version {})", version);
+    }
+    if (ms instanceof MetadataRetrieve) {
+      String xml = service.getOMEXML((MetadataRetrieve) ms);
+      LOGGER.info("{}", XMLTools.indentXML(xml, true));
+      service.validateOMEXML(xml, true);
     }
     else {
-      LogTools.println("The metadata could not be converted to OME-XML.");
+      LOGGER.info("The metadata could not be converted to OME-XML.");
       if (omexmlVersion == null) {
-        LogTools.println(
-          "The OME-XML Java library is probably not available.");
+        LOGGER.info("The OME-XML Java library is probably not available.");
       }
       else {
-        LogTools.println(omexmlVersion +
-          " is probably not a legal schema version.");
+        LOGGER.info("{} is probably not a legal schema version.",
+          omexmlVersion);
       }
     }
   }
@@ -793,18 +834,13 @@ public class ImageInfo {
    * and displaying the results in a simple display.
    */
   public boolean testRead(String[] args)
-    throws FormatException, IOException
-  {
+    throws FormatException, ServiceException, IOException {
     parseArgs(args);
     if (printVersion) {
-      LogTools.println("Version: " + FormatTools.VERSION);
-      LogTools.println("SVN revision: " + FormatTools.SVN_REVISION);
-      LogTools.println("Build date: " + FormatTools.DATE);
+      LOGGER.info("Version: {}", FormatTools.VERSION);
+      LOGGER.info("SVN revision: {}", FormatTools.SVN_REVISION);
+      LOGGER.info("Build date: {}", FormatTools.DATE);
       return true;
-    }
-
-    if (LogTools.isDebug()) {
-      LogTools.println("Debugging at level " + LogTools.getDebugLevel());
     }
 
     createReader();
@@ -822,7 +858,7 @@ public class ImageInfo {
     reader.setId(id);
     long e1 = System.currentTimeMillis();
     float sec1 = (e1 - s1) / 1000f;
-    LogTools.println("Initialization took " + sec1 + "s");
+    LOGGER.info("Initialization took {}s", sec1);
 
     configureReaderPostInit();
     checkWarnings();
@@ -847,7 +883,7 @@ public class ImageInfo {
 
   // -- Main method --
 
-  public static void main(String[] args) throws FormatException, IOException {
+  public static void main(String[] args) throws Exception {
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

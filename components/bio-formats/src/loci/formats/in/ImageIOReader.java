@@ -85,10 +85,9 @@ public abstract class ImageIOReader extends BIFormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ImageIOReader.initFile(" + id + ")");
     super.initFile(id);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
     core[0].imageCount = 1;
     BufferedImage img =
       ImageIO.read(new DataInputStream(new RandomAccessInputStream(currentId)));

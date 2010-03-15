@@ -38,7 +38,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import loci.common.LogTools;
 import loci.formats.cache.ByteArraySource;
 import loci.formats.cache.Cache;
 import loci.formats.cache.CacheEvent;
@@ -52,6 +51,9 @@ import loci.formats.cache.RectangleStrategy;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * GUI component for managing a cache.
  *
@@ -64,6 +66,9 @@ public class CacheComponent extends JPanel
 {
 
   // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(CacheComponent.class);
 
   protected static final String[] SOURCES = {"Byte arrays", "BufferedImages"};
   protected static final Class[] SOURCE_VALUES = {
@@ -330,7 +335,7 @@ public class CacheComponent extends JPanel
       ICacheSource source = sourceValue(sourceChooser.getSelectedIndex());
       if (source != null) cache.setSource(source);
     }
-    catch (CacheException exc) { LogTools.trace(exc); }
+    catch (CacheException exc) { LOGGER.info("", exc); }
   }
 
   /** Updates cache strategy to match the state of the GUI. */
@@ -340,7 +345,7 @@ public class CacheComponent extends JPanel
         strategyValue(strategyChooser.getSelectedIndex());
       if (strategy != null) cache.setStrategy(strategy);
     }
-    catch (CacheException exc) { LogTools.trace(exc); }
+    catch (CacheException exc) { LOGGER.info("", exc); }
   }
 
   /** Updates cache range to match the state of the GUI. */
@@ -387,11 +392,11 @@ public class CacheComponent extends JPanel
       Constructor con = c.getConstructor(SOURCE_PARAMS);
       return (ICacheSource) con.newInstance(new Object[] {id});
     }
-    catch (NoSuchMethodException exc) { LogTools.trace(exc); }
-    catch (InstantiationException exc) { LogTools.trace(exc); }
-    catch (IllegalAccessException exc) { LogTools.trace(exc); }
-    catch (IllegalArgumentException exc) { LogTools.trace(exc); }
-    catch (InvocationTargetException exc) { LogTools.trace(exc); }
+    catch (NoSuchMethodException exc) { LOGGER.info("", exc); }
+    catch (InstantiationException exc) { LOGGER.info("", exc); }
+    catch (IllegalAccessException exc) { LOGGER.info("", exc); }
+    catch (IllegalArgumentException exc) { LOGGER.info("", exc); }
+    catch (InvocationTargetException exc) { LOGGER.info("", exc); }
     return null;
   }
 
@@ -412,11 +417,11 @@ public class CacheComponent extends JPanel
       Constructor con = c.getConstructor(STRATEGY_PARAMS);
       return (ICacheStrategy) con.newInstance(new Object[] {lengths});
     }
-    catch (NoSuchMethodException exc) { LogTools.trace(exc); }
-    catch (InstantiationException exc) { LogTools.trace(exc); }
-    catch (IllegalAccessException exc) { LogTools.trace(exc); }
-    catch (IllegalArgumentException exc) { LogTools.trace(exc); }
-    catch (InvocationTargetException exc) { LogTools.trace(exc); }
+    catch (NoSuchMethodException exc) { LOGGER.info("", exc); }
+    catch (InstantiationException exc) { LOGGER.info("", exc); }
+    catch (IllegalAccessException exc) { LOGGER.info("", exc); }
+    catch (IllegalArgumentException exc) { LOGGER.info("", exc); }
+    catch (InvocationTargetException exc) { LOGGER.info("", exc); }
     return null;
   }
 

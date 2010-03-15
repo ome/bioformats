@@ -24,9 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.tiff;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import loci.common.DataTools;
-import loci.common.LogTools;
+import loci.common.enumeration.CodedEnum;
+import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -37,7 +41,11 @@ import loci.formats.codec.LZWCodec;
 import loci.formats.codec.LuraWaveCodec;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.PackbitsCodec;
+import loci.formats.codec.PassthroughCodec;
 import loci.formats.codec.ZlibCodec;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for performing compression operations with a TIFF file.
@@ -51,160 +59,145 @@ import loci.formats.codec.ZlibCodec;
  * @author Melissa Linkert linkert at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  */
-public final class TiffCompression {
+public enum TiffCompression implements CodedEnum {
+
+  // (TIFF code, codec, codec name)
+  UNCOMPRESSED(1, new PassthroughCodec(), "Uncompressed"),
+  CCITT_1D(2, null, "CCITT Group 3 1-Dimensional Modified Huffman"),
+  GROUP_3_FAX(3, null, "CCITT T.4 bi-level encoding (Group 3 Fax)"),
+  GROUP_4_FAX(4, null, "CCITT T.6 bi-level encoding (Group 4 Fax)"),
+  LZW(5, new LZWCodec(), "LZW"),
+  //JPEG(6),
+  JPEG(7, new JPEGCodec(), "JPEG"),
+  PACK_BITS(32773, new PackbitsCodec(), "PackBits"),
+  PROPRIETARY_DEFLATE(32946, new ZlibCodec(), "Deflate (Zlib)"),
+  DEFLATE(8, new ZlibCodec(), "Deflate (Zlib)"),
+  THUNDERSCAN(32809, null, "Thunderscan"),
+  JPEG_2000(33003, new JPEG2000Codec(), "JPEG-2000") {
+    @Override
+    public CodecOptions getCompressionCodecOptions(IFD ifd)
+        throws FormatException {
+      CodecOptions options = super.getCompressionCodecOptions(ifd);
+      options.lossless = true;
+      return JPEG2000CodecOptions.getDefaultOptions(options);
+    }
+  },
+  JPEG_2000_LOSSY(33004, new JPEG2000Codec(), "JPEG-2000 Lossy") {
+    @Override
+    public CodecOptions getCompressionCodecOptions(IFD ifd)
+        throws FormatException {
+      CodecOptions options = super.getCompressionCodecOptions(ifd);
+      options.lossless = false;
+      return JPEG2000CodecOptions.getDefaultOptions(options);
+    }
+  },
+  ALT_JPEG(33007, new JPEGCodec(), "JPEG"),
+  NIKON(34713, new NikonCodec(), "Nikon"),
+  LURAWAVE(65535, new LuraWaveCodec(), "LuraWave");
 
   // -- Constants --
 
-  // TODO: Investigate using Java 1.5 enum instead of int enumeration.
-  //       http://javahowto.blogspot.com/2008/04/java-enum-examples.html
-  public static final int UNCOMPRESSED = 1;
-  public static final int CCITT_1D = 2;
-  public static final int GROUP_3_FAX = 3;
-  public static final int GROUP_4_FAX = 4;
-  public static final int LZW = 5;
-  //public static final int JPEG = 6;
-  public static final int JPEG = 7;
-  public static final int PACK_BITS = 32773;
-  public static final int PROPRIETARY_DEFLATE = 32946;
-  public static final int DEFLATE = 8;
-  public static final int THUNDERSCAN = 32809;
-  public static final int JPEG_2000 = 33003;
-  public static final int JPEG_2000_LOSSY = 33004;
-  public static final int ALT_JPEG_2000 = 33005;
-  public static final int ALT_JPEG = 33007;
-  public static final int NIKON = 34713;
-  public static final int LURAWAVE = 65535;
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(TiffCompression.class);
 
-  // -- Constructor --
+  /** Code for the TIFF compression in the actual TIFF file. */
+  private int code;
 
-  private TiffCompression() { }
+  /** TIFF compression codec. */
+  private Codec codec;
+
+  /** Name of the TIFF compression codec. */
+  private String codecName;
+
+  /** Reverse lookup of code to TIFF compression enumerate value. */
+  private static Map<Integer, TiffCompression> lookup =
+    new HashMap<Integer, TiffCompression>();
+
+  static {
+    for (TiffCompression v : EnumSet.allOf(TiffCompression.class)) {
+      lookup.put(v.getCode(), v);
+    }
+  }
 
   // -- TiffCompression methods --
 
-  /** Returns the name of the given codec. */
-  public static String getCodecName(int codec) {
-    switch (codec) {
-      case UNCOMPRESSED:
-        return "Uncompressed";
-      case CCITT_1D:
-        return "CCITT Group 3 1-Dimensional Modified Huffman";
-      case GROUP_3_FAX:
-        return "CCITT T.4 bi-level encoding (Group 3 Fax)";
-      case GROUP_4_FAX:
-        return "CCITT T.6 bi-level encoding (Group 4 Fax)";
-      case LZW:
-        return "LZW";
-      case JPEG:
-      case ALT_JPEG:
-        return "JPEG";
-      case PACK_BITS:
-        return "PackBits";
-      case DEFLATE:
-      case PROPRIETARY_DEFLATE:
-        return "Deflate (Zlib)";
-      case THUNDERSCAN:
-        return "Thunderscan";
-      case JPEG_2000:
-        return "JPEG-2000";
-      case JPEG_2000_LOSSY:
-        return "JPEG-2000 Lossy";
-      case ALT_JPEG_2000:
-        return "Aperio JPEG-2000";
-      case NIKON:
-        return "Nikon";
-      case LURAWAVE:
-        return "LuraWave";
+  /**
+   * Default constructor.
+   * @param code Integer "code" for the TIFF compression type.
+   * @param codec TIFF compression codec.
+   * @param codecName String name of the compression type.
+   */
+  private TiffCompression(int code, Codec codec, String codecName) {
+    this.code = code;
+    this.codec = codec;
+    this.codecName = codecName;
+  }
+
+  /**
+   * Retrieves a TIFF compression instance by code.
+   * @param code Integer "code" for the TIFF compression type.
+   * @return See above.
+   */
+  public static TiffCompression get(int code) {
+    TiffCompression toReturn = lookup.get(code);
+    if (toReturn == null) {
+      throw new EnumException(
+          "Unable to find TiffCompresssion with code: " + code);
     }
-    return null;
+    return toReturn;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.common.CodedEnum#getCode()
+   */
+  public int getCode() {
+    return code;
+  }
+
+  /**
+   * Retrieves the name of the TIFF compression codec.
+   * @return See above.
+   */
+  public String getCodecName() {
+    return codecName;
   }
 
   // -- TiffCompression methods - decompression --
 
-  /** Returns true if the given decompression scheme is supported. */
-  public static boolean isSupportedDecompression(int decompression) {
-    return
-      decompression == UNCOMPRESSED ||
-      decompression == LZW ||
-      decompression == JPEG ||
-      decompression == ALT_JPEG ||
-      decompression == JPEG_2000 ||
-      decompression == JPEG_2000_LOSSY ||
-      decompression == ALT_JPEG_2000 ||
-      decompression == PACK_BITS ||
-      decompression == PROPRIETARY_DEFLATE ||
-      decompression == DEFLATE ||
-      decompression == NIKON ||
-      decompression == LURAWAVE;
-  }
-
-  /** Decodes a strip of data compressed with the given compression scheme. */
-  public static byte[] uncompress(byte[] input, int compression,
-    CodecOptions options) throws FormatException, IOException
+  /** Decodes a strip of data. */
+  public byte[] decompress(byte[] input, CodecOptions options)
+    throws FormatException, IOException
   {
-    if (compression < 0) compression += 65536;
-
-    if (!isSupportedDecompression(compression)) {
-      String compressionName = getCodecName(compression);
-      String message = null;
-      if (compressionName != null) {
-        message =
-          "Sorry, " + compressionName + " compression mode is not supported";
-      }
-      else message = "Unknown Compression type (" + compression + ")";
-      throw new FormatException(message);
+    if (codec == null) {
+      throw new FormatException(
+          "Sorry, " + getCodecName() + " compression mode is not supported");
     }
-
-    Codec codec = null;
-
-    if (compression == UNCOMPRESSED) return input;
-    else if (compression == LZW) codec = new LZWCodec();
-    else if (compression == JPEG || compression == ALT_JPEG) {
-      codec = new JPEGCodec();
-    }
-    else if (compression == JPEG_2000 || compression == JPEG_2000_LOSSY ||
-      compression == ALT_JPEG_2000)
-    {
-      codec = new JPEG2000Codec();
-    }
-    else if (compression == PACK_BITS) codec = new PackbitsCodec();
-    else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      codec = new ZlibCodec();
-    }
-    else if (compression == NIKON) codec = new NikonCodec();
-    else if (compression == LURAWAVE) codec = new LuraWaveCodec();
-    if (codec != null) return codec.decompress(input, options);
-    throw new FormatException("Unhandled compression (" + compression + ")");
+    return codec.decompress(input, options);
   }
 
   /** Undoes in-place differencing according to the given predictor value. */
   public static void undifference(byte[] input, IFD ifd)
     throws FormatException
   {
-    int predictor = ifd.getIFDIntValue(IFD.PREDICTOR, false, 1);
+    int predictor = ifd.getIFDIntValue(IFD.PREDICTOR, 1);
     if (predictor == 2) {
-      LogTools.debug("reversing horizontal differencing");
+      LOGGER.debug("reversing horizontal differencing");
       int[] bitsPerSample = ifd.getBitsPerSample();
       int len = bitsPerSample.length;
       long width = ifd.getImageWidth();
       boolean little = ifd.isLittleEndian();
       int planarConfig = ifd.getPlanarConfiguration();
 
+      int bytes = ifd.getBytesPerSample()[0];
+
       if (planarConfig == 2 || bitsPerSample[len - 1] == 0) len = 1;
-      if (bitsPerSample[0] <= 8) {
-        for (int b=0; b<input.length; b++) {
-          if (b / len % width == 0) continue;
-          input[b] += input[b - len];
-        }
-      }
-      else if (bitsPerSample[0] <= 16) {
-        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, little);
-        for (int b=0; b<s.length; b++) {
-          if (b / len % width == 0) continue;
-          s[b] += s[b - len];
-        }
-        for (int i=0; i<s.length; i++) {
-          DataTools.unpackBytes(s[i], input, i*2, 2, little);
-        }
+      len *= bytes;
+
+      for (int b=0; b<input.length; b+=bytes) {
+        if (b / len % width == 0) continue;
+        int value = DataTools.bytesToInt(input, b, bytes, little);
+        value += DataTools.bytesToInt(input, b - len, bytes, little);
+        DataTools.unpackBytes(value, input, b, bytes, little);
       }
     }
     else if (predictor != 1) {
@@ -214,31 +207,14 @@ public final class TiffCompression {
 
   // -- TiffCompression methods - compression --
 
-  /** Returns true if the given compression scheme is supported. */
-  public static boolean isSupportedCompression(int compression) {
-    return compression == UNCOMPRESSED || compression == LZW ||
-      compression == JPEG || compression == JPEG_2000 ||
-      compression == JPEG_2000_LOSSY || compression == ALT_JPEG_2000;
-  }
-
-  /** Encodes a strip of data with the given compression scheme. */
-  public static byte[] compress(byte[] input, IFD ifd)
-    throws FormatException, IOException
-  {
-    int compression = ifd.getIFDIntValue(IFD.COMPRESSION, false, UNCOMPRESSED);
-
-    if (!isSupportedCompression(compression)) {
-      String compressionName = getCodecName(compression);
-      if (compressionName != null) {
-        throw new FormatException("Sorry, " + compressionName +
-          " compression mode is not supported");
-      }
-      else {
-        throw new FormatException(
-          "Unknown Compression type (" + compression + ")");
-      }
-    }
-
+  /**
+   * Creates a set of codec options for compression.
+   * @param ifd The IFD to create codec options for.
+   * @return A new codec options instance populated using metadata from
+   * <code>ifd</code>.
+   */
+  public CodecOptions getCompressionCodecOptions(IFD ifd)
+    throws FormatException{
     CodecOptions options = new CodecOptions();
     options.width = (int) ifd.getImageWidth();
     options.height = (int) ifd.getImageLength();
@@ -247,52 +223,37 @@ public final class TiffCompression {
     options.littleEndian = ifd.isLittleEndian();
     options.interleaved = true;
     options.signed = false;
+    return options;
+  }
 
-    if (compression == UNCOMPRESSED) return input;
-    else if (compression == LZW) {
-      return new LZWCodec().compress(input, options);
+  /** Encodes a strip of data. */
+  public byte[] compress(byte[] input, CodecOptions options)
+    throws FormatException, IOException
+  {
+    if (codec == null) {
+      throw new FormatException(
+          "Sorry, " + getCodecName() + " compression mode is not supported");
     }
-    else if (compression == JPEG) {
-      return new JPEGCodec().compress(input, options);
-    }
-    else if (compression == JPEG_2000 || compression == ALT_JPEG_2000) {
-      options.lossless = true;
-      JPEG2000CodecOptions j2kOptions =
-        JPEG2000CodecOptions.getDefaultOptions(options);
-      return new JPEG2000Codec().compress(input, j2kOptions);
-    }
-    else if (compression == JPEG_2000_LOSSY) {
-      options.lossless = false;
-      JPEG2000CodecOptions j2kOptions =
-        JPEG2000CodecOptions.getDefaultOptions(options);
-      return new JPEG2000Codec().compress(input, j2kOptions);
-    }
-    throw new FormatException("Unhandled compression (" + compression + ")");
+    return codec.compress(input, options);
   }
 
   /** Performs in-place differencing according to the given predictor value. */
-  public static void difference(byte[] input, int[] bitsPerSample,
-    long width, int planarConfig, int predictor, boolean little)
-    throws FormatException
-  {
+  public static void difference(byte[] input, IFD ifd) throws FormatException {
+    int predictor = ifd.getIFDIntValue(IFD.PREDICTOR, 1);
     if (predictor == 2) {
-      LogTools.debug("performing horizontal differencing");
+      LOGGER.debug("performing horizontal differencing");
+      int[] bitsPerSample = ifd.getBitsPerSample();
+      long width = ifd.getImageWidth();
+      boolean little = ifd.isLittleEndian();
+      int planarConfig = ifd.getPlanarConfiguration();
+      int bytes = ifd.getBytesPerSample()[0];
+      int len = bytes * (planarConfig == 2 ? 1 : bitsPerSample.length);
 
-      if (bitsPerSample[0] <= 16) {
-        short[] s = (short[]) DataTools.makeDataArray(input, 2, false, little);
-        for (int i=s.length-1; i>=0; i--){
-          if (i / bitsPerSample.length % width == 0) continue;
-          s[i] -= s[i - bitsPerSample.length];
-        }
-        for (int i=0; i<s.length; i++) {
-          DataTools.unpackBytes(s[i], input, i*2, 2, little);
-        }
-      }
-      else if (bitsPerSample[0] <= 8) {
-        for (int b=input.length-1; b>=0; b--) {
-          if (b / bitsPerSample.length % width == 0) continue;
-          input[b] -= input[b - bitsPerSample.length];
-        }
+      for (int b=input.length-bytes; b>=0; b-=bytes) {
+        if (b / len % width == 0) continue;
+        int value = DataTools.bytesToInt(input, b, bytes, little);
+        value -= DataTools.bytesToInt(input, b - len, bytes, little);
+        DataTools.unpackBytes(value, input, b, bytes, little);
       }
     }
     else if (predictor != 1) {

@@ -43,21 +43,28 @@ import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import loci.common.Location;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelMerger;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-import loci.formats.MetadataTools;
 import loci.formats.gui.XMLWindow;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
 import loci.plugins.Colorizer;
 import loci.plugins.LociImporter;
 import loci.plugins.prefs.OptionsDialog;
@@ -70,6 +77,8 @@ import loci.plugins.util.ROIHandler;
 import loci.plugins.util.VirtualImagePlus;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
+
+import org.xml.sax.SAXException;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
@@ -178,17 +187,20 @@ public class Importer {
         else {
           XMLWindow metaWindow =
             new XMLWindow("OME Metadata - " + options.getIdName());
+          Exception exc = null;
           try {
-            String omeXML = MetadataTools.getOMEXML(options.getOMEMetadata());
-            metaWindow.setXML(omeXML);
+            ServiceFactory factory = new ServiceFactory();
+            OMEXMLService service = factory.getInstance(OMEXMLService.class);
+            metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
             WindowTools.placeWindow(metaWindow);
             metaWindow.setVisible(true);
           }
-          catch (javax.xml.parsers.ParserConfigurationException exc) {
-            WindowTools.reportException(exc, options.isQuiet(),
-              "Sorry, there was a problem displaying the OME metadata");
-          }
-          catch (org.xml.sax.SAXException exc) {
+          catch (DependencyException e) { exc = e; }
+          catch (ServiceException e) { exc = e; }
+          catch (ParserConfigurationException e) { exc = e; }
+          catch (SAXException e) { exc = e; }
+
+          if (exc != null) {
             WindowTools.reportException(exc, options.isQuiet(),
               "Sorry, there was a problem displaying the OME metadata");
           }
@@ -273,7 +285,14 @@ public class Importer {
         options.getOMEMetadata().setPixelsDimensionOrder(stackOrder, s, 0);
 
         // dump OME-XML to ImageJ's description field, if available
-        fi.description = MetadataTools.getOMEXML(options.getOMEMetadata());
+
+        try {
+          ServiceFactory factory = new ServiceFactory();
+          OMEXMLService service = factory.getInstance(OMEXMLService.class);
+          fi.description = service.getOMEXML(options.getOMEMetadata());
+        }
+        catch (DependencyException de) { }
+        catch (ServiceException se) { }
 
         if (options.isVirtual()) {
           int cSize = r.getSizeC();

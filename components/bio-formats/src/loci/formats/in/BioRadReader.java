@@ -32,7 +32,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -221,8 +221,6 @@ public class BioRadReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("BioRadReader.initFile(" + id + ")");
-
     // always initialize a PIC file, even if we were given something else
     if (!checkSuffix(id, PIC_SUFFIX)) {
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
@@ -248,7 +246,7 @@ public class BioRadReader extends FormatReader {
     used = new Vector<String>();
     used.add(currentId);
 
-    status("Reading image dimensions");
+    LOGGER.info("Reading image dimensions");
 
     noteStrings = new Vector<Note>();
 
@@ -323,7 +321,7 @@ public class BioRadReader extends FormatReader {
     core[0].metadataComplete = true;
     core[0].falseColor = true;
 
-    status("Reading notes");
+    LOGGER.info("Reading notes");
 
     String zoom = null, zstart = null, zstop = null, mag = null;
     String gain1 = null, gain2 = null, gain3 = null;
@@ -340,7 +338,7 @@ public class BioRadReader extends FormatReader {
 
     readNotes(in, true);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     // look for companion metadata files
 
@@ -357,10 +355,9 @@ public class BioRadReader extends FormatReader {
         if (list[i].endsWith("lse.xml")) {
           String path = new Location(parentPath, list[i]).getAbsolutePath();
           used.add(path);
-          String xml = DataTools.readFile(path);
 
           DefaultHandler handler = new BioRadHandler();
-          XMLTools.parseXML(xml, handler);
+          XMLTools.parseXML(new RandomAccessInputStream(path), handler);
 
           used.remove(currentId);
           for (int q=0; q<list.length; q++) {
@@ -854,14 +851,14 @@ public class BioRadReader extends FormatReader {
       core[0].sizeC = 1;
     }
 
-    status("Reading lookup tables");
+    LOGGER.info("Reading lookup tables");
 
     lut = new byte[getEffectiveSizeC()][][];
     for (int channel=0; channel<lut.length; channel++) {
       int plane = getIndex(0, channel, 0);
       String file =
         picFiles == null ? currentId : picFiles[plane % picFiles.length];
-      debug("reading table for C = " + channel + " from " + file, 2);
+      LOGGER.trace("reading table for C = {} from {}", channel, file);
       RandomAccessInputStream s = new RandomAccessInputStream(file);
       s.order(true);
       readLookupTables(s);

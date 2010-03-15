@@ -32,7 +32,7 @@ import java.io.IOException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/IFormatHandler.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/IFormatHandler.java">SVN</a></dd></dl>
  */
-public interface IFormatHandler extends StatusReporter {
+public interface IFormatHandler {
 
   /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);

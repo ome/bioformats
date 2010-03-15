@@ -11,4 +11,86 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+
+  <target name="test"
+    depends="jar,compile-tests,test-no-mdb,test-no-netcdf,test-no-ome-xml,
+    test-no-poi,test-no-jai,test-no-lurawave"
+    description="run tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng.xml"/>
+    <testng classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
+      groups="all" testname="${component.name}">
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Dlurawave.license=XXX"/>
+    </testng>
+  </target>
+
+  <target name="test-no-mdb" depends="compile-tests"
+    description="run missing MDB tools JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-mdb.xml"/>
+    <testng classpath=
+      "${test-classes.dir}:${classes.dir}:${component.classpath.nomdb}">
+    <!--<testng classpath="${test-classes.dir}:${classes.dir}:${artifact.dir}/loci-common.jar">-->
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-no-netcdf" depends="compile-tests"
+    description="run missing NetCDF JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-netcdf.xml"/>
+    <testng classpath=
+      "${test-classes.dir}:${classes.dir}:${component.classpath.nonetcdf}">
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-no-ome-xml" depends="compile-tests"
+    description="run missing OME-XML JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
+    <testng classpath=
+    "${test-classes.dir}:${classes.dir}:${component.classpath.noxml}">
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-no-poi" depends="compile-tests"
+    description="run missing POI JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-poi.xml"/>
+    <testng classpath=
+      "${test-classes.dir}:${classes.dir}:${component.classpath.nopoi}">
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-no-jai" depends="compile-tests"
+    description="run missing JAI ImageIO JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
+    <testng classpath=
+      "${test-classes.dir}:${classes.dir}:${component.classpath.nojai}">
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
+  <target name="test-no-lurawave" depends="compile-tests"
+    description="run missing LuraWave JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
+    <testng classpath=
+      "${test-classes.dir}:${classes.dir}:${component.classpath.nolurawave}">
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
 </project>

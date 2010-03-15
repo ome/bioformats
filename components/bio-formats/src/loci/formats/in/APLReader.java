@@ -29,6 +29,8 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -36,6 +38,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.MDBService;
 
 /**
  * APLReader is the file format reader for Olympus APL files.
@@ -114,7 +117,6 @@ public class APLReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("APLReader.initFile(" + id + ")");
     super.initFile(id);
 
     // find the corresponding .mtb file
@@ -133,7 +135,18 @@ public class APLReader extends FormatReader {
 
     String mtb = new Location(currentId).getAbsolutePath();
 
-    Vector<String[]> rows = MDBParser.parseDatabase(mtb)[0];
+    MDBService mdb = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      mdb = factory.getInstance(MDBService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("MDB Tools Java library not found", de);
+    }
+
+    mdb.initialize(mtb);
+    Vector<String[]> rows = mdb.parseDatabase().get(0);
+
     String[] columnNames = rows.get(0);
     String[] tmpNames = columnNames;
     columnNames = new String[tmpNames.length - 1];

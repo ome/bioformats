@@ -1,0 +1,9 @@
+<suite name="Missing OME-XML Service Tests">
+    <test name="MissingOMEXMLService">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.MissingOMEXMLServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+</suite>

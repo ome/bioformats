@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -269,14 +268,13 @@ public class NativeQTReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("QTReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
     spork = true;
     offsets = new Vector<Integer>();
     chunkSizes = new Vector<Integer>();
-    status("Parsing tags");
+    LOGGER.info("Parsing tags");
 
     parse(0, 0, in.length());
 
@@ -285,7 +283,7 @@ public class NativeQTReader extends FormatReader {
       core[0].imageCount = chunkSizes.size();
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     int bytesPerPixel = (bitsPerPixel / 8) % 4;
     core[0].pixelType =
@@ -313,9 +311,9 @@ public class NativeQTReader extends FormatReader {
       else base = id;
 
       Location f = new Location(base + ".qtr");
-      debug("Searching for research fork:");
+      LOGGER.debug("Searching for research fork:");
       if (f.exists()) {
-        debug("\t Found: " + f);
+        LOGGER.debug("\t Found: {}", f);
         if (in != null) in.close();
         in = new RandomAccessInputStream(f.getAbsolutePath());
 
@@ -324,12 +322,12 @@ public class NativeQTReader extends FormatReader {
         core[0].imageCount = offsets.size();
       }
       else {
-        debug("\tAbsent: " + f);
+        LOGGER.debug("\tAbsent: {}", f);
         f = new Location(id.substring(0,
           id.lastIndexOf(File.separator) + 1) + "._" +
           id.substring(base.lastIndexOf(File.separator) + 1));
         if (f.exists()) {
-          debug("\t Found: " + f);
+          LOGGER.debug("\t Found: {}", f);
           if (in != null) in.close();
           in = new RandomAccessInputStream(f.getAbsolutePath());
           stripHeader();
@@ -337,10 +335,10 @@ public class NativeQTReader extends FormatReader {
           core[0].imageCount = offsets.size();
         }
         else {
-          debug("\tAbsent: " + f);
+          LOGGER.debug("\tAbsent: {}", f);
           f = new Location(id + "/..namedfork/rsrc");
           if (f.exists()) {
-            debug("\t Found: " + f);
+            LOGGER.debug("\t Found: {}", f);
             if (in != null) in.close();
             in = new RandomAccessInputStream(f.getAbsolutePath());
             stripHeader();
@@ -348,7 +346,7 @@ public class NativeQTReader extends FormatReader {
             core[0].imageCount = offsets.size();
           }
           else {
-            debug("\tAbsent: " + f);
+            LOGGER.debug("\tAbsent: {}", f);
             throw new FormatException("QuickTime resource fork not found. " +
               " To avoid this issue, please flatten your QuickTime movies " +
               "before importing with Bio-Formats.");
@@ -393,11 +391,11 @@ public class NativeQTReader extends FormatReader {
       }
 
       if (atomSize < 0) {
-        LogTools.println("QTReader: invalid atom size: " + atomSize);
+        LOGGER.warn("QTReader: invalid atom size: {}", atomSize);
       }
 
-      debug("Seeking to " + offset +
-        "; atomType=" + atomType + "; atomSize=" + atomSize);
+      LOGGER.debug("Seeking to {}; atomType={}; atomSize={}",
+        new Object[] {offset, atomType, atomSize});
 
       // if this is a container atom, parse the children
       if (isContainer(atomType)) {
@@ -586,7 +584,7 @@ public class NativeQTReader extends FormatReader {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append(" ");
     sb.append(type + " : [" + size + "]");
-    debug(sb.toString());
+    LOGGER.debug(sb.toString());
   }
 
   /** Uncompresses an image plane according to the the codec identifier. */

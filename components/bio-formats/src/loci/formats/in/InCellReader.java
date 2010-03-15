@@ -29,7 +29,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -215,7 +215,6 @@ public class InCellReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("InCellReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
@@ -559,7 +558,7 @@ public class InCellReader extends FormatReader {
         Location file = new Location(currentImageFile);
         img.filename = file.exists() ? currentImageFile : null;
         if (img.filename == null) {
-          warn(currentImageFile + " does not exist.");
+          LOGGER.warn("{} does not exist.", currentImageFile);
         }
         currentImageFile = currentImageFile.toLowerCase();
         img.isTiff = currentImageFile.endsWith(".tif") ||

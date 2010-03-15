@@ -53,6 +53,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   public ImarisTiffReader() {
     super("Bitplane Imaris 3 (TIFF)", "ims");
     suffixSufficient = false;
+    suffixNecessary = true;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
@@ -60,7 +61,6 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ImarisTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
     // hack up the IFDs
@@ -69,14 +69,14 @@ public class ImarisTiffReader extends BaseTiffReader {
     // IFDs defines a stack of tiled planes.
     // MinimalTiffReader.initFile(String) removes thumbnail IFDs.
 
-    status("Verifying IFD sanity");
+    LOGGER.info("Verifying IFD sanity");
 
     IFDList tmp = new IFDList();
 
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
-      long[] byteCounts = ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS, false);
-      long[] offsets = ifd.getIFDLongArray(IFD.TILE_OFFSETS, false);
+      long[] byteCounts = ifd.getStripByteCounts();
+      long[] offsets = ifd.getStripOffsets();
 
       for (int j=0; j<byteCounts.length; j++) {
         IFD t = new IFD(ifd);
@@ -88,7 +88,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     String comment = ifds.get(0).getComment();
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].sizeC = ifds.size();
     core[0].sizeZ = tmp.size() / getSizeC();
@@ -103,7 +103,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     core[0].rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
     core[0].pixelType = ifds.get(0).getPixelType();
 
-    status("Parsing comment");
+    LOGGER.info("Parsing comment");
 
     // likely an INI-style comment, although we can't be sure
 

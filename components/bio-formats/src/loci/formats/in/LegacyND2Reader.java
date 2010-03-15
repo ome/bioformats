@@ -25,7 +25,6 @@ package loci.formats.in;
 
 import java.io.IOException;
 
-import loci.common.LogTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -69,7 +68,7 @@ public class LegacyND2Reader extends FormatReader {
       System.loadLibrary("LegacyND2Reader");
     }
     catch (UnsatisfiedLinkError e) {
-      LogTools.traceDebug(e, 4);
+      LOGGER.trace(NO_NIKON_MSG, e);
       libraryFound = false;
     }
   }
@@ -130,7 +129,6 @@ public class LegacyND2Reader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("LegacyND2Reader.initFile(" + id + ")");
     super.initFile(id);
 
     try {

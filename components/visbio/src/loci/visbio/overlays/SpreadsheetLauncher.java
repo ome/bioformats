@@ -26,7 +26,7 @@ package loci.visbio.overlays;
 import java.io.File;
 import java.io.IOException;
 
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * Launches an external spreadsheet application.

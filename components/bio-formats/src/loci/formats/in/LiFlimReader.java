@@ -39,7 +39,6 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -233,14 +232,13 @@ public class LiFlimReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("LiFlimReader.initFile(" + id + ")");
     super.initFile(id);
 
-    status("Parsing header");
+    LOGGER.info("Parsing header");
     in = new RandomAccessInputStream(id);
     parseHeader();
 
-    status("Parsing metadata");
+    LOGGER.info("Parsing metadata");
     initOriginalMetadata();
     initCoreMetadata();
     initOMEMetadata();
@@ -328,7 +326,7 @@ public class LiFlimReader extends FormatReader {
   private void initCoreMetadata() throws FormatException {
     // check version number
     if (DataTools.indexOf(KNOWN_VERSIONS, version) < 0) {
-      LogTools.warnDebug("Warning: unknown LI-FLIM version: " + version);
+      LOGGER.warn("Unknown LI-FLIM version: {}", version);
     }
 
     // check compression type

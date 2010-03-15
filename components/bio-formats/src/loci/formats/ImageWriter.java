@@ -29,8 +29,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
 
-import loci.common.LogTools;
 import loci.formats.meta.MetadataRetrieve;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ImageWriter is the master file format writer for all supported formats.
@@ -44,6 +46,11 @@ import loci.formats.meta.MetadataRetrieve;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageWriter implements IFormatWriter {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ImageWriter.class);
 
   // -- Static fields --
 
@@ -60,7 +67,7 @@ public class ImageWriter implements IFormatWriter {
       }
       catch (IOException exc) {
         defaultClasses = new ClassList(IFormatWriter.class);
-        LogTools.trace(exc);
+        LOGGER.info("Could not parse class list; using default classes", exc);
       }
     }
     return defaultClasses;
@@ -112,8 +119,7 @@ public class ImageWriter implements IFormatWriter {
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (writer == null) {
-        LogTools.println("Error: " + c[i].getName() +
-          " cannot be instantiated.");
+        LOGGER.error("{} cannot be instantiated.", c[i].getName());
         continue;
       }
       v.add(writer);
@@ -342,24 +348,6 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler#close() */
   public void close() throws IOException {
     getWriter().close();
-  }
-
-  // -- StatusReporter API methods --
-
-  /* @see IFormatHandler#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    for (int i=0; i<writers.length; i++) writers[i].addStatusListener(l);
-  }
-
-  /* @see IFormatHandler#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    for (int i=0; i<writers.length; i++) writers[i].removeStatusListener(l);
-  }
-
-  /* @see IFormatHandler#getStatusListeners() */
-  public StatusListener[] getStatusListeners() {
-    // NB: all writers should have the same status listeners
-    return writers[0].getStatusListeners();
   }
 
 }

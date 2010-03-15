@@ -91,9 +91,7 @@ public class TiffJAIReader extends BIFormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("JAIReader.initFile(" + id + ")");
-
-    status("Checking for JAI");
+    LOGGER.info("Checking for JAI");
     try {
       r = new ReflectedUniverse();
       r.exec("import javax.media.jai.NullOpImage");
@@ -108,7 +106,7 @@ public class TiffJAIReader extends BIFormatReader {
 
     super.initFile(id);
 
-    status("Reading movie dimensions");
+    LOGGER.info("Reading movie dimensions");
 
     // map Location to File or RandomAccessFile, if possible
     IRandomAccess ira = Location.getMappedFile(id);
@@ -151,7 +149,7 @@ public class TiffJAIReader extends BIFormatReader {
     BufferedImage img = openBufferedImage(0);
     if (img == null) throw new FormatException("Invalid image stream");
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].imageCount = numPages;
 

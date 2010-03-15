@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2009 UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2010 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via MetadataAutogen on Oct 20, 2009 12:57:18 AM EDT
+ * Created by melissa via MetadataAutogen on Mar 15, 2010 2:19:27 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -32,8 +32,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.ice.formats;
 
 import Ice.Current;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -51,11 +55,18 @@ public class IMetadataI extends _IMetadataDisp {
   // -- Fields --
 
   private IMetadata metadataObject;
+  private OMEXMLService service;
 
   // -- Constructor --
 
   public IMetadataI() {
-    metadataObject = MetadataTools.createOMEXMLMetadata();
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+      metadataObject = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
   }
 
   // -- IMetadataI methods --
@@ -71,7 +82,11 @@ public class IMetadataI extends _IMetadataDisp {
   // -- MetadataRetrieve methods --
 
   public String getOMEXML(Current current) {
-    return MetadataTools.getOMEXML(metadataObject);
+    try {
+      return service.getOMEXML(metadataObject);
+    }
+    catch (ServiceException se) { }
+    return null;
   }
 
   // - Entity counting -

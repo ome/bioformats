@@ -107,11 +107,10 @@ public class ImarisReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ImarisReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Verifying Imaris RAW format");
+    LOGGER.info("Verifying Imaris RAW format");
 
     in.order(IS_LITTLE);
 
@@ -120,7 +119,7 @@ public class ImarisReader extends FormatReader {
       throw new FormatException("Imaris magic number not found.");
     }
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     addGlobalMeta("Version", in.readInt());
     in.skipBytes(4);
@@ -147,7 +146,7 @@ public class ImarisReader extends FormatReader {
     int isSurvey = in.readInt();
     addGlobalMeta("Survey performed", isSurvey == 0);
 
-    status("Calculating image offsets");
+    LOGGER.info("Calculating image offsets");
 
     core[0].imageCount = getSizeZ() * getSizeC();
     offsets = new int[getImageCount()];
@@ -169,7 +168,7 @@ public class ImarisReader extends FormatReader {
       }
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
     core[0].dimensionOrder = "XYZCT";

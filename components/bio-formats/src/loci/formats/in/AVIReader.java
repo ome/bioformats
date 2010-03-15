@@ -229,12 +229,11 @@ public class AVIReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("AVIReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    status("Verifying AVI format");
+    LOGGER.info("Verifying AVI format");
 
     offsets = new Vector<Long>();
     lengths = new Vector<Long>();
@@ -254,7 +253,7 @@ public class AVIReader extends FormatReader {
     pos = in.getFilePointer();
     long spos = pos;
 
-    status("Searching for image data");
+    LOGGER.info("Searching for image data");
 
     while ((in.length() - in.getFilePointer()) > 4) {
       listString = in.readString(4);
@@ -503,7 +502,7 @@ public class AVIReader extends FormatReader {
       }
       pos = in.getFilePointer();
     }
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].imageCount = offsets.size();
 

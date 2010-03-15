@@ -29,22 +29,24 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.CBZip2InputStream;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -62,7 +64,7 @@ public class OMEXMLReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_OME_XML_MSG =
+  public static final String NO_OME_XML_MSG =
     "The Java OME-XML library is required to read OME-XML files. Please " +
     "obtain ome-xml.jar from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
@@ -76,7 +78,7 @@ public class OMEXMLReader extends FormatReader {
     }
     catch (Throwable t) {
       noOME = true;
-      LogTools.traceDebug(t);
+      LOGGER.debug(NO_OME_XML_MSG, t);
     }
   }
 
@@ -249,7 +251,6 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("OMEXMLReader.initFile(" + id + ")");
     if (noOME) throw new MissingLibraryException(NO_OME_XML_MSG);
     super.initFile(id);
 
@@ -271,17 +272,25 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException("Pixel data not found");
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
-    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata(omexml);
-
-    if (omexmlMeta == null) {
-      throw new MissingLibraryException(NO_OME_XML_MSG);
+    OMEXMLMetadata omexmlMeta;
+    OMEXMLService service;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+      omexmlMeta = service.createOMEXMLMetadata(omexml);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(NO_OME_XML_MSG, de);
+    }
+    catch (ServiceException se) {
+      throw new FormatException(se);
     }
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
 
-    Hashtable originalMetadata = MetadataTools.getOriginalMetadata(omexmlMeta);
+    Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();
     if (originalMetadata != null) metadata = originalMetadata;
 
     int numDatasets = omexmlMeta.getImageCount();
@@ -340,7 +349,7 @@ public class OMEXMLReader extends FormatReader {
     // contents of the internal OME-XML metadata object
     MetadataStore store = getMetadataStore();
 
-    MetadataTools.convertMetadata(omexmlMeta, store);
+    service.convertMetadata(omexmlMeta, store);
   }
 
   // -- Helper class --

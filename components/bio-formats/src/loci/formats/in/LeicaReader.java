@@ -202,7 +202,7 @@ public class LeicaReader extends FormatReader {
       return tiff.get8BitLookupTable();
     }
     catch (IOException e) {
-      traceDebug(e);
+      LOGGER.debug("Failed to retrieve lookup table", e);
     }
     return null;
   }
@@ -215,7 +215,7 @@ public class LeicaReader extends FormatReader {
       return tiff.get16BitLookupTable();
     }
     catch (IOException e) {
-      traceDebug(e);
+      LOGGER.debug("Failed to retrieve lookup table", e);
     }
     return null;
   }
@@ -288,7 +288,6 @@ public class LeicaReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("LeicaReader.initFile(" + id + ")");
     close();
 
     if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && isGroupFiles()) {
@@ -301,7 +300,7 @@ public class LeicaReader extends FormatReader {
 
       in.seek(0);
 
-      status("Finding companion file name");
+      LOGGER.info("Finding companion file name");
 
       // open the TIFF file and look for the "Image Description" field
 
@@ -387,7 +386,7 @@ public class LeicaReader extends FormatReader {
 
     in.order(isLittleEndian());
 
-    status("Reading metadata blocks");
+    LOGGER.info("Reading metadata blocks");
 
     in.skipBytes(8);
     int addr = in.readInt();
@@ -445,7 +444,7 @@ public class LeicaReader extends FormatReader {
     int nameLength = 0;
     int maxPlanes = 0;
 
-    status("Parsing metadata blocks");
+    LOGGER.info("Parsing metadata blocks");
 
     core[0].littleEndian = !isLittleEndian();
 
@@ -520,7 +519,7 @@ public class LeicaReader extends FormatReader {
         // Strategy for handling renamed files:
         // 1) Assume that files for each series follow a pattern.
         // 2) Assign each file group to the first series with the correct count.
-        status("Handling renamed TIFF files");
+        LOGGER.info("Handling renamed TIFF files");
 
         listing = list.toArray(new String[list.size()]);
 
@@ -615,7 +614,7 @@ public class LeicaReader extends FormatReader {
 
     tiff = new MinimalTiffReader();
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     if (headerIFDs == null) headerIFDs = ifds;
 
@@ -1095,7 +1094,7 @@ public class LeicaReader extends FormatReader {
             }
           }
           catch (NumberFormatException e) {
-            traceDebug(e);
+            LOGGER.debug("Failed to parse detector metadata", e);
           }
         }
       }

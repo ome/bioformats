@@ -172,7 +172,6 @@ public class MRWReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("MRW.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
@@ -223,17 +222,12 @@ public class MRWReader extends FormatReader {
             addGlobalMeta(IFD.getIFDTagName(keys[q].intValue()),
               ifd.get(keys[q]));
           }
+        }
 
-          long exifOffset =
-            ifd.getIFDLongValue(IFD.EXIF, false, 0);
-          if (exifOffset != 0 && exifOffset < ras.length()) {
-            IFD exif = tp.getIFD(1, exifOffset);
-
-            Integer[] k = (Integer[]) exif.keySet().toArray(new Integer[0]);
-            for (int q=0; q<k.length; q++) {
-              addGlobalMeta(BaseTiffReader.getExifTagName(k[q].intValue()),
-                exif.get(k[q]));
-            }
+        IFDList exifIFDs = tp.getExifIFDs();
+        for (IFD exif : exifIFDs) {
+          for (Integer key : exif.keySet()) {
+            addGlobalMeta(IFD.getIFDTagName(key.intValue()), exif.get(key));
           }
         }
         ras.close();

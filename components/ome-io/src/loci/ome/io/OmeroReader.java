@@ -120,13 +120,13 @@ public class OmeroReader extends FormatReader {
   }
 
   protected void initFile(String id) throws FormatException, IOException {
-    debug("OmeroReader.initFile(" + id + ")");
+    LOGGER.debug("OmeroReader.initFile({})", id);
 
     super.initFile(id);
 
     // parse credentials from id string
 
-    status("Parsing credentials");
+    LOGGER.info("Parsing credentials");
 
     if (!id.startsWith("omero:")) {
       throw new IllegalArgumentException("Not an OMERO id: " + id);
@@ -179,7 +179,7 @@ public class OmeroReader extends FormatReader {
 
     // authenticate with OMERO server
 
-    status("Logging in");
+    LOGGER.info("Logging in");
 
     Login login = new Login(user, pass);
     Server server = new Server(address, port);
@@ -187,7 +187,7 @@ public class OmeroReader extends FormatReader {
 
     // get raw pixels store and pixels
 
-    status("Getting raw pixels store");
+    LOGGER.info("Getting raw pixels store");
 
     raw = sf.createRawPixelsStore();
     raw.setPixelsId(pid, false);
@@ -224,7 +224,7 @@ public class OmeroReader extends FormatReader {
 
     // populate metadata
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     int sizeX = pix.getSizeX().getValue();
     int sizeY = pix.getSizeY().getValue();

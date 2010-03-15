@@ -71,6 +71,28 @@ public class Index16ColorModel extends ColorModel {
     pixelBits = bits;
   }
 
+  // -- Index16ColorModel API methods --
+
+  /** Return the array of red color components. */
+  public short[] getReds() {
+    return redShort;
+  }
+
+  /** Return the array of green color components. */
+  public short[] getGreens() {
+    return greenShort;
+  }
+
+  /** Return the array of blue color components. */
+  public short[] getBlues() {
+    return blueShort;
+  }
+
+  /** Return the array of alpha color components. */
+  public short[] getAlphas() {
+    return alphaShort;
+  }
+
   // -- ColorModel API methods --
 
   /* @see java.awt.image.ColorModel#getDataElements(int, Object) */

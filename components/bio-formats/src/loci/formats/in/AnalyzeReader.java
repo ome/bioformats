@@ -125,11 +125,9 @@ public class AnalyzeReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("AnalyzeReader.initFile(" + id + ")");
-
     // the dataset has two files - we want the one ending in '.hdr'
     if (id.endsWith(".img")) {
-      status("Looking for header file");
+      LOGGER.info("Looking for header file");
       String header = id.substring(0, id.lastIndexOf(".")) + ".hdr";
       if (new Location(header).exists()) {
         setId(header);
@@ -143,7 +141,7 @@ public class AnalyzeReader extends FormatReader {
     pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
     pixelFile = new RandomAccessInputStream(pixelsFilename);
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     int fileSize = in.readInt();
     boolean little = fileSize != in.length();
@@ -238,7 +236,7 @@ public class AnalyzeReader extends FormatReader {
     addGlobalMeta("Acquisition Date", expDate);
     addGlobalMeta("Acquisition Time", expTime);
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
 
     core[0].sizeX = x;
     core[0].sizeY = y;
@@ -281,7 +279,7 @@ public class AnalyzeReader extends FormatReader {
         throw new FormatException("Unsupported data type: " + dataType);
     }
 
-    status("Populating MetadataStore");
+    LOGGER.info("Populating MetadataStore");
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

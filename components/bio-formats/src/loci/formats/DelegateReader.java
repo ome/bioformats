@@ -181,7 +181,7 @@ public abstract class DelegateReader extends FormatReader {
         legacyReaderInitialized = true;
       }
       catch (FormatException e) {
-        traceDebug(e);
+        LOGGER.debug("", e);
         nativeReader.setId(id);
         nativeReaderInitialized = true;
       }
@@ -195,7 +195,7 @@ public abstract class DelegateReader extends FormatReader {
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
       if (exc != null) {
-        traceDebug(exc);
+        LOGGER.debug("", exc);
         legacyReader.setId(id);
         legacyReaderInitialized = true;
       }
@@ -211,20 +211,5 @@ public abstract class DelegateReader extends FormatReader {
       metadataStore = legacyReader.getMetadataStore();
     }
   }
-
-  // -- StatusReporter API methods --
-
-  /* @see StatusReporter#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    nativeReader.addStatusListener(l);
-    legacyReader.addStatusListener(l);
-  }
-
-  /* @see StatusReporter#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    nativeReader.removeStatusListener(l);
-    legacyReader.removeStatusListener(l);
-  }
-
 
 }

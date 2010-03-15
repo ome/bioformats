@@ -11,6 +11,12 @@ Type "ant -p" for a list of targets.
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
 
+  <taskdef name="testng" classpath="${testng.jar}"
+    classname="org.testng.TestNGAntTask"/>
+  <condition property="doTests">
+    <available file="${tests.dir}"/>
+  </condition>
+
   <!-- Main build targets -->
 
   <target name="compile" depends="copy-source" description="compile classes">
@@ -24,9 +30,26 @@ Type "ant -p" for a list of targets.
     </javac>
   </target>
 
+  <target name="compile-tests" depends="compile, copy-test-source" description="compile test classes" if="doTests">
+    <javac debug="true" deprecation="${component.deprecation}"
+      source="${component.java-version}"
+      target="${component.java-version}"
+      srcdir="${test.dir}" destdir="${test-classes.dir}"
+      classpath="${classes.dir}:${component.classpath}"
+      includes="${component.source}"/>
+  </target>
+
   <target name="exec" depends="compile" description="execute package">
     <java fork="true" classname="${component.main-class}"
       classpath="${classes.dir}:${component.runtime-cp}"/>
+  </target>
+
+  <target name="test" depends="jar, compile-tests" description="run tests" if="doTests">
+    <testng classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
+      groups="all" testname="${component.name}">
+      <xmlfileset file="${testng.xml}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
   </target>
 
   <target name="findbugs" depends="jar"
@@ -189,6 +212,21 @@ your FindBugs installation's lib directory. E.g.:
     <!-- copy resources to classes folder -->
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${dest.dir}" excludes="${component.source}"/>
+    </copy>
+  </target>
+
+  <target name="copy-test-source" depends="init" if="doTests">
+    <copy todir="${test.dir}" preservelastmodified="true">
+      <fileset dir="${tests.dir}" includes="(none) ${component.resources-bin}"/>
+    </copy>
+
+    <copy todir="${test.dir}" preservelastmodified="true">
+      <fileset dir="${tests.dir}" includes="${component.source} ${component.resources-text}"/>
+    </copy>
+
+    <mkdir dir="${test-classes.dir}"/>
+    <copy todir="${test-classes.dir}" preservelastmodified="true">
+      <fileset dir="${tests.dir}" excludes="${component.source}"/>
     </copy>
   </target>
 

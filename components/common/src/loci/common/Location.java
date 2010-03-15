@@ -32,6 +32,9 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Pseudo-extension of java.io.File that supports reading over HTTP.
  * It is strongly recommended that you use this instead of java.io.File.
@@ -41,6 +44,10 @@ import java.util.HashMap;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/Location.java">SVN</a></dd></dl>
  */
 public class Location {
+
+  // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
 
   // -- Static fields --
 
@@ -56,22 +63,25 @@ public class Location {
   // -- Constructors --
 
   public Location(String pathname) {
+    LOGGER.trace("Location({})", pathname);
     try {
       url = new URL(getMappedId(pathname));
     }
     catch (MalformedURLException e) {
+      LOGGER.trace("Location is not a URL", e);
       isURL = false;
     }
     if (!isURL) file = new File(getMappedId(pathname));
   }
 
   public Location(File file) {
+    LOGGER.trace("Location({})", file);
     isURL = false;
     this.file = file;
   }
 
   public Location(String parent, String child) {
-    this(parent + "/" + child);
+    this(parent + File.separator + child);
   }
 
   public Location(Location parent, String child) {
@@ -81,7 +91,7 @@ public class Location {
   // -- Location API methods --
 
   /**
-   * Maps the given id to the actual filename on disk. Typically actual
+   * Maps the given id to an actual filename on disk. Typically actual
    * filenames are used for ids, making this step unnecessary, but in some
    * cases it is useful; e.g., if the file has been renamed to conform to a
    * standard naming scheme and the original file extension is lost, then
@@ -94,15 +104,15 @@ public class Location {
     if (id == null) return;
     if (filename == null) idMap.remove(id);
     else idMap.put(id, filename);
-    LogTools.debug("Location.mapId: " + id + " -> " + filename);
+    LOGGER.debug("Location.mapId: {} -> {}", id, filename);
   }
 
-  /** Maps the given id to the given random access handle. */
+  /** Maps the given id to the given IRandomAccess object. */
   public static void mapFile(String id, IRandomAccess ira) {
     if (id == null) return;
     if (ira == null) idMap.remove(id);
     else idMap.put(id, ira);
-    LogTools.debug("Location.mapFile: " + id + " -> " + ira);
+    LOGGER.debug("Location.mapFile: {} -> {}", id, ira);
   }
 
   /**
@@ -133,8 +143,14 @@ public class Location {
     return ira;
   }
 
+  /** Return the id mapping. */
   public static HashMap<String, Object> getIdMap() { return idMap; }
 
+  /**
+   * Set the id mapping using the given HashMap.
+   *
+   * @throws IllegalArgumentException if the given HashMap is null.
+   */
   public static void setIdMap(HashMap<String, Object> map) {
     if (map == null) throw new IllegalArgumentException("map cannot be null");
     idMap = map;
@@ -155,13 +171,14 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable)
     throws IOException
   {
+    LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
+      LOGGER.trace("no handle was mapped for this ID");
       String mapId = getMappedId(id);
-      File f = new File(mapId).getAbsoluteFile();
 
       if (id.startsWith("http://")) {
-        handle = new URLHandle(mapId, writable ? "w" : "r");
+        handle = new URLHandle(mapId);
       }
       else if (ZipHandle.isZipFile(id)) {
         handle = new ZipHandle(mapId);
@@ -173,23 +190,22 @@ public class Location {
         handle = new BZip2Handle(mapId);
       }
       else {
-        handle = new FileHandle(f, writable ? "rw" : "r");
+        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
       }
     }
-    LogTools.debug("Location.getHandle: " + id + " -> " + handle);
+    LOGGER.debug("Location.getHandle: {} -> {}", id, handle);
     return handle;
   }
 
   /**
-   * Return a list of all of the files in this directory.  If 'noDotFiles' is
-   * set to true, then file names beginning with '.' are omitted.
+   * Return a list of all of the files in this directory.  If 'noHiddenFiles' is
+   * set to true, then hidden files are omitted.
    *
    * @see java.io.File#list()
    */
-  public String[] list(boolean noDotFiles) {
+  public String[] list(boolean noHiddenFiles) {
     ArrayList<String> files = new ArrayList<String>();
     if (isURL) {
-      if (!isDirectory()) return null;
       try {
         URLConnection c = url.openConnection();
         InputStream is = c.getInputStream();
@@ -203,62 +219,116 @@ public class Location {
 
           while (s.indexOf("a href") != -1) {
             int ndx = s.indexOf("a href") + 8;
-            String f = s.substring(ndx, s.indexOf("\"", ndx));
-            s = s.substring(s.indexOf("\"", ndx) + 1);
+            int idx = s.indexOf("\"", ndx);
+            if (idx < 0) break;
+            String f = s.substring(ndx, idx);
+            if (files.size() > 0 && f.startsWith("/")) {
+              return null;
+            }
+            s = s.substring(idx + 1);
+            if (f.startsWith("?")) continue;
             Location check = new Location(getAbsolutePath(), f);
-            if (check.exists() && (!noDotFiles || !f.startsWith("."))) {
+            if (check.exists() && (!noHiddenFiles || !check.isHidden())) {
               files.add(check.getName());
             }
           }
         }
       }
       catch (IOException e) {
+        LOGGER.trace("Could not retrieve directory listing", e);
         return null;
       }
     }
-    if (file == null) return null;
-    String[] f = file.list();
-    if (f == null) return null;
-    for (String file : f) {
-      if (!noDotFiles || !file.startsWith(".")) files.add(file);
+    else {
+      if (file == null) return null;
+      String[] f = file.list();
+      if (f == null) return null;
+      for (String name : f) {
+        if (!noHiddenFiles ||
+          !new Location(file.getAbsolutePath(), name).isHidden())
+        {
+          files.add(name);
+        }
+      }
     }
     return files.toArray(new String[files.size()]);
   }
 
   // -- File API methods --
 
-  /* @see java.io.File#canRead() */
+  /**
+   * If the underlying location is a URL, this method will return true if
+   * the URL exists.
+   * Otherwise, it will return true iff the file exists and is readable.
+   *
+   * @see java.io.File#canRead()
+   */
   public boolean canRead() {
-    return isURL ? true : file.canRead();
+    return isURL ? (isDirectory() || isFile()) : file.canRead();
   }
 
-  /* @see java.io.File#canWrite() */
+  /**
+   * If the underlying location is a URL, this method will always return false.
+   * Otherwise, it will return true iff the file exists and is writable.
+   *
+   * @see java.io.File#canWrite()
+   */
   public boolean canWrite() {
     return isURL ? false : file.canWrite();
   }
 
-  /* @see java.io.File#createNewFile() */
+  /**
+   * Creates a new empty file named by this Location's path name iff a file
+   * with this name does not already exist.  Note that this operation is
+   * only supported if the path name can be interpreted as a path to a file on
+   * disk (i.e. is not a URL).
+   *
+   * @returns true if the file was created successfully
+   * @throws IOException if an I/O error occurred, or the
+   *   abstract pathname is a URL
+   * @see java.io.File#createNewFile()
+   */
   public boolean createNewFile() throws IOException {
     if (isURL) throw new IOException("Unimplemented");
     return file.createNewFile();
   }
 
-  /* @see java.io.File#delete() */
+  /**
+   * Deletes this file.  If {@link isDirectory()} returns true, then the
+   * directory must be empty in order to be deleted.  URLs cannot be deleted.
+   *
+   * @returns true if the file was successfully deleted
+   * @see java.io.File#delete()
+   */
   public boolean delete() {
     return isURL ? false : file.delete();
   }
 
-  /* @see java.io.File#deleteOnExit() */
+  /**
+   * Request that this file be deleted when the JVM terminates.
+   * This method will do nothing if the pathname represents a URL.
+   *
+   * @see java.io.File#deleteOnExit()
+   */
   public void deleteOnExit() {
     if (!isURL) file.deleteOnExit();
   }
 
-  /* @see java.io.File#equals(Object) */
+  /**
+   * @see java.io.File#equals(Object)
+   * @see java.net.URL#equals(Object)
+   */
   public boolean equals(Object obj) {
     return isURL ? url.equals(obj) : file.equals(obj);
   }
 
-  /* @see java.io.File#exists() */
+  /**
+   * Returns whether or not the pathname exists.
+   * If the pathname is a URL, then existence is determined based on whether
+   * or not we can successfully read content from the URL.
+   *
+   * @see java.io.File#exists()
+   */
   public boolean exists() {
     if (isURL) {
       try {
@@ -266,6 +336,7 @@ public class Location {
         return true;
       }
       catch (IOException e) {
+        LOGGER.trace("Failed to retrieve content from URL", e);
         return false;
       }
     }
@@ -284,15 +355,25 @@ public class Location {
 
   /* @see java.io.File#getCanonicalFile() */
   public Location getCanonicalFile() throws IOException {
-    return getAbsoluteFile();
+    return isURL ? getAbsoluteFile() : new Location(file.getCanonicalFile());
   }
 
-  /* @see java.io.File#getCanonicalPath() */
+  /**
+   * Returns the canonical path to this file.
+   * If the file is a URL, then the canonical path is equivalent to the
+   * absolute path ({@link getAbsolutePath()}).  Otherwise, this method
+   * will delegate to {@link java.io.File#getCanonicalPath()}.
+   */
   public String getCanonicalPath() throws IOException {
     return isURL ? getAbsolutePath() : file.getCanonicalPath();
   }
 
-  /* @see java.io.File#getName() */
+  /**
+   * Returns the name of this file, i.e. the last name in the path name
+   * sequence.
+   *
+   * @see java.io.File#getName()
+   */
   public String getName() {
     if (isURL) {
       String name = url.getFile();
@@ -302,7 +383,13 @@ public class Location {
     return file.getName();
   }
 
-  /* @see java.io.File#getParent() */
+  /**
+   * Returns the name of this file's parent directory, i.e. the path name prefix
+   * and every name in the path name sequence except for the last.
+   * If this file does not have a parent directory, then null is returned.
+   *
+   * @see java.io.File#getParent()
+   */
   public String getParent() {
     if (isURL) {
       String absPath = getAbsolutePath();
@@ -322,54 +409,100 @@ public class Location {
     return isURL ? url.getHost() + url.getPath() : file.getPath();
   }
 
-  /* @see java.io.File#isAbsolute() */
+  /**
+   * Tests whether or not this path name is absolute.
+   * If the path name is a URL, this method will always return true.
+   *
+   * @see java.io.File#isAbsolute()
+   */
   public boolean isAbsolute() {
     return isURL ? true : file.isAbsolute();
   }
 
-  /* @see java.io.File#isDirectory() */
+  /**
+   * Returns true if this pathname exists and represents a directory.
+   *
+   * @see java.io.File#isDirectory()
+   */
   public boolean isDirectory() {
-    return isURL ? lastModified() == 0 : file.isDirectory();
+    if (isURL) {
+      String[] list = list();
+      return list != null;
+    }
+    return file.isDirectory();
   }
 
-  /* @see java.io.File#isFile() */
+  /**
+   * Returns true if this pathname exists and represents a regular file.
+   *
+   * @see java.io.File#exists()
+   */
   public boolean isFile() {
-    return isURL ? lastModified() > 0 : file.isFile();
+    return isURL ? (!isDirectory() && exists()) : file.isFile();
   }
 
-  /* @see java.io.File#isHidden() */
+  /**
+   * Returns true if the pathname is 'hidden'.  This method will always
+   * return false if the pathname corresponds to a URL.
+   *
+   * @see java.io.File#isHidden()
+   */
   public boolean isHidden() {
     return isURL ? false : file.isHidden();
   }
 
-  /* @see java.io.File#lastModified() */
+  /**
+   * Return the last modification time of this file, in milliseconds since
+   * the UNIX epoch.
+   * If the file does not exist, 0 is returned.
+   *
+   * @see java.io.File#lastModified()
+   * @see java.net.URLConnection#getLastModified()
+   */
   public long lastModified() {
     if (isURL) {
       try {
         return url.openConnection().getLastModified();
       }
-      catch (IOException e) { return 0; }
+      catch (IOException e) {
+        LOGGER.trace("Could not determine URL's last modification time", e);
+        return 0;
+      }
     }
     return file.lastModified();
   }
 
-  /* @see java.io.File#length() */
+  /**
+   * @see java.io.File#length()
+   * @see java.net.URLConnection#getContentLength()
+   */
   public long length() {
     if (isURL) {
       try {
         return url.openConnection().getContentLength();
       }
-      catch (IOException e) { return 0; }
+      catch (IOException e) {
+        LOGGER.trace("Could not determine URL's content length", e);
+        return 0;
+      }
     }
     return file.length();
   }
 
-  /* @see java.io.File#list() */
+  /**
+   * Return a list of file names in this directory.  Hidden files will be
+   * included in the list.
+   * If this is not a directory, return null.
+   */
   public String[] list() {
     return list(false);
   }
 
-  /* @see java.io.File#listFiles() */
+  /**
+   * Return a list of absolute files in this directory.  Hidden files will
+   * be included in the list.
+   * If this is not a directory, return null.
+   */
   public Location[] listFiles() {
     String[] s = list();
     if (s == null) return null;
@@ -381,14 +514,19 @@ public class Location {
     return f;
   }
 
-  /* @see java.io.File#toURL() */
+  /**
+   * Return the URL corresponding to this pathname.
+   *
+   * @see java.io.File#toURL()
+   */
   public URL toURL() throws MalformedURLException {
     return isURL ? url : file.toURI().toURL();
   }
 
-  // -- Object API methods --
-
-  /* @see java.lang.Object#toString() */
+  /**
+   * @see java.io.File#toString()
+   * @see java.net.URL#toString()
+   */
   public String toString() {
     return isURL ? url.toString() : file.toString();
   }

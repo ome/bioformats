@@ -34,13 +34,13 @@ package loci.formats.tiff;
  *
  * @author Chris Allan callan at blackcat.ca
  */
-public class TiffIFDEntry implements Comparable {
+public class TiffIFDEntry implements Comparable<Object> {
 
   /** The <i>Tag</i> that identifies the field. */
   private int tag;
 
   /** The field <i>Type</i>. */
-  private int type;
+  private IFDType type;
 
   /** The number of values, <i>Count</i> of the indicated <i>Type</i>. */
   private int valueCount;
@@ -51,7 +51,7 @@ public class TiffIFDEntry implements Comparable {
    */
   private long valueOffset;
 
-  public TiffIFDEntry(int tag, int type, int valueCount, long valueOffset) {
+  public TiffIFDEntry(int tag, IFDType type, int valueCount, long valueOffset) {
     this.tag = tag;
     this.type = type;
     this.valueCount = valueCount;
@@ -68,7 +68,7 @@ public class TiffIFDEntry implements Comparable {
    * Retrieves the entry's <i>Type</i> value.
    * @return the entry's <i>Type</i> value.
    */
-  public int getType() { return type; }
+  public IFDType getType() { return type; }
 
   /**
    * Retrieves the entry's <i>ValueCount</i> value.

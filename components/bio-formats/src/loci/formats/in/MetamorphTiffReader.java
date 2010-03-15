@@ -28,7 +28,7 @@ import java.util.Vector;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -73,7 +73,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("MetamorphTiffReader.initFile(" + id + ")");
     super.initFile(id);
 
     String[] comments = new String[ifds.size()];

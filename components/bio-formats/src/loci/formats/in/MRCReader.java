@@ -103,11 +103,10 @@ public class MRCReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   public void initFile(String id) throws FormatException, IOException {
-    debug("MRCReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     // check endianness
 
@@ -214,7 +213,7 @@ public class MRCReader extends FormatReader {
 
     in.skipBytes(extHeaderSize);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].sizeT = 1;
     core[0].dimensionOrder = "XYZTC";

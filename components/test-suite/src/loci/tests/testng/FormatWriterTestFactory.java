@@ -34,7 +34,8 @@ package loci.tests.testng;
 import java.io.File;
 import java.util.Vector;
 
-import loci.common.LogTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for scanning a directory structure and generating instances of
@@ -45,6 +46,11 @@ import loci.common.LogTools;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">SVN</a></dd></dl>
  */
 public class FormatWriterTestFactory {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(FormatWriterTestFactory.class);
 
   // -- TestNG factory methods --
 
@@ -61,7 +67,7 @@ public class FormatWriterTestFactory {
       filename = null;
     }
     if (filename != null && !new File(filename).exists()) {
-      LogTools.println("Error: invalid filename: " + filename);
+      LOGGER.error("Invalid filename: {}", filename);
       return new Object[0];
     }
 
@@ -72,20 +78,18 @@ public class FormatWriterTestFactory {
       baseDir = System.getProperty(baseDirProp);
       if (!new File(baseDir).isDirectory()) {
         if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
-          LogTools.println("Error: no base directory specified.");
+          LOGGER.error("No base directory specified.");
         }
-        else LogTools.println("Error: invalid base directory: " + baseDir);
-        LogTools.println(
-          "Please specify a directory containing files to test:");
-        LogTools.println("   ant -D" + baseDirProp +
-          "=\"/path/to/data\" test-all");
+        else LOGGER.error("Invalid base directory: {}", baseDir);
+        LOGGER.error("Please specify a directory containing files to test:");
+        LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
       FormatWriterTest.config = new ConfigurationTree(baseDir);
 
       // create log file
       TestTools.createLogFile();
-      LogTools.println("testng.directory = " + baseDir);
+      LOGGER.info("testng.directory = {}", baseDir);
     }
 
     // parse multiplier
@@ -97,14 +101,14 @@ public class FormatWriterTestFactory {
         multiplier = Float.parseFloat(mult);
       }
       catch (NumberFormatException exc) {
-        LogTools.println("Warning: invalid multiplier: " + mult);
+        LOGGER.warn("Invalid multiplier: {}", mult);
       }
     }
-    LogTools.println("testng.multiplier = " + multiplier);
+    LOGGER.info("testng.multiplier = {}", multiplier);
 
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
-    LogTools.println("Maximum heap size = " + maxMemory + " MB");
+    LOGGER.info("Maximum heap size = {} MB", maxMemory);
 
     if (filename == null) {
       // scan for files
@@ -113,15 +117,12 @@ public class FormatWriterTestFactory {
       TestTools.getFiles(baseDir, files, FormatWriterTest.config);
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
-      LogTools.println(TestTools.DIVIDER);
-      LogTools.println("Total files: " + files.size());
-      LogTools.print("Scan time: " + time + " s");
-      if (files.size() > 0) {
-        long avg = (end - start) / files.size();
-        LogTools.println(" (" + avg + " ms/file)");
-      }
-      else LogTools.println();
-      LogTools.println(TestTools.DIVIDER);
+      LOGGER.info(TestTools.DIVIDER);
+      LOGGER.info("Total files: {}", files.size());
+      long avg = end - start;
+      if (files.size() > 0) avg /= files.size();
+      LOGGER.info("Scan time: {} s ({} ms/file)", time, avg);
+      LOGGER.info(TestTools.DIVIDER);
     }
     else {
       files.add(filename);
@@ -133,7 +134,6 @@ public class FormatWriterTestFactory {
     for (int i=0; i<tests.length; i++) {
       String id = (String) files.get(i);
       tests[i] = new FormatWriterTest(id);
-      ((FormatWriterTest) tests[i]).setLog(LogTools.getLog());
     }
     if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
     else System.out.println("Ready to test " + tests.length + " files");

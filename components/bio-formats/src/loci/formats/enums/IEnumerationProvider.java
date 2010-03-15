@@ -39,6 +39,8 @@ public interface IEnumerationProvider {
    * @return The enumeration corresponding to the given value, according to
    * the latest OME-XML schema version.  If no enumeration corresponds to the
    * given value, null is returned.
+   *
+   * @param enumerations List of enumerations for this type.
    */
   <T extends Enumeration> T getEnumeration(Class<T> type, String value)
     throws EnumerationException;

@@ -27,22 +27,24 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.net.URL;
 
 /**
- * Provides random access to data over HTTP using the IRandomAccess interface.
+ * Provides random access to URLs using the IRandomAccess interface.
+ * Instances of URLHandle are read-only.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/URLHandle.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/URLHandle.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
- * @see java.net.HttpURLConnection
+ * @see StreamHandle
+ * @see java.net.URLConnection
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class URLHandle implements IRandomAccess {
+public class URLHandle extends StreamHandle {
 
   // -- Fields --
 
@@ -50,304 +52,58 @@ public class URLHandle implements IRandomAccess {
   private String url;
 
   /** Socket underlying this stream */
-  private HttpURLConnection conn;
-
-  /** Input stream */
-  private DataInputStream is;
-
-  /** Output stream */
-  private DataOutputStream os;
-
-  /** Stream pointer */
-  private long fp;
-
-  /** Number of bytes in the stream */
-  private long length;
-
-  /** Reset marker */
-  private long mark;
-
-  private String mode;
+  private URLConnection conn;
 
   // -- Constructors --
 
-  public URLHandle(String url, String mode) throws IOException {
-    this.mode = mode.toLowerCase();
-    if (!url.startsWith("http")) url = "http://" + url;
+  /**
+   * Constructs a new URLHandle using the given URL.
+   */
+  public URLHandle(String url) throws IOException {
+    if (!url.startsWith("http") && !url.startsWith("file:")) {
+      url = "http://" + url;
+    }
     this.url = url;
     resetStream();
   }
 
   // -- IRandomAccess API methods --
 
-  /* @see IRandomAccess#close() */
-  public void close() throws IOException {
-    if (is != null) is.close();
-    if (os != null) os.close();
-    conn.disconnect();
-  }
-
-  /* @see IRandomAccess#getFilePointer() */
-  public long getFilePointer() throws IOException {
-    return fp;
-  }
-
-  /* @see IRandomAccess#length() */
-  public long length() throws IOException { return length; }
-
-  /* @see IRandomAccess#read() */
-  public int read() throws IOException {
-    int value = is.read();
-    while (value == -1 && fp < length()) value = is.read();
-    if (value != -1) fp++;
-    markManager();
-    return value;
-  }
-
-  /* @see IRandomAccess#read(byte[]) */
-  public int read(byte[] b) throws IOException {
-    return read(b, 0, b.length);
-  }
-
-  /* @see IRandomAccess#read(byte[], int, int) */
-  public int read(byte[] b, int off, int len) throws IOException {
-    int read = is.read(b, off, len);
-    if (read != -1) fp += read;
-    if (read == -1) read = 0;
-    markManager();
-    while (read < len && fp < length()) {
-      int oldRead = read;
-      read += read(b, off + read, len - read);
-      if (read < oldRead) read = oldRead;
-    }
-    return read == 0 ? -1 : read;
-  }
-
   /* @see IRandomAccess#seek(long) */
   public void seek(long pos) throws IOException {
-    if (pos >= fp) {
+    if (pos < fp && pos >= mark) {
+      stream.reset();
+      fp = mark;
       skip(pos - fp);
-      return;
     }
-    else if (pos >= mark) {
-      try {
-        is.reset();
-        fp = mark;
-        skip(pos - fp);
-        return;
-      }
-      catch (IOException e) { }
-    }
-
-    close();
-    resetStream();
-    skip(pos);
+    else super.seek(pos);
   }
 
-  /* @see IRandomAccess#setLength(long) */
-  public void setLength(long newLength) throws IOException {
-    length = newLength;
-  }
+  // -- StreamHandle API methods --
 
-  // -- DataInput API methods --
-
-  /* @see java.io.DataInput#readBoolean() */
-  public boolean readBoolean() throws IOException {
-    fp++;
-    return is.readBoolean();
-  }
-
-  /* @see java.io.DataInput#readByte() */
-  public byte readByte() throws IOException {
-    fp++;
-    return is.readByte();
-  }
-
-  /* @see java.io.DataInput#readChar() */
-  public char readChar() throws IOException {
-    fp++;
-    return is.readChar();
-  }
-
-  /* @see java.io.DataInput#readDouble() */
-  public double readDouble() throws IOException {
-    fp += 8;
-    return is.readDouble();
-  }
-
-  /* @see java.io.DataInput#readFloat() */
-  public float readFloat() throws IOException {
-    fp += 4;
-    return is.readFloat();
-  }
-
-  /* @see java.io.DataInput#readFully(byte[]) */
-  public void readFully(byte[] b) throws IOException {
-    fp += b.length;
-    is.readFully(b);
-  }
-
-  /* @see java.io.DataInput#readFully(byte[], int, int) */
-  public void readFully(byte[] b, int off, int len) throws IOException {
-    fp += len;
-    is.readFully(b, off, len);
-  }
-
-  /* @see java.io.DataInput#readInt() */
-  public int readInt() throws IOException {
-    fp += 4;
-    return is.readInt();
-  }
-
-  /* @see java.io.DataInput#readLine() */
-  public String readLine() throws IOException {
-    throw new IOException("Unimplemented");
-  }
-
-  /* @see java.io.DataInput#readLong() */
-  public long readLong() throws IOException {
-    fp += 8;
-    return is.readLong();
-  }
-
-  /* @see java.io.DataInput#readShort() */
-  public short readShort() throws IOException {
-    fp += 2;
-    return is.readShort();
-  }
-
-  /* @see java.io.DataInput#readUnsignedByte() */
-  public int readUnsignedByte() throws IOException {
-    fp++;
-    return is.readUnsignedByte();
-  }
-
-  /* @see java.io.DataInput#readUnsignedShort() */
-  public int readUnsignedShort() throws IOException {
-    fp += 2;
-    return is.readUnsignedShort();
-  }
-
-  /* @see java.io.DataInput#readUTF() */
-  public String readUTF() throws IOException {
-    fp += 2;
-    return is.readUTF();
-  }
-
-  /* @see java.io.DataInput#skipBytes(int) */
-  public int skipBytes(int n) throws IOException {
-    int skipped = 0;
-    for (int i=0; i<n; i++) {
-      if (read() != -1) skipped++;
-      markManager();
-    }
-    return skipped;
-  }
-
-  // -- DataOutput API methods --
-
-  /* @see java.io.DataOutput#write(byte[]) */
-  public void write(byte[] b) throws IOException {
-    os.write(b);
-  }
-
-  /* @see java.io.DataOutput#write(byte[], int, int) */
-  public void write(byte[] b, int off, int len) throws IOException {
-    os.write(b, off, len);
-  }
-
-  /* @see java.io.DataOutput#write(int b) */
-  public void write(int b) throws IOException {
-    os.write(b);
-  }
-
-  /* @see java.io.DataOutput#writeBoolean(boolean) */
-  public void writeBoolean(boolean v) throws IOException {
-    os.writeBoolean(v);
-  }
-
-  /* @see java.io.DataOutput#writeByte(int) */
-  public void writeByte(int v) throws IOException {
-    os.writeByte(v);
-  }
-
-  /* @see java.io.DataOutput#writeBytes(String) */
-  public void writeBytes(String s) throws IOException {
-    os.writeBytes(s);
-  }
-
-  /* @see java.io.DataOutput#writeChar(int) */
-  public void writeChar(int v) throws IOException {
-    os.writeChar(v);
-  }
-
-  /* @see java.io.DataOutput#writeChars(String) */
-  public void writeChars(String s) throws IOException {
-    os.writeChars(s);
-  }
-
-  /* @see java.io.DataOutput#writeDouble(double) */
-  public void writeDouble(double v) throws IOException {
-    os.writeDouble(v);
-  }
-
-  /* @see java.io.DataOutput#writeFloat(float) */
-  public void writeFloat(float v) throws IOException {
-    os.writeFloat(v);
-  }
-
-  /* @see java.io.DataOutput#writeInt(int) */
-  public void writeInt(int v) throws IOException {
-    os.writeInt(v);
-  }
-
-  /* @see java.io.DataOutput#writeLong(long) */
-  public void writeLong(long v) throws IOException {
-    os.writeLong(v);
-  }
-
-  /* @see java.io.DataOutput#writeShort(int) */
-  public void writeShort(int v) throws IOException {
-    os.writeShort(v);
-  }
-
-  /* @see java.io.DataOutput#writeUTF(String) */
-  public void writeUTF(String str) throws IOException {
-    os.writeUTF(str);
+  /* @see StreamHandle#resetStream() */
+  protected void resetStream() throws IOException {
+    conn = (new URL(url)).openConnection();
+    stream = new DataInputStream(new BufferedInputStream(
+      conn.getInputStream(), RandomAccessInputStream.MAX_OVERHEAD));
+    fp = 0;
+    mark = 0;
+    length = conn.getContentLength();
+    if (stream != null) stream.mark(RandomAccessInputStream.MAX_OVERHEAD);
   }
 
   // -- Helper methods --
 
-  private void markManager() throws IOException {
-    if (fp >= mark + RandomAccessInputStream.MAX_OVERHEAD - 1) {
-      mark = fp;
-      is.mark(RandomAccessInputStream.MAX_OVERHEAD);
-    }
-  }
-
-  private void resetStream() throws IOException {
-    conn = (HttpURLConnection) (new URL(url)).openConnection();
-    if (mode.equals("w")) {
-      conn.setDoOutput(true);
-      os = new DataOutputStream(conn.getOutputStream());
-    }
-    else {
-      is = new DataInputStream(new BufferedInputStream(
-        conn.getInputStream(), RandomAccessInputStream.MAX_OVERHEAD));
-    }
-    fp = 0;
-    mark = 0;
-    length = conn.getContentLength();
-    if (is != null) is.mark(RandomAccessInputStream.MAX_OVERHEAD);
-  }
-
+  /** Skip over the given number of bytes. */
   private void skip(long bytes) throws IOException {
     while (bytes >= Integer.MAX_VALUE) {
       bytes -= skipBytes(Integer.MAX_VALUE);
     }
     int skipped = skipBytes((int) bytes);
     while (skipped < bytes) {
-      skipped += skipBytes((int) (bytes - skipped));
+      int n = skipBytes((int) (bytes - skipped));
+      if (n == 0) break;
+      skipped += n;
     }
   }
 

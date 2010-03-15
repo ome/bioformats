@@ -662,7 +662,7 @@ public class Data
     if ((memo_flags & 0x8000)!=0)
     {
       /* inline memo field */
-      text = new String(mdb.pg_buf,start+Constants.MDB_MEMO_OVERHEAD,size - Constants.MDB_MEMO_OVERHEAD);
+      text = new String(mdb.pg_buf,start+Constants.MDB_MEMO_OVERHEAD + 2,size - Constants.MDB_MEMO_OVERHEAD - 2);
 //      strncpy(text, &mdb->pg_buf[start + MDB_MEMO_OVERHEAD],size - MDB_MEMO_OVERHEAD);
 //      text[size - MDB_MEMO_OVERHEAD]='\0';
       return text;
@@ -873,7 +873,6 @@ public class Data
           row_stop = mdb.fmt.pg_size - 1;
         }
         row_start = file.mdb_get_int16(mdb, 10 + ole_row * 2);
-        if (row_start > row_stop) row_start = 0;
 //#if MDB_DEBUG_OLE
 //  printf("row num %d row start %d row stop %d\n", ole_row, row_start, row_stop);
 //#endif

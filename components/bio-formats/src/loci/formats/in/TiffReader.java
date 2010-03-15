@@ -29,7 +29,7 @@ import java.util.StringTokenizer;
 
 import loci.common.DataTools;
 import loci.common.Location;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.FilterMetadata;
@@ -97,7 +97,7 @@ public class TiffReader extends BaseTiffReader {
     super.initStandardMetadata();
     String comment = ifds.get(0).getComment();
 
-    status("Checking comment style");
+    LOGGER.info("Checking comment style");
 
     if (ifds.size() > 1) core[0].orderCertain = false;
 
@@ -213,7 +213,7 @@ public class TiffReader extends BaseTiffReader {
           value = Integer.parseInt(token.substring(eq + 1));
         }
         catch (NumberFormatException e) {
-          traceDebug(e);
+          LOGGER.debug("Failed to parse integer value", e);
         }
       }
 

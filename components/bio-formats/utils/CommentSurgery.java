@@ -2,8 +2,8 @@
 // CommentSurgery.java
 //
 
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
-import loci.formats.tiff.TiffTools;
 
 /**
  * Performs "surgery" on a TIFF ImageDescription comment, particularly the
@@ -24,7 +24,7 @@ public class CommentSurgery {
     for (int i=0; i<args.length; i++) {
       String id = args[i];
       if (!test) System.out.println(id + ": ");
-      String xml = TiffTools.getComment(id);
+      String xml = new TiffParser(id).getComment();
       if (xml == null) {
         System.out.println("ERROR: No OME-XML comment.");
         return;

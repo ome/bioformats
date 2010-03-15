@@ -35,9 +35,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
 import loci.ome.io.OmeroReader;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  * A class for testing the OMERO implementation of
@@ -61,6 +64,11 @@ public class OmeroReaderTest {
   }
 
   public static void main(String[] args) throws Exception {
+    // configure logging
+    Logger root = Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
+
     // get credentials from stdin
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String server = readLine(in, "Server", "localhost");
@@ -75,11 +83,6 @@ public class OmeroReaderTest {
     // connect to OMERO server
     System.out.println("Initializing OMERO reader");
     OmeroReader omero = new OmeroReader();
-    omero.addStatusListener(new StatusListener() {
-      public void statusUpdated(StatusEvent e) {
-        System.out.println("\t" + e.getStatusMessage());
-      }
-    });
     String id = "omero:\n" +
       "server=" + server + "\n" +
       "port=" + port + "\n" +

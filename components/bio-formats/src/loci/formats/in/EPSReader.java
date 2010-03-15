@@ -85,7 +85,7 @@ public class EPSReader extends FormatReader {
       long[] offsets = ifds.get(0).getStripOffsets();
       in.seek(offsets[0]);
 
-      int[] map = ifds.get(0).getIFDIntArray(IFD.COLOR_MAP, false);
+      int[] map = ifds.get(0).getIFDIntArray(IFD.COLOR_MAP);
       if (map == null) {
         readPlane(in, x, y, w, h, buf);
         return buf;
@@ -161,11 +161,10 @@ public class EPSReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("EPSReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Verifying EPS format");
+    LOGGER.info("Verifying EPS format");
 
     String line = in.readLine();
     if (!line.trim().startsWith("%!PS")) {
@@ -222,7 +221,7 @@ public class EPSReader extends FormatReader {
       return;
     }
 
-    status("Finding image data");
+    LOGGER.info("Finding image data");
 
     binary = false;
 
@@ -242,7 +241,7 @@ public class EPSReader extends FormatReader {
             bps = Integer.parseInt(t.nextToken());
           }
           catch (NumberFormatException exc) {
-            traceDebug(exc);
+            LOGGER.debug("Could not parse image dimensions", exc);
             core[0].sizeC = Integer.parseInt(t.nextToken());
           }
         }
@@ -294,7 +293,7 @@ public class EPSReader extends FormatReader {
       line = in.readLine().trim();
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     if (bps == 0) bps = 8;
 

@@ -1,0 +1,9 @@
+<suite name="OME ReaderWriter Service Tests">
+    <test name="OMEReaderWriterService">
+        <groups/>
+        <classes>
+            <class name="loci.ome.utests.OMEReaderWriterServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+</suite>

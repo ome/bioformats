@@ -82,7 +82,7 @@ public class OmeisImporter {
   private IFormatReader reader;
 
   /** Metadata object, for gathering OME-XML metadata. */
-  private OMEXMLMetadata omexmlMeta;
+  private AbstractOMEXMLMetadata omexmlMeta;
 
   private boolean stitch;
 

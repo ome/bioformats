@@ -57,9 +57,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import loci.common.LogTools;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
+import loci.common.services.DependencyException;
+import loci.common.services.OMENotesService;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelMerger;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -68,6 +68,10 @@ import loci.formats.IFormatHandler;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
+import loci.formats.services.OMEReaderWriterService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ImageViewer is a simple viewer/converter
@@ -84,6 +88,9 @@ public class ImageViewer extends JFrame implements ActionListener,
 {
 
   // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ImageViewer.class);
 
   protected static final String TITLE = "Bio-Formats Viewer";
   protected static final char ANIMATION_KEY = ' ';
@@ -144,38 +151,40 @@ public class ImageViewer extends JFrame implements ActionListener,
     myWriter = new BufferedImageWriter(fileWriter);
 
     // NB: avoid dependencies on optional loci.ome.io package
-    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEReaderWriterService service = 
+        factory.getInstance(OMEReaderWriterService.class);
+      // OME server I/O engine
+      try {
+        omeReader = service.newOMEReader();
+      }
+      catch (Exception exc) {
+        LOGGER.warn("OME reader not available", exc);
+      }
+      try {
+        omeWriter = service.newOMEWriter();
+      }
+      catch (Exception exc) {
+        LOGGER.warn("OME writer not available", exc);
+      }
 
-    // OME server I/O engine
-    try {
-      r.exec("import loci.ome.io.OMEReader");
-      omeReader = (IFormatReader) r.exec("new OMEReader()");
+      // OMERO server I/O engine
+      try {
+        omeroReader = service.newOMEROReader();
+      }
+      catch (Exception exc) {
+        LOGGER.warn("OMERO reader not available", exc);
+      }
+      try {
+        omeroWriter = service.newOMEROWriter();
+      }
+      catch (Exception exc) {
+        LOGGER.warn("OMERO writer not available", exc);
+      }
     }
-    catch (ReflectException exc) {
-      LogTools.println("Warning: OME reader not available");
-    }
-    try {
-      r.exec("import loci.ome.io.OMEWriter");
-      omeWriter = (IFormatWriter) r.exec("new OMEWriter()");
-    }
-    catch (ReflectException exc) {
-      LogTools.println("Warning: OME writer not available");
-    }
-
-    // OMERO server I/O engine
-    try {
-      r.exec("import loci.ome.io.OMEROReader");
-      omeroReader = (IFormatReader) r.exec("new OMEROReader()");
-    }
-    catch (ReflectException exc) {
-      LogTools.println("Warning: OMERO reader not available");
-    }
-    try {
-      r.exec("import loci.ome.io.OMEROWriter");
-      omeroWriter = (IFormatWriter) r.exec("new OMEROWriter()");
-    }
-    catch (ReflectException exc) {
-      LogTools.println("Warning: OMERO writer not available");
+    catch (DependencyException e) {
+      LOGGER.warn("OME and OMERO reader/writer service unavailble", e);
     }
 
     // content pane
@@ -274,7 +283,7 @@ public class ImageViewer extends JFrame implements ActionListener,
       if (c != null) canDoNotes = true;
     }
     catch (Throwable t) {
-      LogTools.traceDebug(t);
+      LOGGER.debug("Could not find OME Notes", t);
     }
     if (canDoNotes) {
       JMenuItem fileView = new JMenuItem("View Metadata...");
@@ -356,12 +365,12 @@ public class ImageViewer extends JFrame implements ActionListener,
       myReader.close(true);
     }
     catch (FormatException exc) {
-      LogTools.trace(exc);
+      LOGGER.info("", exc);
       wait(false);
       return;
     }
     catch (IOException exc) {
-      LogTools.trace(exc);
+      LOGGER.info("", exc);
       wait(false);
       return;
     }
@@ -397,8 +406,8 @@ public class ImageViewer extends JFrame implements ActionListener,
       }
       myWriter.close();
     }
-    catch (FormatException exc) { LogTools.trace(exc); }
-    catch (IOException exc) { LogTools.trace(exc); }
+    catch (FormatException exc) { LOGGER.info("", exc); }
+    catch (IOException exc) { LOGGER.info("", exc); }
     wait(false);
   }
 
@@ -515,14 +524,15 @@ public class ImageViewer extends JFrame implements ActionListener,
       }
     }
     else if ("view".equals(cmd)) {
-      // NB: avoid dependencies on optional loci.ome.notes package
-      ReflectedUniverse r = new ReflectedUniverse();
+      OMENotesService service = null;
       try {
-        r.exec("import loci.ome.notes.Notes");
-        r.setVar("filename", filename);
-        r.exec("new Notes(null, filename)");
+        ServiceFactory factory = new ServiceFactory();
+        service = factory.getInstance(OMENotesService.class);
+        service.newNotes(filename);
       }
-      catch (ReflectException exc) { LogTools.trace(exc); }
+      catch (DependencyException de) {
+        LOGGER.info("", de);
+      }
     }
     else if ("exit".equals(cmd)) dispose();
     else if ("download".equals(cmd)) {
@@ -559,7 +569,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         fps = Integer.parseInt(result);
       }
       catch (NumberFormatException exc) {
-        LogTools.traceDebug(exc);
+        LOGGER.debug("Could not parse fps '{}'", fps, exc);
       }
     }
     else if ("about".equals(cmd)) {
@@ -661,7 +671,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         Thread.sleep(1000 / fps);
       }
       catch (InterruptedException exc) {
-        LogTools.traceDebug(exc);
+        LOGGER.debug("", exc);
       }
     }
   }
@@ -752,7 +762,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         try {
           myReader.close();
         }
-        catch (IOException exc) { LogTools.trace(exc); }
+        catch (IOException exc) { LOGGER.info("", exc); }
         myReader = new BufferedImageReader(r);
         open(id);
       }
@@ -769,7 +779,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         try {
           myWriter.close();
         }
-        catch (IOException exc) { LogTools.trace(exc); }
+        catch (IOException exc) { LOGGER.info("", exc); }
         myWriter = BufferedImageWriter.makeBufferedImageWriter(w);
         save(id);
       }

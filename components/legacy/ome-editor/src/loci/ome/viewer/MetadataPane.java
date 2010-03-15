@@ -51,7 +51,10 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import loci.formats.tiff.TiffTools;
+import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
+import loci.formats.tiff.TiffParser;
+
 import ome.xml.DOMUtil;
 
 import org.openmicroscopy.xml.OMENode;
@@ -201,25 +204,20 @@ public class MetadataPane extends JPanel
    */
   public boolean setOMEXML(File file) {
     try {
-      DataInputStream in = new DataInputStream(new FileInputStream(file));
-      byte[] header = new byte[8];
-      in.readFully(header);
-      if (TiffTools.isValidHeader(header)) {
+      RandomAccessInputStream in =
+        new RandomAccessInputStream(file.getAbsolutePath());
+      TiffParser parser = new TiffParser(in);
+      if (parser.isValidHeader()) {
         // TIFF file
+        String xml = parser.getComment();
         in.close();
-        String xml = TiffTools.getComment(file.getPath());
         if (xml == null) return false;
         setOMEXML(xml);
       }
       else {
-        String s = new String(header).trim();
-        if (s.startsWith("<?xml") || s.startsWith("<OME")) {
-          // raw OME-XML
-          byte[] data = new byte[(int) file.length()];
-          System.arraycopy(header, 0, data, 0, 8);
-          in.readFully(data, 8, data.length - 8);
-          in.close();
-          setOMEXML(new String(data));
+        String xml = DataTools.readFile(file.getAbsolutePath());
+        if (xml.startsWith("<?xml") || xml.startsWith("<OME")) {
+          setOMEXML(xml);
         }
         else return false;
       }

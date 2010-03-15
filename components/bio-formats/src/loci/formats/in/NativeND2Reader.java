@@ -31,7 +31,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -233,7 +233,7 @@ public class NativeND2Reader extends FormatReader {
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
-      status("Searching for blocks");
+      LOGGER.info("Searching for blocks");
 
       isJPEG = false;
       in.seek(0);
@@ -265,7 +265,7 @@ public class NativeND2Reader extends FormatReader {
         String blockType = in.readString(12);
 
         int percent = (int) (100 * fp / in.length());
-        status("Parsing block '" + blockType + "' " + percent + "%");
+        LOGGER.info("Parsing block '{}' {}%", blockType, percent);
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
@@ -369,9 +369,9 @@ public class NativeND2Reader extends FormatReader {
       if (isLossless) planeSize /= 4;
 
       if (secondOffset - firstOffset < planeSize) {
-        debug("Correcting SizeC: was " + getSizeC());
-        debug("plane size = " + planeSize);
-        debug("available bytes = " + (secondOffset - firstOffset));
+        LOGGER.debug("Correcting SizeC: was {}", getSizeC());
+        LOGGER.debug("plane size = {}", planeSize);
+        LOGGER.debug("available bytes = {}", (secondOffset - firstOffset));
         core[0].sizeC = 1;
       }
 
@@ -587,7 +587,7 @@ public class NativeND2Reader extends FormatReader {
 
     isJPEG = true;
 
-    status("Calculating image offsets");
+    LOGGER.info("Calculating image offsets");
 
     Vector<Long> vs = new Vector<Long>();
 
@@ -629,7 +629,7 @@ public class NativeND2Reader extends FormatReader {
       if (!lastBoxFound && box != 0x6a703268) in.skipBytes(length);
     }
 
-    status("Finding XML metadata");
+    LOGGER.info("Finding XML metadata");
 
     // read XML metadata from the end of the file
 
@@ -661,7 +661,7 @@ public class NativeND2Reader extends FormatReader {
 
     buf = null;
 
-    status("Parsing XML");
+    LOGGER.info("Parsing XML");
 
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 4);
@@ -698,7 +698,7 @@ public class NativeND2Reader extends FormatReader {
 
       sb.append("</NIKON>");
 
-      status("Finished assembling XML string");
+      LOGGER.info("Finished assembling XML string");
 
       DefaultHandler handler = new ND2Handler();
 
@@ -721,7 +721,7 @@ public class NativeND2Reader extends FormatReader {
       xml = null;
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].pixelType = FormatTools.UINT8;
     offsets = new long[1][2];

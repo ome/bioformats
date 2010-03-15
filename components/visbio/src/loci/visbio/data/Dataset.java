@@ -36,6 +36,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelSeparator;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
@@ -43,11 +46,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+import loci.visbio.StatusEvent;
+import loci.visbio.StatusListener;
 import loci.visbio.VisBioFrame;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
@@ -378,7 +382,22 @@ public class Dataset extends ImageTransform {
     // initialize data reader
     reader = new BufferedImageReader(
       new ChannelSeparator(new FileStitcher(true)));
-    reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+
+    Exception serviceException = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service =
+        (OMEXMLService) factory.getInstance(OMEXMLService.class);
+      reader.setMetadataStore(service.createOMEXMLMetadata());
+    }
+    catch (DependencyException e) { serviceException = e; }
+    catch (ServiceException e) { serviceException = e; }
+
+    if (serviceException != null) {
+      System.err.println("Could not construct OMEXMLMetadataStore");
+      if (VisBioFrame.DEBUG) serviceException.printStackTrace();
+      return;
+    }
 
     // determine number of images per source file
     status(1, numTasks, "Initializing dataset");

@@ -34,14 +34,16 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.POITools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.POIService;
 
 /**
  * TillVisionReader is the file format reader for TillVision files.
@@ -119,12 +121,20 @@ public class TillVisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("TillVisionReader.initFile(" + id + ")");
     super.initFile(id);
 
     exposureTimes = new Hashtable<Integer, Double>();
 
-    POITools poi = new POITools(id);
+    POIService poi = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+
+    poi.initialize(id);
     Vector<String> documents = poi.getDocumentList();
 
     MetadataStore store =
@@ -140,7 +150,7 @@ public class TillVisionReader extends FormatReader {
 
     for (int i=0; i<documents.size(); i++) {
       String name = documents.get(i);
-      debug("Reading " + name);
+      LOGGER.debug("Reading {}", name);
 
       if (name.equals("Root Entry" + File.separator + "Contents")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
@@ -151,7 +161,7 @@ public class TillVisionReader extends FormatReader {
         int nFound = 0;
 
         embeddedImages = b[0] == 1;
-        debug("Images are " + (embeddedImages ? "" : "not ") + "embedded");
+        LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
 
         if (embeddedImages) {
           int len = DataTools.bytesToShort(b, 13, 2, true);
@@ -192,11 +202,12 @@ public class TillVisionReader extends FormatReader {
         if (marker == null) {
           throw new FormatException("Could not find known marker.");
         }
-        debug("Marker: " + marker[0] + ", " + marker[1] + ", " + marker[2]);
+        LOGGER.debug("Marker: {}, {}, {}",
+          new Object[] {marker[0], marker[1], marker[2]});
         s.seek(0);
 
         while (s.getFilePointer() < s.length() - 2) {
-          debug("  Looking for image at " + s.getFilePointer());
+          LOGGER.debug("  Looking for image at {}", s.getFilePointer());
           s.order(false);
           s.seek(findNextOffset(b, marker, (int) s.getFilePointer()));
           if (s.getFilePointer() < 0) break;
@@ -209,7 +220,7 @@ public class TillVisionReader extends FormatReader {
           len = s.readShort();
           if (len < 0 || len > 0x1000) continue;
           String description = s.readString(len);
-          debug("Description: " + description);
+          LOGGER.debug("Description: {}", description);
 
           // parse key/value pairs from description
 

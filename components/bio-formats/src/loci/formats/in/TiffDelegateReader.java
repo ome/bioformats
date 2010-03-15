@@ -48,6 +48,7 @@ public class TiffDelegateReader extends DelegateReader {
     legacyReader = new TiffJAIReader();
     nativeReaderInitialized = false;
     legacyReaderInitialized = false;
+    suffixNecessary = false;
   }
 
 }

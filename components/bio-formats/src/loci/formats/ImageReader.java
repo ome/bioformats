@@ -30,9 +30,11 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ImageReader is the master file format reader for all supported formats.
@@ -46,6 +48,11 @@ import loci.formats.meta.MetadataStore;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageReader implements IFormatReader {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ImageReader.class);
 
   // -- Static fields --
 
@@ -62,7 +69,7 @@ public class ImageReader implements IFormatReader {
       }
       catch (IOException exc) {
         defaultClasses = new ClassList(IFormatReader.class);
-        LogTools.trace(exc);
+        LOGGER.info("Could not parse class list; using default classes", exc);
       }
     }
     return defaultClasses;
@@ -108,8 +115,7 @@ public class ImageReader implements IFormatReader {
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (reader == null) {
-        LogTools.println("Error: " + c[i].getName() +
-          " cannot be instantiated.");
+        LOGGER.error("{} cannot be instantiated.", c[i].getName());
         continue;
       }
       v.add(reader);
@@ -129,9 +135,9 @@ public class ImageReader implements IFormatReader {
   public IFormatReader getReader(String id)
     throws FormatException, IOException
   {
-    // NB: Check that we can generate a valid handle for the ID;
-    // e.g., for files, this will throw an exception if the file is missing.
-    Location.getHandle(id).close();
+   // NB: Check that we can generate a valid handle for the ID;
+   // e.g., for files, this will throw an exception if the file is missing.
+   Location.getHandle(id).close();
 
     if (!id.equals(currentId)) {
       // initialize file
@@ -600,23 +606,5 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatHandler#close() */
   public void close() throws IOException { close(false); }
-
-  // -- StatusReporter API methods --
-
-  /* @see IFormatHandler#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    for (int i=0; i<readers.length; i++) readers[i].addStatusListener(l);
-  }
-
-  /* @see IFormatHandler#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    for (int i=0; i<readers.length; i++) readers[i].removeStatusListener(l);
-  }
-
-  /* @see IFormatHandler#getStatusListeners() */
-  public StatusListener[] getStatusListeners() {
-    // NB: all readers should have the same status listeners
-    return readers[0].getStatusListeners();
-  }
 
 }

@@ -40,7 +40,7 @@ import javax.swing.event.ChangeListener;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * FontChooser is a dialog for graphical font selection. (Java comes with a

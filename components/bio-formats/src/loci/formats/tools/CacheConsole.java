@@ -30,7 +30,6 @@ import java.io.InputStreamReader;
 import javax.swing.JFrame;
 import javax.swing.border.EmptyBorder;
 
-import loci.common.LogTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -65,14 +64,14 @@ public final class CacheConsole {
   /** Interactive interpreter for testing Bio-Formats caching implementation. */
   public static void main(String[] args) throws FormatException, IOException {
     if (args.length < 1) {
-      LogTools.println("Please specify a filename containing image data.");
+      System.out.println("Please specify a filename containing image data.");
       System.exit(1);
     }
     ImageReader reader = new ImageReader();
     String id = args[0];
-    LogTools.println("Reading " + id);
+    System.out.println("Reading " + id);
     reader.setId(id);
-    LogTools.println("Initializing cache");
+    System.out.println("Initializing cache");
     final Cache cache = new Cache(
       new CrosshairStrategy(getLengths(reader)),
       new BufferedImageSource(reader), true);
@@ -117,9 +116,9 @@ public final class CacheConsole {
     };
     cache.addCacheListener(l);
     BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
-    LogTools.println("Entering Bio-Formats caching test console");
+    System.out.println("Entering Bio-Formats caching test console");
     while (true) {
-      LogTools.print("> ");
+      System.out.print("> ");
       String cmd = r.readLine().trim();
       if (cmd.equals("")) continue;
       else if (cmd.startsWith("c")) { // cache
@@ -137,18 +136,20 @@ public final class CacheConsole {
         frame.setVisible(true);
       }
       else if (cmd.startsWith("h")) { // help
-        LogTools.println("Available commands:");
-        LogTools.println("  cache    -- begins loading planes into the cache");
-        LogTools.println("  gui      -- pops up a GUI to configure the cache");
-        LogTools.println("  info     -- displays the cache state");
-        LogTools.println("  position -- changes the current position");
-        LogTools.println("  strategy -- changes the cache strategy");
-        LogTools.println("  source   -- changes the cache source");
-        LogTools.println("  priority -- changes the cache priorities");
-        LogTools.println("  order    -- changes the cache order");
-        LogTools.println("  range    -- changes the cache ranges");
-        LogTools.println("  read     -- gets a plane from the cache");
-        LogTools.println("  exit     -- quits the interpreter");
+        System.out.println("Available commands:");
+        System.out.println(
+          "  cache    -- begins loading planes into the cache");
+        System.out.println(
+          "  gui      -- pops up a GUI to configure the cache");
+        System.out.println("  info     -- displays the cache state");
+        System.out.println("  position -- changes the current position");
+        System.out.println("  strategy -- changes the cache strategy");
+        System.out.println("  source   -- changes the cache source");
+        System.out.println("  priority -- changes the cache priorities");
+        System.out.println("  order    -- changes the cache order");
+        System.out.println("  range    -- changes the cache ranges");
+        System.out.println("  read     -- gets a plane from the cache");
+        System.out.println("  exit     -- quits the interpreter");
       }
       else if (cmd.startsWith("i")) { // info
         // output dimensional position
@@ -156,7 +157,7 @@ public final class CacheConsole {
         // output source information
         ICacheSource source = cache.getSource();
         printSource("source =", cache);
-        LogTools.println("object count = " + source.getObjectCount());
+        System.out.println("object count = " + source.getObjectCount());
         // output strategy information
         ICacheStrategy strategy = cache.getStrategy();
         printStrategy("strategy =", cache);
@@ -166,14 +167,14 @@ public final class CacheConsole {
         printArray("lengths =", strategy.getLengths());
       }
       else if (cmd.startsWith("o")) { // order
-        LogTools.println(ICacheStrategy.CENTERED_ORDER + " => centered");
-        LogTools.println(ICacheStrategy.FORWARD_ORDER + " => forward");
-        LogTools.println(ICacheStrategy.BACKWARD_ORDER + " => backward");
-        LogTools.print("Z: ");
+        System.out.println(ICacheStrategy.CENTERED_ORDER + " => centered");
+        System.out.println(ICacheStrategy.FORWARD_ORDER + " => forward");
+        System.out.println(ICacheStrategy.BACKWARD_ORDER + " => backward");
+        System.out.print("Z: ");
         int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
+        System.out.print("C: ");
         int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
+        System.out.print("T: ");
         int t = Integer.parseInt(r.readLine().trim());
         ICacheStrategy strategy = cache.getStrategy();
         strategy.setOrder(z, 0);
@@ -181,26 +182,26 @@ public final class CacheConsole {
         strategy.setOrder(t, 2);
       }
       else if (cmd.startsWith("po")) { // position
-        LogTools.print("Z: ");
+        System.out.print("Z: ");
         int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
+        System.out.print("C: ");
         int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
+        System.out.print("T: ");
         int t = Integer.parseInt(r.readLine().trim());
         cache.setCurrentPos(new int[] {z, c, t});
       }
       else if (cmd.startsWith("pr")) { // priority
-        LogTools.println(ICacheStrategy.MIN_PRIORITY + " => min priority");
-        LogTools.println(ICacheStrategy.LOW_PRIORITY + " => low priority");
-        LogTools.println(
+        System.out.println(ICacheStrategy.MIN_PRIORITY + " => min priority");
+        System.out.println(ICacheStrategy.LOW_PRIORITY + " => low priority");
+        System.out.println(
           ICacheStrategy.NORMAL_PRIORITY + " => normal priority");
-        LogTools.println(ICacheStrategy.HIGH_PRIORITY + " => high priority");
-        LogTools.println(ICacheStrategy.MAX_PRIORITY + " => max priority");
-        LogTools.print("Z: ");
+        System.out.println(ICacheStrategy.HIGH_PRIORITY + " => high priority");
+        System.out.println(ICacheStrategy.MAX_PRIORITY + " => max priority");
+        System.out.print("Z: ");
         int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
+        System.out.print("C: ");
         int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
+        System.out.print("T: ");
         int t = Integer.parseInt(r.readLine().trim());
         ICacheStrategy strategy = cache.getStrategy();
         strategy.setPriority(z, 0);
@@ -208,31 +209,31 @@ public final class CacheConsole {
         strategy.setPriority(t, 2);
       }
       else if (cmd.startsWith("ra")) { // range
-        LogTools.print("Z: ");
+        System.out.print("Z: ");
         int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
+        System.out.print("C: ");
         int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
+        System.out.print("T: ");
         int t = Integer.parseInt(r.readLine().trim());
         cache.getStrategy().setRange(z, 0);
         cache.getStrategy().setRange(c, 1);
         cache.getStrategy().setRange(t, 2);
       }
       else if (cmd.startsWith("re")) { // read
-        LogTools.print("Z: ");
+        System.out.print("Z: ");
         int z = Integer.parseInt(r.readLine().trim());
-        LogTools.print("C: ");
+        System.out.print("C: ");
         int c = Integer.parseInt(r.readLine().trim());
-        LogTools.print("T: ");
+        System.out.print("T: ");
         int t = Integer.parseInt(r.readLine().trim());
-        LogTools.println("Retrieving Z" + z + "-C" + c + "-T" + t);
+        System.out.println("Retrieving Z" + z + "-C" + c + "-T" + t);
         Object o = cache.getObject(new int[] {z, c, t});
-        LogTools.println(o);
+        System.out.println(o);
       }
       else if (cmd.startsWith("so")) { // source
-        LogTools.println("0: BufferedImage");
-        LogTools.println("1: byte array");
-        LogTools.print("> ");
+        System.out.println("0: BufferedImage");
+        System.out.println("1: byte array");
+        System.out.print("> ");
         int n = Integer.parseInt(r.readLine().trim());
         switch (n) {
           case 0:
@@ -242,13 +243,13 @@ public final class CacheConsole {
             cache.setSource(new ByteArraySource(reader));
             break;
           default:
-            LogTools.println("Unknown source: " + n);
+            System.out.println("Unknown source: " + n);
         }
       }
       else if (cmd.startsWith("st")) { // strategy
-        LogTools.println("0: crosshair");
-        LogTools.println("1: rectangle");
-        LogTools.print("> ");
+        System.out.println("0: crosshair");
+        System.out.println("1: rectangle");
+        System.out.print("> ");
         int n = Integer.parseInt(r.readLine().trim());
         int[] zct = getLengths(reader);
         ICacheStrategy strategy = null;
@@ -260,7 +261,7 @@ public final class CacheConsole {
             strategy = new RectangleStrategy(zct);
             break;
           default:
-            LogTools.println("Unknown strategy: " + n);
+            System.out.println("Unknown strategy: " + n);
         }
         if (strategy != null) {
           ICacheStrategy old = cache.getStrategy();
@@ -275,7 +276,7 @@ public final class CacheConsole {
           cache.setStrategy(strategy);
         }
       }
-      else LogTools.println("Unknown command: " + cmd);
+      else System.out.println("Unknown command: " + cmd);
     }
     reader.close();
   }
@@ -284,63 +285,63 @@ public final class CacheConsole {
 
   /** Helper utility for outputing contents of an int array, used by main. */
   private static final void printArray(String prefix, int[] array) {
-    LogTools.print(prefix);
-    if (array == null) LogTools.println(" null");
+    System.out.print(prefix);
+    if (array == null) System.out.println(" null");
     else {
-      for (int i=0; i<array.length; i++) LogTools.print(" " + array[i]);
-      LogTools.println();
+      for (int i=0; i<array.length; i++) System.out.print(" " + array[i]);
+      System.out.println();
     }
   }
 
   /** Helper utility for outputing cache's associated source, used by main. */
   private static final void printSource(String prefix, Cache cache) {
     ICacheSource source = cache.getSource();
-    LogTools.print(prefix + " ");
+    System.out.print(prefix + " ");
     Class sourceClass = source.getClass();
     if (sourceClass == BufferedImageSource.class) {
-      LogTools.println("BufferedImage");
+      System.out.println("BufferedImage");
     }
     else if (sourceClass == ByteArraySource.class) {
-      LogTools.println("byte array");
+      System.out.println("byte array");
     }
-    else LogTools.println("unknown");
+    else System.out.println("unknown");
   }
 
   /** Helper utility for outputing cache's associated strategy, used by main. */
   private static final void printStrategy(String prefix, Cache cache) {
     ICacheStrategy strategy = cache.getStrategy();
-    LogTools.print(prefix + " ");
+    System.out.print(prefix + " ");
     Class strategyClass = strategy.getClass();
     if (strategyClass == CrosshairStrategy.class) {
-      LogTools.println("crosshair");
+      System.out.println("crosshair");
     }
     else if (strategyClass == RectangleStrategy.class) {
-      LogTools.println("rectangle");
+      System.out.println("rectangle");
     }
-    else LogTools.println("unknown");
+    else System.out.println("unknown");
   }
 
   /** Helper utility for outputing cache strategy's order, used by main. */
   private static final void printOrder(String prefix, Cache cache) {
     ICacheStrategy strategy = cache.getStrategy();
     int[] order = strategy.getOrder();
-    LogTools.print(prefix);
+    System.out.print(prefix);
     for (int i=0; i<order.length; i++) {
       switch (order[i]) {
         case ICacheStrategy.CENTERED_ORDER:
-          LogTools.print(" C");
+          System.out.print(" C");
           break;
         case ICacheStrategy.FORWARD_ORDER:
-          LogTools.print(" F");
+          System.out.print(" F");
           break;
         case ICacheStrategy.BACKWARD_ORDER:
-          LogTools.print(" B");
+          System.out.print(" B");
           break;
         default:
-          LogTools.print(" ?");
+          System.out.print(" ?");
       }
     }
-    LogTools.println();
+    System.out.println();
   }
 
   /** Helper utility for constructing lengths array, used by main. */

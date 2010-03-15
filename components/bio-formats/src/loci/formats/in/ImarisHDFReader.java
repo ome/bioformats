@@ -29,14 +29,19 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.NetcdfTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.NetCDFService;
+import loci.formats.services.NetCDFServiceImpl;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
@@ -56,7 +61,7 @@ public class ImarisHDFReader extends FormatReader {
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private double minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
-  private NetcdfTools netcdf;
+  private NetCDFService netcdf;
 
   // channel parameters
   private Vector<String> emWave, exWave, channelMin, channelMax;
@@ -94,8 +99,14 @@ public class ImarisHDFReader extends FormatReader {
 
     String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
       zct[2] + "/Channel_" + zct[1] + "/Data";
-    Object image = netcdf.getArray(path, new int[] {zct[0], 0, 0},
-      new int[] {1, getSizeY(), getSizeX()});
+    Object image;
+    try {
+      image = netcdf.getArray(path, new int[] {zct[0], 0, 0},
+          new int[] {1, getSizeY(), getSizeX()});
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
 
     boolean big = !isLittleEndian();
     for (int row=0; row<h; row++) {
@@ -165,7 +176,14 @@ public class ImarisHDFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    netcdf = new NetcdfTools(id);
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      netcdf = factory.getInstance(NetCDFService.class);
+      netcdf.setFile(id);
+    }
+    catch (DependencyException e) {
+      throw new MissingLibraryException(NetCDFServiceImpl.NO_NETCDF_MSG, e);
+    }
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 1;
 
@@ -182,9 +200,9 @@ public class ImarisHDFReader extends FormatReader {
 
     // read all of the metadata key/value pairs
 
-    Vector attributes = netcdf.getAttributeList();
+    Vector<String> attributes = netcdf.getAttributeList();
     for (int i=0; i<attributes.size(); i++) {
-      String attr = (String) attributes.get(i);
+      String attr = attributes.get(i);
       String name = attr.substring(attr.lastIndexOf("/") + 1);
       String value = netcdf.getAttributeValue(attr);
       if (value == null) continue;
@@ -285,8 +303,14 @@ public class ImarisHDFReader extends FormatReader {
 
     int type = -1;
 
-    Object pix = netcdf.getVariableValue("/DataSet/ResolutionLevel_" +
-      (getSeriesCount() - 1) + "/TimePoint_0/Channel_0/Data");
+    Object pix;
+    try {
+      pix = netcdf.getVariableValue("/DataSet/ResolutionLevel_" +
+          (getSeriesCount() - 1) + "/TimePoint_0/Channel_0/Data");
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
     if (pix instanceof byte[][][]) type = FormatTools.UINT8;
     else if (pix instanceof short[][][]) type = FormatTools.UINT16;
     else if (pix instanceof int[][][]) type = FormatTools.UINT32;

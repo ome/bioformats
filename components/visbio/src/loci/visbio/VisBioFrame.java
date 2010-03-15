@@ -60,7 +60,7 @@ import loci.visbio.view.DisplayManager;
 import visad.util.GUIFrame;
 import visad.util.Util;
 
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * VisBioFrame is the main GUI frame for VisBio.
@@ -183,7 +183,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
       // handle Mac OS X application menu items
       if (LookUtils.IS_OS_MAC) {
         ReflectedUniverse r = new ReflectedUniverse();
-        r.setDebug(true);
         r.exec("import loci.visbio.MacAdapter");
         r.setVar("bio", this);
         r.exec("MacAdapter.link(bio)");

@@ -28,9 +28,11 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Vector;
 
-import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods for retrieving data from an OME database.
@@ -58,6 +60,8 @@ public final class OMEUtils {
   static final String NO_OME_MSG = "OME-Java library not found.  " +
     "Please obtain ome-java.jar from " + URL_OME_JAVA;
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(OMEUtils.class);
+
   // -- Static fields --
 
   private static boolean noOME = false;
@@ -80,7 +84,7 @@ public final class OMEUtils {
     }
     catch (ReflectException e) {
       noOMERO = true;
-      LogTools.trace(e);
+      LOGGER.info(NO_OMERO_MSG, e);
     }
     try {
       r.exec("import java.util.Hashtable");
@@ -97,7 +101,7 @@ public final class OMEUtils {
     }
     catch (ReflectException e) {
       noOME = true;
-      LogTools.trace(e);
+      LOGGER.info(NO_OME_MSG, e);
     }
     return r;
   }

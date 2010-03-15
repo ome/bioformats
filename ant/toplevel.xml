@@ -69,6 +69,16 @@ Type "ant -p" for a list of targets.
     <delete dir="build"/>
   </target>
 
+  <target name="test"
+    depends="test-common, test-ome-xml,
+      test-jai, test-poi-loci, test-mdbtools,
+      test-formats, test-autogen, test-bf-ice,
+      test-loci-plugins, test-ome-io, test-ome-plugins,
+      test-flow, test-checks, test-tests,
+      test-jvmlink, test-multi-lut, test-ome-notes, test-ome-editor"
+    description="test all components">
+  </target>
+
   <target name="utils"
     depends="jars, utils-common, utils-formats, utils-loci-plugins"
     description="compile all extra utilities">
@@ -154,6 +164,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/common" target="common.utils"/>
   </target>
 
+  <target name="test-common"
+    description="compile and run tests for LOCI common library">
+    <ant dir="components/common" target="test"/>
+  </target>
+
   <!-- JAI Image I/O Tools library -->
 
   <target name="compile-jai"
@@ -179,6 +194,11 @@ Type "ant -p" for a list of targets.
   <target name="clean-jai"
     description="remove build files for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.clean"/>
+  </target>
+
+  <target name="test-jai"
+    description="compile and run tests for JAI Image I/O Tools library">
+    <ant dir="components/forks/jai" target="jai.test"/>
   </target>
 
   <!-- Apache POI Java library -->
@@ -211,6 +231,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/poi" target="poi-loci.clean"/>
   </target>
 
+  <target name="test-poi-loci"
+    description="compile and run tests for Apache POI library">
+    <ant dir="components/forks/poi" target="poi-loci.test"/>
+  </target>
+
   <!-- MDB Tools Java library -->
 
   <target name="compile-mdbtools"
@@ -238,6 +263,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/mdbtools" target="mdbtools.clean"/>
   </target>
 
+  <target name="test-mdbtools"
+    description="compile and run tests for MDB Tools Java library">
+    <ant dir="components/forks/mdbtools" target="mdbtools.test"/>
+  </target>
+
   <!-- OME-XML Java library -->
 
   <target name="compile-ome-xml"
@@ -263,6 +293,11 @@ Type "ant -p" for a list of targets.
   <target name="clean-ome-xml"
     description="remove build files for OME-XML Java library">
     <ant dir="components/ome-xml" target="ome-xml.clean"/>
+  </target>
+
+  <target name="test-ome-xml"
+    description="compile and run tests for OME-XML Java library">
+    <ant dir="components/ome-xml" target="ome-xml.test"/>
   </target>
 
   <!-- Bio-Formats -->
@@ -300,6 +335,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bio-formats" target="formats.utils"/>
   </target>
 
+  <target name="test-formats"
+    description="compile and run tests for Bio-Formats">
+    <ant dir="components/bio-formats" target="test"/>
+  </target>
+
   <!-- LOCI autogen -->
 
   <target name="compile-autogen"
@@ -330,6 +370,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/autogen" target="autogen.clean"/>
   </target>
 
+  <target name="test-autogen"
+    description="compile and run tests for LOCI autogen">
+    <ant dir="components/autogen" target="autogen.test"/>
+  </target>
+
   <!-- Bio-Formats Ice framework -->
 
   <target name="compile-bf-ice"
@@ -358,6 +403,11 @@ Type "ant -p" for a list of targets.
     depends="clean-formats"
     description="remove build files for Bio-Formats Ice framework">
     <ant dir="components/bf-ice" target="bf-ice.clean"/>
+  </target>
+
+  <target name="test-bf-ice"
+    description="compile and run tests for Bio-Formats Ice framework">
+    <ant dir="components/bf-ice" target="bf-ice.test"/>
   </target>
 
   <!-- LOCI Plugins for ImageJ -->
@@ -395,6 +445,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/loci-plugins" target="loci-plugins.utils"/>
   </target>
 
+  <target name="test-loci-plugins"
+    description="compile and run tests for LOCI Plugins for ImageJ">
+    <ant dir="components/loci-plugins" target="loci-plugins.test"/>
+  </target>
+
   <!-- OME I/O -->
 
   <target name="compile-ome-io"
@@ -423,6 +478,11 @@ Type "ant -p" for a list of targets.
     depends="clean-common, clean-formats"
     description="remove build files for OME I/O">
     <ant dir="components/ome-io" target="ome-io.clean"/>
+  </target>
+
+  <target name="test-ome-io"
+    description="compile and run tests for OME I/O">
+    <ant dir="components/ome-io" target="test"/>
   </target>
 
   <!-- OME Plugins for ImageJ -->
@@ -454,6 +514,11 @@ Type "ant -p" for a list of targets.
     depends="clean-common, clean-formats, clean-loci-plugins, clean-ome-io"
     description="remove build files for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
+  </target>
+
+  <target name="test-ome-plugins"
+    description="compile and run tests for OME Plugins for ImageJ">
+    <ant dir="components/ome-plugins" target="ome-plugins.test"/>
   </target>
 
   <!-- VisBio -->
@@ -518,6 +583,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/visbio" target="dist-nojre"/>
   </target>
 
+  <target name="test-visbio"
+    description="compile and run tests for VisBio">
+    <ant dir="components/visbio" target="visbio.test"/>
+  </target>
+
   <!-- SLIM Plotter -->
 
   <target name="compile-slim"
@@ -551,6 +621,11 @@ Type "ant -p" for a list of targets.
   <target name="dist-slim"
     description="create distribution archive for SLIM Plotter">
     <ant dir="components/slim-plotter" target="dist"/>
+  </target>
+
+  <target name="test-slim"
+    description="compile and run tests for SLIM Plotter">
+    <ant dir="components/slim-plotter" target="slim.test"/>
   </target>
 
   <!-- WiscScan Flow Cytometry -->
@@ -588,6 +663,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/flow-cytometry" target="dist"/>
   </target>
 
+  <target name="test-flow"
+    description="compile and run tests for WiscScan Flow Cytometry">
+    <ant dir="components/flow-cytometry" target="flow.test"/>
+  </target>
+
   <!-- LOCI Checkstyle checks -->
 
   <target name="compile-checks"
@@ -613,6 +693,11 @@ Type "ant -p" for a list of targets.
   <target name="clean-checks"
     description="remove build files for LOCI Checkstyle checks">
     <ant dir="components/checkstyle" target="checks.clean"/>
+  </target>
+
+  <target name="test-checks"
+    description="compile and run tests for LOCI Checkstyle checks">
+    <ant dir="components/checkstyle" target="checks.test"/>
   </target>
 
   <!-- LOCI testing framework -->
@@ -645,6 +730,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/test-suite" target="tests.clean"/>
   </target>
 
+  <target name="test-tests"
+    description="compile and run tests for LOCI testing framework">
+    <ant dir="components/test-suite" target="tests.test"/>
+  </target>
+
   <!-- JVMLink -->
 
   <target name="compile-jvmlink"
@@ -675,6 +765,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/legacy/jvmlink" target="jvmlink.clean"/>
   </target>
 
+  <target name="test-jvmlink"
+    description="compile and run tests for JVMLink">
+    <ant dir="components/legacy/jvmlink" target="jvmlink.test"/>
+  </target>
+
   <!-- Multi LUT app -->
 
   <target name="compile-multi-lut"
@@ -700,6 +795,11 @@ Type "ant -p" for a list of targets.
   <target name="clean-multi-lut"
     description="remove build files for Multi LUT app">
     <ant dir="components/legacy/multi-lut" target="multi-lut.clean"/>
+  </target>
+
+  <target name="test-multi-lut"
+    description="compile and run tests for Multi LUT app">
+    <ant dir="components/legacy/multi-lut" target="multi-lut.test"/>
   </target>
 
   <!-- OME Notes -->
@@ -732,6 +832,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/legacy/ome-notes" target="ome-notes.clean"/>
   </target>
 
+  <target name="test-ome-notes"
+    description="compile and run tests for OME Notes">
+    <ant dir="components/legacy/ome-notes" target="ome-notes.test"/>
+  </target>
+
   <!-- OME Metadata Editor -->
 
   <target name="compile-ome-editor"
@@ -760,6 +865,11 @@ Type "ant -p" for a list of targets.
     depends="clean-common, clean-ome-xml, clean-formats"
     description="remove build files for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.clean"/>
+  </target>
+
+  <target name="test-ome-editor"
+    description="compile and run tests for OME Metadata Editor">
+    <ant dir="components/legacy/ome-editor" target="ome-editor.test"/>
   </target>
 
   <!-- Tool collections -->

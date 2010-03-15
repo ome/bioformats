@@ -136,7 +136,6 @@ public class SlidebookReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("SlidebookReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     isSpool = checkSuffix(id, "spl");
@@ -144,7 +143,7 @@ public class SlidebookReader extends FormatReader {
       metadataInPlanes = new Hashtable<Integer, Integer>();
     }
 
-    status("Finding offsets to pixel data");
+    LOGGER.info("Finding offsets to pixel data");
 
     // Slidebook files appear to be comprised of four types of blocks:
     // variable length pixel data blocks, 512 byte metadata blocks,
@@ -184,14 +183,14 @@ public class SlidebookReader extends FormatReader {
     // gather offsets to metadata and pixel data blocks
 
     while (in.getFilePointer() < in.length() - 8) {
-      debug("Looking for block at " + in.getFilePointer());
+      LOGGER.debug("Looking for block at {}", in.getFilePointer());
       in.skipBytes(4);
       int checkOne = in.read();
       int checkTwo = in.read();
       if ((checkOne == 'I' && checkTwo == 'I') ||
         (checkOne == 'M' && checkTwo == 'M'))
       {
-        debug("Found metadata offset: " + (in.getFilePointer() - 6));
+        LOGGER.debug("Found metadata offset: {}", (in.getFilePointer() - 6));
         metadataOffsets.add(new Long(in.getFilePointer() - 6));
         in.skipBytes(in.readShort() - 8);
       }
@@ -206,7 +205,8 @@ public class SlidebookReader extends FormatReader {
             {
               foundBlock = true;
               in.seek(in.getFilePointer() - block.length + i - 2);
-              debug("Found metadata offset: " + (in.getFilePointer() - 2));
+              LOGGER.debug("Found metadata offset: {}",
+                (in.getFilePointer() - 2));
               metadataOffsets.add(new Long(in.getFilePointer() - 2));
               in.skipBytes(in.readShort() - 5);
               break;
@@ -274,7 +274,7 @@ public class SlidebookReader extends FormatReader {
           }
           else in.seek(fp);
 
-          debug("Found pixel offset at " + fp);
+          LOGGER.debug("Found pixel offset at {}", fp);
           pixelOffsets.add(new Long(fp));
           try {
             byte[] buf = new byte[8192];
@@ -335,7 +335,7 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
-    status("Determining dimensions");
+    LOGGER.info("Determining dimensions");
 
     // determine total number of pixel bytes
 

@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -34,6 +35,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
 /**
@@ -70,6 +72,10 @@ public class GelReader extends BaseTiffReader {
   private static final int SQUARE_ROOT = 2;
   private static final int LINEAR = 128;
 
+  // -- Fields --
+
+  private long fmt;
+
   // -- Constructor --
 
   /** Constructs a new GEL reader. */
@@ -80,6 +86,14 @@ public class GelReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    TiffParser parser = new TiffParser(stream);
+    IFD ifd = parser.getFirstIFD();
+    if (ifd == null) return false;
+    return ifd.containsKey(MD_FILETAG);
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -88,7 +102,7 @@ public class GelReader extends BaseTiffReader {
   {
     IFD ifd = ifds.get(no);
 
-    boolean sqrt = ifd.getIFDLongValue(MD_FILETAG, true, LINEAR) == SQUARE_ROOT;
+    boolean sqrt = fmt == SQUARE_ROOT;
 
     if (sqrt) {
       double scale = ((TiffRational)
@@ -133,7 +147,7 @@ public class GelReader extends BaseTiffReader {
 
     IFD firstIFD = ifds.get(0);
 
-    long fmt = firstIFD.getIFDLongValue(MD_FILETAG, true, LINEAR);
+    fmt = firstIFD.getIFDLongValue(MD_FILETAG, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
     addGlobalMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
@@ -144,19 +158,19 @@ public class GelReader extends BaseTiffReader {
 
     // ignore MD_COLOR_TABLE
 
-    String lab = firstIFD.getIFDStringValue(MD_LAB_NAME, false);
+    String lab = firstIFD.getIFDStringValue(MD_LAB_NAME);
     addGlobalMeta("Lab name", lab);
 
-    String info = firstIFD.getIFDStringValue(MD_SAMPLE_INFO, false);
+    String info = firstIFD.getIFDStringValue(MD_SAMPLE_INFO);
     addGlobalMeta("Sample info", info);
 
-    String prepDate = firstIFD.getIFDStringValue(MD_PREP_DATE, false);
+    String prepDate = firstIFD.getIFDStringValue(MD_PREP_DATE);
     addGlobalMeta("Date prepared", prepDate);
 
-    String prepTime = firstIFD.getIFDStringValue(MD_PREP_TIME, false);
+    String prepTime = firstIFD.getIFDStringValue(MD_PREP_TIME);
     addGlobalMeta("Time prepared", prepTime);
 
-    String units = firstIFD.getIFDStringValue(MD_FILE_UNITS, false);
+    String units = firstIFD.getIFDStringValue(MD_FILE_UNITS);
     addGlobalMeta("File units", units);
 
     core[0].imageCount = ifds.size();

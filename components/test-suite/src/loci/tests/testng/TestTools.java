@@ -34,7 +34,7 @@ package loci.tests.testng;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
@@ -45,8 +45,14 @@ import java.util.List;
 
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.formats.ImageReader;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.WriterAppender;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods for use with TestNG tests.
@@ -58,6 +64,8 @@ import loci.formats.ImageReader;
 public class TestTools {
 
   // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestTools.class);
 
   public static final String DIVIDER =
     "----------------------------------------";
@@ -99,19 +107,21 @@ public class TestTools {
     StringBuffer dateBuf = new StringBuffer();
     fmt.format(new Date(), dateBuf, new FieldPosition(0));
     String logFile = "loci-software-test-" + dateBuf + ".log";
-    LogTools.println("Output logged to " + logFile);
+    LOGGER.info("Output logged to {}", logFile);
     try {
-      LogTools.getLog().setStream(
-        new PrintStream(new FileOutputStream(logFile)));
+      org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+      root.setLevel(Level.INFO);
+      root.addAppender(new WriterAppender(
+        new PatternLayout("%p [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
+        new PrintWriter(new FileOutputStream(logFile))));
     }
-    catch (IOException e) { LogTools.println(e); }
+    catch (IOException e) { LOGGER.info("", e); }
 
     // close log file on exit
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
-        LogTools.println(DIVIDER);
-        LogTools.println("Test suite complete.");
-        LogTools.getLog().getStream().close();
+        LOGGER.info(DIVIDER);
+        LOGGER.info("Test suite complete.");
       }
     });
   }
@@ -139,32 +149,32 @@ public class TestTools {
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(root, subs[i]);
       subs[i] = file.getAbsolutePath();
-      LogTools.print("Checking " + subs[i] + ": ");
+      LOGGER.info("Checking {}:", subs[i]);
 
       if (file.getName().equals(".bioformats")) {
         // special config file for the test suite
-        LogTools.println("config file");
+        LOGGER.info("\tconfig file");
         try {
           config.parseConfigFile(subs[i]);
         }
         catch (IOException exc) {
-          LogTools.trace(exc);
+          LOGGER.info("", exc);
         }
       }
       else if (isIgnoredFile(subs[i], config)) {
-        LogTools.println("ignored");
+        LOGGER.info("\tignored");
         continue;
       }
       else if (file.isDirectory()) {
-        LogTools.println("directory");
+        LOGGER.info("\tdirectory");
         getFiles(subs[i], files, config);
       }
       else {
         if (typeTester.isThisType(subs[i])) {
-          LogTools.println("OK");
+          LOGGER.info("\tOK");
           files.add(file.getAbsolutePath());
         }
-        else LogTools.println("unknown type");
+        else LOGGER.info("\tunknown type");
       }
       file = null;
     }

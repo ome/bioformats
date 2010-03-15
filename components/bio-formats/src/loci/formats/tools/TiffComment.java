@@ -26,7 +26,7 @@ package loci.formats.tools;
 import java.io.IOException;
 
 import loci.formats.FormatException;
-import loci.formats.tiff.TiffTools;
+import loci.formats.tiff.TiffParser;
 
 /**
  * Extracts the comment from the first IFD of the given TIFF file(s).
@@ -58,7 +58,7 @@ public class TiffComment {
 
       if (edit) EditTiffG.openFile(args[i]);
       else {
-        String comment = TiffTools.getComment(args[i]);
+        String comment = new TiffParser(args[i]).getComment();
         System.out.println(comment == null ?
           args[i] + ": no TIFF comment found." : comment);
       }

@@ -26,9 +26,11 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.Random;
 
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * BaseCodec contains default implementation and testing for classes
@@ -46,6 +48,11 @@ import loci.formats.FormatException;
  */
 public abstract class BaseCodec implements Codec {
 
+  // -- Constants --
+
+  protected static final Logger LOGGER =
+    LoggerFactory.getLogger(BaseCodec.class);
+
   // -- BaseCodec API methods --
 
   /**
@@ -60,61 +67,59 @@ public abstract class BaseCodec implements Codec {
   public void test() throws FormatException {
     byte[] testdata = new byte[50000];
     Random r = new Random();
-    LogTools.println("Testing " + this.getClass().getName());
-    LogTools.println("Generating random data");
+    LOGGER.info("Testing {}", this.getClass().getName());
+    LOGGER.info("Generating random data");
     r.nextBytes(testdata);
-    LogTools.println("Compressing data");
+    LOGGER.info("Compressing data");
     byte[] compressed = compress(testdata, null);
-    LogTools.println("Compressed size: " + compressed.length);
-    LogTools.println("Decompressing data");
+    LOGGER.info("Compressed size: {}", compressed.length);
+    LOGGER.info("Decompressing data");
     byte[] decompressed = decompress(compressed);
-    LogTools.print("Comparing data... ");
+    LOGGER.info("Comparing data...");
     if (testdata.length != decompressed.length) {
-      LogTools.println("Test data differs in length from uncompressed data");
-      LogTools.println("Exiting...");
+      LOGGER.info("Test data differs in length from uncompressed data");
+      LOGGER.info("Exiting...");
       System.exit(-1);
     }
     else {
       boolean equalsFlag = true;
       for (int i = 0; i < testdata.length; i++) {
         if (testdata[i] != decompressed[i]) {
-          LogTools.println("Test data and uncompressed data differs at byte" +
-                             i);
+          LOGGER.info("Test data and uncompressed data differ at byte {}", i);
           equalsFlag = false;
         }
       }
       if (!equalsFlag) {
-        LogTools.println("Comparison failed. \nExiting...");
+        LOGGER.info("Comparison failed. Exiting...");
         System.exit(-1);
       }
     }
-    LogTools.println("Success.");
-    LogTools.println("Generating 2D byte array test");
+    LOGGER.info("Success.");
+    LOGGER.info("Generating 2D byte array test");
     byte[][] twoDtest = new byte[100][500];
     for (int i = 0; i < 100; i++) {
       System.arraycopy(testdata, 500*i, twoDtest[i], 0, 500);
     }
     byte[] twoDcompressed = compress(twoDtest, null);
-    LogTools.print("Comparing compressed data... ");
+    LOGGER.info("Comparing compressed data...");
     if (twoDcompressed.length != compressed.length) {
-      LogTools.println("1D and 2D compressed data not same length");
-      LogTools.println("Exiting...");
+      LOGGER.info("1D and 2D compressed data not same length");
+      LOGGER.info("Exiting...");
       System.exit(-1);
     }
     boolean equalsFlag = true;
     for (int i = 0; i < twoDcompressed.length; i++) {
       if (twoDcompressed[i] != compressed[i]) {
-        LogTools.println("1D data and 2D compressed data differs at byte" +
-                           i);
+        LOGGER.info("1D data and 2D compressed data differs at byte {}", i);
         equalsFlag = false;
       }
       if (!equalsFlag) {
-        LogTools.println("Comparison failed. \nExiting...");
+        LOGGER.info("Comparison failed. Exiting...");
         System.exit(-1);
       }
     }
-    LogTools.println("Success.");
-    LogTools.println("Test complete.");
+    LOGGER.info("Success.");
+    LOGGER.info("Test complete.");
   }
 
   // -- Codec API methods --

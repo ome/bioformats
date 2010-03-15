@@ -30,19 +30,25 @@ import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 import loci.common.DateTools;
-import loci.common.LogTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-import loci.common.XMLTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  * Uploads images to an OME server.
@@ -80,7 +86,7 @@ public class OMEWriter extends FormatWriter {
       r.exec("import org.openmicroscopy.is.PixelsFactory");
     }
     catch (ReflectException e) {
-      LogTools.traceDebug(e);
+      LOGGER.debug(OMEUtils.NO_OME_MSG, e);
       hasOMEJava = false;
     }
     return r;
@@ -103,24 +109,6 @@ public class OMEWriter extends FormatWriter {
 
   public OMEWriter() {
     super("Open Microscopy Environment", "");
-  }
-
-  // -- Internal OMEWriter API methods --
-
-  /** Fires a status update event. */
-  protected void status(String message) {
-    status(new StatusEvent(message));
-  }
-
-  /** Fires a status update event. */
-  protected void status(int progress, int maximum, String message) {
-    status(new StatusEvent(progress, maximum, message));
-  }
-
-  /** Fires a status update event. */
-  protected void status(StatusEvent e) {
-    StatusListener[] l = getStatusListeners();
-    for (int i=0; i<l.length; i++) l[i].statusUpdated(e);
   }
 
   // -- IFormatWriter API methods --
@@ -195,7 +183,7 @@ public class OMEWriter extends FormatWriter {
       }
     }
     catch (ReflectException e) {
-      LogTools.traceDebug(e);
+      LOGGER.debug("Original file upload failed", e);
     }
 
     int x = metadataRetrieve.getPixelsSizeX(series, 0).intValue();
@@ -333,7 +321,17 @@ public class OMEWriter extends FormatWriter {
 
         // upload original metadata, if available
 
-        if (MetadataTools.isOMEXMLMetadata(metadataRetrieve)) {
+        boolean isOMEXML = false;
+        try {
+          ServiceFactory factory = new ServiceFactory();
+          OMEXMLService service = factory.getInstance(OMEXMLService.class);
+          isOMEXML = service.isOMEXMLMetadata(metadataRetrieve);
+        }
+        catch (DependencyException e) {
+          LOGGER.warn("OMEXMLService not available", e);
+        }
+
+        if (isOMEXML) {
           r.setVar("metadata", metadataRetrieve);
           Hashtable meta = (Hashtable) r.exec("metadata.getOriginalMetadata()");
           String[] keys = (String[]) meta.keySet().toArray(new String[0]);
@@ -395,31 +393,6 @@ public class OMEWriter extends FormatWriter {
     currentId = null;
   }
 
-  // -- StatusReporter API methods --
-
-  /* @see loci.formats.StatusReporter#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    synchronized (statusListeners) {
-      if (!statusListeners.contains(l)) statusListeners.add(l);
-    }
-  }
-
-  /* @see loci.formats.StatusReporter#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    synchronized (statusListeners) {
-      statusListeners.remove(l);
-    }
-  }
-
-  /* @see loci.formats.StatusReporter#getStatusListeners() */
-  public StatusListener[] getStatusListeners() {
-    synchronized (statusListeners) {
-      StatusListener[] l = new StatusListener[statusListeners.size()];
-      statusListeners.copyInto(l);
-      return l;
-    }
-  }
-
   // -- Helper methods --
 
   private void login() throws FormatException {
@@ -434,7 +407,7 @@ public class OMEWriter extends FormatWriter {
       omeis = "http://" + omeis;
     }
 
-    status("Logging in to " + credentials.server);
+    LOGGER.info("Logging in to {}", credentials.server);
 
     try {
       r.setVar("server", credentials.server);
@@ -458,6 +431,10 @@ public class OMEWriter extends FormatWriter {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
+    Logger root = Logger.getRootLogger();
+    root.setLevel(Level.INFO);
+    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
+
     String server = null, user = null, pass = null;
     String id = null;
     int series = -1;
@@ -481,17 +458,15 @@ public class OMEWriter extends FormatWriter {
             doUsage = true;
           }
           else {
-            LogTools.println("Error: unknown flag: "+ param);
-            LogTools.println();
+            LOGGER.warn("Unknown flag: {}", param);
             doUsage = true;
             break;
           }
         }
         catch (ArrayIndexOutOfBoundsException exc) {
           if (i == args.length - 1) {
-            LogTools.println("Error: flag " + param +
-              " must be followed by a parameter value.");
-            LogTools.println();
+            LOGGER.warn(
+              "Flag {} must be followed by a parameter value.", param);
             doUsage = true;
             break;
           }
@@ -501,55 +476,60 @@ public class OMEWriter extends FormatWriter {
       else {
         if (id == null) id = args[i];
         else {
-          LogTools.println("Error: unknown argument: " + args[i]);
-          LogTools.println();
+          LOGGER.warn("Unknown argument: {}", args[i]);
         }
       }
     }
 
     if (id == null) doUsage = true;
     if (doUsage) {
-      LogTools.println("Usage: omeul [-s server.address] " +
+      LOGGER.info("Usage: omeul [-s server.address] " +
         "[-u username] [-p password] [-series series.number] filename");
-      LogTools.println();
       System.exit(1);
     }
 
     // ask for information if necessary
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
     if (server == null) {
-      LogTools.print("Server address? ");
+      LOGGER.info("Server address? ");
       try { server = cin.readLine(); }
       catch (IOException exc) { }
     }
     if (user == null) {
-      LogTools.print("Username? ");
+      LOGGER.info("Username? ");
       try { user = cin.readLine(); }
       catch (IOException exc) { }
     }
     if (pass == null) {
-      LogTools.print("Password? ");
+      LOGGER.info("Password? ");
       try { pass = cin.readLine(); }
       catch (IOException exc) { }
     }
 
     if (server == null || user == null || pass == null) {
-      LogTools.println("Error: could not obtain server login information");
+      LOGGER.error("Could not obtain server login information");
       System.exit(2);
     }
-    LogTools.println("Using server " + server + " as user " + user);
+    LOGGER.info("Using server {} as user {}", server, user);
 
     // create image uploader
     OMEWriter uploader = new OMEWriter();
-    uploader.addStatusListener(new StatusListener() {
-      public void statusUpdated(StatusEvent e) {
-        LogTools.println(e.getStatusMessage());
-      }
-    });
 
     FileStitcher reader = new FileStitcher();
     reader.setOriginalMetadataPopulated(true);
-    reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      reader.setMetadataStore(service.createOMEXMLMetadata());
+    }
+    catch (DependencyException e) {
+      LOGGER.warn("OMEXMLService not available", e);
+    }
+    catch (ServiceException e) {
+      LOGGER.warn("Could not parse OME-XML", e);
+    }
+
     reader.setId(id);
 
     uploader.setMetadataRetrieve((MetadataRetrieve) reader.getMetadataStore());

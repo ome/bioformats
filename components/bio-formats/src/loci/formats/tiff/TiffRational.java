@@ -32,7 +32,7 @@ package loci.formats.tiff;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class TiffRational extends Number implements Comparable {
+public class TiffRational extends Number implements Comparable<TiffRational> {
 
   // -- Fields --
 
@@ -98,7 +98,7 @@ public class TiffRational extends Number implements Comparable {
   // -- Object API methods --
 
   /** Indicates whether some other object is "equal to" this one. */
-  public boolean equals(Object o) {
+  public boolean equals(TiffRational o) {
     return o != null && compareTo(o) == 0;
   }
 
@@ -115,8 +115,7 @@ public class TiffRational extends Number implements Comparable {
    * Returns a negative integer, zero, or a positive integer as this object
    * is less than, equal to, or greater than the specified object.
    */
-  public int compareTo(Object o) {
-    TiffRational q = (TiffRational) o;
+  public int compareTo(TiffRational q) {
     long diff = (numer * q.denom - q.numer * denom);
     if (diff > Integer.MAX_VALUE) diff = Integer.MAX_VALUE;
     else if (diff < Integer.MIN_VALUE) diff = Integer.MIN_VALUE;

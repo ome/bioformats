@@ -30,9 +30,13 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Abstract superclass of all biological file format readers.
@@ -121,6 +125,7 @@ public abstract class FormatReader extends FormatHandler
    * initialization operations such as parsing metadata.
    */
   protected void initFile(String id) throws FormatException, IOException {
+    LOGGER.debug("{}.initFile({})", this.getClass().getName(), id);
     if (currentId != null) {
       String[] s = getUsedFiles();
       for (int i=0; i<s.length; i++) {
@@ -204,8 +209,16 @@ public abstract class FormatReader extends FormatHandler
 
     if (saveOriginalMetadata && simple && meta.equals(metadata)) {
       MetadataStore store = getMetadataStore();
-      if (MetadataTools.isOMEXMLMetadata(store)) {
-        MetadataTools.populateOriginalMetadata(store, key, value.toString());
+      if (store instanceof OMEXMLMetadata) {
+        try {
+          ServiceFactory factory = new ServiceFactory();
+          OMEXMLService service = factory.getInstance(OMEXMLService.class);
+          service.populateOriginalMetadata(
+              (OMEXMLMetadata) store, key, value.toString());
+        }
+        catch (DependencyException e) {
+          LOGGER.warn("OMEXMLService not available.", e);
+        }
       }
     }
 
@@ -417,7 +430,7 @@ public abstract class FormatReader extends FormatHandler
       return isThisType;
     }
     catch (IOException exc) {
-      traceDebug(exc);
+      LOGGER.debug("", exc);
       return false;
     }
   }
@@ -431,7 +444,7 @@ public abstract class FormatReader extends FormatHandler
       return isThisType;
     }
     catch (IOException e) {
-      traceDebug(e);
+      LOGGER.debug("", e);
     }
     return false;
   }

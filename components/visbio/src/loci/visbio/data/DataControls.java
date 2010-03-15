@@ -454,7 +454,6 @@ public class DataControls extends ControlPanel
         boolean needParent = true;
         try {
           ReflectedUniverse r = new ReflectedUniverse();
-          r.setDebug(true);
           r.exec("import " + clas);
           r.setVar("data", data);
           String n = clas.substring(clas.lastIndexOf(".") + 1);
@@ -561,7 +560,6 @@ public class DataControls extends ControlPanel
       DataTransform data = null;
       try {
         ReflectedUniverse r = new ReflectedUniverse();
-        r.setDebug(true);
         r.exec("import " + cmd);
         r.setVar("dm", dm);
         String n = cmd.substring(cmd.lastIndexOf(".") + 1);

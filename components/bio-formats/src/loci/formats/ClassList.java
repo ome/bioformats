@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
 
-import loci.common.LogTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ClassList is a list of classes for use with ImageReader or ImageWriter,
@@ -42,6 +43,10 @@ import loci.common.LogTools;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ClassList {
+
+  // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ClassList.class);
 
   // -- Fields --
 
@@ -109,22 +114,22 @@ public class ClassList {
       Class c = null;
       try { c = Class.forName(line); }
       catch (ClassNotFoundException exc) {
-        LogTools.traceDebug(exc);
+        LOGGER.debug("Could not find {}", line, exc);
       }
       catch (NoClassDefFoundError err) {
-        LogTools.traceDebug(err);
+        LOGGER.debug("Could not find{}", line, err);
       }
       catch (ExceptionInInitializerError err) {
-        LogTools.traceDebug(err);
+        LOGGER.debug("Failed to create an instance of {}", line, err);
       }
       catch (RuntimeException exc) {
         // HACK: workaround for bug in Apache Axis2
         String msg = exc.getMessage();
         if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        LogTools.traceDebug(exc);
+        LOGGER.debug("", exc);
       }
       if (c == null || (base != null && !base.isAssignableFrom(c))) {
-        LogTools.println("Error: \"" + line + "\" is not valid.");
+        LOGGER.error("\"{}\" is not valid.", line);
         continue;
       }
       classes.add(c);

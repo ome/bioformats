@@ -33,7 +33,7 @@ import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.gui.AWTTiffTools;
+import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
@@ -59,17 +59,14 @@ public class TiffWriter extends FormatWriter {
 
   // -- Fields --
 
-  /** The last offset written to. */
-  protected long lastOffset;
-
   /** Current output stream. */
   protected RandomAccessOutputStream out;
 
-  /** Image counts for each open series. */
-  protected Vector imageCounts;
-
   /** Whether or not the output file is a BigTIFF file. */
   protected boolean isBigTiff;
+
+  /** The TiffSaver that will do most of the writing. */
+  protected TiffSaver tiffSaver;
 
   // -- Constructors --
 
@@ -79,7 +76,6 @@ public class TiffWriter extends FormatWriter {
 
   public TiffWriter(String format, String[] exts) {
     super(format, exts);
-    lastOffset = 0;
     compressionTypes = new String[] {
       COMPRESSION_UNCOMPRESSED,
       COMPRESSION_LZW,
@@ -120,46 +116,31 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
+    tiffSaver = new TiffSaver(out);
+    tiffSaver.setLittleEndian(littleEndian);
+    tiffSaver.setBigTiff(isBigTiff);
+
     if (!initialized) {
-      imageCounts = new Vector();
       initialized = true;
       out = new RandomAccessOutputStream(currentId);
 
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       if (tmp.length() == 0) {
         // write TIFF header
-        TiffSaver tiffSaver = new TiffSaver(out);
-        tiffSaver.writeHeader(littleEndian, isBigTiff);
-        lastOffset = isBigTiff ? 16 : 8;
+        tiffSaver.writeHeader();
       }
-      else {
-        // compute the offset to the last IFD
-        TiffParser tiffParser = new TiffParser(tmp);
-        tiffParser.checkHeader();
-        long offset = tiffParser.getFirstOffset();
-        long ifdMax = (tmp.length() - 8) / 18;
-
-        for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-          tiffParser.getIFD(ifdNum, offset);
-          offset = tmp.readInt();
-          if (offset <= 0 || offset >= tmp.length()) break;
-        }
-        lastOffset = offset;
-      }
-      tmp.close();
     }
 
     int width = retrieve.getPixelsSizeX(series, 0).intValue();
     int height = retrieve.getPixelsSizeY(series, 0).intValue();
     Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
     if (channels == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int c = channels == null ? 1 : channels.intValue();
     int type =
       FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
-    boolean signed = FormatTools.isSigned(type);
 
     int plane = width * height * c * bytesPerPixel;
     if (plane > buf.length) {
@@ -179,26 +160,32 @@ public class TiffWriter extends FormatWriter {
       return;
     }
 
-    ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
-    ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
-    if (signed) {
-      ifd.put(new Integer(IFD.SAMPLE_FORMAT), 2);
+    byte[][] lut = AWTImageTools.get8BitLookupTable(cm);
+    if (lut != null) {
+      int[] colorMap = new int[lut.length * lut[0].length];
+      for (int i=0; i<lut.length; i++) {
+        for (int j=0; j<lut[0].length; j++) {
+          colorMap[i * lut[0].length + j] = (int) ((lut[i][j] & 0xff) << 8);
+        }
+      }
+      ifd.putIFDValue(IFD.COLOR_MAP, colorMap);
     }
 
+    ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
+    ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
+
     if (!isBigTiff) {
-      RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
-      isBigTiff = (tmp.length() + 2 * plane) >= 4294967296L;
+      isBigTiff = (out.length() + 2 * plane) >= 4294967296L;
       if (isBigTiff) {
         throw new FormatException("File is too large; call setBigTiff(true)");
       }
-      tmp.close();
     }
 
     // write the image
     ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
-    lastOffset += AWTTiffTools.writeImage(buf, ifd, out, lastOffset, last,
-      isBigTiff, getColorModel(), type, interleaved);
+    ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
+    tiffSaver.writeImage(buf, ifd, last, type);
     if (last) close();
   }
 
@@ -210,20 +197,20 @@ public class TiffWriter extends FormatWriter {
   {
     IFD h = new IFD();
     if (compression == null) compression = "";
-    Integer compressType = new Integer(TiffCompression.UNCOMPRESSED);
+    TiffCompression compressType = TiffCompression.UNCOMPRESSED;
     if (compression.equals(COMPRESSION_LZW)) {
-      compressType = new Integer(TiffCompression.LZW);
+      compressType = TiffCompression.LZW;
     }
     else if (compression.equals(COMPRESSION_J2K)) {
-      compressType = new Integer(TiffCompression.JPEG_2000);
+      compressType = TiffCompression.JPEG_2000;
     }
     else if (compression.equals(COMPRESSION_J2K_LOSSY)) {
-      compressType = new Integer(TiffCompression.JPEG_2000_LOSSY);
+      compressType = TiffCompression.JPEG_2000_LOSSY;
     }
     else if (compression.equals(COMPRESSION_JPEG)) {
-      compressType = new Integer(TiffCompression.JPEG);
+      compressType = TiffCompression.JPEG;
     }
-    h.put(new Integer(IFD.COMPRESSION), compressType);
+    h.put(new Integer(IFD.COMPRESSION), compressType.getCode());
     saveBytes(buf, h, series, lastInSeries, last);
   }
 
@@ -246,8 +233,6 @@ public class TiffWriter extends FormatWriter {
     out = null;
     currentId = null;
     initialized = false;
-    lastOffset = 0;
-    imageCounts = null;
   }
 
   // -- TiffWriter API methods --

@@ -196,12 +196,11 @@ public class SDTReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("SDTReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    status("Reading header");
+    LOGGER.info("Reading header");
 
     // read file header information
     info = new SDTInfo(in, metadata);
@@ -212,7 +211,7 @@ public class SDTReader extends FormatReader {
     addGlobalMeta("channels", channels);
     addGlobalMeta("time base", 1e9 * info.tacR / info.tacG);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].sizeX = info.width;
     core[0].sizeY = info.height;

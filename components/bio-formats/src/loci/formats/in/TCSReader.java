@@ -33,7 +33,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.AxisGuesser;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
@@ -131,7 +131,7 @@ public class TCSReader extends FormatReader {
       return isThisType;
     }
     catch (IOException e) {
-      traceDebug(e);
+      LOGGER.debug("", e);
       return false;
     }
   }
@@ -218,8 +218,6 @@ public class TCSReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("TCSReader.initFile(" + id + ")");
-
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();
     String[] list = parent.list();
@@ -249,7 +247,7 @@ public class TCSReader extends FormatReader {
     tiffs = new Vector<String>();
 
     IFDList ifds = tiffParser.getIFDs();
-    String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME, false);
+    String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME);
     if (date != null) {
       datestamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
     }
@@ -301,7 +299,7 @@ public class TCSReader extends FormatReader {
     }
 
     for (int i=0; i<ifds.size(); i++) {
-      String document = ifds.get(i).getIFDStringValue(IFD.DOCUMENT_NAME, false);
+      String document = ifds.get(i).getIFDStringValue(IFD.DOCUMENT_NAME);
       if (document == null) continue;
 
       int index = document.indexOf("INDEX");
@@ -490,12 +488,12 @@ public class TCSReader extends FormatReader {
         TiffParser tp = new TiffParser(rais);
         IFD ifd = tp.getIFDs().get(0);
 
-        String date = ifd.getIFDStringValue(IFD.DATE_TIME, false);
+        String date = ifd.getIFDStringValue(IFD.DATE_TIME);
         if (date != null) {
           long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
 
           rais.close();
-          String software = ifd.getIFDStringValue(IFD.SOFTWARE, false);
+          String software = ifd.getIFDStringValue(IFD.SOFTWARE);
           if (software != null && software.trim().startsWith("TCS")) {
             timestamps.put(file, new Long(stamp));
           }
@@ -515,7 +513,7 @@ public class TCSReader extends FormatReader {
         IFD ifd = parser.getIFDs().get(0);
         s.close();
 
-        String date = ifd.getIFDStringValue(IFD.DATE_TIME, false);
+        String date = ifd.getIFDStringValue(IFD.DATE_TIME);
         long nextStamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
         if (Math.abs(thisStamp - nextStamp) < 60000) {
           match = true;

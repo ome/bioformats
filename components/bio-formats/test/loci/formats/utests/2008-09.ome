@@ -1,0 +1,158 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#
+	# Copyright (C) 2002-2008 Open Microscopy Environment
+	#       Massachusetts Institute of Technology,
+	#       National Institutes of Health,
+	#       University of Dundee,
+	#       University of Wisconsin at Madison
+	#
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# Written by: Ilya G. Goldberg, Andrew J Patterson
+	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#    This library is free software; you can redistribute it and/or
+#    modify it under the terms of the GNU Lesser General Public
+#    License as published by the Free Software Foundation; either
+#    version 2.1 of the License, or (at your option) any later version.
+#
+#    This library is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public
+#    License along with this library; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09"
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd">
+
+	<Project Name = "Stress Response Pathway" ID = "urn:lsid:foo.bar.com:Project:123456">
+		<ExperimenterRef ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
+		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123456"/>
+	</Project>
+	<Dataset Name = "Controls" ID = "urn:lsid:foo.bar.com:Dataset:123456" Locked = "false">
+		<Description/>
+		<ExperimenterRef ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
+		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123456"/>
+		<ProjectRef ID = "urn:lsid:foo.bar.com:Project:123456"/>
+		<CA:CustomAttributes/>
+	</Dataset>
+	<Experiment Type = "TimeLapse" ID = "urn:lsid:foo.bar.com:Experiment:123456">
+		<Description>This was an experiment.</Description>
+		<ExperimenterRef ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
+	</Experiment>
+	<SPW:Plate ID = "urn:lsid:foo.bar.com:Plate:123456" Name = "SRP001" ExternalIdentifier = "PID.SRP001">
+		<SPW:ScreenRef ID = "urn:lsid:foo.bar.com:Screen:123456"/>
+	</SPW:Plate>
+	<SPW:Screen ID = "urn:lsid:foo.bar.com:Screen:123456" Name = "Stress Response Pathway Controls"
+		ProtocolIdentifier="ProtocolIdentifier0" ProtocolDescription="ProtocolDescription0"
+		ReagentSetDescription="ReagentSetDescription0" ReagentSetIdentifier="ReagentSetIdentifier0"
+		Type="cDNA">
+		<Description>SID.SRPC001</Description>
+		<SPW:Reagent ID="Reagent:a" Description="Description1" Name="Name4" ReagentIdentifier="ReagentIdentifier0"/>
+		<SPW:PlateRef ID="urn:lsid:foo.bar.com:Plate:123456"/>
+		<SPW:ScreenAcquisition ID="urn:lsid:foo.bar.com:ScreenAcquisition:a" EndTime="2006-05-04T18:13:51.0Z" StartTime="2006-05-04T18:13:51.0Z">
+			<SPW:WellSampleRef ID="urn:lsid:foo.bar.com:WellSample:a"/>
+		</SPW:ScreenAcquisition>
+	</SPW:Screen>
+	<Experimenter ID = "urn:lsid:foo.bar.com:Experimenter:123456">
+		<FirstName>Nicola</FirstName>
+		<LastName>Sacco</LastName>
+		<Email>Nicola.Sacco@justice.net</Email>
+		<Institution/>
+		<OMEName>nico</OMEName>
+		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123456"/>
+		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123789"/>
+	</Experimenter>
+	<Group ID = "urn:lsid:foo.bar.com:Group:123456" Name = "IICBU">
+		<Leader ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
+		<Contact ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
+	</Group>
+	<Instrument ID = "urn:lsid:foo.bar.com:Instrument:123456">
+		<Microscope Manufacturer = "Zeiss" Model = "foo" SerialNumber = "bar" Type = "Upright"/>
+		<LightSource ID = "urn:lsid:foo.bar.com:LightSource:123456" Manufacturer = "Olympus" Model = "WMD Laser" SerialNumber = "123skdjhf1234">
+			<Laser Type = "Semiconductor"  LaserMedium="GaAs">
+				<Pump ID = "urn:lsid:foo.bar.com:LightSource:123789"/>
+			</Laser>
+		</LightSource>
+		<LightSource ID = "urn:lsid:foo.bar.com:LightSource:123123" Manufacturer = "Olympus" Model = "Realy Bright Lite" SerialNumber = "123skdjhf1456">
+			<Arc Type = "Hg"/>
+		</LightSource>
+		<Detector ID = "urn:lsid:foo.bar.com:Detector:123456" Type = "CCD" Manufacturer = "Kodak" Model = "Instamatic" SerialNumber = "fnuiprf89uh123498"/>
+		<Objective ID = "urn:lsid:foo.bar.com:Objective:123456" Manufacturer = "Olympus" Model = "SPlanL" SerialNumber = "456anxcoas123">
+			<Correction>PlanFluor</Correction>
+			<Immersion>Multi</Immersion>
+			<LensNA>2.4</LensNA>
+			<NominalMagnification>40</NominalMagnification>
+			<CalibratedMagnification>41.3</CalibratedMagnification>
+			<WorkingDistance>22.6</WorkingDistance>
+		</Objective>
+		<FilterSet ID = "urn:lsid:foo.bar.com:FilterSet:123456" Manufacturer = "Omega" Model = "SuperGFP" LotNumber = "123LJKHG123" DichroicRef="urn:lsid:foo.bar.com:Dichroic:123456" EmFilterRef="urn:lsid:foo.bar.com:Filter:123456" ExFilterRef="urn:lsid:foo.bar.com:Filter:1234567"/>
+		<Filter ID = "urn:lsid:foo.bar.com:Filter:123456" Manufacturer="Omega" Model="SuperGFP">
+			<TransmittanceRange CutIn="432" CutOut="543" Transmittance="20"/>
+		</Filter>
+		<Filter ID = "urn:lsid:foo.bar.com:Filter:1234567" Manufacturer="Omega" Model="SuperGFP">
+			<TransmittanceRange CutIn="432" CutOut="543" Transmittance="20"/>
+		</Filter>
+		<OTF ID = "urn:lsid:foo.bar.com:OTF:123456" PixelType = "int8" OpticalAxisAveraged="true" SizeX = "512" SizeY = "512">
+			<ObjectiveRef ID = "urn:lsid:foo.bar.com:Objective:123456"/>
+			<FilterSetRef ID="urn:lsid:foo.bar.com:FilterSet:123456"/>
+			<Bin:BinaryFile FileName="OTF123.otf" Size="1028000">
+				<Bin:External Compression = "bzip2" SHA1 = "01234567890ABCDEF0123456789ABCDEF0123456" href = "http://my.domain.org/OTF/OTF123.otf"/>
+			</Bin:BinaryFile>
+		</OTF>
+	</Instrument>
+	<Image Name = "P1W1S1" ID = "urn:lsid:foo.bar.com:Image:123456" DefaultPixels="urn:lsid:foo.bar.com:Pixels:123456">
+		<CreationDate>1988-04-07T18:39:09</CreationDate>
+		<ExperimenterRef ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
+		<Description>This is an Image</Description>
+		<ExperimentRef ID = "urn:lsid:foo.bar.com:Experiment:123456"/>
+		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123456"/>
+		<DatasetRef ID = "urn:lsid:foo.bar.com:Dataset:123456"/>
+		<InstrumentRef ID = "urn:lsid:foo.bar.com:Instrument:123456"/>
+		<ObjectiveSettingsRef ID = "urn:lsid:foo.bar.com:ObjectiveSettings:123456"/>
+		<ImagingEnvironment Temperature = ".1" AirPressure = ".1" Humidity = ".2" CO2Percent = ".3"/>
+		<Thumbnail href = "http://ome.nia.gov/GetThumbnail?ID=urn:lsid:foo.bar.com:Image:123456" MIMEtype = "image/jpeg"/>
+		<LogicalChannel ID="urn:lsid:foo.bar.com:LogicalChannel:123456" Name = "Ch 1" IlluminationType="Epifluorescence" ExWave = "490" EmWave = "528" Fluor = "GFP" NdFilter="0.0">
+			<LightSourceRef ID = "urn:lsid:foo.bar.com:LightSource:123123"/>
+			<OTFRef ID = "urn:lsid:foo.bar.com:OTF:123456"/>
+			<DetectorRef ID = "urn:lsid:foo.bar.com:Detector:123456"/>
+			<FilterSetRef ID = "urn:lsid:foo.bar.com:FilterSet:123456"/>
+			<ChannelComponent Pixels="urn:lsid:foo.bar.com:Pixels:123456" Index = "0" ColorDomain="foo"/>
+		</LogicalChannel>
+		<DisplayOptions ID = "urn:lsid:foo.bar.com:DisplayOptions:123456" Zoom = "1.0" Display = "RGB">
+			<RedChannel ChannelNumber = "0" BlackLevel = "144" WhiteLevel = "338" isOn = "true"/>
+			<GreenChannel ChannelNumber = "0" BlackLevel = "144" WhiteLevel = "338" isOn = "true"/>
+			<BlueChannel ChannelNumber = "0" BlackLevel = "144" WhiteLevel = "338" isOn = "true"/>
+			<GreyChannel ChannelNumber = "0" BlackLevel = "144" WhiteLevel = "338"/>
+			<Projection ZStart = "3" ZStop = "3"/>
+			<Time TStart = "3" TStop = "3"/>
+			<ROI ID="urn:lsid:foo.bar.com:ROI:123456" X0 = "0" X1 = "512" Y0 = "0" Y1 = "512" Z0 = "0" Z1 = "0" T0 = "0" T1 = "0"/>
+		</DisplayOptions>
+		<StageLabel Name="Zulu" X="123" Y="456" Z="789"/>
+		<Pixels DimensionOrder = "XYZCT" PixelType = "int16" BigEndian = "true"
+			ID = "urn:lsid:foo.bar.com:Pixels:123456" SizeX = "20" SizeY = "20" SizeZ = "5" SizeC = "1" SizeT = "6" PhysicalSizeX="0.2" PhysicalSizeY="0.2" PhysicalSizeZ="0.2">
+		</Pixels>
+	</Image>
+	<!--
+	<STD:SemanticTypeDefinitions>
+		< - - INSERT STD's here - - >
+	</STD:SemanticTypeDefinitions>
+	-->
+</OME>

@@ -42,12 +42,13 @@ import java.util.List;
 
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.common.LogTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FileStitcher;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -56,6 +57,10 @@ import loci.formats.in.NRRDReader;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.testng.SkipException;
 
@@ -76,6 +81,9 @@ import org.testng.SkipException;
 public class FormatReaderTest {
 
   // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(FormatReaderTest.class);
 
   /** Message to give for why a test was skipped. */
   private static final String SKIP_MESSAGE = "Dataset already tested.";
@@ -105,11 +113,20 @@ public class FormatReaderTest {
    */
   private float timeMultiplier = 1;
 
+  private OMEXMLService omexmlService = null;
+
   // -- Constructor --
 
   public FormatReaderTest(String filename, float multiplier) {
     id = filename;
     timeMultiplier = multiplier;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      omexmlService = factory.getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException e) {
+      LOGGER.warn("OMEXMLService not available", e);
+    }
   }
 
   // -- Tests --
@@ -164,7 +181,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -202,7 +219,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -262,7 +279,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -294,7 +311,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -321,7 +338,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -336,7 +353,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
-      boolean success = MetadataTools.isOMEXMLMetadata(retrieve);
+      boolean success = omexmlService.isOMEXMLMetadata(retrieve);
       if (!success) msg = TestTools.shortClassName(retrieve);
 
       for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
@@ -375,7 +392,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       msg = t.getMessage();
     }
     result(testName, msg == null, msg);
@@ -390,7 +407,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
-      boolean success = MetadataTools.isOMEXMLMetadata(retrieve);
+      boolean success = omexmlService.isOMEXMLMetadata(retrieve);
       if (!success) msg = TestTools.shortClassName(retrieve);
 
       for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
@@ -436,7 +453,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       msg = t.getMessage();
     }
     result(testName, msg == null, msg);
@@ -563,7 +580,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -617,7 +634,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -658,7 +675,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -673,12 +690,12 @@ public class FormatReaderTest {
     boolean success = true;
     try {
       MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
-      String xml = MetadataTools.getOMEXML(retrieve);
-      success = xml != null && MetadataTools.validateOMEXML(xml, true);
+      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+      String xml = omexmlService.getOMEXML(retrieve);
+      success = xml != null && omexmlService.validateOMEXML(xml, true);
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success);
@@ -709,7 +726,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -781,7 +798,7 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -793,7 +810,7 @@ public class FormatReaderTest {
   public void writeConfigFile() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
-    LogTools.println("Generating configuration: " + file);
+    LOGGER.info("Generating configuration: {}", file);
     try {
       StringBuffer line = new StringBuffer();
       line.append("\"");
@@ -838,7 +855,7 @@ public class FormatReaderTest {
           for (int j=0; j<imageCount; j++) reader.openImage(j);
         }
         catch (IOException e) {
-          LogTools.trace(e);
+          LOGGER.info("", e);
         }
       }
       long t2 = System.currentTimeMillis();
@@ -859,14 +876,14 @@ public class FormatReaderTest {
     }
     catch (Throwable t) {
       try {
-        LogTools.trace(t);
+        LOGGER.info("", t);
         File f = new File(new Location(file).getParent(), ".bioformats");
         BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
         w.write("\"" + new Location(file).getName() + "\" test=false\n");
         w.close();
       }
       catch (Throwable t2) {
-        LogTools.trace(t2);
+        LOGGER.info("", t2);
         assert false;
       }
     }
@@ -882,7 +899,13 @@ public class FormatReaderTest {
       reader.setNormalized(true);
       reader.setOriginalMetadataPopulated(true);
       reader.setMetadataFiltered(true);
-      MetadataStore store = MetadataTools.createOMEXMLMetadata();
+      MetadataStore store = null;
+      try {
+        store = omexmlService.createOMEXMLMetadata();
+      }
+      catch (ServiceException e) {
+        LOGGER.warn("Could not parse OME-XML", e);
+      }
       reader.setMetadataStore(store);
     }
     if (id.equals(reader.getCurrentFile())) return true; // already initialized
@@ -890,13 +913,13 @@ public class FormatReaderTest {
     // skip files that were already tested as part of another file's dataset
     int ndx = skipFiles.indexOf(id);
     if (ndx >= 0) {
-      LogTools.println("Skipping " + id);
+      LOGGER.info("Skipping {}", id);
       skipFiles.remove(ndx);
       skip = true;
       throw new SkipException(SKIP_MESSAGE);
     }
 
-    LogTools.print(TestTools.timestamp() + "Initializing " + id + ": ");
+    LOGGER.info("Initializing {}: ", id);
     try {
       reader.setId(id);
       // remove used files
@@ -910,18 +933,17 @@ public class FormatReaderTest {
         skipFiles.add(used[i]);
       }
       boolean single = used.length == 1;
-      if (single && base) LogTools.println("OK");
-      else LogTools.println(used.length + (single ? " file" : " files"));
+      if (single && base) LOGGER.info("OK");
+      else LOGGER.info("{} {}", used.length, single ? "file" : "files");
       if (!base) {
-        LogTools.println("Error: used files list does not include base file");
+        LOGGER.error("Used files list does not include base file");
       }
 
       // initialize configuration tree
       if (config != null) config.setId(id);
     }
     catch (Throwable t) {
-      LogTools.println("error");
-      LogTools.trace(t);
+      LOGGER.error("", t);
       return false;
     }
     return true;
@@ -937,8 +959,8 @@ public class FormatReaderTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LogTools.println("\t" + TestTools.timestamp() + ": " + testName + ": " +
-      (success ? "PASSED" : "FAILED") + (msg == null ? "" : " (" + msg + ")"));
+    LOGGER.info("\t{}: {} ({})", new Object[] {testName,
+      success ? "PASSED" : "FAILED", msg == null ? "" : msg});
     if (msg == null) assert success;
     else assert success : msg;
   }

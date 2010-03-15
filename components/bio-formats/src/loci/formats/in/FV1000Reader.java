@@ -35,14 +35,16 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.POITools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
@@ -120,7 +122,7 @@ public class FV1000Reader extends FormatReader {
 
   private Vector<ChannelData> channels;
 
-  private POITools poi;
+  private POIService poi;
 
   private short[][][] lut;
   private int lastChannel;
@@ -294,13 +296,21 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("FV1000Reader.initFile(" + id + ")");
-
     super.initFile(id);
 
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
-    if (isOIB) poi = new POITools(Location.getMappedId(id));
+    if (isOIB) {
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        poi = factory.getInstance(POIService.class);
+      }
+      catch (DependencyException de) {
+        throw new FormatException("POI library not found", de);
+      }
+
+      poi.initialize(Location.getMappedId(id));
+    }
 
     // mappedOIF is used to distinguish between datasets that are being read
     // directly (e.g. using ImageJ or showinf), and datasets that are being
@@ -663,7 +673,7 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    status("Initializing helper readers");
+    LOGGER.info("Initializing helper readers");
 
     // populate core metadata for preview series
 
@@ -718,7 +728,7 @@ public class FV1000Reader extends FormatReader {
     thumbId = replaceExtension(thumbId, "pty", "bmp");
     thumbId = sanitizeFile(thumbId, path);
 
-    status("Reading additional metadata");
+    LOGGER.info("Reading additional metadata");
 
     // open each INI file (.pty extension) and build list of TIFF files
 
@@ -738,8 +748,8 @@ public class FV1000Reader extends FormatReader {
 
       Location ptyFile = new Location(file);
       if (!isOIB && !ptyFile.exists()) {
-        warn("Could not find .pty file (" + file + "); guessing at the " +
-          "corresponding TIFF file.");
+        LOGGER.warn("Could not find .pty file ({}); guessing at the " +
+          "corresponding TIFF file.", file);
         String tiff = replaceExtension(file, ".pty", ".tif");
         tiffs.add(ii, tiff);
         continue;
@@ -864,7 +874,7 @@ public class FV1000Reader extends FormatReader {
       }
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     // calculate axis sizes
 
@@ -950,7 +960,7 @@ public class FV1000Reader extends FormatReader {
       Location.mapFile("thumbnail.bmp", null);
     }
     catch (IOException e) {
-      traceDebug(e);
+      LOGGER.debug("Could not read thumbnail", e);
     }
 
     // initialize lookup table
@@ -971,7 +981,7 @@ public class FV1000Reader extends FormatReader {
         }
       }
       catch (IOException e) {
-        traceDebug(e);
+        LOGGER.debug("Could not read LUT", e);
         lut = null;
         break;
       }

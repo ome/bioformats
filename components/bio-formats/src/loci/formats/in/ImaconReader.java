@@ -26,7 +26,8 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.DateTools;
-import loci.common.XMLTools;
+import loci.common.RandomAccessInputStream;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -35,6 +36,7 @@ import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -71,6 +73,14 @@ public class ImaconReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    TiffParser parser = new TiffParser(stream);
+    IFD ifd = parser.getFirstIFD();
+    if (ifd == null) return false;
+    return ifd.containsKey(XML_TAG);
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
@@ -87,7 +97,7 @@ public class ImaconReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs(false);
+    ifds = tiffParser.getIFDs();
 
     core = new CoreMetadata[ifds.size()];
     for (int i=0; i<core.length; i++) {
@@ -95,7 +105,7 @@ public class ImaconReader extends BaseTiffReader {
       core[i].imageCount = 1;
       IFD ifd = ifds.get(i);
 
-      int photo = ifd.getPhotometricInterpretation();
+      PhotoInterp photo = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[i].rgb = samples > 1 || photo == PhotoInterp.RGB ||
         photo == PhotoInterp.CFA_ARRAY;

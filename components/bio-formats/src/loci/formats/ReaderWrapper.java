@@ -114,7 +114,6 @@ public abstract class ReaderWrapper implements IFormatReader {
    *   <li>{@link #isNormalized()}</li>
    *   <li>{@link #isMetadataFiltered()}</li>
    *   <li>{@link #isMetadataCollected()}</li>
-   *   <li>Attached {@link StatusListener}s</li>
    *   <li>{@link DelegateReader#isLegacy()}</li>
    * </ul>
    *
@@ -131,13 +130,9 @@ public abstract class ReaderWrapper implements IFormatReader {
     boolean normalized = isNormalized();
     boolean metadataFiltered = isMetadataFiltered();
     boolean metadataCollected = isMetadataCollected();
-    StatusListener[] statusListeners = getStatusListeners();
     wrapperCopy.setNormalized(normalized);
     wrapperCopy.setMetadataFiltered(metadataFiltered);
     wrapperCopy.setMetadataCollected(metadataCollected);
-    for (int k=0; k<statusListeners.length; k++) {
-      wrapperCopy.addStatusListener(statusListeners[k]);
-    }
     return wrapperCopy;
   }
 
@@ -460,20 +455,6 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public void close() throws IOException {
     reader.close();
-  }
-
-  // -- StatusReporter API methods --
-
-  public void addStatusListener(StatusListener l) {
-    reader.addStatusListener(l);
-  }
-
-  public void removeStatusListener(StatusListener l) {
-    reader.removeStatusListener(l);
-  }
-
-  public StatusListener[] getStatusListeners() {
-    return reader.getStatusListeners();
   }
 
   // -- Helper methods --

@@ -25,8 +25,8 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -36,11 +36,12 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.POITools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
@@ -48,6 +49,7 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.POIService;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -95,7 +97,7 @@ public class ZeissZVIReader extends FormatReader {
   private int tileWidth, tileHeight;
   private int realWidth, realHeight;
 
-  private POITools poi;
+  private POIService poi;
 
   private Vector<RandomAccessInputStream> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
@@ -124,15 +126,17 @@ public class ZeissZVIReader extends FormatReader {
     int magic = stream.readInt();
     if (magic != ZVI_MAGIC_BYTES) return false;
     try {
-      POITools p = new POITools(stream);
+      ServiceFactory factory = new ServiceFactory();
+      POIService p = factory.getInstance(POIService.class);
+      p.initialize(stream);
       Vector<String> files = p.getDocumentList();
       String filename = "Tags";
       for (String f : files) {
         if (f.trim().endsWith(filename)) return true;
       }
     }
-    catch (FormatException e) {
-      traceDebug(e);
+    catch (DependencyException e) {
+      LOGGER.debug("", e);
     }
     return false;
   }
@@ -420,12 +424,19 @@ public class ZeissZVIReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ZeissZVIReader.initFile(" + id + ")");
     super.initFile(id);
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+    poi.initialize(Location.getMappedId(id));
 
     timestamps = new Hashtable<Integer, String>();
     exposureTime = new Hashtable<Integer, String>();
-    poi = new POITools(Location.getMappedId(id));
     tagsToParse = new Vector<RandomAccessInputStream>();
 
     // count number of images
@@ -573,7 +584,7 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     for (RandomAccessInputStream s : tagsToParse) {
       s.order(true);

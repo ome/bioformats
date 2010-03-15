@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * A wrapper for RandomAccessFile that implements the IRandomAccess interface.
@@ -87,11 +89,6 @@ public class FileHandle implements IRandomAccess {
     return raf.length();
   }
 
-  /* @see IRandomAccess.read() */
-  public int read() throws IOException {
-    return raf.read();
-  }
-
   /* @see IRandomAccess.read(byte[]) */
   public int read(byte[] b) throws IOException {
     return raf.read(b);
@@ -102,14 +99,32 @@ public class FileHandle implements IRandomAccess {
     return raf.read(b, off, len);
   }
 
+  /* @see IRandomAccess.read(ByteBuffer) */
+  public int read(ByteBuffer buffer) throws IOException {
+    return read(buffer, 0, buffer.capacity());
+  }
+
+  /* @see IRandomAccess.read(ByteBuffer, int, int) */
+  public int read(ByteBuffer buffer, int off, int len) throws IOException {
+    byte[] b = new byte[len];
+    int n = read(b);
+    buffer.put(b, off, len);
+    return n;
+  }
+
   /* @see IRandomAccess.seek(long) */
   public void seek(long pos) throws IOException {
     raf.seek(pos);
   }
 
-  /* @see IRandomAccess.setLength(long) */
-  public void setLength(long newLength) throws IOException {
-    raf.setLength(newLength);
+  /* @see IRandomAccess.write(ByteBuffer) */
+  public void write(ByteBuffer buf) throws IOException {
+    write(buf, 0, buf.capacity());
+  }
+
+  /* @see IRandomAccess.write(ByteBuffer, int, int) */
+  public void write(ByteBuffer buf, int off, int len) throws IOException {
+    // TODO
   }
 
   // -- DataInput API methods --
@@ -259,6 +274,16 @@ public class FileHandle implements IRandomAccess {
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
     raf.writeUTF(str);
+  }
+
+  public ByteOrder getOrder() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public void setOrder(ByteOrder order) {
+    // TODO Auto-generated method stub
+    
   }
 
 }

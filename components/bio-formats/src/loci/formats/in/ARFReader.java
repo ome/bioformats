@@ -85,13 +85,12 @@ public class ARFReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("ARFReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
     // parse file header
 
-    status("Reading file header");
+    LOGGER.info("Reading file header");
 
     byte endian1 = in.readByte();
     byte endian2 = in.readByte();

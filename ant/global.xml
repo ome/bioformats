@@ -47,11 +47,11 @@ Type "ant -p" for a list of targets.
 
   <!-- Ant-Contrib Tasks: http://ant-contrib.sourceforge.net/ -->
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+    classpath="${lib.dir}/ant-contrib-1.0b3.jar"/>
   <!-- HACK - some environments do not install the antcontrib tasks properly
     from antcontrib.properties above; also load them from antlib.xml -->
   <taskdef resource="net/sf/antcontrib/antlib.xml"
-    classpath="${lib.dir}/ant-contrib-1.0b1.jar"/>
+    classpath="${lib.dir}/ant-contrib-1.0b3.jar"/>
 
   <!-- Checkstyle: http://checkstyle.sourceforge.net/ -->
   <!-- NB - We do not reference ${artifact.dir}/loci-checks.jar directly,
@@ -59,7 +59,7 @@ Type "ant -p" for a list of targets.
     (Windows in particular), which causes the clean and clean-jars targets
     to fail. -->
   <taskdef resource="checkstyletask.properties"
-    classpath="${lib.dir}/checkstyle-all-4.2.jar:${lib.dir}/loci-checks.jar"/>
+    classpath="${lib.dir}/checkstyle-all-5.0.jar:${lib.dir}/loci-checks.jar"/>
 
   <!-- FindBugs: http://findbugs.sourceforge.net/ -->
   <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties"

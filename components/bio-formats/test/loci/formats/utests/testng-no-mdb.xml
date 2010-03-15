@@ -1,0 +1,9 @@
+<suite name="Missing MDB Service Tests">
+    <test name="MissingMDBService">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.MissingMDBServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+</suite>

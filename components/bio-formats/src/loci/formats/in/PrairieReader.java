@@ -31,7 +31,7 @@ import java.util.Vector;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -144,7 +144,7 @@ public class PrairieReader extends FormatReader {
     if (ifd == null) return false;
     String software = null;
     try {
-      software = ifd.getIFDStringValue(IFD.SOFTWARE, true);
+      software = ifd.getIFDStringValue(IFD.SOFTWARE);
     }
     catch (FormatException exc) {
       return false; // no software tag, or tag is wrong type
@@ -211,8 +211,6 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("PrairieReader.initFile(" + id + ")");
-
     if (metadata == null) metadata = new Hashtable();
     if (core == null) core = new CoreMetadata[] {new CoreMetadata()};
     if (tiff == null) {
@@ -224,13 +222,13 @@ public class PrairieReader extends FormatReader {
       // we have been given the XML file that lists TIFF files (best case)
 
       if (checkSuffix(id, XML_SUFFIX)) {
-        status("Parsing XML");
+        LOGGER.info("Parsing XML");
         super.initFile(id);
         xmlFile = id;
         readXML = true;
       }
       else if (checkSuffix(id, CFG_SUFFIX)) {
-        status("Parsing CFG");
+        LOGGER.info("Parsing CFG");
         cfgFile = id;
         readCFG = true;
         currentId = id;
@@ -256,9 +254,13 @@ public class PrairieReader extends FormatReader {
       if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];
         f.copyInto(files);
+        if (tiff == null) {
+          tiff = new TiffReader();
+          tiff.setMetadataStore(getMetadataStore());
+        }
         tiff.setId(files[0]);
 
-        status("Populating metadata");
+        LOGGER.info("Populating metadata");
 
         if (zt == 0) zt = 1;
 
@@ -338,7 +340,7 @@ public class PrairieReader extends FormatReader {
       // we have been given a TIFF file - reinitialize with the proper XML file
 
       if (isGroupFiles()) {
-        status("Finding XML file");
+        LOGGER.info("Finding XML file");
 
         Location file = new Location(id);
         file = file.getAbsoluteFile();

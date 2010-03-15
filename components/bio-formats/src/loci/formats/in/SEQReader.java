@@ -26,9 +26,11 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 
 /**
  * SEQReader is the file format reader for Image-Pro Sequence files.
@@ -58,6 +60,16 @@ public class SEQReader extends BaseTiffReader {
   public SEQReader() {
     super("Image-Pro Sequence", "seq");
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    TiffParser parser = new TiffParser(stream);
+    IFD ifd = parser.getFirstIFD();
+    if (ifd == null) return false;
+    return ifd.containsKey(IMAGE_PRO_TAG_1);
   }
 
   // -- Internal BaseTiffReader API methods --

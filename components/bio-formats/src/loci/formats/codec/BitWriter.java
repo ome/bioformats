@@ -25,7 +25,8 @@ package loci.formats.codec;
 
 import java.util.Random;
 
-import loci.common.LogTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for writing arbitrary numbers of bits to a byte array.
@@ -36,6 +37,10 @@ import loci.common.LogTools;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class BitWriter {
+
+  // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(BitWriter.class);
 
   // -- Fields --
 
@@ -128,7 +133,7 @@ public class BitWriter {
   public static void main(String[] args) {
     int max = 50000;
     // randomize values
-    LogTools.println("Generating random list of " + max + " values");
+    LOGGER.info("Generating random list of {} values", max);
     int[] values = new int[max];
     int[] bits = new int[max];
     double log2 = Math.log(2);
@@ -139,39 +144,39 @@ public class BitWriter {
     }
 
     // write values out
-    LogTools.println("Writing values to byte array");
+    LOGGER.info("Writing values to byte array");
     BitWriter out = new BitWriter();
     for (int i=0; i<values.length; i++) out.write(values[i], bits[i]);
 
     // read values back in
-    LogTools.println("Reading values from byte array");
+    LOGGER.info("Reading values from byte array");
     BitBuffer bb = new BitBuffer(out.toByteArray());
     for (int i=0; i<values.length; i++) {
       int value = bb.getBits(bits[i]);
       if (value != values[i]) {
-        LogTools.println("Value #" + i + " does not match (got " +
-          value + "; expected " + values[i] + "; " + bits[i] + " bits)");
+        LOGGER.info("Value #{} does not match (got {}; expected {}; {} bits)",
+          new Object[] {i, value, values[i], bits[i]});
       }
     }
 
     // Testing string functionality
     Random r = new Random();
-    LogTools.println("Generating 5000 random bits for String test");
+    LOGGER.info("Generating 5000 random bits for String test");
     StringBuffer sb = new StringBuffer(5000);
     for (int i = 0; i < 5000; i++) {
       sb.append(r.nextInt(2));
     }
     out = new BitWriter();
-    LogTools.println("Writing values to byte array");
+    LOGGER.info("Writing values to byte array");
     out.write(sb.toString());
-    LogTools.println("Reading values from byte array");
+    LOGGER.info("Reading values from byte array");
     bb = new BitBuffer(out.toByteArray());
     for (int i = 0; i < 5000; i++) {
       int value = bb.getBits(1);
       int expected = (sb.charAt(i) == '1') ? 1 : 0;
       if (value != expected) {
-        LogTools.println("Bit #" + i + " does not match (got " + value +
-          "; expected " + expected + ".");
+        LOGGER.info("Bit #{} does not match (got {}; expected {}.",
+          new Object[] {i, value, expected});
       }
     }
   }

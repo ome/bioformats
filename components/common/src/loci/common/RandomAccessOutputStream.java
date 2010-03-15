@@ -26,6 +26,8 @@ package loci.common;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * RandomAccessOutputStream provides methods for writing to files and
@@ -43,8 +45,21 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
 
   // -- Constructor --
 
+  /**
+   * Constructs a random access stream around the given file.
+   * @param file Filename to open the stream for.
+   * @throws IOException If there is a problem opening the file.
+   */
   public RandomAccessOutputStream(String file) throws IOException {
     outputFile = Location.getHandle(file, true);
+  }
+
+  /**
+   * Constructs a random access stream around the given handle.
+   * @param handle Handle to open the stream for.
+   */
+  public RandomAccessOutputStream(IRandomAccess handle) {
+    outputFile = handle;
   }
 
   // -- RandomAccessOutputStream API methods --
@@ -69,6 +84,17 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
     outputFile.seek(outputFile.getFilePointer() + skip);
   }
 
+  /** Sets the endianness of the stream. */
+  public void order(boolean little) {
+    outputFile.setOrder(
+        little? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+  }
+
+  /** Gets the endianness of the stream. */
+  public boolean isLittleEndian() {
+    return outputFile.getOrder() == ByteOrder.LITTLE_ENDIAN;
+  }
+
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput#write(byte[]) */
@@ -78,6 +104,25 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
 
   /* @see java.io.DataOutput#write(byte[], int, int) */
   public void write(byte[] b, int off, int len) throws IOException {
+    outputFile.write(b, off, len);
+  }
+
+  /**
+   * Writes bytes to the stream from the given buffer.
+   * @param b Source buffer to read data from.
+   * @throws IOException If there is an error writing to the stream.
+   */
+  public void write(ByteBuffer b) throws IOException {
+    outputFile.write(b);
+  }
+
+  /**
+   * @param b Source buffer to read data from.
+   * @param off Offset within the buffer to start reading from.
+   * @param len Number of bytes to read.
+   * @throws IOException If there is an error writing to the stream.
+   */
+  public void write(ByteBuffer b, int off, int len) throws IOException {
     outputFile.write(b, off, len);
   }
 

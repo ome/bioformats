@@ -49,6 +49,9 @@ package loci.common;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * An input stream that decompresses from the BZip2 format (without the file
  * header chars) to be read as any other stream.
@@ -138,12 +141,15 @@ public class CBZip2InputStream extends InputStream {
     936, 638
   };
 
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(CBZip2InputStream.class);
+
   private static void reportCRCError() throws IOException {
     // The clean way would be to throw an exception.
     //throw new IOException("crc error");
 
     // Just print a message, like the previous versions of this class did
-    LogTools.println("BZip2 CRC error");
+    LOGGER.error("BZip2 CRC error");
   }
 
   private void makeMaps() {

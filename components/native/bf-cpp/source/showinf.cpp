@@ -50,7 +50,7 @@ using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
 using jace::proxy::java::lang::String;
 using jace::proxy::java::util::Hashtable;
-using jace::proxy::loci::common::XMLTools;
+using jace::proxy::loci::common::xml::XMLTools;
 using jace::proxy::loci::formats::ChannelFiller;
 using jace::proxy::loci::formats::ChannelMerger;
 using jace::proxy::loci::formats::ChannelSeparator;

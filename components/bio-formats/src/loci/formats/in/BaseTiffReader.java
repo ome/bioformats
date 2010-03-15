@@ -31,6 +31,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
@@ -55,50 +56,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     "dd/MM/yyyy HH:mm:ss.SS",
     "MM/dd/yyyy hh:mm:ss.SSS aa"
   };
-
-  /** EXIF tags. */
-  private static final int EXIF_VERSION = 36864;
-  private static final int FLASH_PIX_VERSION = 40960;
-  private static final int COLOR_SPACE = 40961;
-  private static final int COMPONENTS_CONFIGURATION = 37121;
-  private static final int COMPRESSED_BITS_PER_PIXEL = 37122;
-  private static final int PIXEL_X_DIMENSION = 40962;
-  private static final int PIXEL_Y_DIMENSION = 40963;
-  private static final int MAKER_NOTE = 37500;
-  private static final int USER_COMMENT = 37510;
-  private static final int RELATED_SOUND_FILE = 40964;
-  private static final int DATE_TIME_ORIGINAL = 36867;
-  private static final int DATE_TIME_DIGITIZED = 36868;
-  private static final int SUB_SEC_TIME = 37520;
-  private static final int SUB_SEC_TIME_ORIGINAL = 37521;
-  private static final int SUB_SEC_TIME_DIGITIZED = 37522;
-  private static final int EXPOSURE_TIME = 33434;
-  private static final int F_NUMBER = 33437;
-  private static final int EXPOSURE_PROGRAM = 34850;
-  private static final int SPECTRAL_SENSITIVITY = 34852;
-  private static final int ISO_SPEED_RATINGS = 34855;
-  private static final int OECF = 34856;
-  private static final int SHUTTER_SPEED_VALUE = 37377;
-  private static final int APERTURE_VALUE = 37378;
-  private static final int BRIGHTNESS_VALUE = 37379;
-  private static final int EXPOSURE_BIAS_VALUE = 37380;
-  private static final int MAX_APERTURE_VALUE = 37381;
-  private static final int SUBJECT_DISTANCE = 37382;
-  private static final int METERING_MODE = 37383;
-  private static final int LIGHT_SOURCE = 37384;
-  private static final int FLASH = 37385;
-  private static final int FOCAL_LENGTH = 37386;
-  private static final int FLASH_ENERGY = 41483;
-  private static final int SPATIAL_FREQUENCY_RESPONSE = 41484;
-  private static final int FOCAL_PLANE_X_RESOLUTION = 41486;
-  private static final int FOCAL_PLANE_Y_RESOLUTION = 41487;
-  private static final int FOCAL_PLANE_RESOLUTION_UNIT = 41488;
-  private static final int SUBJECT_LOCATION = 41492;
-  private static final int EXPOSURE_INDEX = 41493;
-  private static final int SENSING_METHOD = 41495;
-  private static final int FILE_SOURCE = 41728;
-  private static final int SCENE_TYPE = 41729;
-  private static final int CFA_PATTERN = 41730;
 
   // -- Constructors --
 
@@ -133,23 +90,21 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     // retrieve EXIF values, if available
 
-    long exifOffset = firstIFD.getIFDLongValue(IFD.EXIF, false, 0);
-    if (exifOffset != 0) {
-      IFD exif = tiffParser.getIFD(1, exifOffset);
-      if (exif != null) {
-        for (Integer key : exif.keySet()) {
-          int k = key.intValue();
-          addGlobalMeta(getExifTagName(k), exif.get(key));
-        }
+    IFDList exifIFDs = tiffParser.getExifIFDs();
+    if (exifIFDs.size() > 0) {
+      IFD exif = exifIFDs.get(0);
+      for (Integer key : exif.keySet()) {
+        int k = key.intValue();
+        addGlobalMeta(getExifTagName(k), exif.get(key));
       }
     }
 
-    int comp = firstIFD.getCompression();
-    put("Compression", TiffCompression.getCodecName(comp));
+    TiffCompression comp = firstIFD.getCompression();
+    put("Compression", comp.getCodecName());
 
-    int photo = firstIFD.getPhotometricInterpretation();
-    String photoInterp = PhotoInterp.getPIName(photo);
-    String metaDataPhotoInterp = PhotoInterp.getPIMeta(photo);
+    PhotoInterp photo = firstIFD.getPhotometricInterpretation();
+    String photoInterp = photo.getName();
+    String metaDataPhotoInterp = photo.getMetadataType();
     put("PhotometricInterpretation", photoInterp);
     put("MetaDataPhotometricInterpretation", metaDataPhotoInterp);
 
@@ -433,7 +388,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * sub-classes that override the getters for pixel set array size, etc.
    */
   protected void initMetadataStore() throws FormatException {
-    status("Populating OME metadata");
+    LOGGER.info("Populating OME metadata");
 
     // the metadata store we're working with
     MetadataStore store =
@@ -453,7 +408,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         firstName = artist.substring(0, ndx);
         lastName = artist.substring(ndx + 1);
       }
-      String email = firstIFD.getIFDStringValue(IFD.HOST_COMPUTER, false);
+      String email = firstIFD.getIFDStringValue(IFD.HOST_COMPUTER);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
       store.setExperimenterEmail(email, 0);
@@ -464,7 +419,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     String creationDate = getImageCreationDate();
     String date = DateTools.formatDate(creationDate, DATE_FORMATS);
     if (creationDate != null && date == null) {
-      warnDebug("unknown creation date format: " + creationDate);
+      LOGGER.warn("unknown creation date format: {}", creationDate);
     }
     creationDate = date;
 
@@ -481,10 +436,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // set the X and Y pixel dimensions
 
     int resolutionUnit = firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT);
-    TiffRational xResolution = firstIFD.getIFDRationalValue(
-      IFD.X_RESOLUTION, false);
-    TiffRational yResolution = firstIFD.getIFDRationalValue(
-      IFD.Y_RESOLUTION, false);
+    TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
+    TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
     float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
     float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
 
@@ -556,7 +509,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("BaseTiffReader.initFile(" + id + ")");
     super.initFile(id);
     initMetadata();
   }
@@ -564,93 +516,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   // -- Helper methods --
 
   public static String getExifTagName(int tag) {
-    switch (tag) {
-      case EXIF_VERSION:
-        return "EXIF Version";
-      case FLASH_PIX_VERSION:
-        return "FlashPix Version";
-      case COLOR_SPACE:
-        return "Color Space";
-      case COMPONENTS_CONFIGURATION:
-        return "Components Configuration";
-      case COMPRESSED_BITS_PER_PIXEL:
-        return "Compressed Bits Per Pixel";
-      case PIXEL_X_DIMENSION:
-        return "Image width";
-      case PIXEL_Y_DIMENSION:
-        return "Image height";
-      case MAKER_NOTE:
-        return "Maker Note";
-      case USER_COMMENT:
-        return "User comment";
-      case RELATED_SOUND_FILE:
-        return "Related sound file";
-      case DATE_TIME_ORIGINAL:
-        return "Original date/time";
-      case DATE_TIME_DIGITIZED:
-        return "Date/time digitized";
-      case SUB_SEC_TIME:
-        return "Date/time subseconds";
-      case SUB_SEC_TIME_ORIGINAL:
-        return "Original date/time subseconds";
-      case SUB_SEC_TIME_DIGITIZED:
-        return "Digitized date/time subseconds";
-      case EXPOSURE_TIME:
-        return "Exposure time";
-      case F_NUMBER:
-        return "F Number";
-      case EXPOSURE_PROGRAM:
-        return "Exposure program";
-      case SPECTRAL_SENSITIVITY:
-        return "Spectral sensitivity";
-      case ISO_SPEED_RATINGS:
-        return "ISO speed ratings";
-      case OECF:
-        return "Optoelectric conversion factor";
-      case SHUTTER_SPEED_VALUE:
-        return "Shutter speed";
-      case APERTURE_VALUE:
-        return "Aperture value";
-      case BRIGHTNESS_VALUE:
-        return "Brightness value";
-      case EXPOSURE_BIAS_VALUE:
-        return "Exposure Bias value";
-      case MAX_APERTURE_VALUE:
-        return "Max aperture value";
-      case SUBJECT_DISTANCE:
-        return "Subject distance";
-      case METERING_MODE:
-        return "Metering mode";
-      case LIGHT_SOURCE:
-        return "Light source";
-      case FLASH:
-        return "Flash";
-      case FOCAL_LENGTH:
-        return "Focal length";
-      case FLASH_ENERGY:
-        return "Flash energy";
-      case SPATIAL_FREQUENCY_RESPONSE:
-        return "Spatial frequency response";
-      case FOCAL_PLANE_X_RESOLUTION:
-        return "Focal plane X resolution";
-      case FOCAL_PLANE_Y_RESOLUTION:
-        return "Focal plane Y resolution";
-      case FOCAL_PLANE_RESOLUTION_UNIT:
-        return "Focal plane resolution unit";
-      case SUBJECT_LOCATION:
-        return "Subject location";
-      case EXPOSURE_INDEX:
-        return "Exposure index";
-      case SENSING_METHOD:
-        return "Sensing method";
-      case FILE_SOURCE:
-        return "File source";
-      case SCENE_TYPE:
-        return "Scene type";
-      case CFA_PATTERN:
-        return "CFA Pattern";
-    }
-    return null;
+    return IFD.getIFDTagName(tag);
   }
 
 }

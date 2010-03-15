@@ -35,6 +35,9 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A general-purpose reflection wrapper class.
  *
@@ -43,6 +46,11 @@ import java.util.StringTokenizer;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/ReflectedUniverse.java">SVN</a></dd></dl>
  */
 public class ReflectedUniverse {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ReflectedUniverse.class);
 
   // -- Fields --
 
@@ -54,9 +62,6 @@ public class ReflectedUniverse {
 
   /** Whether to force our way past restrictive access modifiers. */
   protected boolean force;
-
-  /** Debugging flag. */
-  protected boolean debug;
 
   // -- Constructors --
 
@@ -76,7 +81,6 @@ public class ReflectedUniverse {
   public ReflectedUniverse(ClassLoader loader) {
     variables = new HashMap<String, Object>();
     this.loader = loader == null ? getClass().getClassLoader() : loader;
-    debug = false;
   }
 
   // -- Utility methods --
@@ -141,18 +145,18 @@ public class ReflectedUniverse {
         c = Class.forName(command, true, loader);
       }
       catch (NoClassDefFoundError err) {
-        if (debug) LogTools.trace(err);
+        LOGGER.debug("No such class: {}", command, err);
         throw new ReflectException("No such class: " + command, err);
       }
       catch (ClassNotFoundException exc) {
-        if (debug) LogTools.trace(exc);
+        LOGGER.debug("No such class: {}", command, exc);
         throw new ReflectException("No such class: " + command, exc);
       }
       catch (RuntimeException exc) {
         // HACK: workaround for bug in Apache Axis2
         String msg = exc.getMessage();
         if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        if (debug) LogTools.trace(exc);
+        LOGGER.debug("No such class: {}", command, exc);
         throw new ReflectException("No such class: " + command, exc);
       }
       setVar(varName, c);
@@ -247,7 +251,7 @@ public class ReflectedUniverse {
       catch (IllegalAccessException e) { exc = e; }
       catch (InvocationTargetException e) { exc = e; }
       if (exc != null) {
-        if (debug) LogTools.trace(exc);
+        LOGGER.debug("Cannot instantiate object", exc);
         throw new ReflectException("Cannot instantiate object", exc);
       }
     }
@@ -300,7 +304,7 @@ public class ReflectedUniverse {
       catch (IllegalAccessException e) { exc = e; }
       catch (InvocationTargetException e) { exc = e; }
       if (exc != null) {
-        if (debug) LogTools.trace(exc);
+        LOGGER.debug("Cannot execute method: {}", methodName, exc);
         throw new ReflectException("Cannot execute method: " + methodName, exc);
       }
     }
@@ -411,13 +415,13 @@ public class ReflectedUniverse {
         if (force) field.setAccessible(true);
       }
       catch (NoSuchFieldException exc) {
-        if (debug) LogTools.trace(exc);
+        LOGGER.debug("No such field: {}", varName, exc);
         throw new ReflectException("No such field: " + varName, exc);
       }
       Object fieldVal;
       try { fieldVal = field.get(var); }
       catch (IllegalAccessException exc) {
-        if (debug) LogTools.trace(exc);
+        LOGGER.debug("Cannot get field value: {}", varName, exc);
         throw new ReflectException("Cannot get field value: " + varName, exc);
       }
       return fieldVal;
@@ -435,12 +439,6 @@ public class ReflectedUniverse {
   /** Gets whether access modifiers (protected, private, etc.) are ignored. */
   public boolean isAccessibilityIgnored() { return force; }
 
-  /** Enables or disables extended debugging output. */
-  public void setDebug(boolean debug) { this.debug = debug; }
-
-  /** Gets whether extended debugging output is enabled. */
-  public boolean isDebug() { return debug; }
-
   // -- Main method --
 
   /**
@@ -448,21 +446,23 @@ public class ReflectedUniverse {
    */
   public static void main(String[] args) throws IOException {
     ReflectedUniverse r = new ReflectedUniverse();
-    LogTools.println("Reflected universe test environment. " +
+    System.out.println("Reflected universe test environment. " +
       "Type commands, or press ^D to quit.");
     if (args.length > 0) {
       r.setAccessibilityIgnored(true);
-      LogTools.println("Ignoring accessibility modifiers.");
+      System.out.println("Ignoring accessibility modifiers.");
     }
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     while (true) {
-      LogTools.print("> ");
+      System.out.print("> ");
       String line = in.readLine();
       if (line == null) break;
       try { r.exec(line); }
-      catch (ReflectException exc) { LogTools.trace(exc); }
+      catch (ReflectException exc) {
+        LOGGER.debug("Could not execute '{}'", line, exc);
+      }
     }
-    LogTools.println();
+    System.out.println();
   }
 
 }

@@ -51,13 +51,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import loci.common.LogTools;
 import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility for reorganizing and converting QuickTime movies,
@@ -72,6 +74,9 @@ public class DataConverter extends JFrame implements
 {
 
   // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(DataConverter.class);
 
   private static final String TITLE = "Data Converter";
   private static final int COLUMNS = 24;
@@ -346,8 +351,8 @@ public class DataConverter extends JFrame implements
           pack();
         }
       }
-      catch (FormatException exc) { LogTools.trace(exc); }
-      catch (IOException exc) { LogTools.trace(exc); }
+      catch (FormatException exc) { LOGGER.info("", exc); }
+      catch (IOException exc) { LOGGER.info("", exc); }
 
       updateLabels(pattern);
     }
@@ -372,8 +377,8 @@ public class DataConverter extends JFrame implements
           codec.addItem(codecs[i]);
         }
       }
-      catch (FormatException exc) { LogTools.trace(exc); }
-      catch (IOException exc) { LogTools.trace(exc); }
+      catch (FormatException exc) { LOGGER.info("", exc); }
+      catch (IOException exc) { LOGGER.info("", exc); }
     }
     else if ("zChoice".equals(cmd)) {
       String newName = (String) zChoice.getSelectedItem();
@@ -654,7 +659,7 @@ public class DataConverter extends JFrame implements
       if (swap != null) swap.close();
     }
     catch (FormatException exc) {
-      LogTools.trace(exc);
+      LOGGER.info("", exc);
       String err = exc.getMessage();
       if (err == null) err = exc.getClass().getName();
       msg("Sorry, an error occurred: " + err);
@@ -662,7 +667,7 @@ public class DataConverter extends JFrame implements
       progress.setValue(0);
     }
     catch (IOException exc) {
-      LogTools.trace(exc);
+      LOGGER.info("", exc);
       String err = exc.getMessage();
       if (err == null) err = exc.getClass().getName();
       msg("Sorry, an error occurred: " + err);
@@ -719,8 +724,8 @@ public class DataConverter extends JFrame implements
       includeT.setEnabled(true);
       includeC.setEnabled(true);
     }
-    catch (FormatException exc) { LogTools.trace(exc); }
-    catch (IOException exc) { LogTools.trace(exc); }
+    catch (FormatException exc) { LOGGER.info("", exc); }
+    catch (IOException exc) { LOGGER.info("", exc); }
   }
 
   // -- Helper classes --

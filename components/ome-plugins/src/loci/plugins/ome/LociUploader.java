@@ -5,7 +5,7 @@
 /*
 OME Plugins for ImageJ: a collection of ImageJ plugins
 including the Download from OME and Upload to OME plugins.
-Copyright (C) 2005-@year@ Melissa Linkert, Philip Huettl and Curtis Rueden.
+Copyright (C) 2005-2010 Melissa Linkert, Philip Huettl and Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,13 +35,18 @@ import ij.plugin.PlugIn;
 import ij.process.ColorProcessor;
 
 import java.awt.TextField;
+import java.io.IOException;
 import java.util.HashSet;
 
 import loci.common.DataTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
 import loci.ome.io.OMEWriter;
 import loci.plugins.util.LibraryChecker;
 
@@ -123,17 +128,43 @@ public class LociUploader implements PlugIn {
       }
       ImageStack is = imp.getImageStack();
       FileInfo fi = imp.getOriginalFileInfo();
-      MetadataStore store;
+      MetadataStore store = null;
+
+      OMEXMLService service = null;
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        service = (OMEXMLService) factory.getInstance(OMEXMLService.class);
+      }
+      catch (DependencyException e) {
+        IJ.error("OME-XML library not found.");
+      }
 
       // if we opened this stack with the Bio-Formats importer, then the
       // appropriate OME-XML is in fi.description
       if (fi != null && fi.description != null &&
         fi.description.endsWith("</OME>"))
       {
-        store = MetadataTools.createOMEXMLMetadata(fi.description);
+        Exception exc = null;
+        try {
+          store = service.createOMEXMLMetadata(fi.description);
+        }
+        catch (ServiceException e) { exc = e; }
+
+        if (exc != null) {
+          IJ.error("Could not create OMEXMLMetadataStore");
+        }
       }
       else {
-        store = MetadataTools.createOMEXMLMetadata();
+        Exception exc = null;
+        try {
+          store = service.createOMEXMLMetadata();
+        }
+        catch (ServiceException e) { exc = e; }
+
+        if (exc != null) {
+          IJ.error("Could not create OMEXMLMetadataStore");
+        }
+
         int pixelType = FormatTools.UINT8;
         switch (imp.getBitDepth()) {
           case 16: pixelType = FormatTools.UINT16; break;

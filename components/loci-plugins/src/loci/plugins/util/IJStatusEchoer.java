@@ -26,8 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.util;
 
 import ij.IJ;
-import loci.formats.StatusEvent;
-import loci.formats.StatusListener;
+
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Echoes status messages to the ImageJ status bar.
@@ -38,13 +39,19 @@ import loci.formats.StatusListener;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class IJStatusEchoer implements StatusListener {
+public class IJStatusEchoer extends AppenderSkeleton {
 
-  // -- StatusListener API methods --
+  // -- AppenderSkeleton API methods --
 
-  public void statusUpdated(StatusEvent e) {
-    IJ.showStatus(e.getStatusMessage());
+  protected void append(LoggingEvent event) {
+    IJ.showStatus(event.getMessage().toString());
   }
+
+  public boolean requiresLayout() {
+    return false;
+  }
+
+  public void close() { }
 
 }
 

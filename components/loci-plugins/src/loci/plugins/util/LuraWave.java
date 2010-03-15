@@ -28,7 +28,7 @@ package loci.plugins.util;
 import ij.Prefs;
 import ij.gui.GenericDialog;
 import loci.formats.FormatException;
-import loci.formats.codec.LuraWaveCodec;
+import loci.formats.services.LuraWaveServiceImpl;
 
 /**
  * Utility methods for dealing with proprietary LuraWave licensing.
@@ -47,8 +47,10 @@ public final class LuraWave {
 
   /** Reads LuraWave license code from ImageJ preferences, if available. */
   public static String initLicenseCode() {
-    String code = Prefs.get(LuraWaveCodec.LICENSE_PROPERTY, null);
-    if (code != null) System.setProperty(LuraWaveCodec.LICENSE_PROPERTY, code);
+    String code = Prefs.get(LuraWaveServiceImpl.LICENSE_PROPERTY, null);
+    if (code != null) {
+      System.setProperty(LuraWaveServiceImpl.LICENSE_PROPERTY, code);
+    }
     return code;
   }
 
@@ -58,8 +60,8 @@ public final class LuraWave {
    */
   public static boolean isLicenseCodeException(FormatException exc) {
     String msg = exc == null ? null : exc.getMessage();
-    return msg != null && (msg.equals(LuraWaveCodec.NO_LICENSE_MSG) ||
-      msg.startsWith(LuraWaveCodec.INVALID_LICENSE_MSG));
+    return msg != null && (msg.equals(LuraWaveServiceImpl.NO_LICENSE_MSG) ||
+      msg.startsWith(LuraWaveServiceImpl.INVALID_LICENSE_MSG));
   }
 
   /**
@@ -73,7 +75,7 @@ public final class LuraWave {
     gd.showDialog();
     if (gd.wasCanceled()) return null;
     code = gd.getNextString();
-    if (code != null) Prefs.set(LuraWaveCodec.LICENSE_PROPERTY, code);
+    if (code != null) Prefs.set(LuraWaveServiceImpl.LICENSE_PROPERTY, code);
     return code;
   }
 

@@ -27,18 +27,24 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.RandomAccessOutputStream;
-import loci.common.XMLTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
+import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -88,7 +94,18 @@ public class OMEXMLWriter extends FormatWriter {
     if (!initialized) {
       out = new RandomAccessOutputStream(currentId);
 
-      String xml = MetadataTools.getOMEXML(retrieve);
+      String xml;
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        xml = service.getOMEXML(retrieve);
+      }
+      catch (DependencyException de) {
+        throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+      }
+      catch (ServiceException se) {
+        throw new FormatException(se);
+      }
 
       xmlFragments = new Vector();
       currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -119,7 +136,7 @@ public class OMEXMLWriter extends FormatWriter {
 
     Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
     if (channels == null) {
-      warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
+      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = channels == null ? 1 : channels.intValue();
 

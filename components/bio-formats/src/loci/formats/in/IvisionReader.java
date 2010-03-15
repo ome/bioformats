@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -143,11 +143,10 @@ public class IvisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("IvisionReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     String version = in.readString(4);
     int fileFormat = in.read();
@@ -209,7 +208,7 @@ public class IvisionReader extends FormatReader {
       getSizeY() * FormatTools.getBytesPerPixel(getPixelType()));
 
     // look for block of XML data
-    status("Looking for XML metadata");
+    LOGGER.info("Looking for XML metadata");
     boolean xmlFound = false;
     while (!xmlFound && in.getFilePointer() < in.length() - 6) {
       int len = (int) Math.min(8192, in.length() - in.getFilePointer());
@@ -229,7 +228,7 @@ public class IvisionReader extends FormatReader {
       XMLTools.parseXML(xml, handler);
     }
 
-    status("Populating core metadata");
+    LOGGER.info("Populating core metadata");
     core[0].rgb = getSizeC() > 1;
     core[0].dimensionOrder = "XYCZT";
     core[0].littleEndian = false;
@@ -237,7 +236,7 @@ public class IvisionReader extends FormatReader {
     core[0].indexed = false;
     core[0].imageCount = getSizeZ() * getSizeT();
 
-    status("Populating MetadataStore");
+    LOGGER.info("Populating MetadataStore");
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);

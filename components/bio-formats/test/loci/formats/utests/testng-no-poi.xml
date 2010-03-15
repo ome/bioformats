@@ -1,0 +1,9 @@
+<suite name="Missing POI Service Tests">
+    <test name="MissingPOIService">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.MissingPOIServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+</suite>

@@ -32,9 +32,11 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.Location;
-import loci.common.LogTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Logic to stitch together files with similar names.
@@ -45,6 +47,11 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/FileStitcher.java">SVN</a></dd></dl>
  */
 public class FileStitcher implements IFormatReader {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(FileStitcher.class);
 
   // -- Fields --
 
@@ -659,12 +666,12 @@ public class FileStitcher implements IFormatReader {
               initReader(i, j);
             }
             catch (FormatException exc) {
-              LogTools.trace(exc);
+              LOGGER.info("", exc);
               return null;
             }
             catch (IOException exc) {
-              LogTools.trace(exc);
-             return null;
+              LOGGER.info("", exc);
+              return null;
             }
             used[i][j] = readers[i][j].getUsedFiles();
             total += used[i][j].length;
@@ -720,10 +727,10 @@ public class FileStitcher implements IFormatReader {
         infos[i].reader = reader.unwrap().getClass();
       }
       catch (FormatException e) {
-        LogTools.traceDebug(e);
+        LOGGER.debug("", e);
       }
       catch (IOException e) {
-        LogTools.traceDebug(e);
+        LOGGER.debug("", e);
       }
       infos[i].usedToInitialize = files[i].endsWith(getCurrentFile());
     }
@@ -742,10 +749,10 @@ public class FileStitcher implements IFormatReader {
         infos[i].reader = reader.unwrap().getClass();
       }
       catch (FormatException e) {
-        LogTools.traceDebug(e);
+        LOGGER.debug("", e);
       }
       catch (IOException e) {
-        LogTools.traceDebug(e);
+        LOGGER.debug("", e);
       }
       infos[i].usedToInitialize = files[i].endsWith(getCurrentFile());
     }
@@ -888,42 +895,11 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatHandler#close() */
   public void close() throws IOException { close(false); }
 
-  // -- StatusReporter API methods --
-
-  /* @see IFormatHandler#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    if (readers == null) reader.addStatusListener(l);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].addStatusListener(l);
-        }
-      }
-    }
-  }
-
-  /* @see IFormatHandler#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    if (readers == null) reader.removeStatusListener(l);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].removeStatusListener(l);
-        }
-      }
-    }
-  }
-
-  /* @see IFormatHandler#getStatusListeners() */
-  public StatusListener[] getStatusListeners() {
-    return reader.getStatusListeners();
-  }
-
   // -- Internal FormatReader API methods --
 
   /** Initializes the given file or file pattern. */
   protected void initFile(String id) throws FormatException, IOException {
-    LogTools.debug("initFile: " + id);
+    LOGGER.debug("initFile: {}", id);
 
     close();
     currentId = id;

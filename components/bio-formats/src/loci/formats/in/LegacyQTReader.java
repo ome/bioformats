@@ -111,7 +111,7 @@ public class LegacyQTReader extends BIFormatReader {
       }
     }
     catch (ReflectException e) {
-      traceDebug(e);
+      LOGGER.debug("Failed to close QuickTime session", e);
     }
     if (!fileOnly) {
       currentId = null;
@@ -124,9 +124,7 @@ public class LegacyQTReader extends BIFormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("LegacyQTReader.initFile(" + id + ")");
-
-    status("Checking for QuickTime Java");
+    LOGGER.info("Checking for QuickTime Java");
 
     if (tools == null) {
       tools = new LegacyQTTools();
@@ -136,7 +134,7 @@ public class LegacyQTReader extends BIFormatReader {
 
     super.initFile(id);
 
-    status("Reading movie dimensions");
+    LOGGER.info("Reading movie dimensions");
     try {
       r.exec("QTSession.open()");
 
@@ -192,7 +190,7 @@ public class LegacyQTReader extends BIFormatReader {
         times[i] = q.intValue();
       }
 
-      status("Populating metadata");
+      LOGGER.info("Populating metadata");
 
       BufferedImage img = AWTImageTools.makeBuffered(image);
 

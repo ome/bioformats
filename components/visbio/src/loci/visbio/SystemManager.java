@@ -41,7 +41,7 @@ import javax.swing.Timer;
 import loci.visbio.help.HelpManager;
 import visad.util.Util;
 
-import com.jgoodies.plaf.LookUtils;
+import com.jgoodies.looks.LookUtils;
 
 /**
  * SystemManager is the manager encapsulating

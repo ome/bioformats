@@ -1,0 +1,182 @@
+//
+// POIServiceImpl.java
+//
+
+/*
+OME Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.formats.services;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import loci.common.RandomAccessInputStream;
+import loci.common.services.AbstractService;
+
+import loci.poi.poifs.filesystem.DirectoryEntry;
+import loci.poi.poifs.filesystem.DocumentEntry;
+import loci.poi.poifs.filesystem.DocumentInputStream;
+import loci.poi.poifs.filesystem.Entry;
+import loci.poi.poifs.filesystem.POIFSFileSystem;
+
+/**
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/POIServiceImpl.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/services/POIServiceImpl.java">SVN</a></dd></dl>
+ */
+public class POIServiceImpl extends AbstractService implements POIService {
+
+  // -- Fields --
+
+  private POIFSFileSystem fileSystem;
+  private DirectoryEntry root;
+  private RandomAccessInputStream stream;
+
+  private Vector<String> filePath;
+  private Hashtable<String, Integer> fileSizes;
+  private Hashtable<String, DocumentEntry> files;
+
+  // -- POIService API methods --
+
+  /**
+   * Default constructor.
+   */
+  public POIServiceImpl() {
+    // Just checking a single class in loci.poi.poifs.filesystem package
+    checkClassDependency(loci.poi.poifs.filesystem.DirectoryEntry.class);
+  }
+
+  /* @see POIService#initialize(String) */
+  public void initialize(String file) throws IOException {
+    initialize(new RandomAccessInputStream(file));
+  }
+
+  /* @see POIService#initialize(RandomAccessInputStream) */
+  public void initialize(RandomAccessInputStream s) throws IOException {
+    // determine the size of a 'big' block
+    stream = s;
+    stream.order(true);
+    stream.seek(30);
+    int size = (int) Math.pow(2, stream.readShort());
+    stream.seek(0);
+
+    // initialize the file system
+    fileSystem = new POIFSFileSystem(stream, size);
+    root = fileSystem.getRoot();
+
+    // build the list of files in the file system
+    filePath = new Vector<String>();
+    fileSizes = new Hashtable<String, Integer>();
+    files = new Hashtable<String, DocumentEntry>();
+
+    parseFile(root);
+  }
+
+  /* @see POIService#getInputStream(String) */
+  public InputStream getInputStream(String file) {
+    return (InputStream) files.get(file);
+  }
+
+  /* @see POIService#getDocumentStream(String) */
+  public RandomAccessInputStream getDocumentStream(String file)
+    throws IOException
+  {
+    return new RandomAccessInputStream(getDocumentBytes(file));
+  }
+
+  /* @see POIService#getDocumentBytes(String) */
+  public byte[] getDocumentBytes(String file) throws IOException {
+    return getDocumentBytes(file, getFileSize(file));
+  }
+
+  /* @see POIService#getDocumentBytes(String, int) */
+  public byte[] getDocumentBytes(String file, int length) throws IOException {
+    int size = getFileSize(file);
+    int len = length > size ? size : length;
+
+    byte[] buf = new byte[len];
+    DocumentEntry entry = files.get(file);
+    DocumentInputStream s = new DocumentInputStream(entry, stream);
+    s.read(buf);
+    s.close();
+    return buf;
+  }
+
+  /* @see POIService#getFileSize(String) */
+  public int getFileSize(String file) {
+    if (fileSizes.containsKey(file)) {
+      return fileSizes.get(file).intValue();
+    }
+    return -1;
+  }
+
+  /* @see POIService#getDocumentList() */
+  public Vector<String> getDocumentList() {
+    Vector<String> list = new Vector<String>();
+    list.addAll(fileSizes.keySet());
+    return list;
+  }
+
+  /* @see POIService#close() */
+  public void close() throws IOException {
+    fileSystem = null;
+    root = null;
+    if (stream != null) stream.close();
+    stream = null;
+    filePath = null;
+    fileSizes = null;
+    files = null;
+  }
+
+  // -- Helper methods --
+
+  private void parseFile(DirectoryEntry r) throws IOException {
+    filePath.add(r.getName());
+    Iterator iter = r.getEntries();
+
+    while (iter.hasNext()) {
+      Entry o = (Entry) iter.next();
+      boolean isInstance = o.isDirectoryEntry();
+      boolean isDocument = o.isDocumentEntry();
+
+      if (isInstance) parseFile((DirectoryEntry) o);
+      else if (isDocument) {
+        StringBuffer path = new StringBuffer();
+        for (String p : filePath) {
+          path.append(p);
+          path.append(File.separator);
+        }
+        path.append(o.getName());
+
+        DocumentInputStream s =
+          new DocumentInputStream((DocumentEntry) o, stream);
+        fileSizes.put(path.toString(), new Integer(s.available()));
+        files.put(path.toString(), (DocumentEntry) o);
+        s.close();
+      }
+    }
+    filePath.removeElementAt(filePath.size() - 1);
+  }
+
+}

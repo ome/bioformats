@@ -114,7 +114,6 @@ public abstract class WriterWrapper implements IFormatWriter {
    *   <li>{@link #getColorModel()}</li>
    *   <li>{@link #getFramesPerSecond()}</li>
    *   <li>{@link #getCompression()}</li>
-   *   <li>Attached {@link StatusListener}s</li>
    * </ul>
    *
    * @param imageWriterClass If non-null, any {@link ImageWriter}s in the
@@ -131,14 +130,10 @@ public abstract class WriterWrapper implements IFormatWriter {
     ColorModel cm = getColorModel();
     int rate = getFramesPerSecond();
     String compress = getCompression();
-    StatusListener[] statusListeners = getStatusListeners();
     wrapperCopy.setInterleaved(interleaved);
     wrapperCopy.setColorModel(cm);
     wrapperCopy.setFramesPerSecond(rate);
     wrapperCopy.setCompression(compress);
-    for (int k=0; k<statusListeners.length; k++) {
-      wrapperCopy.addStatusListener(statusListeners[k]);
-    }
     return wrapperCopy;
   }
 
@@ -252,20 +247,6 @@ public abstract class WriterWrapper implements IFormatWriter {
 
   public void close() throws IOException {
     writer.close();
-  }
-
-  // -- StatusReporter API methods --
-
-  public void addStatusListener(StatusListener l) {
-    writer.addStatusListener(l);
-  }
-
-  public void removeStatusListener(StatusListener l) {
-    writer.removeStatusListener(l);
-  }
-
-  public StatusListener[] getStatusListeners() {
-    return writer.getStatusListeners();
   }
 
   // -- Helper methods --

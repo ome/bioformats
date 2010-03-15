@@ -66,7 +66,6 @@ public final class MatlabUtil {
       try {
         r.exec("import com.mathworks.jmi.Matlab");
         r.exec("matlab = new Matlab()");
-        r.setDebug(true);
       }
       catch (ReflectException exc) { }
     }

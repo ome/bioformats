@@ -228,7 +228,7 @@ public class OpenlabReader extends FormatReader {
 
       if (exc != null) {
         r.close();
-        traceDebug(exc);
+        LOGGER.debug("", exc);
         in.seek(planes[index].planeOffset - 298);
 
         if (in.readByte() == 1) in.skipBytes(128);
@@ -305,13 +305,12 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("OpenlabReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
     luts = new Vector<byte[][]>();
 
-    status("Verifying Openlab LIFF format");
+    LOGGER.info("Verifying Openlab LIFF format");
 
     in.order(false);
     in.seek(4);
@@ -337,7 +336,7 @@ public class OpenlabReader extends FormatReader {
     int offset = in.readInt();
     in.seek(offset);
 
-    status("Finding image offsets");
+    LOGGER.info("Finding image offsets");
 
     xcal = ycal = 0.0f;
 

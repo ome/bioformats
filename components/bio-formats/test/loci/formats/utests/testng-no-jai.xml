@@ -1,0 +1,9 @@
+<suite name="Missing JAI ImageIO Service Tests">
+    <test name="MissingJAIIIOService">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.MissingJAIIIOServiceTest"/>
+        </classes>
+        <packages/>
+    </test>
+</suite>

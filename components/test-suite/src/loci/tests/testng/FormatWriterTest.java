@@ -38,17 +38,19 @@ import java.util.List;
 import java.util.Vector;
 
 import loci.common.DataTools;
-import loci.common.Log;
-import loci.common.LogTools;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
-import loci.formats.MetadataTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
 import loci.formats.out.JPEG2000Writer;
 import loci.formats.out.JPEGWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TestNG tester for Bio-Formats file format writers.
@@ -65,6 +67,9 @@ import loci.formats.out.JPEGWriter;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">SVN</a></dd></dl>
  */
 public class FormatWriterTest {
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(FormatWriterTest.class);
 
   /** Message to give for why a test was skipped. */
   private static final String SKIP_MESSAGE = "Dataset already tested.";
@@ -97,14 +102,8 @@ public class FormatWriterTest {
     try {
       reader.setId(id);
     }
-    catch (FormatException e) { LogTools.trace(e); }
-    catch (IOException e) { LogTools.trace(e); }
-  }
-
-  // -- Setup methods --
-
-  public void setLog(Log log) {
-    LogTools.setLog(log);
+    catch (FormatException e) { LOGGER.info("", e); }
+    catch (IOException e) { LOGGER.info("", e); }
   }
 
   // -- Data provider --
@@ -161,7 +160,10 @@ public class FormatWriterTest {
     String msg = null;
     try {
       reader.close();
-      reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      reader.setMetadataStore(service.createOMEXMLMetadata());
       reader.setId(id);
 
       int type = reader.getPixelType();
@@ -291,7 +293,7 @@ public class FormatWriterTest {
       convertedReader.close();
     }
     catch (Throwable t) {
-      LogTools.trace(t);
+      LOGGER.info("", t);
       success = false;
     }
     result(testName, success, msg);
@@ -323,8 +325,8 @@ public class FormatWriterTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LogTools.println("\t" + TestTools.timestamp() + ": " + testName + ": " +
-      (success ? "PASSED" : "FAILED") + (msg == null ? "" : " (" + msg + ")"));
+    LOGGER.info("\t{}: {} ({})", new Object[] {testName,
+      success ? "PASSED" : "FAILED", msg == null ? "" : msg});
     if (msg == null) assert success;
     else assert success : msg;
   }

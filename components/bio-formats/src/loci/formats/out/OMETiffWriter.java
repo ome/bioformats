@@ -29,11 +29,15 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.TiffSaver;
 
 /**
@@ -73,8 +77,6 @@ public class OMETiffWriter extends TiffWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
     if (currentId != null) {
       if (!wroteLast) {
         // FIXME
@@ -84,7 +86,24 @@ public class OMETiffWriter extends TiffWriter {
 
       // extract OME-XML string from metadata object
       MetadataRetrieve retrieve = getMetadataRetrieve();
-      IMetadata omeMeta = MetadataTools.getOMEMetadata(retrieve);
+
+      OMEXMLMetadata omeMeta;
+      OMEXMLService service;
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        service = factory.getInstance(OMEXMLService.class);
+        omeMeta = service.getOMEMetadata(retrieve);
+      }
+      catch (DependencyException de) {
+        // TODO : Modify close() signature to include FormatException?
+        // throw new MissingLibraryException(OMETiffReader.NO_OME_XML_JAR, de);
+        throw new RuntimeException(de);
+      }
+      catch (ServiceException se) {
+        // TODO : Modify close() signature to include FormatException?
+        // throw new FormatException(se);
+        throw new RuntimeException(se);
+      }
 
       // generate UUID and add to OME element
       String filename = new Location(currentId).getName();
@@ -158,7 +177,15 @@ public class OMETiffWriter extends TiffWriter {
         }
       }
 
-      String xml = MetadataTools.getOMEXML(omeMeta);
+      String xml;
+      try {
+        xml = service.getOMEXML(omeMeta);
+      }
+      catch (ServiceException se) {
+        // FIXME: Modify close() signature to include FormatException?
+        // throw new FormatException(se);
+        throw new RuntimeException(se);
+      }
 
       // insert warning comment
       String prefix = xml.substring(0, xml.indexOf(">") + 1);
@@ -167,7 +194,10 @@ public class OMETiffWriter extends TiffWriter {
 
       // write OME-XML to the first IFD's comment
       try {
-        TiffSaver.overwriteComment(currentId, xml);
+        TiffSaver saver = new TiffSaver(out);
+        RandomAccessInputStream in = new RandomAccessInputStream(currentId);
+        saver.overwriteComment(in, xml);
+        in.close();
       }
       catch (FormatException exc) {
         IOException io = new IOException("Unable to append OME-XML comment");
@@ -178,6 +208,8 @@ public class OMETiffWriter extends TiffWriter {
     super.close();
     seriesMap = null;
     wroteLast = false;
+    if (out != null) out.close();
+    out = null;
   }
 
   // -- IFormatWriter API methods --

@@ -1,0 +1,127 @@
+<suite name="IO_Tests" @PARALLEL@>
+    <test name="ByteArrayHandle">
+        <parameter name="provider" value="ByteArrayHandle"/>
+        <groups>
+            <run>
+                <include name="readTests"/>
+                <include name="writeTests"/>
+                <exclude name="readLineTest"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="NewByteArrayHandle">
+        <parameter name="provider" value="NewByteArrayHandle"/>
+        <parameter name="checkGrowth" value="true"/>
+        <groups>
+            <run>
+                <include name="writeTests"/>
+                <exclude name="initialLengthTest"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="ExistingByteArrayHandle">
+        <parameter name="provider" value="ExistingByteArrayHandle"/>
+        <groups>
+            <run>
+                <include name="writeTests"/>
+                <exclude name="initialLengthTest"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="BZip2Handle">
+        <parameter name="provider" value="BZip2Handle"/>
+        <groups>
+            <run>
+                <include name="readTests"/>
+                <exclude name="readLineTest"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="loci.common.utests.ReadOnlyTest"/>
+        </classes>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="GZipHandle">
+        <parameter name="provider" value="GZipHandle"/>
+        <groups>
+            <run>
+                <include name="readTests"/>
+                <exclude name="readLineTest"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="loci.common.utests.ReadOnlyTest"/>
+        </classes>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="NIOFileHandle">
+        <parameter name="provider" value="NIOFileHandle"/>
+        <groups>
+            <run>
+                <include name="readTests"/>
+                <include name="writeTests"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="URLHandle">
+        <parameter name="provider" value="URLHandle"/>
+        <groups>
+            <run>
+                <include name="readTests"/>
+                <exclude name="readLineTest"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="loci.common.utests.ReadOnlyTest"/>
+        </classes>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="ZipHandle">
+        <parameter name="provider" value="ZipHandle"/>
+        <groups>
+            <run>
+                <include name="readTests"/>
+                <exclude name="readLineTest"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="loci.common.utests.ReadOnlyTest"/>
+        </classes>
+        <packages>
+            <package name="loci.common.utests"/>
+        </packages>
+    </test>
+    <test name="TypeDetection">
+        <classes>
+            <class name="loci.common.utests.TypeDetectionTest"/>
+        </classes>
+    </test>
+    <test name="Location">
+        <classes>
+            <class name="loci.common.utests.LocationTest"/>
+        </classes>
+    </test>
+    <test name="URLHandleTest">
+        <classes>
+          <class name="loci.common.utests.URLHandleTest"/>
+        </classes>
+    </test>
+</suite>

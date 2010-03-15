@@ -50,6 +50,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import loci.common.DataTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
@@ -59,6 +62,7 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
@@ -209,7 +213,18 @@ public class Exporter {
       FileInfo fi = imp.getOriginalFileInfo();
       String xml = fi == null ? null : fi.description == null ? null :
         fi.description.indexOf("xml") == -1 ? null : fi.description;
-      IMetadata store = MetadataTools.createOMEXMLMetadata(xml);
+
+      OMEXMLService service = null;
+      IMetadata store = null;
+
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        service = factory.getInstance(OMEXMLService.class);
+        store = service.createOMEXMLMetadata(xml);
+      }
+      catch (DependencyException de) { }
+      catch (ServiceException se) { }
+
       if (store == null) IJ.error("OME-XML Java library not found.");
       if (xml == null) {
         store.createRoot();
@@ -240,7 +255,10 @@ public class Exporter {
               }
               newXML.append(xml.substring(end));
 
-              store = MetadataTools.createOMEXMLMetadata(newXML.toString());
+              try {
+                store = service.createOMEXMLMetadata(newXML.toString());
+              }
+              catch (ServiceException se) { }
 
               break;
             }

@@ -63,16 +63,19 @@ public class MinimalTiffReader extends FormatReader {
 
   /** Constructs a new MinimalTiffReader. */
   public MinimalTiffReader() {
-    super("Minimal TIFF", new String[] {"tif", "tiff"});
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    this("Minimal TIFF", new String[] {"tif", "tiff"});
   }
 
   /** Constructs a new MinimalTiffReader. */
-  public MinimalTiffReader(String name, String suffix) { super(name, suffix); }
+  public MinimalTiffReader(String name, String suffix) {
+    this(name, new String[] {suffix});
+  }
 
   /** Constructs a new MinimalTiffReader. */
   public MinimalTiffReader(String name, String[] suffixes) {
     super(name, suffixes);
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- MinimalTiffReader API methods --
@@ -101,13 +104,12 @@ public class MinimalTiffReader extends FormatReader {
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 8) {
-      int[] colorMap =
-        lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
+      int[] colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
       if (colorMap == null) {
         // it's possible that the LUT is only present in the first IFD
         if (lastPlane != 0) {
           lastIFD = ifds.get(0);
-          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
+          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
           if (colorMap == null) return null;
         }
         else return null;
@@ -133,13 +135,12 @@ public class MinimalTiffReader extends FormatReader {
     IFD lastIFD = ifds.get(lastPlane);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 16 && bits[0] > 8) {
-      int[] colorMap =
-        lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
+      int[] colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
       if (colorMap == null || colorMap.length < 65536 * 3) {
         // it's possible that the LUT is only present in the first IFD
         if (lastPlane != 0) {
           lastIFD = ifds.get(0);
-          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP, false);
+          colorMap = lastIFD.getIFDIntArray(IFD.COLOR_MAP);
           if (colorMap == null || colorMap.length < 65536 * 3) return null;
         }
         else return null;
@@ -163,7 +164,7 @@ public class MinimalTiffReader extends FormatReader {
         return (int) thumbnailIFDs.get(0).getImageWidth();
       }
       catch (FormatException e) {
-        traceDebug(e);
+        LOGGER.debug("Could not retrieve thumbnail width", e);
       }
     }
     return super.getThumbSizeX();
@@ -176,7 +177,7 @@ public class MinimalTiffReader extends FormatReader {
         return (int) thumbnailIFDs.get(0).getImageLength();
       }
       catch (FormatException e) {
-        traceDebug(e);
+        LOGGER.debug("Could not retrieve thumbnail height", e);
       }
     }
     return super.getThumbSizeY();
@@ -280,42 +281,28 @@ public class MinimalTiffReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("MinimalTiffReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     tiffParser = new TiffParser(in);
     boolean little = in.readShort() == 0x4949;
     in.order(little);
 
-    status("Reading IFDs");
+    LOGGER.info("Reading IFDs");
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getNonThumbnailIFDs();
     if (ifds == null || ifds.size() == 0) {
       throw new FormatException("No IFDs found");
     }
 
-    // separate thumbnail IFDs from regular IFDs
+    thumbnailIFDs = tiffParser.getThumbnailIFDs();
 
-    IFDList v = new IFDList();
-    IFDList thumbs = new IFDList();
-    for (int i=0; i<ifds.size(); i++) {
-      IFD ifd = ifds.get(i);
-      boolean thumbnail = ifd.getIFDIntValue(IFD.NEW_SUBFILE_TYPE) == 1 &&
-        (ifds.size() > 1 || ifd.getIFDValue(IFD.IMAGE_WIDTH) == null);
-      if (thumbnail) thumbs.add(ifd);
-      else v.add(ifd);
-    }
-
-    ifds = v;
-    thumbnailIFDs = thumbs;
-
-    status("Populating metadata");
+    LOGGER.info("Populating metadata");
 
     core[0].imageCount = ifds.size();
 
     IFD firstIFD = ifds.get(0);
 
-    int photo = firstIFD.getPhotometricInterpretation();
+    PhotoInterp photo = firstIFD.getPhotometricInterpretation();
     int samples = firstIFD.getSamplesPerPixel();
     core[0].rgb = samples > 1 || photo == PhotoInterp.RGB;
     core[0].interleaved = false;

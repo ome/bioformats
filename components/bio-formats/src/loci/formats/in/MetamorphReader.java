@@ -34,7 +34,7 @@ import java.util.Vector;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -122,6 +122,14 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
+    return ifd.containsKey(METAMORPH_ID);
+  }
+
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return !checkSuffix(id, ND_SUFFIX);
@@ -183,6 +191,7 @@ public class MetamorphReader extends BaseTiffReader {
     stkReader.setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
     stkReader.openBytes(plane, buf, x, y, w, h);
+    stkReader.close();
     return buf;
   }
 
@@ -214,7 +223,7 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, ND_SUFFIX)) {
-      status("Initializing " + id);
+      LOGGER.info("Initializing " + id);
       // find an associated STK file
       String stkFile = id.substring(0, id.lastIndexOf("."));
       if (stkFile.indexOf(File.separator) != -1) {
@@ -222,7 +231,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
       String parentPath = id.substring(0, id.lastIndexOf(File.separator) + 1);
       Location parent = new Location(parentPath).getAbsoluteFile();
-      status("Looking for STK file in " + parent.getAbsolutePath());
+      LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list();
       for (int i=0; i<dirList.length; i++) {
         if (dirList[i].indexOf(stkFile) != -1 &&
@@ -315,6 +324,7 @@ public class MetamorphReader extends BaseTiffReader {
 
         line = ndStream.readLine().trim();
       }
+      ndStream.close();
 
       // figure out how many files we need
 
@@ -750,15 +760,25 @@ public class MetamorphReader extends BaseTiffReader {
         uic1tagEntry.getValueCount());
       in.seek(uic4tagEntry.getValueOffset());
     }
-    catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
-    catch (NullPointerException exc) { traceDebug(exc); }
-    catch (IOException exc) { traceDebug(exc); }
+    catch (IllegalArgumentException exc) {
+      LOGGER.debug("Unknown tag", exc);
+    }
+    catch (NullPointerException exc) {
+      LOGGER.debug("", exc);
+    }
+    catch (IOException exc) {
+      LOGGER.debug("Failed to parse proprietary tags", exc);
+    }
 
     try {
       // copy ifds into a new array of Hashtables that will accommodate the
       // additional image planes
       IFD firstIFD = ifds.get(0);
-      long[] uic2 = firstIFD.getIFDLongArray(UIC2TAG, true);
+      long[] uic2 = firstIFD.getIFDLongArray(UIC2TAG);
+      if (uic2 == null) {
+        throw new FormatException("Invalid Metamorph file. Tag " + UIC2TAG +
+          " not found.");
+      }
       core[0].imageCount = uic2.length;
 
       Object entry = firstIFD.getIFDValue(UIC3TAG);
@@ -784,13 +804,13 @@ public class MetamorphReader extends BaseTiffReader {
       int stripsPerImage = getSizeY() / rowsPerStrip;
       if (stripsPerImage * rowsPerStrip != getSizeY()) stripsPerImage++;
 
-      int check = firstIFD.getPhotometricInterpretation();
+      PhotoInterp check = firstIFD.getPhotometricInterpretation();
       if (check == PhotoInterp.RGB_PALETTE) {
         firstIFD.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
           PhotoInterp.BLACK_IS_ZERO);
       }
 
-      emWavelength = firstIFD.getIFDLongArray(UIC3TAG, true);
+      emWavelength = firstIFD.getIFDLongArray(UIC3TAG);
 
       // for each image plane, construct an IFD hashtable
 
@@ -830,9 +850,15 @@ public class MetamorphReader extends BaseTiffReader {
       }
       ifds = tempIFDs;
     }
-    catch (IllegalArgumentException exc) { traceDebug(exc); } // unknown tag
-    catch (NullPointerException exc) { traceDebug(exc); }
-    catch (FormatException exc) { traceDebug(exc); }
+    catch (IllegalArgumentException exc) {
+      LOGGER.debug("Unknown tag", exc);
+    }
+    catch (NullPointerException exc) {
+      LOGGER.debug("", exc);
+    }
+    catch (FormatException exc) {
+      LOGGER.debug("Failed to build list of IFDs", exc);
+    }
 
     // parse (mangle) TIFF comment
     String descr = ifds.get(0).getComment();
