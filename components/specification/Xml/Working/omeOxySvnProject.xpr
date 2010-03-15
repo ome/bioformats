@@ -104,17 +104,6 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">2008-09 to 2009-09</String>
-                                </field>
-                                <field name="type">
-                                    <String xml:space="preserve">XSL</String>
-                                </field>
-                                <field name="url">
-                                    <String xml:space="preserve">../Validator/Backend/samples/tiny2009-09-V1.ome</String>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="name">
                                     <String xml:space="preserve">TEI P5(experimental) HTML</String>
                                 </field>
                                 <field name="type">
@@ -122,6 +111,17 @@
                                 </field>
                                 <field name="url">
                                     <String xml:space="preserve">Markdown/custom-annotations/tmpl_custom_ann.html</String>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="name">
+                                    <String xml:space="preserve">2008-09 to 2009-09</String>
+                                </field>
+                                <field name="type">
+                                    <String xml:space="preserve">XSL</String>
+                                </field>
+                                <field name="url">
+                                    <String xml:space="preserve">../Validator/Backend/samples/tiny2009-09-V1.ome</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
@@ -372,7 +372,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-B XQuery</String>
+                                    <String xml:space="preserve">Saxon-PE XQuery</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -455,7 +455,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-B XQuery</String>
+                                    <String xml:space="preserve">Saxon-PE XQuery</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -1764,7 +1764,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-B</String>
+                                    <String xml:space="preserve">Saxon-PE</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -1865,19 +1865,24 @@
     </meta>
     <projectTree name="omeOxySvnProject.xpr">
         <folder name="SampleFiles">
+            <file name="assorted-sa-sample-mo.xml"/>
             <file name="BrokenConstraints.xml"/>
             <file name="BrokenConstraintsSmall.xml"/>
             <file name="completesample-local.xml"/>
             <file name="completesample.xml"/>
             <file name="completesamplenopre.xml"/>
             <file name="min-sample.xml"/>
+            <file name="min-sa-sample-lsid.xml"/>
+            <file name="min-sa-sample-mo.xml"/>
             <file name="objective-sample.xml"/>
             <file name="ProposedChanges.txt"/>
             <file name="roi-sa-sample.xml"/>
             <file name="roi-sample.xml"/>
+            <file name="roi-sa-sample-2009.xml"/>
             <file name="sample-updated.ome.xml"/>
         </folder>
         <folder path="../../../Java/xslt/"/>
+        <folder path="../../Documentation/Samples/"/>
         <folder path="../Validator/Backend/samples/"/>
         <folder path="../../Xslt/"/>
         <file name="BinaryFile.xsd"/>
