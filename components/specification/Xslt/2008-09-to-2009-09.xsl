@@ -664,6 +664,7 @@
 				<xsl:copy-of select="current()"/>
 			</xsl:variable>
 			<xsl:for-each select="*  [local-name(.) = 'ChannelComponent']">
+				<xsl:variable name="positionCount"><xsl:number value="position()"/></xsl:variable>
 				<xsl:if test="$pixelsID = @Pixels">
 					<xsl:element name="Channel" namespace="{$newOMENS}">
 						<!-- convert value of @ColorDomain-->
@@ -707,7 +708,7 @@
 												select="'LogicalChannel'"/>
 												<xsl:with-param name="replacement"
 												select="'Channel'"/>
-											</xsl:call-template>
+											</xsl:call-template>:<xsl:value-of select="$positionCount"/>
 										</xsl:attribute>
 									</xsl:when>
 									<xsl:otherwise>
@@ -834,7 +835,16 @@
 	-->
 	<xsl:template match="OME:Image">
 		<xsl:element name="Image" namespace="{$newOMENS}">
-			<xsl:variable name="ac" select="current()/@AcquiredPixels"/>
+			<xsl:variable name="requiredPixels">
+				<xsl:choose>
+					<xsl:when test="@AcquiredPixels">
+						<xsl:value-of select="current()/@AcquiredPixels"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="current()/@DefaultPixels"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<xsl:apply-templates
 				select="@* [not(name() = 'DefaultPixels' or name() = 'AcquiredPixels')]"/>
 			<xsl:for-each
@@ -850,7 +860,7 @@
 					</xsl:when>
 
 					<xsl:when test="local-name(.) = 'Pixels'">
-						<xsl:if test="@ID=$ac">
+						<xsl:if test="@ID=$requiredPixels">
 							<!-- add controls to make sure we only copy one. -->
 							<xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
 								<xsl:call-template name="convertPixels">
