@@ -303,13 +303,13 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="compile-formats"
-    depends="compile-common, compile-ome-xml"
+    depends="compile-common, compile-ome-xml, compile-jai, compile-poi-loci, compile-mdbtools"
     description="compile classes for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.compile"/>
   </target>
 
   <target name="jar-formats"
-    depends="jar-common, jar-ome-xml"
+    depends="jar-common, jar-ome-xml, jar-jai, jar-poi-loci, jar-mdbtools"
     description="generate JAR file for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.jar"/>
   </target>
@@ -325,7 +325,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats"
-    depends="clean-common, clean-ome-xml"
+    depends="clean-common, clean-ome-xml, clean-jai, clean-poi-loci, clean-mdbtools"
     description="remove build files for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>
