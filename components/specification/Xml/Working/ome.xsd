@@ -494,6 +494,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="FluorescenceCorrelationSpectroscopy"/>
 						<xsd:enumeration value="NearFieldScanningOpticalMicroscopy"/>
 						<xsd:enumeration value="SecondHarmonicGenerationImaging"/>
+						<xsd:enumeration value="PALM"/><!-- photo-activated localization microscopy -->
+						<xsd:enumeration value="STORM"/><!-- stochastic optical reconstruction microscopy -->
+						<xsd:enumeration value="STED"/><!-- stimulated emission depletion -->
 						<xsd:enumeration value="Other"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -514,6 +517,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="PolarizedLight"/>
 						<xsd:enumeration value="Darkfield"/>
 						<xsd:enumeration value="Fluorescence"/>
+						<xsd:enumeration value="TIRF"/><!-- total internal reflection fluorescence -->
 						<xsd:enumeration value="Other"/>
 					</xsd:restriction>
 				</xsd:simpleType>
