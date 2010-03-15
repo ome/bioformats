@@ -20,6 +20,7 @@
 	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2010-04" 
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-04" 
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-04" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	version="1" 
 	elementFormDefault="qualified">
@@ -151,6 +152,9 @@
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
+		<!-- Unique Indexes -->
+		<xsd:key name="WellSampleIndex"><xsd:selector xpath="SPW:Well/SPW:WellSample"/><xsd:field xpath="@Index"/></xsd:key>
+		
 	</xsd:element>
 
 	<xsd:simpleType name="NamingConvention">
