@@ -4,7 +4,7 @@
 
 import java.io.FileReader;
 import java.io.IOException;
-import loci.common.XMLTools;
+import loci.common.xml.XMLTools;
 
 import java.io.StringWriter;
 import javax.xml.transform.Templates;
