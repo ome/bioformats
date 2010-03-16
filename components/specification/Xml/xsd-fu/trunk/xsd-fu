@@ -445,19 +445,18 @@ def tabGenMain(args):
 	namespace = "xsd:"
 	
 	for theSchemas in [
-	["OME","../../Working/ome.xsd", [["OME", "OME:"]]], 
-	["SPW","../../Working/SPW.xsd", [["Plate", "OME:Plate:"],["Screen", "OME:Screen:"]]],
-	["CA","../../Working/CA.xsd", [["CustomAttributes", "OME:Image:CustomAttributes:"],["CustomAttributes", "OME:CustomAttributes:"],["CustomAttributes", "OME:Region:CustomAttributes:"]]],
-	["SA","../../Working/SA.xsd", [["StructuredAnnotations", "OME:StructuredAnnotations:"]]],
-	["STD","../../Working/STD.xsd", [["SemanticTypeDefinitions", "OME:SemanticTypeDefinitions:"]]],
-	["AnalysisModule","../../Working/AnalysisModule.xsd", [["AnalysisModuleLibrary", "OME:AnalysisModuleLibrary:"]]],
-	["BinaryFile","../../Working/BinaryFile.xsd", [["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]#,
-
-	#["CLI","../../Working/CLI.xsd"],
-	#["AnalysisChain","../../Working/AnalysisChain.xsd"],
-	#["DataHistory","../../Working/DataHistory.xsd"],
-	#["MLI","../../Working/MLI.xsd"],
-	]:
+			["OME","../../Working/ome.xsd", 
+				[["OME", "OME:"]]], 
+			["ROI","../../Working/ROI.xsd", 
+				[["ROI", "OME:ROI:"]]], 
+			["SPW","../../Working/SPW.xsd", 
+				[["Plate", "OME:Plate:"],
+				["Screen", "OME:Screen:"]]],
+			["SA","../../Working/SA.xsd",
+				[["StructuredAnnotations", "OME:StructuredAnnotations:"]]],
+			["BinaryFile","../../Working/BinaryFile.xsd",
+				[["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]
+		]:
 		prefix = theSchemas[0] + ":"
 		model = parseXmlSchema([theSchemas[1]], namespace)
 		fu = TemplateInfo(outputDirectory, package)
@@ -471,7 +470,7 @@ def parentlist(model, name, pre):
 			#print pre + name;
 			for prop in obj.properties.values():
 				if prop.name[-14:] == "_BackReference":
-					print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\tback\t" + pre + prop.name;
+					print "-\t-\t" + prop.name + "\t" + prop.type + "\tback\t" + pre + prop.name;
 					pass
 				else:
 					if prop.name == name:
