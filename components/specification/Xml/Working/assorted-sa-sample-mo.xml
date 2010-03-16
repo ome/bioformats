@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME:OME xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
+    <OME:Project ID="Project:1">
+        <OME:Description></OME:Description>
+    	<OME:ExperimenterRef ID="Experimenter:1"/>
+        <OME:GroupRef ID="Group:1"/>
+    	<AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID="Annotation:1"/>
+    </OME:Project>
+    <OME:Dataset ID="Dataset:1">
+        <OME:Description></OME:Description>
+    	<OME:ExperimenterRef ID="Experimenter:1"/>
+    	<OME:GroupRef ID="Group:1"/>
+        <OME:ProjectRef ID="Project:1"/>
+        <CustomAttributes xmlns="http://www.openmicroscopy.org/Schemas/CA/2009-09"></CustomAttributes>
+    	<AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID="Annotation:2"/>
+    </OME:Dataset>
+	<OME:Experiment ID="Experiment:1">
+        <OME:Description></OME:Description>
+		<OME:ExperimenterRef ID="Experimenter:1"/>
+		<OME:MicrobeamManipulation ID="MicrobeamManipulation:!">
+            <ROIRef xmlns="http://www.openmicroscopy.org/Schemas/ROI/2009-09" ID="ROI:1"/>
+			<OME:ExperimenterRef ID="Experimenter:1"/>
+			<OME:LightSourceSettings ID="LightSource:1"/>
+        </OME:MicrobeamManipulation>
+    </OME:Experiment>
+    <Plate xmlns="http://www.openmicroscopy.org/Schemas/SPW/2009-09" ID="Plate:1"></Plate>
+    <Screen xmlns="http://www.openmicroscopy.org/Schemas/SPW/2009-09" ID="Screen:1"></Screen>
+	<OME:Experimenter ID="Experimenter:1" DisplayName="Andrew Patterson">
+		<OME:GroupRef ID="Group:1"/>
+		<AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID="Annotation:3"/>
+    </OME:Experimenter>
+	<OME:Group ID="Group:1">
+        <OME:Description></OME:Description>
+		<OME:Leader ID="Experimenter:1"/>
+		<OME:Contact ID="Experimenter:1"/>
+    </OME:Group>
+	<OME:Instrument ID="Instrument:1">
+        <OME:Microscope/>
+		<OME:LightSource ID="LightSource:1">
+			<OME:Laser>
+				<OME:Pump ID="LightSource:2"/>
+			</OME:Laser>
+		</OME:LightSource>
+		<OME:LightSource ID="LightSource:2">
+			<OME:Arc Type="Hg"/>
+		</OME:LightSource>
+		<OME:Detector ID="Detector:1"/>
+        <OME:Objective ID="Objective:1"/>
+        <OME:FilterSet ID="FilterSet:1">
+            <OME:ExcitationFilterRef ID="Filter:1"/>
+            <OME:DichroicRef ID="Dichroic:1"/>
+            <OME:EmissionFilterRef ID="Filter:1"/>
+        </OME:FilterSet>
+        <OME:Filter ID="">
+            <OME:TransmittanceRange/>
+        </OME:Filter>
+        <OME:Dichroic ID=""/>
+        <OME:OTF ID="" Type="" OpticalAxisAveraged="" SizeX="" SizeY="">
+            <OME:ObjectiveSettings ID=""/>
+            <OME:FilterSetRef ID=""/>
+            <BinaryFile xmlns="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" FileName="" Size=""></BinaryFile>
+        </OME:OTF>
+    </OME:Instrument>
+    <OME:Image ID="">
+        <OME:AcquiredDate></OME:AcquiredDate>
+        <OME:ExperimenterRef ID=""/>
+        <OME:Description></OME:Description>
+        <OME:ExperimentRef ID=""/>
+        <OME:GroupRef ID=""/>
+        <OME:DatasetRef ID=""/>
+        <OME:InstrumentRef ID=""/>
+        <OME:ObjectiveSettings ID=""/>
+        <OME:ImagingEnvironment/>
+        <OME:StageLabel Name=""/>
+        <OME:Pixels ID="" DimensionOrder="" Type="" SizeX="" SizeY="" SizeZ="" SizeC="" SizeT="">
+            <OME:Channel ID="">
+                <OME:LightSourceSettings ID=""/>
+                <OME:OTFRef ID=""/>
+                <OME:DetectorSettings ID=""/>
+                <OME:FilterSetRef ID=""/>
+                <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID=""/>
+            </OME:Channel>
+            <BinData xmlns="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" BigEndian="" Length=""></BinData>
+            <OME:Plane TheZ="" TheT="" TheC="">
+                <OME:HashSHA1></OME:HashSHA1>
+                <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID=""/>
+            </OME:Plane>
+            <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID=""/>
+        </OME:Pixels>
+        <CustomAttributes xmlns="http://www.openmicroscopy.org/Schemas/CA/2009-09"></CustomAttributes>
+        <ROIRef xmlns="http://www.openmicroscopy.org/Schemas/ROI/2009-09" ID=""/>
+        <OME:MicrobeamManipulationRef ID=""/>
+        <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09" ID=""/>
+    </OME:Image>
+    <SemanticTypeDefinitions xmlns="http://www.openmicroscopy.org/Schemas/STD/2009-09">
+        <SemanticType Name="" AppliesTo="">
+            <Element Name="" DataType=""></Element>
+        </SemanticType>
+    </SemanticTypeDefinitions>
+    <CustomAttributes xmlns="http://www.openmicroscopy.org/Schemas/CA/2009-09"></CustomAttributes>
+    <StructuredAnnotations xmlns="http://www.openmicroscopy.org/Schemas/SA/2009-09"></StructuredAnnotations>
+    <ROI xmlns="http://www.openmicroscopy.org/Schemas/ROI/2009-09" ID=""></ROI>
+</OME:OME>
