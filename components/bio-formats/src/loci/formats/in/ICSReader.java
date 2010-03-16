@@ -218,14 +218,15 @@ public class ICSReader extends FormatReader {
     int[] coordinates = getZCTCoords(no);
     int[] prevCoordinates = getZCTCoords(prevImage);
 
-    in.seek(offset + no * len);
+    in.seek(offset + no * (long) len);
 
     int sizeC = lifetime ? 1 : getSizeC();
 
     if (!isRGB() && sizeC > 4 && channelLengths.size() == 1) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
-      in.seek(offset + len * getIndex(coordinates[0], 0, coordinates[2]));
+      in.seek(offset +
+        (long) len * getIndex(coordinates[0], 0, coordinates[2]));
       if (!gzip && data == null) {
         data = new byte[len * getSizeC()];
         in.read(data);
