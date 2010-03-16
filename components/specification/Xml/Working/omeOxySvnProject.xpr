@@ -1880,6 +1880,7 @@
             <file name="roi-sample.xml"/>
             <file name="roi-sa-sample-2009.xml"/>
             <file name="sample-updated.ome.xml"/>
+            <file name="spw-sample.xml"/>
         </folder>
         <folder path="../../../Java/xslt/"/>
         <folder path="../../Documentation/Samples/"/>
