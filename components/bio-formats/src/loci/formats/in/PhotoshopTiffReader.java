@@ -85,7 +85,9 @@ public class PhotoshopTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
-    return tp.getFirstIFD().containsKey(IMAGE_SOURCE_DATA);
+    IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
+    return ifd.containsKey(IMAGE_SOURCE_DATA);
   }
 
   /**

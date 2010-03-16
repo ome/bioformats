@@ -45,7 +45,9 @@ public class ImporterMetadata extends HashMap<String, Object> {
 
   // -- Constructor --
 
-  public ImporterMetadata(IFormatReader r, ImporterOptions options) {
+  public ImporterMetadata(IFormatReader r, ImporterOptions options,
+    boolean usePrefix)
+  {
     // merge global metadata
     putAll(r.getGlobalMetadata());
 
@@ -60,17 +62,20 @@ public class ImporterMetadata extends HashMap<String, Object> {
       r.setSeries(i);
 
       // build prefix from image name and/or series number
-      String s = options.getOMEMetadata().getImageName(i);
-      if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("Series ");
-        int zeroes = digits - digits(i + 1);
-        for (int j=0; j<zeroes; j++) sb.append(0);
-        sb.append(i + 1);
-        sb.append(" ");
-        s = sb.toString();
+      String s = "";
+      if (usePrefix) {
+        s = options.getOMEMetadata().getImageName(i);
+        if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
+          StringBuffer sb = new StringBuffer();
+          sb.append("Series ");
+          int zeroes = digits - digits(i + 1);
+          for (int j=0; j<zeroes; j++) sb.append(0);
+          sb.append(i + 1);
+          sb.append(" ");
+          s = sb.toString();
+        }
+        else s += " ";
       }
-      else s += " ";
 
       // merge series metadata
       Hashtable seriesMeta = r.getSeriesMetadata();

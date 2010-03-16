@@ -480,7 +480,13 @@ public class ImporterOptions extends OptionsList {
 
   /** Initializes the ImporterMetadata derived value. */
   private void initializeMetadata() {
-    metadata = new ImporterMetadata(reader.r, this);
+    // only prepend a series name prefix to the metadata keys if multiple
+    // series are being opened
+    int seriesCount = 0;
+    for (int i=0; i<series.length; i++) {
+      if (series[i]) seriesCount++;
+    }
+    metadata = new ImporterMetadata(reader.r, this, seriesCount > 1);
   }
 
   /** Prompts for which series to import, if necessary. */

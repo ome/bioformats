@@ -833,6 +833,7 @@ public class DicomReader extends FormatReader {
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
+        key = formatTag(tag) + " " + key;
         if (metadata.containsKey(key)) {
           // make sure that values are not overwritten
           Object v = getMetadataValue(key);
@@ -1169,6 +1170,14 @@ public class DicomReader extends FormatReader {
         fileList.get(fileSeries).add(file);
       }
     }
+  }
+
+  private String formatTag(int tag) {
+    String s = Integer.toHexString(tag);
+    while (s.length() < 8) {
+      s = "0" + s;
+    }
+    return s.substring(0, 4) + "," + s.substring(4);
   }
 
   /**
