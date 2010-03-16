@@ -179,10 +179,10 @@ public class BDReader extends FormatReader {
 
     plateName = plate.getTable("PlateType").get("Brand");
 
-    Location dir = new Location(id).getParentFile();
-    for (String filename :  dir.list()) {
+    Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    for (String filename : dir.list()) {
       if (filename.startsWith("Well ")) {
-        wellLabels.add(filename.substring(5,8));
+        wellLabels.add(filename.split("\\s|\\.")[1]);
       }
     }
 
