@@ -675,7 +675,7 @@
 						</xsl:attribute>
 						<xsl:for-each select="exsl:node-set($lc)/*">
 							<!-- convert attribute of logicalChannel -->
-							<xsl:for-each select="@* [not(name(.) = 'PhotometricInterpretation')]">
+							<xsl:for-each select="@* [not((name(.) = 'PhotometricInterpretation') or (name(.) = 'SamplesPerPixel'))]">
 								<xsl:choose>
 									<xsl:when test="name() = 'Mode'">
 										<xsl:attribute name="AcquisitionMode">
