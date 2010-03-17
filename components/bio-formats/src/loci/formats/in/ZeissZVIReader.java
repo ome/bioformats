@@ -829,6 +829,12 @@ public class ZeissZVIReader extends FormatReader {
         String key = getKey(tagID);
         if (key.equals("Image Channel Index")) {
           cIndex = Integer.parseInt(value);
+          int v = 0;
+          while (getGlobalMeta(key + " " + v) != null) v++;
+          if (!getGlobalMetadata().containsValue(cIndex)) {
+            addGlobalMeta(key + " " + v, cIndex);
+          }
+          continue;
         }
         else if (key.equals("ImageWidth")) {
           int v = Integer.parseInt(value);
