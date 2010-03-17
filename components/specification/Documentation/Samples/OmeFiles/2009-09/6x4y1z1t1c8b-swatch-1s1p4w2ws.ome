@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09" xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09" xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09" xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
+	<SPW:Plate ID="Plate:1">
+		<SPW:Description></SPW:Description>
+		<SPW:ScreenRef ID="Screen:1"/>
+		<SPW:Well ID="Well:1.1.1" Column="1" Row="1">
+			<SPW:WellSample ID="WellSample:1.1.1.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.1.1.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+		<SPW:Well ID="Well:1.2.1" Column="2" Row="1">
+			<SPW:WellSample ID="WellSample:1.2.1.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.2.1.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+		<SPW:Well ID="Well:1.1.2" Column="1" Row="2">
+			<SPW:WellSample ID="WellSample:1.1.2.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.1.2.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+		<SPW:Well ID="Well:1.2.2" Column="2" Row="2">
+			<SPW:WellSample ID="WellSample:1.2.2.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.2.2.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+	</SPW:Plate>
+	<SPW:Screen ID="Screen:1" 
+		ProtocolDescription="" 
+		ProtocolIdentifier="" 
+		ReagentSetDescription="" 
+		ReagentSetIdentifier="" 
+		Name="" 
+		Type="">
+		<SPW:Description></SPW:Description>
+		<SPW:Reagent ID="Reagent:1" Name="" ReagentIdentifier="">
+			<SPW:Description></SPW:Description>
+		</SPW:Reagent>
+		<SPW:PlateRef ID="Plate:1"/>
+		<SPW:ScreenAcquisition ID="ScreenAcquisition:1" StartTime="2010-02-23T12:49:30" EndTime="2010-02-23T12:50:30">
+			<SPW:WellSampleRef ID="WellSample:1.1.1.1"/>
+			<SPW:WellSampleRef ID="WellSample:1.2.1.1"/>
+			<SPW:WellSampleRef ID="WellSample:1.1.2.1"/>
+			<SPW:WellSampleRef ID="WellSample:1.2.2.1"/>
+		</SPW:ScreenAcquisition>
+		<SPW:ScreenAcquisition ID="ScreenAcquisition:2"  StartTime="2010-02-23T12:50:30" EndTime="2010-02-23T12:51:29">
+			<SPW:WellSampleRef ID="WellSample:1.1.1.2"/>
+			<SPW:WellSampleRef ID="WellSample:1.2.1.2"/>
+			<SPW:WellSampleRef ID="WellSample:1.1.2.2"/>
+			<SPW:WellSampleRef ID="WellSample:1.2.2.2"/>
+		</SPW:ScreenAcquisition>
+	</SPW:Screen>
+	<Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+      <AcquiredDate>2010-02-23T12:51:30</AcquiredDate>
+      <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" 
+         PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" 
+         Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+         <Channel Color="4294967295" ID="Channel:0"/>
+         <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+      </Pixels>
+   </Image>
+</OME>

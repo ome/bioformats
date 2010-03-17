@@ -62,21 +62,74 @@
 
 	<!-- Actual schema changes -->
 
+	<xsl:template match="SPW:Plate">
+		<xsl:element name="{name()}" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="wellCount"><xsl:value-of select="count(* [local-name(.)='Well'])"/></xsl:variable>
+			<xsl:apply-templates select="* [local-name(.)='Description']"/>
+			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
+			<xsl:comment> Total Wells: <xsl:number value="$wellCount"/> </xsl:comment>
+			<xsl:for-each select="* [local-name(.)='Well']">
+				<xsl:variable name="wellNumber"><xsl:number value="position()"/></xsl:variable>
+				<xsl:comment> Process Well #<xsl:number value="$wellNumber"/> </xsl:comment>
+				<xsl:call-template name="convertWell">
+					<xsl:with-param name="wellNode" select="."/>
+					<xsl:with-param name="wellCount" select="$wellCount"/>
+					<xsl:with-param name="wellNumber" select="$wellNumber"/>
+				</xsl:call-template>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<!-- SPW:Well - passing values through to well sample template -->
+	<xsl:template name="convertWell">
+		<xsl:param name="wellNode"/>
+		<xsl:param name="wellCount"/>
+		<xsl:param name="wellNumber"/>
+		<xsl:element name="SPW:Well" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:comment> In Well #<xsl:number value="$wellNumber"/> of <xsl:number value="$wellCount"/></xsl:comment>
+			<xsl:for-each select="* [local-name(.)='WellSample']">
+				<xsl:comment> Processing WellSample #<xsl:number value="position()"/> </xsl:comment>
+				<xsl:call-template name="convertWellSample">
+					<xsl:with-param name="wellSampleNode" select="."/>
+					<xsl:with-param name="wellCount" select="$wellCount"/>
+					<xsl:with-param name="wellNumber" select="$wellNumber"/>
+				</xsl:call-template>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.)='ReagentRef']"/>
+			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- SPW:WellSample - adding index to well sample -->
+	<xsl:template name="convertWellSample">
+		<xsl:param name="wellSampleNode"/>
+		<xsl:param name="wellCount"/>
+		<xsl:param name="wellNumber"/>
+		<xsl:element name="SPW:WellSample" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:attribute name="Index">
+				<xsl:value-of select="$wellNumber * position()"/>
+			</xsl:attribute>
+			<xsl:comment> Wells: <xsl:number value="$wellCount"/> </xsl:comment>
+			<xsl:comment> WellSampleIndex #<xsl:number value="$wellNumber * position()"/> </xsl:comment>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+	
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
-		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
-			xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09"
-			xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09"
-			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
-			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
-			xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
-			xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
-			xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
-			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
-			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
+		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
+			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-04"
+			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04"
+			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd">
+<!-- FIX SCHEMA LOCATION -->
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>
