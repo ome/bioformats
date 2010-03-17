@@ -32,10 +32,12 @@ Type "ant -p" for a list of targets.
 
   <target name="init-svn">
     <!-- determine SVN and version statistics -->
+    <property name="svn.path" value="${basedir}/.svn/entries"/>
+    <available file="${svn.path}" property="svn.present"/>
     <if>
-      <isset property="svn.log"/>
-      <else>
-        <loadfile property="svn.entries" srcFile="${basedir}/.svn/entries"/>
+      <isset property="svn.present"/>
+      <then>
+        <loadfile property="svn.entries" srcFile="${svn.path}"/>
 
         <propertyregex property="svn.revision"
           input="${svn.entries}" regexp="([^\n]*\n){3}([^\n]*)" select="\2"/>
@@ -59,7 +61,7 @@ Type "ant -p" for a list of targets.
           defaultValue="${release.version}"
           input="${svn.url}" regexp=".*/tags/loci-tools-([^/]*).*"
           replace="stable \1"/>
-      </else>
+      </then>
     </if>
   </target>
 
