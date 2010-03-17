@@ -214,10 +214,9 @@ public class ImagePlusReader extends MinMaxCalculator {
         byteTable = new byte[3][256];
 
         for (int i=0; i<byteTable[0].length; i++) {
-          int index = (int) (((float) i / byteTable[0].length) * 65535);
-          byteTable[0][i] = (byte) ((shortTable[0][index] / 65535f) * 255);
-          byteTable[1][i] = (byte) ((shortTable[1][index] / 65535f) * 255);
-          byteTable[2][i] = (byte) ((shortTable[2][index] / 65535f) * 255);
+          byteTable[0][i] = (byte) shortTable[0][i];
+          byteTable[1][i] = (byte) shortTable[1][i];
+          byteTable[2][i] = (byte) shortTable[2][i];
         }
 
         cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],

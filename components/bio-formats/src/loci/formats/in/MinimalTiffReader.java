@@ -145,11 +145,12 @@ public class MinimalTiffReader extends FormatReader {
         }
         else return null;
       }
+
       short[][] table = new short[3][colorMap.length / 3];
       int next = 0;
       for (int i=0; i<table.length; i++) {
         for (int j=0; j<table[0].length; j++) {
-          table[i][j] = (short) ((colorMap[next++] >> 8) & 0xffff);
+          table[i][j] = (short) (colorMap[next++] & 0xffff);
         }
       }
       return table;

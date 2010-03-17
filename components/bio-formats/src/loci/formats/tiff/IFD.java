@@ -842,17 +842,16 @@ public class IFD extends HashMap<Integer, Object> {
         (value instanceof TiffCompression))
       {
         v = value.toString();
+        LOGGER.debug("\t{}={}", getIFDTagName(tag.intValue()), v);
       }
       else {
         // this is an array of primitive types, Strings, or TiffRationals
+        LOGGER.debug("\t{}=", getIFDTagName(tag.intValue()));
         int nElements = Array.getLength(value);
-        v = "";
         for (int i=0; i<nElements; i++) {
-          v += Array.get(value, i);
-          if (i < nElements - 1) v += ",";
+          LOGGER.debug("\t\t{}", Array.get(value, i));
         }
       }
-      LOGGER.debug("\t{}={}", getIFDTagName(tag.intValue()), v);
     }
   }
 
