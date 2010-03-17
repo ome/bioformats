@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.*;
+import loci.common.RandomAccessInputStream;
 import loci.formats.*;
 import loci.formats.out.TiffWriter;
 import loci.formats.tiff.IFD;
@@ -536,7 +537,11 @@ public class MakeTestOmeTiff {
               }
             }
             out.close();
-            TiffSaver.overwriteComment(filenames[i][p][j], xml);
+            TiffSaver saver = new TiffSaver(filenames[i][p][j]);
+            RandomAccessInputStream in =
+              new RandomAccessInputStream(filenames[i][p][j]);
+            saver.overwriteComment(in, xml);
+            in.close();
           }
         }
       }

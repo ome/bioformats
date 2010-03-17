@@ -2,9 +2,10 @@
 // ConvertToOmeTiff.java
 //
 
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 import loci.formats.out.OMETiffWriter;
 
 /**
@@ -30,7 +31,9 @@ public class ConvertToOmeTiff {
       System.out.print("Converting " + id + " to " + outId + " ");
 
       // record metadata to OME-XML format
-      IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      IMetadata omexmlMeta = service.createOMEXMLMetadata();
       reader.setMetadataStore(omexmlMeta);
       reader.setId(id);
 

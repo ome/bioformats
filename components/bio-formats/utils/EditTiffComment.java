@@ -40,7 +40,10 @@ public class EditTiffComment {
       String xml = cin.readLine();
       System.out.print("Saving " + f);
       // save results back to the TIFF file
-      TiffSaver.overwriteComment(f, xml);
+      TiffSaver saver = new TiffSaver(f);
+      RandomAccessInputStream in = new RandomAccessInputStream(f);
+      saver.overwriteComment(in, xml);
+      in.close();
       System.out.println(" [done]");
     }
   }

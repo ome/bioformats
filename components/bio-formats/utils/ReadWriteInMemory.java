@@ -3,10 +3,14 @@
 //
 
 import java.io.*;
-import loci.common.Location;
 import loci.common.ByteArrayHandle;
+import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Tests the Bio-Formats I/O logic to and from byte arrays in memory.
@@ -17,7 +21,9 @@ import loci.formats.meta.IMetadata;
  */
 public class ReadWriteInMemory {
 
-  public static void main(String[] args) throws FormatException, IOException {
+  public static void main(String[] args)
+    throws DependencyException, FormatException, IOException, ServiceException
+  {
     if (args.length < 1) {
       System.out.println("Please specify a (small) image file.");
       System.exit(1);
@@ -45,7 +51,11 @@ public class ReadWriteInMemory {
     // read data from byte array using ImageReader
     System.out.println();
     System.out.println("Reading image data from memory...");
-    IMetadata omeMeta = MetadataTools.createOMEXMLMetadata();
+
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata omeMeta = service.createOMEXMLMetadata();
+
     ImageReader reader = new ImageReader();
     reader.setMetadataStore(omeMeta);
     reader.setId(inId);

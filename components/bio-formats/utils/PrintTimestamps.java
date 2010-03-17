@@ -5,11 +5,12 @@
 import java.util.Arrays;
 
 import loci.common.DateTools;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatReader;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Uses Bio-Formats to extract timestamp information
@@ -113,9 +114,11 @@ public class PrintTimestamps {
     //FormatReader.debug = true;
 
     // create OME-XML metadata store of the latest schema version
-    IMetadata meta = MetadataTools.createOMEXMLMetadata();
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata meta = service.createOMEXMLMetadata();
     // or if you want a specific schema version, you can use:
-    //IMetadata meta = MetadataTools.createOMEXMLMetadata(null, "2009-02");
+    //IMetadata meta = service.createOMEXMLMetadata(null, "2009-02");
     //meta.createRoot();
 
     // create format reader

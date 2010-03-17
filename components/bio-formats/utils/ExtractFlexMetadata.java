@@ -34,8 +34,7 @@ public class ExtractFlexMetadata {
         RandomAccessInputStream in = new RandomAccessInputStream(id);
         TiffParser parser = new TiffParser(in);
         IFD firstIFD = parser.getIFDs().get(0);
-        String xml =
-          (String) firstIFD.getIFDValue(FlexReader.FLEX, true, String.class);
+        String xml = firstIFD.getIFDTextValue(FlexReader.FLEX);
         in.close();
         FileWriter writer = new FileWriter(new File(outId));
         writer.write(xml);

@@ -4,11 +4,14 @@
 
 import java.io.IOException;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Uses Bio-Formats to extract lens numerical aperture
@@ -20,7 +23,9 @@ import loci.formats.meta.IMetadata;
  */
 public class PrintLensNA {
 
-  public static void main(String[] args) throws FormatException, IOException {
+  public static void main(String[] args)
+    throws DependencyException, FormatException, IOException, ServiceException
+  {
     // parse command line arguments
     if (args.length < 1) {
       System.err.println("Usage: java PrintLensNA imageFile");
@@ -30,7 +35,9 @@ public class PrintLensNA {
 
     // configure reader
     IFormatReader reader = new ImageReader();
-    IMetadata meta = MetadataTools.createOMEXMLMetadata();
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata meta = service.createOMEXMLMetadata();
     reader.setMetadataStore(meta);
     System.out.println("Initializing file: " + id);
     reader.setId(id); // parse metadata

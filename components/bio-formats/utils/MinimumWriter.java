@@ -2,8 +2,10 @@
 // MinimumWriter.java
 //
 
+import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Demonstrates the minimum amount of metadata
@@ -33,7 +35,11 @@ public class MinimumWriter {
 
     // create metadata object with minimum required metadata fields
     System.out.println("Populating metadata...");
-    IMetadata meta = MetadataTools.createOMEXMLMetadata();
+
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata meta = service.createOMEXMLMetadata();
+
     meta.createRoot();
     meta.setPixelsBigEndian(Boolean.TRUE, 0, 0);
     meta.setPixelsDimensionOrder("XYZCT", 0, 0);

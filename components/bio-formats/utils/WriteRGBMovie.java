@@ -2,8 +2,10 @@
 // WriteRGBMovie.java
 //
 
+import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Demonstrates writing multiple RGB image planes to a movie.
@@ -40,7 +42,9 @@ public class WriteRGBMovie {
 
     // create metadata object with required metadata fields
     System.out.println("Populating metadata...");
-    IMetadata meta = MetadataTools.createOMEXMLMetadata();
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata meta = service.createOMEXMLMetadata();
     meta.createRoot();
     meta.setPixelsBigEndian(Boolean.TRUE, 0, 0);
     meta.setPixelsDimensionOrder("XYZCT", 0, 0);

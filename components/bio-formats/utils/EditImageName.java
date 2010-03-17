@@ -2,9 +2,10 @@
 // EditImageName.java
 //
 
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Edits the given file's image name (but does not save back to disk).
@@ -22,7 +23,9 @@ public class EditImageName {
     }
     ImageReader reader = new ImageReader();
     // record metadata to OME-XML format
-    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata omexmlMeta = service.createOMEXMLMetadata();
     reader.setMetadataStore(omexmlMeta);
     String id = args[0];
     System.out.print("Reading metadata ");
@@ -47,7 +50,7 @@ public class EditImageName {
     System.out.println("Updated Image name = " + name);
     // output full OME-XML block
     System.out.println("Full OME-XML dump:");
-    String xml = MetadataTools.getOMEXML(omexmlMeta);
+    String xml = service.getOMEXML(omexmlMeta);
     System.out.println(xml);
   }
 

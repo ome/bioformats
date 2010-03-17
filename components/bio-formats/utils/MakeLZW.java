@@ -2,10 +2,11 @@
 // MakeLZW.java
 //
 
-import loci.formats.MetadataTools;
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Converts the given image file to an LZW-compressed TIFF.
@@ -18,7 +19,11 @@ public class MakeLZW {
 
   public static void main(String[] args) throws Exception {
     ImageReader reader = new ImageReader();
-    IMetadata omexmlMeta = MetadataTools.createOMEXMLMetadata();
+
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata omexmlMeta = service.createOMEXMLMetadata();
+
     reader.setMetadataStore(omexmlMeta);
     TiffWriter writer = new TiffWriter();
     for (int i=0; i<args.length; i++) {

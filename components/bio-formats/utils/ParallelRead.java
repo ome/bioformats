@@ -3,9 +3,10 @@
 //
 
 import java.io.File;
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Reads all files in given directory in parallel,
@@ -25,7 +26,9 @@ public class ParallelRead implements Runnable {
   public void run() {
     try {
       ImageReader r = new ImageReader();
-      IMetadata meta = MetadataTools.createOMEXMLMetadata();
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      IMetadata meta = service.createOMEXMLMetadata();
       r.setMetadataStore(meta);
       r.setId(id);
       System.out.println(Thread.currentThread().getName() +

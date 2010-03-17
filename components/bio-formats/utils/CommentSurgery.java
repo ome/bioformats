@@ -2,6 +2,7 @@
 // CommentSurgery.java
 //
 
+import loci.common.RandomAccessInputStream;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 
@@ -36,7 +37,10 @@ public class CommentSurgery {
       if (test) System.out.println(xml);
       else {
         System.out.println(len + " -> " + xml.length());
-        TiffSaver.overwriteComment(id, xml);
+        TiffSaver saver = new TiffSaver(id);
+        RandomAccessInputStream in = new RandomAccessInputStream(id);
+        saver.overwriteComment(in, xml);
+        in.close();
       }
     }
   }

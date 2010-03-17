@@ -4,11 +4,12 @@
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.ServiceFactory;
 import loci.formats.FilePattern;
-import loci.formats.MetadataTools;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
+import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -50,7 +51,9 @@ public class SewTiffs {
 
     for (int t=0; t<num; t++) {
       String inId = base + "_C" + c + "_TP" + (t + 1) + ".tiff";
-      IMetadata meta = MetadataTools.createOMEXMLMetadata();
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      IMetadata meta = service.createOMEXMLMetadata();
       in.setMetadataStore(meta);
       in.setId(inId);
       out.setMetadataRetrieve(meta);
