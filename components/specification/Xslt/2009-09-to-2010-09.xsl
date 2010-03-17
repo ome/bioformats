@@ -89,9 +89,7 @@
 		<xsl:param name="wellNumber"/>
 		<xsl:element name="SPW:Well" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*"/>
-			<xsl:comment> In Well #<xsl:number value="$wellNumber"/> of <xsl:number value="$wellCount"/></xsl:comment>
 			<xsl:for-each select="* [local-name(.)='WellSample']">
-				<xsl:comment> Processing WellSample #<xsl:number value="position()"/> </xsl:comment>
 				<xsl:call-template name="convertWellSample">
 					<xsl:with-param name="wellSampleNode" select="."/>
 					<xsl:with-param name="wellCount" select="$wellCount"/>
@@ -111,10 +109,8 @@
 		<xsl:element name="SPW:WellSample" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:attribute name="Index">
-				<xsl:value-of select="$wellNumber * position()"/>
+				<xsl:value-of select="(($wellNumber) + ($wellCount * (position() - 1)))"/>
 			</xsl:attribute>
-			<xsl:comment> Wells: <xsl:number value="$wellCount"/> </xsl:comment>
-			<xsl:comment> WellSampleIndex #<xsl:number value="$wellNumber * position()"/> </xsl:comment>
 			<xsl:apply-templates select="*"/>
 		</xsl:element>
 	</xsl:template>
