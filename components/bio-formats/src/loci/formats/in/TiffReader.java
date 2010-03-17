@@ -172,11 +172,12 @@ public class TiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     if (description != null) {
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
       store.setImageDescription(description, 0);
     }
+    populateMetadataStoreImageJ(store);
   }
 
   // -- Helper methods --
@@ -206,20 +207,15 @@ public class TiffReader extends BaseTiffReader {
     StringTokenizer st = new StringTokenizer(comment, "\n");
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
-      int value = 0;
+      String value = null;
       int eq = token.indexOf("=");
-      if (eq != -1 && eq + 1 < token.length()) {
-        try {
-          value = Integer.parseInt(token.substring(eq + 1));
-        }
-        catch (NumberFormatException e) {
-          LOGGER.debug("Failed to parse integer value", e);
-        }
-      }
+      if (eq >= 0) value = token.substring(eq + 1);
 
-      if (token.startsWith("channels=")) c = value;
-      else if (token.startsWith("slices=")) z = value;
-      else if (token.startsWith("frames=")) t = value;
+      if (token.startsWith("channels=")) c = parseInt(value);
+      else if (token.startsWith("slices=")) z = parseInt(value);
+      else if (token.startsWith("frames=")) t = parseInt(value);
+      else if (token.startsWith("spacing=")) put("Spacing", value);
+      else if (token.startsWith("unit=")) put("Unit", value);
     }
     if (z * c * t == c && isRGB()) {
       t = getImageCount();
@@ -288,6 +284,23 @@ public class TiffReader extends BaseTiffReader {
     }
   }
 
+  /**
+   * Checks the original metadata table for ImageJ-specific information
+   * to propagate into the metadata store.
+   */
+  private void populateMetadataStoreImageJ(MetadataStore store) {
+    // TODO: Perhaps we should only populate the physical Z size if the unit is
+    //       a known, physical quantity such as "micron" rather than "pixel".
+    //String unit = getGlobalMeta("Unit");
+    Object spacing = getGlobalMeta("Spacing");
+    double zDepth = 0;
+    if (spacing != null) {
+      zDepth = parseDouble(spacing.toString());
+      if (zDepth < 0) zDepth = -zDepth;
+    }
+    if (zDepth != 0) store.setDimensionsPhysicalSizeZ(new Double(zDepth), 0, 0);
+  }
+
   private void parseCommentMetamorph(String comment) {
     // parse key/value pairs
     StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -324,6 +337,26 @@ public class TiffReader extends BaseTiffReader {
       addGlobalMeta("Comment", comment);
       description = comment;
     }
+  }
+
+  private int parseInt(String s) {
+    try {
+      return Integer.parseInt(s);
+    }
+    catch (NumberFormatException e) {
+      LOGGER.debug("Failed to parse integer value", e);
+    }
+    return 0;
+  }
+
+  private double parseDouble(String s) {
+    try {
+      return Double.parseDouble(s);
+    }
+    catch (NumberFormatException e) {
+      LOGGER.debug("Failed to parse floating point value", e);
+    }
+    return 0;
   }
 
 }
