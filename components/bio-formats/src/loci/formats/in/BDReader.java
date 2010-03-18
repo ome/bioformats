@@ -27,12 +27,11 @@ package loci.formats.in;
 import java.io.*;
 import java.util.*;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.IniList;
 import loci.common.IniParser;
-import loci.common.xml.XMLTools;
+import loci.common.IniTable;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -62,7 +61,7 @@ public class BDReader extends FormatReader {
   private Vector<String> metadataFiles = new Vector<String>();
   private Vector<String> channelNames = new Vector<String>();
   private Vector<String> wellLabels = new Vector<String>();
-  private String plateName;
+  private String plateName, plateDescription;
   private String[] tiffs;
   private MinimalTiffReader reader;
 
@@ -133,6 +132,7 @@ public class BDReader extends FormatReader {
       reader = null;
       tiffs = null;
       plateName = null;
+      plateDescription = null;
       channelNames.clear();
       metadataFiles.clear();
       wellLabels.clear();
@@ -172,12 +172,35 @@ public class BDReader extends FormatReader {
       if (filename.endsWith(".plt")) {
         plate = (new IniParser()).parseINI(
           new BufferedReader(new FileReader(filename)));
-        break;
+      }
+      else if (filename.endsWith("RoiSummary.txt")) {
+        RandomAccessInputStream s = new RandomAccessInputStream(filename);
+        String line = s.readLine().trim();
+        while (!line.endsWith(".adf\"")) {
+          line = s.readLine().trim();
+        }
+        plateName = line.substring(line.indexOf(":")).trim();
+        plateName = plateName.replace('/', File.separatorChar);
+        plateName = plateName.replace('\\', File.separatorChar);
+        for (int i=0; i<3; i++) {
+          plateName =
+            plateName.substring(0, plateName.lastIndexOf(File.separator));
+        }
+        plateName =
+          plateName.substring(plateName.lastIndexOf(File.separator) + 1);
+
+        s.close();
       }
     }
     if (plate == null) throw new IOException("No Plate File");
 
-    plateName = plate.getTable("PlateType").get("Brand");
+    IniTable plateType = plate.getTable("PlateType");
+
+    if (plateName == null) {
+      plateName = plateType.get("Brand");
+    }
+    plateDescription =
+      plateType.get("Brand") + " " + plateType.get("Description");
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
     for (String filename : dir.list()) {
@@ -243,7 +266,7 @@ public class BDReader extends FormatReader {
 
     for (String well : wellLabels) {
       String row = well.substring(0, 1).trim();
-      String column = well.substring(1, 3).trim();
+      String column = well.substring(1).trim();
 
       if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
       if (!uniqueColumns.contains(column) && column.length() > 0) {
@@ -304,13 +327,14 @@ public class BDReader extends FormatReader {
     store.setPlateRowNamingConvention("A", 0);
     store.setPlateColumnNamingConvention("01", 0);
     store.setPlateName(plateName, 0);
+    store.setPlateDescription(plateDescription, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
 
       String name = wellLabels.get(i);
       String row = name.substring(0, 1);
-      Integer col = Integer.parseInt(name.substring(1, 3));
+      Integer col = Integer.parseInt(name.substring(1));
 
       store.setWellColumn(col, 0, i);
       store.setWellRow(row.charAt(0)-'A', 0, i);
