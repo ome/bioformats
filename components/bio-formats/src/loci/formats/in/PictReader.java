@@ -245,8 +245,6 @@ public class PictReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    LOGGER.info("Populating metadata");
-
     core[0].littleEndian = false;
 
     in.seek(518);

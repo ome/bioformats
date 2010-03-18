@@ -620,6 +620,65 @@ public class OpenlabReader extends FormatReader {
       //core[i].seriesMetadata = getMetadata();
     }
 
+    Vector<String> uniqueT = new Vector<String>();
+    Vector<String> uniqueC = new Vector<String>();
+    Vector<String> uniqueZ = new Vector<String>();
+    String[] axes = new String[] {"Z", "C", "T"};
+
+    for (int s=0; s<getSeriesCount(); s++) {
+      core[s].dimensionOrder = "XY";
+      uniqueT.clear();
+      uniqueC.clear();
+      uniqueZ.clear();
+      for (PlaneInfo plane : planes) {
+        if (plane == null) continue;
+        if (plane.series == s) {
+          String name = plane.planeName;
+          for (String axis : axes) {
+            Vector<String> unique = null;
+            if (axis.equals("Z")) unique = uniqueZ;
+            else if (axis.equals("C")) unique = uniqueC;
+            else if (axis.equals("T")) unique = uniqueT;
+
+            int index = name.indexOf(axis + "=");
+            if (index == -1) index = name.indexOf(axis + " =");
+            if (index != -1) {
+              int nextEqual = name.indexOf("=", index + 3);
+              if (nextEqual < 0) {
+                nextEqual = (int) Math.min(index + 3, name.length());
+              }
+              int end = name.lastIndexOf(" ", nextEqual);
+              if (end < index) end = name.length();
+
+              String i = name.substring(name.indexOf("=", index), end);
+              if (!unique.contains(i)) {
+                unique.add(i);
+                if (unique.size() > 1 &&
+                  core[s].dimensionOrder.indexOf(axis) == -1)
+                {
+                  core[s].dimensionOrder += axis;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      for (String axis : axes) {
+        if (core[s].dimensionOrder.indexOf(axis) == -1) {
+          core[s].dimensionOrder += axis;
+        }
+      }
+      if (uniqueC.size() > 1) {
+        core[s].sizeC *= uniqueC.size();
+        core[s].sizeZ /= uniqueC.size();
+      }
+      if (uniqueT.size() > 1) {
+        core[s].sizeT = uniqueT.size();
+        core[s].sizeZ /= core[s].sizeT;
+      }
+    }
+
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
