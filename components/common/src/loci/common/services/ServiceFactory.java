@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ServiceFactory.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ServiceFactory.java">SVN</a></dd></dl>
- * @param <T>
  */
 public class ServiceFactory {
 
@@ -53,10 +52,10 @@ public class ServiceFactory {
   private static final String DEFAULT_PROPERTIES_FILE = "services.properties";
 
   /** Constructor cache. */
-  private static Map<Class<? extends Service>, Constructor<? extends Service>> 
-    constructorCache = 
+  private static Map<Class<? extends Service>, Constructor<? extends Service>>
+    constructorCache =
       new HashMap<Class<? extends Service>, Constructor<? extends Service>>();
-  
+
   /** Set of available services. */
   private Map<Class<? extends Service>, Class<? extends Service>>
     services =
@@ -116,7 +115,7 @@ public class ServiceFactory {
       LOGGER.debug("Added interface {} and implementation {}",
           interfaceClass, implementationClass);
     }
-    
+
   }
 
   /**
@@ -146,7 +145,7 @@ public class ServiceFactory {
   }
 
   /**
-   * Retrieves a constructor for a given class from the constructor cache if 
+   * Retrieves a constructor for a given class from the constructor cache if
    * possible.
    * @param klass Class to retrieve a constructor for.
    * @return See above.

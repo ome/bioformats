@@ -283,7 +283,7 @@ public class Location {
    * only supported if the path name can be interpreted as a path to a file on
    * disk (i.e. is not a URL).
    *
-   * @returns true if the file was created successfully
+   * @return true if the file was created successfully
    * @throws IOException if an I/O error occurred, or the
    *   abstract pathname is a URL
    * @see java.io.File#createNewFile()
@@ -294,10 +294,10 @@ public class Location {
   }
 
   /**
-   * Deletes this file.  If {@link isDirectory()} returns true, then the
+   * Deletes this file.  If {@link #isDirectory()} returns true, then the
    * directory must be empty in order to be deleted.  URLs cannot be deleted.
    *
-   * @returns true if the file was successfully deleted
+   * @return true if the file was successfully deleted
    * @see java.io.File#delete()
    */
   public boolean delete() {
@@ -361,7 +361,7 @@ public class Location {
   /**
    * Returns the canonical path to this file.
    * If the file is a URL, then the canonical path is equivalent to the
-   * absolute path ({@link getAbsolutePath()}).  Otherwise, this method
+   * absolute path ({@link #getAbsolutePath()}).  Otherwise, this method
    * will delegate to {@link java.io.File#getCanonicalPath()}.
    */
   public String getCanonicalPath() throws IOException {

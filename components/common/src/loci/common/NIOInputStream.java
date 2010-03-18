@@ -149,7 +149,7 @@ public class NIOInputStream extends InputStream implements DataInput {
   /**
    * Reads a string ending with one of the characters in the given string.
    *
-   * @see #findString(String)
+   * @see #findString(String...)
    */
   public String readString(String lastChars) throws IOException {
     if (lastChars.length() == 1) return findString(lastChars);

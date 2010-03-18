@@ -39,7 +39,7 @@ public interface MDBService extends Service {
 
   /**
    * Prepare the given .mdb file for reading.  This method must be called
-   * before {@link parseDatabase()}.
+   * before {@link #parseDatabase()}.
    *
    * @throws IOException if a problem occurs when opening the file
    */
@@ -54,7 +54,7 @@ public interface MDBService extends Service {
    * The first row in each table contains the names for each column.
    * The first entry in the column name row is the name of the table.
    *
-   * {@link initialize(String)} must be called before calling parseDatabase().
+   * {@link #initialize(String)} must be called before calling parseDatabase().
    *
    * @throws IOException if there is a problem reading the table data
    */

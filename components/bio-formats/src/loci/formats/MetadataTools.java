@@ -256,13 +256,21 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#getLatestVersion()}
+   * instead.
+   */
   public static String getLatestVersion() {
     if (omexmlService == null) return null;
     return omexmlService.getLatestVersion();
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#createOMEXMLMetadata()}
+   * instead.
+   */
   public static IMetadata createOMEXMLMetadata() {
     if (omexmlService == null) return null;
     try {
@@ -273,7 +281,11 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#createOMEXMLMetadata(String)}
+   * instead.
+   */
   public static IMetadata createOMEXMLMetadata(String xml) {
     if (omexmlService == null) return null;
     try {
@@ -284,7 +296,12 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#createOMEXMLMetadata(String,
+   *   String)}
+   * instead.
+   */
   public static IMetadata createOMEXMLMetadata(String xml, String version) {
     if (omexmlService == null) return null;
     try {
@@ -295,7 +312,11 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#createOMEXMLRoot(String)}
+   * instead.
+   */
   public static Object createOMEXMLRoot(String xml) {
     if (omexmlService == null) return null;
     try {
@@ -306,25 +327,41 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#isOMEXMLMetadata(Object)}
+   * instead.
+   */
   public static boolean isOMEXMLMetadata(Object o) {
     if (omexmlService == null) return false;
     return omexmlService.isOMEXMLMetadata(o);
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#isOMEXMLRoot(Object)}
+   * instead.
+   */
   public static boolean isOMEXMLRoot(Object o) {
     if (omexmlService == null) return false;
     return omexmlService.isOMEXMLRoot(o);
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#getOMEXMLVersion(Object)}
+   * instead.
+   */
   public static String getOMEXMLVersion(Object o) {
     if (omexmlService == null) return null;
     return omexmlService.getOMEXMLVersion(o);
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#getOMEMetadata(MetadataRetrieve)}
+   * instead.
+   */
   public static IMetadata getOMEMetadata(MetadataRetrieve src) {
     if (omexmlService == null) return null;
     try {
@@ -335,7 +372,11 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#getOMEXML(MetadataRetrieve)}
+   * instead.
+   */
   public static String getOMEXML(MetadataRetrieve src) {
     if (omexmlService == null) return null;
     try {
@@ -346,13 +387,21 @@ public final class MetadataTools {
     }
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#validateOMEXML(String)}
+   * instead.
+   */
   public static boolean validateOMEXML(String xml) {
     if (omexmlService == null) return false;
     return omexmlService.validateOMEXML(xml);
   }
 
-  /** @deprecated @see loci.formats.services.OMEXMLService */
+  /**
+   * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#validateOMEXML(String, boolean)}
+   * instead.
+   */
   public static boolean validateOMEXML(String xml, boolean pixelsHack) {
     if (omexmlService == null) return false;
     return omexmlService.validateOMEXML(xml, pixelsHack);

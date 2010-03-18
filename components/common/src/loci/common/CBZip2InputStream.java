@@ -59,8 +59,8 @@ import org.slf4j.LoggerFactory;
  * <p>The decompression requires large amounts of memory. Thus you
  * should call the {@link #close() close()} method as soon as
  * possible, to force <tt>CBZip2InputStream</tt> to release the
- * allocated memory.  See {@link CBZip2OutputStream
- * CBZip2OutputStream} for information about memory usage.</p>
+ * allocated memory.  See <tt>CBZip2OutputStream</tt>
+ * for information about memory usage.</p>
  *
  * <p><tt>CBZip2InputStream</tt> reads bytes from the compressed
  * source stream via the single byte {@link java.io.InputStream#read()
