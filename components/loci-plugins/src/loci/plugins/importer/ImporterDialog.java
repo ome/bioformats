@@ -29,6 +29,7 @@ import ij.gui.GenericDialog;
 
 import java.awt.Checkbox;
 import java.awt.Choice;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.Label;
@@ -45,6 +46,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
 import loci.plugins.prefs.OptionsDialog;
+import loci.plugins.util.WindowTools;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -325,6 +327,8 @@ public class ImporterDialog extends OptionsDialog
     gd.add(builder.getPanel());
 
     // display dialog to user and harvest results
+    WindowTools.addScrollBars(gd);
+    gd.setBackground(Color.white); // HACK: workaround for JPanel in a Dialog
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
     options.setAutoscale(gd.getNextBoolean());

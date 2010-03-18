@@ -99,10 +99,10 @@ public final class WindowTools {
     f.dispose();
 
     // compute best size for scrollable viewport
-    size.width += 15;
+    size.width += 25;
     size.height += 15;
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    int maxWidth = 3 * screen.width / 4;
+    int maxWidth = 7 * screen.width / 8;
     int maxHeight = 3 * screen.height / 4;
     if (size.width > maxWidth) size.width = maxWidth;
     if (size.height > maxHeight) size.height = maxHeight;
