@@ -29,8 +29,13 @@ import java.util.Map;
 
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,7 +225,7 @@ public final class MetadataTools {
   // -- Utility methods - original metadata --
 
   /** Gets a sorted list of keys from the given hashtable. */
-  public static String[] keys(Hashtable meta) {
+  public static String[] keys(Hashtable<String, Object> meta) {
     String[] keys = new String[meta.size()];
     meta.keySet().toArray(keys);
     Arrays.sort(keys);
@@ -231,10 +236,126 @@ public final class MetadataTools {
    * Merges the given lists of metadata, prepending the
    * specified prefix for the destination keys.
    */
-  public static void merge(Map src, Map dest, String prefix) {
-    for (Object key : src.keySet()) {
+  public static void merge(Map<String, Object> src, Map<String, Object> dest,
+    String prefix)
+  {
+    for (String key : src.keySet()) {
       dest.put(prefix + key, src.get(key));
     }
+  }
+
+  // -- Deprecated methods --
+
+  private static OMEXMLService omexmlService = createOMEXMLService();
+  private static OMEXMLService createOMEXMLService() {
+    try {
+      return new ServiceFactory().getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static String getLatestVersion() {
+    if (omexmlService == null) return null;
+    return omexmlService.getLatestVersion();
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static IMetadata createOMEXMLMetadata() {
+    if (omexmlService == null) return null;
+    try {
+      return omexmlService.createOMEXMLMetadata();
+    }
+    catch (ServiceException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static IMetadata createOMEXMLMetadata(String xml) {
+    if (omexmlService == null) return null;
+    try {
+      return omexmlService.createOMEXMLMetadata(xml);
+    }
+    catch (ServiceException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static IMetadata createOMEXMLMetadata(String xml, String version) {
+    if (omexmlService == null) return null;
+    try {
+      return omexmlService.createOMEXMLMetadata(xml);
+    }
+    catch (ServiceException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static Object createOMEXMLRoot(String xml) {
+    if (omexmlService == null) return null;
+    try {
+      return omexmlService.createOMEXMLMetadata(xml);
+    }
+    catch (ServiceException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static boolean isOMEXMLMetadata(Object o) {
+    if (omexmlService == null) return false;
+    return omexmlService.isOMEXMLMetadata(o);
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static boolean isOMEXMLRoot(Object o) {
+    if (omexmlService == null) return false;
+    return omexmlService.isOMEXMLRoot(o);
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static String getOMEXMLVersion(Object o) {
+    if (omexmlService == null) return null;
+    return omexmlService.getOMEXMLVersion(o);
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static IMetadata getOMEMetadata(MetadataRetrieve src) {
+    if (omexmlService == null) return null;
+    try {
+      return omexmlService.getOMEMetadata(src);
+    }
+    catch (ServiceException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static String getOMEXML(MetadataRetrieve src) {
+    if (omexmlService == null) return null;
+    try {
+      return omexmlService.getOMEXML(src);
+    }
+    catch (ServiceException exc) {
+      return null;
+    }
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static boolean validateOMEXML(String xml) {
+    if (omexmlService == null) return false;
+    return omexmlService.validateOMEXML(xml);
+  }
+
+  /** @deprecated @see loci.formats.services.OMEXMLService */
+  public static boolean validateOMEXML(String xml, boolean pixelsHack) {
+    if (omexmlService == null) return false;
+    return omexmlService.validateOMEXML(xml, pixelsHack);
   }
 
 }
