@@ -22,6 +22,7 @@
    <Image AcquiredPixels="Pixels:0:0" DefaultPixels="Pixels:0:0" 
       ID="Image:0" Name="6x6x1x8-swatch.tif">
       <CreationDate>2010-02-23T12:51:30</CreationDate>
+      <ExperimenterRef ID="Experimenter:0"/>
       <Description>This image is linked to the Control Set</Description>
       <DatasetRef ID="Dataset:0"/>
       <LogicalChannel ID="LogicalChannel:0">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09" xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09" xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09" xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
 	<SPW:Plate ID="Plate:1">
-		<SPW:Description></SPW:Description>
+		<SPW:Description>Plate 1 description.</SPW:Description>
 		<SPW:ScreenRef ID="Screen:1"/>
 		<SPW:Well ID="Well:1.1.1" Column="1" Row="1">
 			<SPW:WellSample ID="WellSample:1.1.1.1">
