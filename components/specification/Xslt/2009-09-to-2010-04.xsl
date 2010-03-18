@@ -115,6 +115,8 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<xsl:template match="SPW:ScreenAcquisition"/> <!-- Remove as converted to PlateAcquisition -->
+	
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
