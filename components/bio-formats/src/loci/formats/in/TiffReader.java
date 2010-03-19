@@ -62,6 +62,10 @@ public class TiffReader extends BaseTiffReader {
 
   private String companionFile;
   private String description;
+  private String calibrationUnit;
+  private Double physicalSizeZ;
+  private Double timeIncrement;
+  private Integer xOrigin, yOrigin;
 
   // -- Constructor --
 
@@ -87,6 +91,11 @@ public class TiffReader extends BaseTiffReader {
     if (!fileOnly) {
       companionFile = null;
       description = null;
+      calibrationUnit = null;
+      physicalSizeZ = null;
+      timeIncrement = null;
+      xOrigin = null;
+      yOrigin = null;
     }
   }
 
@@ -102,6 +111,11 @@ public class TiffReader extends BaseTiffReader {
     if (ifds.size() > 1) core[0].orderCertain = false;
 
     description = null;
+    calibrationUnit = null;
+    physicalSizeZ = null;
+    timeIncrement = null;
+    xOrigin = null;
+    yOrigin = null;
 
     // check for reusable proprietary tags (65000-65535),
     // which may contain additional metadata
@@ -214,8 +228,26 @@ public class TiffReader extends BaseTiffReader {
       if (token.startsWith("channels=")) c = parseInt(value);
       else if (token.startsWith("slices=")) z = parseInt(value);
       else if (token.startsWith("frames=")) t = parseInt(value);
-      else if (token.startsWith("spacing=")) put("Spacing", value);
-      else if (token.startsWith("unit=")) put("Unit", value);
+      else if (token.startsWith("unit=")) {
+        calibrationUnit = value;
+        put("Unit", calibrationUnit);
+      }
+      else if (token.startsWith("finterval=")) {
+        timeIncrement = parseDouble(value);
+        put("Frame Interval", timeIncrement);
+      }
+      else if (token.startsWith("spacing=")) {
+        physicalSizeZ = parseDouble(value);
+        put("Spacing", physicalSizeZ);
+      }
+      else if (token.startsWith("xorigin=")) {
+        xOrigin = parseInt(value);
+        put("X Origin", xOrigin);
+      }
+      else if (token.startsWith("yorigin=")) {
+        yOrigin = parseInt(value);
+        put("Y Origin", yOrigin);
+      }
     }
     if (z * c * t == c && isRGB()) {
       t = getImageCount();
@@ -291,14 +323,15 @@ public class TiffReader extends BaseTiffReader {
   private void populateMetadataStoreImageJ(MetadataStore store) {
     // TODO: Perhaps we should only populate the physical Z size if the unit is
     //       a known, physical quantity such as "micron" rather than "pixel".
-    //String unit = getGlobalMeta("Unit");
-    Object spacing = getGlobalMeta("Spacing");
-    double zDepth = 0;
-    if (spacing != null) {
-      zDepth = parseDouble(spacing.toString());
+    //       e.g.: if (calibrationUnit.equals("micron"))
+    if (physicalSizeZ != null) {
+      double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
+      store.setDimensionsPhysicalSizeZ(zDepth, 0, 0);
     }
-    if (zDepth != 0) store.setDimensionsPhysicalSizeZ(new Double(zDepth), 0, 0);
+    if (timeIncrement != null) {
+      store.setDimensionsTimeIncrement(timeIncrement, 0, 0);
+    }
   }
 
   private void parseCommentMetamorph(String comment) {
