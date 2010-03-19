@@ -739,6 +739,17 @@ my @libs = (
   \%xmlrpc,
 );
 
+my $programErrors = 0;
+
+# -- ARGUMENT PARSING --
+
+my $skipSummary = 0;
+foreach my $arg (@ARGV) {
+  if ($arg eq '-nosummary') {
+    $skipSummary = 1;
+  }
+}
+
 # -- DATA COLLECTION --
 
 # verify that all JAR files exist -- if not, this file is probably out of date
@@ -928,6 +939,7 @@ foreach my $c (@components) {
     }
     print STDERR "\n  component.classpath = @cp\n";
     print STDERR "\n";
+    $programErrors++;
   }
 
   # verify Eclipse classpath
@@ -974,6 +986,7 @@ foreach my $c (@components) {
     }
     print STDERR "\n  Eclipse classpath = @cp\n";
     print STDERR "\n";
+    $programErrors++;
   }
 
   # verify runtime classpath
@@ -1023,7 +1036,12 @@ foreach my $c (@components) {
     }
     print STDERR "\n  component.runtime-cp = @cp\n";
     print STDERR "\n";
+    $programErrors++;
   }
+}
+
+if ($skipSummary) {
+  exit $programErrors;
 }
 
 # -- FORMATTED DATA OUTPUT --
@@ -1112,16 +1130,16 @@ foreach my $c (@legacy) {
 # components - forks
 for (my $i = 0; $i < 2; $i++) {
   print "$div";
-  my @arg;
+  my @list;
   if ($i == 0) {
-    @arg = @forks;
+    @list = @forks;
     print "The following components are forks of third party projects:\n\n";
   }
   else {
-    @arg = @stubs;
+    @list = @stubs;
     print "The following components are stubs of third party projects:\n\n";
   }
-  foreach my $c (@arg) {
+  foreach my $c (@list) {
     print "$$c{TITLE}\n";
     smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
     print "    -=-\n";
@@ -1161,6 +1179,8 @@ foreach my $l (@libs) {
   print "    License:   $$l{LICENSE}\n";
   print "\n";
 }
+
+exit $programErrors;
 
 # -- SUBROUTINES --
 
