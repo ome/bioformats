@@ -53,7 +53,7 @@ public class MRCReader extends FormatReader {
   // works for modern .mrc files, because older IMOD versions did not put that
   // there, according to: http://bio3d.colorado.edu/imod/doc/mrc_format.txt
 
-  private static final String[] MRC_SUFFIXES = {"mrc", "st", "ali"};
+  private static final String[] MRC_SUFFIXES = {"mrc", "st", "ali", "map"};
 
   // -- Fields --
 
