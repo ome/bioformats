@@ -258,6 +258,16 @@ public final class MetadataTools {
 
   /**
    * @deprecated This method is not thread-safe; use
+   * {@link loci.formats.services.OMEXMLService#asRetrieve(MetadataStore)}
+   * instead.
+   */
+  public static MetadataRetrieve asRetrieve(MetadataStore meta) {
+    if (omexmlService == null) return null;
+    return omexmlService.asRetrieve(meta);
+  }
+
+  /**
+   * @deprecated This method is not thread-safe; use
    * {@link loci.formats.services.OMEXMLService#getLatestVersion()}
    * instead.
    */

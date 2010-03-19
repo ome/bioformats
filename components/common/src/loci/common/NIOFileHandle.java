@@ -466,12 +466,20 @@ public class NIOFileHandle extends AbstractNIOHandle {
     if (newPosition < bufferStartPosition
         || newPosition > bufferStartPosition + bufferSize
         || buffer == null) {
-      bufferStartPosition = offset;
+      bufferStartPosition = Math.min(offset, length() - 1);
       long newSize = Math.min(length() - bufferStartPosition, bufferSize);
       if (newSize < size && newSize == bufferSize) newSize = size;
+      if (newSize + bufferStartPosition > length()) {
+        newSize = length() - bufferStartPosition;
+      }
+      offset = bufferStartPosition;
       ByteOrder byteOrder = buffer == null ? order : getOrder();
       buffer = channel.map(mapMode, bufferStartPosition, newSize);
       if (byteOrder != null) setOrder(byteOrder);
+      // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131
+      // for an explanation of why the following is necessary
+      System.gc();
+      System.runFinalization();
     }
     buffer.position((int) (offset - bufferStartPosition));
   }

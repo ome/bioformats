@@ -227,7 +227,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     InputStreamReader in = new InputStreamReader(this);
     char[] buf = new char[blockSize];
     long loc = 0;
-    while (loc < maxLen) {
+    while (loc < maxLen && getFilePointer() < length()) {
       // if we're not saving the string, drop any old, unnecessary output
       if (!saveString) {
         int outLen = out.length();

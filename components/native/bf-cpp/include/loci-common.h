@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Feb 4, 2010 3:31:08 PM CST
+ * Created by melissa via JaceHeaderAutogen on Mar 19, 2010 1:24:54 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,11 +51,11 @@ your combined work must be distributed under the terms of the GPL.
 
 #include "jace.h"
 
+#include "jace/proxy/loci/common/AbstractNIOHandle.h"
 #include "jace/proxy/loci/common/BZip2Handle.h"
 #include "jace/proxy/loci/common/ByteArrayHandle.h"
 #include "jace/proxy/loci/common/CBZip2InputStream.h"
 #include "jace/proxy/loci/common/CRC.h"
-#include "jace/proxy/loci/common/CompressedRandomAccess.h"
 #include "jace/proxy/loci/common/DataTools.h"
 #include "jace/proxy/loci/common/DateTools.h"
 #include "jace/proxy/loci/common/FileHandle.h"
@@ -66,16 +66,34 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/common/IniParser.h"
 #include "jace/proxy/loci/common/IniTable.h"
 #include "jace/proxy/loci/common/Location.h"
-#include "jace/proxy/loci/common/Log.h"
-#include "jace/proxy/loci/common/LogTools.h"
+#include "jace/proxy/loci/common/NIOFileHandle.h"
+#include "jace/proxy/loci/common/NIOInputStream.h"
 #include "jace/proxy/loci/common/RandomAccessInputStream.h"
 #include "jace/proxy/loci/common/RandomAccessOutputStream.h"
 #include "jace/proxy/loci/common/ReflectException.h"
 #include "jace/proxy/loci/common/ReflectedUniverse.h"
 #include "jace/proxy/loci/common/Region.h"
+#include "jace/proxy/loci/common/StreamHandle.h"
 #include "jace/proxy/loci/common/URLHandle.h"
-#include "jace/proxy/loci/common/XMLTools.h"
 #include "jace/proxy/loci/common/ZipHandle.h"
 //using namespace jace::proxy::loci::common;
+
+#include "jace/proxy/loci/common/enumeration/CodedEnum.h"
+#include "jace/proxy/loci/common/enumeration/EnumException.h"
+//using namespace jace::proxy::loci::common::enumeration;
+
+#include "jace/proxy/loci/common/services/AbstractService.h"
+#include "jace/proxy/loci/common/services/DependencyException.h"
+#include "jace/proxy/loci/common/services/OMENotesService.h"
+#include "jace/proxy/loci/common/services/Service.h"
+#include "jace/proxy/loci/common/services/ServiceException.h"
+#include "jace/proxy/loci/common/services/ServiceFactory.h"
+//using namespace jace::proxy::loci::common::services;
+
+#include "jace/proxy/loci/common/xml/MetadataHandler.h"
+#include "jace/proxy/loci/common/xml/ValidationErrorHandler.h"
+#include "jace/proxy/loci/common/xml/ValidationSAXHandler.h"
+#include "jace/proxy/loci/common/xml/XMLTools.h"
+//using namespace jace::proxy::loci::common::xml;
 
 #endif

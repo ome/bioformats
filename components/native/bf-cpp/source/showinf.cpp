@@ -65,7 +65,6 @@ using jace::proxy::loci::formats::ImageReader;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::MetadataRetrieve;
 using jace::proxy::loci::formats::meta::MetadataStore;
-using jace::proxy::loci::formats::tools::StatusEchoer;
 
 #include <iostream>
 using std::cout;
@@ -122,8 +121,6 @@ ChannelFiller* channelFiller = NULL;
 ChannelSeparator* channelSeparator = NULL;
 ChannelMerger* channelMerger = NULL;
 DimensionSwapper* dimSwapper = NULL;
-
-StatusEchoer* status = NULL;
 
 // -- Methods --
 
@@ -253,9 +250,6 @@ void configureReaderPreInit() {
   if (swapOrder || shuffleOrder) {
     reader = dimSwapper = new DimensionSwapper(*reader);
   }
-
-  status = new StatusEchoer;
-  reader->addStatusListener(*status);
 
   ((IFormatHandler*) reader)->close();
   reader->setNormalized(normalize);
@@ -443,7 +437,6 @@ void readPixels() {
   cout << "Reading";
   if (reader->getSeriesCount() > 1) cout << " series #" << series;
   cout << " pixel data ";
-  status->setVerbose(false);
   int num = reader->getImageCount();
   if (start < 0) start = 0;
   if (start >= num) start = num - 1;
@@ -463,7 +456,6 @@ void readPixels() {
   cout << "(" << start << "-" << end << ") ";
   for (int i=start; i<=end; i++) {
     flush(cout);
-    status->setEchoNext(true);
     if (thumbs) reader->openThumbBytes(i);
     else reader->openBytes(i, xCoordinate, yCoordinate, width, height);
     cout << ".";
@@ -546,9 +538,6 @@ void destroyObjects() {
   channelMerger = NULL;
   delete dimSwapper;
   dimSwapper = NULL;
-
-  delete status;
-  status = NULL;
 }
 
 /* Displays information on the given file. */

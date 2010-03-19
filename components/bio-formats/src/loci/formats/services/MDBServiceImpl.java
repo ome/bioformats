@@ -90,7 +90,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
       String name = ((MdbCatalogEntry) entry).object_name;
 
       if (type == Constants.MDB_TABLE && !name.startsWith("MSys")) {
-        Vector<String[]> tableData = new Vector<String[]>(); 
+        Vector<String[]> tableData = new Vector<String[]>();
         MdbTableDef table = Table.mdb_read_table((MdbCatalogEntry) entry);
         Table.mdb_read_columns(table);
 

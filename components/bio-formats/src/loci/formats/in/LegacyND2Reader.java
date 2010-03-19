@@ -172,6 +172,9 @@ public class LegacyND2Reader extends FormatReader {
         core[i].falseColor = false;
       }
     }
+    catch (UnsatisfiedLinkError e) {
+      throw new MissingLibraryException(NO_NIKON_MSG, e);
+    }
     catch (Exception e) {
       throw new MissingLibraryException(NO_NIKON_MSG, e);
     }
