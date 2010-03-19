@@ -27,18 +27,18 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Stub of the Luratech LuraWave&reg; Java decoder class. NOTE: This
- * class contains <b>NO</b> real implementation. 
+ * Stub of the Luratech LuraWave&reg; Java decoder class.
+ * NOTE: This class contains <b>NO</b> real implementation.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/stubs/src/com.luratech.lwf.lwfDecoder.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/stubs/src/com.luratech.lwf.lwfDecoder.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">SVN</a></dd></dl>
  */
 public class lwfDecoder {
 
-  public lwfDecoder(InputStream stream, String password, String licenseCode) 
-    throws IOException, SecurityException {
-
+  public lwfDecoder(InputStream stream, String password, String licenseCode)
+    throws IOException, SecurityException
+  {
   }
 
   public int getWidth() {
@@ -50,15 +50,14 @@ public class lwfDecoder {
   }
 
   public void decodeToMemoryGray8(byte[] image, int limit,
-                                  int quality, int scale)
-    throws SecurityException{
-
+    int quality, int scale) throws SecurityException
+  {
   }
 
-  public void decodeToMemoryGray16(
-      short[] image, int imageoffset, int limit, int quality, int scale,
-      int pdx, int pdy, int clip_x, int clip_y, int clip_w, int clip_h)
-    throws SecurityException {
-
+  public void decodeToMemoryGray16(short[] image, int imageoffset, int limit,
+    int quality, int scale, int pdx, int pdy, int clip_x, int clip_y,
+    int clip_w, int clip_h) throws SecurityException
+  {
   }
+
 }

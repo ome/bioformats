@@ -601,6 +601,7 @@ public class Importer {
       nSlices, nFrames);
 
     if (options.isViewVisBio()) {
+      // NB: avoid dependency on optional loci.visbio packages
       ReflectedUniverse ru = new ReflectedUniverse();
       try {
         ru.exec("import loci.visbio.data.Dataset");

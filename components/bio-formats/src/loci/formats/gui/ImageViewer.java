@@ -153,7 +153,7 @@ public class ImageViewer extends JFrame implements ActionListener,
     // NB: avoid dependencies on optional loci.ome.io package
     try {
       ServiceFactory factory = new ServiceFactory();
-      OMEReaderWriterService service = 
+      OMEReaderWriterService service =
         factory.getInstance(OMEReaderWriterService.class);
       // OME server I/O engine
       try {
@@ -524,6 +524,7 @@ public class ImageViewer extends JFrame implements ActionListener,
       }
     }
     else if ("view".equals(cmd)) {
+      // NB: avoid dependency on optional loci.ome.notes package
       OMENotesService service = null;
       try {
         ServiceFactory factory = new ServiceFactory();

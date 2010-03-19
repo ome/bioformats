@@ -31,7 +31,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-mdb.xml"/>
     <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.classpath.nomdb}">
+      "${test-classes.dir}:${classes.dir}:${component.cp.no-mdb}">
     <!--<testng classpath="${test-classes.dir}:${classes.dir}:${artifact.dir}/loci-common.jar">-->
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -43,7 +43,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-netcdf.xml"/>
     <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.classpath.nonetcdf}">
+      "${test-classes.dir}:${classes.dir}:${component.cp.no-netcdf}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -54,7 +54,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
     <testng classpath=
-    "${test-classes.dir}:${classes.dir}:${component.classpath.noxml}">
+    "${test-classes.dir}:${classes.dir}:${component.cp.no-xml}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -65,7 +65,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-poi.xml"/>
     <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.classpath.nopoi}">
+      "${test-classes.dir}:${classes.dir}:${component.cp.no-poi}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -76,7 +76,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
     <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.classpath.nojai}">
+      "${test-classes.dir}:${classes.dir}:${component.cp.no-jai}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -87,7 +87,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
     <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.classpath.nolurawave}">
+      "${test-classes.dir}:${classes.dir}:${component.cp.no-lurawave}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>

@@ -17,7 +17,7 @@ LOCI Common
     JAR file:      loci-common.jar
     Path:          components/common
     Project deps:  (none)
-    Library deps:  (none)
+    Library deps:  Simple Logging Facade for Java API, TestNG
     Optional:      (none)
     License:       GPL
 
@@ -36,10 +36,11 @@ Bio-Formats
     -=-
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
-    Project deps:  LOCI Common, OME-XML Java library
-    Library deps:  JGoodies Forms
-    Optional:      OME I/O, OME Notes, Apache Jakarta POI,
-                   MDB Tools (Java port), JAI Image I/O Tools, NetCDF
+    Project deps:  LOCI Common, OME-XML Java library, Apache Jakarta POI,
+                   MDB Tools (Java port), JAI Image I/O Tools
+    Library deps:  JGoodies Forms, Luratech LuraWave stubs, Apache log4j,
+                   NetCDF, Simple Logging Facade for Java API, TestNG
+    Optional:      OME I/O, OME Notes
     License:       GPL
 
 LOCI code generator
@@ -60,7 +61,7 @@ Bio-Formats Ice framework
     JAR file:      bf-ice.jar
     Path:          components/bf-ice
     Project deps:  LOCI Common, Bio-Formats
-    Library deps:  Ice
+    Library deps:  Ice, Apache log4j
     Optional:      (none)
     License:       GPL
 
@@ -72,7 +73,7 @@ LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Path:          components/loci-plugins
     Project deps:  LOCI Common, Bio-Formats
-    Library deps:  JGoodies Forms, ImageJ
+    Library deps:  JGoodies Forms, ImageJ, Apache log4j
     Optional:      OME I/O, VisBio
     License:       GPL
 
@@ -82,7 +83,8 @@ OME I/O
     JAR file:      ome-io.jar
     Path:          components/ome-io
     Project deps:  LOCI Common, Bio-Formats
-    Library deps:  OMERO Client, OMERO Common
+    Library deps:  Apache log4j, Simple Logging Facade for Java API,
+                   OMERO Client, OMERO Common, TestNG
     Optional:      OME-Java
     License:       GPL
 
@@ -104,8 +106,8 @@ VisBio
     Path:          components/visbio
     Project deps:  LOCI Common, OME-XML Java library, Bio-Formats, OME I/O,
                    Apache Jakarta POI
-    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JGoodies Looks,
-                   VisAD
+    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JUnit,
+                   JGoodies Looks, VisAD
     Optional:      (none)
     License:       GPL
 
@@ -125,7 +127,7 @@ WiscScan Flow Cytometry
     -=-
     JAR file:      flow-cytometry.jar
     Path:          components/flow-cytometry
-    Project deps:  Bio-Formats
+    Project deps:  LOCI Common, Bio-Formats
     Library deps:  ImageJ, VisAD
     Optional:      (none)
     License:       BSD
@@ -146,7 +148,7 @@ LOCI testing framework
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
     Project deps:  LOCI Common, Bio-Formats, OME I/O
-    Library deps:  TestNG
+    Library deps:  Apache log4j, Simple Logging Facade for Java API, TestNG
     Optional:      (none)
     License:       BSD
 
@@ -241,17 +243,18 @@ The following external dependencies (in the jar folder) may be required:
 Apple eAWT stubs
     JAR file:  AppleJavaExtensions.jar
     URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
-    Notes:     required to compile VisBio on non-Mac OS X machines
+    Notes:     required to compile Mac-specific functionality on non-Mac OS X
+               machines
     License:   BSD
 
 Ant-Contrib
-    JAR file:  ant-contrib-1.0b1.jar
+    JAR file:  ant-contrib-1.0b3.jar
     URL:       http://ant-contrib.sourceforge.net/
     Notes:     used by tools target to iterate over JAR files ("for" task)
     License:   Apache
 
 Checkstyle
-    JAR file:  checkstyle-all-4.2.jar
+    JAR file:  checkstyle-all-5.0.jar
     URL:       http://checkstyle.sourceforge.net/
     Notes:     used by style Ant target to check source code style conventions
     License:   LGPL
@@ -275,7 +278,7 @@ FindBugs Ant task
     License:   LGPL
 
 JGoodies Forms
-    JAR file:  forms-1.0.4.jar
+    JAR file:  forms-1.3.0.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
     Notes:     used for layout by VisBio, Data Browser and OME Notes
     License:   BSD
@@ -290,7 +293,7 @@ ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
     Notes:     used by LOCI plugins for ImageJ and OME plugins for ImageJ;
-               included with VisBio to achieve ImageJ interconnectivity
+               bundled with VisBio to achieve ImageJ interconnectivity
     License:   Public domain
 
 JAI ImageIO wrapper
@@ -313,8 +316,21 @@ L-M Fit
                used by SLIM Plotter
     License:   LGPL
 
+Luratech LuraWave stubs
+    JAR file:  lwf-stubs.jar
+    URL:       http://www.luratech.com/
+    Notes:     required to compile Bio-Formats's support for Luratech LWF
+               compression for the Opera Flex format
+    License:   BSD
+
+Apache log4j
+    JAR file:  log4j-1.2.15.jar
+    URL:       http://logging.apache.org/log4j/
+    Notes:     required by SLF4J implementation
+    License:   Apache
+
 JGoodies Looks
-    JAR file:  looks-1.2.2.jar
+    JAR file:  looks-2.3.1.jar
     URL:       http://www.jgoodies.com/freeware/looks/index.html
     Notes:     used for a nicer Look & Feel by VisBio and OME Metadata Editor
     License:   BSD
@@ -325,22 +341,16 @@ NetCDF
     Notes:     used by Bio-Formats via reflection for HDF support (Imaris 5.5)
     License:   LGPL
 
-BUFR Java Decoder
-    JAR file:  bufr-1.1.00.jar
-    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
-    Notes:     used by NetCDF library
-    License:   LGPL
-
-GRIB Java Decoder
-    JAR file:  grib-5.1.03.jar
-    URL:       http://www.unidata.ucar.edu/software/netcdf-java/
-    Notes:     used by NetCDF library
-    License:   LGPL
-
-Simple Logging Facade for Java
-    JAR file:  slf4j-jdk14.jar
+Simple Logging Facade for Java API
+    JAR file:  slf4j-api-1.5.10.jar
     URL:       http://www.slf4j.org/
-    Notes:     used by NetCDF library
+    Notes:     used for all logging in loci.*
+    License:   BSD
+
+Simple Logging Facade for Java Binding
+    JAR file:  slf4j-log4j12-1.5.10.jar
+    URL:       http://www.slf4j.org/
+    Notes:     used for all logging in loci.*
     License:   BSD
 
 OME-Java
@@ -356,13 +366,13 @@ OME-Java deprecated classes
     License:   LGPL
 
 OMERO Client
-    JAR file:  omero-client-4.0.3.jar
+    JAR file:  omero-client-4.1.1.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
 
 OMERO Common
-    JAR file:  omero-common-4.0.3.jar
+    JAR file:  omero-common-4.1.1.jar
     URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
@@ -374,13 +384,13 @@ Skin Look and Feel
     License:   Custom (BSD-like)
 
 TestNG
-    JAR file:  testng-5.7-jdk14.jar
+    JAR file:  testng-5.11-jdk15.jar
     URL:       http://testng.org/
     Notes:     testing framework used for LOCI software automated test suite
     License:   Apache
 
 Apache Velocity
-    JAR file:  velocity-dep-1.5.jar
+    JAR file:  velocity-1.6.3-dep.jar
     URL:       http://velocity.apache.org/
     Notes:     used to autogenerate the loci.formats.meta and loci.formats.ome
                Bio-Formats packages

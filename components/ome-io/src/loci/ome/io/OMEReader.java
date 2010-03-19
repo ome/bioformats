@@ -62,6 +62,7 @@ public class OMEReader extends FormatReader {
   private static ReflectedUniverse r = createReflectedUniverse();
 
   private static ReflectedUniverse createReflectedUniverse() {
+    // NB: avoid dependencies on optional org.openmicroscopy.ds packages
     r = null;
     try {
       r = new ReflectedUniverse();

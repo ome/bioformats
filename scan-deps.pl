@@ -316,7 +316,7 @@ my %appleJavaExtensions = (
   LICENSE => "BSD",
   URL     => "http://developer.apple.com/samplecode/AppleJavaExtensions/",
   NOTES   => <<ZZ,
-required to compile VisBio on non-Mac OS X machines
+required to compile Mac-specific functionality on non-Mac OS X machines
 ZZ
 );
 
@@ -465,6 +465,19 @@ Plotter
 ZZ
 );
 
+my %lwfStubs = (
+  NAME    => "lwf-stubs",
+  TITLE   => "Luratech LuraWave stubs",
+  JAR     => "lwf-stubs.jar",
+  PACKAGE => "com.luratech.lwf",
+  LICENSE => "BSD",
+  URL     => "http://www.luratech.com/",
+  NOTES   => <<ZZ,
+required to compile Bio-Formats's support for Luratech LWF compression for
+the Opera Flex format
+ZZ
+);
+
 my %log4j = (
   NAME    => "log4j",
   TITLE   => "Apache log4j",
@@ -570,7 +583,7 @@ ZZ
 );
 
 my %slf4j_api = (
-  NAME    => "slf4j",
+  NAME    => "slf4j-api",
   TITLE   => "Simple Logging Facade for Java API",
   JAR     => "slf4j-api-1.5.10.jar",
   PACKAGE => "org.slf4j",
@@ -583,10 +596,10 @@ ZZ
 );
 
 my %slf4j_impl = (
-  NAME    => "slf4j",
+  NAME    => "slf4j-log4j",
   TITLE   => "Simple Logging Facade for Java Binding",
   JAR     => "slf4j-log4j12-1.5.10.jar",
-  PACKAGE => "org.slf4j",
+  PACKAGE => "org.slf4j.impl",
   LICENSE => "BSD",
   URL     => "http://www.slf4j.org/",
   NOTES   => <<ZZ,
@@ -699,6 +712,7 @@ my @libs = (
   \%jiio,
   \%junit,
   \%lma,
+  \%lwfStubs,
   \%log4j,
   \%looks,
   \%netcdf,
@@ -749,7 +763,7 @@ foreach my $c (@components) {
     }
     elsif (checkReflect($package, $path)) {
       push (@opt, $c2);
-      print STDERR "$name (reflected)\n";
+      print STDERR "$name [reflected]\n";
     }
   }
   $$c{PROJ_DEPS} = \@deps;
@@ -772,7 +786,7 @@ foreach my $c (@components) {
     }
     elsif (checkReflect($package, $path)) {
       push (@opt, $l);
-      print STDERR "$name (reflected)\n";
+      print STDERR "$name [reflected]\n";
     }
   }
   $$c{LIB_DEPS} = \@deps;
@@ -854,6 +868,8 @@ foreach my $c (@components) {
   $$c{ECLIPSE} = \@eclipse;
 }
 
+# -- DATA VERIFICATION --
+
 print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n\n";
 foreach my $c (@components) {
   my @projDeps = @{$$c{PROJ_DEPS}};
@@ -861,24 +877,27 @@ foreach my $c (@components) {
   my @projOpt = @{$$c{PROJ_OPT}};
   my @libOpt = @{$$c{LIB_OPT}};
   my $name = $$c{TITLE};
+  my $path = $$c{PATH};
+  my @deps;
 
   # verify compile-time classpath
-  my @deps = ();
+  my @compile = ();
   foreach my $dep (@projDeps) {
-    push(@deps, "\${artifact.dir}/$$dep{JAR}");
+    push(@compile, "\${artifact.dir}/$$dep{JAR}");
   }
   foreach my $dep (@libDeps) {
-    push(@deps, "\${lib.dir}/$$dep{JAR}");
+    push(@compile, "\${lib.dir}/$$dep{JAR}");
   }
+  @compile = sort @compile;
   my @cp = @{$$c{COMPILE}};
   my $compileError = 0;
-  if (@deps != @cp) {
+  if (@compile != @cp) {
     print STDERR "Dependency mismatch for $name compile time classpath:\n";
     $compileError = 1;
   }
   else {
     for (my $i = 0; $i < @cp; $i++) {
-      my $depJar = $deps[$i];
+      my $depJar = $compile[$i];
       my $cpJar = $cp[$i];
       if ($cpJar ne $depJar) {
         print STDERR "Dependency mismatch for $name compile time classpath:\n";
@@ -903,6 +922,11 @@ foreach my $c (@components) {
 
   # verify Eclipse classpath
   @deps = ();
+  push(@deps, "src");
+  if (-e "$path/test") {
+    push(@deps, "test");
+  }
+  push(@deps, "org.eclipse.jdt.launching.JRE_CONTAINER");
   foreach my $dep (@projDeps) {
     push(@deps, "/$$dep{NAME}");
   }
@@ -910,8 +934,6 @@ foreach my $c (@components) {
     push(@deps, "/External libraries");
   }
   push(@deps, "build/classes");
-  push(@deps, "org.eclipse.jdt.launching.JRE_CONTAINER");
-  push(@deps, "src");
   @deps = sort @deps;
   @cp = @{$$c{ECLIPSE}};
   my $eclipseError = 0;
@@ -945,19 +967,15 @@ foreach my $c (@components) {
   }
 
   # verify runtime classpath
-  @deps = ();
-  foreach my $dep (@projDeps) {
-    push(@deps, "\${artifact.dir}/$$dep{JAR}");
-  }
-  foreach my $dep (@libDeps) {
-    push(@deps, "\${lib.dir}/$$dep{JAR}");
-  }
+  my @runtime = ();
   foreach my $dep (@projOpt) {
-    push(@deps, "\${artifact.dir}/$$dep{JAR}");
+    push(@runtime, "\${artifact.dir}/$$dep{JAR}");
   }
   foreach my $dep (@libOpt) {
-    push(@deps, "\${lib.dir}/$$dep{JAR}");
+    push(@runtime, "\${lib.dir}/$$dep{JAR}");
   }
+  @runtime = sort @runtime;
+  @deps = (@compile, @runtime);
   @cp = @{$$c{RUNTIME}};
   my $runtimeError = 0;
   if (@deps != @cp) {
@@ -1133,7 +1151,7 @@ sub checkDirect {
 
 sub checkReflect {
   my ($package, $path) = @_;
-  return `find $path -name '*.java' | xargs grep -l "import $package\\."`;
+  return `find $path -name '*.java' | xargs grep -l "optional $package"`;
 }
 
 sub smartSplit {
