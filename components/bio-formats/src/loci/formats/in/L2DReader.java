@@ -343,6 +343,7 @@ public class L2DReader extends FormatReader {
   private void addDirectory(String path, int series) {
     Location dir = new Location(path);
     String[] files = dir.list();
+    if (files == null) return;
     for (int i=0; i<files.length; i++) {
       Location file = new Location(path, files[i]);
       if (file.isDirectory()) {
