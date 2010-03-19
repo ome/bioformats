@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package loci.visbio.utests.overlays;
+
 import junit.framework.TestCase;
 import loci.visbio.overlays.*;
 
@@ -28,8 +30,8 @@ import loci.visbio.overlays.*;
  * Test some critical methods of the OverlayNodedObject class.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/overlays/OverlayNodedObjectTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/overlays/OverlayNodedObjectTest.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/overlays/OverlayNodedObjectTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/overlays/OverlayNodedObjectTest.java">SVN</a></dd></dl>
  */
 public class OverlayNodedObjectTest extends TestCase {
 

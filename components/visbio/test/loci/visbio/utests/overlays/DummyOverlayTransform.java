@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package loci.visbio.utests.overlays;
+
 import java.util.*;
 import loci.formats.FormatTools;
 import loci.visbio.data.*;
@@ -32,8 +34,8 @@ import loci.visbio.state.Dynamic;
  * testing on OverlayObjects.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/overlays/DummyOverlayTransform.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/overlays/DummyOverlayTransform.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/overlays/DummyOverlayTransform.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/overlays/DummyOverlayTransform.java">SVN</a></dd></dl>
  */
 public class DummyOverlayTransform extends OverlayTransform
   implements TransformListener

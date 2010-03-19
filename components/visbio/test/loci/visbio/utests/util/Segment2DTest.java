@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package loci.visbio.utests.util;
+
 import junit.framework.TestCase;
 import loci.visbio.util.MathUtil;
 import loci.visbio.util.Segment2D;
@@ -29,8 +31,8 @@ import loci.visbio.util.Segment2D;
  * Unit tests for the Segment2D class.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/util/Segment2DTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/util/Segment2DTest.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/util/Segment2DTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/util/Segment2DTest.java">SVN</a></dd></dl>
  */
 public class Segment2DTest extends TestCase {
 

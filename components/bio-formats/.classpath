@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/poi"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/lwf-stubs"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
