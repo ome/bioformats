@@ -11,45 +11,13 @@ For more information on a component, see the
 build.properties file in that component's subtree.
 Run ./scan-deps.pl to programmatically generate this list.
 
-LOCI Common
-    A library containing common I/O and reflection classes
-    -=-
-    JAR file:      loci-common.jar
-    Path:          components/common
-    Project deps:  (none)
-    Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      (none)
-    License:       GPL
-
-OME-XML Java library
-    A library for working with OME-XML metadata structures
-    -=-
-    JAR file:      ome-xml.jar
-    Path:          components/ome-xml
-    Project deps:  (none)
-    Library deps:  (none)
-    Optional:      (none)
-    License:       GPL
-
-Bio-Formats
-    A library for reading and writing popular microscopy file formats
-    -=-
-    JAR file:      bio-formats.jar
-    Path:          components/bio-formats
-    Project deps:  LOCI Common, OME-XML Java library, Apache Jakarta POI,
-                   MDB Tools (Java port), JAI Image I/O Tools
-    Library deps:  JGoodies Forms, Luratech LuraWave stubs, Apache log4j,
-                   NetCDF, Simple Logging Facade for Java API, TestNG
-    Optional:      OME I/O, OME Notes
-    License:       GPL
-
 LOCI code generator
     Package for generating other code, including the Bio-Formats metadata API,
     related documentation, Ice bindings, and Bio-Formats C++ bindings headers
     -=-
     JAR file:      loci-autogen.jar
     Path:          components/autogen
-    Project deps:  LOCI Common, Bio-Formats
+    Project deps:  Bio-Formats, LOCI Common
     Library deps:  Apache Velocity
     Optional:      (none)
     License:       GPL
@@ -60,66 +28,22 @@ Bio-Formats Ice framework
     -=-
     JAR file:      bf-ice.jar
     Path:          components/bf-ice
-    Project deps:  LOCI Common, Bio-Formats
+    Project deps:  Bio-Formats, LOCI Common
     Library deps:  Ice, Apache log4j
     Optional:      (none)
     License:       GPL
 
-LOCI Plugins for ImageJ
-    A collection of plugins for ImageJ, including the Bio-Formats Importer,
-    Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
-    Colorizer and Stack Slicer
+Bio-Formats
+    A library for reading and writing popular microscopy file formats
     -=-
-    JAR file:      loci_plugins.jar
-    Path:          components/loci-plugins
-    Project deps:  LOCI Common, Bio-Formats
-    Library deps:  JGoodies Forms, ImageJ, Apache log4j
-    Optional:      OME I/O, VisBio
-    License:       GPL
-
-OME I/O
-    A library for OME database import, upload and download
-    -=-
-    JAR file:      ome-io.jar
-    Path:          components/ome-io
-    Project deps:  LOCI Common, Bio-Formats
-    Library deps:  Apache log4j, Simple Logging Facade for Java API,
-                   OMERO Client, OMERO Common, TestNG
-    Optional:      OME-Java
-    License:       GPL
-
-OME Plugins for ImageJ
-    A collection of plugins for ImageJ, including the Download from OME and
-    Upload to OME plugins
-    -=-
-    JAR file:      ome_plugins.jar
-    Path:          components/ome-plugins
-    Project deps:  LOCI Common, Bio-Formats, LOCI Plugins for ImageJ, OME I/O
-    Library deps:  ImageJ
-    Optional:      (none)
-    License:       GPL
-
-VisBio
-    A multi-purpose biological analysis tool
-    -=-
-    JAR file:      visbio.jar
-    Path:          components/visbio
-    Project deps:  LOCI Common, OME-XML Java library, Bio-Formats, OME I/O,
-                   Apache Jakarta POI
-    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JUnit,
-                   JGoodies Looks, VisAD
-    Optional:      (none)
-    License:       GPL
-
-SLIM Plotter
-    An application and curve fitting library for visualization and analysis of
-    combined spectral lifetime data
-    -=-
-    JAR file:      SlimPlotter.jar
-    Path:          components/slim-plotter
-    Project deps:  LOCI Common, Bio-Formats, VisBio
-    Library deps:  L-M Fit, VisAD
-    Optional:      (none)
+    JAR file:      bio-formats.jar
+    Path:          components/bio-formats
+    Project deps:  LOCI Common, OME-XML Java library, JAI Image I/O Tools,
+                   MDB Tools (Java port), Apache Jakarta POI,
+                   Luratech LuraWave stubs
+    Library deps:  JGoodies Forms, Apache log4j, NetCDF,
+                   Simple Logging Facade for Java API, TestNG
+    Optional:      OME I/O, OME Notes
     License:       GPL
 
 WiscScan Flow Cytometry
@@ -127,7 +51,7 @@ WiscScan Flow Cytometry
     -=-
     JAR file:      flow-cytometry.jar
     Path:          components/flow-cytometry
-    Project deps:  LOCI Common, Bio-Formats
+    Project deps:  Bio-Formats, LOCI Common
     Library deps:  ImageJ, VisAD
     Optional:      (none)
     License:       BSD
@@ -142,15 +66,92 @@ LOCI Checkstyle checks
     Optional:      (none)
     License:       Public domain
 
+LOCI Common
+    A library containing common I/O and reflection classes
+    -=-
+    JAR file:      loci-common.jar
+    Path:          components/common
+    Project deps:  (none)
+    Library deps:  Simple Logging Facade for Java API, TestNG
+    Optional:      (none)
+    License:       GPL
+
+LOCI Plugins for ImageJ
+    A collection of plugins for ImageJ, including the Bio-Formats Importer,
+    Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
+    Colorizer and Stack Slicer
+    -=-
+    JAR file:      loci_plugins.jar
+    Path:          components/loci-plugins
+    Project deps:  Bio-Formats, LOCI Common
+    Library deps:  JGoodies Forms, ImageJ, Apache log4j
+    Optional:      OME I/O, VisBio
+    License:       GPL
+
+OME I/O
+    A library for OME database import, upload and download
+    -=-
+    JAR file:      ome-io.jar
+    Path:          components/ome-io
+    Project deps:  Bio-Formats, LOCI Common
+    Library deps:  Apache log4j, Simple Logging Facade for Java API,
+                   OMERO Client, OMERO Common, TestNG
+    Optional:      OME-Java
+    License:       GPL
+
+OME Plugins for ImageJ
+    A collection of plugins for ImageJ, including the Download from OME and
+    Upload to OME plugins
+    -=-
+    JAR file:      ome_plugins.jar
+    Path:          components/ome-plugins
+    Project deps:  Bio-Formats, LOCI Common, LOCI Plugins for ImageJ, OME I/O
+    Library deps:  ImageJ
+    Optional:      (none)
+    License:       GPL
+
+OME-XML Java library
+    A library for working with OME-XML metadata structures
+    -=-
+    JAR file:      ome-xml.jar
+    Path:          components/ome-xml
+    Project deps:  (none)
+    Library deps:  (none)
+    Optional:      (none)
+    License:       GPL
+
+SLIM Plotter
+    An application and curve fitting library for visualization and analysis of
+    combined spectral lifetime data
+    -=-
+    JAR file:      SlimPlotter.jar
+    Path:          components/slim-plotter
+    Project deps:  Bio-Formats, LOCI Common, VisBio
+    Library deps:  L-M Fit, VisAD
+    Optional:      (none)
+    License:       GPL
+
 LOCI testing framework
     Framework for automated and manual testing of the LOCI software packages
     -=-
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
-    Project deps:  LOCI Common, Bio-Formats, OME I/O
+    Project deps:  Bio-Formats, LOCI Common, OME I/O
     Library deps:  Apache log4j, Simple Logging Facade for Java API, TestNG
     Optional:      (none)
     License:       BSD
+
+VisBio
+    A multi-purpose biological analysis tool
+    -=-
+    JAR file:      visbio.jar
+    Path:          components/visbio
+    Project deps:  Bio-Formats, LOCI Common, OME I/O, OME-XML Java library,
+                   Apache Jakarta POI
+    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JUnit,
+                   JGoodies Looks, VisAD
+    Optional:      (none)
+    License:       GPL
 
 ===============================================================================
 The following components are considered "legacy" but still available:
@@ -174,52 +175,27 @@ Multi-LUT
     Optional:      (none)
     License:       Public domain
 
+OME Metadata Editor
+    An application for exploration and editing of OME-XML and OME-TIFF metadata
+    -=-
+    JAR file:      ome-editor.jar
+    Path:          components/legacy/ome-editor
+    Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
+    Optional:      (none)
+    License:       LGPL
+
 OME Notes
     A library for flexible organization and presentation of OME-XML metadata
     within a graphical browser and editor interface
     -=-
     JAR file:      ome-notes.jar
     Path:          components/legacy/ome-notes
-    Project deps:  LOCI Common, Bio-Formats
-    Optional:      (none)
-    License:       LGPL
-
-OME Metadata Editor
-    An application for exploration and editing of OME-XML and OME-TIFF metadata
-    -=-
-    JAR file:      ome-editor.jar
-    Path:          components/legacy/ome-editor
-    Project deps:  LOCI Common, OME-XML Java library, Bio-Formats
+    Project deps:  Bio-Formats, LOCI Common
     Optional:      (none)
     License:       LGPL
 
 ===============================================================================
 The following components are forks of third party projects:
-
-Apache Jakarta POI
-    Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
-    -=-
-    JAR file:      poi-loci.jar
-    Path:          components/forks/poi
-    Project deps:  LOCI Common
-    Optional:      (none)
-    License:       Apache
-    Project URL:   http://jakarta.apache.org/poi/
-    Notes:         Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE
-                   v2 and memory efficiency improvements. Used by Bio-Formats
-                   for OLE support (cxd, ipw, oib, zvi). Used by VisBio
-                   overlays logic for XLS export feature.
-
-MDB Tools (Java port)
-    Java API to handle Microsoft MDB format (Access)
-    -=-
-    JAR file:      mdbtools-java.jar
-    Path:          components/forks/mdbtools
-    Project deps:  (none)
-    Optional:      (none)
-    License:       LGPL
-    Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
-    Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
 
 JAI Image I/O Tools
     Java API to handle JPEG and JPEG2000 files
@@ -237,6 +213,46 @@ JAI Image I/O Tools
                    needed by Bio-Formats, and created an additional dependency.
                    This component will be removed once our changes have been
                    added to the official JAI CVS repository.
+
+MDB Tools (Java port)
+    Java API to handle Microsoft MDB format (Access)
+    -=-
+    JAR file:      mdbtools-java.jar
+    Path:          components/forks/mdbtools
+    Project deps:  (none)
+    Optional:      (none)
+    License:       LGPL
+    Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
+    Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
+
+Apache Jakarta POI
+    Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
+    -=-
+    JAR file:      poi-loci.jar
+    Path:          components/forks/poi
+    Project deps:  LOCI Common
+    Optional:      (none)
+    License:       Apache
+    Project URL:   http://jakarta.apache.org/poi/
+    Notes:         Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE
+                   v2 and memory efficiency improvements. Used by Bio-Formats
+                   for OLE support (cxd, ipw, oib, zvi). Used by VisBio
+                   overlays logic for XLS export feature.
+
+===============================================================================
+The following components are stubs of third party projects:
+
+Luratech LuraWave stubs
+    Stub of proprietary Java API to handle Luratech LWF compression
+    -=-
+    JAR file:      lwf-stubs.jar
+    Path:          components/stubs/lwf-stubs
+    Project deps:  (none)
+    Optional:      (none)
+    License:       BSD
+    Project URL:   http://www.luratech.com/
+    Notes:         required to compile Bio-Formats's support for Luratech LWF
+                   compression for the Opera Flex format
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
@@ -315,13 +331,6 @@ L-M Fit
     Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
                used by SLIM Plotter
     License:   LGPL
-
-Luratech LuraWave stubs
-    JAR file:  lwf-stubs.jar
-    URL:       http://www.luratech.com/
-    Notes:     required to compile Bio-Formats's support for Luratech LWF
-               compression for the Opera Flex format
-    License:   BSD
 
 Apache log4j
     JAR file:  log4j-1.2.15.jar

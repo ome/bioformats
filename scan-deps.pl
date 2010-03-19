@@ -21,8 +21,8 @@ use constant {
   PACKAGE   => 4,  # base package for each component and library
   DESC      => 5,  # description for each component
   LICENSE   => 6,  # license governing each component and library
-  URL       => 7,  # project URL for each external project (forks & libs)
-  NOTES     => 8,  # important notes for each external project (forks & libs)
+  URL       => 7,  # URL for each external project (forks, stubs & libs)
+  NOTES     => 8,  # notes for each external project (forks, stubs & libs)
   PROJ_DEPS => 9,  # compile-time project dependencies for each component
   PROJ_OPT  => 10, # runtime project dependencies for each component
   LIB_DEPS  => 11, # compile-time library dependencies for each component
@@ -34,18 +34,6 @@ use constant {
 };
 
 # -- COMPONENT DEFINITIONS - ACTIVE --
-
-my %bioFormats = (
-  NAME    => "bio-formats",
-  TITLE   => "Bio-Formats",
-  PATH    => "components/bio-formats",
-  JAR     => "bio-formats.jar",
-  PACKAGE => "loci.formats",
-  DESC    => <<ZZ,
-A library for reading and writing popular microscopy file formats
-ZZ
-  LICENSE => "GPL",
-);
 
 my %autogen = (
   NAME    => "autogen",
@@ -73,14 +61,14 @@ ZZ
   LICENSE => "GPL",
 );
 
-my %lociCommon = (
-  NAME    => "common",
-  TITLE   => "LOCI Common",
-  PATH    => "components/common",
-  JAR     => "loci-common.jar",
-  PACKAGE => "loci.common",
+my %bioFormats = (
+  NAME    => "bio-formats",
+  TITLE   => "Bio-Formats",
+  PATH    => "components/bio-formats",
+  JAR     => "bio-formats.jar",
+  PACKAGE => "loci.formats",
   DESC    => <<ZZ,
-A library containing common I/O and reflection classes
+A library for reading and writing popular microscopy file formats
 ZZ
   LICENSE => "GPL",
 );
@@ -107,6 +95,18 @@ my %lociChecks = (
 LOCI's Checkstyle extensions, for checking source code style
 ZZ
   LICENSE => "Public domain",
+);
+
+my %lociCommon = (
+  NAME    => "common",
+  TITLE   => "LOCI Common",
+  PATH    => "components/common",
+  JAR     => "loci-common.jar",
+  PACKAGE => "loci.common",
+  DESC    => <<ZZ,
+A library containing common I/O and reflection classes
+ZZ
+  LICENSE => "GPL",
 );
 
 my %lociPlugins = (
@@ -306,6 +306,25 @@ zvi). Used by VisBio overlays logic for XLS export feature.
 ZZ
 );
 
+# -- COMPONENT DEFINITIONS - STUBS --
+
+my %lwfStubs = (
+  NAME    => "lwf-stubs",
+  TITLE   => "Luratech LuraWave stubs",
+  PATH    => "components/stubs/lwf-stubs",
+  JAR     => "lwf-stubs.jar",
+  PACKAGE => "com.luratech.lwf",
+  DESC    => <<ZZ,
+Stub of proprietary Java API to handle Luratech LWF compression
+ZZ
+  LICENSE => "BSD",
+  URL     => "http://www.luratech.com/",
+  NOTES   => <<ZZ,
+required to compile Bio-Formats's support for Luratech LWF compression for
+the Opera Flex format
+ZZ
+);
+
 # -- LIBRARY DEFINITIONS --
 
 my %appleJavaExtensions = (
@@ -462,19 +481,6 @@ my %lma = (
   NOTES   => <<ZZ,
 Levenberg-Marquardt algorithm for exponential curve fitting, used by SLIM
 Plotter
-ZZ
-);
-
-my %lwfStubs = (
-  NAME    => "lwf-stubs",
-  TITLE   => "Luratech LuraWave stubs",
-  JAR     => "lwf-stubs.jar",
-  PACKAGE => "com.luratech.lwf",
-  LICENSE => "BSD",
-  URL     => "http://www.luratech.com/",
-  NOTES   => <<ZZ,
-required to compile Bio-Formats's support for Luratech LWF compression for
-the Opera Flex format
 ZZ
 );
 
@@ -665,38 +671,43 @@ ZZ
 
 # List of active LOCI software components
 my @active = (
-  \%lociCommon,
-  \%omeXML,
-  \%bioFormats,
   \%autogen,
   \%bfIce,
+  \%bioFormats,
+  \%flowCytometry,
+  \%lociChecks,
+  \%lociCommon,
   \%lociPlugins,
   \%omeIO,
   \%omePlugins,
-  \%visbio,
+  \%omeXML,
   \%slimPlotter,
-  \%flowCytometry,
-  \%lociChecks,
   \%testSuite,
+  \%visbio,
 );
 
 # List of legacy components (no longer supported)
 my @legacy = (
   \%jvmlink,
   \%multiLUT,
-  \%omeNotes,
   \%omeEditor,
+  \%omeNotes,
 );
 
 # List of external project forks
 my @forks = (
-  \%poi,
-  \%mdbtools,
   \%jai,
+  \%mdbtools,
+  \%poi,
+);
+
+# List of external project stubs
+my @stubs = (
+  \%lwfStubs,
 );
 
 # List of all LOCI software components
-my @components = (@active, @legacy, @forks);
+my @components = (@active, @legacy, @forks, @stubs);
 
 # List of external libraries
 my @libs = (
@@ -712,7 +723,6 @@ my @libs = (
   \%jiio,
   \%junit,
   \%lma,
-  \%lwfStubs,
   \%log4j,
   \%looks,
   \%netcdf,
@@ -1100,33 +1110,43 @@ foreach my $c (@legacy) {
 }
 
 # components - forks
-print "$div";
-print "The following components are forks of third party projects:\n\n";
-foreach my $c (@forks) {
-  print "$$c{TITLE}\n";
-  smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
-  print "    -=-\n";
-  print "    JAR file:      $$c{JAR}\n";
-  print "    Path:          $$c{PATH}\n";
-
-  my @deps = @{$$c{PROJ_DEPS}};
-  my @prettyDeps = ();
-  foreach my $q (@deps) {
-    push(@prettyDeps, $$q{TITLE});
+for (my $i = 0; $i < 2; $i++) {
+  print "$div";
+  my @arg;
+  if ($i == 0) {
+    @arg = @forks;
+    print "The following components are forks of third party projects:\n\n";
   }
-  smartSplit("    Project deps:  ", ", ", @prettyDeps);
-
-  my @opt = @{$$c{PROJ_OPT}};
-  my @prettyOpt = ();
-  foreach my $q (@opt) {
-    push(@prettyOpt, $$q{TITLE});
+  else {
+    @arg = @stubs;
+    print "The following components are stubs of third party projects:\n\n";
   }
-  smartSplit("    Optional:      ", ", ", @prettyOpt);
+  foreach my $c (@arg) {
+    print "$$c{TITLE}\n";
+    smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
+    print "    -=-\n";
+    print "    JAR file:      $$c{JAR}\n";
+    print "    Path:          $$c{PATH}\n";
 
-  print "    License:       $$c{LICENSE}\n";
-  print "    Project URL:   $$c{URL}\n";
-  smartSplit("    Notes:         ", " ", split(/[ \n]/, $$c{NOTES}));
-  print "\n";
+    my @deps = @{$$c{PROJ_DEPS}};
+    my @prettyDeps = ();
+    foreach my $q (@deps) {
+      push(@prettyDeps, $$q{TITLE});
+    }
+    smartSplit("    Project deps:  ", ", ", @prettyDeps);
+
+    my @opt = @{$$c{PROJ_OPT}};
+    my @prettyOpt = ();
+    foreach my $q (@opt) {
+      push(@prettyOpt, $$q{TITLE});
+    }
+    smartSplit("    Optional:      ", ", ", @prettyOpt);
+
+    print "    License:       $$c{LICENSE}\n";
+    print "    Project URL:   $$c{URL}\n";
+    smartSplit("    Notes:         ", " ", split(/[ \n]/, $$c{NOTES}));
+    print "\n";
+  }
 }
 
 # libraries

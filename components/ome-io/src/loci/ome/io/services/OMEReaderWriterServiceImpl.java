@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+OME database I/O package for communicating with OME and OMERO servers.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,12 +36,13 @@ import loci.ome.io.OmeroReader;
  *
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OMEReaderWriterServiceImpl.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OMEReaderWriterServiceImpl.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/services/OMEReaderWriterServiceImpl.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/services/OMEReaderWriterServiceImpl.java">SVN</a></dd></dl>
  */
 public class OMEReaderWriterServiceImpl extends AbstractService
-  implements OMEReaderWriterService {
-  
+  implements OMEReaderWriterService
+{
+
   public OMEReaderWriterServiceImpl() {
     // Just being thorough with these dependencies.
     checkClassDependency(OMEReader.class);

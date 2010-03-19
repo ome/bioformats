@@ -4,7 +4,7 @@
 
 /*
 LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
-Copyright (C) 2005-@year@ Melissa Linkert and Curtis Rueden.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Chris Allan.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

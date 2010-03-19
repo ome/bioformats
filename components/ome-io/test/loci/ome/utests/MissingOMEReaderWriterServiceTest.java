@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+OME database I/O package for communicating with OME and OMERO servers.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ import org.testng.annotations.Test;
  *
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MissingOMEReaderWriterServiceTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MissingOMEReaderWriterServiceTest.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-io/test/loci/ome/utests/MissingOMEReaderWriterServiceTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-io/test/loci/ome/utests/MissingOMEReaderWriterServiceTest.java">SVN</a></dd></dl>
  */
 public class MissingOMEReaderWriterServiceTest {
 
