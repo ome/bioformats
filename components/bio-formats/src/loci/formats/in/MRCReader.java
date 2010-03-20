@@ -233,9 +233,9 @@ public class MRCReader extends FormatReader {
     double y = (ylen / my) == Double.POSITIVE_INFINITY ? 1 : (ylen / my);
     double z = (zlen / mz) == Double.POSITIVE_INFINITY ? 1 : (zlen / mz);
 
-    store.setDimensionsPhysicalSizeX(new Double(x), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(y), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(z), 0, 0);
+    store.setDimensionsPhysicalSizeX(x, 0, 0);
+    store.setDimensionsPhysicalSizeY(y, 0, 0);
+    store.setDimensionsPhysicalSizeZ(z, 0, 0);
   }
 
 }

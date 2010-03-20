@@ -806,17 +806,17 @@ public class ICSReader extends FormatReader {
         }
         else if (axes[i].equals("ch")) {
           int c = pixelSizes[i].intValue();
-          if (c > 0) store.setDimensionsWaveIncrement(new Integer(c), 0, 0);
+          if (c > 0) store.setDimensionsWaveIncrement(c, 0, 0);
         }
       }
     }
     else if (sizes != null) {
       if (sizes.length > 0) {
-        store.setDimensionsPhysicalSizeX(new Double(sizes[0]), 0, 0);
+        store.setDimensionsPhysicalSizeX(sizes[0], 0, 0);
       }
       if (sizes.length > 1) {
         sizes[1] /= getSizeY();
-        store.setDimensionsPhysicalSizeY(new Double(sizes[1]), 0, 0);
+        store.setDimensionsPhysicalSizeY(sizes[1], 0, 0);
       }
     }
 

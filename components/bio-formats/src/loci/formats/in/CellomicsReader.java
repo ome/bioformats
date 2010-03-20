@@ -169,8 +169,8 @@ public class CellomicsReader extends FormatReader {
     double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
     double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-    store.setDimensionsPhysicalSizeX(new Double(width), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(height), 0, 0);
+    store.setDimensionsPhysicalSizeX(width, 0, 0);
+    store.setDimensionsPhysicalSizeY(height, 0, 0);
   }
 
 }

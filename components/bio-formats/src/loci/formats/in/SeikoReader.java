@@ -108,8 +108,8 @@ public class SeikoReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     store.setImageDescription(comment, 0);
-    store.setDimensionsPhysicalSizeX(new Double(xSize), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(ySize), 0, 0);
+    store.setDimensionsPhysicalSizeX(xSize, 0, 0);
+    store.setDimensionsPhysicalSizeY(ySize, 0, 0);
   }
 
 }

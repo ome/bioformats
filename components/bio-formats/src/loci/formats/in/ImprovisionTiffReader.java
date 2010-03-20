@@ -214,10 +214,10 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), 0, 0);
-    store.setDimensionsTimeIncrement(new Double(pixelSizeT / 1000000.0), 0, 0);
+    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
+    store.setDimensionsTimeIncrement(pixelSizeT / 1000000.0, 0, 0);
   }
 
 }

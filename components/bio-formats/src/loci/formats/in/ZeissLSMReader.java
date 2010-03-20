@@ -411,7 +411,7 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       initMetadata(series);
-      store.setPixelsBigEndian(new Boolean(!isLittleEndian()), series, 0);
+      store.setPixelsBigEndian(!isLittleEndian(), series, 0);
     }
     for (int series=0; series<ifdsList.size(); series++) {
       store.setImageName(imageNames.get(series), series);
@@ -862,16 +862,14 @@ public class ZeissLSMReader extends FormatReader {
 
       if (zct[2] < timestamps.size()) {
         double thisStamp = timestamps.get(zct[2]).doubleValue();
-        store.setPlaneTimingDeltaT(new Double(thisStamp - firstStamp),
-          series, 0, i);
+        store.setPlaneTimingDeltaT(thisStamp - firstStamp, series, 0, i);
         int index = zct[2] + 1;
         double nextStamp = index < timestamps.size() ?
           timestamps.get(index).doubleValue() : thisStamp;
         if (i == getSizeT() - 1 && zct[2] > 0) {
           thisStamp = timestamps.get(zct[2] - 1).doubleValue();
         }
-        store.setPlaneTimingExposureTime(new Double(nextStamp - thisStamp),
-          series, 0, i);
+        store.setPlaneTimingExposureTime(nextStamp - thisStamp, series, 0, i);
       }
     }
     in.close();
@@ -986,7 +984,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
       store.setDetectorType("PMT", series, nextDetector);
-      store.setDetectorZoom(new Double(zoom), series, nextDetector);
+      store.setDetectorZoom(zoom, series, nextDetector);
       nextDetectChannel++;
       nextDetector++;
     }
@@ -1279,15 +1277,15 @@ public class ZeissLSMReader extends FormatReader {
       // populate shape attributes
 
       store.setShapeFontFamily(fontName, series, i, 0);
-      store.setShapeFontSize(new Integer(fontHeight), series, i, 0);
+      store.setShapeFontSize(fontHeight, series, i, 0);
       store.setShapeFontStyle(fontItalic ? "normal" : "italic", series, i, 0);
       store.setShapeFontWeight(String.valueOf(fontWeight), series, i, 0);
-      store.setShapeLocked(new Boolean(moveable), series, i, 0);
+      store.setShapeLocked(moveable, series, i, 0);
       store.setShapeStrokeColor(String.valueOf(color), series, i, 0);
-      store.setShapeStrokeWidth(new Integer(lineWidth), series, i, 0);
+      store.setShapeStrokeWidth(lineWidth, series, i, 0);
       store.setShapeTextDecoration(fontUnderlined ? "underline" :
         fontStrikeout ? "line-through" : "normal", series, i, 0);
-      store.setShapeVisibility(new Boolean(enabled), series, i, 0);
+      store.setShapeVisibility(enabled, series, i, 0);
 
       in.seek(offset + blockLength);
     }
@@ -1651,7 +1649,7 @@ public class ZeissLSMReader extends FormatReader {
         startTime = DateTools.convertDate(stamp, DateTools.MICROSOFT);
       }
 
-      zoom = (Double) getDoubleValue(RECORDING_ZOOM);
+      zoom = getDoubleValue(RECORDING_ZOOM);
 
       String objective = getStringValue(RECORDING_OBJECTIVE);
 

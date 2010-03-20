@@ -114,10 +114,10 @@ public class LEOReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    store.setDimensionsPhysicalSizeX(new Double(xSize), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(xSize), 0, 0);
+    store.setDimensionsPhysicalSizeX(xSize, 0, 0);
+    store.setDimensionsPhysicalSizeY(xSize, 0, 0);
 
-    store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+    store.setObjectiveWorkingDistance(workingDistance, 0, 0);
 
     date = DateTools.formatDate(date, "HH:mm dd-MMM-yyyy");
     store.setImageCreationDate(date, 0);

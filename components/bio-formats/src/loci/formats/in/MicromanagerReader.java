@@ -495,7 +495,7 @@ public class MicromanagerReader extends FormatReader {
     if (cameraMode == null) cameraMode = "Unknown";
     store.setDetectorType(cameraMode, 0, 0);
 
-    store.setImagingEnvironmentTemperature(new Double(temperature), 0);
+    store.setImagingEnvironmentTemperature(temperature, 0);
   }
 
 }

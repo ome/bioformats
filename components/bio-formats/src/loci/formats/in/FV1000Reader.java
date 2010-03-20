@@ -1041,8 +1041,8 @@ public class FV1000Reader extends FormatReader {
 
       if (getSizeZ() == 1) pixelSizeZ = 0d;
       if (getSizeT() == 1) pixelSizeT = 0d;
-      store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), i, 0);
-      store.setDimensionsTimeIncrement(new Double(pixelSizeT), i, 0);
+      store.setDimensionsPhysicalSizeZ(pixelSizeZ, i, 0);
+      store.setDimensionsTimeIncrement(pixelSizeT, i, 0);
 
       // populate LogicalChannel data
 
@@ -1249,11 +1249,11 @@ public class FV1000Reader extends FormatReader {
             store.setShapeTheZ(zIndex, 0, nextROI, nextShape);
             store.setShapeTheT(tIndex, 0, nextROI, nextShape);
 
-            store.setShapeFontSize(new Integer(fontSize), 0, nextROI,
+            store.setShapeFontSize(fontSize, 0, nextROI,
               nextShape);
             store.setShapeFontFamily(fontName, 0, nextROI, nextShape);
             store.setShapeText(name, 0, nextROI, nextShape);
-            store.setShapeStrokeWidth(new Integer(lineWidth), 0, nextROI,
+            store.setShapeStrokeWidth(lineWidth, 0, nextROI,
               nextShape);
             store.setShapeStrokeColor(String.valueOf(color), 0, nextROI,
               nextShape);

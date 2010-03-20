@@ -680,8 +680,8 @@ public class PerkinElmerReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     // populate Dimensions element
-    store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
 
     // populate Image element
     if (finishTime != null) {
@@ -719,14 +719,14 @@ public class PerkinElmerReader extends FormatReader {
 
     for (int i=0; i<getImageCount(); i++) {
       int[] zct = getZCTCoords(i);
-      store.setPlaneTimingDeltaT(new Double(i * secondsPerPlane), 0, 0, i);
+      store.setPlaneTimingDeltaT(i * secondsPerPlane, 0, 0, i);
       if (zct[1] < exposureTimes.size()) {
         store.setPlaneTimingExposureTime(exposureTimes.get(zct[1]), 0, 0, i);
       }
 
       if (zct[0] < zPositions.size()) {
-        store.setStagePositionPositionX(new Double(0.0), 0, 0, i);
-        store.setStagePositionPositionY(new Double(0.0), 0, 0, i);
+        store.setStagePositionPositionX(0.0, 0, 0, i);
+        store.setStagePositionPositionY(0.0, 0, 0, i);
         store.setStagePositionPositionZ(zPositions.get(zct[0]), 0, 0, i);
       }
     }

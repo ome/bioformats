@@ -210,9 +210,9 @@ public class NikonTiffReader extends BaseTiffReader {
 
     store.setImageDescription("", 0);
 
-    store.setDimensionsPhysicalSizeX(new Double(physicalSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(physicalSizeY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(physicalSizeZ), 0, 0);
+    store.setDimensionsPhysicalSizeX(physicalSizeX, 0, 0);
+    store.setDimensionsPhysicalSizeY(physicalSizeY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(physicalSizeZ, 0, 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
@@ -221,12 +221,12 @@ public class NikonTiffReader extends BaseTiffReader {
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
-    store.setObjectiveNominalMagnification(new Integer(magnification), 0, 0);
+    store.setObjectiveNominalMagnification(magnification, 0, 0);
 
     if (correction == null) correction = "Unknown";
     store.setObjectiveCorrection(correction, 0, 0);
-    store.setObjectiveLensNA(new Double(lensNA), 0, 0);
-    store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+    store.setObjectiveLensNA(lensNA, 0, 0);
+    store.setObjectiveWorkingDistance(workingDistance, 0, 0);
     if (immersion == null) immersion = "Unknown";
     store.setObjectiveImmersion(immersion, 0, 0);
 
@@ -245,7 +245,7 @@ public class NikonTiffReader extends BaseTiffReader {
     }
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
-      store.setLogicalChannelPinholeSize(new Double(pinholeSize), 0, c);
+      store.setLogicalChannelPinholeSize(pinholeSize, 0, c);
       if (c < exWave.size()) {
         store.setLogicalChannelExWave(exWave.get(c), 0, c);
       }

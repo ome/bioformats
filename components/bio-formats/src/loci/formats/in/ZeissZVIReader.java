@@ -724,8 +724,8 @@ public class ZeissZVIReader extends FormatReader {
         store.setPlaneTimingDeltaT(new Double(stamp / 1600000), 0, 0, plane);
       }
 
-      store.setStagePositionPositionX(new Double(stageX), 0, 0, plane);
-      store.setStagePositionPositionY(new Double(stageY), 0, 0, plane);
+      store.setStagePositionPositionX(stageX, 0, 0, plane);
+      store.setStagePositionPositionY(stageY, 0, 0, plane);
     }
 
     core[0].indexed = !isRGB() && channelColors != null;
@@ -948,7 +948,7 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("Objective Magnification")) {
           double mag = Double.parseDouble(value);
-          store.setObjectiveNominalMagnification(new Integer((int) mag), 0, 0);
+          store.setObjectiveNominalMagnification((int) mag, 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
@@ -966,7 +966,7 @@ public class ZeissZVIReader extends FormatReader {
               int mag = (int)
                 Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
-              store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+              store.setObjectiveNominalMagnification(mag, 0, 0);
               store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(tokens[q - 1], 0, 0);
               break;

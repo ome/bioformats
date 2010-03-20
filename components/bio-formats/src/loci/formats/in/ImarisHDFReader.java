@@ -340,9 +340,9 @@ public class ImarisHDFReader extends FormatReader {
       if (px == 1) px = (maxX - minX) / core[i].sizeX;
       if (py == 1) py = (maxY - minY) / core[i].sizeY;
       if (pz == 1) pz = (maxZ - minZ) / core[i].sizeZ;
-      store.setDimensionsPhysicalSizeX(new Double(px), i, 0);
-      store.setDimensionsPhysicalSizeY(new Double(py), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(pz), i, 0);
+      store.setDimensionsPhysicalSizeX(px, i, 0);
+      store.setDimensionsPhysicalSizeY(py, i, 0);
+      store.setDimensionsPhysicalSizeZ(pz, i, 0);
     }
 
     int cIndex = 0;

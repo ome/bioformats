@@ -286,8 +286,8 @@ public class PCIReader extends FormatReader {
       store.setImageCreationDate(creationDate, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setDimensionsPhysicalSizeX(new Double(scaleFactor), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(scaleFactor), 0, 0);
+    store.setDimensionsPhysicalSizeX(scaleFactor, 0, 0);
+    store.setDimensionsPhysicalSizeY(scaleFactor, 0, 0);
 
     for (int i=0; i<timestamps.size(); i++) {
       Double timestamp = new Double(

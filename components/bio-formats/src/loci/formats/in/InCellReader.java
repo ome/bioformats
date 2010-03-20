@@ -443,8 +443,8 @@ public class InCellReader extends FormatReader {
 
     store.setPlateRowNamingConvention(rowName, 0);
     store.setPlateColumnNamingConvention(colName, 0);
-    store.setPlateWellOriginX(new Double(0.5), 0);
-    store.setPlateWellOriginY(new Double(0.5), 0);
+    store.setPlateWellOriginX(0.5, 0);
+    store.setPlateWellOriginY(0.5, 0);
 
     // populate Well data
 
@@ -458,7 +458,7 @@ public class InCellReader extends FormatReader {
       int sampleIndex = field * totalTimepoints + timepoint;
 
       String imageID = MetadataTools.createLSID("Image", i);
-      store.setWellSampleIndex(new Integer(i), 0, well, sampleIndex);
+      store.setWellSampleIndex(i, 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
       store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
       store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
@@ -684,8 +684,8 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        store.setObjectiveNominalMagnification(new Integer((int)
-          Double.parseDouble(attributes.getValue("magnification"))), 0, 0);
+        store.setObjectiveNominalMagnification((int)
+          Double.parseDouble(attributes.getValue("magnification")), 0, 0);
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         store.setObjectiveImmersion("Unknown", 0, 0);
@@ -765,8 +765,8 @@ public class InCellReader extends FormatReader {
 
         for (int r=0; r<wellRows; r++) {
           for (int c=0; c<wellCols; c++) {
-            store.setWellRow(new Integer(r), nextPlate, r*wellCols + c);
-            store.setWellColumn(new Integer(c), nextPlate, r*wellCols + c);
+            store.setWellRow(r, nextPlate, r*wellCols + c);
+            store.setWellColumn(c, nextPlate, r*wellCols + c);
           }
         }
         nextPlate++;

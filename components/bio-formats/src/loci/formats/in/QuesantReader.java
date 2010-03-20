@@ -167,8 +167,8 @@ public class QuesantReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageDescription(comment, 0);
-    store.setDimensionsPhysicalSizeX(new Double(xSize / getSizeX()), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(xSize / getSizeY()), 0, 0);
+    store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
+    store.setDimensionsPhysicalSizeY((double) xSize / getSizeY(), 0, 0);
   }
 
 }

@@ -284,8 +284,8 @@ public class PrairieReader extends FormatReader {
         store.setInstrumentID(instrumentID, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
-        store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
-        store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
+        store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+        store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
         for (int i=0; i<getSizeC(); i++) {
           String gain = i < gains.size() ? gains.get(i) : null;
           String offset = i < offsets.size() ? offsets.get(i) : null;

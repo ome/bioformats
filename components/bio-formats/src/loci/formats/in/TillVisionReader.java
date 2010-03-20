@@ -425,7 +425,7 @@ public class TillVisionReader extends FormatReader {
       if (i < waves.size()) {
         int waveIncrement = Integer.parseInt(waves.get(i));
         if (waveIncrement > 0) {
-          store.setDimensionsWaveIncrement(new Integer(waveIncrement), i, 0);
+          store.setDimensionsWaveIncrement(waveIncrement, i, 0);
         }
       }
 

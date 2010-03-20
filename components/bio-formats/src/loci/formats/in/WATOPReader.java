@@ -142,8 +142,8 @@ public class WATOPReader extends FormatReader {
 
     store.setImageDescription(comment, 0);
     store.setImageCreationDate(date, 0);
-    store.setDimensionsPhysicalSizeX(new Double(xSize / getSizeX()), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(ySize / getSizeY()), 0, 0);
+    store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
+    store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
   }
 
 }

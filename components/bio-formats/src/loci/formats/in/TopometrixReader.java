@@ -175,8 +175,8 @@ public class TopometrixReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    store.setDimensionsPhysicalSizeX(new Double(xSize / getSizeX()), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(ySize / getSizeY()), 0, 0);
+    store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
+    store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
     store.setImageDescription(comment, 0);
     store.setImageCreationDate(DateTools.formatDate(date,
       new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"}), 0);

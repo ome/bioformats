@@ -505,7 +505,7 @@ public class DeltavisionReader extends FormatReader {
       DVExtHdrFields hdrC = extHdrFields[0][w][0];
       store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
       if ((int) hdrC.exWavelen > 0) {
-        store.setLogicalChannelExWave(new Integer((int) hdrC.exWavelen), 0, w);
+        store.setLogicalChannelExWave((int) hdrC.exWavelen, 0, w);
       }
       if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
       store.setLogicalChannelNdFilter(ndFilters[w], 0, w);
@@ -695,7 +695,7 @@ public class DeltavisionReader extends FormatReader {
           try {
             double mhz = Double.parseDouble(value) / 1000;
             for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsReadOutRate(new Double(mhz), 0, c);
+              store.setDetectorSettingsReadOutRate(mhz, 0, c);
             }
           }
           catch (NumberFormatException e) {
@@ -706,7 +706,7 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("C", "").trim();
           try {
             // this is the camera temperature, not the environment temperature
-            //store.setImagingEnvironmentTemperature(new Double(value), 0);
+            //store.setImagingEnvironmentTemperature(value, 0);
           }
           catch (NumberFormatException e) {
             LOGGER.warn("Could not parse temperature '{}'", value);

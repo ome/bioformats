@@ -681,12 +681,12 @@ public class MIASReader extends FormatReader {
         int row = wellIndex / wellColumns;
         int wellCol = (wellIndex % wellColumns) + 1;
 
-        store.setWellRow(new Integer(row), 0, well);
-        store.setWellColumn(new Integer(wellCol - 1), 0, well);
+        store.setWellRow(row, 0, well);
+        store.setWellColumn(wellCol - 1, 0, well);
 
         String imageID = MetadataTools.createLSID("Image", well);
         store.setWellSampleImageRef(imageID, 0, well, 0);
-        store.setWellSampleIndex(new Integer(well), 0, well, 0);
+        store.setWellSampleIndex(well, 0, well, 0);
 
         // populate Image/Pixels metadata
         store.setImageExperimentRef("Experiment:" + experiment.getName(), well);
@@ -908,7 +908,7 @@ public class MIASReader extends FormatReader {
         }
         else if (key.equals("Magnification")) {
           int mag = (int) Double.parseDouble(value);
-          store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+          store.setObjectiveNominalMagnification(mag, 0, 0);
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);

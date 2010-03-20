@@ -439,8 +439,8 @@ public class FlexReader extends FormatReader {
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
-        store.setWellRow(new Integer(row), 0, row * wellColumns + col);
-        store.setWellColumn(new Integer(col), 0, row * wellColumns + col);
+        store.setWellRow(row, 0, row * wellColumns + col);
+        store.setWellColumn(col, 0, row * wellColumns + col);
       }
     }
 
@@ -496,11 +496,11 @@ public class FlexReader extends FormatReader {
       int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
       if (wellRows == 0 && wellColumns == 0) {
         well = pos[1];
-        store.setWellRow(new Integer(wellNumber[pos[1]][0]), pos[2], pos[1]);
-        store.setWellColumn(new Integer(wellNumber[pos[1]][1]), pos[2], pos[1]);
+        store.setWellRow(wellNumber[pos[1]][0], pos[2], pos[1]);
+        store.setWellColumn(wellNumber[pos[1]][1], pos[2], pos[1]);
       }
 
-      store.setWellSampleIndex(new Integer(i), pos[2], well, pos[0]);
+      store.setWellSampleIndex(i, pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
       if (pos[0] < xPositions.size()) {
         store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], well, pos[0]);

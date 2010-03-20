@@ -234,13 +234,12 @@ public class GatanReader extends FormatReader {
 
     for (int i=0; i<getSizeC(); i++) {
       // CTR CHECK
-//      store.setDisplayChannel(new Integer(i), null, null,
-//        new Double(gamma), null);
+//      store.setDisplayChannel(i, null, null, gamma, null);
     }
 
     // CTR CHECK
-    //store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
-    //store.setDetectorVoltage(new Double(voltage), 0, 0);
+    //store.setObjectiveCalibratedMagnification(mag, 0, 0);
+    //store.setDetectorVoltage(voltage, 0, 0);
 
     if (info == null) info = "";
     StringTokenizer scopeInfo = new StringTokenizer(info, "(");

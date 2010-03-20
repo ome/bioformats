@@ -425,10 +425,10 @@ public class ScanrReader extends FormatReader {
       int wellRow = well / wellColumns;
       int wellCol = well % wellColumns;
 
-      store.setWellColumn(new Integer(wellCol), 0, well);
-      store.setWellRow(new Integer(wellRow), 0, well);
+      store.setWellColumn(wellCol, 0, well);
+      store.setWellRow(wellRow, 0, well);
 
-      store.setWellSampleIndex(new Integer(i), 0, well, field);
+      store.setWellSampleIndex(i, 0, well, field);
       String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);

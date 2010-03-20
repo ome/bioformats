@@ -202,8 +202,8 @@ public class UnisokuReader extends FormatReader {
     store.setImageName(imageName, 0);
     store.setImageDescription(remark, 0);
     store.setImageCreationDate(date, 0);
-    store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), 0, 0);
+    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
   }
 
 }

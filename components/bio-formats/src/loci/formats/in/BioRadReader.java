@@ -535,8 +535,8 @@ public class BioRadReader extends FormatReader {
                   Double.parseDouble(values[5]) - Double.parseDouble(values[3]);
                 height /= getSizeY();
 
-                store.setDimensionsPhysicalSizeX(new Double(width), 0, 0);
-                store.setDimensionsPhysicalSizeY(new Double(height), 0, 0);
+                store.setDimensionsPhysicalSizeX(width, 0, 0);
+                store.setDimensionsPhysicalSizeY(height, 0, 0);
 
                 break;
               case 3:
@@ -882,7 +882,7 @@ public class BioRadReader extends FormatReader {
     store.setObjectiveSettingsObjective(objectiveID, 0);
 
     store.setObjectiveLensNA(new Double(lens), 0, 0);
-    store.setObjectiveNominalMagnification(new Integer((int) magFactor), 0, 0);
+    store.setObjectiveNominalMagnification((int) magFactor, 0, 0);
     store.setObjectiveCorrection("Unknown", 0, 0);
     store.setObjectiveImmersion("Unknown", 0, 0);
 

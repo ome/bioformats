@@ -199,8 +199,8 @@ public class ImarisReader extends FormatReader {
     store.setDimensionsPhysicalSizeX(new Double(dx), 0, 0);
     store.setDimensionsPhysicalSizeY(new Double(dy), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Double(dz), 0, 0);
-    store.setDimensionsTimeIncrement(new Double(1), 0, 0);
-    store.setDimensionsWaveIncrement(new Integer(1), 0, 0);
+    store.setDimensionsTimeIncrement(1.0, 0, 0);
+    store.setDimensionsWaveIncrement(1, 0, 0);
 
     // populate LogicalChannel data
 

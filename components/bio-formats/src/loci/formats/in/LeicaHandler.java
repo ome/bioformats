@@ -448,7 +448,7 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
-        store.setDimensionsPhysicalSizeZ(new Double(zStep), numDatasets, 0);
+        store.setDimensionsPhysicalSizeZ(zStep, numDatasets, 0);
       }
       else if (id.equals("nDelayTime_s")) {
         store.setDimensionsTimeIncrement(new Double(value), numDatasets, 0);
@@ -666,10 +666,8 @@ public class LeicaHandler extends DefaultHandler {
           String filter =
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(filter, numDatasets, nextFilter);
-          store.setTransmittanceRangeCutIn(new Integer(m.cutIn), numDatasets,
-            nextFilter);
-          store.setTransmittanceRangeCutOut(new Integer(m.cutOut), numDatasets,
-            nextFilter);
+          store.setTransmittanceRangeCutIn(m.cutIn, numDatasets, nextFilter);
+          store.setTransmittanceRangeCutOut(m.cutOut, numDatasets, nextFilter);
           store.setLogicalChannelSecondaryEmissionFilter(filter, numDatasets,
             nextChannel);
           nextFilter++;
@@ -741,15 +739,14 @@ public class LeicaHandler extends DefaultHandler {
           store.setImageCreationDate(date, numDatasets);
         }
         firstStamp = ms;
-        store.setPlaneTimingDeltaT(new Double(0), numDatasets, 0, count);
+        store.setPlaneTimingDeltaT(0.0, numDatasets, 0, count);
       }
       else {
         CoreMetadata coreMeta = core.get(numDatasets);
         int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
         if (count < nImages) {
           ms -= firstStamp;
-          store.setPlaneTimingDeltaT(
-            new Double(ms / 1000.0), numDatasets, 0, count);
+          store.setPlaneTimingDeltaT(ms / 1000.0, numDatasets, 0, count);
         }
       }
 
@@ -870,11 +867,11 @@ public class LeicaHandler extends DefaultHandler {
       if (text != null) store.setShapeText(text, series, roi, 0);
       if (fontName != null) store.setShapeFontFamily(fontName, series, roi, 0);
       if (fontSize != null) {
-        store.setShapeFontSize(
-          new Integer((int) Double.parseDouble(fontSize)), series, roi, 0);
+        store.setShapeFontSize((int) Double.parseDouble(fontSize),
+          series, roi, 0);
       }
       store.setShapeStrokeColor(String.valueOf(color), series, roi, 0);
-      store.setShapeStrokeWidth(new Integer(linewidth), series, roi, 0);
+      store.setShapeStrokeWidth(linewidth, series, roi, 0);
 
       if (!normalized) normalize();
 
@@ -949,13 +946,13 @@ public class LeicaHandler extends DefaultHandler {
       for (int i=0; i<x.size(); i++) {
         double coordinate = x.get(i).doubleValue() * 1000000;
         coordinate *= (1 / physicalSizeX);
-        x.setElementAt(new Double(coordinate), i);
+        x.setElementAt(coordinate, i);
       }
 
       for (int i=0; i<y.size(); i++) {
         double coordinate = y.get(i).doubleValue() * 1000000;
         coordinate *= (1 / physicalSizeY);
-        y.setElementAt(new Double(coordinate), i);
+        y.setElementAt(coordinate, i);
       }
 
       normalized = true;

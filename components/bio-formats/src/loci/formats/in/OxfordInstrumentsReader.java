@@ -182,8 +182,8 @@ public class OxfordInstrumentsReader extends FormatReader {
 
     store.setImageDescription(comment, 0);
     store.setImageCreationDate(dateTime.toString(), 0);
-    store.setDimensionsPhysicalSizeX(new Double(xSize / getSizeX()), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(ySize / getSizeY()), 0, 0);
+    store.setDimensionsPhysicalSizeX(xSize / getSizeX(), 0, 0);
+    store.setDimensionsPhysicalSizeY(ySize / getSizeY(), 0, 0);
   }
 
 }

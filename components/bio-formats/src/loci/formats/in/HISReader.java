@@ -237,11 +237,11 @@ public class HISReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, i);
       store.setImageCreationDate(date[i], i);
 
-      store.setPlaneTimingExposureTime(new Double(exposureTime[i]), i, 0, 0);
+      store.setPlaneTimingExposureTime(exposureTime[i], i, 0, 0);
 
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
       store.setDetectorID(detectorID, 0, i);
-      store.setDetectorOffset(new Double(offset[i]), 0, i);
+      store.setDetectorOffset(offset[i], 0, i);
       store.setDetectorType("Unknown", 0, i);
       store.setDetectorSettingsDetector(detectorID, i, 0);
       store.setDetectorSettingsBinning(binning[i], i, 0);

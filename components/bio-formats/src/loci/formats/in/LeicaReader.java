@@ -976,24 +976,22 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      store.setDimensionsPhysicalSizeX(new Double(physicalSizes[i][0]), i, 0);
-      store.setDimensionsPhysicalSizeY(new Double(physicalSizes[i][1]), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(physicalSizes[i][2]), i, 0);
+      store.setDimensionsPhysicalSizeX(physicalSizes[i][0], i, 0);
+      store.setDimensionsPhysicalSizeY(physicalSizes[i][1], i, 0);
+      store.setDimensionsPhysicalSizeZ(physicalSizes[i][2], i, 0);
       if ((int) physicalSizes[i][3] > 0) {
-        store.setDimensionsWaveIncrement(
-          new Integer((int) physicalSizes[i][3]), i, 0);
+        store.setDimensionsWaveIncrement((int) physicalSizes[i][3], i, 0);
       }
       if ((int) physicalSizes[i][4] > 0) {
-        store.setDimensionsTimeIncrement(new Double(physicalSizes[i][4]), i, 0);
+        store.setDimensionsTimeIncrement(physicalSizes[i][4], i, 0);
       }
 
       for (int j=0; j<core[i].imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
-          store.setPlaneTimingDeltaT(new Double(elapsedTime), i, 0, j);
-          store.setPlaneTimingExposureTime(
-            new Double(exposureTime[i]), i, 0, j);
+          store.setPlaneTimingDeltaT(elapsedTime, i, 0, j);
+          store.setPlaneTimingExposureTime(exposureTime[i], i, 0, j);
         }
       }
     }
@@ -1139,8 +1137,8 @@ public class LeicaReader extends FormatReader {
             objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
-          store.setObjectiveNominalMagnification(
-            new Integer((int) Double.parseDouble(mag)), series, objective);
+          store.setObjectiveNominalMagnification((int)
+            Double.parseDouble(mag), series, objective);
         }
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, series, objective);
@@ -1217,7 +1215,7 @@ public class LeicaReader extends FormatReader {
       {
         double pos = Double.parseDouble(data) * 1000000;
         for (int q=0; q<core[series].imageCount; q++) {
-          store.setStagePositionPositionZ(new Double(pos), series, 0, q);
+          store.setStagePositionPositionZ(pos, series, 0, q);
         }
       }
 

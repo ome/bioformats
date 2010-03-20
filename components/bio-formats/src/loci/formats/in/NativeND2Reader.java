@@ -928,9 +928,9 @@ public class NativeND2Reader extends FormatReader {
 
     // populate Dimensions data
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
-      store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(pixelSizeZ), i, 0);
+      store.setDimensionsPhysicalSizeX(pixelSizeX, i, 0);
+      store.setDimensionsPhysicalSizeY(pixelSizeY, i, 0);
+      store.setDimensionsPhysicalSizeZ(pixelSizeZ, i, 0);
     }
 
     // populate PlaneTiming and StagePosition data
@@ -942,7 +942,7 @@ public class NativeND2Reader extends FormatReader {
           int stampIndex = coords[2] + i * getSizeT();
           if (tsT.size() == getImageCount()) stampIndex = n;
           double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneTimingDeltaT(new Double(stamp), i, 0, n);
+          store.setPlaneTimingDeltaT(stamp, i, 0, n);
 
           int index = i * getSizeC() + coords[1];
           if (index < exposureTime.size()) {

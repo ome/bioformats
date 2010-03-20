@@ -448,9 +448,9 @@ public class TCSReader extends FormatReader {
       }
     }
 
-    store.setDimensionsPhysicalSizeX(new Double(voxelX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(voxelY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(voxelZ), 0, 0);
+    store.setDimensionsPhysicalSizeX(voxelX, 0, 0);
+    store.setDimensionsPhysicalSizeY(voxelY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(voxelZ, 0, 0);
   }
 
   // -- Helper methods --

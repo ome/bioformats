@@ -438,8 +438,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     int resolutionUnit = firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT);
     TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
     TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
-    float pixX = xResolution == null ? 0f : 1 / xResolution.floatValue();
-    float pixY = yResolution == null ? 0f : 1 / yResolution.floatValue();
+    double pixX = xResolution == null ? 0 : 1 / xResolution.doubleValue();
+    double pixY = yResolution == null ? 0 : 1 / yResolution.doubleValue();
 
     switch (resolutionUnit) {
       case 2:
@@ -454,9 +454,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         break;
     }
 
-    store.setDimensionsPhysicalSizeX(new Double(pixX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(pixY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(0), 0, 0);
+    store.setDimensionsPhysicalSizeX(pixX, 0, 0);
+    store.setDimensionsPhysicalSizeY(pixY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(0.0, 0, 0);
   }
 
   /**

@@ -466,12 +466,12 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     // populate Dimensions
-    store.setDimensionsPhysicalSizeX(new Double(voxelX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(voxelY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(voxelZ), 0, 0);
-    store.setDimensionsTimeIncrement(new Double(voxelT), 0, 0);
+    store.setDimensionsPhysicalSizeX(voxelX, 0, 0);
+    store.setDimensionsPhysicalSizeY(voxelY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(voxelZ, 0, 0);
+    store.setDimensionsTimeIncrement(voxelT, 0, 0);
     if ((int) voxelC > 0) {
-      store.setDimensionsWaveIncrement(new Integer((int) voxelC), 0, 0);
+      store.setDimensionsWaveIncrement((int) voxelC, 0, 0);
     }
 
     // populate LogicalChannel data
@@ -486,8 +486,7 @@ public class FluoviewReader extends BaseTiffReader {
 
     for (int i=0; i<getSizeC(); i++) {
       // CTR CHECK
-//      store.setDisplayChannel(new Integer(i), null, null,
-//        gamma == null ? null : new Double(gamma.doubleValue()), null);
+//      store.setDisplayChannel(i, null, null, gamma, null);
 
       if (voltages[i] != null) {
         if (detManu != null) store.setDetectorManufacturer(detManu, 0, 0);
