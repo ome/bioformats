@@ -356,8 +356,13 @@ public class LeicaReader extends FormatReader {
       r.setId(id);
 
       core = r.getCoreMetadata();
-      metadata = r.getMetadata();
       metadataStore = r.getMetadataStore();
+
+      Hashtable globalMetadata = r.getGlobalMetadata();
+      for (Object key : globalMetadata.keySet()) {
+        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      }
+
       r.close();
 
       files = new Vector[] {new Vector()};

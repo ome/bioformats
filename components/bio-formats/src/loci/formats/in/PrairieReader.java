@@ -358,7 +358,11 @@ public class PrairieReader extends FormatReader {
         tiff.setId(files[0]);
         core = tiff.getCoreMetadata();
         metadataStore = tiff.getMetadataStore();
-        metadata = tiff.getMetadata();
+
+        Hashtable globalMetadata = tiff.getGlobalMetadata();
+        for (Object key : globalMetadata.keySet()) {
+          addGlobalMeta(key.toString(), globalMetadata.get(key));
+        }
       }
     }
     if (currentId == null) currentId = id;

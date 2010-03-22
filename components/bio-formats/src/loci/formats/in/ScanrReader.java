@@ -201,8 +201,13 @@ public class ScanrReader extends FormatReader {
       r.setMetadataStore(getMetadataStore());
       r.setId(id);
       core = r.getCoreMetadata();
-      metadata = r.getMetadata();
       metadataStore = r.getMetadataStore();
+
+      Hashtable globalMetadata = r.getGlobalMetadata();
+      for (Object key : globalMetadata.keySet()) {
+        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      }
+
       r.close();
       tiffs = new String[] {id};
       reader = new MinimalTiffReader();

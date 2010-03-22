@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -163,7 +164,11 @@ public class L2DReader extends FormatReader {
       r.setId(id);
       core = r.getCoreMetadata();
       metadataStore = r.getMetadataStore();
-      metadata = r.getMetadata();
+
+      Hashtable globalMetadata = r.getGlobalMetadata();
+      for (Object key : globalMetadata.keySet()) {
+        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      }
       r.close();
       reader = new MinimalTiffReader();
       return;

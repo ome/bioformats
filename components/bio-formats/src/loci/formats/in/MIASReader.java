@@ -292,8 +292,13 @@ public class MIASReader extends FormatReader {
       r.setMetadataStore(getMetadataStore());
       r.setId(tiffs[0][0]);
       core = r.getCoreMetadata();
-      metadata = r.getMetadata();
       metadataStore = r.getMetadataStore();
+
+      Hashtable globalMetadata = r.getGlobalMetadata();
+      for (Object key : globalMetadata.keySet()) {
+        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      }
+
       r.close();
 
       tileRows = 1;
