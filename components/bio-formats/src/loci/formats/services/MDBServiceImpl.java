@@ -108,7 +108,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
         }
         tableData.add(columnNames);
 
-        while (Data.mdb_fetch_row(table)) {
+        while (fetchRow(table)) {
           String[] row = new String[numCols];
           for (int i=0; i<numCols; i++) {
             Holder h = boundValues.get(i + previousColumnCount);
@@ -130,4 +130,18 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
     boundValues = null;
   }
 
+  /**
+   * Fetches the next row from the table, ignoring potential parsing exceptions.
+   * @param table Table to fetch the next available row from.
+   * @return <code>true</code> if there are further rows to fetch.
+   * <code>false</code> if there are no further rows to fetch or an exception
+   * is thrown while parsing the row.
+   */
+  private boolean fetchRow(MdbTableDef table) {
+    try {
+      return Data.mdb_fetch_row(table);
+    } catch (Exception e) {
+      return false;
+    }
+  }
 }
