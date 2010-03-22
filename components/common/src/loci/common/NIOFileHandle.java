@@ -474,12 +474,21 @@ public class NIOFileHandle extends AbstractNIOHandle {
       }
       offset = bufferStartPosition;
       ByteOrder byteOrder = buffer == null ? order : getOrder();
-      buffer = channel.map(mapMode, bufferStartPosition, newSize);
+      try {
+        buffer = channel.map(mapMode, bufferStartPosition, newSize);
+      } catch (IOException e) {
+        // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131 and
+        //     http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205
+        // for an explanation of why the following is necessary
+        // This is not a problem with JDK 1.6 and higher but can be a
+        // problem with earlier JVMs.
+        System.gc();
+        System.runFinalization();
+        buffer = channel.map(mapMode, bufferStartPosition, newSize);
+      }
       if (byteOrder != null) setOrder(byteOrder);
-      // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131
-      // for an explanation of why the following is necessary
-      System.gc();
-      System.runFinalization();
+      //System.gc();
+      //System.runFinalization();
     }
     buffer.position((int) (offset - bufferStartPosition));
   }
