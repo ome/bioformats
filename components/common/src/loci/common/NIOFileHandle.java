@@ -487,8 +487,6 @@ public class NIOFileHandle extends AbstractNIOHandle {
         buffer = channel.map(mapMode, bufferStartPosition, newSize);
       }
       if (byteOrder != null) setOrder(byteOrder);
-      //System.gc();
-      //System.runFinalization();
     }
     buffer.position((int) (offset - bufferStartPosition));
   }
