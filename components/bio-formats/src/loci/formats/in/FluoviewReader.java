@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -186,7 +185,7 @@ public class FluoviewReader extends BaseTiffReader {
     ras.order(isLittleEndian());
 
     put("Header Flag", ras.readShort());
-    put("Image Type", ras.readChar());
+    put("Image Type", ras.read());
 
     put("Image name", ras.readString(257));
 
@@ -349,9 +348,9 @@ public class FluoviewReader extends BaseTiffReader {
     if (comment != null) {
       // this is an INI-style comment, with one key/value pair per line
 
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
+      String[] lines = comment.split("\n");
+      for (String token : lines) {
+        token = token.trim();
         int eq = token.indexOf("=");
         if (eq != -1) {
           String key = token.substring(0, eq);
@@ -407,6 +406,15 @@ public class FluoviewReader extends BaseTiffReader {
           else if (key.equals("Time")) {
             date += " " + value;
           }
+        }
+        else if (token.startsWith("Z") && token.indexOf(" um ") != -1) {
+          // looking for "Z - x um in y planes"
+          String z = token.substring(token.indexOf("-") + 1);
+          z = z.replaceAll("\\p{Alpha}", "").trim();
+          int firstSpace = z.indexOf(" ");
+          double size = Double.parseDouble(z.substring(0, firstSpace));
+          double nPlanes = Double.parseDouble(z.substring(firstSpace).trim());
+          voxelZ = size / nPlanes;
         }
       }
       if (date != null) {

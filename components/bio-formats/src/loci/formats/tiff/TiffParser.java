@@ -178,7 +178,7 @@ public class TiffParser {
     for (int i=0; i<ifds.size(); i++) {
       Number subfile = (Number) ifds.get(i).getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
-      if (subfileType == 0) {
+      if (subfileType != 1) {
         ifds.remove(i--);
       }
     }
@@ -191,7 +191,7 @@ public class TiffParser {
     for (int i=0; i<ifds.size(); i++) {
       Number subfile = (Number) ifds.get(i).getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
-      if (subfileType != 0 && ifds.size() > 1) {
+      if (subfileType == 1 && ifds.size() > 1) {
         ifds.remove(i--);
       }
     }
