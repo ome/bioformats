@@ -789,7 +789,10 @@ public class ZeissLSMReader extends FormatReader {
             blocks.add(block);
           }
         }
-        else in.skipBytes(dataSize);
+        else if (dataSize + in.getFilePointer() <= in.length()) {
+          in.skipBytes(dataSize);
+        }
+        else break;
       }
 
       Vector<SubBlock> nonAcquiredBlocks = new Vector<SubBlock>();
