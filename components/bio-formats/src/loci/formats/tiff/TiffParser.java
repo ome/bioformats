@@ -191,7 +191,7 @@ public class TiffParser {
     for (int i=0; i<ifds.size(); i++) {
       Number subfile = (Number) ifds.get(i).getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
-      if (subfileType != 0) {
+      if (subfileType != 0 && ifds.size() > 1) {
         ifds.remove(i--);
       }
     }
@@ -881,7 +881,7 @@ public class TiffParser {
       return in.readLong();
     }
     long offset = (previous & ~0xffffffffL) | (in.readInt() & 0xffffffffL);
-    if (offset < previous) {
+    if (offset < previous && offset != 0) {
       offset += 0x100000000L;
     }
     return offset;

@@ -84,6 +84,7 @@ public class WriteCharTest {
 
   @Test
   public void testSequential() throws IOException {
+    fileHandle.seek(0);
     fileHandle.writeChar('a');
     if (checkGrowth) {
       assertEquals(2, fileHandle.length());
@@ -122,6 +123,7 @@ public class WriteCharTest {
 
   @Test
   public void testReset() throws IOException {
+    fileHandle.seek(0);
     fileHandle.writeChar('a');
     if (checkGrowth) {
       assertEquals(2, fileHandle.length());

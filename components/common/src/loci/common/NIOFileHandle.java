@@ -335,7 +335,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
     long oldPosition = position;
     long newPosition = oldPosition + Math.min(n, length());
 
-    buffer(newPosition, n);
+    buffer(newPosition, 0);
     return (int) (position - oldPosition);
   }
 
@@ -358,11 +358,12 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
   public void write(ByteBuffer buf, int off, int len) throws IOException {
-    validateLength(len);
-    buf.position(off);
+    writeSetup(len);
+    buf.position(off + len);
     buf.limit(off + len);
-    channel.position(position);
-    buffer(position + channel.write(buf), 0);
+    buf.position(buf.position() - len);
+    position += channel.write(buf, position);
+    buffer = null;
   }
 
   /* @see java.io.DataOutput.write(int b) */
@@ -377,10 +378,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeByte(int) */
   public void writeByte(int v) throws IOException {
-    validateLength(1);
-    buffer(position, 1);
+    writeSetup(1);
     buffer.put((byte) v);
-    position += 1;
+    doWrite(1);
   }
 
   /* @see java.io.DataOutput.writeBytes(String) */
@@ -390,10 +390,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
-    validateLength(2);
-    buffer(position, 2);
+    writeSetup(2);
     buffer.putChar((char) v);
-    position += 2;
+    doWrite(2);
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
@@ -403,53 +402,48 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeDouble(double) */
   public void writeDouble(double v) throws IOException {
-    validateLength(8);
-    buffer(position, 8);
+    writeSetup(8);
     buffer.putDouble(v);
-    position += 8;
+    doWrite(8);
   }
 
   /* @see java.io.DataOutput.writeFloat(float) */
   public void writeFloat(float v) throws IOException {
-    validateLength(4);
-    buffer(position, 4);
+    writeSetup(4);
     buffer.putFloat(v);
-    position += 4;
+    doWrite(4);
   }
 
   /* @see java.io.DataOutput.writeInt(int) */
   public void writeInt(int v) throws IOException {
-    validateLength(4);
-    buffer(position, 4);
+    writeSetup(4);
     buffer.putInt(v);
-    position += 4;
+    doWrite(4);
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
   public void writeLong(long v) throws IOException {
-    validateLength(8);
-    buffer(position, 8);
+    writeSetup(8);
     buffer.putLong(v);
-    position += 8;
+    doWrite(8);
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
-    validateLength(2);
-    buffer(position, 2);
+    writeSetup(2);
     buffer.putShort((short) v);
-    position += 2;
+    doWrite(2);
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
     // NB: number of bytes written is greater than the length of the string
     int strlen = str.getBytes("UTF-8").length + 2;
-    validateLength(strlen);
-    buffer(position, strlen);
+    writeSetup(strlen);
     raf.seek(position);
     raf.writeUTF(str);
     position += strlen;
+    buffer = null;
   }
 
   /**
@@ -463,10 +457,13 @@ public class NIOFileHandle extends AbstractNIOHandle {
   private void buffer(long offset, int size) throws IOException {
     position = offset;
     long newPosition = offset + size;
-    if (newPosition < bufferStartPosition
-        || newPosition > bufferStartPosition + bufferSize
-        || buffer == null) {
-      bufferStartPosition = Math.min(offset, length() - 1);
+    if (newPosition < bufferStartPosition ||
+      newPosition > bufferStartPosition + bufferSize || buffer == null)
+    {
+      bufferStartPosition = offset;
+      if (length() > 0 && length() - 1 < bufferStartPosition) {
+        bufferStartPosition = length() - 1;
+      }
       long newSize = Math.min(length() - bufferStartPosition, bufferSize);
       if (newSize < size && newSize == bufferSize) newSize = size;
       if (newSize + bufferStartPosition > length()) {
@@ -474,21 +471,22 @@ public class NIOFileHandle extends AbstractNIOHandle {
       }
       offset = bufferStartPosition;
       ByteOrder byteOrder = buffer == null ? order : getOrder();
-      try {
-        buffer = channel.map(mapMode, bufferStartPosition, newSize);
-      } catch (IOException e) {
-        // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131 and
-        //     http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205
-        // for an explanation of why the following is necessary
-        // This is not a problem with JDK 1.6 and higher but can be a
-        // problem with earlier JVMs.
-        System.gc();
-        System.runFinalization();
-        buffer = channel.map(mapMode, bufferStartPosition, newSize);
-      }
+      buffer = ByteBuffer.allocate((int) newSize);
       if (byteOrder != null) setOrder(byteOrder);
+      channel.read(buffer, bufferStartPosition);
     }
     buffer.position((int) (offset - bufferStartPosition));
+  }
+
+  private void writeSetup(int length) throws IOException {
+    validateLength(length);
+    buffer(position, length);
+  }
+
+  private void doWrite(int length) throws IOException {
+    buffer.position(buffer.position() - length);
+    channel.write(buffer, position);
+    position += length;
   }
 
 }
