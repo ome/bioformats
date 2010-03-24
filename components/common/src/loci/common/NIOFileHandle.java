@@ -192,6 +192,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see IRandomAccess.seek(long) */
   public void seek(long pos) throws IOException {
+    if (mapMode == FileChannel.MapMode.READ_WRITE && pos > length()) {
+      setLength(pos);
+    }
     buffer(pos, 0);
   }
 

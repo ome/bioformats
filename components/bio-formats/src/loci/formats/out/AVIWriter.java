@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -48,6 +49,34 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class AVIWriter extends FormatWriter {
 
+  // -- Constants --
+
+  private static final long SAVE_MOVI = 4092;
+  private static final long SAVE_FILE_SIZE = 4;
+
+  // location of length of strf CHUNK - not including the first 8 bytes with
+  // strf and size. strn follows the end of this CHUNK.
+  private static final long SAVE_STRF_SIZE = 168;
+
+  private static final long SAVE_STRN_POS = SAVE_STRF_SIZE + 1068;
+  private static final long SAVE_JUNK_SIG = SAVE_STRN_POS + 24;
+
+  // location of length of CHUNK with first LIST - not including first 8
+  // bytes with LIST and size. JUNK follows the end of this CHUNK
+  private static final long SAVE_LIST1_SIZE = 16;
+
+  // location of length of CHUNK with second LIST - not including first 8
+  // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
+  // 76, and that the length size written to saveLIST2Size is 76 less than
+  // that written to saveLIST1Size. JUNK follows the end of this CHUNK.
+  private static final long SAVE_LIST1_SUBSIZE = 92;
+
+  private static final long FRAME_OFFSET = 48;
+  private static final long FRAME_OFFSET_2 = 140;
+  private static final long PADDING_BYTES = 4076 - SAVE_JUNK_SIG;
+  private static final long SAVE_LIST2_SIZE = 4088;
+  private static final String DATA_SIGNATURE = "00db";
+
   // -- Fields --
 
   private RandomAccessOutputStream out;
@@ -58,37 +87,11 @@ public class AVIWriter extends FormatWriter {
   private int xDim, yDim, zDim, tDim, xPad;
   private int microSecPerFrame;
 
-  // location of file size in bytes not counting first 8 bytes
-  private long saveFileSize;
-
-  // location of length of CHUNK with first LIST - not including first 8
-  // bytes with LIST and size. JUNK follows the end of this CHUNK
-  private long saveLIST1Size;
-
-  // location of length of CHUNK with second LIST - not including first 8
-  // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
-  // 76, and that the length size written to saveLIST2Size is 76 less than
-  // that written to saveLIST1Size. JUNK follows the end of this CHUNK.
-  private long saveLIST1subSize;
-
-  // location of length of strf CHUNK - not including the first 8 bytes with
-  // strf and size. strn follows the end of this CHUNK.
-  private long savestrfSize;
-
-  private long savestrnPos;
-  private long saveJUNKsignature;
-  private int paddingBytes;
-  private long saveLIST2Size;
-  private byte[] dataSignature;
   private Vector savedbLength;
   private long idx1Pos;
   private long endPos;
   private long saveidx1Length;
-  private int z;
-  private long savemovi;
   private int xMod;
-  private long frameOffset;
-  private long frameOffset2;
 
   // -- Constructor --
 
@@ -131,29 +134,35 @@ public class AVIWriter extends FormatWriter {
 
     if (!initialized) {
       initialized = true;
-      planesWritten = 0;
       bytesPerPixel = nChannels == 2 ? 3 : nChannels;
-
-      out = new RandomAccessOutputStream(currentId);
-      out.seek(out.length());
-      saveFileSize = 4;
-      saveLIST1Size = 16;
-      saveLIST1subSize = 23 * 4;
-      frameOffset = 48;
-      frameOffset2 = 35 * 4;
-      savestrfSize = 42 * 4;
-      savestrnPos = savestrfSize + 44 + 1024;
-      saveJUNKsignature = savestrnPos + 24;
-      saveLIST2Size = 4088;
-      savemovi = 4092;
-
       savedbLength = new Vector();
 
-      dataSignature = new byte[4];
-      dataSignature[0] = 48; // 0
-      dataSignature[1] = 48; // 0
-      dataSignature[2] = 100; // d
-      dataSignature[3] = 98; // b
+      out = new RandomAccessOutputStream(currentId);
+
+      if (out.length() > 0) {
+        RandomAccessInputStream in = new RandomAccessInputStream(currentId);
+        in.order(true);
+        in.seek(FRAME_OFFSET);
+        planesWritten = in.readInt();
+
+        in.seek(SAVE_FILE_SIZE);
+        endPos = in.readInt() + SAVE_FILE_SIZE + 4;
+
+        in.seek(SAVE_LIST2_SIZE);
+        idx1Pos = in.readInt() + SAVE_LIST2_SIZE + 4;
+        saveidx1Length = idx1Pos + 4;
+
+        in.seek(saveidx1Length + 4);
+        for (int z=0; z<planesWritten; z++) {
+          in.skipBytes(8);
+          savedbLength.add(in.readInt() + 4 + SAVE_MOVI);
+          in.skipBytes(4);
+        }
+        in.close();
+        out.seek(idx1Pos);
+      }
+
+      out.order(true);
 
       tDim = meta.getPixelsSizeZ(series, 0).intValue();
       zDim = meta.getPixelsSizeT(series, 0).intValue();
@@ -400,36 +409,30 @@ public class AVIWriter extends FormatWriter {
           }
         }
 
-        out.seek(savestrfSize);
-        out.writeInt((int) (savestrnPos - (savestrfSize + 4)));
-        out.seek(savestrnPos);
+        out.seek(SAVE_STRF_SIZE);
+        out.writeInt((int) (SAVE_STRN_POS - (SAVE_STRF_SIZE + 4)));
+        out.seek(SAVE_STRN_POS);
 
         // Use strn to provide zero terminated text string describing the stream
         out.writeBytes("strn");
         out.writeInt(16); // Write length of strn sub-CHUNK
         out.writeBytes("FileAVI write  ");
 
-        out.seek(saveLIST1Size);
-        out.writeInt((int) (saveJUNKsignature - (saveLIST1Size + 4)));
-        out.seek(saveLIST1subSize);
-        out.writeInt((int) (saveJUNKsignature - (saveLIST1subSize + 4)));
-        out.seek(saveJUNKsignature);
+        out.seek(SAVE_LIST1_SIZE);
+        out.writeInt((int) (SAVE_JUNK_SIG - (SAVE_LIST1_SIZE + 4)));
+        out.seek(SAVE_LIST1_SUBSIZE);
+        out.writeInt((int) (SAVE_JUNK_SIG - (SAVE_LIST1_SUBSIZE + 4)));
+        out.seek(SAVE_JUNK_SIG);
 
         // write a JUNK CHUNK for padding
         out.writeBytes("JUNK");
-        paddingBytes = (int) (4084 - (saveJUNKsignature + 8));
-        out.writeInt(paddingBytes);
-        for (int i=0; i<paddingBytes/2; i++) {
+        out.writeInt((int) PADDING_BYTES);
+        for (int i=0; i<PADDING_BYTES/2; i++) {
           out.writeShort((short) 0);
         }
 
         // Write the second LIST chunk, which contains the actual data
         out.writeBytes("LIST");
-
-        // Write the length of the LIST CHUNK not including the first 8 bytes
-        // with LIST and size. The end of the second LIST CHUNK is followed by
-        // idx1.
-        saveLIST2Size = out.getFilePointer();
 
         out.writeInt(0);  // For now write 0
         out.writeBytes("movi"); // Write CHUNK type 'movi'
@@ -443,7 +446,7 @@ public class AVIWriter extends FormatWriter {
     int width = xDim - xPad;
     int height = buf.length / (width * bytesPerPixel);
 
-    out.write(dataSignature);
+    out.writeBytes(DATA_SIGNATURE);
     savedbLength.add(new Long(out.getFilePointer()));
 
     // Write the data length
@@ -475,58 +478,59 @@ public class AVIWriter extends FormatWriter {
 
     planesWritten++;
 
+    // Write the idx1 CHUNK
+    // Write the 'idx1' signature
+    idx1Pos = out.getFilePointer();
+    out.seek(SAVE_LIST2_SIZE);
+    out.writeInt((int) (idx1Pos - (SAVE_LIST2_SIZE + 4)));
+
+    out.seek(idx1Pos);
+    out.writeBytes("idx1");
+
+    saveidx1Length = out.getFilePointer();
+
+    // Write the length of the idx1 CHUNK not including the idx1 signature
+    out.writeInt(4 + (planesWritten*16));
+
+    for (int z=0; z<planesWritten; z++) {
+      // In the ckid field write the 4 character code to identify the chunk
+      // 00db or 00dc
+      out.writeBytes(DATA_SIGNATURE);
+      // Write the flags - select AVIIF_KEYFRAME
+      if (z == 0) out.writeInt(0x10);
+      else out.writeInt(0x00);
+
+      // AVIIF_KEYFRAME 0x00000010L
+      // The flag indicates key frames in the video sequence.
+      // Key frames do not need previous video information to be
+      // decompressed.
+      // AVIIF_NOTIME 0x00000100L The CHUNK does not influence video timing
+      // (for example a palette change CHUNK).
+      // AVIIF_LIST 0x00000001L Marks a LIST CHUNK.
+      // AVIIF_TWOCC 2L
+      // AVIIF_COMPUSE 0x0FFF0000L These bits are for compressor use.
+      out.writeInt((int) (((Long)
+        savedbLength.get(z)).longValue() - 4 - SAVE_MOVI));
+
+      // Write the offset (relative to the 'movi' field) to the relevant
+      // CHUNK. Write the length of the relevant CHUNK. Note that this length
+      // is also written at savedbLength
+      out.writeInt(bytesPerPixel*xDim*yDim);
+    }
+    endPos = out.getFilePointer();
+    out.seek(SAVE_FILE_SIZE);
+    out.writeInt((int) (endPos - (SAVE_FILE_SIZE + 4)));
+
+    out.seek(saveidx1Length);
+    out.writeInt((int) (endPos - (saveidx1Length + 4)));
+
+    // write the total number of planes
+    out.seek(FRAME_OFFSET);
+    out.writeInt(planesWritten);
+    out.seek(FRAME_OFFSET_2);
+    out.writeInt(planesWritten);
+
     if (last) {
-      // Write the idx1 CHUNK
-      // Write the 'idx1' signature
-      idx1Pos = out.getFilePointer();
-      out.seek(saveLIST2Size);
-      out.writeInt((int) (idx1Pos - (saveLIST2Size + 4)));
-      out.seek(idx1Pos);
-      out.writeBytes("idx1");
-
-      saveidx1Length = out.getFilePointer();
-
-      // Write the length of the idx1 CHUNK not including the idx1 signature
-      out.writeInt(4 + (planesWritten*16));
-
-      for (z=0; z<planesWritten; z++) {
-        // In the ckid field write the 4 character code to identify the chunk
-        // 00db or 00dc
-        out.write(dataSignature);
-        // Write the flags - select AVIIF_KEYFRAME
-        if (z == 0) out.writeInt(0x10);
-        else out.writeInt(0x00);
-
-        // AVIIF_KEYFRAME 0x00000010L
-        // The flag indicates key frames in the video sequence.
-        // Key frames do not need previous video information to be
-        // decompressed.
-        // AVIIF_NOTIME 0x00000100L The CHUNK does not influence video timing
-        // (for example a palette change CHUNK).
-        // AVIIF_LIST 0x00000001L Marks a LIST CHUNK.
-        // AVIIF_TWOCC 2L
-        // AVIIF_COMPUSE 0x0FFF0000L These bits are for compressor use.
-        out.writeInt((int) (((Long)
-          savedbLength.get(z)).longValue() - 4 - savemovi));
-
-        // Write the offset (relative to the 'movi' field) to the relevant
-        // CHUNK. Write the length of the relevant CHUNK. Note that this length
-        // is also written at savedbLength
-        out.writeInt(bytesPerPixel*xDim*yDim);
-      }
-      endPos = out.getFilePointer();
-      out.seek(saveFileSize);
-      out.writeInt((int) (endPos - (saveFileSize + 4)));
-
-      out.seek(saveidx1Length);
-      out.writeInt((int) (endPos - (saveidx1Length + 4)));
-
-      // write the total number of planes
-      out.seek(frameOffset);
-      out.writeInt(planesWritten);
-      out.seek(frameOffset2);
-      out.writeInt(planesWritten);
-
       out.close();
     }
   }
