@@ -336,7 +336,7 @@ public class BDReader extends FormatReader {
       String row = name.substring(0, 1);
       Integer col = Integer.parseInt(name.substring(1));
 
-      store.setWellColumn(col, 0, i);
+      store.setWellColumn(col - 1, 0, i);
       store.setWellRow(row.charAt(0)-'A', 0, i);
 
       store.setWellSampleIndex(i, 0, i, 0);
