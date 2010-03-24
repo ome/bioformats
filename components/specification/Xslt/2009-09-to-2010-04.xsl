@@ -68,6 +68,16 @@
 			<xsl:variable name="wellCount"><xsl:value-of select="count(* [local-name(.)='Well'])"/></xsl:variable>
 			<xsl:apply-templates select="* [local-name(.)='Description']"/>
 			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
+			
+			<xsl:variable name="wellSampleCount">
+				<xsl:call-template name="maxWellSampleCount">
+					<xsl:with-param name="wellList" select="* [local-name(.)='Well']"/>
+					<xsl:with-param name="wellIndex" select="count(* [local-name(.)='Well'])"/>
+				</xsl:call-template>
+			</xsl:variable>
+			
+			<xsl:comment> Max Well Sample: <xsl:number value="$wellSampleCount"/> </xsl:comment>
+			
 			<xsl:comment> Total Wells: <xsl:number value="$wellCount"/> </xsl:comment>
 			<xsl:for-each select="* [local-name(.)='Well']">
 				<xsl:variable name="wellNumber"><xsl:number value="position()"/></xsl:variable>
@@ -80,6 +90,40 @@
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
 		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template name="maxWellSampleCount">
+		<xsl:param name="wellList"/>
+		<xsl:param name="wellIndex"/>
+		<xsl:variable name="currentWellCount">
+			<xsl:for-each select="$wellList">
+				<xsl:if test="position() = $wellIndex">
+					<xsl:value-of select="count(* [local-name(.)='WellSample'])"/>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="currentMaxWellCount">
+			<xsl:choose>
+				<xsl:when test="$wellIndex &lt; 0">
+					<xsl:value-of select="0"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="maxWellSampleCount">
+						<xsl:with-param name="wellList" select="$wellList"/>
+						<xsl:with-param name="wellIndex" select="$wellIndex - 1"/>
+					</xsl:call-template>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+				
+		<xsl:choose>
+			<xsl:when test="$currentMaxWellCount &lt; $currentWellCount">
+				<xsl:value-of select="$currentWellCount"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$currentMaxWellCount"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	<!-- SPW:Well - passing values through to well sample template -->
