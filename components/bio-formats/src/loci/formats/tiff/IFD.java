@@ -546,9 +546,11 @@ public class IFD extends HashMap<Integer, Object> {
 
     int samplesPerPixel = getSamplesPerPixel();
     if (bitsPerSample.length < samplesPerPixel) {
-      throw new FormatException("BitsPerSample length (" +
-        bitsPerSample.length + ") does not match SamplesPerPixel (" +
-        samplesPerPixel + ")");
+      LogTools.debug("BitsPerSample length (" + bitsPerSample.length +
+        ") does not match SamplesPerPixel(" + samplesPerPixel + ")");
+      int bits = bitsPerSample[0];
+      bitsPerSample = new int[samplesPerPixel];
+      Arrays.fill(bitsPerSample, bits);
     }
     int nSamples = (int) Math.min(bitsPerSample.length, samplesPerPixel);
     for (int i=0; i<nSamples; i++) {
