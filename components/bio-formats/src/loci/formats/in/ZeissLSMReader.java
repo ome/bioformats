@@ -300,7 +300,8 @@ public class ZeissLSMReader extends FormatReader {
 
     IFDList ifds = ifdsList.get(getSeries());
 
-    if (splitPlanes && getSizeC() > 1) {
+    if (splitPlanes && getSizeC() > 1 && ifds.size() == getSizeZ() * getSizeT())
+    {
       int bpp = FormatTools.getBytesPerPixel(getPixelType());
       int plane = no / getSizeC();
       int c = no % getSizeC();
@@ -367,16 +368,12 @@ public class ZeissLSMReader extends FormatReader {
       s.close();
     }
 
-    LOGGER.info("Removing thumbnails");
-
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
     for (int series=0; series<ifdsList.size(); series++) {
       IFDList ifds = ifdsList.get(series);
-      for (int i=0; i<ifds.size(); i++) {
-        IFD ifd = ifds.get(i);
-
+      for (IFD ifd : ifds) {
         // check that predictor is set to 1 if anything other
         // than LZW compression is used
         if (ifd.getCompression() != TiffCompression.LZW) {
@@ -466,8 +463,13 @@ public class ZeissLSMReader extends FormatReader {
     // get TIF_CZ_LSMINFO structure
     short[] s = ifd.getIFDShortArray(ZEISS_ID);
     if (s == null) {
-      throw new FormatException("Invalid Zeiss LSM file. Tag " +
-        ZEISS_ID + " not found.");
+      LOGGER.warn("Invalid Zeiss LSM file. Tag {} not found.", ZEISS_ID);
+      TiffReader reader = new TiffReader();
+      reader.setId(lsmFilenames[series]);
+      core[series] = reader.getCoreMetadata()[0];
+      reader.close();
+      imageNames.add(imageName);
+      return;
     }
     byte[] cz = new byte[s.length];
     for (int i=0; i<s.length; i++) {
