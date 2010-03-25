@@ -101,7 +101,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
         uniqueC.add(c);
       }
     }
-    core[0].sizeC = uniqueC.size();
+    int effectiveC = uniqueC.size();
+    if (effectiveC == 0) effectiveC = 1;
+    core[0].sizeC = effectiveC * ifds.get(0).getSamplesPerPixel();
 
     Vector<Double> uniqueZ = new Vector<Double>();
     for (int i=0; i<zPositions.size(); i++) {
@@ -109,7 +111,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
     core[0].sizeZ = uniqueZ.size();
-    core[0].sizeT = ifds.size() / (getSizeZ() * getSizeC());
+    core[0].sizeT = ifds.size() / (getSizeZ() * effectiveC);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
