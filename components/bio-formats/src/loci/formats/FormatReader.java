@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -32,6 +33,8 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
@@ -392,6 +395,29 @@ public abstract class FormatReader extends FormatHandler
       }
     }
     return buf;
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
+   */
+  public MetadataOptions getMetadataOptions() {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  public void setMetadataOptions(MetadataOptions options) {
+    throw new RuntimeException("Not implemented.");
   }
 
   // -- IFormatReader API methods --

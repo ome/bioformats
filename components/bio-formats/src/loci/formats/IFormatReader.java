@@ -36,7 +36,7 @@ import loci.formats.meta.MetadataStore;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/IFormatReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/IFormatReader.java">SVN</a></dd></dl>
  */
-public interface IFormatReader extends IFormatHandler {
+public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   // -- Constants --
 

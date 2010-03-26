@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -33,6 +35,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IMetadataConfigurable;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMinMaxStore;
@@ -47,7 +50,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class DeltavisionReader extends FormatReader {
+public class DeltavisionReader extends FormatReader implements IMetadataConfigurable {
 
   // -- Constants --
 
@@ -85,6 +88,8 @@ public class DeltavisionReader extends FormatReader {
   protected int numIntsPerSection;
   protected int numFloatsPerSection;
 
+  private MetadataOptions metadataOptions;
+
   /** Initialize an array of Extended Header Field structures. */
   protected DVExtHdrFields[][][] extHdrFields = null;
 
@@ -101,6 +106,7 @@ public class DeltavisionReader extends FormatReader {
     suffixSufficient = false;
     suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+    metadataOptions = new DefaultMetadataOptions();
   }
 
   // -- IFormatReader API methods --
@@ -167,6 +173,173 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    if (checkSuffix(id, "dv.log")) {
+      id = id.substring(0, id.lastIndexOf("."));
+    }
+    else if (id.endsWith("_log.txt")) {
+      id = id.substring(0, id.lastIndexOf("_")) + ".dv";
+    }
+
+    super.initFile(id);
+
+    MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
+    switch (metadataLevel) {
+      case PIXELS_ONLY: {
+        initFilePixelsOnly(id);
+        break;
+      }
+      case ALL: {
+        initFileOld(id);
+        break;
+      }
+      default: {
+        LOGGER.warn("Unsupported level: " + metadataLevel);
+      }
+    }
+  }
+
+  protected void initFilePixelsOnly(String id)
+    throws FormatException, IOException {
+    LOGGER.info("Reading header");
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+
+    in = new RandomAccessInputStream(id);
+
+    in.seek(96);
+    in.order(true);
+
+    boolean little = in.readShort() == LITTLE_ENDIAN;
+    in.order(little);
+    in.seek(0);
+
+    int sizeX = in.readInt();
+    int sizeY = in.readInt();
+    int imageCount = in.readInt();
+    int filePixelType = in.readInt();
+
+    in.seek(180);
+    int rawSizeT = in.readShort();
+    int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
+
+    int sequence = in.readShort();
+
+    in.seek(92);
+    extSize = in.readInt();
+
+    in.seek(196);
+    int rawSizeC = in.readShort();
+    int sizeC = rawSizeC == 0 ? 1 : rawSizeC;
+
+    // --- compute some secondary values ---
+
+    String imageSequence;
+    switch (sequence) {
+      case 0:
+        imageSequence = "ZTW";
+        break;
+      case 1:
+        imageSequence = "WZT";
+        break;
+      case 2:
+        imageSequence = "ZWT";
+        break;
+      case 65536:
+        imageSequence = "WZT";
+        break;
+      default:
+        imageSequence = "ZTW";
+    }
+
+    int sizeZ = imageCount / (sizeC * sizeT);
+
+    // --- populate core metadata ---
+
+    LOGGER.info("Populating core metadata");
+
+    core[0].littleEndian = little;
+    core[0].sizeX = sizeX;
+    core[0].sizeY = sizeY;
+    core[0].imageCount = imageCount;
+
+    String pixel;
+    switch (filePixelType) {
+      case 0:
+        pixel = "8 bit unsigned integer";
+        core[0].pixelType = FormatTools.UINT8;
+        break;
+      case 1:
+        pixel = "16 bit signed integer";
+        core[0].pixelType = FormatTools.INT16;
+        break;
+      case 2:
+        pixel = "32 bit floating point";
+        core[0].pixelType = FormatTools.FLOAT;
+        break;
+      case 3:
+        pixel = "16 bit complex";
+        core[0].pixelType = FormatTools.INT16;
+        break;
+      case 4:
+        pixel = "64 bit complex";
+        core[0].pixelType = FormatTools.FLOAT;
+        break;
+      case 6:
+        pixel = "16 bit unsigned integer";
+        core[0].pixelType = FormatTools.UINT16;
+        break;
+      default:
+        pixel = "unknown";
+        core[0].pixelType = FormatTools.UINT8;
+    }
+
+    core[0].sizeT = sizeT;
+
+    core[0].dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
+
+    core[0].sizeC = sizeC;
+    core[0].sizeZ = sizeZ;
+
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].metadataComplete = true;
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    
+    // --- populate original metadata ---
+
+    LOGGER.info("Populating original metadata");
+
+    addGlobalMeta("ImageWidth", sizeX);
+    addGlobalMeta("ImageHeight", sizeY);
+    addGlobalMeta("NumberOfImages", imageCount);
+
+    addGlobalMeta("PixelType", pixel);
+
+    addGlobalMeta("Number of timepoints", rawSizeT);
+
+    addGlobalMeta("Image sequence", imageSequence);
+
+    addGlobalMeta("Number of wavelengths", rawSizeC);
+    addGlobalMeta("Number of focal planes", sizeZ);
+
+    // --- populate OME metadata ---
+
+    LOGGER.info("Populating OME metadata");
+
+    MetadataTools.populatePixels(store, this, true);
+
+    MetadataTools.setDefaultCreationDate(store, id, 0);
+
+    // link Instrument and Image
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
+  }
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFileOld(String id) throws FormatException, IOException {
     if (checkSuffix(id, "dv.log")) {
       id = id.substring(0, id.lastIndexOf("."));
     }
@@ -1029,6 +1202,30 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.in.IMetadataConfigurable#getMetadataOptions()
+   */
+  public MetadataOptions getMetadataOptions() {
+    return metadataOptions;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.in.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
+    supportedLevels.add(MetadataLevel.ALL);
+    supportedLevels.add(MetadataLevel.PIXELS_ONLY);
+    return supportedLevels;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.in.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  public void setMetadataOptions(MetadataOptions options) {
+    this.metadataOptions = options;
   }
 
 }

@@ -26,8 +26,11 @@ package loci.formats;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
+import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -134,6 +137,29 @@ public abstract class ReaderWrapper implements IFormatReader {
     wrapperCopy.setMetadataFiltered(metadataFiltered);
     wrapperCopy.setMetadataCollected(metadataCollected);
     return wrapperCopy;
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    return reader.getSupportedMetadataLevels();
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
+   */
+  public MetadataOptions getMetadataOptions() {
+    return reader.getMetadataOptions();
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  public void setMetadataOptions(MetadataOptions options) {
+    reader.setMetadataOptions(options);
   }
 
   // -- IFormatReader API methods --

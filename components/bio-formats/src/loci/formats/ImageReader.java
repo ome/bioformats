@@ -27,10 +27,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
@@ -176,6 +179,29 @@ public class ImageReader implements IFormatReader {
     IFormatReader[] r = new IFormatReader[readers.length];
     System.arraycopy(readers, 0, r, 0, readers.length);
     return r;
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
+   */
+  public MetadataOptions getMetadataOptions() {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  public void setMetadataOptions(MetadataOptions options) {
+    throw new RuntimeException("Not implemented.");
   }
 
   // -- IFormatReader API methods --

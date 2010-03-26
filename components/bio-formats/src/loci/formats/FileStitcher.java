@@ -29,10 +29,13 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
@@ -247,6 +250,29 @@ public class FileStitcher implements IFormatReader {
       if (pattern != null) id = pattern;
     }
     return new FilePattern(id);
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
+   */
+  public MetadataOptions getMetadataOptions() {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  public void setMetadataOptions(MetadataOptions options) {
+    throw new RuntimeException("Not implemented.");
   }
 
   // -- IFormatReader API methods --
