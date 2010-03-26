@@ -222,6 +222,24 @@ public final class MetadataTools {
     store.setImageCreationDate(DateTools.convertDate(time, DateTools.UNIX),
       series);
   }
+
+  /**
+   * Adjusts the given dimension order as needed so that it contains exactly
+   * one of each of the following characters: 'X', 'Y', 'Z', 'C', 'T'.
+   */
+  public static String makeSaneDimensionOrder(String dimensionOrder) {
+    String order = dimensionOrder.toUpperCase();
+    order = order.replaceAll("[^XYZCT]", "");
+    String[] axes = new String[] {"X", "Y", "C", "Z", "T"};
+    for (String axis : axes) {
+      if (order.indexOf(axis) == -1) order += axis;
+      while (order.indexOf(axis) != order.lastIndexOf(axis)) {
+        order = order.replaceFirst(axis, "");
+      }
+    }
+    return order;
+  }
+
   // -- Utility methods - original metadata --
 
   /** Gets a sorted list of keys from the given hashtable. */

@@ -183,25 +183,23 @@ public class ImageReader implements IFormatReader {
 
   // -- IMetadataConfigurable API methods --
 
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
-   */
+  /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
   public Set<MetadataLevel> getSupportedMetadataLevels() {
-    throw new RuntimeException("Not implemented.");
+    return getReader().getSupportedMetadataLevels();
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
-   */
+  /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
   public MetadataOptions getMetadataOptions() {
-    throw new RuntimeException("Not implemented.");
+    return getReader().getMetadataOptions();
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+  /**
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(MetadataOptions)
    */
   public void setMetadataOptions(MetadataOptions options) {
-    throw new RuntimeException("Not implemented.");
+    for (IFormatReader reader : readers) {
+      reader.setMetadataOptions(options);
+    }
   }
 
   // -- IFormatReader API methods --

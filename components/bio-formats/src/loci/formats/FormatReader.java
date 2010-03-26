@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
@@ -33,6 +34,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
@@ -110,6 +112,9 @@ public abstract class FormatReader extends FormatHandler
    */
   protected MetadataStore metadataStore = new DummyMetadata();
 
+  /** Metadata parsing options. */
+  protected MetadataOptions metadataOptions;
+
   // -- Constructors --
 
   /** Constructs a format reader with the given name and default suffix. */
@@ -144,6 +149,10 @@ public abstract class FormatReader extends FormatHandler
     core = new CoreMetadata[1];
     core[0] = new CoreMetadata();
     core[0].orderCertain = true;
+
+    if (metadataOptions == null) {
+      metadataOptions = new DefaultMetadataOptions();
+    }
 
     // reinitialize the MetadataStore
     // NB: critical for metadata conversion to work properly!
@@ -403,21 +412,24 @@ public abstract class FormatReader extends FormatHandler
    * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
    */
   public Set<MetadataLevel> getSupportedMetadataLevels() {
-    throw new RuntimeException("Not implemented.");
+    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
+    supportedLevels.add(MetadataLevel.ALL);
+    supportedLevels.add(MetadataLevel.PIXELS_ONLY);
+    return supportedLevels;
   }
 
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
    */
   public MetadataOptions getMetadataOptions() {
-    throw new RuntimeException("Not implemented.");
+    return metadataOptions;
   }
 
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
    */
   public void setMetadataOptions(MetadataOptions options) {
-    throw new RuntimeException("Not implemented.");
+    this.metadataOptions = options;
   }
 
   // -- IFormatReader API methods --

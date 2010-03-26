@@ -129,9 +129,16 @@ public class LeicaReader extends FormatReader {
   /** Name of current LEI file */
   private String leiFilename;
 
+  /** Length of each file name. */
+  private int fileLength;
+
+  private boolean[] valid;
+
+  private String[][] timestamps;
+
   private Vector<String> seriesNames;
   private Vector<String> seriesDescriptions;
-  private int lastPlane = 0;
+  private int lastPlane = 0, nameLength = 0;
 
   private double[][] physicalSizes;
   private double[] pinhole, exposureTime;
@@ -290,95 +297,41 @@ public class LeicaReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     close();
 
-    if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && isGroupFiles()) {
-      // need to find the associated .lei file
-      if (ifds == null) super.initFile(id);
+    String leiFile = findLEIFile(id);
+    if (leiFile == null) {
+      if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && !isGroupFiles()) {
+        super.initFile(id);
+        TiffReader r = new TiffReader();
+        r.setMetadataStore(getMetadataStore());
+        r.setId(id);
 
-      in = new RandomAccessInputStream(id);
-      TiffParser tp = new TiffParser(in);
-      in.order(tp.checkHeader().booleanValue());
+        core = r.getCoreMetadata();
+        metadataStore = r.getMetadataStore();
 
-      in.seek(0);
+        Hashtable globalMetadata = r.getGlobalMetadata();
+        for (Object key : globalMetadata.keySet()) {
+          addGlobalMeta(key.toString(), globalMetadata.get(key));
+        }
 
-      LOGGER.info("Finding companion file name");
+        r.close();
 
-      // open the TIFF file and look for the "Image Description" field
+        files = new Vector[] {new Vector()};
+        files[0].add(id);
+        tiff = new MinimalTiffReader();
 
-      ifds = tp.getIFDs();
-      if (ifds == null) throw new FormatException("No IFDs found");
-      String descr = ifds.get(0).getComment();
-
-      // remove anything of the form "[blah]"
-
-      descr = descr.replaceAll("\\[.*.\\]\n", "");
-
-      // each remaining line in descr is a (key, value) pair,
-      // where '=' separates the key from the value
-
-      String lei = id.substring(0, id.lastIndexOf(File.separator) + 1);
-
-      StringTokenizer lines = new StringTokenizer(descr, "\n");
-      String line = null, key = null, value = null;
-      while (lines.hasMoreTokens()) {
-        line = lines.nextToken();
-        if (line.indexOf("=") == -1) continue;
-        key = line.substring(0, line.indexOf("=")).trim();
-        value = line.substring(line.indexOf("=") + 1).trim();
-        addGlobalMeta(key, value);
-
-        if (key.startsWith("Series Name")) lei += value;
-      }
-
-      // now open the LEI file
-
-      Location l = new Location(lei).getAbsoluteFile();
-      if (l.exists()) {
-        initFile(lei);
         return;
       }
       else {
-        l = l.getParentFile();
-        String[] list = l.list();
-        for (int i=0; i<list.length; i++) {
-          if (checkSuffix(list[i], LEI_SUFFIX)) {
-            initFile(
-              new Location(l.getAbsolutePath(), list[i]).getAbsolutePath());
-            return;
-          }
-        }
+        throw new FormatException("LEI file not found.");
       }
-      throw new FormatException("LEI file not found.");
-    }
-    else if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && !isGroupFiles()) {
-      super.initFile(id);
-      TiffReader r = new TiffReader();
-      r.setMetadataStore(getMetadataStore());
-      r.setId(id);
-
-      core = r.getCoreMetadata();
-      metadataStore = r.getMetadataStore();
-
-      Hashtable globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
-      }
-
-      r.close();
-
-      files = new Vector[] {new Vector()};
-      files[0].add(id);
-      tiff = new MinimalTiffReader();
-
-      return;
     }
 
     // parse the LEI file
 
-    super.initFile(id);
+    super.initFile(leiFile);
 
-    leiFilename = new File(id).exists() ?
-      new Location(id).getAbsolutePath() : id;
-    in = new RandomAccessInputStream(id);
+    in = new RandomAccessInputStream(leiFile);
+    MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
 
     seriesNames = new Vector<String>();
 
@@ -413,9 +366,7 @@ public class LeicaReader extends FormatReader {
         in.seek(offset + 12);
 
         int size = in.readInt();
-        byte[] data = new byte[size];
-        in.read(data);
-        ifd.putIFDValue(tag, data);
+        ifd.putIFDValue(tag, in.getFilePointer());
         in.seek(pos);
         tag = in.readInt();
       }
@@ -446,146 +397,25 @@ public class LeicaReader extends FormatReader {
 
     // determine the length of a filename
 
-    int nameLength = 0;
-    int maxPlanes = 0;
-
     LOGGER.info("Parsing metadata blocks");
 
     core[0].littleEndian = !isLittleEndian();
 
     int seriesIndex = 0;
-    boolean[] valid = new boolean[numSeries];
+    int invalidCount = 0;
+    valid = new boolean[numSeries];
+    timestamps = new String[headerIFDs.size()][];
     for (int i=0; i<headerIFDs.size(); i++) {
       IFD ifd = headerIFDs.get(i);
       valid[i] = true;
       if (ifd.get(SERIES) != null) {
-        byte[] temp = (byte[]) ifd.get(SERIES);
-        nameLength = DataTools.bytesToInt(temp, 8, isLittleEndian()) * 2;
+        long offset = ((Long) ifd.get(SERIES)).longValue();
+        in.seek(offset + 8);
+        nameLength = in.readInt() * 2;
       }
 
-      Vector<String> f = new Vector<String>();
-      byte[] tempData = (byte[]) ifd.get(IMAGES);
-      RandomAccessInputStream data = new RandomAccessInputStream(tempData);
-      data.order(isLittleEndian());
-      int tempImages = data.readInt();
-
-      if (((long) tempImages * nameLength) > data.length()) {
-        data.order(!isLittleEndian());
-        tempImages = data.readInt();
-        data.order(isLittleEndian());
-      }
-
-      core[i].sizeX = data.readInt();
-      core[i].sizeY = data.readInt();
-      data.skipBytes(4);
-      int samplesPerPixel = data.readInt();
-      core[i].rgb = samplesPerPixel > 1;
-      core[i].sizeC = samplesPerPixel;
-
-      File dirFile = new File(id).getAbsoluteFile();
-      String[] listing = null;
-      String dirPrefix = "";
-      if (dirFile.exists()) {
-        listing = dirFile.getParentFile().list();
-        dirPrefix = dirFile.getParent();
-        if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
-      }
-      else {
-        listing =
-          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-      }
-
-      Vector<String> list = new Vector<String>();
-
-      for (int k=0; k<listing.length; k++) {
-        if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
-          list.add(listing[k]);
-        }
-      }
-
-      boolean tiffsExist = false;
-
-      String prefix = "";
-      for (int j=0; j<tempImages; j++) {
-        // read in each filename
-        prefix = getString(data, nameLength);
-        f.add(dirPrefix + prefix);
-        // test to make sure the path is valid
-        Location test = new Location(f.get(f.size() - 1));
-        if (test.exists()) list.remove(prefix);
-        if (!tiffsExist) tiffsExist = test.exists();
-      }
-      data.close();
-      tempData = null;
-
-      // all of the TIFF files were renamed
-
-      if (!tiffsExist) {
-        // Strategy for handling renamed files:
-        // 1) Assume that files for each series follow a pattern.
-        // 2) Assign each file group to the first series with the correct count.
-        LOGGER.info("Handling renamed TIFF files");
-
-        listing = list.toArray(new String[list.size()]);
-
-        // grab the file patterns
-        Vector<String> filePatterns = new Vector<String>();
-        for (String q : listing) {
-          Location l = new Location(dirPrefix, q).getAbsoluteFile();
-          FilePattern pattern = new FilePattern(l);
-
-          AxisGuesser guess = new AxisGuesser(pattern, "XYZCT", 1, 1, 1, false);
-          String fp = pattern.getPattern();
-
-          if (guess.getAxisCountS() >= 1) {
-            String pre = pattern.getPrefix(guess.getAxisCountS());
-            Vector<String> fileList = new Vector<String>();
-            for (int n=0; n<listing.length; n++) {
-              Location p = new Location(dirPrefix, listing[n]);
-              if (p.getAbsolutePath().startsWith(pre)) {
-                fileList.add(listing[n]);
-              }
-            }
-            fp = FilePattern.findPattern(l.getAbsolutePath(), dirPrefix,
-              fileList.toArray(new String[fileList.size()]));
-          }
-
-          if (fp != null && !filePatterns.contains(fp)) {
-            filePatterns.add(fp);
-          }
-        }
-
-        for (String q : filePatterns) {
-          String[] pattern = new FilePattern(q).getFiles();
-          if (pattern.length == tempImages) {
-            // make sure that this pattern hasn't already been used
-
-            boolean validPattern = true;
-            for (int n=0; n<i; n++) {
-              if (files[n] == null) continue;
-              if (files[n].contains(pattern[0])) {
-                validPattern = false;
-                break;
-              }
-            }
-
-            if (validPattern) {
-              files[i] = new Vector<String>();
-              files[i].addAll(Arrays.asList(pattern));
-            }
-          }
-        }
-      }
-      else files[i] = f;
-      if (files[i] == null) valid[i] = false;
-      else {
-        core[i].imageCount = files[i].size();
-        if (core[i].imageCount > maxPlanes) maxPlanes = core[i].imageCount;
-      }
-    }
-
-    int invalidCount = 0;
-    for (int i=0; i<valid.length; i++) {
+      in.seek(((Long) ifd.get(IMAGES)).longValue());
+      parseFilenames(i);
       if (!valid[i]) invalidCount++;
     }
 
@@ -623,10 +453,6 @@ public class LeicaReader extends FormatReader {
 
     if (headerIFDs == null) headerIFDs = ifds;
 
-    int fileLength = 0;
-
-    int resolution = -1;
-    String[][] timestamps = new String[headerIFDs.size()][];
     seriesDescriptions = new Vector<String>();
 
     physicalSizes = new double[headerIFDs.size()][5];
@@ -638,243 +464,34 @@ public class LeicaReader extends FormatReader {
 
       core[i].littleEndian = isLittleEndian();
       setSeries(i);
-      Object[] keys = ifd.keySet().toArray();
+      Integer[] keys = ifd.keySet().toArray(new Integer[ifd.size()]);
       Arrays.sort(keys);
 
-      for (int q=0; q<keys.length; q++) {
-        byte[] tmp = (byte[]) ifd.get(keys[q]);
-        if (tmp == null) continue;
-        RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
-        stream.order(isLittleEndian());
+      for (Integer key : keys) {
+        long offset = ((Long) ifd.get(key)).longValue();
+        in.seek(offset);
 
-        if (keys[q].equals(SERIES)) {
-          addSeriesMeta("Version", stream.readInt());
-          addSeriesMeta("Number of Series", stream.readInt());
-          fileLength = stream.readInt();
-          addSeriesMeta("Length of filename", fileLength);
-          int extLen = stream.readInt();
-          if (extLen > fileLength) {
-            stream.seek(8);
-            core[0].littleEndian = !isLittleEndian();
-            stream.order(isLittleEndian());
-            fileLength = stream.readInt();
-            extLen = stream.readInt();
-          }
-          addSeriesMeta("Length of file extension", extLen);
-          addSeriesMeta("Image file extension", getString(stream, extLen));
+        if (key.equals(SERIES) && metadataLevel == MetadataLevel.ALL) {
+          parseSeriesTag();
         }
-        else if (keys[q].equals(IMAGES)) {
-          core[i].imageCount = stream.readInt();
-          core[i].sizeX = stream.readInt();
-          core[i].sizeY = stream.readInt();
-
-          addSeriesMeta("Number of images", getImageCount());
-          addSeriesMeta("Image width", getSizeX());
-          addSeriesMeta("Image height", getSizeY());
-          addSeriesMeta("Bits per Sample", stream.readInt());
-          addSeriesMeta("Samples per pixel", stream.readInt());
-
-          String name = getString(stream, fileLength * 2);
-
-          if (name.indexOf(".") != -1) {
-            name = name.substring(0, name.lastIndexOf("."));
-          }
-
-          String[] tokens = name.split("_");
-          StringBuffer buf = new StringBuffer();
-          for (int p=1; p<tokens.length; p++) {
-            String lcase = tokens[p].toLowerCase();
-            if (!lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
-              !lcase.startsWith("z0") && !lcase.startsWith("t0"))
-            {
-              if (buf.length() > 0) buf.append("_");
-              buf.append(tokens[p]);
-            }
-          }
-          seriesNames.add(buf.toString());
+        else if (key.equals(IMAGES)) {
+          parseImageTag(i);
         }
-        else if (keys[q].equals(DIMDESCR)) {
-          addSeriesMeta("Voxel Version", stream.readInt());
-          core[i].rgb = stream.readInt() == 20;
-          addSeriesMeta("VoxelType", isRGB() ? "RGB" : "gray");
-
-          int bpp = stream.readInt();
-          addSeriesMeta("Bytes per pixel", bpp);
-
-          switch (bpp) {
-            case 1:
-              core[i].pixelType = FormatTools.UINT8;
-              break;
-            case 3:
-              core[i].pixelType = FormatTools.UINT8;
-              core[i].sizeC = 3;
-              core[i].rgb = true;
-              break;
-            case 2:
-              core[i].pixelType = FormatTools.UINT16;
-              break;
-            case 6:
-              core[i].pixelType = FormatTools.UINT16;
-              core[i].sizeC = 3;
-              core[i].rgb = true;
-              break;
-            case 4:
-              core[i].pixelType = FormatTools.UINT32;
-              break;
-            default:
-              throw new FormatException("Unsupported bytes per pixel (" +
-                bpp + ")");
-          }
-
-          core[i].dimensionOrder = "XY";
-
-          resolution = stream.readInt();
-          core[i].bitsPerPixel = resolution;
-          addSeriesMeta("Real world resolution", resolution);
-          addSeriesMeta("Maximum voxel intensity", getString(stream, true));
-          addSeriesMeta("Minimum voxel intensity", getString(stream, true));
-          int len = stream.readInt();
-          stream.skipBytes(len * 2 + 4);
-
-          len = stream.readInt();
-          for (int j=0; j<len; j++) {
-            int dimId = stream.readInt();
-            String dimType = dimensionNames.get(new Integer(dimId));
-            if (dimType == null) dimType = "";
-
-            int size = stream.readInt();
-            int distance = stream.readInt();
-            int strlen = stream.readInt() * 2;
-            String[] sizeData = getString(stream, strlen).split(" ");
-            String physicalSize = sizeData[0];
-            String unit = "";
-            if (sizeData.length > 1) unit = sizeData[1];
-
-            double physical = Double.parseDouble(physicalSize) / size;
-            if (unit.equals("m")) {
-              physical *= 1000000;
-            }
-
-            if (dimType.equals("x")) {
-              core[i].sizeX = size;
-              physicalSizes[i][0] = physical;
-            }
-            else if (dimType.equals("y")) {
-              core[i].sizeY = size;
-              physicalSizes[i][1] = physical;
-            }
-            else if (dimType.equals("channel")) {
-              if (getSizeC() == 0) core[i].sizeC = 1;
-              core[i].sizeC *= size;
-              if (getDimensionOrder().indexOf("C") == -1) {
-                core[i].dimensionOrder += "C";
-              }
-              physicalSizes[i][3] = physical;
-            }
-            else if (dimType.equals("z")) {
-              core[i].sizeZ = size;
-            }
-            else {
-              core[i].sizeT = size;
-              if (getDimensionOrder().indexOf("T") == -1) {
-                core[i].dimensionOrder += "T";
-              }
-              physicalSizes[i][4] = physical;
-            }
-
-            String dimPrefix = "Dim" + j;
-
-            addSeriesMeta(dimPrefix + " type", dimType);
-            addSeriesMeta(dimPrefix + " size", size);
-            addSeriesMeta(dimPrefix + " distance between sub-dimensions",
-              distance);
-
-            addSeriesMeta(dimPrefix + " physical length",
-              physicalSize + " " + unit);
-
-            addSeriesMeta(dimPrefix + " physical origin",
-              getString(stream, true));
-          }
-          addSeriesMeta("Series name", getString(stream, false));
-
-          String description = getString(stream, false);
-          seriesDescriptions.add(description);
-          addSeriesMeta("Series description", description);
+        else if (key.equals(DIMDESCR)) {
+          parseDimensionTag(i);
         }
-        else if (keys[q].equals(TIMEINFO)) {
-          int nDims = stream.readInt();
-          addSeriesMeta("Number of time-stamped dimensions", nDims);
-          addSeriesMeta("Time-stamped dimension", stream.readInt());
-
-          for (int j=0; j<nDims; j++) {
-            String dimPrefix = "Dimension " + j;
-            addSeriesMeta(dimPrefix + " ID", stream.readInt());
-            addSeriesMeta(dimPrefix + " size", stream.readInt());
-            addSeriesMeta(dimPrefix + " distance", stream.readInt());
-          }
-
-          int numStamps = stream.readInt();
-          addSeriesMeta("Number of time-stamps", numStamps);
-          timestamps[i] = new String[numStamps];
-          for (int j=0; j<numStamps; j++) {
-            timestamps[i][j] = getString(stream, 64);
-            addSeriesMeta("Timestamp " + j, timestamps[i][j]);
-          }
-
-          if (stream.getFilePointer() < stream.length()) {
-            int numTMs = stream.readInt();
-            addSeriesMeta("Number of time-markers", numTMs);
-            for (int j=0; j<numTMs; j++) {
-              int numDims = stream.readInt();
-
-              String time = "Time-marker " + j + " Dimension ";
-
-              for (int k=0; k<numDims; k++) {
-                addSeriesMeta(time + k + " coordinate", stream.readInt());
-              }
-              addSeriesMeta("Time-marker " + j, getString(stream, 64));
-            }
-          }
+        else if (key.equals(TIMEINFO) && metadataLevel == MetadataLevel.ALL) {
+          parseTimeTag(i);
         }
-        else if (keys[q].equals(EXPERIMENT)) {
-          stream.skipBytes(8);
-          String description = getString(stream, true);
-          addSeriesMeta("Image Description", description);
-          addSeriesMeta("Main file extension", getString(stream, true));
-          addSeriesMeta("Image format identifier", getString(stream, true));
-          addSeriesMeta("Single image extension", getString(stream, true));
+        else if (key.equals(EXPERIMENT) && metadataLevel == MetadataLevel.ALL) {
+          parseExperimentTag();
         }
-        else if (keys[q].equals(LUTDESC)) {
-          int nChannels = stream.readInt();
-          if (nChannels > 0) core[i].indexed = true;
-          addSeriesMeta("Number of LUT channels", nChannels);
-          addSeriesMeta("ID of colored dimension", stream.readInt());
-
-          for (int j=0; j<nChannels; j++) {
-            String p = "LUT Channel " + j;
-            addSeriesMeta(p + " version", stream.readInt());
-            addSeriesMeta(p + " inverted?", stream.read() == 1);
-            addSeriesMeta(p + " description", getString(stream, false));
-            addSeriesMeta(p + " filename", getString(stream, false));
-            String lut = getString(stream, false);
-            addSeriesMeta(p + " name", lut);
-            stream.skipBytes(8);
-          }
+        else if (key.equals(LUTDESC) && metadataLevel == MetadataLevel.ALL) {
+          parseLUT(i);
         }
-        else if (keys[q].equals(CHANDESC)) {
-          int nBands = stream.readInt();
-          for (int band=0; band<nBands; band++) {
-            String p = "Band #" + (band + 1) + " ";
-            addSeriesMeta(p + "Lower wavelength", stream.readDouble());
-            stream.skipBytes(4);
-            addSeriesMeta(p + "Higher wavelength", stream.readDouble());
-            stream.skipBytes(4);
-            addSeriesMeta(p + "Gain", stream.readDouble());
-            addSeriesMeta(p + "Offset", stream.readDouble());
-          }
+        else if (key.equals(CHANDESC) && metadataLevel == MetadataLevel.ALL) {
+          parseChannelTag();
         }
-
-        stream.close();
       }
 
       core[i].orderCertain = true;
@@ -907,20 +524,15 @@ public class LeicaReader extends FormatReader {
       }
       if (isRGB()) core[i].indexed = false;
 
-      if (getDimensionOrder().indexOf("C") == -1) {
-        core[i].dimensionOrder += "C";
-      }
-      if (getDimensionOrder().indexOf("Z") == -1) {
-        core[i].dimensionOrder += "Z";
-      }
-      if (getDimensionOrder().indexOf("T") == -1) {
-        core[i].dimensionOrder += "T";
-      }
+      core[i].dimensionOrder =
+        MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
     }
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
+
+    if (metadataLevel == MetadataLevel.PIXELS_ONLY) return;
 
     for (int i=0; i<numSeries; i++) {
       IFD ifd = headerIFDs.get(i);
@@ -951,29 +563,23 @@ public class LeicaReader extends FormatReader {
       cutInPopulated[i] = new boolean[core[i].sizeC];
       cutOutPopulated[i] = new boolean[core[i].sizeC];
 
-      Object[] keys = ifd.keySet().toArray();
+      Integer[] keys = ifd.keySet().toArray(new Integer[ifd.size()]);
       Arrays.sort(keys);
       int nextInstrumentBlock = 1;
       sequential = DataTools.indexOf(keys, SEQ_SCANNERSET) != -1;
-      for (int q=0; q<keys.length; q++) {
-        if (keys[q].equals(FILTERSET) || keys[q].equals(SCANNERSET) ||
-          keys[q].equals(SEQ_SCANNERSET) || keys[q].equals(SEQ_FILTERSET) ||
-          (((Integer) keys[q]).intValue() > SEQ_SCANNERSET.intValue() &&
-          ((Integer) keys[q]).intValue() < SEQ_SCANNERSET_END) ||
-          (((Integer) keys[q]).intValue() > SEQ_FILTERSET.intValue() &&
-          ((Integer) keys[q]).intValue() < SEQ_FILTERSET_END))
+      for (Integer key : keys) {
+        if (key.equals(FILTERSET) || key.equals(SCANNERSET) ||
+          key.equals(SEQ_SCANNERSET) || key.equals(SEQ_FILTERSET) ||
+          (key > SEQ_SCANNERSET && key < SEQ_SCANNERSET_END) ||
+          (key > SEQ_FILTERSET && key < SEQ_FILTERSET_END))
         {
-          if (sequential && (keys[q].equals(FILTERSET) ||
-            keys[q].equals(SCANNERSET)))
-          {
+          if (sequential && (key.equals(FILTERSET) || key.equals(SCANNERSET))) {
             continue;
           }
-          byte[] tmp = (byte[]) ifd.get(keys[q]);
-          if (tmp == null) continue;
-          RandomAccessInputStream stream = new RandomAccessInputStream(tmp);
-          stream.order(isLittleEndian());
-          parseInstrumentData(stream, store, i, nextInstrumentBlock++);
-          stream.close();
+          long offset = ((Long) ifd.get(key)).longValue();
+          in.seek(offset);
+          setSeries(i);
+          parseInstrumentData(store, nextInstrumentBlock++);
         }
       }
       activeChannelIndices.clear();
@@ -1005,48 +611,469 @@ public class LeicaReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void parseInstrumentData(RandomAccessInputStream stream,
-    MetadataStore store, int series, int blockNum) throws IOException
+  /** Find the .lei file that belongs to the same dataset as the given file. */
+  private String findLEIFile(String baseFile)
+    throws FormatException, IOException
   {
-    setSeries(series);
+    if (checkSuffix(baseFile, LEI_SUFFIX)) {
+      return baseFile;
+    }
+    else if (checkSuffix(baseFile, TiffReader.TIFF_SUFFIXES) && isGroupFiles())
+    {
+      // need to find the associated .lei file
+      if (ifds == null) super.initFile(baseFile);
+
+      in = new RandomAccessInputStream(baseFile);
+      TiffParser tp = new TiffParser(in);
+      in.order(tp.checkHeader().booleanValue());
+
+      in.seek(0);
+
+      LOGGER.info("Finding companion file name");
+
+      // open the TIFF file and look for the "Image Description" field
+
+      ifds = tp.getIFDs();
+      if (ifds == null) throw new FormatException("No IFDs found");
+      String descr = ifds.get(0).getComment();
+
+      // remove anything of the form "[blah]"
+
+      descr = descr.replaceAll("\\[.*.\\]\n", "");
+
+      // each remaining line in descr is a (key, value) pair,
+      // where '=' separates the key from the value
+
+      String lei =
+        baseFile.substring(0, baseFile.lastIndexOf(File.separator) + 1);
+
+      StringTokenizer lines = new StringTokenizer(descr, "\n");
+      String line = null, key = null, value = null;
+      while (lines.hasMoreTokens()) {
+        line = lines.nextToken();
+        if (line.indexOf("=") == -1) continue;
+        key = line.substring(0, line.indexOf("=")).trim();
+        value = line.substring(line.indexOf("=") + 1).trim();
+        addGlobalMeta(key, value);
+
+        if (key.startsWith("Series Name")) lei += value;
+      }
+
+      // now open the LEI file
+
+      Location l = new Location(lei).getAbsoluteFile();
+      if (l.exists()) {
+        return lei;
+      }
+      else {
+        l = l.getParentFile();
+        String[] list = l.list();
+        for (int i=0; i<list.length; i++) {
+          if (checkSuffix(list[i], LEI_SUFFIX)) {
+            return new Location(l.getAbsolutePath(), list[i]).getAbsolutePath();
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  private void parseFilenames(int seriesIndex) throws IOException {
+    int maxPlanes = 0;
+    Vector<String> f = new Vector<String>();
+    int tempImages = in.readInt();
+
+    if (((long) tempImages * nameLength) > in.length()) {
+      in.order(!isLittleEndian());
+      tempImages = in.readInt();
+      in.order(isLittleEndian());
+    }
+
+    core[seriesIndex].sizeX = in.readInt();
+    core[seriesIndex].sizeY = in.readInt();
+    in.skipBytes(4);
+    int samplesPerPixel = in.readInt();
+    core[seriesIndex].rgb = samplesPerPixel > 1;
+    core[seriesIndex].sizeC = samplesPerPixel;
+
+    File dirFile = new File(currentId).getAbsoluteFile();
+    String[] listing = null;
+    String dirPrefix = "";
+    if (dirFile.exists()) {
+      listing = dirFile.getParentFile().list();
+      dirPrefix = dirFile.getParent();
+      if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
+    }
+    else {
+      listing =
+        (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+    }
+
+    Vector<String> list = new Vector<String>();
+
+    for (int k=0; k<listing.length; k++) {
+      if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
+        list.add(listing[k]);
+      }
+    }
+
+    boolean tiffsExist = false;
+
+    String prefix = "";
+    for (int j=0; j<tempImages; j++) {
+      // read in each filename
+      prefix = getString(nameLength);
+      f.add(dirPrefix + prefix);
+      // test to make sure the path is valid
+      Location test = new Location(f.get(f.size() - 1));
+      if (test.exists()) list.remove(prefix);
+      if (!tiffsExist) tiffsExist = test.exists();
+    }
+
+    // all of the TIFF files were renamed
+
+    if (!tiffsExist) {
+      // Strategy for handling renamed files:
+      // 1) Assume that files for each series follow a pattern.
+      // 2) Assign each file group to the first series with the correct count.
+      LOGGER.info("Handling renamed TIFF files");
+
+      listing = list.toArray(new String[list.size()]);
+
+      // grab the file patterns
+      Vector<String> filePatterns = new Vector<String>();
+      for (String q : listing) {
+        Location l = new Location(dirPrefix, q).getAbsoluteFile();
+        FilePattern pattern = new FilePattern(l);
+
+        AxisGuesser guess = new AxisGuesser(pattern, "XYZCT", 1, 1, 1, false);
+        String fp = pattern.getPattern();
+
+        if (guess.getAxisCountS() >= 1) {
+          String pre = pattern.getPrefix(guess.getAxisCountS());
+          Vector<String> fileList = new Vector<String>();
+          for (int n=0; n<listing.length; n++) {
+            Location p = new Location(dirPrefix, listing[n]);
+            if (p.getAbsolutePath().startsWith(pre)) {
+              fileList.add(listing[n]);
+            }
+          }
+          fp = FilePattern.findPattern(l.getAbsolutePath(), dirPrefix,
+            fileList.toArray(new String[fileList.size()]));
+        }
+
+        if (fp != null && !filePatterns.contains(fp)) {
+          filePatterns.add(fp);
+        }
+      }
+
+      for (String q : filePatterns) {
+        String[] pattern = new FilePattern(q).getFiles();
+        if (pattern.length == tempImages) {
+          // make sure that this pattern hasn't already been used
+
+          boolean validPattern = true;
+          for (int n=0; n<seriesIndex; n++) {
+            if (files[n] == null) continue;
+            if (files[n].contains(pattern[0])) {
+              validPattern = false;
+              break;
+            }
+          }
+
+          if (validPattern) {
+            files[seriesIndex] = new Vector<String>();
+            files[seriesIndex].addAll(Arrays.asList(pattern));
+          }
+        }
+      }
+    }
+    else files[seriesIndex] = f;
+    if (files[seriesIndex] == null) valid[seriesIndex] = false;
+    else {
+      core[seriesIndex].imageCount = files[seriesIndex].size();
+      maxPlanes = (int) Math.max(maxPlanes, core[seriesIndex].imageCount);
+    }
+  }
+
+  private void parseSeriesTag() throws IOException {
+    addSeriesMeta("Version", in.readInt());
+    addSeriesMeta("Number of Series", in.readInt());
+    fileLength = in.readInt();
+    addSeriesMeta("Length of filename", fileLength);
+    int extLen = in.readInt();
+    if (extLen > fileLength) {
+      in.seek(8);
+      core[0].littleEndian = !isLittleEndian();
+      in.order(isLittleEndian());
+      fileLength = in.readInt();
+      extLen = in.readInt();
+    }
+    addSeriesMeta("Length of file extension", extLen);
+    addSeriesMeta("Image file extension", getString(extLen));
+  }
+
+  private void parseImageTag(int seriesIndex) throws IOException {
+    core[seriesIndex].imageCount = in.readInt();
+    core[seriesIndex].sizeX = in.readInt();
+    core[seriesIndex].sizeY = in.readInt();
+
+    addSeriesMeta("Number of images", getImageCount());
+    addSeriesMeta("Image width", getSizeX());
+    addSeriesMeta("Image height", getSizeY());
+    addSeriesMeta("Bits per Sample", in.readInt());
+    addSeriesMeta("Samples per pixel", in.readInt());
+
+    String name = getString(fileLength * 2);
+
+    if (name.indexOf(".") != -1) {
+      name = name.substring(0, name.lastIndexOf("."));
+    }
+
+    String[] tokens = name.split("_");
+    StringBuffer buf = new StringBuffer();
+    for (int p=1; p<tokens.length; p++) {
+      String lcase = tokens[p].toLowerCase();
+      if (!lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
+        !lcase.startsWith("z0") && !lcase.startsWith("t0"))
+      {
+        if (buf.length() > 0) buf.append("_");
+        buf.append(tokens[p]);
+      }
+    }
+    seriesNames.add(buf.toString());
+  }
+
+  private void parseDimensionTag(int seriesIndex)
+    throws FormatException, IOException
+  {
+    addSeriesMeta("Voxel Version", in.readInt());
+    core[seriesIndex].rgb = in.readInt() == 20;
+    addSeriesMeta("VoxelType", isRGB() ? "RGB" : "gray");
+
+    int bpp = in.readInt();
+    addSeriesMeta("Bytes per pixel", bpp);
+
+    switch (bpp) {
+      case 1:
+        core[seriesIndex].pixelType = FormatTools.UINT8;
+        break;
+      case 3:
+        core[seriesIndex].pixelType = FormatTools.UINT8;
+        core[seriesIndex].sizeC = 3;
+        core[seriesIndex].rgb = true;
+        break;
+      case 2:
+        core[seriesIndex].pixelType = FormatTools.UINT16;
+        break;
+      case 6:
+        core[seriesIndex].pixelType = FormatTools.UINT16;
+        core[seriesIndex].sizeC = 3;
+        core[seriesIndex].rgb = true;
+        break;
+      case 4:
+        core[seriesIndex].pixelType = FormatTools.UINT32;
+        break;
+      default:
+        throw new FormatException("Unsupported bytes per pixel (" +
+          bpp + ")");
+    }
+
+    core[seriesIndex].dimensionOrder = "XY";
+
+    int resolution = in.readInt();
+    core[seriesIndex].bitsPerPixel = resolution;
+    addSeriesMeta("Real world resolution", resolution);
+    addSeriesMeta("Maximum voxel intensity", getString(true));
+    addSeriesMeta("Minimum voxel intensity", getString(true));
+    int len = in.readInt();
+    in.skipBytes(len * 2 + 4);
+
+    len = in.readInt();
+    for (int j=0; j<len; j++) {
+      int dimId = in.readInt();
+      String dimType = dimensionNames.get(new Integer(dimId));
+      if (dimType == null) dimType = "";
+
+      int size = in.readInt();
+      int distance = in.readInt();
+      int strlen = in.readInt() * 2;
+      String[] sizeData = getString(strlen).split(" ");
+      String physicalSize = sizeData[0];
+      String unit = "";
+      if (sizeData.length > 1) unit = sizeData[1];
+
+      double physical = Double.parseDouble(physicalSize) / size;
+      if (unit.equals("m")) {
+        physical *= 1000000;
+      }
+
+      if (dimType.equals("x")) {
+        core[seriesIndex].sizeX = size;
+        physicalSizes[seriesIndex][0] = physical;
+      }
+      else if (dimType.equals("y")) {
+        core[seriesIndex].sizeY = size;
+        physicalSizes[seriesIndex][1] = physical;
+      }
+      else if (dimType.equals("channel")) {
+        if (getSizeC() == 0) core[seriesIndex].sizeC = 1;
+        core[seriesIndex].sizeC *= size;
+        if (getDimensionOrder().indexOf("C") == -1) {
+          core[seriesIndex].dimensionOrder += "C";
+        }
+        physicalSizes[seriesIndex][3] = physical;
+      }
+      else if (dimType.equals("z")) {
+        core[seriesIndex].sizeZ = size;
+      }
+      else {
+        core[seriesIndex].sizeT = size;
+        if (getDimensionOrder().indexOf("T") == -1) {
+          core[seriesIndex].dimensionOrder += "T";
+        }
+        physicalSizes[seriesIndex][4] = physical;
+      }
+
+      String dimPrefix = "Dim" + j;
+
+      addSeriesMeta(dimPrefix + " type", dimType);
+      addSeriesMeta(dimPrefix + " size", size);
+      addSeriesMeta(dimPrefix + " distance between sub-dimensions",
+        distance);
+
+      addSeriesMeta(dimPrefix + " physical length",
+        physicalSize + " " + unit);
+
+      addSeriesMeta(dimPrefix + " physical origin", getString(true));
+    }
+    addSeriesMeta("Series name", getString(false));
+
+    String description = getString(false);
+    seriesDescriptions.add(description);
+    addSeriesMeta("Series description", description);
+  }
+
+  private void parseTimeTag(int seriesIndex) throws IOException {
+    int nDims = in.readInt();
+    addSeriesMeta("Number of time-stamped dimensions", nDims);
+    addSeriesMeta("Time-stamped dimension", in.readInt());
+
+    for (int j=0; j<nDims; j++) {
+      String dimPrefix = "Dimension " + j;
+      addSeriesMeta(dimPrefix + " ID", in.readInt());
+      addSeriesMeta(dimPrefix + " size", in.readInt());
+      addSeriesMeta(dimPrefix + " distance", in.readInt());
+    }
+
+    int numStamps = in.readInt();
+    addSeriesMeta("Number of time-stamps", numStamps);
+    timestamps[seriesIndex] = new String[numStamps];
+    for (int j=0; j<numStamps; j++) {
+      timestamps[seriesIndex][j] = getString(64);
+      addSeriesMeta("Timestamp " + j, timestamps[seriesIndex][j]);
+    }
+
+    if (in.getFilePointer() < in.length()) {
+      int numTMs = in.readInt();
+      addSeriesMeta("Number of time-markers", numTMs);
+      for (int j=0; j<numTMs; j++) {
+        int numDims = in.readInt();
+
+        String time = "Time-marker " + j + " Dimension ";
+
+        for (int k=0; k<numDims; k++) {
+          addSeriesMeta(time + k + " coordinate", in.readInt());
+        }
+        addSeriesMeta("Time-marker " + j, getString(64));
+      }
+    }
+  }
+
+  private void parseExperimentTag() throws IOException {
+    in.skipBytes(8);
+    String description = getString(true);
+    addSeriesMeta("Image Description", description);
+    addSeriesMeta("Main file extension", getString(true));
+    addSeriesMeta("Image format identifier", getString(true));
+    addSeriesMeta("Single image extension", getString(true));
+  }
+
+  private void parseLUT(int seriesIndex) throws IOException {
+    int nChannels = in.readInt();
+    if (nChannels > 0) core[seriesIndex].indexed = true;
+    addSeriesMeta("Number of LUT channels", nChannels);
+    addSeriesMeta("ID of colored dimension", in.readInt());
+
+    for (int j=0; j<nChannels; j++) {
+      String p = "LUT Channel " + j;
+      addSeriesMeta(p + " version", in.readInt());
+      addSeriesMeta(p + " inverted?", in.read() == 1);
+      addSeriesMeta(p + " description", getString(false));
+      addSeriesMeta(p + " filename", getString(false));
+      String lut = getString(false);
+      addSeriesMeta(p + " name", lut);
+      in.skipBytes(8);
+    }
+  }
+
+  private void parseChannelTag() throws IOException {
+    int nBands = in.readInt();
+    for (int band=0; band<nBands; band++) {
+      String p = "Band #" + (band + 1) + " ";
+      addSeriesMeta(p + "Lower wavelength", in.readDouble());
+      in.skipBytes(4);
+      addSeriesMeta(p + "Higher wavelength", in.readDouble());
+      in.skipBytes(4);
+      addSeriesMeta(p + "Gain", in.readDouble());
+      addSeriesMeta(p + "Offset", in.readDouble());
+    }
+  }
+
+  private void parseInstrumentData(MetadataStore store, int blockNum)
+    throws IOException
+  {
+    int series = getSeries();
 
     // read 24 byte SAFEARRAY
-    stream.skipBytes(4);
-    int cbElements = stream.readInt();
-    stream.skipBytes(8);
-    int nElements = stream.readInt();
-    stream.skipBytes(4);
+    in.skipBytes(4);
+    int cbElements = in.readInt();
+    in.skipBytes(8);
+    int nElements = in.readInt();
+    in.skipBytes(4);
 
     for (int j=0; j<nElements; j++) {
-      stream.seek(24 + j * cbElements);
-      String contentID = getString(stream, 128);
-      String description = getString(stream, 64);
-      String data = getString(stream, 64);
-      int dataType = stream.readShort();
-      stream.skipBytes(6);
+      in.seek(24 + j * cbElements);
+      String contentID = getString(128);
+      String description = getString(64);
+      String data = getString(64);
+      int dataType = in.readShort();
+      in.skipBytes(6);
 
       // read data
       switch (dataType) {
         case 2:
-          data = String.valueOf(stream.readShort());
+          data = String.valueOf(in.readShort());
           break;
         case 3:
-          data = String.valueOf(stream.readInt());
+          data = String.valueOf(in.readInt());
           break;
         case 4:
-          data = String.valueOf(stream.readFloat());
+          data = String.valueOf(in.readFloat());
           break;
         case 5:
-          data = String.valueOf(stream.readDouble());
+          data = String.valueOf(in.readDouble());
           break;
         case 7:
         case 11:
-          data = stream.read() == 0 ? "false" : "true";
+          data = in.read() == 0 ? "false" : "true";
           break;
         case 17:
-          data = stream.readString(1);
+          data = in.readString(1);
           break;
       }
+
+      if (data.trim().length() == 0) continue;
 
       String[] tokens = contentID.split("\\|");
 
@@ -1246,7 +1273,6 @@ public class LeicaReader extends FormatReader {
 
       addSeriesMeta("Block " + blockNum + " " + contentID, data);
     }
-    stream.close();
 
     // populate saved LogicalChannel data
 
@@ -1289,18 +1315,14 @@ public class LeicaReader extends FormatReader {
     return false;
   }
 
-  private String getString(RandomAccessInputStream stream, int len)
-    throws IOException
-  {
-    return DataTools.stripString(stream.readString(len));
+  private String getString(int len) throws IOException {
+    return DataTools.stripString(in.readString(len));
   }
 
-  private String getString(RandomAccessInputStream stream, boolean doubleLength)
-    throws IOException
-  {
-    int len = stream.readInt();
+  private String getString(boolean doubleLength) throws IOException {
+    int len = in.readInt();
     if (doubleLength) len *= 2;
-    return getString(stream, len);
+    return getString(len);
   }
 
   private static Hashtable<Integer, String> makeDimensionTable() {

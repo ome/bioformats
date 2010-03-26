@@ -50,7 +50,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class DeltavisionReader extends FormatReader implements IMetadataConfigurable {
+public class DeltavisionReader extends FormatReader {
 
   // -- Constants --
 
@@ -88,8 +88,6 @@ public class DeltavisionReader extends FormatReader implements IMetadataConfigur
   protected int numIntsPerSection;
   protected int numFloatsPerSection;
 
-  private MetadataOptions metadataOptions;
-
   /** Initialize an array of Extended Header Field structures. */
   protected DVExtHdrFields[][][] extHdrFields = null;
 
@@ -106,7 +104,6 @@ public class DeltavisionReader extends FormatReader implements IMetadataConfigur
     suffixSufficient = false;
     suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
-    metadataOptions = new DefaultMetadataOptions();
   }
 
   // -- IFormatReader API methods --
@@ -1202,30 +1199,6 @@ public class DeltavisionReader extends FormatReader implements IMetadataConfigur
       }
     }
 
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.in.IMetadataConfigurable#getMetadataOptions()
-   */
-  public MetadataOptions getMetadataOptions() {
-    return metadataOptions;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.in.IMetadataConfigurable#getSupportedMetadataLevels()
-   */
-  public Set<MetadataLevel> getSupportedMetadataLevels() {
-    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
-    supportedLevels.add(MetadataLevel.ALL);
-    supportedLevels.add(MetadataLevel.PIXELS_ONLY);
-    return supportedLevels;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.in.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
-   */
-  public void setMetadataOptions(MetadataOptions options) {
-    this.metadataOptions = options;
   }
 
 }

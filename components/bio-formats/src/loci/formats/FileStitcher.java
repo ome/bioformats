@@ -258,21 +258,21 @@ public class FileStitcher implements IFormatReader {
    * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
    */
   public Set<MetadataLevel> getSupportedMetadataLevels() {
-    throw new RuntimeException("Not implemented.");
+    return reader.getSupportedMetadataLevels();
   }
 
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
    */
   public MetadataOptions getMetadataOptions() {
-    throw new RuntimeException("Not implemented.");
+    return reader.getMetadataOptions();
   }
 
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
    */
   public void setMetadataOptions(MetadataOptions options) {
-    throw new RuntimeException("Not implemented.");
+    reader.setMetadataOptions(options);
   }
 
   // -- IFormatReader API methods --
