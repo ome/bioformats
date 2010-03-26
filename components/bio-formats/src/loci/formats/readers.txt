@@ -77,6 +77,7 @@ loci.formats.in.SeikoReader           # xqd, xqf
 loci.formats.in.TopometrixReader      # tfr, ffr, zfr, zfp, 2fl
 loci.formats.in.UBMReader             # pr3
 loci.formats.in.QuesantReader         # afm
+loci.formats.in.BioRadGelReader       # 1sc
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
