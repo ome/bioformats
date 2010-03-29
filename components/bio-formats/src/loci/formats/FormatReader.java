@@ -414,7 +414,7 @@ public abstract class FormatReader extends FormatHandler
   public Set<MetadataLevel> getSupportedMetadataLevels() {
     Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
     supportedLevels.add(MetadataLevel.ALL);
-    supportedLevels.add(MetadataLevel.PIXELS_ONLY);
+    supportedLevels.add(MetadataLevel.MINIMUM);
     return supportedLevels;
   }
 

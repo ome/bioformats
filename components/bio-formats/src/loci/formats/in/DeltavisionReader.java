@@ -181,7 +181,7 @@ public class DeltavisionReader extends FormatReader {
 
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
     switch (metadataLevel) {
-      case PIXELS_ONLY: {
+      case MINIMUM: {
         initFilePixelsOnly(id);
         break;
       }

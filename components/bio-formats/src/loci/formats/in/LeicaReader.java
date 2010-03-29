@@ -532,7 +532,7 @@ public class LeicaReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
-    if (metadataLevel == MetadataLevel.PIXELS_ONLY) return;
+    if (metadataLevel == MetadataLevel.MINIMUM) return;
 
     for (int i=0; i<numSeries; i++) {
       IFD ifd = headerIFDs.get(i);

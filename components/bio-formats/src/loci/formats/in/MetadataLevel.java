@@ -33,7 +33,7 @@ package loci.formats.in;
  */
 public enum MetadataLevel {
 
-  PIXELS_ONLY,
+  MINIMUM,
   ALL;
 
 }

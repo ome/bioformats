@@ -59,7 +59,7 @@ public class DeltavisionMetadataConfigurableTest {
   @BeforeClass
   public void setUp() {
     pixelsOnly = new DeltavisionReader();
-    pixelsOnly.getMetadataOptions().setMetadataLevel(MetadataLevel.PIXELS_ONLY);
+    pixelsOnly.getMetadataOptions().setMetadataLevel(MetadataLevel.MINIMUM);
     all = new DeltavisionReader();
     all.getMetadataOptions().setMetadataLevel(MetadataLevel.ALL);
   }
@@ -68,7 +68,7 @@ public class DeltavisionMetadataConfigurableTest {
   public void testSetId() throws FormatException, IOException {
     long t0 = System.currentTimeMillis();
     pixelsOnly.setId(ID);
-    assertEquals(MetadataLevel.PIXELS_ONLY,
+    assertEquals(MetadataLevel.MINIMUM,
                  pixelsOnly.getMetadataOptions().getMetadataLevel());
     assertNull(pixelsOnly.getSeriesMetadata().get(ALL_ONLY_KEY));
     long t1 = System.currentTimeMillis();

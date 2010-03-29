@@ -56,7 +56,7 @@ public class MetadataConfigurableTest {
   public void setUp() {
     pixelsOnly = new ImageReader();
     pixelsOnly.setMetadataOptions(
-      new DefaultMetadataOptions(MetadataLevel.PIXELS_ONLY));
+      new DefaultMetadataOptions(MetadataLevel.MINIMUM));
     all = new ImageReader();
     all.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.ALL));
     id = System.getProperty(FILENAME_PROPERTY);
@@ -66,7 +66,7 @@ public class MetadataConfigurableTest {
   public void testSetId() throws FormatException, IOException {
     long t0 = System.currentTimeMillis();
     pixelsOnly.setId(id);
-    assertEquals(MetadataLevel.PIXELS_ONLY,
+    assertEquals(MetadataLevel.MINIMUM,
       pixelsOnly.getMetadataOptions().getMetadataLevel());
 
     long t1 = System.currentTimeMillis();
