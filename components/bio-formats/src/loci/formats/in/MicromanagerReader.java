@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -142,9 +143,13 @@ public class MicromanagerReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int[] coords = getZCTCoords(no);
-    tiffReader.setId(tiffs.get(no));
-    return tiffReader.openBytes(0, buf, x, y, w, h);
+
+    if (new Location(tiffs.get(no)).exists()) {
+      tiffReader.setId(tiffs.get(no));
+      return tiffReader.openBytes(0, buf, x, y, w, h);
+    }
+    LOGGER.warn("File for image #{} ({}) is missing.", no, tiffs.get(no));
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -187,10 +192,7 @@ public class MicromanagerReader extends FormatReader {
 
     // usually a small file, so we can afford to read it into memory
 
-    byte[] meta = new byte[(int) in.length()];
-    in.read(meta);
-    String s = new String(meta);
-    meta = null;
+    String s = DataTools.readFile(metadataFile);
 
     LOGGER.info("Finding image file names");
 
@@ -251,6 +253,7 @@ public class MicromanagerReader extends FormatReader {
           value = valueBuffer.toString();
           value = value.replaceAll("\n", "");
         }
+        if (value == null) continue;
 
         int startIndex = value.indexOf("[");
         int endIndex = value.indexOf("]");
@@ -263,11 +266,9 @@ public class MicromanagerReader extends FormatReader {
         addGlobalMeta(key, value);
         if (key.equals("Channels")) core[0].sizeC = Integer.parseInt(value);
         else if (key.equals("ChNames")) {
-          StringTokenizer t = new StringTokenizer(value, ",");
-          int nTokens = t.countTokens();
-          channels = new String[nTokens];
-          for (int q=0; q<nTokens; q++) {
-            channels[q] = t.nextToken().replaceAll("\"", "").trim();
+          channels = value.split(",");
+          for (int q=0; q<channels.length; q++) {
+            channels[q] = channels[q].replaceAll("\"", "").trim();
           }
         }
         else if (key.equals("Frames")) {
