@@ -392,6 +392,17 @@ public final class DataTools {
     return bytesToDouble(bytes, 0, 8, little);
   }
 
+  /** Translates the given byte array into a String of hexadecimal digits. */
+  public static String bytesToHex(byte[] b) {
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<b.length; i++) {
+      String a = Integer.toHexString(b[i] & 0xff);
+      if (a.length() == 1) sb.append("0");
+      sb.append(a);
+    }
+    return sb.toString();
+  }
+
   // -- Word decoding - primitive types to bytes --
 
   /** Translates the short value into an array of two bytes. */

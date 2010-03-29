@@ -185,12 +185,12 @@ public class ImageReader implements IFormatReader {
 
   /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
   public Set<MetadataLevel> getSupportedMetadataLevels() {
-    return getReader().getSupportedMetadataLevels();
+    return getReaders()[0].getSupportedMetadataLevels();
   }
 
   /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
   public MetadataOptions getMetadataOptions() {
-    return getReader().getMetadataOptions();
+    return getReaders()[0].getMetadataOptions();
   }
 
   /**

@@ -983,8 +983,12 @@ public class LeicaReader extends FormatReader {
         String time = "Time-marker " + j + " Dimension ";
 
         for (int k=0; k<numDims; k++) {
-          addSeriesMeta(time + k + " coordinate", in.readInt());
+          if (in.getFilePointer() < in.length()) {
+            addSeriesMeta(time + k + " coordinate", in.readInt());
+          }
+          else break;
         }
+        if (in.getFilePointer() >= in.length()) break;
         addSeriesMeta("Time-marker " + j, getString(64));
       }
     }

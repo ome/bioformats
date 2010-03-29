@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.formats.ImageReader;
@@ -82,13 +83,7 @@ public class TestTools {
       md.reset();
       md.update(b);
       byte[] digest = md.digest();
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<digest.length; i++) {
-        String a = Integer.toHexString(digest[i] & 0xff);
-        if (a.length() == 1) sb.append("0");
-        sb.append(a);
-      }
-      return sb.toString();
+      return DataTools.bytesToHex(digest);
     }
     catch (NoSuchAlgorithmException e) { }
     return null;

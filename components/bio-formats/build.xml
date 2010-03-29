@@ -93,4 +93,15 @@ Type "ant -p" for a list of targets.
     </testng>
   </target>
 
+  <target name="test-metadata" depends="compile-tests"
+    description="test metadata level support for a single file" if="doTests">
+    <testng sourcedir="${test.dir}"
+      classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
+      testname="Metadata tests">
+      <classfileset file="${test-classes.dir}/loci/formats/utests/MetadataConfigurableTest.class"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
 </project>
