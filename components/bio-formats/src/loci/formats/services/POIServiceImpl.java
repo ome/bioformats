@@ -94,8 +94,8 @@ public class POIServiceImpl extends AbstractService implements POIService {
   }
 
   /* @see POIService#getInputStream(String) */
-  public InputStream getInputStream(String file) {
-    return (InputStream) files.get(file);
+  public InputStream getInputStream(String file) throws IOException {
+    return new DocumentInputStream(files.get(file), stream);
   }
 
   /* @see POIService#getDocumentStream(String) */
@@ -116,8 +116,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
     int len = length > size ? size : length;
 
     byte[] buf = new byte[len];
-    DocumentEntry entry = files.get(file);
-    DocumentInputStream s = new DocumentInputStream(entry, stream);
+    InputStream s = getInputStream(file);
     s.read(buf);
     s.close();
     return buf;

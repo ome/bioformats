@@ -99,7 +99,7 @@ public class ZeissZVIReader extends FormatReader {
 
   private POIService poi;
 
-  private Vector<RandomAccessInputStream> tagsToParse;
+  private Vector<String> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
   private double stageX = 0, stageY = 0;
 
@@ -437,7 +437,7 @@ public class ZeissZVIReader extends FormatReader {
 
     timestamps = new Hashtable<Integer, String>();
     exposureTime = new Hashtable<Integer, String>();
-    tagsToParse = new Vector<RandomAccessInputStream>();
+    tagsToParse = new Vector<String>();
 
     // count number of images
 
@@ -487,20 +487,16 @@ public class ZeissZVIReader extends FormatReader {
       }
 
       if (name.indexOf("Scaling") == -1 && dirName.equals("Tags")) {
-        RandomAccessInputStream s = poi.getDocumentStream(name);
-        s.order(true);
         int imageNum = getImageNumber(name, -1);
         if (imageNum == -1) {
-          parseTags(imageNum, s, new DummyMetadata());
+          parseTags(imageNum, name, new DummyMetadata());
         }
-        else tagsToParse.add(s);
+        else tagsToParse.add(name);
       }
       else if (dirName.equals("Shapes") && name.indexOf("Item") != -1) {
-        RandomAccessInputStream s = poi.getDocumentStream(name);
-        s.order(true);
         int imageNum = getImageNumber(name, -1);
         if (imageNum != -1) {
-          parseROIs(imageNum, s, store);
+          parseROIs(imageNum, name, store);
         }
       }
       else if (dirName.equals("Image") ||
@@ -530,12 +526,9 @@ public class ZeissZVIReader extends FormatReader {
         int cidx = s.readInt();
         int tidx = s.readInt();
 
-        Integer z = new Integer(zidx);
-        Integer t = new Integer(tidx);
-        Integer c = new Integer(cidx);
-        if (!zIndices.contains(z)) zIndices.add(z);
-        if (!tIndices.contains(t)) tIndices.add(t);
-        if (!cIndices.contains(c)) cIndices.add(c);
+        if (!zIndices.contains(zidx)) zIndices.add(zidx);
+        if (!tIndices.contains(tidx)) tIndices.add(tidx);
+        if (!cIndices.contains(cidx)) cIndices.add(cidx);
 
         s.skipBytes(len);
 
@@ -586,10 +579,8 @@ public class ZeissZVIReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    for (RandomAccessInputStream s : tagsToParse) {
-      s.order(true);
-      parseTags(-1, s, store);
-      s.close();
+    for (String name : tagsToParse) {
+      parseTags(-1, name, store);
     }
 
     core[0].sizeZ = zIndices.size();
@@ -607,7 +598,7 @@ public class ZeissZVIReader extends FormatReader {
 
     // calculate tile dimensions and number of tiles
     if (isTiled) {
-      Integer[] t = tiles.keySet().toArray(new Integer[0]);
+      Integer[] t = tiles.keySet().toArray(new Integer[tiles.size()]);
       Arrays.sort(t);
       Vector<Integer> tmpOffsets = new Vector<Integer>();
       Vector<String> tmpFiles = new Vector<String>();
@@ -659,7 +650,6 @@ public class ZeissZVIReader extends FormatReader {
       core[0].sizeY = tileHeight * tileRows;
     }
 
-
     core[0].dimensionOrder = "XY";
     if (isRGB()) core[0].dimensionOrder += "C";
     for (int i=0; i<coordinates.length-1; i++) {
@@ -678,19 +668,14 @@ public class ZeissZVIReader extends FormatReader {
         core[0].dimensionOrder += "T";
       }
     }
-    if (getDimensionOrder().indexOf("C") == -1) {
-      core[0].dimensionOrder += "C";
-    }
-    if (getDimensionOrder().indexOf("Z") == -1) {
-      core[0].dimensionOrder += "Z";
-    }
-    if (getDimensionOrder().indexOf("T") == -1) {
-      core[0].dimensionOrder += "T";
-    }
+    core[0].dimensionOrder =
+      MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
 
     if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
     else if (bpp == 2 || bpp == 6) core[0].pixelType = FormatTools.UINT16;
     if (isJPEG) core[0].pixelType = FormatTools.UINT8;
+
+    core[0].indexed = !isRGB() && channelColors != null;
 
     MetadataTools.populatePixels(store, this, true);
 
@@ -703,47 +688,47 @@ public class ZeissZVIReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    for (int plane=0; plane<getImageCount(); plane++) {
-      int[] zct = getZCTCoords(plane);
-      String exposure = exposureTime.get(new Integer(zct[1]));
-      Double exp = new Double(0.0);
-      try { exp = new Double(exposure); }
-      catch (NumberFormatException e) { }
-      catch (NullPointerException e) { }
-      store.setPlaneTimingExposureTime(exp, 0, 0, plane);
+      for (int plane=0; plane<getImageCount(); plane++) {
+        int[] zct = getZCTCoords(plane);
+        String exposure = exposureTime.get(new Integer(zct[1]));
+        Double exp = new Double(0.0);
+        try { exp = new Double(exposure); }
+        catch (NumberFormatException e) { }
+        catch (NullPointerException e) { }
+        store.setPlaneTimingExposureTime(exp, 0, 0, plane);
 
-      if (plane < timestamps.size()) {
-        String timestamp = timestamps.get(new Integer(plane));
-        long stamp = parseTimestamp(timestamp);
-        stamp -= firstStamp;
-        store.setPlaneTimingDeltaT(new Double(stamp / 1600000), 0, 0, plane);
+        if (plane < timestamps.size()) {
+          String timestamp = timestamps.get(new Integer(plane));
+          long stamp = parseTimestamp(timestamp);
+          stamp -= firstStamp;
+          store.setPlaneTimingDeltaT(new Double(stamp / 1600000), 0, 0, plane);
+        }
+
+        store.setStagePositionPositionX(stageX, 0, 0, plane);
+        store.setStagePositionPositionY(stageY, 0, 0, plane);
       }
 
-      store.setStagePositionPositionX(stageX, 0, 0, plane);
-      store.setStagePositionPositionY(stageY, 0, 0, plane);
+      // link DetectorSettings to an actual Detector
+      for (int i=0; i<getEffectiveSizeC(); i++) {
+        String detectorID = MetadataTools.createLSID("Detector", 0, i);
+        store.setDetectorID(detectorID, 0, i);
+        store.setDetectorSettingsDetector(detectorID, 0, i);
+        store.setDetectorType("Unknown", 0, i);
+      }
+
+      // link Objective to Image
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setObjectiveCorrection("Unknown", 0, 0);
+      store.setObjectiveImmersion("Unknown", 0, 0);
     }
-
-    core[0].indexed = !isRGB() && channelColors != null;
-
-    // link DetectorSettings to an actual Detector
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      String detectorID = MetadataTools.createLSID("Detector", 0, i);
-      store.setDetectorID(detectorID, 0, i);
-      store.setDetectorSettingsDetector(detectorID, 0, i);
-      store.setDetectorType("Unknown", 0, i);
-    }
-
-    // link Objective to Image
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {
@@ -803,9 +788,12 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Parse all of the tags in a stream. */
-  private void parseTags(int image, RandomAccessInputStream s,
-    MetadataStore store) throws IOException
+  private void parseTags(int image, String file, MetadataStore store)
+    throws IOException
   {
+    RandomAccessInputStream s = poi.getDocumentStream(file);
+    s.order(true);
+
     s.seek(8);
 
     int count = s.readInt();
@@ -911,28 +899,10 @@ public class ZeissZVIReader extends FormatReader {
             nextChName++;
           }
         }
-        else if (key.startsWith("BlackValue")) {
-          if (cIndex != -1) {
-            // store.setGreyChannelBlackValue(new Double(value), 0);
-          }
-        }
-        else if (key.startsWith("WhiteValue")) {
-          if (cIndex != -1) {
-            // store.setGreyChannelWhiteValue(new Double(value), 0);
-          }
-        }
-        else if (key.startsWith("GammaValue")) {
-          if (cIndex != -1) {
-            // store.setGreyChannelGammaValue(new Double(value), 0);
-          }
-        }
         else if (key.startsWith("Exposure Time [ms]")) {
           if (cIndex != -1) {
-            try {
-              double exp = Double.parseDouble(value) / 1000;
-              exposureTime.put(new Integer(cIndex), String.valueOf(exp));
-            }
-            catch (NumberFormatException e) { }
+            double exp = Double.parseDouble(value) / 1000;
+            exposureTime.put(new Integer(cIndex), String.valueOf(exp));
           }
         }
         else if (key.startsWith("User Name")) {
@@ -1015,15 +985,23 @@ public class ZeissZVIReader extends FormatReader {
       }
       catch (NumberFormatException e) { }
     }
+    s.close();
   }
 
   /**
    * Parse ROI data from the given RandomAccessInputStream and store it in the
    * given MetadataStore.
    */
-  private void parseROIs(int imageNum, RandomAccessInputStream s,
-    MetadataStore store) throws IOException
+  private void parseROIs(int imageNum, String name, MetadataStore store)
+    throws IOException
   {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+      return;
+    }
+
+    RandomAccessInputStream s = poi.getDocumentStream(name);
+    s.order(true);
+
     // scan stream for offsets to each ROI
 
     Vector<Long> roiOffsets = new Vector<Long>();
@@ -1101,7 +1079,9 @@ public class ZeissZVIReader extends FormatReader {
         store.setEllipseRx(String.valueOf(w / 2), 0, imageNum, shape);
         store.setEllipseRy(String.valueOf(h / 2), 0, imageNum, shape);
       }
-      else if (roiType == CURVE) {
+      else if (roiType == CURVE || roiType == OUTLINE ||
+        roiType == OUTLINE_SPLINE)
+      {
         StringBuffer points = new StringBuffer();
         for (int p=0; p<nPoints; p++) {
           double px = s.readDouble();
@@ -1111,19 +1091,12 @@ public class ZeissZVIReader extends FormatReader {
           points.append(py);
           if (p < nPoints - 1) points.append(" ");
         }
-        store.setPolylinePoints(points.toString(), 0, imageNum, shape);
-      }
-      else if (roiType == OUTLINE || roiType == OUTLINE_SPLINE) {
-        StringBuffer points = new StringBuffer();
-        for (int p=0; p<nPoints; p++) {
-          double px = s.readDouble();
-          double py = s.readDouble();
-          points.append(px);
-          points.append(",");
-          points.append(py);
-          if (p < nPoints - 1) points.append(" ");
+        if (roiType == CURVE) {
+          store.setPolylinePoints(points.toString(), 0, imageNum, shape);
         }
-        store.setPolygonPoints(points.toString(), 0, imageNum, shape);
+        else {
+          store.setPolygonPoints(points.toString(), 0, imageNum, shape);
+        }
       }
       else if (roiType == RECTANGLE || roiType == TEXT) {
         store.setRectX(String.valueOf(x), 0, imageNum, shape);
@@ -1142,20 +1115,7 @@ public class ZeissZVIReader extends FormatReader {
         store.setLineY2(String.valueOf(y2), 0, imageNum, shape);
       }
     }
-  }
-
-  // TODO: this method is never called; eliminate?
-  private double getScaleUnit(String value) {
-    int v = Integer.parseInt(value);
-    switch (v) {
-      case 72: // meters
-        return 1000000;
-      case 77: // nanometers
-        return 0.001;
-      case 81: // inches
-        return 25400;
-    }
-    return 1;
+    s.close();
   }
 
   /** Return the string corresponding to the given ID. */

@@ -62,7 +62,7 @@ public interface POIService extends Service {
    *   retrieve an InputStream.
    * @throws IOException if an error occurred when reading the file
    */
-  public InputStream getInputStream(String file);
+  public InputStream getInputStream(String file) throws IOException;
 
   /**
    * Retrieve a RandomAccessInputStream corresponding to the given file name.

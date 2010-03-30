@@ -1169,6 +1169,7 @@ public class FV1000Reader extends FormatReader {
     parent = tmp.getAbsolutePath();
 
     baseFile = current.getName();
+    if (baseFile == null || baseFile.indexOf("_") == -1) return null;
     baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
     if (checkSuffix(current.getName(), "roi")) {
       // ROI files have an extra underscore
