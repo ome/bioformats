@@ -65,7 +65,7 @@ public abstract class FormatReader extends FormatHandler
   protected RandomAccessInputStream in;
 
   /** Hashtable containing metadata key/value pairs. */
-  protected Hashtable metadata;
+  protected Hashtable<String, Object> metadata;
 
   /** The number of the current series. */
   protected int series = 0;
@@ -144,7 +144,7 @@ public abstract class FormatReader extends FormatHandler
     series = 0;
     close();
     currentId = id;
-    metadata = new Hashtable();
+    metadata = new Hashtable<String, Object>();
 
     core = new CoreMetadata[1];
     core[0] = new CoreMetadata();

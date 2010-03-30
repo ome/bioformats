@@ -23,8 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -33,6 +35,9 @@ import java.util.Vector;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -91,6 +96,8 @@ public class FV1000Reader extends FormatReader {
 
   // -- Fields --
 
+  private IniParser parser = new IniParser();
+
   /** Names of every TIFF file to open. */
   private Vector<String> tiffs;
 
@@ -109,7 +116,8 @@ public class FV1000Reader extends FormatReader {
   /** File mappings for OIB file. */
   private Hashtable<String, String> oibMapping;
 
-  private String[] code, size, pixelSize;
+  private String[] code, size;
+  private Double[] pixelSize;
   private int imageDepth;
   private Vector<String> previewNames;
 
@@ -121,11 +129,19 @@ public class FV1000Reader extends FormatReader {
   private String creationDate;
 
   private Vector<ChannelData> channels;
+  private Vector<String> lutNames = new Vector<String>();
+  private Hashtable<Integer, String> filenames =
+    new Hashtable<Integer, String>();
+  private Hashtable<Integer, String> roiFilenames =
+    new Hashtable<Integer, String>();
 
   private POIService poi;
 
   private short[][][] lut;
   private int lastChannel;
+  private double pixelSizeZ = 1, pixelSizeT = 1;
+
+  private String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
 
   // -- Constructor --
 
@@ -139,7 +155,7 @@ public class FV1000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
-    return checkSuffix(id, "oib");
+    return checkSuffix(id, OIB_SUFFIX);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
@@ -149,18 +165,12 @@ public class FV1000Reader extends FormatReader {
     if (!open) return false; // not allowed to touch the file system
 
     try {
-      Location parent = new Location(name).getAbsoluteFile().getParentFile();
-      String path = parent.getPath();
-      path = path.substring(path.lastIndexOf(File.separator) + 1);
-      if (path.indexOf(".") != -1) {
-        path = path.substring(0, path.lastIndexOf("."));
-      }
-
-      Location oif = new Location(parent.getParentFile(), path);
+      Location oif = new Location(findOIFFile(name));
       return oif.exists() && !oif.isDirectory() &&
         checkSuffix(oif.getAbsolutePath(), "oif");
     }
     catch (NullPointerException e) { }
+    catch (FormatException e) { }
     return false;
   }
 
@@ -176,7 +186,7 @@ public class FV1000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     String name = id.toLowerCase();
-    if (name.endsWith(".oib") || name.endsWith(".oif")) {
+    if (checkSuffix(name, FV1000_SUFFIXES)) {
       return FormatTools.CANNOT_GROUP;
     }
     return FormatTools.MUST_GROUP;
@@ -281,7 +291,8 @@ public class FV1000Reader extends FormatReader {
       wavelengths = null;
       illuminations = null;
       oibMapping = null;
-      code = size = pixelSize = null;
+      code = size = null;
+      pixelSize = null;
       imageDepth = 0;
       pixelSizeX = pixelSizeY = null;
       pinholeSize = null;
@@ -324,352 +335,165 @@ public class FV1000Reader extends FormatReader {
     illuminations = new Vector<String>();
     channels = new Vector<ChannelData>();
 
-    String key = null, value = null, oifName = null;
+    String oifName = null;
 
     if (isOIB) {
-      String infoFile = null;
-      Vector<String> list = poi.getDocumentList();
-      for (String name : list) {
-        if (name.endsWith("OibInfo.txt")) {
-          infoFile = name;
-          break;
-        }
-      }
-      if (infoFile == null) {
-        throw new FormatException("OibInfo.txt not found in " + id);
-      }
-      RandomAccessInputStream ras = poi.getDocumentStream(infoFile);
-
-      oibMapping = new Hashtable<String, String>();
-
-      // set up file name mappings
-
-      String s = DataTools.stripString(ras.readString((int) ras.length()));
-      ras.close();
-      String[] lines = s.split("\n");
-
-      // sort the lines to ensure that the
-      // directory key is before the file names
-      Arrays.sort(lines);
-
-      String directoryKey = null, directoryValue = null;
-      for (String line : lines) {
-        line = line.trim();
-        if (line.indexOf("=") != -1) {
-          key = line.substring(0, line.indexOf("="));
-          value = line.substring(line.indexOf("=") + 1);
-
-          if (directoryKey != null && directoryValue != null) {
-            value = value.replaceAll(directoryKey, directoryValue);
-          }
-
-          if (value.indexOf("GST") != -1) {
-            String first = value.substring(0, value.indexOf("GST"));
-            String last = value.substring(value.lastIndexOf("=") + 1);
-            value = first + last;
-          }
-
-          if (key.startsWith("Stream")) {
-            if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
-            if (directoryKey != null && value.startsWith(directoryValue)) {
-              value = sanitizeFile(value, "");
-              oibMapping.put(value, "Root Entry" + File.separator +
-                directoryKey + File.separator + key);
-            }
-            else {
-              value = sanitizeFile(value, "");
-              oibMapping.put(value, "Root Entry" + File.separator + key);
-            }
-          }
-          else if (key.startsWith("Storage")) {
-            directoryKey = key;
-            directoryValue = value;
-          }
-        }
-      }
-      s = null;
+      oifName = mapOIBFiles();
     }
     else {
       // make sure we have the OIF file, not a TIFF
       if (!checkSuffix(id, OIF_SUFFIX)) {
-        Location current = new Location(id).getAbsoluteFile();
-        String parent = current.getParent();
-        Location tmp = new Location(parent).getParentFile();
-        parent = tmp.getAbsolutePath();
-
-        id = current.getName();
-        id = id.substring(0, id.lastIndexOf("_"));
-        if (checkSuffix(current.getName(), "roi")) {
-          // ROI files have an extra underscore
-          id = id.substring(0, id.lastIndexOf("_"));
-        }
-        id += ".oif";
-        tmp = new Location(tmp, id);
-        String oifFile = tmp.getAbsolutePath();
-
-        if (!tmp.exists()) {
-          oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
-          tmp = new Location(oifFile);
-          if (!tmp.exists()) {
-            // check in parent directory
-            if (parent.endsWith(File.separator)) {
-              parent = parent.substring(0, parent.length() - 1);
-            }
-            String dir = parent.substring(parent.lastIndexOf(File.separator));
-            dir = dir.substring(0, dir.lastIndexOf("."));
-            tmp = new Location(parent);
-            oifFile = new Location(tmp, dir).getAbsolutePath();
-            if (!new Location(oifFile).exists()) {
-              throw new FormatException("OIF file not found");
-            }
-          }
-          currentId = oifFile;
-        }
-        else currentId = oifFile;
+        currentId = findOIFFile(id);
         initFile(currentId);
       }
       oifName = currentId;
     }
 
-    String f = new Location(oifName).getAbsoluteFile().getAbsolutePath();
-    String path = (isOIB || !f.endsWith(oifName) || mappedOIF) ? "" :
-      f.substring(0, f.lastIndexOf(File.separator) + 1);
+    String oifPath = new Location(oifName).getAbsoluteFile().getAbsolutePath();
+    String path = (isOIB || !oifPath.endsWith(oifName) || mappedOIF) ? "" :
+      oifPath.substring(0, oifPath.lastIndexOf(File.separator) + 1);
 
-    RandomAccessInputStream oif = null;
     try {
-      oif = getFile(oifName);
+      getFile(oifName);
     }
     catch (IOException e) {
-      oif = getFile(oifName.replaceAll(".oif", ".OIF"));
+      oifName = oifName.replaceAll(".oif", ".OIF");
     }
 
     // parse key/value pairs from the OIF file
 
-    String s = oif.readString((int) oif.length());
-    oif.close();
-
     code = new String[NUM_DIMENSIONS];
     size = new String[NUM_DIMENSIONS];
-    pixelSize = new String[NUM_DIMENSIONS];
-
-    StringTokenizer st = new StringTokenizer(s, "\r\n");
+    pixelSize = new Double[NUM_DIMENSIONS];
 
     previewNames = new Vector<String>();
     boolean laserEnabled = true;
 
-    String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
+    IniList f = getIniFile(oifName);
 
-    Vector<String> lutNames = new Vector<String>();
-    Hashtable<Integer, String> filenames = new Hashtable<Integer, String>();
-    Hashtable<Integer, String> roiFilenames = new Hashtable<Integer, String>();
-    String prefix = "";
-    while (st.hasMoreTokens()) {
-      line = DataTools.stripString(st.nextToken().trim());
-      if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
-        key = line.substring(0, line.indexOf("=")).trim();
-        value = line.substring(line.indexOf("=") + 1).trim();
-        if (value.startsWith("\"")) {
-          value = value.substring(1, value.length() - 1);
-        }
+    IniTable saveInfo = f.getTable("ProfileSaveInfo");
+    String[] saveKeys = saveInfo.keySet().toArray(new String[saveInfo.size()]);
+    for (String key : saveKeys) {
+      String value = saveInfo.get(key).toString();
+      value = sanitizeValue(value).trim();
 
-        value = value.replace('/', File.separatorChar);
-        value = value.replace('\\', File.separatorChar);
-        while (value.indexOf("GST") != -1) {
-          String first = value.substring(0, value.indexOf("GST"));
-          int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-            value.length() : value.indexOf(File.separator);
-          String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-          value = first + last;
+      if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
+        !isPreviewName(value))
+      {
+        if (mappedOIF) {
+          value = value.substring(value.lastIndexOf(File.separator) + 1).trim();
         }
-
-        if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
-          !isPreviewName(value))
-        {
-          if (mappedOIF) {
-            value = value.substring(value.lastIndexOf(File.separator) + 1);
-          }
-          filenames.put(new Integer(key.substring(11)), value.trim());
-        }
-        else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
-          !isPreviewName(value))
-        {
-          if (mappedOIF) {
-            value = value.substring(value.lastIndexOf(File.separator) + 1);
-          }
-          try {
-            roiFilenames.put(new Integer(key.substring(11)), value.trim());
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (key.equals("PtyFileNameS")) ptyStart = value;
-        else if (key.equals("PtyFileNameE")) ptyEnd = value;
-        else if (key.equals("PtyFileNameT2")) ptyPattern = value;
-        else if (key.indexOf("Thumb") != -1) {
-          if (mappedOIF) {
-            value = value.substring(value.lastIndexOf(File.separator) + 1);
-          }
-          if (thumbId == null) thumbId = value.trim();
-        }
-        else if (key.startsWith("LutFileName")) {
-          if (mappedOIF) {
-            value = value.substring(value.lastIndexOf(File.separator) + 1);
-          }
-          lutNames.add(path + value);
-        }
-        else if (isPreviewName(value)) {
-          if (mappedOIF) {
-            value = value.substring(value.lastIndexOf(File.separator) + 1);
-          }
-          previewNames.add(path + value.trim());
-        }
-        addGlobalMeta(prefix + key, value);
-
-        if (prefix.startsWith("[Axis ") &&
-          prefix.endsWith("Parameters Common] - "))
-        {
-          int ndx =
-            Integer.parseInt(prefix.substring(6, prefix.indexOf("P")).trim());
-          if (key.equals("AxisCode")) code[ndx] = value;
-          else if (key.equals("MaxSize")) size[ndx] = value;
-          else if (key.equals("EndPosition")) pixelSize[ndx] = value;
-          else if (key.equals("StartPosition")) {
-            if (pixelSize[ndx] != null) {
-              double pix = Double.parseDouble(pixelSize[ndx]);
-              double v = Double.parseDouble(value);
-              pixelSize[ndx] = String.valueOf(pix - v);
-            }
-            else {
-              pixelSize[ndx] = value;
-            }
-          }
-        }
-        else if ((prefix + key).equals(
-          "[Reference Image Parameter] - ImageDepth"))
-        {
-          imageDepth = Integer.parseInt(value);
-        }
-        else if ((prefix + key).equals(
-          "[Reference Image Parameter] - WidthConvertValue"))
-        {
-          pixelSizeX = value;
-        }
-        else if ((prefix + key).equals(
-          "[Reference Image Parameter] - HeightConvertValue"))
-        {
-          pixelSizeY = value;
-        }
-        else if (prefix.startsWith("[GUI Channel")) {
-          int lastSpace = prefix.lastIndexOf(" ", prefix.indexOf("]"));
-          int nextToLastSpace = prefix.lastIndexOf(" ", lastSpace - 1) + 1;
-          int index =
-            Integer.parseInt(prefix.substring(nextToLastSpace, lastSpace));
-          ChannelData channel = null;
-          if (index > channels.size()) {
-            channel = new ChannelData();
-          }
-          else channel = channels.get(index - 1);
-
-          if (key.equals("AnalogPMTGain")) channel.gain = new Double(value);
-          else if (key.equals("AnalogPMTVoltage")) {
-            channel.voltage = new Double(value);
-          }
-          else if (key.equals("BF Name")) {
-            channel.barrierFilter = value;
-          }
-          else if (key.equals("CH Activate")) {
-            channel.active = Integer.parseInt(value) != 0;
-          }
-          else if (key.equals("CH Name")) channel.name = value;
-          else if (key.equals("DyeName")) channel.dyeName = value;
-          else if (key.equals("EmissionDM Name")) {
-            channel.emissionFilter = value;
-          }
-          else if (key.equals("EmissionWavelength")) {
-            channel.emWave = new Integer(value);
-          }
-          else if (key.equals("ExcitationDM Name")) {
-            channel.excitationFilter = value;
-          }
-          else if (key.equals("ExcitationWavelength")) {
-            channel.exWave = new Integer(value);
-          }
-          if (index > channels.size()) channels.add(channel);
-        }
-        else if (prefix.indexOf("[Channel ") != -1 &&
-          prefix.indexOf("Parameters] - ") != -1)
-        {
-          if (key.equals("LightType")) {
-            String illumination = value.toLowerCase();
-            if (illumination.indexOf("fluorescence") != -1) {
-              illumination = "Epifluorescence";
-            }
-            else if (illumination.indexOf("transmitted") != -1) {
-              illumination = "Transmitted";
-            }
-            else illumination = null;
-            illuminations.add(illumination);
-          }
-        }
-        else if (prefix.startsWith("[Laser ") && key.equals("Laser Enable")) {
-          laserEnabled = value.equals("1");
-        }
-        else if (prefix.startsWith("[Laser ") && key.equals("LaserWavelength"))
-        {
-          if (laserEnabled) wavelengths.add(new Integer(value));
-        }
-        else if (key.equals("ImageCaputreDate") ||
-          key.equals("ImageCaptureDate"))
-        {
-          creationDate = value;
-        }
+        filenames.put(new Integer(key.substring(11)), value);
       }
-      else if (line.length() > 0) {
-        if (line.indexOf("[") == 2) {
-          line = line.substring(2, line.length());
+      else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
+        !isPreviewName(value))
+      {
+        if (mappedOIF) {
+          value = value.substring(value.lastIndexOf(File.separator) + 1).trim();
         }
-        prefix = line + " - ";
+        try {
+          roiFilenames.put(new Integer(key.substring(11)), value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (key.equals("PtyFileNameS")) ptyStart = value;
+      else if (key.equals("PtyFileNameE")) ptyEnd = value;
+      else if (key.equals("PtyFileNameT2")) ptyPattern = value;
+      else if (key.indexOf("Thumb") != -1) {
+        if (mappedOIF) {
+          value = value.substring(value.lastIndexOf(File.separator) + 1);
+        }
+        if (thumbId == null) thumbId = value.trim();
+      }
+      else if (key.startsWith("LutFileName")) {
+        if (mappedOIF) {
+          value = value.substring(value.lastIndexOf(File.separator) + 1);
+        }
+        lutNames.add(path + value);
+      }
+      else if (isPreviewName(value)) {
+        if (mappedOIF) {
+          value = value.substring(value.lastIndexOf(File.separator) + 1);
+        }
+        previewNames.add(path + value.trim());
       }
     }
 
-    // if this is a version 2 file, the .pty files have not yet been
-    // added to the file list
-    if (ptyStart != null && ptyEnd != null && ptyPattern != null) {
-      // FV1000 version 2 gives the first .pty file, the last .pty and
-      // the file name pattern.  Version 1 lists each .pty file individually.
+    for (int i=0; i<NUM_DIMENSIONS; i++) {
+      IniTable commonParams = f.getTable("Axis " + i + " Parameters Common");
+      code[i] = commonParams.get("AxisCode");
+      size[i] = commonParams.get("MaxSize");
 
-      // pattern is typically 's_C%03dT%03d.pty'
+      double end = Double.parseDouble(commonParams.get("EndPosition"));
+      double start = Double.parseDouble(commonParams.get("StartPosition"));
+      pixelSize[i] = end - start;
+    }
 
-      // build list of block indexes
+    IniTable referenceParams = f.getTable("Reference Image Parameter");
+    imageDepth = Integer.parseInt(referenceParams.get("ImageDepth"));
+    pixelSizeX = referenceParams.get("WidthConvertValue");
+    pixelSizeY = referenceParams.get("HeightConvertValue");
 
-      String[] prefixes = ptyPattern.split("%03d");
+    int index = 0;
 
-      // get first and last numbers for each block
-      int[] first = scanFormat(ptyPattern, ptyStart);
-      int[] last = scanFormat(ptyPattern, ptyEnd);
-      int[] lengths = new int[prefixes.length - 1];
-      int totalFiles = 1;
-      for (int i=0; i<first.length; i++) {
-        lengths[i] = last[i] - first[i] + 1;
-        totalFiles *= lengths[i];
+    IniTable laser = f.getTable("Laser " + index + " Parameters");
+    while (laser != null) {
+      laserEnabled = laser.get("Laser Enable").equals("1");
+      if (laserEnabled) {
+        wavelengths.add(new Integer(laser.get("LaserWavelength")));
       }
 
-      // add each .pty file
+      creationDate = laser.get("ImageCaputreDate");
+      if (creationDate == null) {
+        creationDate = laser.get("ImageCaptureDate");
+      }
 
-      for (int file=0; file<totalFiles; file++) {
-        int[] pos = FormatTools.rasterToPosition(lengths, file);
-        StringBuffer pty = new StringBuffer();
-        for (int block=0; block<prefixes.length; block++) {
-          pty.append(prefixes[block]);
+      index++;
+      laser = f.getTable("Laser " + index + " Parameters");
+    }
 
-          if (block < pos.length) {
-            String num = String.valueOf(pos[block] + 1);
-            for (int q=0; q<3 - num.length(); q++) {
-              pty.append("0");
-            }
-            pty.append(num);
-          }
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      index = 1;
+      IniTable guiChannel = f.getTable("GUI Channel " + index + " Parameters");
+      while (guiChannel != null) {
+        ChannelData channel = new ChannelData();
+        channel.gain = new Double(guiChannel.get("AnalogPMTGain"));
+        channel.voltage = new Double(guiChannel.get("AnalogPMTVoltage"));
+        channel.barrierFilter = guiChannel.get("BF Name");
+        channel.active = Integer.parseInt(guiChannel.get("CH Activate")) != 0;
+        channel.name = guiChannel.get("CH Name");
+        channel.dyeName = guiChannel.get("DyeName");
+        channel.emissionFilter = guiChannel.get("EmissionDM Name");
+        channel.emWave = new Integer(guiChannel.get("EmissionWavelength"));
+        channel.excitationFilter = guiChannel.get("ExcitationDM Name");
+        channel.exWave = new Integer(guiChannel.get("ExcitationWavelength"));
+        channels.add(channel);
+        index++;
+        guiChannel = f.getTable("GUI Channel " + index + " Parameters");
+      }
+
+      index = 1;
+      IniTable channel = f.getTable("Channel " + index + " Parameters");
+      while (channel != null) {
+        String illumination = channel.get("LightType");
+        if (illumination.indexOf("fluorescence") != -1) {
+          illumination = "Epifluorescence";
         }
-        filenames.put(new Integer(file), pty.toString());
+        else if (illumination.indexOf("transmitted") != -1) {
+          illumination = "Transmitted";
+        }
+        else illumination = null;
+        illuminations.add(illumination);
+        index++;
+        channel = f.getTable("Channel " + index + " Parameters");
+      }
+
+      for (IniTable table : f) {
+        String tableName = table.get(IniTable.HEADER_KEY);
+        String[] keys = table.keySet().toArray(new String[table.size()]);
+        for (String key : keys) {
+          addGlobalMeta(tableName + " " + key, table.get(key));
+        }
       }
     }
 
@@ -690,8 +514,7 @@ public class FV1000Reader extends FormatReader {
         core[0] = new CoreMetadata();
         core[1] = new CoreMetadata();
         IFDList ifds = null;
-        for (int i=0; i<previewNames.size(); i++) {
-          String previewName = previewNames.get(i);
+        for (String previewName : previewNames) {
           RandomAccessInputStream preview = getFile(previewName);
           TiffParser tp = new TiffParser(preview);
           ifds = tp.getIFDs();
@@ -755,87 +578,60 @@ public class FV1000Reader extends FormatReader {
         continue;
       }
 
-      RandomAccessInputStream ptyReader = getFile(file);
-      s = ptyReader.readString((int) ptyReader.length());
-      ptyReader.close();
-      st = new StringTokenizer(s, "\n");
+      IniList pty = getIniFile(file);
 
-      boolean zAxis = false, cAxis = false, tAxis = false;
+      IniTable fileInfo = pty.getTable("File Info");
+      file = sanitizeValue(fileInfo.get("DataName"));
+      if (!isPreviewName(file)) {
+        while (file.indexOf("GST") != -1) {
+          file = removeGST(file);
+        }
+        if (!mappedOIF) {
+          file = new Location(tiffPath, file).getAbsolutePath();
+          if (isOIB) {
+            file = file.substring(file.indexOf(File.separator));
+          }
+        }
+        tiffs.add(ii, file);
+      }
 
-      while (st.hasMoreTokens()) {
-        line = st.nextToken().trim();
-        line = DataTools.stripString(line);
+      for (int dim=0; dim<NUM_DIMENSIONS; dim++) {
+        IniTable axis = pty.getTable("Axis " + dim + " Parameters");
+        if (axis == null) break;
+        boolean addAxis = Integer.parseInt(axis.get("Number")) > 1;
+        if (dim == 2) {
+          if (addAxis && getDimensionOrder().indexOf("C") == -1) {
+            core[0].dimensionOrder += "C";
+          }
+        }
+        else if (dim == 3) {
+          if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
+            core[0].dimensionOrder += "Z";
+          }
+        }
+        else if (dim == 4) {
+          if (addAxis && getDimensionOrder().indexOf("T") == -1) {
+            core[0].dimensionOrder += "T";
+          }
+        }
+      }
 
-        if (line.equals("[Axis 2 Parameters]")) cAxis = true;
-        else if (line.equals("[Axis 3 Parameters]")) zAxis = true;
-        else if (line.equals("[Axis 4 Parameters]")) tAxis = true;
+      IniTable acquisition = pty.getTable("Acquisition Parameters Common");
+      magnification = acquisition.get("Magnification");
+      lensNA = acquisition.get("ObjectiveLens NAValue");
+      objectiveName = acquisition.get("ObjectiveLens Name");
+      workingDistance = acquisition.get("ObjectiveLens WDValue");
+      pinholeSize = acquisition.get("PinholeDiameter");
+      String validBitCounts = acquisition.get("ValidBitCounts");
+      if (validBitCounts != null) {
+        core[0].bitsPerPixel = Integer.parseInt(validBitCounts);
+      }
 
-        if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
-          key = line.substring(0, line.indexOf("=")).trim();
-          value = line.substring(line.indexOf("=") + 1).trim();
-          value = value.replaceAll("\"", "");
-          if (key.equals("DataName")) {
-            if (!isPreviewName(value)) {
-              value = value.replace('/', File.separatorChar);
-              value = value.replace('\\', File.separatorChar);
-              while (value.indexOf("GST") != -1) {
-                String first = value.substring(0, value.indexOf("GST"));
-                int ndx = value.indexOf(File.separator) < value.indexOf("GST") ?
-                  value.length() : value.indexOf(File.separator);
-                String last = value.substring(value.lastIndexOf("=", ndx) + 1);
-                value = first + last;
-              }
-              if (mappedOIF) tiffs.add(ii, value);
-              else {
-                String tiff = new Location(tiffPath, value).getAbsolutePath();
-                if (isOIB) {
-                  tiff = tiff.substring(tiff.indexOf(File.separator));
-                }
-                tiffs.add(ii, tiff);
-              }
-            }
-          }
-          else if (key.equals("Number")) {
-            boolean addAxis = Integer.parseInt(value) > 1;
-            if (zAxis) {
-              if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
-                core[0].dimensionOrder += "Z";
-              }
-              zAxis = false;
-            }
-            if (cAxis) {
-              if (addAxis && getDimensionOrder().indexOf("C") == -1) {
-                core[0].dimensionOrder += "C";
-              }
-              cAxis = false;
-            }
-            if (tAxis) {
-              if (addAxis && getDimensionOrder().indexOf("T") == -1) {
-                core[0].dimensionOrder += "T";
-              }
-              tAxis = false;
-            }
-          }
-
-          addGlobalMeta("Image " + ii + " : " + key, value);
-
-          if (key.equals("Magnification")) {
-            magnification = value;
-          }
-          else if (key.equals("ObjectiveLens NAValue")) {
-            lensNA = value;
-          }
-          else if (key.equals("ObjectiveLens Name")) {
-            objectiveName = value;
-          }
-          else if (key.equals("ObjectiveLens WDValue")) {
-            workingDistance = value;
-          }
-          else if (key.equals("PinholeDiameter")) {
-            pinholeSize = value;
-          }
-          else if (key.equals("ValidBitCounts")) {
-            core[0].bitsPerPixel = Integer.parseInt(value);
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        for (IniTable table : pty) {
+          String[] keys = table.keySet().toArray(new String[table.size()]);
+          for (String key : keys) {
+            addGlobalMeta("Image " + ii + " : " + key, table.get(key));
           }
         }
       }
@@ -878,24 +674,22 @@ public class FV1000Reader extends FormatReader {
 
     // calculate axis sizes
 
-    double pixelSizeZ = 1, pixelSizeT = 1;
-
     int realChannels = 0;
-    for (int i=0; i<9; i++) {
+    for (int i=0; i<NUM_DIMENSIONS; i++) {
       int ss = Integer.parseInt(size[i]);
-      if (pixelSize[i] == null) pixelSize[i] = "1.0";
-      pixelSize[i] = pixelSize[i].replaceAll("\"", "");
-      Double pixel = new Double(pixelSize[i]);
+      if (pixelSize[i] == null) pixelSize[i] = 1.0;
       if (code[i].equals("X")) core[0].sizeX = ss;
       else if (code[i].equals("Y")) core[0].sizeY = ss;
       else if (code[i].equals("Z")) {
         core[0].sizeZ = ss;
         // Z size stored in nm
-        pixelSizeZ = Math.abs((pixel.doubleValue() / (getSizeZ() - 1)) / 1000);
+        pixelSizeZ =
+          Math.abs((pixelSize[i].doubleValue() / (getSizeZ() - 1)) / 1000);
       }
       else if (code[i].equals("T")) {
         core[0].sizeT = ss;
-        pixelSizeT = Math.abs((pixel.doubleValue() / (getSizeT() - 1)) / 1000);
+        pixelSizeT =
+          Math.abs((pixelSize[i].doubleValue() / (getSizeT() - 1)) / 1000);
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
@@ -1008,15 +802,25 @@ public class FV1000Reader extends FormatReader {
       creationDate = DateTools.formatDate(creationDate, DATE_FORMAT);
     }
 
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       store.setImageName("Series " + (i + 1), i);
       if (creationDate != null) store.setImageCreationDate(creationDate, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
+    }
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      populateMetadataStore(store, path);
+    }
+  }
+
+  private void populateMetadataStore(MetadataStore store, String path)
+    throws FormatException, IOException
+  {
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+
+    for (int i=0; i<getSeriesCount(); i++) {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
@@ -1029,18 +833,16 @@ public class FV1000Reader extends FormatReader {
         store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
       }
       if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
-        pixelSizeZ == Double.POSITIVE_INFINITY)
+        pixelSizeZ == Double.POSITIVE_INFINITY || getSizeZ() == 1)
       {
         pixelSizeZ = 0d;
       }
       if (pixelSizeT == Double.NEGATIVE_INFINITY ||
-        pixelSizeT == Double.POSITIVE_INFINITY)
+        pixelSizeT == Double.POSITIVE_INFINITY || getSizeT() == 1)
       {
         pixelSizeT = 0d;
       }
 
-      if (getSizeZ() == 1) pixelSizeZ = 0d;
-      if (getSizeT() == 1) pixelSizeT = 0d;
       store.setDimensionsPhysicalSizeZ(pixelSizeZ, i, 0);
       store.setDimensionsTimeIncrement(pixelSizeT, i, 0);
 
@@ -1054,8 +856,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     int channelIndex = 0;
-    for (int c=0; c<channels.size(); c++) {
-      ChannelData channel = channels.get(c);
+    for (ChannelData channel : channels) {
       if (!channel.active) continue;
       if (channelIndex >= getEffectiveSizeC()) break;
 
@@ -1072,20 +873,18 @@ public class FV1000Reader extends FormatReader {
       String filterSet = MetadataTools.createLSID("FilterSet", 0, channelIndex);
 
       store.setLogicalChannelName(channel.name, 0, channelIndex);
+      String lightSourceID =
+        MetadataTools.createLSID("LightSource", 0, channelIndex);
+      store.setLightSourceSettingsLightSource(lightSourceID, 0, channelIndex);
+
       if (channel.emWave.intValue() > 0) {
         store.setLogicalChannelEmWave(channel.emWave, 0, channelIndex);
       }
       if (channel.exWave.intValue() > 0) {
         store.setLogicalChannelExWave(channel.exWave, 0, channelIndex);
-      }
-      store.setLogicalChannelFilterSet(filterSet, 0, channelIndex);
-
-      String lightSourceID =
-        MetadataTools.createLSID("LightSource", 0, channelIndex);
-      store.setLightSourceSettingsLightSource(lightSourceID, 0, channelIndex);
-      if (channel.exWave.intValue() > 0) {
         store.setLightSourceSettingsWavelength(channel.exWave, 0, channelIndex);
       }
+      store.setLogicalChannelFilterSet(filterSet, 0, channelIndex);
 
       // populate Filter data
       if (channel.barrierFilter != null) {
@@ -1143,8 +942,8 @@ public class FV1000Reader extends FormatReader {
     if (lensNA != null) store.setObjectiveLensNA(new Double(lensNA), 0, 0);
     store.setObjectiveModel(objectiveName, 0, 0);
     if (magnification != null) {
-      store.setObjectiveNominalMagnification(
-        new Integer((int) Float.parseFloat(magnification)), 0, 0);
+      int mag = (int) Float.parseFloat(magnification);
+      store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
@@ -1162,210 +961,329 @@ public class FV1000Reader extends FormatReader {
     // populate ROI data - there is one ROI file per plane
     for (int i=0; i<roiFilenames.size(); i++) {
       if (i >= getImageCount()) break;
-      int[] coordinates = getZCTCoords(i);
       String filename = roiFilenames.get(new Integer(i));
       filename = sanitizeFile(filename, path);
+      nextROI = parseROIFile(filename, store, nextROI, i);
+    }
+  }
 
-      RandomAccessInputStream stream = getFile(filename);
-      String data = stream.readString((int) stream.length());
-      stream.close();
+  private int parseROIFile(String filename, MetadataStore store, int nextROI,
+    int plane) throws FormatException, IOException
+  {
+    int[] coordinates = getZCTCoords(plane);
+    IniList roiFile = getIniFile(filename);
 
-      String[] lines = data.split("\n");
+    boolean validROI = false;
+    int shape = -1;
+    int shapeType = -1;
 
-      boolean validROI = false;
-      int nextShape = -1;
-      int shapeType = -1;
+    String[] xc = null, yc = null;
+    int divide = 0;
+    int color = 0, fontSize = 0, lineWidth = 0, angle = 0;
+    String fontName = null, name = null;
 
-      String[] xc = null, yc = null;
-      int divide = 0;
-      int color = 0, fontSize = 0, lineWidth = 0, angle = 0;
-      String fontName = null, name = null;
-
-      for (int q=0; q<lines.length; q++) {
-        lines[q] = DataTools.stripString(lines[q]);
-
-        int eq = lines[q].indexOf("=");
-        if (eq == -1) continue;
-        key = lines[q].substring(0, eq).trim();
-        value = lines[q].substring(eq + 1).trim();
-
-        if (key.equals("Name")) {
-          value = value.replaceAll("\"", "");
-          try {
-            validROI = Integer.parseInt(value) > 1;
-          }
-          catch (NumberFormatException e) { validROI = false; }
+    for (IniTable table : roiFile) {
+      String tableName = table.get(IniTable.HEADER_KEY);
+      if (tableName.equals("ROIBase FileInformation")) {
+        try {
+          String roiName = table.get("Name").replaceAll("\"", "");
+          validROI = Integer.parseInt(roiName) > 1;
         }
+        catch (NumberFormatException e) { validROI = false; }
         if (!validROI) continue;
+      }
+      else if (tableName.equals("ROIBase Body")) {
+        shapeType = Integer.parseInt(table.get("SHAPE"));
+        divide = Integer.parseInt(table.get("DIVIDE"));
+        String[] fontAttributes = table.get("FONT").split(",");
+        fontName = fontAttributes[0];
+        fontSize = Integer.parseInt(fontAttributes[1]);
 
-        if (key.equals("SHAPE")) {
-          shapeType = Integer.parseInt(value);
-        }
-        else if (key.equals("DIVIDE")) {
-          divide = Integer.parseInt(value);
-        }
-        else if (key.equals("FONT")) {
-          String[] fontAttributes = value.split(",");
-          fontName = fontAttributes[0];
-          fontSize = Integer.parseInt(fontAttributes[1]);
-        }
-        else if (key.equals("LINEWIDTH")) {
-          lineWidth = Integer.parseInt(value);
-        }
-        else if (key.equals("FORECOLOR")) {
-          color = Integer.parseInt(value);
-        }
-        else if (key.equals("NAME")) {
-          name = value;
-        }
-        else if (key.equals("ANGLE")) {
-          angle = Integer.parseInt(value);
-        }
-        else if (key.equals("X")) {
-          xc = value.split(",");
-        }
-        else if (key.equals("Y")) {
-          yc = value.split(",");
+        lineWidth = Integer.parseInt(table.get("LINEWIDTH"));
+        color = Integer.parseInt(table.get("FORECOLOR"));
+        name = table.get("NAME");
+        angle = Integer.parseInt(table.get("ANGLE"));
+        xc = table.get("X").split(",");
+        yc = table.get("Y").split(",");
 
-          int x = Integer.parseInt(xc[0]);
-          int width = xc.length > 1 ? Integer.parseInt(xc[1]) - x : 0;
-          int y = Integer.parseInt(yc[0]);
-          int height = yc.length > 1 ? Integer.parseInt(yc[1]) - y : 0;
+        int x = Integer.parseInt(xc[0]);
+        int width = xc.length > 1 ? Integer.parseInt(xc[1]) - x : 0;
+        int y = Integer.parseInt(yc[0]);
+        int height = yc.length > 1 ? Integer.parseInt(yc[1]) - y : 0;
 
-          if (width + x <= getSizeX() && height + y <= getSizeY()) {
-            nextShape++;
+        if (width + x <= getSizeX() && height + y <= getSizeY()) {
+          shape++;
 
-            Integer zIndex = new Integer(coordinates[0]);
-            Integer tIndex = new Integer(coordinates[2]);
+          Integer zIndex = new Integer(coordinates[0]);
+          Integer tIndex = new Integer(coordinates[2]);
 
-            if (nextShape == 0) {
-              nextROI++;
-              store.setROIZ0(zIndex, 0, nextROI);
-              store.setROIZ1(zIndex, 0, nextROI);
-              store.setROIT0(tIndex, 0, nextROI);
-              store.setROIT1(tIndex, 0, nextROI);
-            }
+          if (shape == 0) {
+            nextROI++;
+            store.setROIZ0(zIndex, 0, nextROI);
+            store.setROIZ1(zIndex, 0, nextROI);
+            store.setROIT0(tIndex, 0, nextROI);
+            store.setROIT1(tIndex, 0, nextROI);
+          }
 
-            store.setShapeTheZ(zIndex, 0, nextROI, nextShape);
-            store.setShapeTheT(tIndex, 0, nextROI, nextShape);
+          store.setShapeTheZ(zIndex, 0, nextROI, shape);
+          store.setShapeTheT(tIndex, 0, nextROI, shape);
 
-            store.setShapeFontSize(fontSize, 0, nextROI,
-              nextShape);
-            store.setShapeFontFamily(fontName, 0, nextROI, nextShape);
-            store.setShapeText(name, 0, nextROI, nextShape);
-            store.setShapeStrokeWidth(lineWidth, 0, nextROI,
-              nextShape);
-            store.setShapeStrokeColor(String.valueOf(color), 0, nextROI,
-              nextShape);
+          store.setShapeFontSize(fontSize, 0, nextROI, shape);
+          store.setShapeFontFamily(fontName, 0, nextROI, shape);
+          store.setShapeText(name, 0, nextROI, shape);
+          store.setShapeStrokeWidth(lineWidth, 0, nextROI, shape);
+          store.setShapeStrokeColor(String.valueOf(color), 0, nextROI, shape);
 
-            if (shapeType == POINT) {
-              store.setPointCx(xc[0], 0, nextROI, nextShape);
-              store.setPointCy(yc[0], 0, nextROI, nextShape);
-            }
-            else if (shapeType == RECTANGLE) {
-              store.setRectX(String.valueOf(x), 0, nextROI, nextShape);
-              store.setRectWidth(String.valueOf(width), 0, nextROI, nextShape);
-              store.setRectY(String.valueOf(y), 0, nextROI, nextShape);
-              store.setRectHeight(String.valueOf(height), 0, nextROI,
-                nextShape);
+          if (shapeType == POINT) {
+            store.setPointCx(xc[0], 0, nextROI, shape);
+            store.setPointCy(yc[0], 0, nextROI, shape);
+          }
+          else if (shapeType == GRID || shapeType == RECTANGLE) {
+            if (shapeType == RECTANGLE) divide = 1;
+            width /= divide;
+            height /= divide;
+            for (int row=0; row<divide; row++) {
+              for (int col=0; col<divide; col++) {
+                int realX = x + col * width;
+                int realY = y + row * height;
 
-              int centerX = x + (width / 2);
-              int centerY = y + (height / 2);
-              store.setRectTransform("rotate(" + angle + " " + centerX + " " +
-                centerY + ")", 0, nextROI, nextShape);
-            }
-            else if (shapeType == GRID) {
-              width /= divide;
-              height /= divide;
-              for (int row=0; row<divide; row++) {
-                for (int col=0; col<divide; col++) {
-                  store.setRectX(String.valueOf(x + col*width), 0, nextROI,
-                    nextShape);
-                  store.setRectY(String.valueOf(y + row*height), 0, nextROI,
-                    nextShape);
-                  store.setRectWidth(String.valueOf(width), 0, nextROI,
-                    nextShape);
-                  store.setRectHeight(String.valueOf(height), 0, nextROI,
-                    nextShape);
+                store.setRectX(String.valueOf(realX), 0, nextROI, shape);
+                store.setRectY(String.valueOf(realY), 0, nextROI, shape);
+                store.setRectWidth(String.valueOf(width), 0, nextROI, shape);
+                store.setRectHeight(String.valueOf(height), 0, nextROI, shape);
 
-                  int centerX = x + col * width + (width / 2);
-                  int centerY = y + row * height + (height / 2);
+                int centerX = realX + (width / 2);
+                int centerY = realY + (height / 2);
 
-                  store.setRectTransform("rotate(" + angle + " " + centerX +
-                    " " + centerY + ")", 0, nextROI, nextShape);
+                store.setRectTransform(String.format("rotate(%d %d %d)",
+                  angle, centerX, centerY), 0, nextROI, shape);
 
-                  if (row < divide - 1 || col < divide - 1) nextShape++;
-                }
+                if (row < divide - 1 || col < divide - 1) shape++;
               }
             }
-            else if (shapeType == LINE) {
-              store.setLineX1(String.valueOf(x), 0, nextROI, nextShape);
-              store.setLineY1(String.valueOf(y), 0, nextROI, nextShape);
-              store.setLineX2(String.valueOf(x + width), 0, nextROI, nextShape);
-              store.setLineY2(String.valueOf(y + height), 0, nextROI,
-                nextShape);
+          }
+          else if (shapeType == LINE) {
+            store.setLineX1(String.valueOf(x), 0, nextROI, shape);
+            store.setLineY1(String.valueOf(y), 0, nextROI, shape);
+            store.setLineX2(String.valueOf(x + width), 0, nextROI, shape);
+            store.setLineY2(String.valueOf(y + height), 0, nextROI, shape);
 
-              int centerX = x + (width / 2);
-              int centerY = y + (height / 2);
+            int centerX = x + (width / 2);
+            int centerY = y + (height / 2);
 
-              store.setLineTransform("rotate(" + angle + " " + centerX + " " +
-                centerY + ")", 0, nextROI, nextShape);
+            store.setLineTransform(String.format("rotate(%d %d %d)",
+              angle, centerX, centerY), 0, nextROI, shape);
+          }
+          else if (shapeType == CIRCLE) {
+            int r = width / 2;
+            store.setCircleCx(String.valueOf(x + r), 0, nextROI, shape);
+            store.setCircleCy(String.valueOf(y + r), 0, nextROI, shape);
+            store.setCircleR(String.valueOf(r), 0, nextROI, shape);
+          }
+          else if (shapeType == ELLIPSE) {
+            int rx = width / 2;
+            int ry = height / 2;
+            store.setEllipseCx(String.valueOf(x + rx), 0, nextROI, shape);
+            store.setEllipseCy(String.valueOf(y + ry), 0, nextROI, shape);
+            store.setEllipseRx(String.valueOf(rx), 0, nextROI, shape);
+            store.setEllipseRy(String.valueOf(ry), 0, nextROI, shape);
+            store.setEllipseTransform(String.format("rotate(%d %d %d)",
+              angle, x + rx, y + ry), 0, nextROI, shape);
+          }
+          else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
+            shapeType == POLYLINE || shapeType == FREE_LINE)
+          {
+            StringBuffer points = new StringBuffer();
+            for (int point=0; point<xc.length; point++) {
+              points.append(xc[point]);
+              points.append(",");
+              points.append(yc[point]);
+              if (point < xc.length - 1) points.append(" ");
             }
-            else if (shapeType == CIRCLE) {
-              int r = width / 2;
-              store.setCircleCx(String.valueOf(x + r), 0, nextROI, nextShape);
-              store.setCircleCy(String.valueOf(y + r), 0, nextROI, nextShape);
-              store.setCircleR(String.valueOf(r), 0, nextROI, nextShape);
-            }
-            else if (shapeType == ELLIPSE) {
-              int rx = width / 2;
-              int ry = height / 2;
-              store.setEllipseCx(String.valueOf(x + rx), 0, nextROI, nextShape);
-              store.setEllipseCy(String.valueOf(y + ry), 0, nextROI, nextShape);
-              store.setEllipseRx(String.valueOf(rx), 0, nextROI, nextShape);
-              store.setEllipseRy(String.valueOf(ry), 0, nextROI, nextShape);
-              store.setEllipseTransform("rotate(" + angle + " " + (x + rx) +
-                " " + (y + ry) + ")", 0, nextROI, nextShape);
-            }
-            else if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
-              StringBuffer points = new StringBuffer();
-              for (int point=0; point<xc.length; point++) {
-                points.append(xc[point]);
-                points.append(",");
-                points.append(yc[point]);
-                if (point < xc.length - 1) points.append(" ");
-              }
-              store.setPolygonPoints(points.toString(), 0, nextROI, nextShape);
+            if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
+              store.setPolygonPoints(points.toString(), 0, nextROI, shape);
               store.setPolygonTransform("rotate(" + angle + ")", 0, nextROI,
-                nextShape);
+                shape);
             }
-            else if (shapeType == POLYLINE || shapeType == FREE_LINE) {
-              StringBuffer points = new StringBuffer();
-              for (int point=0; point<xc.length; point++) {
-                points.append(xc[point]);
-                points.append(",");
-                points.append(yc[point]);
-                if (point < xc.length - 1) points.append(" ");
-              }
-              store.setPolylinePoints(points.toString(), 0, nextROI, nextShape);
+            else {
+              store.setPolylinePoints(points.toString(), 0, nextROI, shape);
               store.setPolylineTransform("rotate(" + angle + ")", 0, nextROI,
-                nextShape);
+                shape);
             }
           }
         }
+      }
+    }
+
+    return nextROI;
+  }
+
+  private void addPtyFiles() throws FormatException {
+    if (ptyStart != null && ptyEnd != null && ptyPattern != null) {
+      // FV1000 version 2 gives the first .pty file, the last .pty and
+      // the file name pattern.  Version 1 lists each .pty file individually.
+
+      // pattern is typically 's_C%03dT%03d.pty'
+
+      // build list of block indexes
+
+      String[] prefixes = ptyPattern.split("%03d");
+
+      // get first and last numbers for each block
+      int[] first = scanFormat(ptyPattern, ptyStart);
+      int[] last = scanFormat(ptyPattern, ptyEnd);
+      int[] lengths = new int[prefixes.length - 1];
+      int totalFiles = 1;
+      for (int i=0; i<first.length; i++) {
+        lengths[i] = last[i] - first[i] + 1;
+        totalFiles *= lengths[i];
+      }
+
+      // add each .pty file
+
+      for (int file=0; file<totalFiles; file++) {
+        int[] pos = FormatTools.rasterToPosition(lengths, file);
+        StringBuffer pty = new StringBuffer();
+        for (int block=0; block<prefixes.length; block++) {
+          pty.append(prefixes[block]);
+
+          if (block < pos.length) {
+            String num = String.valueOf(pos[block] + 1);
+            for (int q=0; q<3 - num.length(); q++) {
+              pty.append("0");
+            }
+            pty.append(num);
+          }
+        }
+        filenames.put(new Integer(file), pty.toString());
       }
     }
   }
 
   // -- Helper methods --
 
-  private String sanitizeFile(String file, String path) {
-    String f = file;
-    f = f.replaceAll("\"", "");
+  private String findOIFFile(String baseFile) throws FormatException {
+    Location current = new Location(baseFile).getAbsoluteFile();
+    String parent = current.getParent();
+    Location tmp = new Location(parent).getParentFile();
+    parent = tmp.getAbsolutePath();
+
+    baseFile = current.getName();
+    baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
+    if (checkSuffix(current.getName(), "roi")) {
+      // ROI files have an extra underscore
+      baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
+    }
+    baseFile += ".oif";
+    tmp = new Location(tmp, baseFile);
+    String oifFile = tmp.getAbsolutePath();
+
+    if (!tmp.exists()) {
+      oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
+      tmp = new Location(oifFile);
+      if (!tmp.exists()) {
+        // check in parent directory
+        if (parent.endsWith(File.separator)) {
+          parent = parent.substring(0, parent.length() - 1);
+        }
+        String dir = parent.substring(parent.lastIndexOf(File.separator));
+        dir = dir.substring(0, dir.lastIndexOf("."));
+        tmp = new Location(parent);
+        oifFile = new Location(tmp, dir).getAbsolutePath();
+        if (!new Location(oifFile).exists()) {
+          throw new FormatException("OIF file not found");
+        }
+      }
+    }
+    return oifFile;
+  }
+
+  private String mapOIBFiles() throws FormatException, IOException {
+    String oifName = null;
+    String infoFile = null;
+    Vector<String> list = poi.getDocumentList();
+    for (String name : list) {
+      if (name.endsWith("OibInfo.txt")) {
+        infoFile = name;
+        break;
+      }
+    }
+    if (infoFile == null) {
+      throw new FormatException("OibInfo.txt not found in " + currentId);
+    }
+    RandomAccessInputStream ras = poi.getDocumentStream(infoFile);
+
+    oibMapping = new Hashtable<String, String>();
+
+    // set up file name mappings
+
+    String s = DataTools.stripString(ras.readString((int) ras.length()));
+    ras.close();
+    String[] lines = s.split("\n");
+
+    // sort the lines to ensure that the
+    // directory key is before the file names
+    Arrays.sort(lines);
+
+    String directoryKey = null, directoryValue = null, key = null, value = null;
+    for (String line : lines) {
+      line = line.trim();
+      if (line.indexOf("=") != -1) {
+        key = line.substring(0, line.indexOf("="));
+        value = line.substring(line.indexOf("=") + 1);
+
+        if (directoryKey != null && directoryValue != null) {
+          value = value.replaceAll(directoryKey, directoryValue);
+        }
+
+        value = removeGST(value);
+
+        if (key.startsWith("Stream")) {
+          if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
+          value = sanitizeFile(value, "");
+          if (directoryKey != null && value.startsWith(directoryValue)) {
+            oibMapping.put(value, "Root Entry" + File.separator +
+              directoryKey + File.separator + key);
+          }
+          else {
+            oibMapping.put(value, "Root Entry" + File.separator + key);
+          }
+        }
+        else if (key.startsWith("Storage")) {
+          directoryKey = key;
+          directoryValue = value;
+        }
+      }
+    }
+    s = null;
+    return oifName;
+  }
+
+  private String sanitizeValue(String value) {
+    String f = value.replaceAll("\"", "");
     f = f.replace('\\', File.separatorChar);
     f = f.replace('/', File.separatorChar);
+    while (f.indexOf("GST") != -1) {
+      f = removeGST(f);
+    }
+    return f;
+  }
+
+  private String sanitizeFile(String file, String path) {
+    String f = sanitizeValue(file);
     if (!isOIB && path.equals("")) return f;
     return path + File.separator + f;
+  }
+
+  private String removeGST(String s) {
+    if (s.indexOf("GST") != -1) {
+      String first = s.substring(0, s.indexOf("GST"));
+      int ndx = s.indexOf(File.separator) < s.indexOf("GST") ?
+        s.length() : s.indexOf(File.separator);
+      String last = s.substring(s.lastIndexOf("=", ndx) + 1);
+      return first + last;
+    }
+    return s;
   }
 
   private RandomAccessInputStream getFile(String name)
@@ -1453,6 +1371,27 @@ public class FV1000Reader extends FormatReader {
     }
 
     return result;
+  }
+
+  private IniList getIniFile(String filename)
+    throws FormatException, IOException
+  {
+    RandomAccessInputStream stream = getFile(filename);
+    stream.skipBytes(2);
+    String data = stream.readString((int) stream.length() - 2);
+    data = DataTools.stripString(data);
+    BufferedReader reader = new BufferedReader(new StringReader(data));
+    stream.close();
+    IniList list = parser.parseINI(reader);
+
+    // most of the values will be wrapped in double quotes
+    for (IniTable table : list) {
+      String[] keys = table.keySet().toArray(new String[table.size()]);
+      for (String key : keys) {
+        table.put(key, sanitizeValue(table.get(key)));
+      }
+    }
+    return list;
   }
 
   // -- Helper classes --
