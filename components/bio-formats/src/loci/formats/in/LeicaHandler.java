@@ -722,7 +722,10 @@ public class LeicaHandler extends DefaultHandler {
       String intensity = attributes.getValue("IntensityDev");
       l.intensity = intensity == null ? 0d : Double.parseDouble(intensity);
 
-      if (l.intensity > 0) lasers.add(l);
+      if (l.intensity > 0) {
+        l.intensity = 100d - l.intensity;
+        lasers.add(l);
+      }
     }
     else if (qName.equals("TimeStamp") && numDatasets >= 0) {
       String stampHigh = attributes.getValue("HighInteger");
