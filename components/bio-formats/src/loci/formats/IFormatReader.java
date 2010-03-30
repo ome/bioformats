@@ -288,10 +288,16 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Returns true if we should normalize float data. */
   boolean isNormalized();
 
-  /** Specifies whether or not to collect metadata. */
+  /**
+   * Specifies whether or not to collect metadata.
+   * @deprecated Use {@link setMetadataOptions(MetadataOptions)} instead.
+   */
   void setMetadataCollected(boolean collect);
 
-  /** Returns true if we should collect metadata. */
+  /**
+   * Returns true if we should collect metadata.
+   * @deprecated Use {@link getMetadataOptions()} instead.
+   */
   boolean isMetadataCollected();
 
   /**

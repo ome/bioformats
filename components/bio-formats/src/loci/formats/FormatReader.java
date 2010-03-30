@@ -91,9 +91,6 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to filter out invalid metadata. */
   protected boolean filterMetadata;
 
-  /** Whether or not to collect metadata. */
-  protected boolean collectMetadata = true;
-
   /** Whether or not to save proprietary metadata in the MetadataStore. */
   protected boolean saveOriginalMetadata = false;
 
@@ -174,7 +171,9 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the specified Hashtable. */
   protected void addMeta(String key, Object value, Hashtable meta) {
-    if (key == null || value == null || !collectMetadata) return;
+    if (key == null || value == null || !isMetadataCollected()) {
+      return;
+    }
 
     key = key.trim();
 
@@ -769,15 +768,22 @@ public abstract class FormatReader extends FormatHandler
     return normalizeData;
   }
 
-  /* @see IFormatReader#setMetadataCollected(boolean) */
+  /**
+   * @deprecated
+   * @see IFormatReader#setMetadataCollected(boolean)
+   */
   public void setMetadataCollected(boolean collect) {
     FormatTools.assertId(currentId, false, 1);
-    collectMetadata = collect;
+    MetadataLevel level = collect ? MetadataLevel.ALL : MetadataLevel.MINIMUM;
+    setMetadataOptions(new DefaultMetadataOptions(level));
   }
 
-  /* @see IFormatReader#isMetadataCollected() */
+  /**
+   * @deprecated
+   * @see IFormatReader#isMetadataCollected()
+   */
   public boolean isMetadataCollected() {
-    return collectMetadata;
+    return getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL;
   }
 
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */

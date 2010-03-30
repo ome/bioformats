@@ -24,8 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -73,6 +77,24 @@ public abstract class DelegateReader extends FormatReader {
   /** Gets whether to use the legacy reader by default. */
   public boolean isLegacy() { return useLegacy; }
 
+  // -- IMetadataConfigurable API methods --
+
+  /* @see IMetadataConfigurable#getSupportedMetadataLevels() */
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    return nativeReader.getSupportedMetadataLevels();
+  }
+
+  /* @see IMetadataConfigurable#getMetadataOptions() */
+  public MetadataOptions getMetadataOptions() {
+    return nativeReader.getMetadataOptions();
+  }
+
+  /* @see IMetadataConfigurable#setMetadataOptions(MetadataOptions) */
+  public void setMetadataOptions(MetadataOptions options) {
+    nativeReader.setMetadataOptions(options);
+    legacyReader.setMetadataOptions(options);
+  }
+
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#isThisType(String, boolean) */
@@ -99,7 +121,10 @@ public abstract class DelegateReader extends FormatReader {
     legacyReader.setNormalized(normalize);
   }
 
-  /* @see IFormatReader#setMetadataCollected(boolean) */
+  /**
+   * @deprecated
+   * @see IFormatReader#setMetadataCollected(boolean)
+   */
   public void setMetadataCollected(boolean collect) {
     super.setMetadataCollected(collect);
     nativeReader.setMetadataCollected(collect);

@@ -510,7 +510,10 @@ public class ImageReader implements IFormatReader {
     return readers[0].isNormalized();
   }
 
-  /* @see IFormatReader#setMetadataCollected(boolean) */
+  /**
+   * @deprecated
+   * @see IFormatReader#setMetadataCollected(boolean)
+   */
   public void setMetadataCollected(boolean collect) {
     FormatTools.assertId(currentId, false, 2);
     for (int i=0; i<readers.length; i++) {
@@ -518,7 +521,10 @@ public class ImageReader implements IFormatReader {
     }
   }
 
-  /* @see IFormatReader#isMetadataCollected() */
+  /**
+   * @deprecated
+   * @see IFormatReader#isMetadataCollected()
+   */
   public boolean isMetadataCollected() {
     return readers[0].isMetadataCollected();
   }

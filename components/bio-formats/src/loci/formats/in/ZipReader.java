@@ -96,7 +96,7 @@ public class ZipReader extends FormatReader {
     super.initFile(id);
     reader = new ImageReader();
 
-    reader.setMetadataCollected(isMetadataCollected());
+    reader.setMetadataOptions(getMetadataOptions());
     reader.setMetadataFiltered(isMetadataFiltered());
     reader.setOriginalMetadataPopulated(isOriginalMetadataPopulated());
     reader.setNormalized(isNormalized());

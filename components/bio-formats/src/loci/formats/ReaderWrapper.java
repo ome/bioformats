@@ -352,10 +352,12 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isNormalized() { return reader.isNormalized(); }
 
+  /** @deprecated */
   public void setMetadataCollected(boolean collect) {
     reader.setMetadataCollected(collect);
   }
 
+  /** @deprecated */
   public boolean isMetadataCollected() { return reader.isMetadataCollected(); }
 
   public void setOriginalMetadataPopulated(boolean populate) {

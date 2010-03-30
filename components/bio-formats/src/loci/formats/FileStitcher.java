@@ -632,7 +632,10 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isNormalized() */
   public boolean isNormalized() { return reader.isNormalized(); }
 
-  /* @see IFormatReader#setMetadataCollected(boolean) */
+  /**
+   * @deprecated
+   * @see IFormatReader#setMetadataCollected(boolean)
+   */
   public void setMetadataCollected(boolean collect) {
     FormatTools.assertId(currentId, false, 2);
     if (readers == null) reader.setMetadataCollected(collect);
@@ -645,7 +648,10 @@ public class FileStitcher implements IFormatReader {
     }
   }
 
-  /* @see IFormatReader#isMetadataCollected() */
+  /**
+   * @deprecated
+   * @see IFormatReader#isMetadataCollected()
+   */
   public boolean isMetadataCollected() {
     return reader.isMetadataCollected();
   }
