@@ -1199,9 +1199,9 @@ public class NativeND2Reader extends FormatReader {
           t = t.substring(11);
           StringTokenizer dims = new StringTokenizer(t, " x ");
 
-          core[0].sizeZ = 1;
-          core[0].sizeT = 1;
-          core[0].sizeC = 1;
+          if (getSizeZ() == 0) core[0].sizeZ = 1;
+          if (getSizeT() == 0) core[0].sizeT = 1;
+          if (getSizeC() == 0) core[0].sizeC = 1;
 
           while (dims.hasMoreTokens()) {
             String dim = dims.nextToken().trim();
@@ -1228,9 +1228,17 @@ public class NativeND2Reader extends FormatReader {
                 }
               }
             }
-            else if (dim.startsWith("T")) core[0].sizeT = v;
-            else if (dim.startsWith("Z")) core[0].sizeZ = v;
-            else {
+            else if (dim.startsWith("T")) {
+              if (getSizeT() <= 1) {
+                core[0].sizeT = v;
+              }
+            }
+            else if (dim.startsWith("Z")) {
+              if (getSizeZ() <= 1) {
+                core[0].sizeZ = v;
+              }
+            }
+            else if (getSizeC() <= 1) {
               core[0].sizeC = v;
             }
           }
