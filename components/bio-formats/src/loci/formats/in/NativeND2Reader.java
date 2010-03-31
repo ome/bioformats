@@ -38,6 +38,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.ByteVector;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
@@ -143,32 +144,22 @@ public class NativeND2Reader extends FormatReader {
     options.interleaved = isInterleaved();
     options.maxBytes = (int) maxFP;
 
-    if (isJPEG) {
-      byte[] tmp = new JPEG2000Codec().decompress(in, options);
-      for (int row=y; row<h+y; row++) {
-        System.arraycopy(tmp, pixel * row * getSizeX(), buf,
-          pixel * w * (row - y), pixel * w);
-      }
-      System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
-      tmp = null;
-    }
-    else if (isLossless) {
-      // plane is compressed using ZLIB
+    int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
 
-      int effectiveX = getSizeX();
-      if ((getSizeX() % 2) != 0) effectiveX++;
-      byte[] t = new ZlibCodec().decompress(in, options);
-
+    if (isJPEG || isLossless) {
+      Codec codec = isJPEG ? new JPEG2000Codec() : new ZlibCodec();
+      byte[] t = codec.decompress(in, options);
+      int effectiveX = getSizeX() + scanlinePad;
       for (int row=0; row<h; row++) {
         int offset = (row + y) * effectiveX * pixel + x * pixel;
         if (offset + w * pixel <= t.length) {
           System.arraycopy(t, offset, buf, row * w * pixel, w * pixel);
         }
       }
+      t = null;
     }
     else {
       // plane is not compressed
-      int scanlinePad = getSizeX() % 2; // round up to even width
       readPlane(in, x, y, w, h, scanlinePad, buf);
     }
 
@@ -537,44 +528,46 @@ public class NativeND2Reader extends FormatReader {
 
       // read first CustomData block
 
-      if (customDataOffsets.size() > 0) {
-        in.seek(customDataOffsets.get(0).longValue());
-        int[] p = customDataLengths.get(0);
-        int len = p[0] + p[1];
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        if (customDataOffsets.size() > 0) {
+          in.seek(customDataOffsets.get(0).longValue());
+          int[] p = customDataLengths.get(0);
+          int len = p[0] + p[1];
 
-        int timestampBytes = imageOffsets.size() * 8;
-        in.skipBytes(len - timestampBytes);
+          int timestampBytes = imageOffsets.size() * 8;
+          in.skipBytes(len - timestampBytes);
 
-        // the acqtimecache is a undeliniated stream of doubles
+          // the acqtimecache is a undeliniated stream of doubles
 
-        for (int series=0; series<getSeriesCount(); series++) {
-          setSeries(series);
-          for (int plane=0; plane<getImageCount(); plane++) {
-            // timestamps are stored in ms; we want them in seconds
-            double time = in.readDouble() / 1000;
-            tsT.add(new Double(time));
-            addSeriesMeta("timestamp " + plane, time);
+          for (int series=0; series<getSeriesCount(); series++) {
+            setSeries(series);
+            for (int plane=0; plane<getImageCount(); plane++) {
+              // timestamps are stored in ms; we want them in seconds
+              double time = in.readDouble() / 1000;
+              tsT.add(new Double(time));
+              addSeriesMeta("timestamp " + plane, time);
+            }
+          }
+          setSeries(0);
+        }
+
+        if (posX.size() == 0 && xOffset != 0) {
+          in.seek(xOffset);
+          for (int i=0; i<imageOffsets.size(); i++) {
+            posX.add(new Double(in.readDouble()));
           }
         }
-        setSeries(0);
-      }
-
-      if (posX.size() == 0 && xOffset != 0) {
-        in.seek(xOffset);
-        for (int i=0; i<imageOffsets.size(); i++) {
-          posX.add(new Double(in.readDouble()));
+        if (posY.size() == 0 && yOffset != 0) {
+          in.seek(yOffset);
+          for (int i=0; i<imageOffsets.size(); i++) {
+            posY.add(new Double(in.readDouble()));
+          }
         }
-      }
-      if (posY.size() == 0 && yOffset != 0) {
-        in.seek(yOffset);
-        for (int i=0; i<imageOffsets.size(); i++) {
-          posY.add(new Double(in.readDouble()));
-        }
-      }
-      if (posZ.size() == 0 && zOffset != 0) {
-        in.seek(zOffset);
-        for (int i=0; i<imageOffsets.size(); i++) {
-          posZ.add(new Double(in.readDouble()));
+        if (posZ.size() == 0 && zOffset != 0) {
+          in.seek(zOffset);
+          for (int i=0; i<imageOffsets.size(); i++) {
+            posZ.add(new Double(in.readDouble()));
+          }
         }
       }
 
@@ -913,15 +906,20 @@ public class NativeND2Reader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-
-    // populate Image data
     String filename = new Location(getCurrentFile()).getName();
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(filename + " (series " + (i + 1) + ")", i);
       MetadataTools.setDefaultCreationDate(store, currentId, i);
+    }
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
+      return;
+    }
+
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+
+    for (int i=0; i<getSeriesCount(); i++) {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
     }
