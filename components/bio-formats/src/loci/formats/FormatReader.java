@@ -112,6 +112,9 @@ public abstract class FormatReader extends FormatHandler
   /** Metadata parsing options. */
   protected MetadataOptions metadataOptions;
 
+  private ServiceFactory factory;
+  private OMEXMLService service;
+
   // -- Constructors --
 
   /** Constructs a format reader with the given name and default suffix. */
@@ -222,10 +225,12 @@ public abstract class FormatReader extends FormatHandler
       MetadataStore store = getMetadataStore();
       if (store instanceof OMEXMLMetadata) {
         try {
-          ServiceFactory factory = new ServiceFactory();
-          OMEXMLService service = factory.getInstance(OMEXMLService.class);
+          if (factory == null) factory = new ServiceFactory();
+          if (service == null) {
+            service = factory.getInstance(OMEXMLService.class);
+          }
           service.populateOriginalMetadata(
-              (OMEXMLMetadata) store, key, value.toString());
+            (OMEXMLMetadata) store, key, value.toString());
         }
         catch (DependencyException e) {
           LOGGER.warn("OMEXMLService not available.", e);
