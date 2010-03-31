@@ -600,7 +600,9 @@ public class MIASReader extends FormatReader {
 
     LOGGER.info("Populating metadata hashtable");
 
-    if (resultFile != null && isMetadataCollected()) {
+    if (resultFile != null &&
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+    {
       String[] cols = null;
       Vector<String> rows = new Vector<String>();
 
@@ -643,13 +645,50 @@ public class MIASReader extends FormatReader {
 
     // Populate MetadataStore
 
-    if (isMetadataCollected()) {
-      LOGGER.info("Populating MetadataStore");
+    LOGGER.info("Populating MetadataStore");
 
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-      MetadataTools.populatePixels(store, this, true);
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this, true);
 
+    // HACK: if we don't have the analysis file, we don't how many
+    // rows/columns are in the plate
+    //
+    // assume that a 96 well plate is 8x12, and a 384 well plate is 16x24
+    if (wellColumns == 0) {
+      if (nWells == 96) {
+        wellColumns = 12;
+      }
+      else if (nWells == 384) {
+        wellColumns = 24;
+      }
+      else {
+        LOGGER.warn("Could not determine the plate dimensions.");
+        wellColumns = 24;
+      }
+    }
+
+    for (int well=0; well<nWells; well++) {
+      int wellIndex = wellNumber[well];
+
+      int row = wellIndex / wellColumns;
+      int wellCol = (wellIndex % wellColumns) + 1;
+      char wellRow = (char) ('A' + row);
+
+      store.setWellRow(row, 0, well);
+      store.setWellColumn(wellCol - 1, 0, well);
+
+      String imageID = MetadataTools.createLSID("Image", well);
+      store.setWellSampleImageRef(imageID, 0, well, 0);
+      store.setWellSampleIndex(well, 0, well, 0);
+
+      store.setImageID(imageID, well);
+      store.setImageName("Well " + wellRow + wellCol, well);
+
+      MetadataTools.setDefaultCreationDate(store, id, well);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setExperimentID("Experiment:" + experiment.getName(), 0);
       store.setExperimentType("Other", 0);
 
@@ -663,48 +702,13 @@ public class MIASReader extends FormatReader {
       store.setPlateName(plateName, 0);
       store.setPlateExternalIdentifier(plateName, 0);
 
-      // HACK: if we don't have the analysis file, we don't how many
-      // rows/columns are in the plate
-      //
-      // assume that a 96 well plate is 8x12, and a 384 well plate is 16x24
-      if (wellColumns == 0) {
-        if (nWells == 96) {
-          wellColumns = 12;
-        }
-        else if (nWells == 384) {
-          wellColumns = 24;
-        }
-        else {
-          LOGGER.warn("Could not determine the plate dimensions.");
-          wellColumns = 24;
-        }
-      }
-
       for (int well=0; well<nWells; well++) {
-        int wellIndex = wellNumber[well];
-
-        int row = wellIndex / wellColumns;
-        int wellCol = (wellIndex % wellColumns) + 1;
-
-        store.setWellRow(row, 0, well);
-        store.setWellColumn(wellCol - 1, 0, well);
-
-        String imageID = MetadataTools.createLSID("Image", well);
-        store.setWellSampleImageRef(imageID, 0, well, 0);
-        store.setWellSampleIndex(well, 0, well, 0);
-
         // populate Image/Pixels metadata
         store.setImageExperimentRef("Experiment:" + experiment.getName(), well);
-        char wellRow = (char) ('A' + row);
-
-        store.setImageID(imageID, well);
-        store.setImageName("Well " + wellRow + wellCol, well);
 
         String instrumentID = MetadataTools.createLSID("Instrument", 0);
         store.setInstrumentID(instrumentID, 0);
         store.setImageInstrumentRef(instrumentID, well);
-
-        MetadataTools.setDefaultCreationDate(store, id, well);
       }
 
       // populate image-level ROIs

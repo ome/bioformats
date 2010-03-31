@@ -169,6 +169,7 @@ public class FV1000Reader extends FormatReader {
       return oif.exists() && !oif.isDirectory() &&
         checkSuffix(oif.getAbsolutePath(), "oif");
     }
+    catch (IndexOutOfBoundsException e) { }
     catch (NullPointerException e) { }
     catch (FormatException e) { }
     return false;
