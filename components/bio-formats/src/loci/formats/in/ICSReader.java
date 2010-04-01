@@ -458,42 +458,11 @@ public class ICSReader extends FormatReader {
         else if (k.equalsIgnoreCase("representation sign")) {
           signed = v.equals("signed");
         }
-        else if (k.equalsIgnoreCase("sensor s_params LambdaEm")) {
-          String[] waves = v.split(" ");
-          emWaves = new Integer[waves.length];
-          for (int n=0; n<emWaves.length; n++) {
-            try {
-              emWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse emission wavelength", e);
-            }
-          }
-        }
-        else if (k.equalsIgnoreCase("sensor s_params LambdaEx")) {
-          String[] waves = v.split(" ");
-          exWaves = new Integer[waves.length];
-          for (int n=0; n<exWaves.length; n++) {
-            try {
-              exWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse excitation wavelength", e);
-            }
-          }
-        }
         else if (k.equalsIgnoreCase("history software") &&
           v.indexOf("SVI") != -1)
         {
           // ICS files written by SVI Huygens are inverted on the Y axis
           invertY = true;
-        }
-        else if (k.equalsIgnoreCase("history") ||
-          k.equalsIgnoreCase("history text"))
-        {
-          textBlock.append(v);
-          textBlock.append("\n");
-          metadata.remove(k);
         }
         else if (k.equalsIgnoreCase("filename")) imageName = v;
         else if (k.equalsIgnoreCase("history date") ||
@@ -503,93 +472,127 @@ public class ICSReader extends FormatReader {
           date = v.substring(0, v.lastIndexOf(" "));
           date = DateTools.formatDate(date, DATE_FORMATS);
         }
-        else if (k.startsWith("history gain")) {
-          Integer n = new Integer(0);
-          try {
-            n = new Integer(k.substring(12).trim());
-            n = new Integer(n.intValue() - 1);
-          }
-          catch (NumberFormatException e) { }
-          if (doubleValue != null) gains.put(n, doubleValue);
-        }
-        else if (k.startsWith("history laser") && k.endsWith("wavelength")) {
-          int laser = Integer.parseInt(k.substring(13, k.indexOf(" ", 13))) - 1;
-          v = v.replaceAll("nm", "").trim();
-          try {
-            wavelengths.put(new Integer(laser), new Integer(v));
-          }
-          catch (NumberFormatException e) {
-            LOGGER.debug("Could not parse wavelength", e);
-          }
-        }
-        else if (k.equalsIgnoreCase("history objective type")) {
-          objectiveModel = v;
-        }
-        else if (k.equalsIgnoreCase("history objective immersion")) {
-          immersion = v;
-        }
-        else if (k.equalsIgnoreCase("history objective NA")) {
-          lensNA = doubleValue;
-        }
-        else if (k.equalsIgnoreCase("history objective WorkingDistance")) {
-          workingDistance = doubleValue;
-        }
-        else if (k.equalsIgnoreCase("history objective magnification")) {
-          magnification = doubleValue;
-        }
-        else if (k.equalsIgnoreCase("sensor s_params PinholeRadius")) {
-          String[] pins = v.split(" ");
-          int channel = 0;
-          for (int n=0; n<pins.length; n++) {
-            if (pins[n].trim().equals("")) continue;
-            try {
-              pinholes.put(new Integer(channel++), new Double(pins[n]));
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse pinhole", e);
-            }
-          }
-        }
-        else if (k.equalsIgnoreCase("history author")) lastName = v;
-        else if (k.equalsIgnoreCase("history extents")) {
-          String[] lengths = v.split(" ");
-          sizes = new double[lengths.length];
-          for (int n=0; n<sizes.length; n++) {
-            try {
-              sizes[n] = Double.parseDouble(lengths[n].trim());
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse axis length", e);
-            }
-          }
-        }
-        else if (k.equalsIgnoreCase("history stage_xyzum")) {
-          String[] positions = v.split(" ");
-          stagePos = new Double[positions.length];
-          for (int n=0; n<stagePos.length; n++) {
-            try {
-              stagePos[n] = new Double(positions[n]);
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse stage position", e);
-            }
-          }
-        }
-        else if (k.equalsIgnoreCase("history other text")) {
-          description = v;
-        }
-        else if (k.startsWith("history step") && k.endsWith("name")) {
-          Integer n = new Integer(k.substring(12, k.indexOf(" ", 12)));
-          channelNames.put(n, v);
-        }
         else if (k.equalsIgnoreCase("history type")) {
           // HACK - support for Gray Institute at Oxford's ICS lifetime data
           if (v.equalsIgnoreCase("time resolved")) lifetime = true;
         }
-        else if (k.equalsIgnoreCase("parameter ch")) {
-          String[] names = v.split(" ");
-          for (int n=0; n<names.length; n++) {
-            channelNames.put(new Integer(n), names[n].trim());
+        else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          if (k.equalsIgnoreCase("sensor s_params LambdaEm")) {
+            String[] waves = v.split(" ");
+            emWaves = new Integer[waves.length];
+            for (int n=0; n<emWaves.length; n++) {
+              try {
+                emWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse emission wavelength", e);
+              }
+            }
+          }
+          else if (k.equalsIgnoreCase("sensor s_params LambdaEx")) {
+            String[] waves = v.split(" ");
+            exWaves = new Integer[waves.length];
+            for (int n=0; n<exWaves.length; n++) {
+              try {
+                exWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse excitation wavelength", e);
+              }
+            }
+          }
+          else if (k.equalsIgnoreCase("history") ||
+            k.equalsIgnoreCase("history text"))
+          {
+            textBlock.append(v);
+            textBlock.append("\n");
+            metadata.remove(k);
+          }
+          else if (k.startsWith("history gain")) {
+            Integer n = new Integer(0);
+            try {
+              n = new Integer(k.substring(12).trim());
+              n = new Integer(n.intValue() - 1);
+            }
+            catch (NumberFormatException e) { }
+            if (doubleValue != null) gains.put(n, doubleValue);
+          }
+          else if (k.startsWith("history laser") && k.endsWith("wavelength")) {
+            int laser =
+              Integer.parseInt(k.substring(13, k.indexOf(" ", 13))) - 1;
+            v = v.replaceAll("nm", "").trim();
+            try {
+              wavelengths.put(new Integer(laser), new Integer(v));
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("Could not parse wavelength", e);
+            }
+          }
+          else if (k.equalsIgnoreCase("history objective type")) {
+            objectiveModel = v;
+          }
+          else if (k.equalsIgnoreCase("history objective immersion")) {
+            immersion = v;
+          }
+          else if (k.equalsIgnoreCase("history objective NA")) {
+            lensNA = doubleValue;
+          }
+          else if (k.equalsIgnoreCase("history objective WorkingDistance")) {
+            workingDistance = doubleValue;
+          }
+          else if (k.equalsIgnoreCase("history objective magnification")) {
+            magnification = doubleValue;
+          }
+          else if (k.equalsIgnoreCase("sensor s_params PinholeRadius")) {
+            String[] pins = v.split(" ");
+            int channel = 0;
+            for (int n=0; n<pins.length; n++) {
+              if (pins[n].trim().equals("")) continue;
+              try {
+                pinholes.put(new Integer(channel++), new Double(pins[n]));
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse pinhole", e);
+              }
+            }
+          }
+          else if (k.equalsIgnoreCase("history author")) lastName = v;
+          else if (k.equalsIgnoreCase("history extents")) {
+            String[] lengths = v.split(" ");
+            sizes = new double[lengths.length];
+            for (int n=0; n<sizes.length; n++) {
+              try {
+                sizes[n] = Double.parseDouble(lengths[n].trim());
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse axis length", e);
+              }
+            }
+          }
+          else if (k.equalsIgnoreCase("history stage_xyzum")) {
+            String[] positions = v.split(" ");
+            stagePos = new Double[positions.length];
+            for (int n=0; n<stagePos.length; n++) {
+              try {
+                stagePos[n] = new Double(positions[n]);
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse stage position", e);
+              }
+            }
+          }
+          else if (k.equalsIgnoreCase("history other text")) {
+            description = v;
+          }
+          else if (k.startsWith("history step") && k.endsWith("name")) {
+            Integer n = new Integer(k.substring(12, k.indexOf(" ", 12)));
+            channelNames.put(n, v);
+          }
+          else if (k.equalsIgnoreCase("parameter ch")) {
+            String[] names = v.split(" ");
+            for (int n=0; n<names.length; n++) {
+              channelNames.put(new Integer(n), names[n].trim());
+            }
           }
         }
       }
@@ -667,15 +670,8 @@ public class ICSReader extends FormatReader {
       channelTypes.add(FormatTools.CHANNEL);
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) {
-      core[0].dimensionOrder += "Z";
-    }
-    if (getDimensionOrder().indexOf("T") == -1) {
-      core[0].dimensionOrder += "T";
-    }
-    if (getDimensionOrder().indexOf("C") == -1) {
-      core[0].dimensionOrder += "C";
-    }
+    core[0].dimensionOrder =
+      MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     if (getSizeC() == 0) core[0].sizeC = 1;
@@ -781,119 +777,121 @@ public class ICSReader extends FormatReader {
     if (date != null) store.setImageCreationDate(date, 0);
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    store.setImageDescription(description, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(description, 0);
 
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    // populate Dimensions data
+      // populate Dimensions data
 
-    if (pixelSizes != null) {
-      for (int i=0; i<pixelSizes.length; i++) {
-        if (axes[i].equals("x")) {
-          store.setDimensionsPhysicalSizeX(pixelSizes[i], 0, 0);
+      if (pixelSizes != null) {
+        for (int i=0; i<pixelSizes.length; i++) {
+          if (axes[i].equals("x")) {
+            store.setDimensionsPhysicalSizeX(pixelSizes[i], 0, 0);
+          }
+          else if (axes[i].equals("y")) {
+            store.setDimensionsPhysicalSizeY(pixelSizes[i], 0, 0);
+          }
+          else if (axes[i].equals("z")) {
+            store.setDimensionsPhysicalSizeZ(pixelSizes[i], 0, 0);
+          }
+          else if (axes[i].equals("t")) {
+            store.setDimensionsTimeIncrement(pixelSizes[i], 0, 0);
+          }
+          else if (axes[i].equals("ch")) {
+            int c = pixelSizes[i].intValue();
+            if (c > 0) store.setDimensionsWaveIncrement(c, 0, 0);
+          }
         }
-        else if (axes[i].equals("y")) {
-          store.setDimensionsPhysicalSizeY(pixelSizes[i], 0, 0);
+      }
+      else if (sizes != null) {
+        if (sizes.length > 0) {
+          store.setDimensionsPhysicalSizeX(sizes[0], 0, 0);
         }
-        else if (axes[i].equals("z")) {
-          store.setDimensionsPhysicalSizeZ(pixelSizes[i], 0, 0);
-        }
-        else if (axes[i].equals("t")) {
-          store.setDimensionsTimeIncrement(pixelSizes[i], 0, 0);
-        }
-        else if (axes[i].equals("ch")) {
-          int c = pixelSizes[i].intValue();
-          if (c > 0) store.setDimensionsWaveIncrement(c, 0, 0);
+        if (sizes.length > 1) {
+          sizes[1] /= getSizeY();
+          store.setDimensionsPhysicalSizeY(sizes[1], 0, 0);
         }
       }
-    }
-    else if (sizes != null) {
-      if (sizes.length > 0) {
-        store.setDimensionsPhysicalSizeX(sizes[0], 0, 0);
-      }
-      if (sizes.length > 1) {
-        sizes[1] /= getSizeY();
-        store.setDimensionsPhysicalSizeY(sizes[1], 0, 0);
-      }
-    }
 
-    // populate LogicalChannel data
+      // populate LogicalChannel data
 
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      Integer channel = new Integer(i);
-      if (channelNames.containsKey(channel)) {
-        store.setLogicalChannelName(channelNames.get(channel), 0, i);
-      }
-      if (pinholes.containsKey(channel)) {
-        store.setLogicalChannelPinholeSize(pinholes.get(channel), 0, i);
-      }
-      if (emWaves != null && i < emWaves.length && emWaves[i].intValue() > 0) {
-        store.setLogicalChannelEmWave(emWaves[i], 0, i);
-      }
-      if (exWaves != null && i < exWaves.length && exWaves[i].intValue() > 0) {
-        store.setLogicalChannelExWave(exWaves[i], 0, i);
-      }
-    }
-
-    // populate Laser data
-
-    Integer[] lasers = wavelengths.keySet().toArray(new Integer[0]);
-    for (int i=0; i<lasers.length; i++) {
-      store.setLaserWavelength(wavelengths.get(lasers[i]), 0,
-        lasers[i].intValue());
-      store.setLaserType("Unknown", 0, lasers[i].intValue());
-      store.setLaserLaserMedium("Unknown", 0, lasers[i].intValue());
-    }
-
-    // populate Objective data
-
-    if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
-    if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
-    else store.setObjectiveImmersion("Unknown", 0, 0);
-    if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
-    if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(workingDistance, 0, 0);
-    }
-    if (magnification != null) {
-      store.setObjectiveCalibratedMagnification(magnification, 0, 0);
-    }
-    store.setObjectiveCorrection("Unknown", 0, 0);
-
-    // link Objective to Image
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
-
-    for (Integer key : gains.keySet()) {
-      int index = key.intValue();
-      if (index < getEffectiveSizeC()) {
-        store.setDetectorSettingsGain(gains.get(key), 0, index);
-        store.setDetectorType("Unknown", 0, index);
-        String detectorID = MetadataTools.createLSID("Detector", 0, index);
-        store.setDetectorID(detectorID, 0, index);
-        store.setDetectorSettingsDetector(detectorID, 0, index);
-      }
-    }
-
-    // populate Experimenter data
-
-    if (lastName != null) store.setExperimenterLastName(lastName, 0);
-
-    // populate StagePosition data
-
-    if (stagePos != null) {
-      for (int i=0; i<getImageCount(); i++) {
-        if (stagePos.length > 0) {
-          store.setStagePositionPositionX(stagePos[0], 0, 0, i);
+      for (int i=0; i<getEffectiveSizeC(); i++) {
+        if (channelNames.containsKey(i)) {
+          store.setLogicalChannelName(channelNames.get(i), 0, i);
         }
-        if (stagePos.length > 1) {
-          store.setStagePositionPositionY(stagePos[1], 0, 0, i);
+        if (pinholes.containsKey(i)) {
+          store.setLogicalChannelPinholeSize(pinholes.get(i), 0, i);
         }
-        if (stagePos.length > 2) {
-          store.setStagePositionPositionZ(stagePos[2], 0, 0, i);
+        if (emWaves != null && i < emWaves.length && emWaves[i].intValue() > 0)
+        {
+          store.setLogicalChannelEmWave(emWaves[i], 0, i);
+        }
+        if (exWaves != null && i < exWaves.length && exWaves[i].intValue() > 0)
+        {
+          store.setLogicalChannelExWave(exWaves[i], 0, i);
+        }
+      }
+
+      // populate Laser data
+
+      Integer[] lasers = wavelengths.keySet().toArray(new Integer[0]);
+      for (Integer laser : lasers) {
+        store.setLaserWavelength(wavelengths.get(laser), 0, laser.intValue());
+        store.setLaserType("Unknown", 0, laser.intValue());
+        store.setLaserLaserMedium("Unknown", 0, laser.intValue());
+      }
+
+      // populate Objective data
+
+      if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
+      if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
+      else store.setObjectiveImmersion("Unknown", 0, 0);
+      if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
+      if (workingDistance != null) {
+        store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      }
+      if (magnification != null) {
+        store.setObjectiveCalibratedMagnification(magnification, 0, 0);
+      }
+      store.setObjectiveCorrection("Unknown", 0, 0);
+
+      // link Objective to Image
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
+
+      for (Integer key : gains.keySet()) {
+        int index = key.intValue();
+        if (index < getEffectiveSizeC()) {
+          store.setDetectorSettingsGain(gains.get(key), 0, index);
+          store.setDetectorType("Unknown", 0, index);
+          String detectorID = MetadataTools.createLSID("Detector", 0, index);
+          store.setDetectorID(detectorID, 0, index);
+          store.setDetectorSettingsDetector(detectorID, 0, index);
+        }
+      }
+
+      // populate Experimenter data
+
+      if (lastName != null) store.setExperimenterLastName(lastName, 0);
+
+      // populate StagePosition data
+
+      if (stagePos != null) {
+        for (int i=0; i<getImageCount(); i++) {
+          if (stagePos.length > 0) {
+            store.setStagePositionPositionX(stagePos[0], 0, 0, i);
+          }
+          if (stagePos.length > 1) {
+            store.setStagePositionPositionY(stagePos[1], 0, 0, i);
+          }
+          if (stagePos.length > 2) {
+            store.setStagePositionPositionZ(stagePos[2], 0, 0, i);
+          }
         }
       }
     }
