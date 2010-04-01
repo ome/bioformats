@@ -327,7 +327,10 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    LeicaHandler handler = new LeicaHandler(new DummyMetadata());
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+    LeicaHandler handler = new LeicaHandler(store, level);
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
@@ -376,24 +379,7 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    // Populate metadata store
-
-    LOGGER.info("Populating metadata");
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
-    // populate Pixels/Image data
-
-    MetadataTools.populatePixels(store, this, true);
-
-    for (int i=0; i<getSeriesCount(); i++) {
-      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
-    }
-    try {
-      XMLTools.parseXML(xml, new LeicaHandler(store));
-    }
-    catch (IOException e) { }
+    MetadataTools.populatePixels(store, this, true, false);
   }
 
 }

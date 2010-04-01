@@ -360,7 +360,9 @@ public class TCSReader extends FormatReader {
     // cut up comment
 
     String comment = ifds.get(0).getComment();
-    if (comment != null && comment.startsWith("[")) {
+    if (comment != null && comment.startsWith("[") &&
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+    {
       String[] lines = comment.split("\n");
       for (String line : lines) {
         if (!line.startsWith("[")) {
@@ -413,15 +415,14 @@ public class TCSReader extends FormatReader {
       core[0].imageCount = getSizeT() * c;
     }
 
-    MetadataTools.populatePixels(store, this, true);
-
     if (xmlFile != null) {
       // parse XML metadata
 
       String xml = DataTools.readFile(xmlFile);
       xml = XMLTools.sanitizeXML(PREFIX + xml + SUFFIX);
 
-      LeicaHandler handler = new LeicaHandler(store);
+      LeicaHandler handler =
+        new LeicaHandler(store, getMetadataOptions().getMetadataLevel());
       XMLTools.parseXML(xml, handler);
 
       metadata = handler.getGlobalMetadata();
@@ -440,12 +441,12 @@ public class TCSReader extends FormatReader {
         core[i].interleaved = false;
         core[i].indexed = tiffReaders[0].isIndexed();
       }
+    }
 
-      MetadataTools.populatePixels(store, this, true);
+    MetadataTools.populatePixels(store, this, true);
 
-      for (int i=0; i<getSeriesCount(); i++) {
-        MetadataTools.setDefaultCreationDate(store, id, i);
-      }
+    for (int i=0; i<getSeriesCount(); i++) {
+      MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     store.setDimensionsPhysicalSizeX(voxelX, 0, 0);

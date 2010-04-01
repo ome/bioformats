@@ -87,9 +87,11 @@ public class LeicaHandler extends DefaultHandler {
   private Vector<Detector> detectors = new Vector<Detector>();
   private Vector<Laser> lasers = new Vector<Laser>();
 
+  private MetadataLevel level;
+
   // -- Constructor --
 
-  public LeicaHandler(MetadataStore store) {
+  public LeicaHandler(MetadataStore store, MetadataLevel level) {
     super();
     globalMetadata = new Hashtable();
     lutNames = new Vector<String>();
@@ -100,6 +102,7 @@ public class LeicaHandler extends DefaultHandler {
     yPos = new Vector<Double>();
     zPos = new Vector<Double>();
     bytesPerAxis = new Hashtable<Integer, String>();
+    this.level = level;
   }
 
   // -- LeicaHandler API methods --
@@ -164,28 +167,31 @@ public class LeicaHandler extends DefaultHandler {
         core.setElementAt(coreMeta, numDatasets);
       }
 
-      int nChannels = coreMeta.rgb ? 0 : numChannels;
+      if (level == MetadataLevel.ALL) {
+        int nChannels = coreMeta.rgb ? 0 : numChannels;
 
-      for (int c=0; c<nChannels; c++) {
-        store.setLogicalChannelPinholeSize(pinhole, numDatasets, c);
-      }
-
-      for (int i=0; i<xPos.size(); i++) {
-        int nPlanes = coreMeta.imageCount / (coreMeta.rgb ? 1 : coreMeta.sizeC);
-        for (int image=0; image<nPlanes; image++) {
-          int offset = image * nChannels + i;
-          store.setStagePositionPositionX(xPos.get(i), numDatasets, 0, offset);
-          store.setStagePositionPositionY(yPos.get(i), numDatasets, 0, offset);
-          store.setStagePositionPositionZ(zPos.get(i), numDatasets, 0, offset);
+        for (int c=0; c<nChannels; c++) {
+          store.setLogicalChannelPinholeSize(pinhole, numDatasets, c);
         }
-      }
 
-      for (int c=0; c<nChannels; c++) {
-        int index = c < detectorIndices.size() ?
-          detectorIndices.get(c).intValue() : detectorIndices.size() - 1;
-        if (index < 0 || index >= nChannels || index >= 0) break;
-        String id = MetadataTools.createLSID("Detector", numDatasets, index);
-        store.setDetectorSettingsDetector(id, numDatasets, c);
+        for (int i=0; i<xPos.size(); i++) {
+          int nPlanes =
+            coreMeta.imageCount / (coreMeta.rgb ? 1 : coreMeta.sizeC);
+          for (int image=0; image<nPlanes; image++) {
+            int index = image * nChannels + i;
+            store.setStagePositionPositionX(xPos.get(i), numDatasets, 0, index);
+            store.setStagePositionPositionY(yPos.get(i), numDatasets, 0, index);
+            store.setStagePositionPositionZ(zPos.get(i), numDatasets, 0, index);
+          }
+        }
+
+        for (int c=0; c<nChannels; c++) {
+          int index = c < detectorIndices.size() ?
+            detectorIndices.get(c).intValue() : detectorIndices.size() - 1;
+          if (index < 0 || index >= nChannels || index >= 0) break;
+          String id = MetadataTools.createLSID("Detector", numDatasets, index);
+          store.setDetectorSettingsDetector(id, numDatasets, c);
+        }
       }
 
       xPos.clear();
@@ -193,7 +199,7 @@ public class LeicaHandler extends DefaultHandler {
       zPos.clear();
       detectorIndices.clear();
     }
-    else if (qName.equals("Element")) {
+    else if (qName.equals("Element") && level == MetadataLevel.ALL) {
       multiBands.clear();
       nextROI = 0;
 
@@ -218,7 +224,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = true;
     }
-    else if (qName.equals("Annotation")) {
+    else if (qName.equals("Annotation") && level == MetadataLevel.ALL) {
       roi.storeROI(store, numDatasets, nextROI++);
     }
   }
@@ -251,21 +257,21 @@ public class LeicaHandler extends DefaultHandler {
     String suffix = attributes.getValue("Identifier");
     String value = attributes.getValue("Variant");
     if (suffix == null) suffix = attributes.getValue("Description");
-    if (suffix != null && value != null) {
-      int index = 1;
-      while (h.get(key.toString() + suffix + " " + index) != null) index++;
-      h.put(key.toString() + suffix + " " + index, value);
-    }
-    else {
-      for (int i=0; i<attributes.getLength(); i++) {
+    if (level == MetadataLevel.ALL) {
+      if (suffix != null && value != null) {
         int index = 1;
-        while (
-          h.get(key.toString() + attributes.getQName(i) + " " + index) != null)
-        {
-          index++;
+        while (h.get(key.toString() + suffix + " " + index) != null) index++;
+        h.put(key.toString() + suffix + " " + index, value);
+      }
+      else {
+        for (int i=0; i<attributes.getLength(); i++) {
+          int index = 1;
+          String name = attributes.getQName(i);
+          while (h.get(key.toString() + name + " " + index) != null) {
+            index++;
+          }
+          h.put(key.toString() + name + " " + index, attributes.getValue(i));
         }
-        h.put(key.toString() + attributes.getQName(i) + " " + index,
-          attributes.getValue(i));
       }
     }
 
@@ -276,7 +282,7 @@ public class LeicaHandler extends DefaultHandler {
       collection = elementName;
     }
     else if (qName.equals("Image")) {
-      if (!linkedInstruments) {
+      if (!linkedInstruments && level == MetadataLevel.ALL) {
         int c = 0;
         for (Detector d : detectors) {
           String id = MetadataTools.createLSID(
@@ -329,7 +335,7 @@ public class LeicaHandler extends DefaultHandler {
       numChannels = 0;
       extras = 1;
     }
-    else if (qName.equals("Attachment")) {
+    else if (qName.equals("Attachment") && level == MetadataLevel.ALL) {
       if ("ContextDescription".equals(attributes.getValue("Name"))) {
         store.setImageDescription(attributes.getValue("Content"), numDatasets);
       }
@@ -432,7 +438,8 @@ public class LeicaHandler extends DefaultHandler {
       }
       count++;
     }
-    else if (qName.equals("ScannerSettingRecord")) {
+    else if (qName.equals("ScannerSettingRecord") && level == MetadataLevel.ALL)
+    {
       String id = attributes.getValue("Identifier");
       if (id == null) id = "";
 
@@ -485,7 +492,8 @@ public class LeicaHandler extends DefaultHandler {
         }
       }
     }
-    else if (qName.equals("FilterSettingRecord")) {
+    else if (qName.equals("FilterSettingRecord") && level == MetadataLevel.ALL)
+    {
       String object = attributes.getValue("ObjectName");
       String attribute = attributes.getValue("Attribute");
       String objectClass = attributes.getValue("ClassName");
@@ -628,7 +636,7 @@ public class LeicaHandler extends DefaultHandler {
         }
       }
     }
-    else if (qName.equals("Detector")) {
+    else if (qName.equals("Detector") && level == MetadataLevel.ALL) {
       String v = attributes.getValue("Gain");
       Double gain = v == null ? null : new Double(v);
       v = attributes.getValue("Offset");
@@ -704,7 +712,7 @@ public class LeicaHandler extends DefaultHandler {
         nextChannel++;
       }
     }
-    else if (qName.equals("LaserLineSetting")) {
+    else if (qName.equals("LaserLineSetting") && level == MetadataLevel.ALL) {
       Laser l = new Laser();
       String lineIndex = attributes.getValue("LineIndex");
       String qual = attributes.getValue("Qualifier");
@@ -744,7 +752,7 @@ public class LeicaHandler extends DefaultHandler {
         firstStamp = ms;
         store.setPlaneTimingDeltaT(0.0, numDatasets, 0, count);
       }
-      else {
+      else if (level == MetadataLevel.ALL) {
         CoreMetadata coreMeta = core.get(numDatasets);
         int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
         if (count < nImages) {
@@ -755,7 +763,7 @@ public class LeicaHandler extends DefaultHandler {
 
       count++;
     }
-    else if (qName.equals("RelTimeStamp")) {
+    else if (qName.equals("RelTimeStamp") && level == MetadataLevel.ALL) {
       CoreMetadata coreMeta = core.get(numDatasets);
       int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
       if (count < nImages) {
@@ -763,7 +771,7 @@ public class LeicaHandler extends DefaultHandler {
         store.setPlaneTimingDeltaT(time, numDatasets, 0, count++);
       }
     }
-    else if (qName.equals("Annotation")) {
+    else if (qName.equals("Annotation") && level == MetadataLevel.ALL) {
       roi = new ROI();
       String type = attributes.getValue("type");
       if (type != null) roi.type = Integer.parseInt(type);
@@ -781,7 +789,7 @@ public class LeicaHandler extends DefaultHandler {
       if (linewidth != null) roi.linewidth = Integer.parseInt(linewidth);
       roi.text = attributes.getValue("text");
     }
-    else if (qName.equals("Vertex")) {
+    else if (qName.equals("Vertex") && level == MetadataLevel.ALL) {
       String x = attributes.getValue("x");
       String y = attributes.getValue("y");
       if (x != null) {
@@ -796,7 +804,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("ROI")) {
       alternateCenter = true;
     }
-    else if (qName.equals("MultiBand")) {
+    else if (qName.equals("MultiBand") && level == MetadataLevel.ALL) {
       MultiBand m = new MultiBand();
       m.dyeName = attributes.getValue("DyeName");
       m.channel = Integer.parseInt(attributes.getValue("Channel"));
