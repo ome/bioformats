@@ -401,24 +401,6 @@ public class ScanrReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    // populate LogicalChannel data
-
-    for (int i=0; i<getSeriesCount(); i++) {
-      for (int c=0; c<getSizeC(); c++) {
-        store.setLogicalChannelName(channelNames.get(c), i, c);
-      }
-    }
-
-    if (wellRows > 26) {
-      store.setPlateRowNamingConvention("1", 0);
-      store.setPlateColumnNamingConvention("A", 0);
-    }
-    else {
-      store.setPlateRowNamingConvention("A", 0);
-      store.setPlateColumnNamingConvention("1", 0);
-    }
-    store.setPlateName(plateName, 0);
-
     int nFields = fieldRows * fieldColumns;
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -447,6 +429,25 @@ public class ScanrReader extends FormatReader {
       store.setImageName(name, i);
     }
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // populate LogicalChannel data
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        for (int c=0; c<getSizeC(); c++) {
+          store.setLogicalChannelName(channelNames.get(c), i, c);
+        }
+      }
+
+      if (wellRows > 26) {
+        store.setPlateRowNamingConvention("1", 0);
+        store.setPlateColumnNamingConvention("A", 0);
+      }
+      else {
+        store.setPlateRowNamingConvention("A", 0);
+        store.setPlateColumnNamingConvention("1", 0);
+      }
+      store.setPlateName(plateName, 0);
+    }
   }
 
   // -- Helper class --
