@@ -343,8 +343,10 @@ public class InCellReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    handler = new InCellHandler(store);
-    XMLTools.parseXML(b, handler);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      handler = new InCellHandler(store);
+      XMLTools.parseXML(b, handler);
+    }
 
     // populate Image data
 
@@ -356,8 +358,9 @@ public class InCellReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i) + 1;
-      int timepoint = oneTimepointPerSeries ?
-        (i % channelsPerTimepoint.size()) + 1 : -1;
+      int totalTimepoints =
+        oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
+      int timepoint = oneTimepointPerSeries ? (i % totalTimepoints) + 1 : -1;
 
       String imageID = MetadataTools.createLSID("Image", i);
       store.setImageID(imageID, i);
@@ -389,79 +392,94 @@ public class InCellReader extends FormatReader {
 
       store.setImageName(imageName, i);
       store.setImageCreationDate(creationDate, i);
-    }
 
-    // populate PlaneTiming data
+      timepoint--;
+      if (timepoint < 0) timepoint = 0;
+      int sampleIndex = (field - 1) * totalTimepoints + timepoint;
 
-    for (int i=0; i<seriesCount; i++) {
-      int well = getWellFromSeries(i);
-      int field = getFieldFromSeries(i);
-      int timepoint = oneTimepointPerSeries ?
-        i % channelsPerTimepoint.size() : 0;
-      for (int time=0; time<getSizeT(); time++) {
-        if (!oneTimepointPerSeries) timepoint = time;
-        int c = channelsPerTimepoint.get(timepoint).intValue();
-        for (int q=0; q<getSizeZ()*c; q++) {
-          Image img = imageFiles[well][field][timepoint][q];
-          if (img == null) continue;
-          int plane = time * getSizeZ() * c + q;
-          store.setPlaneTimingDeltaT(img.deltaT, i, 0, plane);
-          store.setPlaneTimingExposureTime(img.exposure, i, 0, plane);
-
-          store.setStagePositionPositionX(posX.get(field), i, 0, plane);
-          store.setStagePositionPositionY(posY.get(field), i, 0, plane);
-          store.setStagePositionPositionZ(img.zPosition, i, 0, plane);
-        }
-      }
-    }
-
-    // populate LogicalChannel data
-
-    for (int i=0; i<seriesCount; i++) {
-      setSeries(i);
-      for (int q=0; q<getEffectiveSizeC(); q++) {
-        if (q < channelNames.size()) {
-          store.setLogicalChannelName(channelNames.get(q), i, q);
-        }
-        if (q < emWaves.size()) {
-          int wave = emWaves.get(q).intValue();
-          if (wave > 0) {
-            store.setLogicalChannelEmWave(emWaves.get(q), i, q);
-          }
-        }
-        if (q < exWaves.size()) {
-          int wave = exWaves.get(q).intValue();
-          if (wave > 0) {
-            store.setLogicalChannelExWave(exWaves.get(q), i, q);
-          }
-        }
-      }
-    }
-    setSeries(0);
-
-    // populate Plate data
-
-    store.setPlateRowNamingConvention(rowName, 0);
-    store.setPlateColumnNamingConvention(colName, 0);
-    store.setPlateWellOriginX(0.5, 0);
-    store.setPlateWellOriginY(0.5, 0);
-
-    // populate Well data
-
-    for (int i=0; i<seriesCount; i++) {
-      int well = getWellFromSeries(i);
-      int field = getFieldFromSeries(i);
-      int totalTimepoints =
-        oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
-      int timepoint = i % totalTimepoints;
-
-      int sampleIndex = field * totalTimepoints + timepoint;
-
-      String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleIndex(i, 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-      store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
-      store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
+      if (field < posX.size()) {
+        store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
+      }
+      if (field < posY.size()) {
+        store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
+      }
+    }
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // populate PlaneTiming data
+
+      for (int i=0; i<seriesCount; i++) {
+        int well = getWellFromSeries(i);
+        int field = getFieldFromSeries(i);
+        int timepoint = oneTimepointPerSeries ?
+          i % channelsPerTimepoint.size() : 0;
+        for (int time=0; time<getSizeT(); time++) {
+          if (!oneTimepointPerSeries) timepoint = time;
+          int c = channelsPerTimepoint.get(timepoint).intValue();
+          for (int q=0; q<getSizeZ()*c; q++) {
+            Image img = imageFiles[well][field][timepoint][q];
+            if (img == null) continue;
+            int plane = time * getSizeZ() * c + q;
+            store.setPlaneTimingDeltaT(img.deltaT, i, 0, plane);
+            store.setPlaneTimingExposureTime(img.exposure, i, 0, plane);
+
+            store.setStagePositionPositionX(posX.get(field), i, 0, plane);
+            store.setStagePositionPositionY(posY.get(field), i, 0, plane);
+            store.setStagePositionPositionZ(img.zPosition, i, 0, plane);
+          }
+        }
+      }
+
+      // populate LogicalChannel data
+
+      for (int i=0; i<seriesCount; i++) {
+        setSeries(i);
+        for (int q=0; q<getEffectiveSizeC(); q++) {
+          if (q < channelNames.size()) {
+            store.setLogicalChannelName(channelNames.get(q), i, q);
+          }
+          if (q < emWaves.size()) {
+            int wave = emWaves.get(q).intValue();
+            if (wave > 0) {
+              store.setLogicalChannelEmWave(wave, i, q);
+            }
+          }
+          if (q < exWaves.size()) {
+            int wave = exWaves.get(q).intValue();
+            if (wave > 0) {
+              store.setLogicalChannelExWave(wave, i, q);
+            }
+          }
+        }
+      }
+      setSeries(0);
+
+      // populate Plate data
+
+      store.setPlateRowNamingConvention(rowName, 0);
+      store.setPlateColumnNamingConvention(colName, 0);
+      store.setPlateWellOriginX(0.5, 0);
+      store.setPlateWellOriginY(0.5, 0);
+
+      // populate Well data
+
+      for (int i=0; i<seriesCount; i++) {
+        int well = getWellFromSeries(i);
+        int field = getFieldFromSeries(i);
+        int totalTimepoints =
+          oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
+        int timepoint = i % totalTimepoints;
+
+        int sampleIndex = field * totalTimepoints + timepoint;
+
+        String imageID = MetadataTools.createLSID("Image", i);
+        store.setWellSampleIndex(i, 0, well, sampleIndex);
+        store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
+        store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
+        store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
+      }
     }
   }
 
@@ -597,6 +615,24 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Size")) {
         imageWidth = Integer.parseInt(attributes.getValue("width"));
         imageHeight = Integer.parseInt(attributes.getValue("height"));
+      }
+      else if (qName.equals("NamingRows")) {
+        rowName = attributes.getValue("begin");
+        try {
+          startRow = Integer.parseInt(rowName);
+        }
+        catch (NumberFormatException e) {
+          startRow = rowName.charAt(0) - 'A' + 1;
+        }
+      }
+      else if (qName.equals("NamingColumns")) {
+        colName = attributes.getValue("begin");
+        try {
+          startCol = Integer.parseInt(colName);
+        }
+        catch (NumberFormatException e) {
+          startCol = colName.charAt(0) - 'A' + 1;
+        }
       }
     }
   }
@@ -780,24 +816,6 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Exposure") && openImage) {
         double exp = Double.parseDouble(attributes.getValue("time"));
         exposure = new Double(exp / 1000);
-      }
-      else if (qName.equals("NamingRows")) {
-        rowName = attributes.getValue("begin");
-        try {
-          startRow = Integer.parseInt(rowName);
-        }
-        catch (NumberFormatException e) {
-          startRow = rowName.charAt(0) - 'A' + 1;
-        }
-      }
-      else if (qName.equals("NamingColumns")) {
-        colName = attributes.getValue("begin");
-        try {
-          startCol = Integer.parseInt(colName);
-        }
-        catch (NumberFormatException e) {
-          startCol = colName.charAt(0) - 'A' + 1;
-        }
       }
       else if (qName.equals("offset_point")) {
         posX.add(new Double(attributes.getValue("x")));
