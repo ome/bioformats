@@ -314,7 +314,9 @@ public class FlexReader extends FormatReader {
     MeaHandler handler = new MeaHandler();
     LOGGER.info("Reading contents of .mea file");
     LOGGER.info("Parsing XML from .mea file");
-    XMLTools.parseXML(new RandomAccessInputStream(id), handler);
+    RandomAccessInputStream s = new RandomAccessInputStream(id);
+    XMLTools.parseXML(s, handler);
+    s.close();
 
     Vector<String> flex = handler.getFlexFiles();
     if (flex.size() == 0) {
@@ -424,89 +426,100 @@ public class FlexReader extends FormatReader {
   private void populateMetadataStore(MetadataStore store) {
     LOGGER.info("Populating MetadataStore");
     MetadataTools.populatePixels(store, this, true);
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
 
     Location currentFile = new Location(getCurrentFile()).getAbsoluteFile();
-
-    if (plateName == null) plateName = currentFile.getParentFile().getName();
-    if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
-    store.setPlateName(plateName, 0);
-    store.setPlateRowNamingConvention("A", 0);
-    store.setPlateColumnNamingConvention("1", 0);
-
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
-        store.setWellRow(row, 0, row * wellColumns + col);
-        store.setWellColumn(col, 0, row * wellColumns + col);
       }
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
       int[] pos = FormatTools.rasterToPosition(lengths, i);
-
       String imageID = MetadataTools.createLSID("Image", i);
       store.setImageID(imageID, i);
-      store.setImageInstrumentRef(instrumentID, i);
+
+      int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
+
       char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
-
-      int seriesIndex = i * getImageCount();
-      if (seriesIndex < objectiveRefs.size()) {
-        store.setObjectiveSettingsObjective(objectiveRefs.get(seriesIndex), i);
-      }
-
-      if (seriesIndex < lightSourceCombinationRefs.size()) {
-        String lightSourceCombo = lightSourceCombinationRefs.get(seriesIndex);
-        Vector<String> lightSources =
-          lightSourceCombinationIDs.get(lightSourceCombo);
-
-        for (int c=0; c<getEffectiveSizeC(); c++) {
-          int index = i * getImageCount() + c;
-          if (index < cameraRefs.size()) {
-            store.setDetectorSettingsDetector(cameraRefs.get(index), i, c);
-          }
-          if (index < binnings.size()) {
-            store.setDetectorSettingsBinning(binnings.get(index), i, c);
-          }
-          if (lightSources != null && c < lightSources.size()) {
-            store.setLightSourceSettingsLightSource(lightSources.get(c), i, c);
-          }
-          else if (c > 0 && lightSources != null && lightSources.size() == 1) {
-            store.setLightSourceSettingsLightSource(lightSources.get(0), i, c);
-          }
-          if (index < filterSets.size()) {
-            String filterSetID = filterSetMap.get(filterSets.get(index));
-            store.setLogicalChannelFilterSet(filterSetID, i, c);
-          }
-        }
-      }
-
-      int sizeIndex = i * getImageCount();
-      if (sizeIndex < xSizes.size()) {
-        store.setDimensionsPhysicalSizeX(xSizes.get(sizeIndex), i, 0);
-      }
-      if (sizeIndex < ySizes.size()) {
-        store.setDimensionsPhysicalSizeY(ySizes.get(sizeIndex), i, 0);
-      }
-
-      int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
-      if (wellRows == 0 && wellColumns == 0) {
-        well = pos[1];
-        store.setWellRow(wellNumber[pos[1]][0], pos[2], pos[1]);
-        store.setWellColumn(wellNumber[pos[1]][1], pos[2], pos[1]);
-      }
-
       store.setWellSampleIndex(i, pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
-      if (pos[0] < xPositions.size()) {
-        store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], well, pos[0]);
-      }
-      if (pos[0] < yPositions.size()) {
-        store.setWellSamplePosY(yPositions.get(pos[0]), pos[2], well, pos[0]);
+      store.setWellRow(wellNumber[pos[1]][0], 0, i);
+      store.setWellColumn(wellNumber[pos[1]][1], 0, i);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+
+      if (plateName == null) plateName = currentFile.getParentFile().getName();
+      if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
+      store.setPlateName(plateName, 0);
+      store.setPlateRowNamingConvention("A", 0);
+      store.setPlateColumnNamingConvention("1", 0);
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        int[] pos = FormatTools.rasterToPosition(lengths, i);
+
+        store.setImageInstrumentRef(instrumentID, i);
+
+        int seriesIndex = i * getImageCount();
+        if (seriesIndex < objectiveRefs.size()) {
+          store.setObjectiveSettingsObjective(
+            objectiveRefs.get(seriesIndex), i);
+        }
+
+        if (seriesIndex < lightSourceCombinationRefs.size()) {
+          String lightSourceCombo = lightSourceCombinationRefs.get(seriesIndex);
+          Vector<String> lightSources =
+            lightSourceCombinationIDs.get(lightSourceCombo);
+
+          for (int c=0; c<getEffectiveSizeC(); c++) {
+            int index = seriesIndex + c;
+            if (index < cameraRefs.size()) {
+              store.setDetectorSettingsDetector(cameraRefs.get(index), i, c);
+            }
+            if (index < binnings.size()) {
+              store.setDetectorSettingsBinning(binnings.get(index), i, c);
+            }
+            if (lightSources != null && c < lightSources.size()) {
+              store.setLightSourceSettingsLightSource(
+                lightSources.get(c), i, c);
+            }
+            else if (c > 0 && lightSources != null && lightSources.size() == 1)
+            {
+              store.setLightSourceSettingsLightSource(
+                lightSources.get(0), i, c);
+            }
+            if (index < filterSets.size()) {
+              String filterSetID = filterSetMap.get(filterSets.get(index));
+              store.setLogicalChannelFilterSet(filterSetID, i, c);
+            }
+          }
+        }
+
+        if (seriesIndex < xSizes.size()) {
+          store.setDimensionsPhysicalSizeX(xSizes.get(seriesIndex), i, 0);
+        }
+        if (seriesIndex < ySizes.size()) {
+          store.setDimensionsPhysicalSizeY(ySizes.get(seriesIndex), i, 0);
+        }
+
+        int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
+        if (wellRows == 0 && wellColumns == 0) {
+          well = pos[1];
+        }
+
+        if (pos[0] < xPositions.size()) {
+          store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], well, pos[0]);
+        }
+        if (pos[0] < yPositions.size()) {
+          store.setWellSamplePosY(yPositions.get(pos[0]), pos[2], well, pos[0]);
+        }
       }
     }
   }
@@ -1063,6 +1076,7 @@ public class FlexReader extends FormatReader {
 
     private HashMap<String, String> filterMap;
     private HashMap<String, String> dichroicMap;
+    private MetadataLevel level;
 
     private StringBuffer charData = new StringBuffer();
 
@@ -1076,6 +1090,7 @@ public class FlexReader extends FormatReader {
       this.well = well;
       filterMap = new HashMap<String, String>();
       dichroicMap = new HashMap<String, String>();
+      level = getMetadataOptions().getMetadataLevel();
     }
 
     public void characters(char[] ch, int start, int length) {
@@ -1085,6 +1100,33 @@ public class FlexReader extends FormatReader {
     public void endElement(String uri, String localName, String qName) {
       String value = charData.toString();
       charData = new StringBuffer();
+
+      if (qName.equals("XSize") && "Plate".equals(parentQName)) {
+        wellRows = Integer.parseInt(value);
+      }
+      else if (qName.equals("YSize") && "Plate".equals(parentQName)) {
+        wellColumns = Integer.parseInt(value);
+      }
+      else if ("Image".equals(parentQName)) {
+        if (fieldCount == 0) fieldCount = 1;
+        int nImages = firstWellPlanes() / fieldCount;
+        if (nImages == 0) nImages = 1; // probably a manually altered dataset
+        int currentSeries = (nextImage - 1) / nImages;
+        currentSeries += well * fieldCount;
+        int currentImage = (nextImage - 1) % nImages;
+
+        int seriesCount = 1;
+        if (plateCount > 0) seriesCount *= plateCount;
+        if (wellCount > 0) seriesCount *= wellCount;
+        if (fieldCount > 0) seriesCount *= fieldCount;
+        if (currentSeries >= seriesCount) return;
+
+        if (qName.equals("DateTime")) {
+          store.setImageCreationDate(value, currentSeries);
+        }
+      }
+
+      if (level == MetadataLevel.MINIMUM) return;
 
       if (qName.equals("Image")) {
         binnings.add(binX + "x" + binY);
@@ -1121,12 +1163,6 @@ public class FlexReader extends FormatReader {
         if (qName.equals("OffsetX")) xPositions.add(offset);
         else yPositions.add(offset);
       }
-      else if (qName.equals("XSize") && "Plate".equals(parentQName)) {
-        wellRows = Integer.parseInt(value);
-      }
-      else if (qName.equals("YSize") && "Plate".equals(parentQName)) {
-        wellColumns = Integer.parseInt(value);
-      }
       else if ("Image".equals(parentQName)) {
         if (fieldCount == 0) fieldCount = 1;
         int nImages = firstWellPlanes() / fieldCount;
@@ -1141,10 +1177,7 @@ public class FlexReader extends FormatReader {
         if (fieldCount > 0) seriesCount *= fieldCount;
         if (currentSeries >= seriesCount) return;
 
-        if (qName.equals("DateTime")) {
-          store.setImageCreationDate(value, currentSeries);
-        }
-        else if (qName.equals("CameraBinningX")) {
+        if (qName.equals("CameraBinningX")) {
           binX = Integer.parseInt(value);
         }
         else if (qName.equals("CameraBinningY")) {
@@ -1214,18 +1247,20 @@ public class FlexReader extends FormatReader {
           else if (name.equals("Factor")) factors.add(attributes.getValue(i));
         }
       }
-      else if (qName.equals("LightSource")) {
+      else if (qName.equals("LightSource") && level == MetadataLevel.ALL) {
         parentQName = qName;
         String type = attributes.getValue("LightSourceType");
 
         lightSourceIDs.add(attributes.getValue("ID"));
         nextLaser++;
       }
-      else if (qName.equals("LightSourceCombination")) {
+      else if (qName.equals("LightSourceCombination") &&
+        level == MetadataLevel.ALL)
+      {
         lightSourceID = attributes.getValue("ID");
         lightSourceCombinationIDs.put(lightSourceID, new Vector<String>());
       }
-      else if (qName.equals("LightSourceRef")) {
+      else if (qName.equals("LightSourceRef") && level == MetadataLevel.ALL) {
         Vector<String> v = lightSourceCombinationIDs.get(lightSourceID);
         if (v != null) {
           int id = lightSourceIDs.indexOf(attributes.getValue("ID"));
@@ -1234,7 +1269,7 @@ public class FlexReader extends FormatReader {
           lightSourceCombinationIDs.put(lightSourceID, v);
         }
       }
-      else if (qName.equals("Camera")) {
+      else if (qName.equals("Camera") && level == MetadataLevel.ALL) {
         parentQName = qName;
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
@@ -1242,7 +1277,7 @@ public class FlexReader extends FormatReader {
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
       }
-      else if (qName.equals("Objective")) {
+      else if (qName.equals("Objective") && level == MetadataLevel.ALL) {
         parentQName = qName;
         nextObjective++;
 
@@ -1271,11 +1306,13 @@ public class FlexReader extends FormatReader {
         parentQName = qName;
         nextImage++;
 
-        //Implemented for FLEX v1.7 and below
-        String x = attributes.getValue("CameraBinningX");
-        String y = attributes.getValue("CameraBinningY");
-        if (x != null) binX = Integer.parseInt(x);
-        if (y != null) binY = Integer.parseInt(y);
+        if (level == MetadataLevel.ALL) {
+          //Implemented for FLEX v1.7 and below
+          String x = attributes.getValue("CameraBinningX");
+          String y = attributes.getValue("CameraBinningY");
+          if (x != null) binX = Integer.parseInt(x);
+          if (y != null) binY = Integer.parseInt(y);
+        }
       }
       else if (qName.equals("Plate")) {
         parentQName = qName;
@@ -1290,10 +1327,10 @@ public class FlexReader extends FormatReader {
           wellNumber[0][1] = Integer.parseInt(attributes.getValue("Col")) - 1;
         }
       }
-      else if (qName.equals("Slider")) {
+      else if (qName.equals("Slider") && level == MetadataLevel.ALL) {
         sliderName = attributes.getValue("Name");
       }
-      else if (qName.equals("Filter")) {
+      else if (qName.equals("Filter") && level == MetadataLevel.ALL) {
         String id = attributes.getValue("ID");
         if (sliderName.endsWith("Dichro")) {
           String dichroicID =
@@ -1312,13 +1349,14 @@ public class FlexReader extends FormatReader {
           nextFilter++;
         }
       }
-      else if (qName.equals("FilterCombination")) {
+      else if (qName.equals("FilterCombination") && level == MetadataLevel.ALL)
+      {
         String filterSetID =
           MetadataTools.createLSID("FilterSet", 0, nextFilterSet);
         store.setFilterSetID(filterSetID, 0, nextFilterSet);
         filterSetMap.put("FilterSet:" + attributes.getValue("ID"), filterSetID);
       }
-      else if (qName.equals("SliderRef")) {
+      else if (qName.equals("SliderRef") && level == MetadataLevel.ALL) {
         String filterName = attributes.getValue("Filter");
         String filterID = filterMap.get(filterName);
         String dichroicID = dichroicMap.get(filterName);
