@@ -232,12 +232,14 @@ public class NativeND2Reader extends FormatReader {
 
       // assemble offsets to each block
 
+      Vector<String> imageNames = new Vector<String>();
       Vector<Long> imageOffsets = new Vector<Long>();
       Vector<int[]> imageLengths = new Vector<int[]>();
-      Vector<Long> xmlOffsets = new Vector<Long>();
-      Vector<int[]> xmlLengths = new Vector<int[]>();
       Vector<Long> customDataOffsets = new Vector<Long>();
       Vector<int[]> customDataLengths = new Vector<int[]>();
+
+      ByteVector xml = new ByteVector();
+      StringBuffer name = new StringBuffer();
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -260,70 +262,70 @@ public class NativeND2Reader extends FormatReader {
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
-        in.skipBytes(skip);
 
         if (blockType.startsWith("ImageDataSeq")) {
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo});
+          char b = (char) in.readByte();
+          while (b != '!') {
+            name.append(b);
+            b = (char) in.readByte();
+          }
+          imageNames.add(name.toString());
+          name = name.delete(0, name.length());
         }
         else if (blockType.startsWith("Image")) {
-          xmlOffsets.add(new Long(fp));
-          xmlLengths.add(new int[] {lenOne, lenTwo});
+          int length = lenOne + lenTwo - 12;
+          byte[] b = new byte[length];
+          in.read(b);
+
+          // strip out invalid characters
+          int off = 0;
+          for (int j=0; j<length; j++) {
+            char c = (char) b[j];
+            if ((off == 0 && c == '!') || c == 0) off = j + 1;
+            if (Character.isISOControl(c) || !Character.isDefined(c)) {
+              b[j] = (byte) ' ';
+            }
+          }
+
+          if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
+            b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
+          {
+            boolean endBracketFound = false;
+            while (!endBracketFound) {
+              if (b[off++] == '>') {
+                endBracketFound = true;
+              }
+            }
+            xml.add(b, off, b.length - off);
+          }
+          skip = 0;
         }
-        else if (blockType.startsWith("CustomData|A")) {
-          customDataOffsets.add(new Long(fp));
-          customDataLengths.add(new int[] {lenOne, lenTwo});
+        else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          if (blockType.startsWith("CustomData|A")) {
+            customDataOffsets.add(new Long(fp));
+            customDataLengths.add(new int[] {lenOne, lenTwo});
+          }
+          else if (blockType.startsWith("CustomData|Z")) {
+            int nDoubles = (lenOne + lenTwo) / 8;
+            zOffset = fp + 8 * (nDoubles - imageOffsets.size());
+          }
+          else if (blockType.startsWith("CustomData|X")) {
+            int nDoubles = (lenOne + lenTwo) / 8;
+            xOffset = fp + 8 * (nDoubles - imageOffsets.size());
+          }
+          else if (blockType.startsWith("CustomData|Y")) {
+            int nDoubles = (lenOne + lenTwo) / 8;
+            yOffset = fp + 8 * (nDoubles - imageOffsets.size());
+          }
         }
-        else if (blockType.startsWith("CustomData|Z")) {
-          int nDoubles = (lenOne + lenTwo) / 8;
-          zOffset = fp + 8 * (nDoubles - imageOffsets.size());
-        }
-        else if (blockType.startsWith("CustomData|X")) {
-          int nDoubles = (lenOne + lenTwo) / 8;
-          xOffset = fp + 8 * (nDoubles - imageOffsets.size());
-        }
-        else if (blockType.startsWith("CustomData|Y")) {
-          int nDoubles = (lenOne + lenTwo) / 8;
-          yOffset = fp + 8 * (nDoubles - imageOffsets.size());
-        }
+        in.skipBytes(skip);
       }
 
       // parse XML blocks
 
       DefaultHandler handler = new ND2Handler();
-      ByteVector xml = new ByteVector();
-
-      for (int i=0; i<xmlOffsets.size(); i++) {
-        long offset = xmlOffsets.get(i).longValue();
-        int[] p = xmlLengths.get(i);
-        int length = p[0] + p[1];
-
-        byte[] b = new byte[length];
-        in.seek(offset);
-        in.read(b);
-
-        // strip out invalid characters
-        int off = 0;
-        for (int j=0; j<length; j++) {
-          char c = (char) b[j];
-          if ((off == 0 && c == '!') || c == 0) off = j + 1;
-          if (Character.isISOControl(c) || !Character.isDefined(c)) {
-            b[j] = (byte) ' ';
-          }
-        }
-
-        if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
-          b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
-        {
-          boolean endBracketFound = false;
-          while (!endBracketFound) {
-            if (b[off++] == '>') {
-              endBracketFound = true;
-            }
-          }
-          xml.add(b, off, b.length - off);
-        }
-      }
 
       String xmlString = new String(xml.toByteArray());
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
@@ -431,18 +433,6 @@ public class NativeND2Reader extends FormatReader {
         int[] p = imageLengths.get(i);
         int length = p[0] + p[1];
 
-        in.seek(offset);
-        byte[] b = new byte[p[0]];
-        in.read(b);
-
-        StringBuffer sb = new StringBuffer();
-        int pt = 13;
-        while (b[pt] != '!') {
-          sb.append((char) b[pt++]);
-        }
-        b = null;
-        int ndx = Integer.parseInt(sb.toString());
-
         if (getSizeC() == 0) {
           int sizeC = length / (getSizeX() * getSizeY() *
             FormatTools.getBytesPerPixel(getPixelType()));
@@ -450,6 +440,9 @@ public class NativeND2Reader extends FormatReader {
             core[q].sizeC = sizeC;
           }
         }
+
+        String imageName = imageNames.get(i);
+        int ndx = Integer.parseInt(imageName.replaceAll("\\D", ""));
 
         int[] pos = FormatTools.rasterToPosition(lengths, ndx);
         int seriesIndex = pos[fieldIndex];
