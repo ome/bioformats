@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.ByteArrayHandle;
@@ -477,7 +476,10 @@ public class FV1000Reader extends FormatReader {
       IniTable channel = f.getTable("Channel " + index + " Parameters");
       while (channel != null) {
         String illumination = channel.get("LightType");
-        if (illumination.indexOf("fluorescence") != -1) {
+        if (illumination == null) {
+          // Ignored
+        }
+        else if (illumination.indexOf("fluorescence") != -1) {
           illumination = "Epifluorescence";
         }
         else if (illumination.indexOf("transmitted") != -1) {
