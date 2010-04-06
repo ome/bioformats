@@ -24,9 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.IniList;
@@ -55,7 +60,7 @@ public class BDReader extends FormatReader {
 
   // -- Constants --
   private static final String EXPERIMENT_FILE = "Experiment.exp";
-  private static final String[] META_EXT = {"drt","dye","exp","plt"};
+  private static final String[] META_EXT = {"drt", "dye", "exp", "plt", "txt"};
 
   // -- Fields --
   private Vector<String> metadataFiles = new Vector<String>();
@@ -64,6 +69,11 @@ public class BDReader extends FormatReader {
   private String plateName, plateDescription;
   private String[] tiffs;
   private MinimalTiffReader reader;
+
+  private String roiFile;
+  private int[] emWave, exWave;
+  private double[] gain, offset, exposure;
+  private String binning, objective;
 
   // -- Constructor --
 
@@ -101,6 +111,7 @@ public class BDReader extends FormatReader {
     if (ifd == null) return false;
 
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
+    if (software == null) return false;
 
     return software.trim().startsWith("MATROX Imaging Library");
   }
@@ -163,83 +174,6 @@ public class BDReader extends FormatReader {
   }
 
   // -- Internal FormatReader API methods --
-  public IniList readMetaData(String id) throws IOException {
-    IniList exp = (new IniParser()).parseINI(
-      new BufferedReader(new FileReader(id)));
-    IniList plate = null;
-    // Read Plate File
-    for (String filename : metadataFiles) {
-      if (filename.endsWith(".plt")) {
-        plate = (new IniParser()).parseINI(
-          new BufferedReader(new FileReader(filename)));
-      }
-      else if (filename.endsWith("RoiSummary.txt")) {
-        RandomAccessInputStream s = new RandomAccessInputStream(filename);
-        String line = s.readLine().trim();
-        while (!line.endsWith(".adf\"")) {
-          line = s.readLine().trim();
-        }
-        plateName = line.substring(line.indexOf(":")).trim();
-        plateName = plateName.replace('/', File.separatorChar);
-        plateName = plateName.replace('\\', File.separatorChar);
-        for (int i=0; i<3; i++) {
-          plateName =
-            plateName.substring(0, plateName.lastIndexOf(File.separator));
-        }
-        plateName =
-          plateName.substring(plateName.lastIndexOf(File.separator) + 1);
-
-        s.close();
-      }
-    }
-    if (plate == null) throw new IOException("No Plate File");
-
-    IniTable plateType = plate.getTable("PlateType");
-
-    if (plateName == null) {
-      plateName = plateType.get("Brand");
-    }
-    plateDescription =
-      plateType.get("Brand") + " " + plateType.get("Description");
-
-    Location dir = new Location(id).getAbsoluteFile().getParentFile();
-    for (String filename : dir.list()) {
-      if (filename.startsWith("Well ")) {
-        wellLabels.add(filename.split("\\s|\\.")[1]);
-      }
-    }
-
-    core = new CoreMetadata[wellLabels.size()];
-
-    core[0] = new CoreMetadata();
-
-
-// Hack for current testing/development purposes
-// Not all channels have the same Z!!! How to handle???
-// FIXME FIXME FIXME
-    core[0].sizeZ=1;
-// FIXME FIXME FIXME
-// END OF HACK
-
-    core[0].sizeC = Integer.parseInt(exp.getTable("General").get("Dyes"));
-
-    for (int i=1; i<=core[0].sizeC; i++) {
-      channelNames.add(exp.getTable("Dyes").get(Integer.toString(i)));
-    }
-
-    // Count Images
-    core[0].sizeT = 0;
-    Location well = new Location(dir.getAbsolutePath(),
-      "Well " + wellLabels.get(1));
-    for (String filename : well.list()) {
-      if (filename.startsWith(channelNames.get(0)) &&
-         filename.endsWith(".tif"))
-      {
-        core[0].sizeT++;
-      }
-    }
-    return exp;
-  }
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
@@ -251,16 +185,26 @@ public class BDReader extends FormatReader {
     for (String file : dir.list(true)) {
       Location f = new Location(dir, file);
       if (!f.isDirectory()) {
-        for (String ext : META_EXT) {
-          if (checkSuffix(id, ext)) {
-            metadataFiles.add(f.getAbsolutePath());
-          }
+        if (checkSuffix(file, META_EXT)) {
+          metadataFiles.add(f.getAbsolutePath());
         }
       }
     }
 
     // parse Experiment metadata
     IniList experiment = readMetaData(id);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      objective = experiment.getTable("Geometry").get("Name");
+      IniTable camera = experiment.getTable("Camera");
+      binning = camera.get("BinX") + "x" + camera.get("BinY");
+
+      parseChannelData(dir);
+
+      addGlobalMeta("Objective", objective);
+      addGlobalMeta("Camera binning", binning);
+    }
+
     Vector<String> uniqueRows = new Vector<String>();
     Vector<String> uniqueColumns = new Vector<String>();
 
@@ -280,9 +224,7 @@ public class BDReader extends FormatReader {
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
     if (nChannels == 0) nChannels = 1;
 
-    tiffs = getTiffs(dir.getAbsoluteFile().toString());
-
-    // []   files = new String[nChannels * nWells * nTimepoints * nSlices];
+    tiffs = getTiffs(dir.getAbsolutePath());
 
     reader = new MinimalTiffReader();
     reader.setId(tiffs[0]);
@@ -315,19 +257,9 @@ public class BDReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-
-    // populate LogicalChannel data
-    for (int i=0; i<getSeriesCount(); i++) {
-      for (int c=0; c<getSizeC(); c++) {
-        store.setLogicalChannelName(channelNames.get(c), i, c);
-      }
-    }
-
-    store.setPlateRowNamingConvention("A", 0);
-    store.setPlateColumnNamingConvention("01", 0);
-    store.setPlateName(plateName, 0);
-    store.setPlateDescription(plateDescription, 0);
+    boolean populatePlanes =
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL;
+    MetadataTools.populatePixels(store, this, populatePlanes);
 
     for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
@@ -346,7 +278,70 @@ public class BDReader extends FormatReader {
       store.setImageID(imageID, i);
       store.setImageName(name, i);
     }
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      if (objective != null) {
+        String[] tokens = objective.split(" ");
+        String mag = tokens[0].replaceAll("[xX]", "");
+        String na = null;
+        int naIndex = 0;
+        for (int i=0; i<tokens.length; i++) {
+          if (tokens[i].equals("NA")) {
+            naIndex = i + 1;
+            na = tokens[naIndex];
+            break;
+          }
+        }
+
+        store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+        if (na != null) {
+          na = na.substring(0, 1) + "." + na.substring(1);
+          store.setObjectiveLensNA(new Double(na), 0, 0);
+        }
+        if (naIndex + 1 < tokens.length) {
+          store.setObjectiveManufacturer(tokens[naIndex + 1], 0, 0);
+        }
+      }
+
+      // populate LogicalChannel data
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageInstrumentRef(instrumentID, i);
+        store.setObjectiveSettingsObjective(objectiveID, i);
+
+        for (int c=0; c<getSizeC(); c++) {
+          store.setLogicalChannelName(channelNames.get(c), i, c);
+          store.setLogicalChannelEmWave(emWave[c], i, c);
+          store.setLogicalChannelExWave(exWave[c], i, c);
+
+          String detectorID = MetadataTools.createLSID("Detector", 0, c);
+          store.setDetectorID(detectorID, 0, c);
+          store.setDetectorSettingsDetector(detectorID, i, c);
+          store.setDetectorSettingsGain(gain[c], i, c);
+          store.setDetectorSettingsOffset(offset[c], i, c);
+          store.setDetectorSettingsBinning(binning, i, c);
+        }
+
+        for (int p=0; p<getImageCount(); p++) {
+          int[] zct = getZCTCoords(p);
+          store.setPlaneTimingExposureTime(exposure[zct[1]], i, 0, p);
+        }
+      }
+
+      store.setPlateRowNamingConvention("A", 0);
+      store.setPlateColumnNamingConvention("01", 0);
+      store.setPlateName(plateName, 0);
+      store.setPlateDescription(plateDescription, 0);
+
+      parseROIs(store);
+    }
   }
+
+  // -- Helper methods --
 
   /* Locate the experiment file given any file in set */
   private String locateExperimentFile(String id)
@@ -357,43 +352,166 @@ public class BDReader extends FormatReader {
       if (checkSuffix(id, "tif")) parent = parent.getParentFile();
       for (String file : parent.list()) {
         if (file.equals(EXPERIMENT_FILE)) {
-          id = new Location(parent, file).getAbsolutePath();
-          break;
+          return new Location(parent, file).getAbsolutePath();
         }
       }
-      if (!checkSuffix(id, "exp")) {
-        throw new FormatException("Could not find " + EXPERIMENT_FILE +
-          " in " + parent.getAbsolutePath());
-      }
+      throw new FormatException("Could not find " + EXPERIMENT_FILE +
+        " in " + parent.getAbsolutePath());
     }
     return id;
   }
 
-  public String[] getTiffs(String dir) {
-    LinkedList<String> files = new LinkedList<String>();
-    FileFilter wellDirFilter = new FileFilter() {
-      public boolean accept(File file) {
-          return file.isDirectory() && file.getName().startsWith("Well ");
+  private IniList readMetaData(String id) throws IOException {
+    IniParser parser = new IniParser();
+    IniList exp = parser.parseINI(new BufferedReader(new FileReader(id)));
+    IniList plate = null;
+    // Read Plate File
+    for (String filename : metadataFiles) {
+      if (checkSuffix(filename, "plt")) {
+        plate = parser.parseINI(new BufferedReader(new FileReader(filename)));
       }
-    };
-    FileFilter tiffFilter = new FileFilter() {
-      public boolean accept(File file) {
-        return file.getName().matches(".* - n\\d\\d\\d\\d\\d\\d\\.tif");
+      else if (filename.endsWith("RoiSummary.txt")) {
+        roiFile = filename;
+        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          RandomAccessInputStream s = new RandomAccessInputStream(filename);
+          String line = s.readLine().trim();
+          while (!line.endsWith(".adf\"")) {
+            line = s.readLine().trim();
+          }
+          plateName = line.substring(line.indexOf(":")).trim();
+          plateName = plateName.replace('/', File.separatorChar);
+          plateName = plateName.replace('\\', File.separatorChar);
+          for (int i=0; i<3; i++) {
+            plateName =
+              plateName.substring(0, plateName.lastIndexOf(File.separator));
+          }
+          plateName =
+            plateName.substring(plateName.lastIndexOf(File.separator) + 1);
+
+          s.close();
+        }
       }
-    };
+    }
+    if (plate == null) throw new IOException("No Plate File");
 
-    File[] dirs = (new File(dir)).listFiles(wellDirFilter);
+    IniTable plateType = plate.getTable("PlateType");
 
-    Arrays.sort(dirs);
+    if (plateName == null) {
+      plateName = plateType.get("Brand");
+    }
+    plateDescription =
+      plateType.get("Brand") + " " + plateType.get("Description");
 
-    for (File well : dirs) {
-      File[] found = well.listFiles(tiffFilter);
-      Arrays.sort(found);
-      for (File file : found) {
-        files.add(file.getAbsolutePath());
+    Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    for (String filename : dir.list()) {
+      if (filename.startsWith("Well ")) {
+        wellLabels.add(filename.split("\\s|\\.")[1]);
       }
     }
 
-    return files.toArray(new String[files.size()]);
+    core = new CoreMetadata[wellLabels.size()];
+
+    core[0] = new CoreMetadata();
+
+
+// Hack for current testing/development purposes
+// Not all channels have the same Z!!! How to handle???
+// FIXME FIXME FIXME
+    core[0].sizeZ=1;
+// FIXME FIXME FIXME
+// END OF HACK
+
+    core[0].sizeC = Integer.parseInt(exp.getTable("General").get("Dyes"));
+    core[0].bitsPerPixel =
+      Integer.parseInt(exp.getTable("Camera").get("BitdepthUsed"));
+
+    IniTable dyeTable = exp.getTable("Dyes");
+    for (int i=1; i<=getSizeC(); i++) {
+      channelNames.add(dyeTable.get(Integer.toString(i)));
+    }
+
+    // Count Images
+    core[0].sizeT = 0;
+    Location well = new Location(dir.getAbsolutePath(),
+      "Well " + wellLabels.get(1));
+    for (String filename : well.list()) {
+      if (filename.startsWith(channelNames.get(0)) && filename.endsWith(".tif"))
+      {
+        core[0].sizeT++;
+      }
+    }
+    return exp;
   }
+
+  private void parseChannelData(Location dir) throws IOException {
+    emWave = new int[channelNames.size()];
+    exWave = new int[channelNames.size()];
+    exposure = new double[channelNames.size()];
+    gain = new double[channelNames.size()];
+    offset = new double[channelNames.size()];
+
+    for (int c=0; c<channelNames.size(); c++) {
+      Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
+      IniList dye = new IniParser().parseINI(
+        new BufferedReader(new FileReader(dyeFile.getAbsolutePath())));
+
+      IniTable numerator = dye.getTable("Numerator");
+      String em = numerator.get("Emission");
+      em = em.substring(0, em.indexOf(" "));
+      emWave[c] = Integer.parseInt(em);
+
+      String ex = numerator.get("Excitation");
+      ex = ex.substring(0, ex.lastIndexOf(" "));
+      if (ex.indexOf(" ") != -1) {
+        ex = ex.substring(ex.lastIndexOf(" ") + 1);
+      }
+      exWave[c] = Integer.parseInt(ex);
+
+      exposure[c] = Double.parseDouble(numerator.get("Exposure"));
+      gain[c] = Double.parseDouble(numerator.get("Gain"));
+      offset[c] = Double.parseDouble(numerator.get("Offset"));
+    }
+  }
+
+  private String[] getTiffs(String dir) {
+    Location f = new Location(dir);
+    Vector<String> files = new Vector<String>();
+
+    for (String filename : f.list(true)) {
+      Location file = new Location(f, filename).getAbsoluteFile();
+      if (file.isDirectory() && filename.startsWith("Well ")) {
+        for (String tiff : file.list(true)) {
+          if (tiff.matches(".* - n\\d\\d\\d\\d\\d\\d\\.tif")) {
+            files.add(new Location(file, tiff).getAbsolutePath());
+          }
+        }
+      }
+    }
+
+    String[] tiffFiles = files.toArray(new String[files.size()]);
+    Arrays.sort(tiffFiles);
+    return tiffFiles;
+  }
+
+  private void parseROIs(MetadataStore store) throws IOException {
+    String roiData = DataTools.readFile(roiFile);
+    String[] lines = roiData.split("\r\n");
+
+    int firstRow = 0;
+    while (!lines[firstRow].startsWith("ROI")) firstRow++;
+    firstRow += 2;
+
+    for (int i=firstRow; i<lines.length; i++) {
+      String[] cols = lines[i].split("\t");
+      if (cols.length < 6) break;
+
+      if (cols[2].trim().length() > 0) {
+        store.setRectX(cols[2], 0, i - firstRow, 0);
+        store.setRectY(cols[3], 0, i - firstRow, 0);
+        store.setRectWidth(cols[4], 0, i - firstRow, 0);
+        store.setRectHeight(cols[5], 0, i - firstRow, 0);
+      }
+    }
+  }
+
 }
