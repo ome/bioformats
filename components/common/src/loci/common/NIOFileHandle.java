@@ -80,6 +80,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /** The buffer's byte ordering. */
   protected ByteOrder order;
 
+  /** Provider class for NIO byte buffers, allocated or memory mapped. */
+  protected NIOByteBufferProvider byteBufferProvider;
+
   // -- Constructors --
 
   /**
@@ -96,6 +99,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
     }
     raf = new RandomAccessFile(file, mode);
     channel = raf.getChannel();
+    byteBufferProvider = new NIOByteBufferProvider(channel, mapMode);
     buffer(position, 0);
   }
 
@@ -474,9 +478,8 @@ public class NIOFileHandle extends AbstractNIOHandle {
       }
       offset = bufferStartPosition;
       ByteOrder byteOrder = buffer == null ? order : getOrder();
-      buffer = ByteBuffer.allocate((int) newSize);
+      buffer = byteBufferProvider.allocate(bufferStartPosition, (int) newSize);
       if (byteOrder != null) setOrder(byteOrder);
-      channel.read(buffer, bufferStartPosition);
     }
     buffer.position((int) (offset - bufferStartPosition));
   }

@@ -22,7 +22,7 @@ Type "ant -p"  for a list of targets.
       </filterset>
     </copy>
     <testng
-        classpath="${test-classes.dir}:${classes.dir}:${component.classpath}">
+        classpath="${test-classes.dir}:${classes.dir}:${component.runtime-cp}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -37,7 +37,7 @@ Type "ant -p"  for a list of targets.
       </filterset>
     </copy>
     <testng
-        classpath="${test-classes.dir}:${classes.dir}:${component.classpath}">
+        classpath="${test-classes.dir}:${classes.dir}:${component.runtime-cp}">
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
