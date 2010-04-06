@@ -158,13 +158,15 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see IRandomAccess.getOrder() */
   public ByteOrder getOrder() {
-    return buffer.order();
+    return buffer == null ? order : buffer.order();
   }
 
   /* @see IRandomAccess.setOrder(ByteOrder) */
   public void setOrder(ByteOrder order) {
     this.order = order;
-    buffer.order(order);
+    if (buffer != null) {
+      buffer.order(order);
+    }
   }
 
   /* @see IRandomAccess.read(byte[]) */
@@ -366,9 +368,8 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
   public void write(ByteBuffer buf, int off, int len) throws IOException {
     writeSetup(len);
-    buf.position(off + len);
     buf.limit(off + len);
-    buf.position(buf.position() - len);
+    buf.position(off);
     position += channel.write(buf, position);
     buffer = null;
   }
