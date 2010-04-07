@@ -81,7 +81,7 @@ public class PackbitsCodec extends BaseCodec {
         for (int i=0; i<len; i++) output.write(inp);
       }
     }
-    in.seek(fp + nread);
+    if (fp + nread < in.length()) in.seek(fp + nread);
     return output.toByteArray();
   }
 }

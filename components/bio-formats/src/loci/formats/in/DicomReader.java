@@ -593,6 +593,16 @@ public class DicomReader extends FormatReader {
 
     // calculate the offset to each plane
 
+    in.seek(baseOffset - 12);
+    int len = in.readInt();
+    if (len >= 0 && len + in.getFilePointer() < in.length()) {
+      in.skipBytes(len);
+      int check = in.readShort() & 0xffff;
+      if (check == 0xfffe) {
+        baseOffset = in.getFilePointer() + 2;
+      }
+    }
+
     offsets = new long[imagesPerFile];
     for (int i=0; i<imagesPerFile; i++) {
       if (isRLE) {
