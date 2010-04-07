@@ -620,14 +620,16 @@ public class FV1000Reader extends FormatReader {
       }
 
       IniTable acquisition = pty.getTable("Acquisition Parameters Common");
-      magnification = acquisition.get("Magnification");
-      lensNA = acquisition.get("ObjectiveLens NAValue");
-      objectiveName = acquisition.get("ObjectiveLens Name");
-      workingDistance = acquisition.get("ObjectiveLens WDValue");
-      pinholeSize = acquisition.get("PinholeDiameter");
-      String validBitCounts = acquisition.get("ValidBitCounts");
-      if (validBitCounts != null) {
-        core[0].bitsPerPixel = Integer.parseInt(validBitCounts);
+      if (acquisition != null) {
+        magnification = acquisition.get("Magnification");
+        lensNA = acquisition.get("ObjectiveLens NAValue");
+        objectiveName = acquisition.get("ObjectiveLens Name");
+        workingDistance = acquisition.get("ObjectiveLens WDValue");
+        pinholeSize = acquisition.get("PinholeDiameter");
+        String validBitCounts = acquisition.get("ValidBitCounts");
+        if (validBitCounts != null) {
+          core[0].bitsPerPixel = Integer.parseInt(validBitCounts);
+        }
       }
 
       if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
