@@ -39,7 +39,16 @@ import java.io.InputStreamReader;
  */
 public class IniParser {
 
+  private String commentDelimiter = "#";
+
   // -- IniParser API methods --
+
+  /**
+   * Set the String that identifies a comment.  Defaults to "#".
+   */
+  public void setCommentDelimiter(String delimiter) {
+    commentDelimiter = delimiter;
+  }
 
   /** Parses the INI-style configuration data from the given resource. */
   public IniList parseINI(String path)
@@ -148,8 +157,10 @@ public class IniParser {
       no++;
 
       // strip comments
-      int hash = line.indexOf("#");
-      if (hash >= 0) line = line.substring(0, hash);
+      if (commentDelimiter != null) {
+        int comment = line.indexOf(commentDelimiter);
+        if (comment >= 0) line = line.substring(0, comment);
+      }
 
       // kill whitespace
       line = line.trim();

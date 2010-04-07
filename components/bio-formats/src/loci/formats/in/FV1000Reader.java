@@ -309,6 +309,8 @@ public class FV1000Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    parser.setCommentDelimiter(null);
+
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
     if (isOIB) {
@@ -418,6 +420,8 @@ public class FV1000Reader extends FormatReader {
         previewNames.add(path + value.trim());
       }
     }
+
+    if (filenames.size() == 0) addPtyFiles();
 
     for (int i=0; i<NUM_DIMENSIONS; i++) {
       IniTable commonParams = f.getTable("Axis " + i + " Parameters Common");
@@ -590,10 +594,10 @@ public class FV1000Reader extends FormatReader {
           file = removeGST(file);
         }
         if (!mappedOIF) {
-          file = new Location(tiffPath, file).getAbsolutePath();
           if (isOIB) {
-            file = file.substring(file.indexOf(File.separator));
+            file = tiffPath + File.separator + file;
           }
+          else file = new Location(tiffPath, file).getAbsolutePath();
         }
         tiffs.add(ii, file);
       }
@@ -761,6 +765,9 @@ public class FV1000Reader extends FormatReader {
     catch (IOException e) {
       LOGGER.debug("Could not read thumbnail", e);
     }
+    catch (FormatException e) {
+      LOGGER.debug("Could not read thumbnail", e);
+    }
 
     // initialize lookup table
 
@@ -768,6 +775,7 @@ public class FV1000Reader extends FormatReader {
     byte[] buffer = new byte[65536 * 4];
     int count = (int) Math.min(getSizeC(), lutNames.size());
     for (int c=0; c<count; c++) {
+      Exception exc = null;
       try {
         RandomAccessInputStream stream = getFile(lutNames.get(c));
         stream.seek(stream.length() - 65536 * 4);
@@ -779,8 +787,10 @@ public class FV1000Reader extends FormatReader {
           lut[c][2][q / 4] = buffer[q + 3];
         }
       }
-      catch (IOException e) {
-        LOGGER.debug("Could not read LUT", e);
+      catch (IOException e) { exc = e; }
+      catch (FormatException e) { exc = e; }
+      if (exc != null) {
+        LOGGER.debug("Could not read LUT", exc);
         lut = null;
         break;
       }
@@ -976,7 +986,14 @@ public class FV1000Reader extends FormatReader {
     int plane) throws FormatException, IOException
   {
     int[] coordinates = getZCTCoords(plane);
-    IniList roiFile = getIniFile(filename);
+    IniList roiFile = null;
+    try {
+      roiFile = getIniFile(filename);
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not parse ROI file {}", filename, e);
+      return nextROI;
+    }
 
     boolean validROI = false;
     int shape = -1;
@@ -1245,8 +1262,8 @@ public class FV1000Reader extends FormatReader {
         value = removeGST(value);
 
         if (key.startsWith("Stream")) {
-          if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
           value = sanitizeFile(value, "");
+          if (checkSuffix(value, OIF_SUFFIX)) oifName = value;
           if (directoryKey != null && value.startsWith(directoryValue)) {
             oibMapping.put(value, "Root Entry" + File.separator +
               directoryKey + File.separator + key);
@@ -1277,7 +1294,7 @@ public class FV1000Reader extends FormatReader {
 
   private String sanitizeFile(String file, String path) {
     String f = sanitizeValue(file);
-    if (!isOIB && path.equals("")) return f;
+    if (path.equals("")) return f;
     return path + File.separator + f;
   }
 
@@ -1296,12 +1313,13 @@ public class FV1000Reader extends FormatReader {
     throws FormatException, IOException
   {
     if (isOIB) {
-      if (!name.startsWith(File.separator)) {
-        name = File.separator + name;
-      }
       name = name.replace('\\', File.separatorChar);
       name = name.replace('/', File.separatorChar);
-      return poi.getDocumentStream(oibMapping.get(name));
+      String realName = oibMapping.get(name);
+      if (realName == null) {
+        throw new FormatException("File " + name + " not found.");
+      }
+      return poi.getDocumentStream(realName);
     }
     else return new RandomAccessInputStream(name);
   }

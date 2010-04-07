@@ -59,6 +59,9 @@ public class RawDataBlockList
                 break;
             }
             blocks.add(block);
+            if (size + stream.getFilePointer() > stream.length()) {
+              break;
+            }
             stream.skipBytes(size);
         }
         setBlocks(( RawDataBlock [] ) blocks.toArray(new RawDataBlock[ 0 ]));
