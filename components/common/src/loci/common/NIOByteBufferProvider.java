@@ -61,7 +61,7 @@ public class NIOByteBufferProvider {
   // -- Fields --
 
   /** Whether or not we are to use memory mapped I/O. */
-  private boolean useMappedByteBuffer = false;
+  private static boolean useMappedByteBuffer = false;
 
   /** File channel to allocate or map data from. */
   private FileChannel channel;
@@ -69,17 +69,7 @@ public class NIOByteBufferProvider {
   /** If we are to use memory mapped I/O, the map mode. */
   private MapMode mapMode;
 
-  // -- Constructors --
-
-  /**
-   * Default constructor.
-   * @param channel File channel to allocate or map byte buffers from.
-   * @param mapMode The map mode. Required but only used if memory mapped I/O
-   * is to occur.
-   */
-  public NIOByteBufferProvider(FileChannel channel, MapMode mapMode) {
-    this.channel = channel;
-    this.mapMode = mapMode;
+  static {
     String osArch = System.getProperty("os.arch");
     String javaVersion = System.getProperty("java.version");
     if ("amd64".equals(osArch) || "x86_64".equals(osArch)) {
@@ -105,12 +95,28 @@ public class NIOByteBufferProvider {
         if (y >= MINIMUM_JAVA_VERSION) {
           useMappedByteBuffer = true;
         }
+        else {
+          useMappedByteBuffer = false;
+        }
       }
       catch (Exception e) {
         LOGGER.warn("Error parsing x.y.z Java version string.", e);
       }
     }
-    LOGGER.debug("Using mapped byte buffer? " + useMappedByteBuffer);
+    LOGGER.info("Using mapped byte buffer? " + useMappedByteBuffer);
+  }
+
+  // -- Constructors --
+
+  /**
+   * Default constructor.
+   * @param channel File channel to allocate or map byte buffers from.
+   * @param mapMode The map mode. Required but only used if memory mapped I/O
+   * is to occur.
+   */
+  public NIOByteBufferProvider(FileChannel channel, MapMode mapMode) {
+    this.channel = channel;
+    this.mapMode = mapMode;
   }
 
   /**
