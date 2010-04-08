@@ -243,8 +243,11 @@ public class APNGReader extends BIFormatReader {
     core[0].dimensionOrder = "XYCTZ";
     core[0].interleaved = false;
 
-    BufferedImage img =
-      ImageIO.read(new DataInputStream(new RandomAccessInputStream(currentId)));
+    RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
+    DataInputStream dis = new DataInputStream(ras);
+    BufferedImage img = ImageIO.read(dis);
+    dis.close();
+
     core[0].sizeX = img.getWidth();
     core[0].sizeY = img.getHeight();
     core[0].rgb = img.getRaster().getNumBands() > 1;

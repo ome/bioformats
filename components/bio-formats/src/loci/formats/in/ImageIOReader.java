@@ -89,8 +89,10 @@ public abstract class ImageIOReader extends BIFormatReader {
 
     LOGGER.info("Populating metadata");
     core[0].imageCount = 1;
-    BufferedImage img =
-      ImageIO.read(new DataInputStream(new RandomAccessInputStream(currentId)));
+    RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
+    DataInputStream dis = new DataInputStream(ras);
+    BufferedImage img = ImageIO.read(dis);
+    dis.close();
     if (img == null) throw new FormatException("Invalid image stream");
 
     core[0].sizeX = img.getWidth();

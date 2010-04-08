@@ -357,7 +357,9 @@ public class BioRadReader extends FormatReader {
           used.add(path);
 
           DefaultHandler handler = new BioRadHandler();
-          XMLTools.parseXML(new RandomAccessInputStream(path), handler);
+          RandomAccessInputStream xml = new RandomAccessInputStream(path);
+          XMLTools.parseXML(xml, handler);
+          xml.close();
 
           used.remove(currentId);
           for (int q=0; q<list.length; q++) {
