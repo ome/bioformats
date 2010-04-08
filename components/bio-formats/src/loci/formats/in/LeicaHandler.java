@@ -707,23 +707,25 @@ public class LeicaHandler extends DefaultHandler {
       long low = Long.parseLong(attributes.getValue("LowInteger"));
 
       long ms = DateTools.getMillisFromTicks(high, low);
-      if (count == 0) {
-        String date = DateTools.convertDate(ms, DateTools.COBOL);
-        if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
-          System.currentTimeMillis())
-        {
-          store.setImageCreationDate(date, numDatasets);
+      if (numDatasets >= 0) {
+        if (count == 0) {
+          String date = DateTools.convertDate(ms, DateTools.COBOL);
+          if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
+            System.currentTimeMillis())
+          {
+            store.setImageCreationDate(date, numDatasets);
+          }
+          firstStamp = ms;
+          store.setPlaneTimingDeltaT(new Float(0), numDatasets, 0, count);
         }
-        firstStamp = ms;
-        store.setPlaneTimingDeltaT(new Float(0), numDatasets, 0, count);
-      }
-      else {
-        CoreMetadata coreMeta = core.get(numDatasets);
-        int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
-        if (count < nImages) {
-          ms -= firstStamp;
-          store.setPlaneTimingDeltaT(
-            new Float(ms / 1000.0), numDatasets, 0, count);
+        else {
+          CoreMetadata coreMeta = core.get(numDatasets);
+          int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
+          if (count < nImages) {
+            ms -= firstStamp;
+            store.setPlaneTimingDeltaT(
+              new Float(ms / 1000.0), numDatasets, 0, count);
+          }
         }
       }
 
