@@ -46,7 +46,7 @@ import java.io.IOException;
 * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/auto/Jar2Lib.java">Trac</a>,
 * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/auto/Jar2Lib.java">SVN</a></dd></dl>
 *
-* @author Curtis Rueden ctrueden at wisc.edu
+* @author Brian Selinsky bselinsky at wisc.edu
 */
 public class Jar2Lib {
 
@@ -153,23 +153,66 @@ public class Jar2Lib {
 
 	// -- Main method --
 	public static void main(String[] args) throws Exception {
-		if (args.length < 2) {
-			System.out.println(
-				"Usage: java JaceHeaderAutogen component-name source-dir");
-			System.out.println("    E.g.: java JaceHeaderAutogen " +
-				"bio-formats ~/svn/java/components/bio-formats/src");
-			System.exit(1);
-		}
-
-		String headerFileName = args[0];
-		String sourceInputPath = args[1];
-		String headerInputPath = args[2];
-		String headerOutputPath = args[3];
-		String sourceOutputPath = args[4];
-		String classPath = args[5];
+		String headerFileName = "";
+		String sourceInputPath = "";
+		String headerInputPath = "";
+		String headerOutputPath = "";
+		String sourceOutputPath = "";
+		String classPath = "";
 		boolean mindep = false;
 		boolean exportSymbols = false;
 		String dependencies = "";
+
+		boolean headerInputPathDefined = false;
+		boolean headerOutputPathDefined = false;
+		boolean sourceInputPathDefined = false;
+		boolean sourceOutputPathDefined = false;
+		boolean headerFileNameDefined = false;
+		boolean classPathDefined = false;
+
+		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:em");
+		go.optErr = true;
+		int ch = -1;
+		// process options in command line arguments
+		while ((ch = go.getopt()) != go.optEOF) {
+			// System.out.println("Processing " + (char)ch);
+			if (ch == 'h') {
+				headerInputPath = go.optArgGet();
+				headerInputPathDefined = true;
+			} else if (ch == 's') {
+				sourceInputPath = go.optArgGet();
+				sourceInputPathDefined = true;
+			} else if (ch == 'H') {
+				headerOutputPath = go.optArgGet();
+				headerOutputPathDefined = true;
+			} else if (ch == 'S') {
+				sourceOutputPath = go.optArgGet();
+				sourceOutputPathDefined = true;
+			} else if (ch == 'C') {
+				classPath = go.optArgGet();
+				classPathDefined = true;
+			} else if (ch == 'd') {
+				dependencies = go.optArgGet();
+			} else if (ch == 'f') {
+				headerFileName = go.optArgGet();
+				headerFileNameDefined = true;
+			} else if (ch == 'm') {
+				mindep = true;
+			} else if (ch == 'e') {
+				exportSymbols = true;
+			} else {
+				System.err.println("Illegal option " + ch);
+				System.exit(1);
+			}
+		}
+
+		if (!(headerInputPathDefined && headerInputPathDefined &&
+			sourceOutputPathDefined && sourceOutputPathDefined &&
+			headerFileNameDefined && classPathDefined))
+		{
+			System.out.println("Add a usage statement");
+			System.exit(1);
+		}
 
 		Jar2Lib jar2Lib =
 			new Jar2Lib(
