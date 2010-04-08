@@ -116,13 +116,18 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    tiffSaver = new TiffSaver(out);
-    tiffSaver.setLittleEndian(littleEndian);
-    tiffSaver.setBigTiff(isBigTiff);
+    if (initialized) {
+      tiffSaver = new TiffSaver(out);
+      tiffSaver.setLittleEndian(littleEndian);
+      tiffSaver.setBigTiff(isBigTiff);
+    }
 
     if (!initialized) {
       initialized = true;
       out = new RandomAccessOutputStream(currentId);
+      tiffSaver = new TiffSaver(out);
+      tiffSaver.setLittleEndian(littleEndian);
+      tiffSaver.setBigTiff(isBigTiff);
 
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       if (tmp.length() == 0) {

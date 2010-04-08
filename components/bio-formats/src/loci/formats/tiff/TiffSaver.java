@@ -246,6 +246,7 @@ public class TiffSaver {
       out.write(strips[i]);
     }
     long endFP = out.getFilePointer();
+    if (last) endFP = 0;
 
     out.seek(fp);
     writeIFD(ifd, endFP);
@@ -550,7 +551,7 @@ public class TiffSaver {
         writeIntValue(out, newOffset);
         if (extraBuf.length() > 0) {
           out.seek(newOffset);
-          out.write(extraBuf.getByteBuffer());
+          out.write(extraBuf.getByteBuffer(), 0, newCount);
         }
         return;
       }
@@ -616,6 +617,9 @@ public class TiffSaver {
     }
     if (ifd.get(IFD.ROWS_PER_STRIP) == null) {
       ifd.putIFDValue(IFD.ROWS_PER_STRIP, new long[] {1});
+    }
+    if (ifd.get(IFD.IMAGE_DESCRIPTION) == null) {
+      ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, "");
     }
   }
 
