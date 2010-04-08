@@ -34,6 +34,11 @@ import java.lang.String;
 import jace.autoproxy.AutoProxy;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
 * Automatically generates a C++ header file for use with Jace, listing all
@@ -70,7 +75,8 @@ public class Jar2Lib {
 		String classPath,
 		boolean mindep,
 		boolean exportSymbols,
-		String dependencies) {
+		String dependencies,
+		String dependencyFile) {
 
 		this.headerFileName = headerFileName;
 		this.headerInputPath = headerInputPath;
@@ -80,16 +86,35 @@ public class Jar2Lib {
 		this.classPath = classPath;
 		this.mindep = mindep;
 		this.exportSymbols = exportSymbols;
+		this.dependencyList = new HashSet<String>();
 
-		StringTokenizer st = new StringTokenizer(dependencies, "=");
-		// st.nextToken();
-		// String depList = st.nextToken();
-		// st = new StringTokenizer(depList, ",");
-	
-		dependencyList = new HashSet<String>();
-		// while (st.hasMoreTokens()) {
-			// dependencyList.add(st.nextToken());
-		// }
+		if ( (dependencies != null) && (dependencies.length() != 0) ) {
+			StringTokenizer st = new StringTokenizer(dependencies, "=");
+			st.nextToken();
+			String depList = st.nextToken();
+			st = new StringTokenizer(depList, ",");
+		
+			while (st.hasMoreTokens()) {
+				dependencyList.add(st.nextToken());
+			}
+		}
+
+		if (dependencyFile != null) {
+			File depFile = new File(dependencyFile);
+			if ( (depFile.exists()) && (depFile.exists()) ) {
+				try {
+					BufferedReader reader = new BufferedReader(new FileReader(depFile));
+					String input;
+					while ( (input = reader.readLine()) != null) {
+						dependencyList.add(input);
+					}
+				} catch (java.io.FileNotFoundException fnfe) {
+					// Shouldn't get here
+				} catch (java.io.IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void createJaceHeader() {
@@ -162,6 +187,7 @@ public class Jar2Lib {
 		boolean mindep = false;
 		boolean exportSymbols = false;
 		String dependencies = "";
+		String dependencyFile = "";
 
 		boolean headerInputPathDefined = false;
 		boolean headerOutputPathDefined = false;
@@ -170,7 +196,7 @@ public class Jar2Lib {
 		boolean headerFileNameDefined = false;
 		boolean classPathDefined = false;
 
-		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:em");
+		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:D:em");
 		go.optErr = true;
 		int ch = -1;
 		// process options in command line arguments
@@ -191,6 +217,8 @@ public class Jar2Lib {
 			} else if (ch == 'C') {
 				classPath = go.optArgGet();
 				classPathDefined = true;
+			} else if (ch == 'D') {
+				dependencyFile = go.optArgGet();
 			} else if (ch == 'd') {
 				dependencies = go.optArgGet();
 			} else if (ch == 'f') {
@@ -224,7 +252,8 @@ public class Jar2Lib {
 				classPath,
 				mindep,
 				exportSymbols,
-				dependencies);
+				dependencies,
+				dependencyFile);
 
 		jar2Lib.createJaceHeader();
 
