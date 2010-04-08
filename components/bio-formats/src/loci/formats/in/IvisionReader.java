@@ -87,7 +87,7 @@ public class IvisionReader extends FormatReader {
     String version = stream.readString(3);
     try {
       Double.parseDouble(version);
-      return true;
+      return version.indexOf(".") != -1;
     }
     catch (NumberFormatException e) { }
     return false;

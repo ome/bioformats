@@ -178,6 +178,7 @@ public class DeltavisionReader extends FormatReader {
     }
 
     super.initFile(id);
+    findLogFiles();
 
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
     switch (metadataLevel) {
@@ -303,7 +304,7 @@ public class DeltavisionReader extends FormatReader {
     core[0].metadataComplete = true;
     core[0].indexed = false;
     core[0].falseColor = false;
-    
+
     // --- populate original metadata ---
 
     LOGGER.info("Populating original metadata");
@@ -732,15 +733,26 @@ public class DeltavisionReader extends FormatReader {
     return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
   }
 
-  /** Extract metadata from associated log file, if it exists. */
-  private boolean parseLogFile(MetadataStore store) throws IOException {
-    // see if log file exists
+  /** Find the log files. */
+  private void findLogFiles() throws IOException {
     if (getCurrentFile().endsWith("_D3D.dv")) {
       logFile = getCurrentFile();
       logFile = logFile.substring(0, logFile.indexOf("_D3D.dv")) + ".dv.log";
     }
     else logFile = getCurrentFile() + ".log";
-    if (!new Location(logFile).exists()) {
+    if (!new Location(logFile).exists()) logFile = null;
+
+    int dot = getCurrentFile().lastIndexOf(".");
+    String base = getCurrentFile().substring(0, dot);
+    deconvolutionLogFile = base + "_log.txt";
+    if (!new Location(deconvolutionLogFile).exists()) {
+      deconvolutionLogFile = null;
+    }
+  }
+
+  /** Extract metadata from associated log file, if it exists. */
+  private boolean parseLogFile(MetadataStore store) throws IOException {
+    if (logFile == null || !new Location(logFile).exists()) {
       logFile = null;
       return false;
     }
@@ -967,13 +979,13 @@ public class DeltavisionReader extends FormatReader {
 
   /** Parse deconvolution output, if it exists. */
   private void parseDeconvolutionLog(MetadataStore store) throws IOException {
-    int dot = getCurrentFile().lastIndexOf(".");
-    String base = getCurrentFile().substring(0, dot);
-    if (!new Location(base + "_log.txt").exists()) return;
+    if (deconvolutionLogFile == null ||
+      !new Location(deconvolutionLogFile).exists())
+    {
+      return;
+    }
 
     LOGGER.info("Parsing deconvolution log file");
-
-    deconvolutionLogFile = base + "_log.txt";
 
     RandomAccessInputStream s =
       new RandomAccessInputStream(deconvolutionLogFile);
