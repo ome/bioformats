@@ -37,6 +37,10 @@ import loci.formats.FormatException;
 /**
  * AmiraParameters handles parsing and writing of AmiraMesh headers.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">SVN</a></dd></dl>
+ *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
@@ -81,15 +85,19 @@ public class AmiraParameters {
     Matcher amiraMeshDef = Pattern.compile("#\\s+AmiraMesh.*?" +
       "(BINARY|ASCII)(-LITTLE-ENDIAN)*").matcher(firstLine);
     if (amiraMeshDef.find()) {
-      if (amiraMeshDef.group(1).equals("BINARY"))
+      if (amiraMeshDef.group(1).equals("BINARY")) {
         littleEndian = amiraMeshDef.group(2) != null;
-      else if(amiraMeshDef.group(1).equals("ASCII"))
+      }
+      else if (amiraMeshDef.group(1).equals("ASCII")) {
         ascii = true;
-      else
+      }
+      else {
         syntaxError("Can't recognise this Amira file type");
+      }
     }
-    else
+    else {
       syntaxError("Doesn't seem to be an Amira file");
+    }
 
     column = 0;
     row = 1;
@@ -124,10 +132,12 @@ public class AmiraParameters {
         streamNames[i] = (String) al.get(0);
         Map streamMap = (Map) al.get(1);
         Iterator it = streamMap.keySet().iterator();
-        if (it.hasNext())
+        if (it.hasNext()) {
           streamTypes[i] = (String) it.next();
-        else
+        }
+        else {
           syntaxError("Unable to identify data type");
+        }
         i++;
       }
     }
@@ -173,12 +183,15 @@ public class AmiraParameters {
         value = dimensions;
       }
       else if(key.equals("nNodes") || key.equals("nTriangles") ||
-          key.equals("nTetrahedra") || key.equals("nEdges"))
+        key.equals("nTetrahedra") || key.equals("nEdges"))
+      {
         throw new FormatException("Don't know yet how to handle " + key);
-      else if (key.equals("Parameters"))
+      }
+      else if (key.equals("Parameters")) {
         value = readMap();
+      }
       else if (key.equals("Lattice") || key.equals("Vertices") ||
-          key.equals("Lines") || key.equals("Markers"))
+        key.equals("Lines") || key.equals("Markers"))
       {
         ArrayList list = new ArrayList();
         list.add(key);
@@ -190,22 +203,19 @@ public class AmiraParameters {
           readByte();
           skipWhiteSpace();
         }
-        if (c != '@')
-          syntaxError("Missing @");
+        if (c != '@') syntaxError("Missing @");
 
         // store information in an array
         readByte();
         int index = readNumber().intValue();
 
-        if (c == '(')
-          list.add(readQuotedString());
+        if (c == '(') list.add(readQuotedString());
         skipComment();
 
         streams.put("@" + index, list);
         continue; // no need to store this information
       }
-      else
-        skipComment();
+      else skipComment();
       map.put(key, value);
     }
   }
@@ -216,19 +226,16 @@ public class AmiraParameters {
       row++;
       column = 1;
     }
-    else
-      column++;
+    else column++;
     return c;
   }
 
   protected void skipComment() throws IOException {
-    while (c != '\n')
-      readByte();
+    while (c != '\n') readByte();
   }
 
   protected void skipWhiteSpace() throws IOException {
-    while (c == ' ' || c == '\t' || c == '\n')
-      readByte();
+    while (c == ' ' || c == '\t' || c == '\n') readByte();
   }
 
   protected String readKey() throws IOException {
@@ -243,14 +250,15 @@ public class AmiraParameters {
   protected Number readNumber() throws FormatException, IOException {
     String string = "";
     while ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+' ||
-        c == 'e')
+      c == 'e')
     {
       string += c;
       readByte();
     }
     try {
-      if (string.indexOf('.') < 0 && string.indexOf('e') < 0)
+      if (string.indexOf('.') < 0 && string.indexOf('e') < 0) {
         return Integer.valueOf(string);
+      }
       return Double.valueOf(string);
     }
     catch (NumberFormatException e) {
@@ -264,7 +272,7 @@ public class AmiraParameters {
     ArrayList<Integer> result = new ArrayList<Integer>();
     int currentRow = row;
     // Keep reading until we hit newline or a non-numeric
-    while (currentRow==row &&
+    while (currentRow == row &&
       ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+'))
     {
       result.add((Integer) readNumber());
@@ -277,19 +285,20 @@ public class AmiraParameters {
   protected Number[] readNumberArray() throws FormatException, IOException {
     // read integers until end of line
     ArrayList<Number> result = new ArrayList<Number>();
-    boolean intsOnly=true;
+    boolean intsOnly = true;
     int currentRow = row;
     // Keep reading until we hit newline or a non-numeric
-    while (currentRow==row  &&
-        ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+'))
+    while (currentRow == row &&
+      ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+'))
     {
-      Number n=readNumber();
-      if(n instanceof Double)
-        intsOnly=false;
+      Number n = readNumber();
+      if (n instanceof Double) {
+        intsOnly = false;
+      }
       result.add(n);
       skipWhiteSpace();
     }
-    if(intsOnly) {
+    if (intsOnly) {
       Integer[] intResult = new Integer[result.size()];
       return result.toArray(intResult);
     }
@@ -297,7 +306,7 @@ public class AmiraParameters {
       // nb this is necessary because we may have a mix
       // of Integers and Doubles
       Double[] doubleResult = new Double[result.size()];
-      for(int i = 0; i < doubleResult.length; i++) {
+      for (int i = 0; i < doubleResult.length; i++) {
         doubleResult[i] = new Double(result.get(i).doubleValue());
       }
       return doubleResult;
@@ -328,10 +337,12 @@ public class AmiraParameters {
 
   protected String readQuotedString() throws FormatException, IOException {
     int quote = c;
-    if (quote == '(')
+    if (quote == '(') {
       quote = ')';
-    else if (quote != '"' && quote != '\'')
+    }
+    else if (quote != '"' && quote != '\'') {
       syntaxError("Invalid quote: " + c);
+    }
     String result = "";
     for (;;) {
       readByte();
@@ -339,15 +350,17 @@ public class AmiraParameters {
         readByte();
         return result;
       }
-      if (quote == '"' && c == '\\')
+      if (quote == '"' && c == '\\') {
         readByte();
+      }
       result += c;
     }
   }
 
   protected Map readMap() throws FormatException, IOException {
-    if (c != '{')
+    if (c != '{') {
       syntaxError("Illegal block: " + c);
+    }
     readByte();
     Map subMap = new LinkedHashMap();
     for (;;) {
@@ -362,33 +375,33 @@ public class AmiraParameters {
       }
 
       String key = readKey();
-      if (key.equals(""))
-        syntaxError("Invalid key");
+      if (key.equals("")) syntaxError("Invalid key");
 
       skipWhiteSpace();
       Object value;
-      if (c == '{')
-        value = readMap();
+      if (c == '{') value = readMap();
       else {
-        if (key.equals("BoundingBox"))
+        if (key.equals("BoundingBox")) {
           value = readDoubleArray(6);
-        else if (key.equals("MinMax"))
+        }
+        else if (key.equals("MinMax")) {
           value = readDoubleArray(2);
+        }
         else if (key.startsWith("byte") || key.startsWith("short") ||
-            key.startsWith("ushort") || key.startsWith("float"))
+          key.startsWith("ushort") || key.startsWith("float"))
+        {
           value = readKey();
-        else if (c == '"' || c == '\'')
+        }
+        else if (c == '"' || c == '\'') {
           value = readQuotedString();
+        }
         else {
           Number[] na = readNumberArray();
-          if(na.length==1)
-            value = na[0];
-          else
-            value = na;
+          if (na.length == 1) value = na[0];
+          else value = na;
         }
 
-        if (c == ',')
-          readByte();
+        if (c == ',') readByte();
       }
       subMap.put(key, value);
     }
@@ -418,10 +431,12 @@ public class AmiraParameters {
       Map.Entry entry = (Map.Entry) iter.next();
       result += separator + entry.getKey() + " " +
         entryToString(entry.getValue(), indent);
-      if (result.endsWith("}"))
+      if (result.endsWith("}")) {
         separator = "\n" + indent;
-      else
+      }
+      else {
         separator = ",\n" + indent;
+      }
     }
     return result + "\n";
   }
@@ -429,49 +444,56 @@ public class AmiraParameters {
   public static String entryToString(Object object, String indent)
     throws FormatException
   {
-    if (object instanceof Integer || object instanceof Double)
+    if (object instanceof Integer || object instanceof Double) {
       return object.toString();
+    }
     if (object instanceof String) {
       String string = (String) object, result = "\"";
       int offset = 0;
       for (;;) {
         int nextOffset = string.indexOf('"', offset + 1);
-        if (nextOffset < 0)
+        if (nextOffset < 0) {
           break;
-        if (nextOffset > offset + 1)
-          result += string.substring(offset,
-              nextOffset);
+        }
+        if (nextOffset > offset + 1) {
+          result += string.substring(offset, nextOffset);
+        }
         result += "\\";
         offset = nextOffset;
       }
-      if (offset + 1 < string.length())
+      if (offset + 1 < string.length()) {
         result += string.substring(offset);
+      }
       return result + "\"";
     }
     if (object instanceof Integer[]) {
       Integer[] array = (Integer[]) object;
       String result = null;
-      for (int i = 0; i < array.length; i++)
+      for (int i = 0; i < array.length; i++) {
         result = (i > 0 ? result + " " : "") + array[i];
+      }
       return result;
     }
     if (object instanceof Double[]) {
       Double[] array = (Double[]) object;
       String result = null;
-      for (int i = 0; i < array.length; i++)
+      for (int i = 0; i < array.length; i++) {
         result = (i > 0 ? result + " " : "") + array[i];
+      }
       return result;
     }
-    if (object instanceof Map)
+    if (object instanceof Map) {
       return "{\n" + toString((Map) object, indent + "\t") + indent + "}";
+    }
     if (object instanceof ArrayList) {
       String result = "{\n";
-      for (Object item : (ArrayList) object)
+      for (Object item : (ArrayList) object) {
         result += entryToString(item, indent + "\t") + "\n";
+      }
       return result + indent + "}";
     }
     throw new FormatException("Illegal value type: " +
-        object.getClass().getName());
+      object.getClass().getName());
   }
 
   public static void main(String[] args) {

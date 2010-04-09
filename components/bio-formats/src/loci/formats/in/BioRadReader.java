@@ -94,6 +94,43 @@ public class BioRadReader extends FormatReader {
   public static final int NOTE_TYPE_STRUCTURE = 21;
   public static final int NOTE_TYPE_4D_SERIES = 22;
 
+  /** Structure labels. */
+  public static final String[] STRUCTURE_LABELS_1 = {
+    "Scan Channel", "Both mode", "Speed", "Filter", "Factor", "Number of scans",
+    "Photon counting mode (channel 1)", "Photon counting detector (channel 1)",
+    "Photon counting mode (channel 2)", "Photon counting detector (channel 2)",
+    "Photon mode", "Objective magnification", "Zoom factor", "Motor on",
+    "Z Step Size"
+  };
+
+  public static final String[] STRUCTURE_LABELS_2 = {
+    "Z Start", "Z Stop", "Scan area X coordinate", "Scan area Y coordinate",
+    "Scan area width", "Scan area height"
+  };
+
+  public static final String[] STRUCTURE_LABELS_3 = {
+    "Iris for PMT", "Gain for PMT", "Black level for PMT",
+    "Emission filter for PMT", "Multiplier for channel"
+  };
+
+  public static final String[] STRUCTURE_LABELS_4 = {
+    "enhanced", "PMT 1 percentage", "PMT 2 percentage",
+    "Transmission 1 percentage", "Transmission 2 percentage",
+    "Transmission 3 percentage"
+  };
+
+  public static final String[] STRUCTURE_LABELS_5 = {
+    "laser ", "excitation filter for laser ", "ND filter for laser ",
+    "emission filter for laser "
+  };
+
+  public static final String[] STRUCTURE_LABELS_6 = {
+    "Part number for laser 3", "Part number for excitation filter for laser 3",
+    "Part number for ND filter for laser 3",
+    "Part number for emission filter for laser 3",
+    "Part number for filter block 1", "Part number for filter block 2"
+  };
+
   public static final String[] PIC_SUFFIX = {"pic"};
 
   public static final int LUT_LENGTH = 256;
@@ -271,39 +308,45 @@ public class BioRadReader extends FormatReader {
       }
     }
 
-    int merged = in.readShort();
-    int color1 = in.readShort();
-    int fileId = in.readShort();
-    int ramp2min = in.readShort();
-    int ramp2max = in.readShort();
-    int color2 = in.readShort();
-    int edited = in.readShort();
-    int lens = in.readShort();
-    float magFactor = in.readFloat();
+    float magFactor = 1f;
+    int lens = 0;
 
-    // check validity of header
-    if (fileId != PIC_FILE_ID) {
-      throw new FormatException("Invalid file header : " + fileId);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      int merged = in.readShort();
+      int color1 = in.readShort();
+      int fileId = in.readShort();
+      int ramp2min = in.readShort();
+      int ramp2max = in.readShort();
+      int color2 = in.readShort();
+      int edited = in.readShort();
+      lens = in.readShort();
+      magFactor = in.readFloat();
+
+      // check validity of header
+      if (fileId != PIC_FILE_ID) {
+        throw new FormatException("Invalid file header : " + fileId);
+      }
+
+      // populate metadata fields
+      addGlobalMeta("nx", getSizeX());
+      addGlobalMeta("ny", getSizeY());
+      addGlobalMeta("npic", getImageCount());
+      addGlobalMeta("ramp1_min", ramp1min);
+      addGlobalMeta("ramp1_max", ramp1max);
+      addGlobalMeta("notes", notes);
+      addGlobalMeta("image_number", imageNumber);
+      addGlobalMeta("name", name);
+      addGlobalMeta("merged", MERGE_NAMES[merged]);
+      addGlobalMeta("color1", color1);
+      addGlobalMeta("file_id", fileId);
+      addGlobalMeta("ramp2_min", ramp2min);
+      addGlobalMeta("ramp2_max", ramp2max);
+      addGlobalMeta("color2", color2);
+      addGlobalMeta("edited", edited);
+      addGlobalMeta("lens", lens);
+      addGlobalMeta("mag_factor", magFactor);
     }
-
-    // populate metadata fields
-    addGlobalMeta("nx", getSizeX());
-    addGlobalMeta("ny", getSizeY());
-    addGlobalMeta("npic", getImageCount());
-    addGlobalMeta("ramp1_min", ramp1min);
-    addGlobalMeta("ramp1_max", ramp1max);
-    addGlobalMeta("notes", notes);
-    addGlobalMeta("image_number", imageNumber);
-    addGlobalMeta("name", name);
-    addGlobalMeta("merged", MERGE_NAMES[merged]);
-    addGlobalMeta("color1", color1);
-    addGlobalMeta("file_id", fileId);
-    addGlobalMeta("ramp2_min", ramp2min);
-    addGlobalMeta("ramp2_max", ramp2max);
-    addGlobalMeta("color2", color2);
-    addGlobalMeta("edited", edited);
-    addGlobalMeta("lens", lens);
-    addGlobalMeta("mag_factor", magFactor);
+    else in.skipBytes(20);
 
     // skip image data
     int imageLen = getSizeX() * getSizeY();
@@ -331,8 +374,6 @@ public class BioRadReader extends FormatReader {
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
-    int nLasers = 0;
 
     // read notes
 
@@ -380,446 +421,7 @@ public class BioRadReader extends FormatReader {
 
     core[0].dimensionOrder = "XYCTZ";
 
-    int nextDetector = 0;
-
-    boolean multipleFiles = false;
-    for (int noteIndex=0; noteIndex<noteStrings.size(); noteIndex++) {
-      Note n = noteStrings.get(noteIndex);
-      switch (n.type) {
-        case NOTE_TYPE_USER:
-          // TODO : this should be an overlay
-          addGlobalMeta("Note #" + noteIndex, n.toString());
-          break;
-        case NOTE_TYPE_SCALEBAR:
-          // TODO : this should be an overlay
-          // the format of the text is:
-          // SCALEBAR = <length> <angle>
-          // where <length> is the length of the scalebar in microns,
-          // and <angle> is the angle in degrees
-          addGlobalMeta("Note #" + noteIndex, n.toString());
-          break;
-        case NOTE_TYPE_ARROW:
-          // TODO : this should be an overlay
-          // the format of the text is:
-          // ARROW = <lx> <ly> <angle> <fill>
-          // where <lx> and <ly> define the arrow's bounding box,
-          // <angle> is the angle in degrees and <fill> is either "Fill" or
-          // "Outline"
-          addGlobalMeta("Note #" + noteIndex, n.toString());
-          break;
-        case NOTE_TYPE_VARIABLE:
-          if (n.p.indexOf("=") >= 0) {
-            String key = n.p.substring(0, n.p.indexOf("=")).trim();
-            String value = n.p.substring(n.p.indexOf("=") + 1).trim();
-            addGlobalMeta(key, value);
-
-            if (key.equals("INFO_OBJECTIVE_NAME")) {
-              store.setObjectiveModel(value, 0, 0);
-            }
-            else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
-              store.setObjectiveNominalMagnification(
-                new Integer((int) Float.parseFloat(value)), 0, 0);
-            }
-            else if (key.equals("LENS_MAGNIFICATION")) {
-              store.setObjectiveNominalMagnification(
-                new Integer((int) Float.parseFloat(value)), 0, 0);
-            }
-            else if (key.startsWith("SETTING")) {
-              if (key.indexOf("_DET_") != -1) {
-                int index = key.indexOf("_DET_") + 5;
-                if (key.lastIndexOf("_") > index) {
-                  String detectorID =
-                    MetadataTools.createLSID("Detector", 0, nextDetector);
-                  store.setDetectorID(detectorID, 0, nextDetector);
-                  store.setDetectorType("Unknown", 0, nextDetector);
-
-                  if (key.endsWith("OFFSET")) {
-                    if (nextDetector < offset.size()) {
-                      offset.setElementAt(new Double(value), nextDetector);
-                    }
-                    else {
-                      while (nextDetector > offset.size()) {
-                        offset.add(null);
-                      }
-                      offset.add(new Double(value));
-                    }
-                  }
-                  else if (key.endsWith("GAIN")) {
-                    if (nextDetector < gain.size()) {
-                      gain.setElementAt(new Double(value), nextDetector);
-                    }
-                    else {
-                      while (nextDetector > gain.size()) {
-                        gain.add(null);
-                      }
-                      gain.add(new Double(value));
-                    }
-                  }
-                  nextDetector++;
-                }
-              }
-            }
-            else {
-              String[] values = value.split(" ");
-              if (values.length > 1) {
-                try {
-                  int type = Integer.parseInt(values[0]);
-                  if (type == 257 && values.length >= 3) {
-                    // found length of axis in um
-                    Double pixelSize = new Double(values[2]);
-                    if (key.equals("AXIS_2")) {
-                      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-                    }
-                    else if (key.equals("AXIS_3")) {
-                      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-                    }
-                  }
-                }
-                catch (NumberFormatException e) { }
-              }
-            }
-          }
-          else if (n.p.startsWith("AXIS_2")) {
-            String[] values = n.p.split(" ");
-            Double pixelSize = new Double(values[3]);
-            store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-          }
-          else if (n.p.startsWith("AXIS_3")) {
-            String[] values = n.p.split(" ");
-            Double pixelSize = new Double(values[3]);
-            store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-          }
-          else {
-            addGlobalMeta("Note #" + noteIndex, n.toString());
-          }
-          break;
-        case NOTE_TYPE_STRUCTURE:
-          int structureType = (n.x & 0xff00) >> 8;
-          int version = (n.x & 0xff);
-          String[] values = n.p.split(" ");
-          if (structureType == 1) {
-            switch (n.y) {
-              case 1:
-                addGlobalMeta("Scan Channel", values[0]);
-                addGlobalMeta("Both mode", values[1]);
-                addGlobalMeta("Speed", values[2]);
-                addGlobalMeta("Filter", values[3]);
-                addGlobalMeta("Factor", values[4]);
-                addGlobalMeta("Number of scans", values[5]);
-                addGlobalMeta("Photon counting mode (channel 1)", values[6]);
-                addGlobalMeta("Photon counting detector (channel 1)",
-                  values[7]);
-                addGlobalMeta("Photon counting mode (channel 2)", values[8]);
-                addGlobalMeta("Photon counting detector (channel 2)",
-                  values[9]);
-                addGlobalMeta("Photon mode", values[10]);
-                addGlobalMeta("Objective magnification", values[11]);
-                addGlobalMeta("Zoom factor", values[12]);
-                addGlobalMeta("Motor on", values[13]);
-                addGlobalMeta("Z Step Size", values[14]);
-
-                store.setObjectiveNominalMagnification(
-                  new Integer((int) Float.parseFloat(values[11])), 0, 0);
-                store.setDimensionsPhysicalSizeZ(new Double(values[14]), 0, 0);
-                break;
-              case 2:
-                addGlobalMeta("Z Start", values[0]);
-                addGlobalMeta("Z Stop", values[1]);
-                addGlobalMeta("Scan area X coordinate", values[2]);
-                addGlobalMeta("Scan area Y coordinate", values[3]);
-                addGlobalMeta("Scan area width", values[4]);
-                addGlobalMeta("Scan area height", values[5]);
-
-                double width =
-                  Double.parseDouble(values[4]) - Double.parseDouble(values[2]);
-                width /= getSizeX();
-                double height =
-                  Double.parseDouble(values[5]) - Double.parseDouble(values[3]);
-                height /= getSizeY();
-
-                store.setDimensionsPhysicalSizeX(width, 0, 0);
-                store.setDimensionsPhysicalSizeY(height, 0, 0);
-
-                break;
-              case 3:
-                for (int i=0; i<3; i++) {
-                  addGlobalMeta("Iris for PMT " + (i + 1), values[i * 4]);
-                  addGlobalMeta("Gain for PMT " + (i + 1), values[i * 4 + 1]);
-                  addGlobalMeta("Black level for PMT " + (i + 1),
-                    values[i * 4 + 2]);
-                  addGlobalMeta("Emission filter for PMT " + (i+1),
-                    values[i*4] + 3);
-                  addGlobalMeta("Multiplier for channel " + (i+1),
-                    values[12 + i]);
-                }
-                break;
-              case 4:
-                nLasers = Integer.parseInt(values[0]);
-                addGlobalMeta("Number of lasers", values[0]);
-                addGlobalMeta("Number of transmission detectors", values[1]);
-                addGlobalMeta("Number of PMTs", values[2]);
-                for (int i=1; i<=3; i++) {
-                  int idx = (i + 1) * 3;
-                  addGlobalMeta("Shutter present for laser " + i,
-                    values[i + 2]);
-                  addGlobalMeta("Neutral density filter for laser " + i,
-                    values[idx]);
-                  addGlobalMeta("Excitation filter for laser " + i,
-                    values[idx + 1]);
-                  addGlobalMeta("Use laser " + i, values[idx + 2]);
-                }
-                for (int i=0; i<nLasers; i++) {
-                  addGlobalMeta("Neutral density filter name - laser " +
-                    (i + 1), values[15 + i]);
-                }
-                break;
-              case 5:
-                for (int i=0; i<nLasers; i++) {
-                  addGlobalMeta("Excitation filter name - laser " + (i+1),
-                    values[i]);
-                }
-                break;
-              case 6:
-                for (int i=0; i<nLasers; i++) {
-                  addGlobalMeta("Emission filter name - laser " + (i+1),
-                    values[i]);
-                }
-                break;
-              case 7:
-                for (int i=0; i<2; i++) {
-                  String prefix = "Mixer " + i;
-                  addGlobalMeta(prefix + " - enhanced", values[i*7]);
-                  addGlobalMeta(prefix + " - PMT 1 percentage",
-                    values[i*7 + 1]);
-                  addGlobalMeta(prefix + " - PMT 2 percentage",
-                    values[i*7 + 2]);
-                  addGlobalMeta(prefix + " - PMT 3 percentage",
-                    values[i*7 + 3]);
-                  addGlobalMeta(prefix + " - Transmission 1 percentage",
-                    values[i * 7 + 4]);
-                  addGlobalMeta(prefix + " - Transmission 2 percentage",
-                    values[i * 7 + 5]);
-                  addGlobalMeta(prefix + " - Transmission 3 percentage",
-                    values[i * 7 + 6]);
-                }
-                addGlobalMeta("Mixer 0 - low signal on", values[14]);
-                addGlobalMeta("Mixer 1 - low signal on", values[15]);
-                break;
-              case 8:
-                addGlobalMeta("Laser name - laser 1", values[0]);
-                break;
-              case 9:
-                addGlobalMeta("Laser name - laser 2", values[0]);
-                break;
-              case 10:
-                addGlobalMeta("Laser name - laser 3", values[0]);
-                break;
-              case 11:
-                for (int i=0; i<3; i++) {
-                  String prefix = "Transmission detector " + (i + 1) + " - ";
-                  addGlobalMeta(prefix + "offset", values[i * 3]);
-                  addGlobalMeta(prefix + "gain", values[i * 3 + 1]);
-                  addGlobalMeta(prefix + "black level", values[i * 3 + 2]);
-
-                  String detectorID =
-                    MetadataTools.createLSID("Detector", 0, i);
-                  store.setDetectorID(detectorID, 0, i);
-                  store.setDetectorOffset(new Double(values[i * 3]), 0, i);
-                  store.setDetectorGain(new Double(values[i * 3 + 1]), 0, i);
-                  store.setDetectorType("Unknown", 0, i);
-                }
-                break;
-              case 12:
-                for (int i=0; i<2; i++) {
-                  String prefix = "Part number for ";
-                  addGlobalMeta(prefix + "laser " + (i + 1), values[i * 4]);
-                  addGlobalMeta(prefix + "excitation filter for laser " +
-                    (i + 1), values[i * 4 + 1]);
-                  addGlobalMeta(prefix + "ND filter for laser " + (i + 1),
-                    values[i * 4 + 2]);
-                  addGlobalMeta(prefix + "emission filter for laser " + (i + 1),
-                    values[i * 4 + 3]);
-                }
-                break;
-              case 13:
-                  addGlobalMeta("Part number for laser 3", values[0]);
-                  addGlobalMeta("Part number for excitation filter for laser 3",
-                    values[1]);
-                  addGlobalMeta("Part number for ND filter for laser 3",
-                    values[2]);
-                  addGlobalMeta("Part number for emission filter for laser 3",
-                    values[3]);
-                  addGlobalMeta("Part number for filter block 1", values[4]);
-                  addGlobalMeta("Part number for filter block 2", values[5]);
-                break;
-              case 14:
-                addGlobalMeta("Filter Block Name - filter block 1", values[0]);
-                addGlobalMeta("Filter Block Name - filter block 2", values[1]);
-                break;
-              case 15:
-                for (int i=0; i<5; i++) {
-                  addGlobalMeta("Image bands status - band " + (i + 1),
-                    values[i*3]);
-                  addGlobalMeta("Image bands min - band " + (i + 1),
-                    values[i*3 + 1]);
-                  addGlobalMeta("Image bands max - band " + (i + 1),
-                    values[i*3 + 2]);
-                  if (store instanceof IMinMaxStore) {
-                    ((IMinMaxStore) store).setChannelGlobalMinMax(i,
-                      Double.parseDouble(values[i*3 + 1]),
-                      Double.parseDouble(values[i*3 + 2]), 0);
-                  }
-                }
-                break;
-              case 17:
-                int year = Integer.parseInt(values[5]) + 1900;
-                for (int i=0; i<5; i++) {
-                  if (values[i].length() == 1) values[i] = "0" + values[i];
-                }
-
-                // date is in yyyy-MM-dd'T'HH:mm:ss
-                String date = year + "-" + values[4] + "-" + values[3] + "T" +
-                  values[2] + ":" + values[1] + ":" + values[0];
-                addGlobalMeta("Acquisition date", date);
-                store.setImageCreationDate(date, 0);
-                break;
-              case 18:
-                addGlobalMeta("Mixer 3 - enhanced", values[0]);
-                for (int i=1; i<=3; i++) {
-                  addGlobalMeta("Mixer 3 - PMT " + i + " percentage",
-                    values[i]);
-                  addGlobalMeta("Mixer 3 - Transmission " + i + " percentage",
-                    values[i + 3]);
-                  addGlobalMeta("Mixer 3 - photon counting " + i,
-                    values[i + 7]);
-                }
-                addGlobalMeta("Mixer 3 - low signal on", values[7]);
-                addGlobalMeta("Mixer 3 - mode", values[11]);
-                break;
-              case 19:
-                for (int i=1; i<=2; i++) {
-                  String prefix = "Mixer " + i;
-                  addGlobalMeta(prefix + " - photon counting 1",
-                    values[i * 4 - 4]);
-                  addGlobalMeta(prefix + " - photon counting 2",
-                    values[i * 4 - 3]);
-                  addGlobalMeta(prefix + " - photon counting 3",
-                    values[i * 4 - 2]);
-                  addGlobalMeta(prefix + " - mode", values[i * 4 - 1]);
-                }
-                break;
-              case 20:
-                addGlobalMeta("Display mode", values[0]);
-                addGlobalMeta("Course", values[1]);
-                addGlobalMeta("Time Course - experiment type", values[2]);
-                addGlobalMeta("Time Course - kd factor", values[3]);
-                store.setExperimentType(values[2], 0);
-                break;
-              case 21:
-                addGlobalMeta("Time Course - ion name", values[0]);
-                break;
-              case 22:
-                addGlobalMeta("PIC file generated on Isoscan (lite)",
-                  values[0]);
-                for (int i=1; i<=3; i++) {
-                  addGlobalMeta("Photon counting used (PMT " + i + ")",
-                    values[i]);
-                  addGlobalMeta("Hot spot filter used (PMT " + i + ")",
-                    values[i+3]);
-                  addGlobalMeta("Tx Selector used (TX " + i + ")",
-                    values[i + 6]);
-                }
-                break;
-            }
-          }
-          break;
-        default:
-          // notes for display only
-          addGlobalMeta("Note #" + noteIndex, n.toString());
-      }
-
-      // if the text of the note contains "AXIS", parse the text
-      // more thoroughly (see pg. 21 of the BioRad specs)
-
-      if (n.p.indexOf("AXIS") != -1) {
-        n.p = n.p.replaceAll("=", "");
-        Vector<String> v = new Vector<String>();
-        StringTokenizer tokens = new StringTokenizer(n.p, " ");
-        while (tokens.hasMoreTokens()) {
-          String token = tokens.nextToken().trim();
-          if (token.length() > 0) v.add(token);
-        }
-        String[] values = v.toArray(new String[v.size()]);
-        String key = values[0];
-        String noteType = values[1];
-
-        int axisType = Integer.parseInt(noteType);
-
-        if (values.length > 2) {
-          switch (axisType) {
-            case 1:
-              addGlobalMeta(key + " distance (X) in microns", values[2]);
-              addGlobalMeta(key + " distance (Y) in microns", values[3]);
-              break;
-            case 3:
-              addGlobalMeta(key + " angle (X) in degrees", values[2]);
-              addGlobalMeta(key + " angle (Y) in degrees", values[3]);
-              break;
-            case 4:
-              addGlobalMeta(key + " intensity (X)", values[2]);
-              addGlobalMeta(key + " intensity (Y)", values[3]);
-              break;
-            case 6:
-              addGlobalMeta(key + " ratio (X)", values[2]);
-              addGlobalMeta(key + " ratio (Y)", values[3]);
-              break;
-            case 7:
-              addGlobalMeta(key + " log ratio (X)", values[2]);
-              addGlobalMeta(key + " log ratio (Y)", values[3]);
-              break;
-            case 9:
-              addGlobalMeta(key + " noncalibrated intensity min", values[2]);
-              addGlobalMeta(key + " noncalibrated intensity max", values[3]);
-              addGlobalMeta(key + " calibrated intensity min", values[4]);
-              addGlobalMeta(key + " calibrated intensity max", values[5]);
-              break;
-            case 11:
-              addGlobalMeta(key + " RGB type (X)", values[2]);
-              addGlobalMeta(key + " RGB type (Y)", values[3]);
-
-              if (key.equals("AXIS_4")) {
-                // this is a single section multi-channel dataset
-                core[0].sizeC = getImageCount();
-                core[0].sizeZ = 1;
-                core[0].sizeT = 1;
-              }
-              else if (key.equals("AXIS_9")) {
-                multipleFiles = true;
-                core[0].sizeC = (int) Double.parseDouble(values[3]);
-              }
-              break;
-            case 14:
-              addGlobalMeta(key + " time course type (X)", values[2]);
-              addGlobalMeta(key + " time course type (Y)", values[3]);
-              break;
-            case 15:
-              String prefix = " inverse sigmoid calibrated intensity ";
-              addGlobalMeta(key + prefix + "(min)", values[2]);
-              addGlobalMeta(key + prefix + "(max)", values[3]);
-              addGlobalMeta(key + prefix + "(beta)", values[4]);
-              addGlobalMeta(key + prefix + "(Kd)", values[5]);
-              break;
-            case 16:
-              prefix = " log inverse sigmoid calibrated intensity ";
-              addGlobalMeta(key + prefix + "(min)", values[2]);
-              addGlobalMeta(key + prefix + "(max)", values[3]);
-              addGlobalMeta(key + prefix + "(beta)", values[4]);
-              addGlobalMeta(key + prefix + "(Kd)", values[5]);
-              break;
-          }
-        }
-      }
-    }
+    boolean multipleFiles = parseNotes(store);
 
     if (multipleFiles && isGroupFiles() && pics.size() == 0) {
       // do file grouping
@@ -873,37 +475,39 @@ public class BioRadReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName(name, 0);
 
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    // link Objective to Image using ObjectiveSettings
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
+      // link Objective to Image using ObjectiveSettings
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
 
-    store.setObjectiveLensNA(new Double(lens), 0, 0);
-    store.setObjectiveNominalMagnification((int) magFactor, 0, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setObjectiveLensNA(new Double(lens), 0, 0);
+      store.setObjectiveNominalMagnification((int) magFactor, 0, 0);
+      store.setObjectiveCorrection("Unknown", 0, 0);
+      store.setObjectiveImmersion("Unknown", 0, 0);
 
-    // link Detector to Image
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      Double detectorOffset = i < offset.size() ? offset.get(i) : null;
-      Double detectorGain = i < gain.size() ? gain.get(i) : null;
+      // link Detector to Image
+      for (int i=0; i<getEffectiveSizeC(); i++) {
+        Double detectorOffset = i < offset.size() ? offset.get(i) : null;
+        Double detectorGain = i < gain.size() ? gain.get(i) : null;
 
-      if (detectorOffset != null || detectorGain != null) {
-        String detectorID = MetadataTools.createLSID("Detector", 0, i);
-        store.setDetectorSettingsDetector(detectorID, 0, i);
-        store.setDetectorID(detectorID, 0, i);
-        store.setDetectorType("Unknown", 0, i);
-      }
-      if (detectorOffset != null) {
-        store.setDetectorSettingsOffset(detectorOffset, 0, i);
-      }
-      if (detectorGain != null) {
-        store.setDetectorSettingsGain(detectorGain, 0, i);
+        if (detectorOffset != null || detectorGain != null) {
+          String detectorID = MetadataTools.createLSID("Detector", 0, i);
+          store.setDetectorSettingsDetector(detectorID, 0, i);
+          store.setDetectorID(detectorID, 0, i);
+          store.setDetectorType("Unknown", 0, i);
+        }
+        if (detectorOffset != null) {
+          store.setDetectorSettingsOffset(detectorOffset, 0, i);
+        }
+        if (detectorGain != null) {
+          store.setDetectorSettingsGain(detectorGain, 0, i);
+        }
       }
     }
   }
@@ -988,6 +592,415 @@ public class BioRadReader extends FormatReader {
       // add note to list
       noteStrings.add(n);
     }
+  }
+
+  private boolean parseNotes(MetadataStore store) {
+    boolean multipleFiles = false;
+    int nextDetector = 0, nLasers = 0;
+    for (int noteIndex=0; noteIndex<noteStrings.size(); noteIndex++) {
+      Note n = noteStrings.get(noteIndex);
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        switch (n.type) {
+          case NOTE_TYPE_USER:
+            // TODO : this should be an overlay
+            addGlobalMeta("Note #" + noteIndex, n.toString());
+            break;
+          case NOTE_TYPE_SCALEBAR:
+            // TODO : this should be an overlay
+            // the format of the text is:
+            // SCALEBAR = <length> <angle>
+            // where <length> is the length of the scalebar in microns,
+            // and <angle> is the angle in degrees
+            addGlobalMeta("Note #" + noteIndex, n.toString());
+            break;
+          case NOTE_TYPE_ARROW:
+            // TODO : this should be an overlay
+            // the format of the text is:
+            // ARROW = <lx> <ly> <angle> <fill>
+            // where <lx> and <ly> define the arrow's bounding box,
+            // <angle> is the angle in degrees and <fill> is either "Fill" or
+            // "Outline"
+            addGlobalMeta("Note #" + noteIndex, n.toString());
+            break;
+          case NOTE_TYPE_VARIABLE:
+            if (n.p.indexOf("=") >= 0) {
+              String key = n.p.substring(0, n.p.indexOf("=")).trim();
+              String value = n.p.substring(n.p.indexOf("=") + 1).trim();
+              addGlobalMeta(key, value);
+
+              if (key.equals("INFO_OBJECTIVE_NAME")) {
+                store.setObjectiveModel(value, 0, 0);
+              }
+              else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
+                store.setObjectiveNominalMagnification(
+                  (int) Float.parseFloat(value), 0, 0);
+              }
+              else if (key.equals("LENS_MAGNIFICATION")) {
+                store.setObjectiveNominalMagnification(
+                  (int) Float.parseFloat(value), 0, 0);
+              }
+              else if (key.startsWith("SETTING")) {
+                if (key.indexOf("_DET_") != -1) {
+                  int index = key.indexOf("_DET_") + 5;
+                  if (key.lastIndexOf("_") > index) {
+                    String detectorID =
+                      MetadataTools.createLSID("Detector", 0, nextDetector);
+                    store.setDetectorID(detectorID, 0, nextDetector);
+                    store.setDetectorType("Unknown", 0, nextDetector);
+
+                    if (key.endsWith("OFFSET")) {
+                      if (nextDetector < offset.size()) {
+                        offset.setElementAt(new Double(value), nextDetector);
+                      }
+                      else {
+                        while (nextDetector > offset.size()) {
+                          offset.add(null);
+                        }
+                        offset.add(new Double(value));
+                      }
+                    }
+                    else if (key.endsWith("GAIN")) {
+                      if (nextDetector < gain.size()) {
+                        gain.setElementAt(new Double(value), nextDetector);
+                      }
+                      else {
+                        while (nextDetector > gain.size()) {
+                          gain.add(null);
+                        }
+                        gain.add(new Double(value));
+                      }
+                    }
+                    nextDetector++;
+                  }
+                }
+              }
+              else {
+                String[] values = value.split(" ");
+                if (values.length > 1) {
+                  try {
+                    int type = Integer.parseInt(values[0]);
+                    if (type == 257 && values.length >= 3) {
+                      // found length of axis in um
+                      Double pixelSize = new Double(values[2]);
+                      if (key.equals("AXIS_2")) {
+                        store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+                      }
+                      else if (key.equals("AXIS_3")) {
+                        store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+                      }
+                    }
+                  }
+                  catch (NumberFormatException e) { }
+                }
+              }
+            }
+            else if (n.p.startsWith("AXIS_2")) {
+              String[] values = n.p.split(" ");
+              Double pixelSize = new Double(values[3]);
+              store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+            }
+            else if (n.p.startsWith("AXIS_3")) {
+              String[] values = n.p.split(" ");
+              Double pixelSize = new Double(values[3]);
+              store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+            }
+            else {
+              addGlobalMeta("Note #" + noteIndex, n.toString());
+            }
+            break;
+          case NOTE_TYPE_STRUCTURE:
+            int structureType = (n.x & 0xff00) >> 8;
+            int version = (n.x & 0xff);
+            String[] values = n.p.split(" ");
+            if (structureType == 1) {
+              switch (n.y) {
+                case 1:
+                  for (int i=0; i<STRUCTURE_LABELS_1.length; i++) {
+                    addGlobalMeta(STRUCTURE_LABELS_1[i], values[i]);
+                  }
+
+                  store.setObjectiveNominalMagnification(
+                    (int) Float.parseFloat(values[11]), 0, 0);
+                  store.setDimensionsPhysicalSizeZ(
+                    new Double(values[14]), 0, 0);
+                  break;
+                case 2:
+                  for (int i=0; i<STRUCTURE_LABELS_2.length; i++) {
+                    addGlobalMeta(STRUCTURE_LABELS_2[i], values[i]);
+                  }
+
+                  double x1 = Double.parseDouble(values[2]);
+                  double x2 = Double.parseDouble(values[4]);
+                  double width = x2 - x1;
+                  width /= getSizeX();
+
+                  double y1 = Double.parseDouble(values[3]);
+                  double y2 = Double.parseDouble(values[5]);
+                  double height = y2 - y1;
+                  height /= getSizeY();
+
+                  store.setDimensionsPhysicalSizeX(width, 0, 0);
+                  store.setDimensionsPhysicalSizeY(height, 0, 0);
+
+                  break;
+                case 3:
+                  for (int i=0; i<3; i++) {
+                    for (int j=0; j<STRUCTURE_LABELS_3.length; j++) {
+                      String v = j == STRUCTURE_LABELS_3.length - 1 ?
+                        values[12 + i] : values[i * 4 + j];
+                      addGlobalMeta(STRUCTURE_LABELS_3[j] + " " + (i + 1), v);
+                    }
+                  }
+                  break;
+                case 4:
+                  nLasers = Integer.parseInt(values[0]);
+                  addGlobalMeta("Number of lasers", values[0]);
+                  addGlobalMeta("Number of transmission detectors", values[1]);
+                  addGlobalMeta("Number of PMTs", values[2]);
+                  for (int i=1; i<=3; i++) {
+                    int idx = (i + 1) * 3;
+                    addGlobalMeta("Shutter present for laser " + i,
+                      values[i + 2]);
+                    addGlobalMeta("Neutral density filter for laser " + i,
+                      values[idx]);
+                    addGlobalMeta("Excitation filter for laser " + i,
+                      values[idx + 1]);
+                    addGlobalMeta("Use laser " + i, values[idx + 2]);
+                  }
+                  for (int i=0; i<nLasers; i++) {
+                    addGlobalMeta("Neutral density filter name - laser " +
+                      (i + 1), values[15 + i]);
+                  }
+                  break;
+                case 5:
+                  String prefix = "Excitation filter name - laser ";
+                  for (int i=0; i<nLasers; i++) {
+                    addGlobalMeta(prefix + (i + 1), values[i]);
+                  }
+                  break;
+                case 6:
+                  prefix = "Emission filter name - laser ";
+                  for (int i=0; i<nLasers; i++) {
+                    addGlobalMeta(prefix + (i + 1), values[i]);
+                  }
+                  break;
+                case 7:
+                  for (int i=0; i<2; i++) {
+                    prefix = "Mixer " + i + " - ";
+                    for (int j=0; j<STRUCTURE_LABELS_4.length; j++) {
+                      addGlobalMeta(prefix + STRUCTURE_LABELS_4[j],
+                        values[i * 7 + j]);
+                    }
+                  }
+                  addGlobalMeta("Mixer 0 - low signal on", values[14]);
+                  addGlobalMeta("Mixer 1 - low signal on", values[15]);
+                  break;
+                case 8:
+                case 9:
+                case 10:
+                  addGlobalMeta("Laser name - laser " + (n.y - 7), values[0]);
+                  break;
+                case 11:
+                  for (int i=0; i<3; i++) {
+                    prefix = "Transmission detector " + (i + 1) + " - ";
+                    addGlobalMeta(prefix + "offset", values[i * 3]);
+                    addGlobalMeta(prefix + "gain", values[i * 3 + 1]);
+                    addGlobalMeta(prefix + "black level", values[i * 3 + 2]);
+
+                    String detectorID =
+                      MetadataTools.createLSID("Detector", 0, i);
+                    store.setDetectorID(detectorID, 0, i);
+                    store.setDetectorOffset(new Double(values[i * 3]), 0, i);
+                    store.setDetectorGain(new Double(values[i * 3 + 1]), 0, i);
+                    store.setDetectorType("Unknown", 0, i);
+                  }
+                  break;
+                case 12:
+                  for (int i=0; i<2; i++) {
+                    prefix = "Part number for ";
+                    for (int j=0; j<STRUCTURE_LABELS_5.length; j++) {
+                      addGlobalMeta(prefix + STRUCTURE_LABELS_5[j] + (i + 1),
+                        values[i * 4 + j]);
+                    }
+                  }
+                  break;
+                case 13:
+                  for (int i=0; i<STRUCTURE_LABELS_6.length; i++) {
+                    addGlobalMeta(STRUCTURE_LABELS_6[i], values[i]);
+                  }
+                  break;
+                case 14:
+                  prefix = "Filter Block Name - filter block ";
+                  addGlobalMeta(prefix + "1", values[0]);
+                  addGlobalMeta(prefix + "2", values[1]);
+                  break;
+                case 15:
+                  for (int i=0; i<5; i++) {
+                    addGlobalMeta("Image bands status - band " + (i + 1),
+                      values[i*3]);
+                    addGlobalMeta("Image bands min - band " + (i + 1),
+                      values[i*3 + 1]);
+                    addGlobalMeta("Image bands max - band " + (i + 1),
+                      values[i*3 + 2]);
+                    if (store instanceof IMinMaxStore) {
+                      ((IMinMaxStore) store).setChannelGlobalMinMax(i,
+                        Double.parseDouble(values[i*3 + 1]),
+                        Double.parseDouble(values[i*3 + 2]), 0);
+                    }
+                  }
+                  break;
+                case 17:
+                  int year = Integer.parseInt(values[5]) + 1900;
+                  for (int i=0; i<5; i++) {
+                    if (values[i].length() == 1) values[i] = "0" + values[i];
+                  }
+
+                  // date is in yyyy-MM-dd'T'HH:mm:ss
+                  String date = year + "-" + values[4] + "-" + values[3] + "T" +
+                    values[2] + ":" + values[1] + ":" + values[0];
+                  addGlobalMeta("Acquisition date", date);
+                  store.setImageCreationDate(date, 0);
+                  break;
+                case 18:
+                  addGlobalMeta("Mixer 3 - enhanced", values[0]);
+                  for (int i=1; i<=3; i++) {
+                    addGlobalMeta("Mixer 3 - PMT " + i + " percentage",
+                      values[i]);
+                    addGlobalMeta("Mixer 3 - Transmission " + i + " percentage",
+                      values[i + 3]);
+                    addGlobalMeta("Mixer 3 - photon counting " + i,
+                      values[i + 7]);
+                  }
+                  addGlobalMeta("Mixer 3 - low signal on", values[7]);
+                  addGlobalMeta("Mixer 3 - mode", values[11]);
+                  break;
+                case 19:
+                  for (int i=1; i<=2; i++) {
+                    prefix = "Mixer " + i + " - ";
+                    String photon = prefix + "photon counting ";
+                    addGlobalMeta(photon + "1", values[i * 4 - 4]);
+                    addGlobalMeta(photon + "2", values[i * 4 - 3]);
+                    addGlobalMeta(photon + "3", values[i * 4 - 2]);
+                    addGlobalMeta(prefix + "mode", values[i * 4 - 1]);
+                  }
+                  break;
+                case 20:
+                  addGlobalMeta("Display mode", values[0]);
+                  addGlobalMeta("Course", values[1]);
+                  addGlobalMeta("Time Course - experiment type", values[2]);
+                  addGlobalMeta("Time Course - kd factor", values[3]);
+                  store.setExperimentType(values[2], 0);
+                  break;
+                case 21:
+                  addGlobalMeta("Time Course - ion name", values[0]);
+                  break;
+                case 22:
+                  addGlobalMeta("PIC file generated on Isoscan (lite)",
+                    values[0]);
+                  for (int i=1; i<=3; i++) {
+                    addGlobalMeta("Photon counting used (PMT " + i + ")",
+                      values[i]);
+                    addGlobalMeta("Hot spot filter used (PMT " + i + ")",
+                      values[i + 3]);
+                    addGlobalMeta("Tx Selector used (TX " + i + ")",
+                      values[i + 6]);
+                  }
+                  break;
+              }
+            }
+            break;
+          default:
+            // notes for display only
+            addGlobalMeta("Note #" + noteIndex, n.toString());
+        }
+      }
+
+      // if the text of the note contains "AXIS", parse the text
+      // more thoroughly (see pg. 21 of the BioRad specs)
+
+      if (n.p.indexOf("AXIS") != -1) {
+        n.p = n.p.replaceAll("=", "");
+        Vector<String> v = new Vector<String>();
+        StringTokenizer tokens = new StringTokenizer(n.p, " ");
+        while (tokens.hasMoreTokens()) {
+          String token = tokens.nextToken().trim();
+          if (token.length() > 0) v.add(token);
+        }
+        String[] values = v.toArray(new String[v.size()]);
+        String key = values[0];
+        String noteType = values[1];
+
+        int axisType = Integer.parseInt(noteType);
+
+        if (axisType == 11 && values.length > 2) {
+          addGlobalMeta(key + " RGB type (X)", values[2]);
+          addGlobalMeta(key + " RGB type (Y)", values[3]);
+
+          if (key.equals("AXIS_4")) {
+            // this is a single section multi-channel dataset
+            core[0].sizeC = getImageCount();
+            core[0].sizeZ = 1;
+            core[0].sizeT = 1;
+          }
+          else if (key.equals("AXIS_9")) {
+            multipleFiles = true;
+            core[0].sizeC = (int) Double.parseDouble(values[3]);
+          }
+        }
+
+        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL &&
+          values.length > 2)
+        {
+          switch (axisType) {
+            case 1:
+              addGlobalMeta(key + " distance (X) in microns", values[2]);
+              addGlobalMeta(key + " distance (Y) in microns", values[3]);
+              break;
+            case 3:
+              addGlobalMeta(key + " angle (X) in degrees", values[2]);
+              addGlobalMeta(key + " angle (Y) in degrees", values[3]);
+              break;
+            case 4:
+              addGlobalMeta(key + " intensity (X)", values[2]);
+              addGlobalMeta(key + " intensity (Y)", values[3]);
+              break;
+            case 6:
+              addGlobalMeta(key + " ratio (X)", values[2]);
+              addGlobalMeta(key + " ratio (Y)", values[3]);
+              break;
+            case 7:
+              addGlobalMeta(key + " log ratio (X)", values[2]);
+              addGlobalMeta(key + " log ratio (Y)", values[3]);
+              break;
+            case 9:
+              addGlobalMeta(key + " noncalibrated intensity min", values[2]);
+              addGlobalMeta(key + " noncalibrated intensity max", values[3]);
+              addGlobalMeta(key + " calibrated intensity min", values[4]);
+              addGlobalMeta(key + " calibrated intensity max", values[5]);
+              break;
+            case 14:
+              addGlobalMeta(key + " time course type (X)", values[2]);
+              addGlobalMeta(key + " time course type (Y)", values[3]);
+              break;
+            case 15:
+              String prefix = " inverse sigmoid calibrated intensity ";
+              addGlobalMeta(key + prefix + "(min)", values[2]);
+              addGlobalMeta(key + prefix + "(max)", values[3]);
+              addGlobalMeta(key + prefix + "(beta)", values[4]);
+              addGlobalMeta(key + prefix + "(Kd)", values[5]);
+              break;
+            case 16:
+              prefix = " log inverse sigmoid calibrated intensity ";
+              addGlobalMeta(key + prefix + "(min)", values[2]);
+              addGlobalMeta(key + prefix + "(max)", values[3]);
+              addGlobalMeta(key + prefix + "(beta)", values[4]);
+              addGlobalMeta(key + prefix + "(Kd)", values[5]);
+              break;
+          }
+        }
+      }
+    }
+    return multipleFiles;
   }
 
   /**

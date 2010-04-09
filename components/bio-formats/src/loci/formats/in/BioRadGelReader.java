@@ -77,7 +77,6 @@ public class BioRadGelReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-
     if (offset > PIXEL_OFFSET) {
       in.seek(offset + 1285);
     }
@@ -107,25 +106,27 @@ public class BioRadGelReader extends FormatReader {
     in.seek(348);
     int skip = in.readInt() - 28;
 
-    in.seek(348 + skip - 8187);
-    String scannerName = in.readCString();
-    in.skipBytes(8);
-    in.readCString();
-    in.skipBytes(8);
-    String imageArea = in.readCString();
-
-    scannerName = scannerName.substring(scannerName.indexOf(":") + 1).trim();
-    addGlobalMeta("Scanner name", scannerName);
-
-    imageArea = imageArea.substring(imageArea.indexOf(":") + 1).trim();
     double physicalWidth = 0d, physicalHeight = 0d;
-    int xIndex = imageArea.indexOf("x");
-    if (xIndex > 0) {
-      String width = imageArea.substring(1, imageArea.indexOf(" "));
-      String height =
-        imageArea.substring(xIndex + 1, imageArea.indexOf(" ", xIndex + 2));
-      physicalWidth = Double.parseDouble(width.trim()) * 1000;
-      physicalHeight = Double.parseDouble(height.trim()) * 1000;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.seek(348 + skip - 8187);
+      String scannerName = in.readCString();
+      in.skipBytes(8);
+      in.readCString();
+      in.skipBytes(8);
+      String imageArea = in.readCString();
+
+      scannerName = scannerName.substring(scannerName.indexOf(":") + 1).trim();
+      addGlobalMeta("Scanner name", scannerName);
+
+      imageArea = imageArea.substring(imageArea.indexOf(":") + 1).trim();
+      int xIndex = imageArea.indexOf("x");
+      if (xIndex > 0) {
+        String width = imageArea.substring(1, imageArea.indexOf(" "));
+        String height =
+          imageArea.substring(xIndex + 1, imageArea.indexOf(" ", xIndex + 2));
+        physicalWidth = Double.parseDouble(width.trim()) * 1000;
+        physicalHeight = Double.parseDouble(height.trim()) * 1000;
+      }
     }
 
     in.seek(348 + skip - 273);
@@ -174,8 +175,10 @@ public class BioRadGelReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageCreationDate(date, 0);
-    store.setDimensionsPhysicalSizeX(physicalWidth / getSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY(physicalHeight / getSizeY(), 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setDimensionsPhysicalSizeX(physicalWidth / getSizeX(), 0, 0);
+      store.setDimensionsPhysicalSizeY(physicalHeight / getSizeY(), 0, 0);
+    }
   }
 
 }

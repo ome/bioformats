@@ -43,10 +43,17 @@ import loci.formats.tools.AmiraParameters;
 
 /**
  * This is a file format reader for AmiraMesh data.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/AmiraReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/AmiraReader.java">SVN</a></dd></dl>
+ *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
 public class AmiraReader extends FormatReader {
+
+  // -- Fields --
 
   AmiraParameters parameters;
   long offsetOfFirstStream;
@@ -57,46 +64,44 @@ public class AmiraReader extends FormatReader {
   // for labels
   byte[][] lut;
 
+  // -- Constructor --
+
   public AmiraReader() {
     super("Amira", new String[] {"am", "amiramesh", "grey", "hx", "labels"});
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
+  // -- IFormatReader API methods --
+
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int width,
-      int height) throws FormatException, IOException
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, width, height);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int planeSize = FormatTools.getPlaneSize(this);
     if (planeReader != null) {
-      if (x == 0 && y == 0 &&
-          width == parameters.width && height == parameters.height)
+      if (x == 0 && y == 0 && w == parameters.width && h == parameters.height) {
         return planeReader.read(no, buf);
+      }
 
       // plane readers can only read whole planes, so we need to blit
       int bytesPerPixel = FormatTools.getBytesPerPixel(core[series].pixelType);
       byte[] planeBuf = new byte[planeSize];
       planeReader.read(no, planeBuf);
-      for (int j = y; j < y + height; j++)
+      for (int j = y; j < y + h; j++) {
         System.arraycopy(planeBuf, (x + j * parameters.width) * bytesPerPixel,
-          buf, (j - y) * width * bytesPerPixel, width * bytesPerPixel);
-      return buf;
+          buf, (j - y) * w * bytesPerPixel, w * bytesPerPixel);
+      }
+    }
+    else {
+      in.seek(offsetOfFirstStream + no * planeSize);
+      readPlane(in, x, y, w, h, buf);
     }
 
-    in.seek(offsetOfFirstStream + no * planeSize);
-    readPlane(in, x, y, width, height, buf);
-
     return buf;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.FormatReader#getUsedFiles()
-   */
-  public String[] getUsedFiles() {
-    return super.getUsedFiles();
   }
 
   /* (non-Javadoc)
@@ -129,27 +134,28 @@ public class AmiraReader extends FormatReader {
     core[0].littleEndian = parameters.littleEndian;
     core[0].dimensionOrder = "XYCZT";
 
-    if (parameters.streamTypes[0].toLowerCase().equals("byte")) {
+    String streamType = parameters.streamTypes[0].toLowerCase();
+    if (streamType.equals("byte")) {
       core[0].pixelType = FormatTools.UINT8;
     }
-    else if (parameters.streamTypes[0].toLowerCase().equals("short")) {
+    else if (streamType.equals("short")) {
       core[0].pixelType = FormatTools.INT16;
       addGlobalMeta("Bits per pixel", 16);
     }
-    else if (parameters.streamTypes[0].toLowerCase().equals("ushort")) {
+    else if (streamType.equals("ushort")) {
       core[0].pixelType = FormatTools.UINT16;
       addGlobalMeta("Bits per pixel", 16);
     }
-    else if (parameters.streamTypes[0].toLowerCase().equals("int")) {
+    else if (streamType.equals("int")) {
       core[0].pixelType = FormatTools.INT32;
       addGlobalMeta("Bits per pixel", 32);
     }
-    else if (parameters.streamTypes[0].toLowerCase().equals("float")) {
+    else if (streamType.equals("float")) {
       core[0].pixelType = FormatTools.FLOAT;
       addGlobalMeta("Bits per pixel", 32);
     }
     else {
-      System.err.println("Assuming data type is byte");
+      LOGGER.warn("Assuming data type is byte");
       core[0].pixelType = FormatTools.UINT8;
     }
     LOGGER.info("Populating metadata store");
@@ -161,28 +167,30 @@ public class AmiraReader extends FormatReader {
 
     // Note that Amira specifies a bounding box, not pixel sizes.
     // The bounding box is the range of the centre of the voxels
-    double pixelWidth = (double) (parameters.x1 - parameters.x0) /
-      (parameters.width - 1);
-    double pixelHeight = (double) (parameters.y1 - parameters.y0) /
-      (parameters.height - 1);
-    // TODO - what is correct setting if single slice?
-    double pixelDepth = (double) (parameters.z1 - parameters.z0) /
-      (parameters.depth - 1);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      double pixelWidth = (double) (parameters.x1 - parameters.x0) /
+        (parameters.width - 1);
+      double pixelHeight = (double) (parameters.y1 - parameters.y0) /
+        (parameters.height - 1);
+      // TODO - what is correct setting if single slice?
+      double pixelDepth = (double) (parameters.z1 - parameters.z0) /
+        (parameters.depth - 1);
 
-    // Amira does not have a standard form for encoding units, so we just
-    // have to assume microns for microscopy data
-    addGlobalMeta("Pixels per meter (X)", 1e6 / pixelWidth);
-    addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
-    addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
+      // Amira does not have a standard form for encoding units, so we just
+      // have to assume microns for microscopy data
+      addGlobalMeta("Pixels per meter (X)", 1e6 / pixelWidth);
+      addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
+      addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-    // NB these methods expects pixels sizes in microns
-    store.setDimensionsPhysicalSizeX(new Double(pixelWidth), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(pixelHeight), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(pixelDepth), 0, 0);
+      store.setDimensionsPhysicalSizeX(new Double(pixelWidth), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Double(pixelHeight), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(pixelDepth), 0, 0);
+    }
 
-    if (parameters.ascii)
+    if (parameters.ascii) {
       planeReader = new ASCII(core[0].pixelType,
         parameters.width * parameters.height);
+    }
 
     int compressionType = 0;
     ArrayList streamData = (ArrayList) parameters.getStreams().get("@1");
@@ -216,17 +224,20 @@ public class AmiraReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, 50, false)) return false;
-    String c=stream.readLine().toString();
+    String c = stream.readLine();
 
     Matcher amiraMeshDef = Pattern.compile("#\\s+AmiraMesh.*?" +
-        "(BINARY|ASCII)(-LITTLE-ENDIAN)*").matcher(c);
+      "(BINARY|ASCII)(-LITTLE-ENDIAN)*").matcher(c);
     return amiraMeshDef.find();
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true ,1);
     return lut;
   }
+
+  // -- Helper methods --
 
   byte[][] getLookupTable(Map materials) throws FormatException {
     byte[][] result = new byte[3][256];
@@ -234,20 +245,23 @@ public class AmiraReader extends FormatReader {
     for (Object label : materials.keySet()) {
       i++;
       Object object = materials.get(label);
-      if (!(object instanceof Map))
+      if (!(object instanceof Map)) {
         throw new FormatException("Invalid material: " + label);
+      }
       Map material = (Map) object;
       object = material.get("Color");
-      if (object == null)
-        continue; // black
-      if (!(object instanceof Number[]))
+      if (object == null) continue; // black
+      if (!(object instanceof Number[])) {
         throw new FormatException("Invalid material: " + label);
+      }
       Number[] color = (Number[]) object;
-      if (color.length != 3)
+      if (color.length != 3) {
         throw new FormatException("Invalid color: " +
           color.length + " channels");
-      for (int j = 0; j < 3; j++)
+      }
+      for (int j = 0; j < 3; j++) {
         result[j][i] = (byte) (int) (255 * color[j].floatValue());
+      }
     }
     return result;
   }
@@ -282,18 +296,20 @@ public class AmiraReader extends FormatReader {
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (offsets[no] == 0) {
         int i = no - 1;
-        while (offsets[i] == 0)
+        while (offsets[i] == 0) {
           i--;
+        }
         in.seek(offsets[i]);
         while (i < no) {
-          for (int j = 0; j < pixelsPerPlane; j++)
+          for (int j = 0; j < pixelsPerPlane; j++) {
             readNumberString();
-          i++;
-          offsets[i] = in.getFilePointer();
+          }
+          offsets[++i] = in.getFilePointer();
         }
       }
-      else
+      else {
         in.seek(offsets[no]);
+      }
       for (int j = 0; j < pixelsPerPlane; j++) {
         int offset = j * bytesPerPixel;
         double number = readNumberString();
@@ -302,8 +318,7 @@ public class AmiraReader extends FormatReader {
           pixelType == FormatTools.FLOAT ?
           Float.floatToIntBits((float) number) :
           (long) number;
-        DataTools.unpackBytes(value, buf, offset,
-            bytesPerPixel, false);
+        DataTools.unpackBytes(value, buf, offset, bytesPerPixel, false);
       }
       offsets[no + 1] = in.getFilePointer();
       return buf;
@@ -313,8 +328,9 @@ public class AmiraReader extends FormatReader {
       numberBuffer[0] = skipWhiteSpace();
       for (int i = 1;; i++) {
         byte c = in.readByte();
-        if (!(c >= '0' && c <= '9') && c != '.')
+        if (!(c >= '0' && c <= '9') && c != '.') {
           return Double.parseDouble(new String(numberBuffer, 0, i));
+        }
         numberBuffer[i] = c;
       }
     }
@@ -322,8 +338,9 @@ public class AmiraReader extends FormatReader {
     byte skipWhiteSpace() throws IOException {
       for (;;) {
         byte c = in.readByte();
-        if (c != ' ' && c != '\t' && c != '\n')
+        if (c != ' ' && c != '\t' && c != '\n') {
           return c;
+        }
       }
     }
   }
@@ -354,14 +371,14 @@ public class AmiraReader extends FormatReader {
     }
 
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
-      if (no < currentNo)
+      if (no < currentNo) {
         initDecompressor();
+      }
       for (; currentNo <= no; currentNo++) {
         int offset = 0, len = planeSize;
         while (len > 0) {
           int count = decompressor.read(buf, offset, len);
-          if (count <= 0)
-            return null;
+          if (count <= 0) return null;
           offset += count;
           len -= count;
         }
@@ -395,20 +412,21 @@ public class AmiraReader extends FormatReader {
         int insn = in.readByte();
         if (insn < 0) {
           insn = (insn & 0x7f);
-          if (insn > len)
+          if (insn > len) {
             throw new FormatException("Slice " + currentNo + " is unaligned!");
+          }
           while (insn > 0) {
             int count = in.read(buf, off, insn);
-            if (count < 0)
-              throw new IOException("End of file!");
+            if (count < 0) throw new IOException("End of file!");
             insn -= count;
             len -= count;
             off += count;
           }
         }
         else {
-          if (insn > len)
+          if (insn > len) {
             throw new FormatException("Slice " + currentNo + " is unaligned!");
+          }
           Arrays.fill(buf, off, off + insn, in.readByte());
           len -= insn;
           off += insn;
@@ -418,19 +436,22 @@ public class AmiraReader extends FormatReader {
 
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (maxOffsetIndex < no) {
-        if (currentNo != maxOffsetIndex)
+        if (currentNo != maxOffsetIndex) {
           in.seek(offsets[maxOffsetIndex]);
+        }
         while (maxOffsetIndex < no) {
           read(buf, planeSize);
           offsets[++maxOffsetIndex] = in.getFilePointer();
         }
       }
       else {
-        if (currentNo != no)
+        if (currentNo != no) {
           in.seek(offsets[no]);
+        }
         read(buf, planeSize);
-        if (maxOffsetIndex == no)
+        if (maxOffsetIndex == no) {
           offsets[++maxOffsetIndex] = in.getFilePointer();
+        }
       }
       currentNo = no + 1;
       return buf;
