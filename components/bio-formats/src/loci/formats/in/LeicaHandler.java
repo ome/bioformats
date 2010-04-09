@@ -206,10 +206,7 @@ public class LeicaHandler extends DefaultHandler {
         store.setLogicalChannelPinholeSize(pinhole, numDatasets, c);
       }
     }
-    else if (qName.equals("ScannerSetting")) {
-      nextChannel = 0;
-    }
-    else if (qName.equals("FilterSetting")) {
+    else if (qName.equals("Image")) {
       nextChannel = 0;
     }
     else if (qName.equals("LDM_Block_Sequential_Master")) {
