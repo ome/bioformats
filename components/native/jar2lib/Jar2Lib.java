@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.HashSet;
+import java.util.jar.JarFile;
 
 import java.lang.String;
 
@@ -60,6 +61,7 @@ public class Jar2Lib {
 	private final String sourceInputPath;
 	private final String headerOutputPath;
 	private final String sourceOutputPath;
+	private final String jarFileName;
 	private final String classPath;
 	private final boolean mindep;
 	private final boolean exportSymbols;
@@ -76,7 +78,8 @@ public class Jar2Lib {
 		boolean mindep,
 		boolean exportSymbols,
 		String dependencies,
-		String dependencyFile) {
+		String dependencyFile,
+		String jarFileName) {
 
 		this.headerFileName = headerFileName;
 		this.headerInputPath = headerInputPath;
@@ -87,6 +90,7 @@ public class Jar2Lib {
 		this.mindep = mindep;
 		this.exportSymbols = exportSymbols;
 		this.dependencyList = new HashSet<String>();
+		this.jarFileName = jarFileName;
 
 		if ( (dependencies != null) && (dependencies.length() != 0) ) {
 			StringTokenizer st = new StringTokenizer(dependencies, "=");
@@ -135,7 +139,11 @@ public class Jar2Lib {
 		// parse header file template
 		SourceList javaList = null;
 		try {
-			javaList = new SourceList(sourceInputPath);
+			if (jarFileName != null) {
+				javaList = new SourceList(new JarFile(jarFileName));
+			} else {
+				javaList = new SourceList(sourceInputPath);
+			}
 		} catch (IOException ioe) {
 			System.err.println("IO Exception caught from SourceList");
 			ioe.printStackTrace();
@@ -188,6 +196,7 @@ public class Jar2Lib {
 		boolean exportSymbols = false;
 		String dependencies = "";
 		String dependencyFile = "";
+		String jarFileName = null;
 
 		boolean headerInputPathDefined = false;
 		boolean headerOutputPathDefined = false;
@@ -196,7 +205,7 @@ public class Jar2Lib {
 		boolean headerFileNameDefined = false;
 		boolean classPathDefined = false;
 
-		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:D:em");
+		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:D:j:em");
 		go.optErr = true;
 		int ch = -1;
 		// process options in command line arguments
@@ -221,6 +230,8 @@ public class Jar2Lib {
 				dependencyFile = go.optArgGet();
 			} else if (ch == 'd') {
 				dependencies = go.optArgGet();
+			} else if (ch == 'j') {
+				jarFileName = go.optArgGet();
 			} else if (ch == 'f') {
 				headerFileName = go.optArgGet();
 				headerFileNameDefined = true;
@@ -253,7 +264,8 @@ public class Jar2Lib {
 				mindep,
 				exportSymbols,
 				dependencies,
-				dependencyFile);
+				dependencyFile,
+				jarFileName);
 
 		jar2Lib.createJaceHeader();
 
