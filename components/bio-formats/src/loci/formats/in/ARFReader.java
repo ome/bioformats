@@ -47,6 +47,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class ARFReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final long PIXELS_OFFSET = 524;
+
   // -- Constructor --
 
   /** Constructs a new ARF reader. */
@@ -64,7 +68,7 @@ public class ARFReader extends FormatReader {
     byte endian1 = stream.readByte();
     byte endian2 = stream.readByte();
     return ((endian1 == 1 && endian2 == 0) || (endian1 == 0 && endian2 == 1)) &&
-      stream.readString(2).startsWith("AR");
+      stream.readString(2).equals("AR");
   }
 
   /**
@@ -75,7 +79,7 @@ public class ARFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(524 + no * FormatTools.getPlaneSize(this));
+    in.seek(PIXELS_OFFSET + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
 
     return buf;
@@ -134,14 +138,16 @@ public class ARFReader extends FormatReader {
     core[0].indexed = false;
     core[0].metadataComplete = true;
 
-    // populate original metadata
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // populate original metadata
 
-    addGlobalMeta("Endianness", little ? "little" : "big");
-    addGlobalMeta("Version", version);
-    addGlobalMeta("Width", width);
-    addGlobalMeta("Height", height);
-    addGlobalMeta("Bits per pixel", bitsPerPixel);
-    addGlobalMeta("Image count", numImages);
+      addGlobalMeta("Endianness", little ? "little" : "big");
+      addGlobalMeta("Version", version);
+      addGlobalMeta("Width", width);
+      addGlobalMeta("Height", height);
+      addGlobalMeta("Bits per pixel", bitsPerPixel);
+      addGlobalMeta("Image count", numImages);
+    }
 
     // populate OME metadata
 

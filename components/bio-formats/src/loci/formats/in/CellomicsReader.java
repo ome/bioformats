@@ -118,22 +118,26 @@ public class CellomicsReader extends FormatReader {
     }
 
     in.skipBytes(4);
-    int pixelWidth = in.readInt();
-    int pixelHeight = in.readInt();
-    int colorUsed = in.readInt();
-    int colorImportant = in.readInt();
+    int pixelWidth = 0, pixelHeight = 0;
 
-    LOGGER.info("Populating metadata hashtable");
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      pixelWidth = in.readInt();
+      pixelHeight = in.readInt();
+      int colorUsed = in.readInt();
+      int colorImportant = in.readInt();
 
-    addGlobalMeta("Image width", x);
-    addGlobalMeta("Image height", y);
-    addGlobalMeta("Number of planes", nPlanes);
-    addGlobalMeta("Bits per pixel", nBits);
-    addGlobalMeta("Compression", compression);
-    addGlobalMeta("Pixels per meter (X)", pixelWidth);
-    addGlobalMeta("Pixels per meter (Y)", pixelHeight);
-    addGlobalMeta("Color used", colorUsed);
-    addGlobalMeta("Color important", colorImportant);
+      LOGGER.info("Populating metadata hashtable");
+
+      addGlobalMeta("Image width", x);
+      addGlobalMeta("Image height", y);
+      addGlobalMeta("Number of planes", nPlanes);
+      addGlobalMeta("Bits per pixel", nBits);
+      addGlobalMeta("Compression", compression);
+      addGlobalMeta("Pixels per meter (X)", pixelWidth);
+      addGlobalMeta("Pixels per meter (Y)", pixelHeight);
+      addGlobalMeta("Color used", colorUsed);
+      addGlobalMeta("Color important", colorImportant);
+    }
 
     LOGGER.info("Populating core metadata");
 
@@ -164,13 +168,15 @@ public class CellomicsReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    // physical dimensions are stored as pixels per meter - we want them
-    // in microns per pixel
-    double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
-    double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // physical dimensions are stored as pixels per meter - we want them
+      // in microns per pixel
+      double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
+      double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-    store.setDimensionsPhysicalSizeX(width, 0, 0);
-    store.setDimensionsPhysicalSizeY(height, 0, 0);
+      store.setDimensionsPhysicalSizeX(width, 0, 0);
+      store.setDimensionsPhysicalSizeY(height, 0, 0);
+    }
   }
 
 }

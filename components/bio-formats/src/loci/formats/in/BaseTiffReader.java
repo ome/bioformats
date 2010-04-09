@@ -83,6 +83,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * overwritten if you do so.
    */
   protected void initStandardMetadata() throws FormatException, IOException {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+      return;
+    }
     IFD firstIFD = ifds.get(0);
     put("ImageWidth", firstIFD, IFD.IMAGE_WIDTH);
     put("ImageLength", firstIFD, IFD.IMAGE_LENGTH);
@@ -354,28 +357,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     put("BitsPerSample", bps);
     put("NumberOfChannels", numC);
-
-    int samples = firstIFD.getSamplesPerPixel();
-    core[0].rgb = samples > 1 || photo == PhotoInterp.RGB;
-    core[0].interleaved = false;
-    core[0].littleEndian = firstIFD.isLittleEndian();
-
-    core[0].sizeX = (int) firstIFD.getImageWidth();
-    core[0].sizeY = (int) firstIFD.getImageLength();
-    core[0].sizeZ = 1;
-    core[0].sizeC = isRGB() ? samples : 1;
-    core[0].sizeT = ifds.size();
-    core[0].metadataComplete = true;
-    core[0].indexed = photo == PhotoInterp.RGB_PALETTE &&
-      (get8BitLookupTable() != null || get16BitLookupTable() != null);
-    if (isIndexed()) {
-      core[0].sizeC = 1;
-      core[0].rgb = false;
-    }
-    if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
-    core[0].falseColor = false;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = firstIFD.getPixelType();
   }
 
   /**
@@ -397,23 +378,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     IFD firstIFD = ifds.get(0);
 
-    // populate Experimenter
-    String artist = firstIFD.getIFDTextValue(IFD.ARTIST);
-
-    if (artist != null) {
-      String firstName = null, lastName = null;
-      int ndx = artist.indexOf(" ");
-      if (ndx < 0) lastName = artist;
-      else {
-        firstName = artist.substring(0, ndx);
-        lastName = artist.substring(ndx + 1);
-      }
-      String email = firstIFD.getIFDStringValue(IFD.HOST_COMPUTER);
-      store.setExperimenterFirstName(firstName, 0);
-      store.setExperimenterLastName(lastName, 0);
-      store.setExperimenterEmail(email, 0);
-    }
-
     // format the creation date to ISO 8601
 
     String creationDate = getImageCreationDate();
@@ -431,32 +395,52 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     else {
        MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
-    store.setImageDescription(firstIFD.getComment(), 0);
 
-    // set the X and Y pixel dimensions
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // populate Experimenter
+      String artist = firstIFD.getIFDTextValue(IFD.ARTIST);
 
-    int resolutionUnit = firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT);
-    TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
-    TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
-    double pixX = xResolution == null ? 0 : 1 / xResolution.doubleValue();
-    double pixY = yResolution == null ? 0 : 1 / yResolution.doubleValue();
+      if (artist != null) {
+        String firstName = null, lastName = null;
+        int ndx = artist.indexOf(" ");
+        if (ndx < 0) lastName = artist;
+        else {
+          firstName = artist.substring(0, ndx);
+          lastName = artist.substring(ndx + 1);
+        }
+        String email = firstIFD.getIFDStringValue(IFD.HOST_COMPUTER);
+        store.setExperimenterFirstName(firstName, 0);
+        store.setExperimenterLastName(lastName, 0);
+        store.setExperimenterEmail(email, 0);
+      }
 
-    switch (resolutionUnit) {
-      case 2:
-        // resolution is expressed in pixels per inch
-        pixX *= 25400;
-        pixY *= 25400;
-        break;
-      case 3:
-        // resolution is expressed in pixels per centimeter
-        pixX *= 10000;
-        pixY *= 10000;
-        break;
+      store.setImageDescription(firstIFD.getComment(), 0);
+
+      // set the X and Y pixel dimensions
+
+      int resolutionUnit = firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT);
+      TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
+      TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
+      double pixX = xResolution == null ? 0 : 1 / xResolution.doubleValue();
+      double pixY = yResolution == null ? 0 : 1 / yResolution.doubleValue();
+
+      switch (resolutionUnit) {
+        case 2:
+          // resolution is expressed in pixels per inch
+          pixX *= 25400;
+          pixY *= 25400;
+          break;
+        case 3:
+          // resolution is expressed in pixels per centimeter
+          pixX *= 10000;
+          pixY *= 10000;
+          break;
+      }
+
+      store.setDimensionsPhysicalSizeX(pixX, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixY, 0, 0);
+      store.setDimensionsPhysicalSizeZ(0.0, 0, 0);
     }
-
-    store.setDimensionsPhysicalSizeX(pixX, 0, 0);
-    store.setDimensionsPhysicalSizeY(pixY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(0.0, 0, 0);
   }
 
   /**

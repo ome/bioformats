@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
@@ -39,7 +40,6 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.ByteVector;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
@@ -57,11 +57,6 @@ import loci.formats.meta.MetadataStore;
 public class APNGReader extends BIFormatReader {
 
   // -- Constants --
-
-  // Valid values for dispose operation field:
-  //private static final int DISPOSE_OP_NONE = 0;
-  //private static final int DISPOSE_OP_BACKGROUND = 1;
-  //private static final int DISPOSE_OP_PREVIOUS = 2;
 
   private static final byte[] PNG_SIGNATURE = new byte[] {
     (byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a
@@ -103,8 +98,8 @@ public class APNGReader extends BIFormatReader {
       return ImageIO.read(dis).getSubimage(x, y, w, h);
     }
 
-    ByteVector stream = new ByteVector();
-    stream.add(PNG_SIGNATURE);
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    stream.write(PNG_SIGNATURE);
 
     boolean fdatValid = false;
     int fctlCount = 0;
@@ -127,7 +122,7 @@ public class APNGReader extends BIFormatReader {
         }
         int crc = (int) computeCRC(b, b.length - 4);
         DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
-        stream.add(b);
+        stream.write(b);
         b = null;
       }
       else if (block.type.equals("fcTL")) {
@@ -146,7 +141,7 @@ public class APNGReader extends BIFormatReader {
           in.read(b, 8, b.length - 12);
           int crc = (int) computeCRC(b, b.length - 4);
           DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
-          stream.add(b);
+          stream.write(b);
           b = null;
         }
       }

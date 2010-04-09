@@ -151,11 +151,9 @@ public class AnalyzeReader extends FormatReader {
     in.skipBytes(10);
 
     String imageName = in.readString(18);
-    addGlobalMeta("Database name", imageName);
     in.skipBytes(8);
 
     int ndims = in.readShort();
-    addGlobalMeta("Number of dimensions", ndims);
 
     int x = in.readShort();
     int y = in.readShort();
@@ -165,76 +163,81 @@ public class AnalyzeReader extends FormatReader {
     in.skipBytes(20);
 
     int dataType = in.readShort();
-
     int nBitsPerPixel = in.readShort();
 
-    addGlobalMeta("Data type", dataType);
-    addGlobalMeta("Number of bits per pixel", nBitsPerPixel);
+    String description = null;
+    double voxelWidth = 0d, voxelHeight = 0d, sliceThickness = 0d, deltaT = 0d;
 
-    in.skipBytes(6);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.skipBytes(6);
 
-    float voxelWidth = in.readFloat();
-    float voxelHeight = in.readFloat();
-    float sliceThickness = in.readFloat();
-    float deltaT = in.readFloat();
+      voxelWidth = in.readFloat();
+      voxelHeight = in.readFloat();
+      sliceThickness = in.readFloat();
+      deltaT = in.readFloat();
 
-    addGlobalMeta("Voxel width", voxelWidth);
-    addGlobalMeta("Voxel height", voxelHeight);
-    addGlobalMeta("Slice thickness", sliceThickness);
-    addGlobalMeta("Exposure time", deltaT);
+      in.skipBytes(12);
 
-    in.skipBytes(12);
+      pixelOffset = (int) in.readFloat();
+      in.skipBytes(12);
 
-    pixelOffset = (int) in.readFloat();
+      float calibratedMax = in.readFloat();
+      float calibratedMin = in.readFloat();
+      float compressed = in.readFloat();
+      float verified = in.readFloat();
+      float pixelMax = in.readFloat();
+      float pixelMin = in.readFloat();
 
-    addGlobalMeta("Pixel offset", pixelOffset);
+      description = in.readString(80);
+      String auxFile = in.readString(24);
+      char orient = (char) in.readByte();
+      String originator = in.readString(10);
+      String generated = in.readString(10);
+      String scannum = in.readString(10);
+      String patientID = in.readString(10);
+      String expDate = in.readString(10);
+      String expTime = in.readString(10);
 
-    in.skipBytes(12);
+      in.skipBytes(3);
 
-    float calibratedMax = in.readFloat();
-    float calibratedMin = in.readFloat();
-    float compressed = in.readFloat();
-    float verified = in.readFloat();
-    float pixelMax = in.readFloat();
-    float pixelMin = in.readFloat();
+      int views = in.readInt();
+      int volsAdded = in.readInt();
+      int startField = in.readInt();
+      int fieldSkip = in.readInt();
+      int omax = in.readInt();
+      int omin = in.readInt();
+      int smax = in.readInt();
+      int smin = in.readInt();
 
-    addGlobalMeta("Calibrated maximum", calibratedMax);
-    addGlobalMeta("Calibrated minimum", calibratedMin);
-    addGlobalMeta("Compressed", compressed);
-    addGlobalMeta("Verified", verified);
-    addGlobalMeta("Pixel maximum", pixelMax);
-    addGlobalMeta("Pixel minimum", pixelMin);
-
-    String description = in.readString(80);
-    String auxFile = in.readString(24);
-    char orient = in.readChar();
-    String originator = in.readString(10);
-    String generated = in.readString(10);
-    String scannum = in.readString(10);
-    String patientID = in.readString(10);
-    String expDate = in.readString(10);
-    String expTime = in.readString(10);
-
-    in.skipBytes(3);
-
-    int views = in.readInt();
-    int volsAdded = in.readInt();
-    int startField = in.readInt();
-    int fieldSkip = in.readInt();
-    int omax = in.readInt();
-    int omin = in.readInt();
-    int smax = in.readInt();
-    int smin = in.readInt();
-
-    addGlobalMeta("Description", description);
-    addGlobalMeta("Auxiliary file", auxFile);
-    addGlobalMeta("Orientation", orient);
-    addGlobalMeta("Originator", originator);
-    addGlobalMeta("Generated", generated);
-    addGlobalMeta("Scan Number", scannum);
-    addGlobalMeta("Patient ID", patientID);
-    addGlobalMeta("Acquisition Date", expDate);
-    addGlobalMeta("Acquisition Time", expTime);
+      addGlobalMeta("Database name", imageName);
+      addGlobalMeta("Number of dimensions", ndims);
+      addGlobalMeta("Data type", dataType);
+      addGlobalMeta("Number of bits per pixel", nBitsPerPixel);
+      addGlobalMeta("Voxel width", voxelWidth);
+      addGlobalMeta("Voxel height", voxelHeight);
+      addGlobalMeta("Slice thickness", sliceThickness);
+      addGlobalMeta("Exposure time", deltaT);
+      addGlobalMeta("Pixel offset", pixelOffset);
+      addGlobalMeta("Calibrated maximum", calibratedMax);
+      addGlobalMeta("Calibrated minimum", calibratedMin);
+      addGlobalMeta("Compressed", compressed);
+      addGlobalMeta("Verified", verified);
+      addGlobalMeta("Pixel maximum", pixelMax);
+      addGlobalMeta("Pixel minimum", pixelMin);
+      addGlobalMeta("Description", description);
+      addGlobalMeta("Auxiliary file", auxFile);
+      addGlobalMeta("Orientation", orient);
+      addGlobalMeta("Originator", originator);
+      addGlobalMeta("Generated", generated);
+      addGlobalMeta("Scan Number", scannum);
+      addGlobalMeta("Patient ID", patientID);
+      addGlobalMeta("Acquisition Date", expDate);
+      addGlobalMeta("Acquisition Time", expTime);
+    }
+    else {
+      in.skipBytes(34);
+      pixelOffset = (int) in.readFloat();
+    }
 
     LOGGER.info("Populating core metadata");
 
@@ -286,12 +289,14 @@ public class AnalyzeReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageDescription(description, 0);
 
-    store.setDimensionsPhysicalSizeX(voxelWidth * 0.001, 0, 0);
-    store.setDimensionsPhysicalSizeY(voxelHeight * 0.001, 0, 0);
-    store.setDimensionsPhysicalSizeZ(sliceThickness * 0.001, 0, 0);
-    store.setDimensionsTimeIncrement(new Double(deltaT * 1000), 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(description, 0);
+      store.setDimensionsPhysicalSizeX(voxelWidth * 0.001, 0, 0);
+      store.setDimensionsPhysicalSizeY(voxelHeight * 0.001, 0, 0);
+      store.setDimensionsPhysicalSizeZ(sliceThickness * 0.001, 0, 0);
+      store.setDimensionsTimeIncrement(new Double(deltaT * 1000), 0, 0);
+    }
   }
 
 }

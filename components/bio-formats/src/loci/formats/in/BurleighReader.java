@@ -105,65 +105,65 @@ public class BurleighReader extends FormatReader {
     core[0].sizeY = in.readShort();
 
     double xSize = 0d, ySize = 0d, zSize = 0d;
-    double timePerPixel = 0d;
-    int mode = 0, gain = 0, mag = 0;
-    double sampleVolts = 0d, tunnelCurrent = 0d;
 
-    if (version == 1) {
-      in.seek(in.length() - 40);
-      in.skipBytes(12);
-      xSize = in.readInt();
-      ySize = in.readInt();
-      zSize = in.readInt();
-      timePerPixel = in.readShort() * 50;
-      mag = in.readShort();
+    pixelsOffset = version == 1 ? 8 : 260;
 
-      switch (mag) {
-        case 3:
-          mag = 10;
-          break;
-        case 4:
-          mag = 50;
-          break;
-        case 5:
-          mag = 250;
-          break;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      double timePerPixel = 0d;
+      int mode = 0, gain = 0, mag = 0;
+      double sampleVolts = 0d, tunnelCurrent = 0d;
+      if (version == 1) {
+        in.seek(in.length() - 40);
+        in.skipBytes(12);
+        xSize = in.readInt();
+        ySize = in.readInt();
+        zSize = in.readInt();
+        timePerPixel = in.readShort() * 50;
+        mag = in.readShort();
+
+        switch (mag) {
+          case 3:
+            mag = 10;
+            break;
+          case 4:
+            mag = 50;
+            break;
+          case 5:
+            mag = 250;
+            break;
+        }
+        xSize /= mag;
+        ySize /= mag;
+        zSize /= mag;
+
+        mode = in.readShort();
+        gain = in.readShort();
+        sampleVolts = in.readFloat() / 1000;
+        tunnelCurrent = in.readFloat();
       }
-      xSize /= mag;
-      ySize /= mag;
-      zSize /= mag;
+      else if (version == 2) {
+        in.skipBytes(14);
+        xSize = in.readInt();
+        ySize = in.readInt();
+        zSize = in.readInt();
+        mode = in.readShort();
+        in.skipBytes(4);
+        gain = in.readShort();
+        timePerPixel = in.readShort() * 50;
+        in.skipBytes(12);
+        sampleVolts = in.readFloat();
+        tunnelCurrent = in.readFloat();
+        addGlobalMeta("Force", in.readFloat());
+      }
 
-      mode = in.readShort();
-      gain = in.readShort();
-      sampleVolts = in.readFloat() / 1000;
-      tunnelCurrent = in.readFloat();
-      pixelsOffset = 8;
+      addGlobalMeta("Version", version);
+      addGlobalMeta("Image mode", mode);
+      addGlobalMeta("Z gain", gain);
+      addGlobalMeta("Time per pixel (s)", timePerPixel);
+      addGlobalMeta("Sample volts", sampleVolts);
+      addGlobalMeta("Tunnel current", tunnelCurrent);
+      addGlobalMeta("Magnification", mag);
     }
-    else if (version == 2) {
-      in.skipBytes(14);
-      xSize = in.readInt();
-      ySize = in.readInt();
-      zSize = in.readInt();
-      mode = in.readShort();
-      in.skipBytes(4);
-      gain = in.readShort();
-      timePerPixel = in.readShort() * 50;
-      in.skipBytes(12);
-      sampleVolts = in.readFloat();
-      tunnelCurrent = in.readFloat();
-      double force = in.readFloat();
-
-      addGlobalMeta("Force", force);
-      pixelsOffset = 260;
-    }
-
-    addGlobalMeta("Version", version);
-    addGlobalMeta("Image mode", mode);
-    addGlobalMeta("Z gain", gain);
-    addGlobalMeta("Time per pixel (s)", timePerPixel);
-    addGlobalMeta("Sample volts", sampleVolts);
-    addGlobalMeta("Tunnel current", tunnelCurrent);
-    addGlobalMeta("Magnification", mag);
 
     core[0].pixelType = FormatTools.UINT16;
     core[0].sizeZ = 1;
@@ -177,9 +177,11 @@ public class BurleighReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    store.setDimensionsPhysicalSizeX(xSize / getSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY(ySize / getSizeY(), 0, 0);
-    store.setDimensionsPhysicalSizeZ(zSize / getSizeZ(), 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setDimensionsPhysicalSizeX(xSize / getSizeX(), 0, 0);
+      store.setDimensionsPhysicalSizeY(ySize / getSizeY(), 0, 0);
+      store.setDimensionsPhysicalSizeZ(zSize / getSizeZ(), 0, 0);
+    }
   }
 
 }

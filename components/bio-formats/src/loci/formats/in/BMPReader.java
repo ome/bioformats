@@ -60,9 +60,6 @@ public class BMPReader extends FormatReader {
 
   // -- Fields --
 
-  /** Offset to the image data. */
-  private int offset;
-
   /** Number of bits per pixel. */
   private int bpp;
 
@@ -132,24 +129,18 @@ public class BMPReader extends FormatReader {
 
     BitBuffer bb = new BitBuffer(rawPlane);
 
-    if ((palette != null && palette[0].length > 0) || getSizeC() == 1) {
-      for (int row=h-1; row>=0; row--) {
-        bb.skipBits(x * bpp);
-        for (int i=0; i<w; i++) {
-          buf[row*w + i] = (byte) (bb.getBits(bpp) & 0xff);
-        }
-        if (row > 0) bb.skipBits((getSizeX() - w - x) * bpp + pad * 8);
+    int effectiveC = palette != null && palette[0].length > 0 ? 1 : getSizeC();
+    for (int row=h-1; row>=y; row--) {
+      bb.skipBits(x * bpp * effectiveC);
+      for (int i=0; i<w*effectiveC; i++) {
+        buf[row * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
+      }
+      if (row > y) {
+        bb.skipBits((getSizeX() - w - x) * bpp * effectiveC + pad*8);
       }
     }
-    else {
-      int len = getSizeX() * getSizeC();
-      for (int row=h-1; row>=y; row--) {
-        bb.skipBits(x * getSizeC() * bpp);
-        for (int i=0; i<w*getSizeC(); i++) {
-          buf[row*w*getSizeC() + i] = (byte) (bb.getBits(bpp) & 0xff);
-        }
-        bb.skipBits(getSizeC() * bpp * (getSizeX() - w - x) + pad * 8);
-      }
+
+    if (getRGBChannelCount() > 1) {
       ImageTools.bgrToRgb(buf, isInterleaved(), 1, getRGBChannelCount());
     }
     return buf;
@@ -159,7 +150,7 @@ public class BMPReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      offset = bpp = compression = 0;
+      bpp = compression = 0;
       global = 0;
       palette = null;
     }
@@ -181,10 +172,7 @@ public class BMPReader extends FormatReader {
     addGlobalMeta("Magic identifier", in.readString(2));
 
     addGlobalMeta("File size (in bytes)", in.readInt());
-    in.skipBytes(4); // reserved
-
-    // read the offset to the image data
-    offset = in.readInt();
+    in.skipBytes(8); // reserved
 
     // read the second header - 40 bytes
 
@@ -199,38 +187,15 @@ public class BMPReader extends FormatReader {
       throw new FormatException("Invalid image dimensions: " +
         getSizeX() + " x " + getSizeY());
     }
-    addGlobalMeta("Image width", getSizeX());
-    addGlobalMeta("Image height", getSizeY());
 
     addGlobalMeta("Color planes", in.readShort());
     bpp = in.readShort();
-    addGlobalMeta("Bits per pixel", bpp);
 
     compression = in.readInt();
-    String comp = "invalid";
-
-    switch (compression) {
-      case RAW:
-        comp = "None";
-        break;
-      case RLE_8:
-        comp = "8 bit run length encoding";
-        break;
-      case RLE_4:
-        comp = "4 bit run length encoding";
-        break;
-      case RGB_MASK:
-        comp = "RGB bitmap with mask";
-        break;
-    }
-
-    addGlobalMeta("Compression type", comp);
 
     in.skipBytes(4);
     int pixelSizeX = in.readInt();
     int pixelSizeY = in.readInt();
-    addGlobalMeta("X resolution", pixelSizeX);
-    addGlobalMeta("Y resolution", pixelSizeY);
     int nColors = in.readInt();
     if (nColors == 0 && bpp != 32 && bpp != 24) {
       nColors = bpp < 8 ? 1 << bpp : 256;
@@ -252,8 +217,6 @@ public class BMPReader extends FormatReader {
     else if (nColors != 0) in.skipBytes(nColors * 4);
 
     global = in.getFilePointer();
-
-    addGlobalMeta("Indexed color", palette != null);
 
     LOGGER.info("Populating metadata");
 
@@ -287,6 +250,33 @@ public class BMPReader extends FormatReader {
     }
     core[0].falseColor = false;
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      addGlobalMeta("Indexed color", palette != null);
+      addGlobalMeta("Image width", getSizeX());
+      addGlobalMeta("Image height", getSizeY());
+      addGlobalMeta("Bits per pixel", bpp);
+      String comp = "invalid";
+
+      switch (compression) {
+        case RAW:
+          comp = "None";
+          break;
+        case RLE_8:
+          comp = "8 bit run length encoding";
+          break;
+        case RLE_4:
+          comp = "4 bit run length encoding";
+          break;
+        case RGB_MASK:
+          comp = "RGB bitmap with mask";
+          break;
+      }
+
+      addGlobalMeta("Compression type", comp);
+      addGlobalMeta("X resolution", pixelSizeX);
+      addGlobalMeta("Y resolution", pixelSizeY);
+    }
+
     // Populate metadata store.
 
     MetadataStore store =
@@ -294,14 +284,16 @@ public class BMPReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    // resolution is stored as pixels per meter; we want to convert to
-    // microns per pixel
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // resolution is stored as pixels per meter; we want to convert to
+      // microns per pixel
 
-    double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
-    double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
+      double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
+      double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
 
-    store.setDimensionsPhysicalSizeX(correctedX, 0, 0);
-    store.setDimensionsPhysicalSizeY(correctedY, 0, 0);
+      store.setDimensionsPhysicalSizeX(correctedX, 0, 0);
+      store.setDimensionsPhysicalSizeY(correctedY, 0, 0);
+    }
   }
 
 }

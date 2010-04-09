@@ -198,54 +198,56 @@ public class AliconaReader extends FormatReader {
 
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    // link Image and Instrument
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // link Image and Instrument
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    // populate Detector data
+      // populate Detector data
 
-    // According to the spec, the voltage and magnification values are those
-    // used when the dataset was acquired, i.e. detector settings.
-    if (voltage != null) {
-      store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
+      // According to the spec, the voltage and magnification values are those
+      // used when the dataset was acquired, i.e. detector settings.
+      if (voltage != null) {
+        store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
 
-      // link DetectorSettings to an actual Detector
-      String detectorID = MetadataTools.createLSID("Detector", 0, 0);
-      store.setDetectorID(detectorID, 0, 0);
-      store.setDetectorSettingsDetector(detectorID, 0, 0);
+        // link DetectorSettings to an actual Detector
+        String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+        store.setDetectorID(detectorID, 0, 0);
+        store.setDetectorSettingsDetector(detectorID, 0, 0);
 
-      // set required Detector type
-      store.setDetectorType("Unknown", 0, 0);
-    }
+        // set required Detector type
+        store.setDetectorType("Unknown", 0, 0);
+      }
 
-    // populate Objective data
+      // populate Objective data
 
-    if (magnification != null) {
-      store.setObjectiveCalibratedMagnification(
-        new Double(magnification), 0, 0);
-    }
+      if (magnification != null) {
+        store.setObjectiveCalibratedMagnification(
+          new Double(magnification), 0, 0);
+      }
 
-    if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
-    }
+      if (workingDistance != null) {
+        store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+      }
 
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setObjectiveCorrection("Unknown", 0, 0);
+      store.setObjectiveImmersion("Unknown", 0, 0);
 
-    // link Objective to an Image using ObjectiveSettings
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
+      // link Objective to an Image using ObjectiveSettings
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
 
-    // populate Dimensions data
+      // populate Dimensions data
 
-    if (pntX != null && pntY != null) {
-      double pixelSizeX = Double.parseDouble(pntX) * 1000000;
-      double pixelSizeY = Double.parseDouble(pntY) * 1000000;
+      if (pntX != null && pntY != null) {
+        double pixelSizeX = Double.parseDouble(pntX) * 1000000;
+        double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+        store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+        store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+      }
     }
   }
 
