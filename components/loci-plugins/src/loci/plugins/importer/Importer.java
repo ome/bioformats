@@ -113,8 +113,45 @@ public class Importer {
 
   // -- Importer API methods --
 
-  /** Parses core importer options. */
-  public ImporterOptions parseOptions(String arg, boolean quiet) {
+  /** Executes the plugin. */
+  public void run(String arg) {
+    ImporterOptions options = parseOptions(arg, false);
+
+    checkNewVersion(options);
+    if (plugin.canceled) return;
+
+    try {
+      harvestAdditionalOptions(options);
+      if (plugin.canceled) return;
+
+      displayMetadata(options);
+      if (plugin.canceled) return;
+
+      readPixelData(options);
+      if (plugin.canceled) return;
+
+      displayROIs(options);
+      if (plugin.canceled) return;
+
+      finishUp(options);
+      if (plugin.canceled) return;
+    }
+    catch (FormatException exc) {
+      WindowTools.reportException(exc, options.isQuiet(),
+        "Sorry, there was a problem reading the data.");
+    }
+    catch (IOException exc) {
+      WindowTools.reportException(exc, options.isQuiet(),
+        "Sorry, there was an I/O problem reading the data.");
+    }
+  }
+
+  // -- Helper methods --
+
+  // -- CTR BEGIN TEMP helper methods --
+
+  // Step 0: parse core options
+  private ImporterOptions parseOptions(String arg, boolean quiet) {
     BF.debug("parse core options");
     ImporterOptions options = null;
     try {
@@ -128,8 +165,9 @@ public class Importer {
     return options;
   }
 
+  // Step 1: check if new version is available
   /** Checks if a new version of the LOCI plugins is available. */
-  public void checkNewVersion(ImporterOptions options) {
+  private void checkNewVersion(ImporterOptions options) {
     BF.debug("check if new version is available");
 
     UpgradeDialog upgradeDialog = new UpgradeDialog(options);
@@ -137,389 +175,378 @@ public class Importer {
     if (!statusOk(status)) return;
   }
 
-  /** Executes the plugin. */
-  public void run(String arg) {
-
-    // -- Step 0: parse core options --
-
-    ImporterOptions options = parseOptions(arg, false);
-
-    // -- Step 1: check if new version is available --
-
-    checkNewVersion(options);
-    if (plugin.canceled) return;
-
-    // -- Step 2: harvest additional options --
-
+  // Step 2: harvest additional options
+  private void harvestAdditionalOptions(ImporterOptions options)
+    throws FormatException, IOException
+  {
     BF.debug("get parameter values");
+    boolean success = options.showDialogs();
+    if (!success) {
+      plugin.canceled = true;
+      return;
+    }
+    ImagePlusReader r = options.getReader();
 
-    try {
-      boolean success = options.showDialogs();
-      if (!success) {
-        plugin.canceled = true;
-        return;
+    BF.debug("analyze and read from data source");
+
+    IJ.showStatus("Analyzing " + options.getIdName());
+  }
+
+  // Step 3: display metadata, if appropriate
+  private void displayMetadata(ImporterOptions options) throws IOException {
+    if (options.isShowMetadata()) {
+      BF.debug("display metadata");
+      IJ.showStatus("Populating metadata");
+
+      // display standard metadata in a table in its own window
+      ImporterMetadata meta = options.getOriginalMetadata();
+      meta.showMetadataWindow(options.getIdName());
+    }
+    else BF.debug("skip metadata");
+
+    if (options.isShowOMEXML()) {
+      BF.debug("show OME-XML");
+      if (options.isViewBrowser()) {
+        // NB: Data Browser has its own internal OME-XML metadata window,
+        // which we'll trigger once we have created a Data Browser.
+        // So there is no need to pop up a separate OME-XML here.
       }
-      ImagePlusReader r = options.getReader();
-
-      BF.debug("analyze and read from data source");
-
-      IJ.showStatus("Analyzing " + options.getIdName());
-
-      // -- Step 3: display metadata, if appropriate --
-
-      if (options.isShowMetadata()) {
-        BF.debug("display metadata");
-        IJ.showStatus("Populating metadata");
-
-        // display standard metadata in a table in its own window
-        ImporterMetadata meta = options.getOriginalMetadata();
-        meta.showMetadataWindow(options.getIdName());
-      }
-      else BF.debug("skip metadata");
-
-      if (options.isShowOMEXML()) {
-        BF.debug("show OME-XML");
-        if (options.isViewBrowser()) {
-          // NB: Data Browser has its own internal OME-XML metadata window,
-          // which we'll trigger once we have created a Data Browser.
-          // So there is no need to pop up a separate OME-XML here.
-        }
-        else {
-          XMLWindow metaWindow =
-            new XMLWindow("OME Metadata - " + options.getIdName());
-          Exception exc = null;
-          try {
-            ServiceFactory factory = new ServiceFactory();
-            OMEXMLService service = factory.getInstance(OMEXMLService.class);
-            metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
-            WindowTools.placeWindow(metaWindow);
-            metaWindow.setVisible(true);
-          }
-          catch (DependencyException e) { exc = e; }
-          catch (ServiceException e) { exc = e; }
-          catch (ParserConfigurationException e) { exc = e; }
-          catch (SAXException e) { exc = e; }
-
-          if (exc != null) {
-            WindowTools.reportException(exc, options.isQuiet(),
-              "Sorry, there was a problem displaying the OME metadata");
-          }
-        }
-      }
-      else BF.debug("skip OME-XML");
-
-      // -- Step 5: read pixel data --
-
-      if (options.isViewNone()) return; // nothing to display
-
-      BF.debug("read pixel data");
-
-      IJ.showStatus("Reading " + options.getCurrentFile());
-
-      if (options.isVirtual()) {
-        int totalSeries = 0;
-        for (int s=0; s<r.getSeriesCount(); s++) {
-          if (options.isSeriesOn(s)) totalSeries++;
-        }
-        ((VirtualReader) r.getReader()).setRefCount(totalSeries);
-      }
-
-      for (int s=0; s<r.getSeriesCount(); s++) {
-        if (!options.isSeriesOn(s)) continue;
-        r.setSeries(s);
-
-        boolean[] load = new boolean[r.getImageCount()];
-        int cBegin = options.getCBegin(s);
-        int cEnd = options.getCEnd(s);
-        int cStep = options.getCStep(s);
-        int zBegin = options.getZBegin(s);
-        int zEnd = options.getZEnd(s);
-        int zStep = options.getZStep(s);
-        int tBegin = options.getTBegin(s);
-        int tEnd = options.getTEnd(s);
-        int tStep = options.getTStep(s);
-        for (int c=cBegin; c<=cEnd; c+=cStep) {
-          for (int z=zBegin; z<=zEnd; z+=zStep) {
-            for (int t=tBegin; t<=tEnd; t+=tStep) {
-              //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
-              int index = r.getIndex(z, c, t);
-              load[index] = true;
-            }
-          }
-        }
-        int total = 0;
-        for (int j=0; j<r.getImageCount(); j++) if (load[j]) total++;
-
-        FileInfo fi = new FileInfo();
-
-        // populate other common FileInfo fields
-        String idDir = options.getIdLocation() == null ?
-          null : options.getIdLocation().getParent();
-        if (idDir != null && !idDir.endsWith(File.separator)) {
-          idDir += File.separator;
-        }
-        fi.fileName = options.getIdName();
-        fi.directory = idDir;
-
-        long startTime = System.currentTimeMillis();
-        long time = startTime;
-
-        ImageStack stackB = null; // for byte images (8-bit)
-        ImageStack stackS = null; // for short images (16-bit)
-        ImageStack stackF = null; // for floating point images (32-bit)
-        ImageStack stackO = null; // for all other images (24-bit RGB)
-
-        Rectangle cropRegion = options.getCropRegion(s);
-        int w = options.doCrop() ? cropRegion.width : r.getSizeX();
-        int h = options.doCrop() ? cropRegion.height : r.getSizeY();
-        int c = r.getRGBChannelCount();
-        int type = r.getPixelType();
-
-        int q = 0;
-        stackOrder = options.getStackOrder();
-        if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
-          stackOrder = r.getDimensionOrder();
-        }
-        ((VirtualReader) r.getReader()).setOutputOrder(stackOrder);
-
-        options.getOMEMetadata().setPixelsDimensionOrder(stackOrder, s, 0);
-
-        // dump OME-XML to ImageJ's description field, if available
-
+      else {
+        XMLWindow metaWindow =
+          new XMLWindow("OME Metadata - " + options.getIdName());
+        Exception exc = null;
         try {
           ServiceFactory factory = new ServiceFactory();
           OMEXMLService service = factory.getInstance(OMEXMLService.class);
-          fi.description = service.getOMEXML(options.getOMEMetadata());
+          metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
+          WindowTools.placeWindow(metaWindow);
+          metaWindow.setVisible(true);
         }
-        catch (DependencyException de) { }
-        catch (ServiceException se) { }
+        catch (DependencyException e) { exc = e; }
+        catch (ServiceException e) { exc = e; }
+        catch (ParserConfigurationException e) { exc = e; }
+        catch (SAXException e) { exc = e; }
 
-        if (options.isVirtual()) {
-          int cSize = r.getSizeC();
-          int pt = r.getPixelType();
-          boolean doMerge = options.isMergeChannels();
-          boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
-          boolean needComposite = doMerge && (cSize > 3 || eight);
-          int merge = (needComposite || !doMerge) ? 1 : cSize;
-
-          r.setSeries(s);
-          // NB: ImageJ 1.39+ is required for VirtualStack
-          BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
-            r, options.isColorize(), doMerge, options.isRecord());
-          stackB = virtualStackB;
-          if (doMerge) {
-            for (int j=0; j<r.getImageCount(); j++) {
-              int[] pos = r.getZCTCoords(j);
-              if (pos[1] > 0) continue;
-              String label = constructSliceLabel(
-                new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]),
-                new ChannelMerger(r), options.getOMEMetadata(), s,
-                options.getZCount(s), options.getCCount(s),
-                options.getTCount(s));
-              virtualStackB.addSlice(label);
-            }
-          }
-          else {
-            for (int j=0; j<r.getImageCount(); j++) {
-              String label = constructSliceLabel(j, r,
-                options.getOMEMetadata(), s, options.getZCount(s),
-                options.getCCount(s), options.getTCount(s));
-              virtualStackB.addSlice(label);
-            }
-          }
-        }
-        else {
-          if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
-
-          for (int i=0; i<r.getImageCount(); i++) {
-            if (!load[i]) continue;
-
-            // limit message update rate
-            long clock = System.currentTimeMillis();
-            if (clock - time >= 100) {
-              String sLabel = r.getSeriesCount() > 1 ?
-                ("series " + (s + 1) + ", ") : "";
-              String pLabel = "plane " + (i + 1) + "/" + total;
-              IJ.showStatus("Reading " + sLabel + pLabel);
-              time = clock;
-            }
-            IJ.showProgress((double) q++ / total);
-
-            String label = constructSliceLabel(i, r,
-              options.getOMEMetadata(), s, options.getZCount(s),
-              options.getCCount(s), options.getTCount(s));
-
-            // get image processor for ith plane
-            ImageProcessor[] p = r.openProcessors(i, cropRegion);
-            ImageProcessor ip = p[0];
-            if (p.length > 1) {
-              ip = ImagePlusTools.makeRGB(p).getProcessor();
-            }
-            if (ip == null) {
-              plugin.canceled = true;
-              return;
-            }
-
-            int channel = r.getZCTCoords(i)[1];
-            if (colorModels != null && p.length == 1) {
-              colorModels[channel] = (IndexColorModel) ip.getColorModel();
-            }
-
-            // add plane to image stack
-            if (ip instanceof ByteProcessor) {
-              if (stackB == null) stackB = new ImageStack(w, h);
-              stackB.addSlice(label, ip);
-            }
-            else if (ip instanceof ShortProcessor) {
-              if (stackS == null) stackS = new ImageStack(w, h);
-              stackS.addSlice(label, ip);
-            }
-            else if (ip instanceof FloatProcessor) {
-              // merge image plane into existing stack if possible
-              if (stackB != null) {
-                ip = ip.convertToByte(true);
-                stackB.addSlice(label, ip);
-              }
-              else if (stackS != null) {
-                ip = ip.convertToShort(true);
-                stackS.addSlice(label, ip);
-              }
-              else {
-                if (stackF == null) stackF = new ImageStack(w, h);
-                stackF.addSlice(label, ip);
-              }
-            }
-            else if (ip instanceof ColorProcessor) {
-              if (stackO == null) stackO = new ImageStack(w, h);
-              stackO.addSlice(label, ip);
-            }
-          }
-        }
-
-        IJ.showStatus("Creating image");
-        IJ.showProgress(1);
-
-        showStack(stackB, s, fi, options);
-        showStack(stackS, s, fi, options);
-        showStack(stackF, s, fi, options);
-        showStack(stackO, s, fi, options);
-
-        long endTime = System.currentTimeMillis();
-        double elapsed = (endTime - startTime) / 1000.0;
-        if (r.getImageCount() == 1) {
-          IJ.showStatus("Bio-Formats: " + elapsed + " seconds");
-        }
-        else {
-          long average = (endTime - startTime) / r.getImageCount();
-          IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
-            average + " ms per plane)");
+        if (exc != null) {
+          WindowTools.reportException(exc, options.isQuiet(),
+            "Sorry, there was a problem displaying the OME metadata");
         }
       }
+    }
+    else BF.debug("skip OME-XML");
+  }
 
-      if (options.isConcatenate()) {
-        ArrayList<Integer> widths = new ArrayList<Integer>();
-        ArrayList<Integer> heights = new ArrayList<Integer>();
-        ArrayList<Integer> types = new ArrayList<Integer>();
-        ArrayList<ImagePlus> newImps = new ArrayList<ImagePlus>();
+  // Step 5: read pixel data
+  private void readPixelData(ImporterOptions options)
+    throws FormatException, IOException
+  {
+    if (options.isViewNone()) return; // nothing to display
 
-        for (int j=0; j<imps.size(); j++) {
-          ImagePlus imp = imps.get(j);
-          int wj = imp.getWidth();
-          int hj = imp.getHeight();
-          int tj = imp.getBitDepth();
-          boolean append = false;
-          for (int k=0; k<widths.size(); k++) {
-            int wk = ((Integer) widths.get(k)).intValue();
-            int hk = ((Integer) heights.get(k)).intValue();
-            int tk = ((Integer) types.get(k)).intValue();
+    BF.debug("read pixel data");
 
-            if (wj == wk && hj == hk && tj == tk) {
-              ImagePlus oldImp = newImps.get(k);
-              ImageStack is = oldImp.getStack();
-              ImageStack newStack = imp.getStack();
-              for (int s=0; s<newStack.getSize(); s++) {
-                is.addSlice(newStack.getSliceLabel(s + 1),
-                  newStack.getProcessor(s + 1));
-              }
-              oldImp.setStack(oldImp.getTitle(), is);
-              newImps.set(k, oldImp);
-              append = true;
-              k = widths.size();
-            }
-          }
-          if (!append) {
-            widths.add(new Integer(wj));
-            heights.add(new Integer(hj));
-            types.add(new Integer(tj));
-            newImps.add(imp);
-          }
-        }
+    IJ.showStatus("Reading " + options.getCurrentFile());
 
-        boolean splitC = options.isSplitChannels();
-        boolean splitZ = options.isSplitFocalPlanes();
-        boolean splitT = options.isSplitTimepoints();
+    ImagePlusReader r = options.getReader();
 
-        for (int j=0; j<newImps.size(); j++) {
-          ImagePlus imp = (ImagePlus) newImps.get(j);
-          imp.show();
-          if (splitC || splitZ || splitT) {
-            IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-              " slice_c=" + splitC + " slice_t=" + splitT +
-              " stack_order=" + stackOrder + " keep_original=false " +
-              "hyper_stack=" + options.isViewHyperstack() + " ");
-            imp.close();
-          }
-          if (options.isMergeChannels() && options.isWindowless()) {
-            IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-              " merge=true merge_option=[" + options.getMergeOption() + "] " +
-              "series=" + r.getSeries() + " hyper_stack=" +
-              options.isViewHyperstack() + " ");
-            imp.close();
-          }
-          else if (options.isMergeChannels()) {
-            IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-              " merge=true series=" + r.getSeries() + " hyper_stack=" +
-              options.isViewHyperstack() + " ");
-            imp.close();
+    if (options.isVirtual()) {
+      int totalSeries = 0;
+      for (int s=0; s<r.getSeriesCount(); s++) {
+        if (options.isSeriesOn(s)) totalSeries++;
+      }
+      ((VirtualReader) r.getReader()).setRefCount(totalSeries);
+    }
+
+    for (int s=0; s<r.getSeriesCount(); s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
+
+      boolean[] load = new boolean[r.getImageCount()];
+      int cBegin = options.getCBegin(s);
+      int cEnd = options.getCEnd(s);
+      int cStep = options.getCStep(s);
+      int zBegin = options.getZBegin(s);
+      int zEnd = options.getZEnd(s);
+      int zStep = options.getZStep(s);
+      int tBegin = options.getTBegin(s);
+      int tEnd = options.getTEnd(s);
+      int tStep = options.getTStep(s);
+      for (int c=cBegin; c<=cEnd; c+=cStep) {
+        for (int z=zBegin; z<=zEnd; z+=zStep) {
+          for (int t=tBegin; t<=tEnd; t+=tStep) {
+            //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
+            int index = r.getIndex(z, c, t);
+            load[index] = true;
           }
         }
       }
+      int total = 0;
+      for (int j=0; j<r.getImageCount(); j++) if (load[j]) total++;
 
-      // -- Step 6: display ROIs, if necessary --
+      FileInfo fi = new FileInfo();
 
-      if (options.showROIs()) {
-        BF.debug("display ROIs");
-
-        ImagePlus[] impsArray = imps.toArray(new ImagePlus[0]);
-        ROIHandler.openROIs(options.getOMEMetadata(), impsArray);
+      // populate other common FileInfo fields
+      String idDir = options.getIdLocation() == null ?
+        null : options.getIdLocation().getParent();
+      if (idDir != null && !idDir.endsWith(File.separator)) {
+        idDir += File.separator;
       }
-      else BF.debug("skip ROIs");
+      fi.fileName = options.getIdName();
+      fi.directory = idDir;
 
-      // -- Step 7: finish up --
+      long startTime = System.currentTimeMillis();
+      long time = startTime;
 
-      BF.debug("finish up");
+      ImageStack stackB = null; // for byte images (8-bit)
+      ImageStack stackS = null; // for short images (16-bit)
+      ImageStack stackF = null; // for floating point images (32-bit)
+      ImageStack stackO = null; // for all other images (24-bit RGB)
+
+      Rectangle cropRegion = options.getCropRegion(s);
+      int w = options.doCrop() ? cropRegion.width : r.getSizeX();
+      int h = options.doCrop() ? cropRegion.height : r.getSizeY();
+      int c = r.getRGBChannelCount();
+      int type = r.getPixelType();
+
+      int q = 0;
+      stackOrder = options.getStackOrder();
+      if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
+        stackOrder = r.getDimensionOrder();
+      }
+      ((VirtualReader) r.getReader()).setOutputOrder(stackOrder);
+
+      options.getOMEMetadata().setPixelsDimensionOrder(stackOrder, s, 0);
+
+      // dump OME-XML to ImageJ's description field, if available
 
       try {
-        if (!options.isVirtual()) r.close();
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        fi.description = service.getOMEXML(options.getOMEMetadata());
       }
-      catch (IOException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was a problem closing the file");
+      catch (DependencyException de) { }
+      catch (ServiceException se) { }
+
+      if (options.isVirtual()) {
+        int cSize = r.getSizeC();
+        int pt = r.getPixelType();
+        boolean doMerge = options.isMergeChannels();
+        boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
+        boolean needComposite = doMerge && (cSize > 3 || eight);
+        int merge = (needComposite || !doMerge) ? 1 : cSize;
+
+        r.setSeries(s);
+        // NB: ImageJ 1.39+ is required for VirtualStack
+        BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
+          r, options.isColorize(), doMerge, options.isRecord());
+        stackB = virtualStackB;
+        if (doMerge) {
+          for (int j=0; j<r.getImageCount(); j++) {
+            int[] pos = r.getZCTCoords(j);
+            if (pos[1] > 0) continue;
+            String label = constructSliceLabel(
+              new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]),
+              new ChannelMerger(r), options.getOMEMetadata(), s,
+              options.getZCount(s), options.getCCount(s),
+              options.getTCount(s));
+            virtualStackB.addSlice(label);
+          }
+        }
+        else {
+          for (int j=0; j<r.getImageCount(); j++) {
+            String label = constructSliceLabel(j, r,
+              options.getOMEMetadata(), s, options.getZCount(s),
+              options.getCCount(s), options.getTCount(s));
+            virtualStackB.addSlice(label);
+          }
+        }
+      }
+      else {
+        if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
+
+        for (int i=0; i<r.getImageCount(); i++) {
+          if (!load[i]) continue;
+
+          // limit message update rate
+          long clock = System.currentTimeMillis();
+          if (clock - time >= 100) {
+            String sLabel = r.getSeriesCount() > 1 ?
+              ("series " + (s + 1) + ", ") : "";
+            String pLabel = "plane " + (i + 1) + "/" + total;
+            IJ.showStatus("Reading " + sLabel + pLabel);
+            time = clock;
+          }
+          IJ.showProgress((double) q++ / total);
+
+          String label = constructSliceLabel(i, r,
+            options.getOMEMetadata(), s, options.getZCount(s),
+            options.getCCount(s), options.getTCount(s));
+
+          // get image processor for ith plane
+          ImageProcessor[] p = r.openProcessors(i, cropRegion);
+          ImageProcessor ip = p[0];
+          if (p.length > 1) {
+            ip = ImagePlusTools.makeRGB(p).getProcessor();
+          }
+          if (ip == null) {
+            plugin.canceled = true;
+            return;
+          }
+
+          int channel = r.getZCTCoords(i)[1];
+          if (colorModels != null && p.length == 1) {
+            colorModels[channel] = (IndexColorModel) ip.getColorModel();
+          }
+
+          // add plane to image stack
+          if (ip instanceof ByteProcessor) {
+            if (stackB == null) stackB = new ImageStack(w, h);
+            stackB.addSlice(label, ip);
+          }
+          else if (ip instanceof ShortProcessor) {
+            if (stackS == null) stackS = new ImageStack(w, h);
+            stackS.addSlice(label, ip);
+          }
+          else if (ip instanceof FloatProcessor) {
+            // merge image plane into existing stack if possible
+            if (stackB != null) {
+              ip = ip.convertToByte(true);
+              stackB.addSlice(label, ip);
+            }
+            else if (stackS != null) {
+              ip = ip.convertToShort(true);
+              stackS.addSlice(label, ip);
+            }
+            else {
+              if (stackF == null) stackF = new ImageStack(w, h);
+              stackF.addSlice(label, ip);
+            }
+          }
+          else if (ip instanceof ColorProcessor) {
+            if (stackO == null) stackO = new ImageStack(w, h);
+            stackO.addSlice(label, ip);
+          }
+        }
       }
 
-      plugin.success = true;
+      IJ.showStatus("Creating image");
+      IJ.showProgress(1);
+
+      showStack(stackB, s, fi, options);
+      showStack(stackS, s, fi, options);
+      showStack(stackF, s, fi, options);
+      showStack(stackO, s, fi, options);
+
+      long endTime = System.currentTimeMillis();
+      double elapsed = (endTime - startTime) / 1000.0;
+      if (r.getImageCount() == 1) {
+        IJ.showStatus("Bio-Formats: " + elapsed + " seconds");
+      }
+      else {
+        long average = (endTime - startTime) / r.getImageCount();
+        IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
+          average + " ms per plane)");
+      }
     }
-    catch (FormatException exc) {
-      WindowTools.reportException(exc, options.isQuiet(),
-        "Sorry, there was a problem reading the data.");
-    }
-    catch (IOException exc) {
-      WindowTools.reportException(exc, options.isQuiet(),
-        "Sorry, there was an I/O problem reading the data.");
+
+    if (options.isConcatenate()) {
+      ArrayList<Integer> widths = new ArrayList<Integer>();
+      ArrayList<Integer> heights = new ArrayList<Integer>();
+      ArrayList<Integer> types = new ArrayList<Integer>();
+      ArrayList<ImagePlus> newImps = new ArrayList<ImagePlus>();
+
+      for (int j=0; j<imps.size(); j++) {
+        ImagePlus imp = imps.get(j);
+        int wj = imp.getWidth();
+        int hj = imp.getHeight();
+        int tj = imp.getBitDepth();
+        boolean append = false;
+        for (int k=0; k<widths.size(); k++) {
+          int wk = ((Integer) widths.get(k)).intValue();
+          int hk = ((Integer) heights.get(k)).intValue();
+          int tk = ((Integer) types.get(k)).intValue();
+
+          if (wj == wk && hj == hk && tj == tk) {
+            ImagePlus oldImp = newImps.get(k);
+            ImageStack is = oldImp.getStack();
+            ImageStack newStack = imp.getStack();
+            for (int s=0; s<newStack.getSize(); s++) {
+              is.addSlice(newStack.getSliceLabel(s + 1),
+                newStack.getProcessor(s + 1));
+            }
+            oldImp.setStack(oldImp.getTitle(), is);
+            newImps.set(k, oldImp);
+            append = true;
+            k = widths.size();
+          }
+        }
+        if (!append) {
+          widths.add(new Integer(wj));
+          heights.add(new Integer(hj));
+          types.add(new Integer(tj));
+          newImps.add(imp);
+        }
+      }
+
+      boolean splitC = options.isSplitChannels();
+      boolean splitZ = options.isSplitFocalPlanes();
+      boolean splitT = options.isSplitTimepoints();
+
+      for (int j=0; j<newImps.size(); j++) {
+        ImagePlus imp = (ImagePlus) newImps.get(j);
+        imp.show();
+        if (splitC || splitZ || splitT) {
+          IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
+            " slice_c=" + splitC + " slice_t=" + splitT +
+            " stack_order=" + stackOrder + " keep_original=false " +
+            "hyper_stack=" + options.isViewHyperstack() + " ");
+          imp.close();
+        }
+        if (options.isMergeChannels() && options.isWindowless()) {
+          IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+            " merge=true merge_option=[" + options.getMergeOption() + "] " +
+            "series=" + r.getSeries() + " hyper_stack=" +
+            options.isViewHyperstack() + " ");
+          imp.close();
+        }
+        else if (options.isMergeChannels()) {
+          IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+            " merge=true series=" + r.getSeries() + " hyper_stack=" +
+            options.isViewHyperstack() + " ");
+          imp.close();
+        }
+      }
     }
   }
 
-  // -- Helper methods --
+  // Step 6: display ROIs, if necessary
+  private void displayROIs(ImporterOptions options) {
+    if (options.showROIs()) {
+      BF.debug("display ROIs");
+
+      ImagePlus[] impsArray = imps.toArray(new ImagePlus[0]);
+      ROIHandler.openROIs(options.getOMEMetadata(), impsArray);
+    }
+    else BF.debug("skip ROIs");
+  }
+
+  // Step 7: finish up
+  private void finishUp(ImporterOptions options) {
+    BF.debug("finish up");
+
+    ImagePlusReader r = options.getReader();
+
+    try {
+      if (!options.isVirtual()) r.close();
+    }
+    catch (IOException exc) {
+      WindowTools.reportException(exc, options.isQuiet(),
+        "Sorry, there was a problem closing the file");
+    }
+
+    plugin.success = true;
+  }
+
+  // -- CTR END TEMP helper methods --
 
   /**
    * Displays the given image stack according to
