@@ -184,6 +184,22 @@ public class Jar2Lib {
 		System.out.println("Finished Proxy generation.");
 	}
 
+	private static void printUsageStatement() {
+		System.out.println("Usage: java JarFile");
+		System.out.println("	[ -C classpath ]");
+		System.out.println("	[ -d dependencies comma seperated list ]");
+		System.out.println("	[ -D dependencies file ]");
+		System.out.println("	[ -e /* export symbols */ ]");
+		System.out.println("	-f File name for header file");
+		System.out.println("	-h Header file input path");
+		System.out.println("	-H Header file output path");
+		System.out.println("	[ -j Jar file ]");
+		System.out.println("	[ -m /* mindep  */ ]");
+		System.out.println("	-s Source file input path");
+		System.out.println("	-S Source file output path");
+		System.out.println("	[ -? Print this statement ]");
+	}
+
 	// -- Main method --
 	public static void main(String[] args) throws Exception {
 		String headerFileName = "";
@@ -205,7 +221,7 @@ public class Jar2Lib {
 		boolean headerFileNameDefined = false;
 		boolean classPathDefined = false;
 
-		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:D:j:em");
+		GetOpt go = new GetOpt(args, "h:s:H:S:C:f:D:j:em?");
 		go.optErr = true;
 		int ch = -1;
 		// process options in command line arguments
@@ -239,17 +255,27 @@ public class Jar2Lib {
 				mindep = true;
 			} else if (ch == 'e') {
 				exportSymbols = true;
+			} else if (ch == '?') {
+				Jar2Lib.printUsageStatement();
+				System.exit(1);
 			} else {
 				System.err.println("Illegal option " + ch);
+				Jar2Lib.printUsageStatement();
 				System.exit(1);
 			}
 		}
 
-		if (!(headerInputPathDefined && headerInputPathDefined &&
-			sourceOutputPathDefined && sourceOutputPathDefined &&
+		if (!(headerInputPathDefined && headerOutputPathDefined &&
+			sourceInputPathDefined && sourceOutputPathDefined &&
 			headerFileNameDefined && classPathDefined))
 		{
-			System.out.println("Add a usage statement");
+			System.out.println("The following options are required ");
+			System.out.println("	-f Header File Name");
+			System.out.println("	-h Header Input Path");
+			System.out.println("	-H Header Output Path");
+			System.out.println("	-s Source Input Path");
+			System.out.println("	-S Source Output Path");
+			Jar2Lib.printUsageStatement();
 			System.exit(1);
 		}
 
