@@ -56,6 +56,8 @@ public class ImarisHDFReader extends FormatReader {
 
   public static final String HDF_MAGIC_STRING = "HDF";
 
+  private static final String[] DELIMITERS = {" ", "-", "."};
+
   // -- Fields --
 
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
@@ -93,23 +95,14 @@ public class ImarisHDFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int[] zct = FormatTools.getZCTCoords(this, no);
-
     // pixel data is stored in XYZ blocks
 
-    String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
-      zct[2] + "/Channel_" + zct[1] + "/Data";
-    Object image;
-    try {
-      image = netcdf.getArray(path, new int[] {zct[0], 0, 0},
-          new int[] {1, getSizeY(), getSizeX()});
-    }
-    catch (ServiceException e) {
-      throw new FormatException(e);
-    }
+    Object image = getImageData(no);
 
     boolean big = !isLittleEndian();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int row=0; row<h; row++) {
+      int base = row * w * bpp;
       if (image instanceof byte[][]) {
         byte[][] data = (byte[][]) image;
         byte[] rowData = data[row + y];
@@ -118,7 +111,6 @@ public class ImarisHDFReader extends FormatReader {
       else if (image instanceof short[][]) {
         short[][] data = (short[][]) image;
         short[] rowData = data[row + y];
-        int base = row * w * 2;
         for (int i=0; i<w; i++) {
           DataTools.unpackBytes(rowData[x + i], buf, base + 2*i, 2, big);
         }
@@ -126,7 +118,6 @@ public class ImarisHDFReader extends FormatReader {
       else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
         int[] rowData = data[row + y];
-        int base = row * w * 4;
         for (int i=0; i<w; i++) {
           DataTools.unpackBytes(rowData[x + i], buf, base + i*4, 4, big);
         }
@@ -134,7 +125,6 @@ public class ImarisHDFReader extends FormatReader {
       else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
         float[] rowData = data[row + y];
-        int base = row * w * 4;
         for (int i=0; i<w; i++) {
           int v = Float.floatToIntBits(rowData[x + i]);
           DataTools.unpackBytes(v, buf, base + i*4, 4, big);
@@ -143,7 +133,6 @@ public class ImarisHDFReader extends FormatReader {
       else if (image instanceof double[][]) {
         double[][] data = (double[][]) image;
         double[] rowData = data[row + y];
-        int base = row * w * 8;
         for (int i=0; i<w; i++) {
           long v = Double.doubleToLongBits(rowData[x + i]);
           DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
@@ -200,77 +189,7 @@ public class ImarisHDFReader extends FormatReader {
 
     // read all of the metadata key/value pairs
 
-    Vector<String> attributes = netcdf.getAttributeList();
-    for (int i=0; i<attributes.size(); i++) {
-      String attr = attributes.get(i);
-      String name = attr.substring(attr.lastIndexOf("/") + 1);
-      String value = netcdf.getAttributeValue(attr);
-      if (value == null) continue;
-      value = value.trim();
-
-      if (name.equals("X")) {
-        core[0].sizeX = Integer.parseInt(value);
-      }
-      else if (name.equals("Y")) {
-        core[0].sizeY = Integer.parseInt(value);
-      }
-      else if (name.equals("Z")) {
-        core[0].sizeZ = Integer.parseInt(value);
-      }
-      else if (name.equals("FileTimePoints")) {
-        core[0].sizeT = Integer.parseInt(value);
-      }
-      else if (name.equals("RecordingEntrySampleSpacing")) {
-        pixelSizeX = Double.parseDouble(value);
-      }
-      else if (name.equals("RecordingEntryLineSpacing")) {
-        pixelSizeY = Double.parseDouble(value);
-      }
-      else if (name.equals("RecordingEntryPlaneSpacing")) {
-        pixelSizeZ = Double.parseDouble(value);
-      }
-      else if (name.equals("ExtMax0")) maxX = Double.parseDouble(value);
-      else if (name.equals("ExtMax1")) maxY = Double.parseDouble(value);
-      else if (name.equals("ExtMax2")) maxZ = Double.parseDouble(value);
-      else if (name.equals("ExtMin0")) minX = Double.parseDouble(value);
-      else if (name.equals("ExtMin1")) minY = Double.parseDouble(value);
-      else if (name.equals("ExtMin2")) minZ = Double.parseDouble(value);
-
-      if (attr.startsWith("/DataSet/ResolutionLevel_")) {
-        int slash = attr.indexOf("/", 25);
-        int n = Integer.parseInt(attr.substring(25, slash == -1 ?
-          attr.length() : slash));
-        if (n == seriesCount) seriesCount++;
-      }
-
-      if (attr.startsWith("/DataSetInfo/Channel_")) {
-        if (value.indexOf(" ") != -1) {
-          value = value.substring(value.indexOf(" ") + 1);
-        }
-        if (value.indexOf("-") != -1) {
-          value = value.substring(value.indexOf("-") + 1);
-        }
-        if (value.indexOf(".") != -1) {
-          value = value.substring(0, value.indexOf("."));
-        }
-
-        int underscore = attr.indexOf("_") + 1;
-        int cIndex = Integer.parseInt(attr.substring(underscore,
-          attr.indexOf("/", underscore)));
-        if (cIndex == getSizeC()) core[0].sizeC++;
-
-        if (name.equals("Gain")) gain.add(value);
-        else if (name.equals("LSMEmissionWavelength")) emWave.add(value);
-        else if (name.equals("LSMExcitationWavelength")) exWave.add(value);
-        else if (name.equals("Max")) channelMax.add(value);
-        else if (name.equals("Min")) channelMin.add(value);
-        else if (name.equals("Pinhole")) pinhole.add(value);
-        else if (name.equals("Name")) channelName.add(value);
-        else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
-      }
-
-      if (value != null) addGlobalMeta(name, value);
-    }
+    parseAttributes();
 
     if (seriesCount > 1) {
       CoreMetadata oldCore = core[0];
@@ -297,25 +216,19 @@ public class ImarisHDFReader extends FormatReader {
     }
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     core[0].thumbnail = false;
+    core[0].dimensionOrder = "XYZCT";
 
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves
 
     int type = -1;
 
-    Object pix;
-    try {
-      pix = netcdf.getVariableValue("/DataSet/ResolutionLevel_" +
-          (getSeriesCount() - 1) + "/TimePoint_0/Channel_0/Data");
-    }
-    catch (ServiceException e) {
-      throw new FormatException(e);
-    }
-    if (pix instanceof byte[][][]) type = FormatTools.UINT8;
-    else if (pix instanceof short[][][]) type = FormatTools.UINT16;
-    else if (pix instanceof int[][][]) type = FormatTools.UINT32;
-    else if (pix instanceof float[][][]) type = FormatTools.FLOAT;
-    else if (pix instanceof double[][][]) type = FormatTools.DOUBLE;
+    Object pix = getImageData(0);
+    if (pix instanceof byte[][]) type = FormatTools.UINT8;
+    else if (pix instanceof short[][]) type = FormatTools.UINT16;
+    else if (pix instanceof int[][]) type = FormatTools.UINT32;
+    else if (pix instanceof float[][]) type = FormatTools.FLOAT;
+    else if (pix instanceof double[][]) type = FormatTools.DOUBLE;
     else {
       throw new FormatException("Unknown pixel type: " + pix);
     }
@@ -335,21 +248,25 @@ public class ImarisHDFReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    for (int i=0; i<getSeriesCount(); i++) {
-      double px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
-      if (px == 1) px = (maxX - minX) / core[i].sizeX;
-      if (py == 1) py = (maxY - minY) / core[i].sizeY;
-      if (pz == 1) pz = (maxZ - minZ) / core[i].sizeZ;
-      store.setDimensionsPhysicalSizeX(px, i, 0);
-      store.setDimensionsPhysicalSizeY(py, i, 0);
-      store.setDimensionsPhysicalSizeZ(pz, i, 0);
-    }
 
-    int cIndex = 0;
     String imageName = new Location(getCurrentFile()).getName();
     for (int s=0; s<getSeriesCount(); s++) {
       store.setImageName(imageName + " Resolution Level " + (s + 1), s);
       MetadataTools.setDefaultCreationDate(store, id, s);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+
+    int cIndex = 0;
+    for (int s=0; s<getSeriesCount(); s++) {
+      double px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
+      if (px == 1) px = (maxX - minX) / core[s].sizeX;
+      if (py == 1) py = (maxY - minY) / core[s].sizeY;
+      if (pz == 1) pz = (maxZ - minZ) / core[s].sizeZ;
+      store.setDimensionsPhysicalSizeX(px, s, 0);
+      store.setDimensionsPhysicalSizeY(py, s, 0);
+      store.setDimensionsPhysicalSizeZ(pz, s, 0);
+
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;
         Integer pinholeValue = null, emWaveValue = null, exWaveValue;
@@ -404,6 +321,93 @@ public class ImarisHDFReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
       }
+    }
+  }
+
+  // -- Helper methods --
+
+  private Object getImageData(int no) throws FormatException {
+    int[] zct = getZCTCoords(no);
+    String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
+      zct[2] + "/Channel_" + zct[1] + "/Data";
+    Object image = null;
+    int[] dimensions = new int[] {1, getSizeY(), getSizeX()};
+    int[] indices = new int[] {zct[0], 0, 0};
+    try {
+      image = netcdf.getArray(path, indices, dimensions);
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
+    return image;
+  }
+
+  private void parseAttributes() {
+    Vector<String> attributes = netcdf.getAttributeList();
+    for (String attr : attributes) {
+      String name = attr.substring(attr.lastIndexOf("/") + 1);
+      String value = netcdf.getAttributeValue(attr);
+      if (value == null) continue;
+      value = value.trim();
+
+      if (name.equals("X")) {
+        core[0].sizeX = Integer.parseInt(value);
+      }
+      else if (name.equals("Y")) {
+        core[0].sizeY = Integer.parseInt(value);
+      }
+      else if (name.equals("Z")) {
+        core[0].sizeZ = Integer.parseInt(value);
+      }
+      else if (name.equals("FileTimePoints")) {
+        core[0].sizeT = Integer.parseInt(value);
+      }
+      else if (name.equals("RecordingEntrySampleSpacing")) {
+        pixelSizeX = Double.parseDouble(value);
+      }
+      else if (name.equals("RecordingEntryLineSpacing")) {
+        pixelSizeY = Double.parseDouble(value);
+      }
+      else if (name.equals("RecordingEntryPlaneSpacing")) {
+        pixelSizeZ = Double.parseDouble(value);
+      }
+      else if (name.equals("ExtMax0")) maxX = Double.parseDouble(value);
+      else if (name.equals("ExtMax1")) maxY = Double.parseDouble(value);
+      else if (name.equals("ExtMax2")) maxZ = Double.parseDouble(value);
+      else if (name.equals("ExtMin0")) minX = Double.parseDouble(value);
+      else if (name.equals("ExtMin1")) minY = Double.parseDouble(value);
+      else if (name.equals("ExtMin2")) minZ = Double.parseDouble(value);
+
+      if (attr.startsWith("/DataSet/ResolutionLevel_")) {
+        int slash = attr.indexOf("/", 25);
+        int n = Integer.parseInt(attr.substring(25, slash == -1 ?
+          attr.length() : slash));
+        if (n == seriesCount) seriesCount++;
+      }
+
+      if (attr.startsWith("/DataSetInfo/Channel_")) {
+        for (String d : DELIMITERS) {
+          if (value.indexOf(d) != -1) {
+            value = value.substring(value.indexOf(d) + 1);
+          }
+        }
+
+        int underscore = attr.indexOf("_") + 1;
+        int cIndex = Integer.parseInt(attr.substring(underscore,
+          attr.indexOf("/", underscore)));
+        if (cIndex == getSizeC()) core[0].sizeC++;
+
+        if (name.equals("Gain")) gain.add(value);
+        else if (name.equals("LSMEmissionWavelength")) emWave.add(value);
+        else if (name.equals("LSMExcitationWavelength")) exWave.add(value);
+        else if (name.equals("Max")) channelMax.add(value);
+        else if (name.equals("Min")) channelMin.add(value);
+        else if (name.equals("Pinhole")) pinhole.add(value);
+        else if (name.equals("Name")) channelName.add(value);
+        else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
+      }
+
+      if (value != null) addGlobalMeta(name, value);
     }
   }
 

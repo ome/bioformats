@@ -73,15 +73,14 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     IFDList tmp = new IFDList();
 
-    for (int i=0; i<ifds.size(); i++) {
-      IFD ifd = ifds.get(i);
+    for (IFD ifd : ifds) {
       long[] byteCounts = ifd.getStripByteCounts();
       long[] offsets = ifd.getStripOffsets();
 
-      for (int j=0; j<byteCounts.length; j++) {
+      for (int i=0; i<byteCounts.length; i++) {
         IFD t = new IFD(ifd);
-        t.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts[j]);
-        t.putIFDValue(IFD.TILE_OFFSETS, offsets[j]);
+        t.putIFDValue(IFD.TILE_BYTE_COUNTS, byteCounts[i]);
+        t.putIFDValue(IFD.TILE_OFFSETS, offsets[i]);
         tmp.add(t);
       }
     }
@@ -111,51 +110,54 @@ public class ImarisTiffReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    String description = null, creationDate = null;
-    Vector<Integer> emWave = new Vector<Integer>();
-    Vector<Integer> exWave = new Vector<Integer>();
-    Vector<String> channelNames = new Vector<String>();
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String description = null, creationDate = null;
+      Vector<Integer> emWave = new Vector<Integer>();
+      Vector<Integer> exWave = new Vector<Integer>();
+      Vector<String> channelNames = new Vector<String>();
 
-    if (comment != null && comment.startsWith("[")) {
-      // parse key/value pairs
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        String line = st.nextToken();
-        int equals = line.indexOf("=");
-        if (equals < 0) continue;
-        String key = line.substring(0, equals).trim();
-        String value = line.substring(equals + 1).trim();
-        addGlobalMeta(key, value);
+      if (comment != null && comment.startsWith("[")) {
+        // parse key/value pairs
+        StringTokenizer st = new StringTokenizer(comment, "\n");
+        while (st.hasMoreTokens()) {
+          String line = st.nextToken();
+          int equals = line.indexOf("=");
+          if (equals < 0) continue;
+          String key = line.substring(0, equals).trim();
+          String value = line.substring(equals + 1).trim();
+          addGlobalMeta(key, value);
 
-        if (key.equals("Description")) {
-          description = value;
+          if (key.equals("Description")) {
+            description = value;
+          }
+          else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
+            emWave.add(new Integer(value));
+          }
+          else if (key.equals("LSMExcitationWavelength") && !value.equals("0"))
+          {
+            exWave.add(new Integer(value));
+          }
+          else if (key.equals("Name") && !currentId.endsWith(value)) {
+            channelNames.add(value);
+          }
+          else if (key.equals("RecordingDate")) {
+            value = value.replaceAll(" ", "T");
+            creationDate = value.substring(0, value.indexOf("."));
+          }
         }
-        else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
-          emWave.add(new Integer(value));
-        }
-        else if (key.equals("LSMExcitationWavelength") && !value.equals("0")) {
-          exWave.add(new Integer(value));
-        }
-        else if (key.equals("Name") && !currentId.endsWith(value)) {
-          channelNames.add(value);
-        }
-        else if (key.equals("RecordingDate")) {
-          value = value.replaceAll(" ", "T");
-          creationDate = value.substring(0, value.indexOf("."));
-        }
+        metadata.remove("Comment");
       }
-      metadata.remove("Comment");
-    }
 
-    // populate Image data
-    store.setImageDescription(description, 0);
-    store.setImageCreationDate(creationDate, 0);
+      // populate Image data
+      store.setImageDescription(description, 0);
+      store.setImageCreationDate(creationDate, 0);
 
-    // populate LogicalChannel data
-    for (int i=0; i<emWave.size(); i++) {
-      store.setLogicalChannelEmWave(emWave.get(i), 0, i);
-      store.setLogicalChannelExWave(exWave.get(i), 0, i);
-      store.setLogicalChannelName(channelNames.get(i), 0, i);
+      // populate LogicalChannel data
+      for (int i=0; i<emWave.size(); i++) {
+        store.setLogicalChannelEmWave(emWave.get(i), 0, i);
+        store.setLogicalChannelExWave(exWave.get(i), 0, i);
+        store.setLogicalChannelName(channelNames.get(i), 0, i);
+      }
     }
   }
 

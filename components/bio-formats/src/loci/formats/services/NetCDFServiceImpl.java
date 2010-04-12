@@ -96,18 +96,6 @@ public class NetCDFServiceImpl extends AbstractService
    */
   public void setFile(String file) throws IOException {
     this.currentFile = file;
-    // HACK - NetCDF prints a fair number of warning messages to stdout
-    // we need to filter these out so that they don't interfere with omebf
-    // FIXME: Get rid of this.
-    PrintStream out = new PrintStream(System.out) {
-      public void print(String s) {
-        if (s == null || !s.trim().startsWith("WARN:")) super.print(s);
-      }
-      public void println(String s) {
-        if (s == null || !s.trim().startsWith("WARN:")) super.println(s);
-      }
-    };
-    System.setOut(out);
 
     String currentId = Location.getMappedId(currentFile);
     netCDFFile = NetcdfFile.open(currentId);
@@ -165,7 +153,8 @@ public class NetCDFServiceImpl extends AbstractService
    * @see loci.formats.NetCDFService#getArray(java.lang.String, int[], int[])
    */
   public Object getArray(String path, int[] origin, int[] shape)
-    throws ServiceException {
+    throws ServiceException
+  {
     String groupName = getDirectory(path);
     String variableName = getName(path);
     Group group = getGroup(groupName);
@@ -173,7 +162,7 @@ public class NetCDFServiceImpl extends AbstractService
     Variable variable = group.findVariable(variableName);
     try {
       if (origin != null && shape != null) {
-        return variable.read(origin, shape).reduce();
+        return variable.read(origin, shape).reduce().copyToNDJavaArray();
       }
       else {
         return variable.read().copyToNDJavaArray();

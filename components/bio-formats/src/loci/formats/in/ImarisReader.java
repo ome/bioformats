@@ -121,10 +121,10 @@ public class ImarisReader extends FormatReader {
 
     LOGGER.info("Reading header");
 
-    addGlobalMeta("Version", in.readInt());
+    int version = in.readInt();
     in.skipBytes(4);
 
-    addGlobalMeta("Image name", in.readString(128));
+    String imageName = in.readString(128);
 
     core[0].sizeX = in.readShort();
     core[0].sizeY = in.readShort();
@@ -135,16 +135,15 @@ public class ImarisReader extends FormatReader {
     core[0].sizeC = in.readInt();
     in.skipBytes(2);
 
-    addGlobalMeta("Original date", in.readString(32));
+    String date = in.readString(32);
 
     float dx = in.readFloat();
     float dy = in.readFloat();
     float dz = in.readFloat();
     int mag = in.readShort();
 
-    addGlobalMeta("Image comment", in.readString(128));
+    String description = in.readString(128);
     int isSurvey = in.readInt();
-    addGlobalMeta("Survey performed", isSurvey == 0);
 
     LOGGER.info("Calculating image offsets");
 
@@ -155,18 +154,29 @@ public class ImarisReader extends FormatReader {
     float[] detectorOffsets = new float[getSizeC()];
     float[] pinholes = new float[getSizeC()];
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=0; i<getSizeC(); i++) {
+        addGlobalMeta("Channel #" + i + " Comment", in.readString(128));
+        gains[i] = in.readFloat();
+        detectorOffsets[i] = in.readFloat();
+        pinholes[i] = in.readFloat();
+        in.skipBytes(24);
+      }
+    }
+
+    int offset = 336 + (164 * getSizeC());
     for (int i=0; i<getSizeC(); i++) {
-      addGlobalMeta("Channel #" + i + " Comment", in.readString(128));
-      gains[i] = in.readFloat();
-      detectorOffsets[i] = in.readFloat();
-      pinholes[i] = in.readFloat();
-      in.skipBytes(24);
-      int offset = 336 + (164 * getSizeC()) +
-        (i * getSizeX() * getSizeY() * getSizeZ());
       for (int j=0; j<getSizeZ(); j++) {
         offsets[i*getSizeZ() + j] = offset + (j * getSizeX() * getSizeY());
       }
+      offset += getSizeX() * getSizeY() * getSizeZ();
     }
+
+    addGlobalMeta("Version", version);
+    addGlobalMeta("Image name", imageName);
+    addGlobalMeta("Image comment", description);
+    addGlobalMeta("Survey performed", isSurvey == 0);
+    addGlobalMeta("Original date", date);
 
     LOGGER.info("Populating metadata");
 
@@ -187,46 +197,48 @@ public class ImarisReader extends FormatReader {
 
     // populate Image data
 
-    MetadataTools.setDefaultCreationDate(store, id, 0);
+    store.setImageName(imageName, 0);
+    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(description, 0);
 
-    // populate Dimensions data
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    store.setDimensionsPhysicalSizeX(new Double(dx), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(dy), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(dz), 0, 0);
-    store.setDimensionsTimeIncrement(1.0, 0, 0);
-    store.setDimensionsWaveIncrement(1, 0, 0);
+      // populate Dimensions data
 
-    // populate LogicalChannel data
+      store.setDimensionsPhysicalSizeX(new Double(dx), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Double(dy), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(dz), 0, 0);
+      store.setDimensionsTimeIncrement(1.0, 0, 0);
+      store.setDimensionsWaveIncrement(1, 0, 0);
 
-    for (int i=0; i<getSizeC(); i++) {
-      if (pinholes[i] > 0) {
-        store.setLogicalChannelPinholeSize(new Double(pinholes[i]), 0, i);
+      // populate LogicalChannel data
+
+      for (int i=0; i<getSizeC(); i++) {
+        if (pinholes[i] > 0) {
+          store.setLogicalChannelPinholeSize(new Double(pinholes[i]), 0, i);
+        }
+      }
+
+      // populate Detector data
+
+      for (int i=0; i<getSizeC(); i++) {
+        if (gains[i] > 0) {
+          store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
+        }
+        store.setDetectorSettingsOffset(new Double(offsets[i]), i, 0);
+
+        // link DetectorSettings to an actual Detector
+        String detectorID = MetadataTools.createLSID("Detector", 0, i);
+        store.setDetectorID(detectorID, 0, i);
+        store.setDetectorType("Unknown", 0, i);
+        store.setDetectorSettingsDetector(detectorID, 0, i);
       }
     }
-
-    // populate Detector data
-
-    for (int i=0; i<getSizeC(); i++) {
-      if (gains[i] > 0) {
-        store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
-      }
-      store.setDetectorSettingsOffset(new Double(offsets[i]), i, 0);
-
-      // link DetectorSettings to an actual Detector
-      String detectorID = MetadataTools.createLSID("Detector", 0, i);
-      store.setDetectorID(detectorID, 0, i);
-      store.setDetectorType("Unknown", 0, i);
-      store.setDetectorSettingsDetector(detectorID, 0, i);
-    }
-
-    // CTR CHECK
-    //store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
   }
 
 }

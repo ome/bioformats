@@ -94,7 +94,7 @@ public interface NetCDFService extends Service {
    * @param origin Array specifying the starting index. If null, assume
    * all zeroes.
    * @param shape Array specifying the extents in each dimension. This
-   * becomes the shape of the returned Array. 
+   * becomes the shape of the returned Array.
    * @return The Java n-dimensional array representation of the path's values.
    * @throws ServiceException If there is an error with the range of values
    * or reading from the file.
