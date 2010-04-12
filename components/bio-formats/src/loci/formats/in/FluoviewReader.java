@@ -74,8 +74,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
-  private String mag, detManu, objManu, comment;
-  private Double gamma;
+  private String mag, detectorManufacturer, objectiveManufacturer, comment;
 
   // -- Constructor --
 
@@ -106,32 +105,7 @@ public class FluoviewReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    // the 'series' axis can be in any position relative to Z, C and T
-    // we need to convert the plane number within the series into an IFD number
-    int[] lengths = new int[4];
-    int[] pos = getZCTCoords(no);
-    int[] realPos = new int[4];
-    for (int i=2; i<dimensionOrder.length(); i++) {
-      char axis = dimensionOrder.charAt(i);
-      if (axis == 'Z') {
-        lengths[i - 2] = getSizeZ();
-        realPos[i - 2] = pos[0];
-      }
-      else if (axis == 'C') {
-        lengths[i - 2] = getEffectiveSizeC();
-        realPos[i - 2] = pos[1];
-      }
-      else if (axis == 'T') {
-        lengths[i - 2] = getSizeT();
-        realPos[i - 2] = pos[2];
-      }
-      else if (axis == 'S') {
-        lengths[i - 2] = getSeriesCount();
-        realPos[i - 2] = getSeries();
-      }
-    }
-
-    int image = FormatTools.positionToRaster(lengths, realPos);
+    int image = getImageIndex(no);
 
     if (getSizeY() == ifds.get(0).getImageLength()) {
       tiffParser.getSamples(ifds.get(image), buf, x, y, w, h);
@@ -151,8 +125,7 @@ public class FluoviewReader extends BaseTiffReader {
       voxelX = voxelY = voxelZ = voxelC = voxelT = 1;
       dimensionOrder = null;
       gains = voltages = offsets = channelNames = lensNA = null;
-      mag = detManu = objManu = comment = null;
-      gamma = null;
+      mag = detectorManufacturer = objectiveManufacturer = comment = null;
       date = null;
       timeIndex = -1;
       stamps = null;
@@ -175,28 +148,27 @@ public class FluoviewReader extends BaseTiffReader {
       throw new FormatException("Invalid Fluoview/Andor TIFF. Tag " +
         MMHEADER + " not found.");
     }
-    byte[] mmheader = new byte[s.length];
-    for (int i=0; i<mmheader.length; i++) {
-      mmheader[i] = (byte) s[i];
-      if (mmheader[i] < 0) mmheader[i]++;
-    }
+    byte[] mmheader = shortArrayToBytes(s);
 
     RandomAccessInputStream ras = new RandomAccessInputStream(mmheader);
     ras.order(isLittleEndian());
 
-    put("Header Flag", ras.readShort());
-    put("Image Type", ras.read());
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      put("Header Flag", ras.readShort());
+      put("Image Type", ras.read());
 
-    put("Image name", ras.readString(257));
+      put("Image name", ras.readString(257));
 
-    ras.skipBytes(4); // skip pointer to data field
+      ras.skipBytes(4); // skip pointer to data field
 
-    put("Number of colors", ras.readInt());
-    ras.skipBytes(4); // skip pointer to palette field
-    ras.skipBytes(4); // skip pointer to other palette field
+      put("Number of colors", ras.readInt());
+      ras.skipBytes(4); // skip pointer to palette field
+      ras.skipBytes(4); // skip pointer to other palette field
 
-    put("Comment size", ras.readInt());
-    ras.skipBytes(4); // skip pointer to comment field
+      put("Comment size", ras.readInt());
+      ras.skipBytes(4); // skip pointer to comment field
+    }
+    else ras.skipBytes(284);
 
     // read dimension information
     String[] names = new String[10];
@@ -208,55 +180,42 @@ public class FluoviewReader extends BaseTiffReader {
       double origin = ras.readDouble();
       resolutions[i] = ras.readDouble();
 
-      put("Dimension " + (i+1) + " Name", names[i]);
-      put("Dimension " + (i+1) + " Size", sizes[i]);
-      put("Dimension " + (i+1) + " Origin", origin);
-      put("Dimension " + (i+1) + " Resolution", resolutions[i]);
-      put("Dimension " + (i+1) + " Units", ras.readString(64));
+      put("Dimension " + (i + 1) + " Name", names[i]);
+      put("Dimension " + (i + 1) + " Size", sizes[i]);
+      put("Dimension " + (i + 1) + " Origin", origin);
+      put("Dimension " + (i + 1) + " Resolution", resolutions[i]);
+      put("Dimension " + (i + 1) + " Units", ras.readString(64));
     }
 
-    ras.skipBytes(4); // skip pointer to spatial position data
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      ras.skipBytes(4); // skip pointer to spatial position data
 
-    put("Map type", ras.readShort());
-    put("Map min", ras.readDouble());
-    put("Map max", ras.readDouble());
-    put("Min value", ras.readDouble());
-    put("Max value", ras.readDouble());
+      put("Map type", ras.readShort());
+      put("Map min", ras.readDouble());
+      put("Map max", ras.readDouble());
+      put("Min value", ras.readDouble());
+      put("Max value", ras.readDouble());
 
-    ras.skipBytes(4); // skip pointer to map data
+      ras.skipBytes(4); // skip pointer to map data
 
-    put("Gamma", ras.readDouble());
-    put("Offset", ras.readDouble());
+      put("Gamma", ras.readDouble());
+      put("Offset", ras.readDouble());
 
-    // read gray channel data
-    put("Gray Channel Name", ras.readString(16));
-    put("Gray Channel Size", ras.readInt());
-    put("Gray Channel Origin", ras.readDouble());
-    put("Gray Channel Resolution", ras.readDouble());
-    put("Gray Channel Units", ras.readString(64));
+      // read gray channel data
+      put("Gray Channel Name", ras.readString(16));
+      put("Gray Channel Size", ras.readInt());
+      put("Gray Channel Origin", ras.readDouble());
+      put("Gray Channel Resolution", ras.readDouble());
+      put("Gray Channel Units", ras.readString(64));
 
-    ras.skipBytes(4); // skip pointer to thumbnail data
+      ras.skipBytes(4); // skip pointer to thumbnail data
 
-    put("Voice field", ras.readInt());
-    ras.skipBytes(4); // skip pointer to voice field
+      put("Voice field", ras.readInt());
+      ras.skipBytes(4); // skip pointer to voice field
 
-    // now we need to read the MMSTAMP data to determine dimension order
+      // now we need to read the MMSTAMP data to determine dimension order
 
-    stamps = new long[8][ifds.size()];
-    for (int i=0; i<ifds.size(); i++) {
-      s = ifds.get(i).getIFDShortArray(MMSTAMP);
-      byte[] stamp = new byte[s.length];
-      for (int j=0; j<s.length; j++) {
-        stamp[j] = (byte) s[j];
-        if (stamp[j] < 0) stamp[j]++;
-      }
-      ras.close();
-      ras = new RandomAccessInputStream(stamp);
-
-      // each stamp is 8 longs, representing the position on dimensions 3-10
-      for (int j=0; j<8; j++) {
-        stamps[j][i] = ras.readLong() / 10000;
-      }
+      readStamps();
     }
     ras.close();
 
@@ -336,15 +295,180 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    // cut up the comment, if necessary
-    comment = ifds.get(0).getComment();
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // cut up the comment, if necessary
+      comment = ifds.get(0).getComment();
 
-    gains = new String[getSizeC()];
-    offsets = new String[getSizeC()];
-    voltages = new String[getSizeC()];
-    channelNames = new String[getSizeC()];
-    lensNA = new String[getSizeC()];
+      gains = new String[getSizeC()];
+      offsets = new String[getSizeC()];
+      voltages = new String[getSizeC()];
+      channelNames = new String[getSizeC()];
+      lensNA = new String[getSizeC()];
 
+      parseComment();
+      addGlobalMeta("Comment", comment);
+    }
+  }
+
+  /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
+  protected void initMetadataStore() throws FormatException {
+    super.initMetadataStore();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this, true);
+
+    if (date != null) {
+      store.setImageCreationDate(date, 0);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+      return;
+    }
+
+    store.setImageDescription(comment, 0);
+
+    // link Instrument and Image
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setImageInstrumentRef(instrumentID, 0);
+
+    // populate timing data
+    if (timeIndex >= 0) {
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneTimingDeltaT(
+          new Double(stamps[timeIndex][i] / 1000.0), 0, 0, i);
+      }
+    }
+
+    // populate Dimensions
+    store.setDimensionsPhysicalSizeX(voxelX, 0, 0);
+    store.setDimensionsPhysicalSizeY(voxelY, 0, 0);
+    store.setDimensionsPhysicalSizeZ(voxelZ, 0, 0);
+    store.setDimensionsTimeIncrement(voxelT, 0, 0);
+    if ((int) voxelC > 0) {
+      store.setDimensionsWaveIncrement((int) voxelC, 0, 0);
+    }
+
+    // populate LogicalChannel data
+
+    for (int i=0; i<getSizeC(); i++) {
+      if (channelNames[i] != null) {
+        store.setLogicalChannelName(channelNames[i].trim(), 0, i);
+      }
+    }
+
+    // populate Detector data
+
+    for (int i=0; i<getSizeC(); i++) {
+      if (voltages[i] != null) {
+        if (detectorManufacturer != null) {
+          store.setDetectorManufacturer(detectorManufacturer, 0, 0);
+        }
+        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, 0);
+      }
+      if (gains[i] != null) {
+        store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
+      }
+      if (offsets[i] != null) {
+        store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
+      }
+      store.setDetectorType("Unknown", 0, i);
+
+      // link DetectorSettings to an actual Detector
+      String detectorID = MetadataTools.createLSID("Detector", 0, i);
+      store.setDetectorID(detectorID, 0, i);
+      store.setDetectorSettingsDetector(detectorID, 0, i);
+    }
+
+    // populate Objective data
+
+    if (mag != null && mag.toLowerCase().endsWith("x")) {
+      mag = mag.substring(0, mag.length() - 1);
+    }
+    else if (mag == null) mag = "1";
+
+    store.setObjectiveCorrection("Unknown", 0, 0);
+    store.setObjectiveImmersion("Unknown", 0, 0);
+
+    if (objectiveManufacturer != null) {
+      String[] objectiveData = objectiveManufacturer.split(" ");
+      store.setObjectiveModel(objectiveData[0], 0, 0);
+      if (objectiveData.length > 2) {
+        store.setObjectiveImmersion(objectiveData[2], 0, 0);
+      }
+    }
+
+    if (mag != null) {
+      store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
+    }
+
+    for (int i=0; i<getSizeC(); i++) {
+      if (lensNA[i] != null) {
+        store.setObjectiveLensNA(new Double(lensNA[i]), 0, i);
+      }
+    }
+
+    // link Objective to Image using ObjectiveSettings
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+    store.setObjectiveSettingsObjective(objectiveID, 0);
+  }
+
+  // -- Helper methods --
+
+  private int getImageIndex(int no) {
+    // the 'series' axis can be in any position relative to Z, C and T
+    // we need to convert the plane number within the series into an IFD number
+    int[] lengths = new int[4];
+    int[] pos = getZCTCoords(no);
+    int[] realPos = new int[4];
+    for (int i=2; i<dimensionOrder.length(); i++) {
+      char axis = dimensionOrder.charAt(i);
+      if (axis == 'Z') {
+        lengths[i - 2] = getSizeZ();
+        realPos[i - 2] = pos[0];
+      }
+      else if (axis == 'C') {
+        lengths[i - 2] = getEffectiveSizeC();
+        realPos[i - 2] = pos[1];
+      }
+      else if (axis == 'T') {
+        lengths[i - 2] = getSizeT();
+        realPos[i - 2] = pos[2];
+      }
+      else if (axis == 'S') {
+        lengths[i - 2] = getSeriesCount();
+        realPos[i - 2] = getSeries();
+      }
+    }
+
+    return FormatTools.positionToRaster(lengths, realPos);
+  }
+
+  private void readStamps() throws FormatException, IOException {
+    stamps = new long[8][ifds.size()];
+    for (int i=0; i<ifds.size(); i++) {
+      byte[] stamp = shortArrayToBytes(ifds.get(i).getIFDShortArray(MMSTAMP));
+      RandomAccessInputStream ras = new RandomAccessInputStream(stamp);
+
+      // each stamp is 8 longs, representing the position on dimensions 3-10
+      for (int j=0; j<8; j++) {
+        stamps[j][i] = ras.readLong() / 10000;
+      }
+      ras.close();
+    }
+  }
+
+  private byte[] shortArrayToBytes(short[] s) {
+    byte[] b = new byte[s.length];
+    for (int i=0; i<s.length; i++) {
+      b[i] = (byte) s[i];
+      if (b[i] < 0) b[i]++;
+    }
+    return b;
+  }
+
+  private void parseComment() {
     if (comment != null) {
       // this is an INI-style comment, with one key/value pair per line
 
@@ -381,9 +505,10 @@ public class FluoviewReader extends BaseTiffReader {
             }
           }
           else if (key.equals("Magnification")) mag = value;
-          else if (key.equals("System Configuration")) detManu = value;
-          else if (key.equals("Objective Lens")) objManu = value;
-          else if (key.equals("Gamma")) gamma = new Double(value);
+          else if (key.equals("System Configuration")) {
+            detectorManufacturer = value;
+          }
+          else if (key.equals("Objective Lens")) objectiveManufacturer = value;
           else if (key.startsWith("Channel ") && key.endsWith("Dye")) {
             for (int i=0; i<channelNames.length; i++) {
               if (channelNames[i] == null) {
@@ -445,107 +570,6 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else comment = "";
     }
-    addGlobalMeta("Comment", comment);
-  }
-
-  /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
-  protected void initMetadataStore() throws FormatException {
-    super.initMetadataStore();
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this, true);
-
-    store.setImageDescription(comment, 0);
-    if (date != null) {
-      store.setImageCreationDate(date, 0);
-    }
-
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
-
-    // populate timing data
-    if (timeIndex >= 0) {
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneTimingDeltaT(
-          new Double(stamps[timeIndex][i] / 1000.0), 0, 0, i);
-      }
-    }
-
-    // populate Dimensions
-    store.setDimensionsPhysicalSizeX(voxelX, 0, 0);
-    store.setDimensionsPhysicalSizeY(voxelY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(voxelZ, 0, 0);
-    store.setDimensionsTimeIncrement(voxelT, 0, 0);
-    if ((int) voxelC > 0) {
-      store.setDimensionsWaveIncrement((int) voxelC, 0, 0);
-    }
-
-    // populate LogicalChannel data
-
-    for (int i=0; i<getSizeC(); i++) {
-      if (channelNames[i] != null) {
-        store.setLogicalChannelName(channelNames[i].trim(), 0, i);
-      }
-    }
-
-    // populate Detector data
-
-    for (int i=0; i<getSizeC(); i++) {
-      // CTR CHECK
-//      store.setDisplayChannel(i, null, null, gamma, null);
-
-      if (voltages[i] != null) {
-        if (detManu != null) store.setDetectorManufacturer(detManu, 0, 0);
-        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, 0);
-      }
-      if (gains[i] != null) {
-        store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
-      }
-      if (offsets[i] != null) {
-        store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
-      }
-      store.setDetectorType("Unknown", 0, i);
-
-      // link DetectorSettings to an actual Detector
-      String detectorID = MetadataTools.createLSID("Detector", 0, i);
-      store.setDetectorID(detectorID, 0, i);
-      store.setDetectorSettingsDetector(detectorID, 0, i);
-    }
-
-    // populate Objective data
-
-    if (mag != null && mag.toLowerCase().endsWith("x")) {
-      mag = mag.substring(0, mag.length() - 1);
-    }
-    else if (mag == null) mag = "1";
-
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
-
-    if (objManu != null) {
-      String[] objectiveData = objManu.split(" ");
-      store.setObjectiveModel(objectiveData[0], 0, 0);
-      if (objectiveData.length > 2) {
-        store.setObjectiveImmersion(objectiveData[2], 0, 0);
-      }
-    }
-
-    if (mag != null) {
-      store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
-    }
-
-    for (int i=0; i<getSizeC(); i++) {
-      if (lensNA[i] != null) {
-        store.setObjectiveLensNA(new Double(lensNA[i]), 0, i);
-      }
-    }
-
-    // link Objective to Image using ObjectiveSettings
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
   }
 
 }

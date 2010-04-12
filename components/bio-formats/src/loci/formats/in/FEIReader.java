@@ -115,13 +115,20 @@ public class FEIReader extends FormatReader {
 
     LOGGER.info("Reading file header");
 
-    in.skipBytes(44);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.skipBytes(44);
 
-    float magnification = in.readFloat();
-    float kV = in.readFloat() / 1000;
-    float wd = in.readFloat();
-    in.skipBytes(12);
-    float spot = in.readFloat();
+      float magnification = in.readFloat();
+      float kV = in.readFloat() / 1000;
+      float wd = in.readFloat();
+      in.skipBytes(12);
+      float spot = in.readFloat();
+
+      addGlobalMeta("Magnification", magnification);
+      addGlobalMeta("kV", kV);
+      addGlobalMeta("Working distance", wd);
+      addGlobalMeta("Spot", spot);
+    }
 
     in.seek(514);
     core[0].sizeX = in.readShort() - INVALID_PIXELS;

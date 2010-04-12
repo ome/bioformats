@@ -53,31 +53,21 @@ public class GIFReader extends FormatReader {
   /** Maximum buffer size. */
   private static final int MAX_STACK_SIZE = 4096;
 
+  private static final int IMAGE_SEPARATOR = 0x2c;
+  private static final int EXTENSION = 0x21;
+  private static final int END = 0x3b;
+  private static final int GRAPHICS = 0xf9;
+
   // -- Fields --
-
-  /** Global color table used. */
-  private boolean gctFlag;
-
-  /** Size of global color table. */
-  private int gctSize;
 
   /** Global color table. */
   private int[] gct;
 
-  /** Local color table. */
-  private int[] lct;
-
   /** Active color table. */
   private int[] act;
 
-  /** Local color table flag. */
-  private boolean lctFlag;
-
   /** Interlace flag. */
   private boolean interlace;
-
-  /** Local color table size. */
-  private int lctSize;
 
   /** Current image rectangle. */
   private int ix, iy, iw, ih;
@@ -169,10 +159,10 @@ public class GIFReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      gctFlag = lctFlag = interlace = transparency = false;
-      gctSize = lctSize = ix = iy = iw = ih = blockSize = 0;
+      interlace = transparency = false;
+      ix = iy = iw = ih = blockSize = 0;
       dispose = lastDispose = transIndex = 0;
-      gct = lct = act;
+      gct = act;
       prefix = null;
       suffix = pixelStack = pixels = null;
       images = null;
@@ -196,7 +186,7 @@ public class GIFReader extends FormatReader {
 
     String ident = in.readString(6);
 
-    if (!ident.startsWith("GIF")) {
+    if (!ident.startsWith(GIF_MAGIC_STRING)) {
       throw new FormatException("Not a valid GIF file.");
     }
 
@@ -206,26 +196,12 @@ public class GIFReader extends FormatReader {
     core[0].sizeY = in.readShort();
 
     int packed = in.read() & 0xff;
-    gctFlag = (packed & 0x80) != 0;
-    gctSize = 2 << (packed & 7);
-    in.skipBytes(1);
-    in.skipBytes(1);
+    boolean gctFlag = (packed & 0x80) != 0;
+    int gctSize = 2 << (packed & 7);
+    in.skipBytes(2);
 
     if (gctFlag) {
-      int nbytes = 3 * gctSize;
-      byte[] c = new byte[nbytes];
-      in.read(c);
-
-      gct = new int[256];
-      int i = 0;
-      int j = 0;
-      int r, g, b;
-      while (i < gctSize) {
-        r = c[j++] & 0xff;
-        g = c[j++] & 0xff;
-        b = c[j++] & 0xff;
-        gct[i++] = 0xff000000 | (r << 16) | (g << 8) | b;
-      }
+      gct = readLut(gctSize);
     }
 
     LOGGER.info("Reading data blocks");
@@ -234,71 +210,13 @@ public class GIFReader extends FormatReader {
     while (!done) {
       int code = in.read() & 0xff;
       switch (code) {
-        case 0x2c: // image separator:
-          ix = in.readShort();
-          iy = in.readShort();
-          iw = in.readShort();
-          ih = in.readShort();
-
-          packed = in.read();
-          lctFlag = (packed & 0x80) != 0;
-          interlace = (packed & 0x40) != 0;
-          lctSize = 2 << (packed & 7);
-
-          if (lctFlag) {
-            int nbytes = 3 * lctSize;
-            byte[] c = new byte[nbytes];
-            int n = 0;
-            try { n = in.read(c); }
-            catch (IOException e) { }
-
-            if (n < nbytes) {
-              throw new FormatException("Local color table not found");
-            }
-
-            lct = new int[256];
-            int i = 0;
-            int j = 0;
-            while (i < lctSize) {
-              int r = c[j++] & 0xff;
-              int g = c[j++] & 0xff;
-              int b = c[j++] & 0xff;
-              lct[i++] = 0xff000000 | (r << 16) + (g << 8) | b;
-            }
-
-            act = lct;
-          }
-          else {
-            act = gct;
-          }
-
-          int save = 0;
-
-          if (transparency) {
-            save = act[transIndex];
-            act[transIndex] = 0;
-          }
-
-          if (act == null) throw new FormatException("Color table not found.");
-
-          decodeImageData();
-
-          int check = 0;
-          do { check = readBlock(); }
-          while (blockSize > 0 && check != -1);
-
-          core[0].imageCount++;
-
-          if (transparency) act[transIndex] = save;
-
-          lastDispose = dispose;
-          lct = null;
-
+        case IMAGE_SEPARATOR:
+          readImageBlock();
           break;
-        case 0x21: // extension
+        case EXTENSION:
           code = in.read() & 0xff;
           switch (code) {
-            case 0xf9: // graphics control extension
+            case GRAPHICS:
               in.skipBytes(1);
               packed = in.read() & 0xff;
               dispose = (packed & 0x1c) >> 1;
@@ -307,34 +225,15 @@ public class GIFReader extends FormatReader {
               transIndex = in.read() & 0xff;
               in.skipBytes(1);
               break;
-            case 0xff:  // application extension
+            default:
               if (readBlock() == -1) {
                 done = true;
                 break;
               }
-
-              String app = new String(dBlock, 0, 11);
-              if (app.equals("NETSCAPE2.0")) {
-                do {
-                  check = readBlock();
-                }
-                while (blockSize > 0 && check != -1);
-              }
-              else {
-                do {
-                  check = readBlock();
-                }
-                while (blockSize > 0 && check != -1);
-              }
-              break;
-            default:
-              do {
-                check = readBlock();
-              }
-              while (blockSize > 0 && check != -1);
+              skipBlocks();
           }
           break;
-        case 0x3b: // terminator
+        case END:
           done = true;
           break;
       }
@@ -379,7 +278,9 @@ public class GIFReader extends FormatReader {
           n += count;
         }
       }
-      catch (IOException e) { }
+      catch (IOException e) {
+        LOGGER.trace("Truncated block", e);
+      }
     }
     return n;
   }
@@ -389,9 +290,6 @@ public class GIFReader extends FormatReader {
     int nullCode = -1;
     int npix = iw * ih;
 
-    int available, clear, codeMask, codeSize, eoi, inCode, oldCode, bits, code,
-      count, i, datum, dataSize, first, top, bi, pi;
-
     if (pixels == null || pixels.length < npix) pixels = new byte[npix];
 
     if (prefix == null) prefix = new short[MAX_STACK_SIZE];
@@ -400,14 +298,15 @@ public class GIFReader extends FormatReader {
 
     // initialize GIF data stream decoder
 
-    dataSize = in.read() & 0xff;
+    int dataSize = in.read() & 0xff;
 
-    clear = 1 << dataSize;
-    eoi = clear + 1;
-    available = clear + 2;
-    oldCode = nullCode;
-    codeSize = dataSize + 1;
-    codeMask = (1 << codeSize) - 1;
+    int clear = 1 << dataSize;
+    int eoi = clear + 1;
+    int available = clear + 2;
+    int oldCode = nullCode;
+    int codeSize = dataSize + 1;
+    int codeMask = (1 << codeSize) - 1;
+    int code = 0, inCode = 0;
     for (code=0; code<clear; code++) {
       prefix[code] = 0;
       suffix[code] = (byte) code;
@@ -415,7 +314,8 @@ public class GIFReader extends FormatReader {
 
     // decode GIF pixel stream
 
-    datum = bits = count = first = top = pi = bi = 0;
+    int datum = 0, first = 0, top = 0, pi = 0, bi = 0, bits = 0, count = 0;
+    int i = 0;
 
     for (i=0; i<npix;) {
       if (top == 0) {
@@ -425,7 +325,7 @@ public class GIFReader extends FormatReader {
             if (count <= 0) break;
             bi = 0;
           }
-          datum += (((int) dBlock[bi]) & 0xff) << bits;
+          datum += (dBlock[bi] & 0xff) << bits;
           bits += 8;
           bi++;
           count--;
@@ -468,7 +368,7 @@ public class GIFReader extends FormatReader {
           pixelStack[top++] = suffix[code];
           code = prefix[code];
         }
-        first = ((int) suffix[code]) & 0xff;
+        first = suffix[code] & 0xff;
 
         if (available >= MAX_STACK_SIZE) break;
         pixelStack[top++] = (byte) first;
@@ -545,13 +445,74 @@ public class GIFReader extends FormatReader {
         int sx = i * iw; // start of line in source
         while (dx < dlim) {
           // map color and insert in destination
-          int index = ((int) pixels[sx++]) & 0xff;
+          int index = pixels[sx++] & 0xff;
           dest[dx++] = (byte) index;
         }
       }
     }
     colorTables.add(act);
     images.add(dest);
+  }
+
+  private void skipBlocks() throws IOException {
+    int check = 0;
+    do { check = readBlock(); }
+    while (blockSize > 0 && check != -1);
+  }
+
+  private void readImageBlock() throws FormatException, IOException {
+    ix = in.readShort();
+    iy = in.readShort();
+    iw = in.readShort();
+    ih = in.readShort();
+
+    int packed = in.read();
+    boolean lctFlag = (packed & 0x80) != 0;
+    interlace = (packed & 0x40) != 0;
+    int lctSize = 2 << (packed & 7);
+
+    act = lctFlag ? readLut(lctSize) : gct;
+
+    int save = 0;
+
+    if (transparency) {
+      save = act[transIndex];
+      act[transIndex] = 0;
+    }
+
+    if (act == null) throw new FormatException("Color table not found.");
+
+    decodeImageData();
+    skipBlocks();
+
+    core[0].imageCount++;
+
+    if (transparency) act[transIndex] = save;
+
+    lastDispose = dispose;
+  }
+
+  /** Read a color lookup table of the specified size. */
+  private int[] readLut(int size) throws FormatException {
+    int nbytes = 3 * size;
+    byte[] c = new byte[nbytes];
+    int n = 0;
+    try { n = in.read(c); }
+    catch (IOException e) { }
+
+    if (n < nbytes) {
+      throw new FormatException("Color table not found");
+    }
+
+    int[] lut = new int[256];
+    int j = 0;
+    for (int i=0; i<size; i++) {
+      int r = c[j++] & 0xff;
+      int g = c[j++] & 0xff;
+      int b = c[j++] & 0xff;
+      lut[i] = 0xff000000 | (r << 16) | (g << 8) | b;
+    }
+    return lut;
   }
 
 }

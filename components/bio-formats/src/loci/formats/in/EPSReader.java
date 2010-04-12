@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -50,9 +49,6 @@ import loci.formats.tiff.TiffParser;
 public class EPSReader extends FormatReader {
 
   // -- Fields --
-
-  /** Bits per sample. */
-  private int bps;
 
   /** Starting line of pixel data. */
   private int start;
@@ -151,7 +147,7 @@ public class EPSReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      bps = start = 0;
+      start = 0;
       binary = isTiff = false;
       ifds = null;
     }
@@ -195,18 +191,7 @@ public class EPSReader extends FormatReader {
       core[0].littleEndian = firstIFD.isLittleEndian();
       core[0].interleaved = true;
       core[0].rgb = getSizeC() > 1;
-
-      bps = firstIFD.getBitsPerSample()[0];
-      switch (bps) {
-        case 16:
-          core[0].pixelType = FormatTools.UINT16;
-          break;
-        case 32:
-          core[0].pixelType = FormatTools.UINT32;
-          break;
-        default:
-          core[0].pixelType = FormatTools.UINT8;
-      }
+      core[0].pixelType = firstIFD.getPixelType();
 
       core[0].imageCount = 1;
       core[0].dimensionOrder = "XYCZT";
@@ -234,15 +219,14 @@ public class EPSReader extends FormatReader {
       if (line.endsWith(image)) {
         if (!line.startsWith(image)) {
           if (line.indexOf("colorimage") != -1) core[0].sizeC = 3;
-          StringTokenizer t = new StringTokenizer(line, " ");
+          String[] t = line.split(" ");
           try {
-            core[0].sizeX = Integer.parseInt(t.nextToken());
-            core[0].sizeY = Integer.parseInt(t.nextToken());
-            bps = Integer.parseInt(t.nextToken());
+            core[0].sizeX = Integer.parseInt(t[0]);
+            core[0].sizeY = Integer.parseInt(t[1]);
           }
           catch (NumberFormatException exc) {
             LOGGER.debug("Could not parse image dimensions", exc);
-            core[0].sizeC = Integer.parseInt(t.nextToken());
+            core[0].sizeC = Integer.parseInt(t[3]);
           }
         }
 
@@ -252,11 +236,11 @@ public class EPSReader extends FormatReader {
       else if (line.startsWith("%%")) {
         if (line.startsWith("%%BoundingBox:")) {
           line = line.substring(14);
-          StringTokenizer t = new StringTokenizer(line, " ");
-          int originX = Integer.parseInt(t.nextToken().trim());
-          int originY = Integer.parseInt(t.nextToken().trim());
-          core[0].sizeX = Integer.parseInt(t.nextToken().trim()) - originX;
-          core[0].sizeY = Integer.parseInt(t.nextToken().trim()) - originY;
+          String[] t = line.split(" ");
+          int originX = Integer.parseInt(t[0].trim());
+          int originY = Integer.parseInt(t[1].trim());
+          core[0].sizeX = Integer.parseInt(t[2].trim()) - originX;
+          core[0].sizeY = Integer.parseInt(t[3].trim()) - originY;
 
           addGlobalMeta("X-coordinate of origin", originX);
           addGlobalMeta("Y-coordinate of origin", originY);
@@ -277,13 +261,12 @@ public class EPSReader extends FormatReader {
       }
       else if (line.startsWith("%ImageData:")) {
         line = line.substring(11);
-        StringTokenizer t = new StringTokenizer(line, " ");
-        core[0].sizeX = Integer.parseInt(t.nextToken());
-        core[0].sizeY = Integer.parseInt(t.nextToken());
-        bps = Integer.parseInt(t.nextToken());
-        core[0].sizeC = Integer.parseInt(t.nextToken());
-        while (t.hasMoreTokens()) {
-          image = t.nextToken().trim();
+        String[] t = line.split(" ");
+        core[0].sizeX = Integer.parseInt(t[0]);
+        core[0].sizeY = Integer.parseInt(t[1]);
+        core[0].sizeC = Integer.parseInt(t[3]);
+        for (int i=4; i<t.length; i++) {
+          image = t[i].trim();
           if (image.length() > 1) {
             image = image.substring(1, image.length() - 1);
           }
@@ -294,8 +277,6 @@ public class EPSReader extends FormatReader {
     }
 
     LOGGER.info("Populating metadata");
-
-    if (bps == 0) bps = 8;
 
     if (getSizeC() == 0) core[0].sizeC = 1;
 

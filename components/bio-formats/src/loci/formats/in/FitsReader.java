@@ -45,10 +45,13 @@ import loci.formats.meta.MetadataStore;
  */
 public class FitsReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final int LINE_LENGTH = 80;
+
   // -- Fields --
 
-  /** Number of lines in the header. */
-  private int count;
+  private long pixelOffset;
 
   // -- Constructor --
 
@@ -69,7 +72,7 @@ public class FitsReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(2880 * ((((count * 80) - 1) / 2880) + 1));
+    in.seek(pixelOffset);
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
@@ -77,7 +80,7 @@ public class FitsReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (!fileOnly) count = 0;
+    if (!fileOnly) pixelOffset = 0;
   }
 
   // -- Internal FormatReader API methods --
@@ -86,17 +89,15 @@ public class FitsReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    count = 1;
 
-    String line = in.readString(80);
+    String line = in.readString(LINE_LENGTH);
     if (!line.startsWith("SIMPLE")) {
       throw new FormatException("Unsupported FITS file.");
     }
 
     String key = "", value = "";
     while (true) {
-      count++;
-      line = in.readString(80);
+      line = in.readString(LINE_LENGTH);
 
       // parse key/value pair
       int ndx = line.indexOf("=");
@@ -142,6 +143,8 @@ public class FitsReader extends FormatReader {
 
       addGlobalMeta(key, value);
     }
+    while (in.read() == 0x20);
+    pixelOffset = in.getFilePointer() - 1;
 
     core[0].sizeC = 1;
     core[0].sizeT = 1;
