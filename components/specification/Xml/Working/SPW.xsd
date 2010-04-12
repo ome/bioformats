@@ -378,9 +378,11 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="WellSampleCount" use="optional" type="xsd:integer">
+			<xsd:attribute name="MaximumFieldCount" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
+						The maximum number of fields (well samples) in any well 
+						in this PlateAcquisition.
 						This is only used to speed up user interaction by stoping 
 						the reading of every well sample.
 					</xsd:documentation>
