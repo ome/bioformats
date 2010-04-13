@@ -854,30 +854,13 @@ public class LeicaReader extends FormatReader {
     int bpp = in.readInt();
     addSeriesMeta("Bytes per pixel", bpp);
 
-    switch (bpp) {
-      case 1:
-        core[seriesIndex].pixelType = FormatTools.UINT8;
-        break;
-      case 3:
-        core[seriesIndex].pixelType = FormatTools.UINT8;
-        core[seriesIndex].sizeC = 3;
-        core[seriesIndex].rgb = true;
-        break;
-      case 2:
-        core[seriesIndex].pixelType = FormatTools.UINT16;
-        break;
-      case 6:
-        core[seriesIndex].pixelType = FormatTools.UINT16;
-        core[seriesIndex].sizeC = 3;
-        core[seriesIndex].rgb = true;
-        break;
-      case 4:
-        core[seriesIndex].pixelType = FormatTools.UINT32;
-        break;
-      default:
-        throw new FormatException("Unsupported bytes per pixel (" +
-          bpp + ")");
+    if (bpp % 3 == 0) {
+      core[seriesIndex].sizeC = 3;
+      core[seriesIndex].rgb = true;
+      bpp /= 3;
     }
+    core[seriesIndex].pixelType =
+      FormatTools.pixelTypeFromBytes(bpp, false, false);
 
     core[seriesIndex].dimensionOrder = "XY";
 

@@ -102,14 +102,15 @@ public class GelReader extends BaseTiffReader {
   {
     IFD ifd = ifds.get(no);
 
-    boolean sqrt = fmt == SQUARE_ROOT;
-
-    if (sqrt) {
-      double scale = ((TiffRational)
-        ifd.getIFDValue(MD_SCALE_PIXEL)).doubleValue();
+    if (fmt == SQUARE_ROOT) {
+      float scale =
+        ((TiffRational) ifd.getIFDValue(MD_SCALE_PIXEL)).floatValue();
 
       byte[] tmp = new byte[buf.length];
-      super.openBytes(no, tmp, x, y, w, h);
+
+      // DO NOT call super.openBytes here. MinimalTiffReader will interpret
+      // the pixels as half-floats, when really they are unsigned shorts.
+      tiffParser.getSamples(ifds.get(no), tmp, x, y, w, h);
 
       int originalBytes = ifd.getBitsPerSample()[0] / 8;
 
@@ -117,7 +118,7 @@ public class GelReader extends BaseTiffReader {
         long value = DataTools.bytesToShort(tmp, i*originalBytes,
           originalBytes, isLittleEndian());
         long square = value * value;
-        float pixel = (float) (square * scale);
+        float pixel = square * scale;
         DataTools.unpackBytes(Float.floatToIntBits(pixel), buf, i*4, 4,
           isLittleEndian());
       }
@@ -149,37 +150,36 @@ public class GelReader extends BaseTiffReader {
 
     fmt = firstIFD.getIFDLongValue(MD_FILETAG, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
-    addGlobalMeta("Data format", fmt == SQUARE_ROOT ? "square root" : "linear");
 
-    TiffRational scale =
-      (TiffRational) firstIFD.getIFDValue(MD_SCALE_PIXEL);
+    TiffRational scale = (TiffRational) firstIFD.getIFDValue(MD_SCALE_PIXEL);
     if (scale == null) scale = new TiffRational(1, 1);
-    addGlobalMeta("Scale factor", scale);
-
-    // ignore MD_COLOR_TABLE
-
-    String lab = firstIFD.getIFDStringValue(MD_LAB_NAME);
-    addGlobalMeta("Lab name", lab);
-
-    String info = firstIFD.getIFDStringValue(MD_SAMPLE_INFO);
-    addGlobalMeta("Sample info", info);
-
-    String prepDate = firstIFD.getIFDStringValue(MD_PREP_DATE);
-    addGlobalMeta("Date prepared", prepDate);
-
-    String prepTime = firstIFD.getIFDStringValue(MD_PREP_TIME);
-    addGlobalMeta("Time prepared", prepTime);
-
-    String units = firstIFD.getIFDStringValue(MD_FILE_UNITS);
-    addGlobalMeta("File units", units);
 
     core[0].imageCount = ifds.size();
     core[0].sizeT = getImageCount();
 
+    // ignore MD_COLOR_TABLE
+
+    String info = firstIFD.getIFDStringValue(MD_SAMPLE_INFO);
+    String prepDate = firstIFD.getIFDStringValue(MD_PREP_DATE);
+    String prepTime = firstIFD.getIFDStringValue(MD_PREP_TIME);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String units = firstIFD.getIFDStringValue(MD_FILE_UNITS);
+      String lab = firstIFD.getIFDStringValue(MD_LAB_NAME);
+
+      addGlobalMeta("Scale factor", scale);
+      addGlobalMeta("Lab name", lab);
+      addGlobalMeta("Sample info", info);
+      addGlobalMeta("Date prepared", prepDate);
+      addGlobalMeta("Time prepared", prepTime);
+      addGlobalMeta("File units", units);
+      addGlobalMeta("Data format",
+        fmt == SQUARE_ROOT ? "square root" : "linear");
+    }
+
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-    store.setImageDescription(info, 0);
 
     String parsedDate = DateTools.formatDate(prepDate, FORMATS);
     String parsedTime = DateTools.formatDate(prepTime, FORMATS);
@@ -194,9 +194,12 @@ public class GelReader extends BaseTiffReader {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
-    Double pixelSize = new Double(scale.doubleValue());
-    store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-    store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(info, 0);
+      Double pixelSize = new Double(scale.doubleValue());
+      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+    }
   }
 
 }

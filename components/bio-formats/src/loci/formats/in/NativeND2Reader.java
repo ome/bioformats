@@ -818,16 +818,11 @@ public class NativeND2Reader extends FormatReader {
         int div = qName.equals("uiWidthBytes") ? getSizeX() : 8;
         int bytes = Integer.parseInt(value) / div;
 
-        switch (bytes) {
-          case 2:
-            core[0].pixelType = FormatTools.UINT16;
-            break;
-          case 4:
-            core[0].pixelType = FormatTools.UINT32;
-            break;
-          default:
-            core[0].pixelType = FormatTools.UINT8;
+        try {
+          core[0].pixelType =
+            FormatTools.pixelTypeFromBytes(bytes, false, false);
         }
+        catch (FormatException e) { }
         parseKeyAndValue(qName, value, prevRuntype);
       }
       else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {

@@ -742,26 +742,9 @@ public class ICSReader extends FormatReader {
 
     if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
 
-    if (rFormat.equals("real")) {
-      if (bitsPerPixel == 32) core[0].pixelType = FormatTools.FLOAT;
-      else if (bitsPerPixel == 64) core[0].pixelType = FormatTools.DOUBLE;
-    }
-    else if (rFormat.equals("integer")) {
-      switch (bitsPerPixel) {
-        case 8:
-          core[0].pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
-          break;
-        case 16:
-          core[0].pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
-          break;
-        case 32:
-          core[0].pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
-          break;
-      }
-    }
-    else {
-      throw new RuntimeException("Unknown pixel format: " + rFormat);
-    }
+    boolean fp = rFormat.equals("real");
+    int bytes = bitsPerPixel / 8;
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, fp);
 
     LOGGER.info("Populating OME metadata");
 

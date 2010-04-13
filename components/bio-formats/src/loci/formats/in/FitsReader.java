@@ -118,24 +118,10 @@ public class FitsReader extends FormatReader {
 
       if (key.equals("BITPIX")) {
         int bits = Integer.parseInt(value);
-        switch (bits) {
-          case 8:
-            core[0].pixelType = FormatTools.UINT8;
-            break;
-          case 16:
-            core[0].pixelType = FormatTools.INT16;
-            break;
-          case 32:
-            core[0].pixelType = FormatTools.INT32;
-            break;
-          case -32:
-            core[0].pixelType = FormatTools.FLOAT;
-            break;
-          case -64:
-            core[0].pixelType = FormatTools.DOUBLE;
-            break;
-          default: throw new FormatException("Unsupported pixel type: " + bits);
-        }
+        boolean fp = bits < 0;
+        boolean signed = bits != 8;
+        bits = Math.abs(bits) / 8;
+        core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, signed, fp);
       }
       else if (key.equals("NAXIS1")) core[0].sizeX = Integer.parseInt(value);
       else if (key.equals("NAXIS2")) core[0].sizeY = Integer.parseInt(value);

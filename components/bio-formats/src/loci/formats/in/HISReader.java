@@ -52,6 +52,7 @@ public class HISReader extends FormatReader {
 
   // -- Fields --
 
+  /** Offsets to pixel data for each series. */
   private long[] pixelOffset;
 
   // -- Constructor --
@@ -180,33 +181,35 @@ public class HISReader extends FormatReader {
 
       in.skipBytes(50);
       String comment = in.readString(commentBytes);
-      String[] data = comment.split(";");
-      for (String token : data) {
-        int eq = token.indexOf("=");
-        if (eq != -1) {
-          String key = token.substring(0, eq);
-          String value = token.substring(eq + 1);
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        String[] data = comment.split(";");
+        for (String token : data) {
+          int eq = token.indexOf("=");
+          if (eq != -1) {
+            String key = token.substring(0, eq);
+            String value = token.substring(eq + 1);
 
-          addSeriesMeta(key, value);
+            addSeriesMeta(key, value);
 
-          if (key.equals("vDate")) {
-            date[i] = value;
-          }
-          else if (key.equals("vTime")) {
-            date[i] += " " + value;
-            date[i] = DateTools.formatDate(date[i], "yyyy/MM/dd HH:mm:ss");
-          }
-          else if (key.equals("vOffset")) {
-            offset[i] = Double.parseDouble(value);
-          }
-          else if (key.equals("vBinX")) {
-            binning[i] = value;
-          }
-          else if (key.equals("vBinY")) {
-            binning[i] += "x" + value;
-          }
-          else if (key.equals("vExpTim1")) {
-            exposureTime[i] = Double.parseDouble(value) * 100;
+            if (key.equals("vDate")) {
+              date[i] = value;
+            }
+            else if (key.equals("vTime")) {
+              date[i] += " " + value;
+              date[i] = DateTools.formatDate(date[i], "yyyy/MM/dd HH:mm:ss");
+            }
+            else if (key.equals("vOffset")) {
+              offset[i] = Double.parseDouble(value);
+            }
+            else if (key.equals("vBinX")) {
+              binning[i] = value;
+            }
+            else if (key.equals("vBinY")) {
+              binning[i] += "x" + value;
+            }
+            else if (key.equals("vExpTim1")) {
+              exposureTime[i] = Double.parseDouble(value) * 100;
+            }
           }
         }
       }
@@ -233,18 +236,20 @@ public class HISReader extends FormatReader {
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
 
-    for (int i=0; i<nSeries; i++) {
-      store.setImageInstrumentRef(instrumentID, i);
-      store.setImageCreationDate(date[i], i);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=0; i<nSeries; i++) {
+        store.setImageInstrumentRef(instrumentID, i);
+        store.setImageCreationDate(date[i], i);
 
-      store.setPlaneTimingExposureTime(exposureTime[i], i, 0, 0);
+        store.setPlaneTimingExposureTime(exposureTime[i], i, 0, 0);
 
-      String detectorID = MetadataTools.createLSID("Detector", 0, i);
-      store.setDetectorID(detectorID, 0, i);
-      store.setDetectorOffset(offset[i], 0, i);
-      store.setDetectorType("Unknown", 0, i);
-      store.setDetectorSettingsDetector(detectorID, i, 0);
-      store.setDetectorSettingsBinning(binning[i], i, 0);
+        String detectorID = MetadataTools.createLSID("Detector", 0, i);
+        store.setDetectorID(detectorID, 0, i);
+        store.setDetectorOffset(offset[i], 0, i);
+        store.setDetectorType("Unknown", 0, i);
+        store.setDetectorSettingsDetector(detectorID, i, 0);
+        store.setDetectorSettingsBinning(binning[i], i, 0);
+      }
     }
   }
 

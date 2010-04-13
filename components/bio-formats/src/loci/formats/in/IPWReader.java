@@ -291,35 +291,11 @@ public class IPWReader extends FormatReader {
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
-    core[0].pixelType = FormatTools.UINT8;
+    boolean fp = bitFormat == 3;
+    boolean signed = bitFormat == 2;
 
-    if (bitFormat == 3) core[0].pixelType = FormatTools.FLOAT;
-    else if (bitFormat == 2) {
-      switch (bitsPerSample) {
-        case 8:
-          core[0].pixelType = FormatTools.INT8;
-          break;
-        case 16:
-          core[0].pixelType = FormatTools.INT16;
-          break;
-        case 32:
-          core[0].pixelType = FormatTools.INT32;
-          break;
-      }
-    }
-    else {
-      switch (bitsPerSample) {
-        case 8:
-          core[0].pixelType = FormatTools.UINT8;
-          break;
-        case 16:
-          core[0].pixelType = FormatTools.UINT16;
-          break;
-        case 32:
-          core[0].pixelType = FormatTools.UINT32;
-          break;
-      }
-    }
+    core[0].pixelType =
+      FormatTools.pixelTypeFromBytes(bitsPerSample / 4, signed, fp);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

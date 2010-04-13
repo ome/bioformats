@@ -100,27 +100,11 @@ public class LIMReader extends FormatReader {
     int bits = in.readShort();
 
     while (bits % 8 != 0) bits++;
-    switch (bits) {
-      case 8:
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 16:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      case 24:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 3;
-        break;
-      case 32:
-        core[0].pixelType = FormatTools.UINT32;
-        break;
-      case 48:
-        core[0].pixelType = FormatTools.UINT16;
-        core[0].sizeC = 3;
-        break;
-      default:
-        throw new FormatException("Unsupported bits per pixel : " + bits);
+    if ((bits % 3) == 0) {
+      core[0].sizeC = 3;
+      bits /= 3;
     }
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
 
     isCompressed = in.readShort() != 0;
     if (isCompressed) {

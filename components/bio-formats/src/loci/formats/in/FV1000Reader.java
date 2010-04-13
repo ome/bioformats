@@ -536,16 +536,8 @@ public class FV1000Reader extends FormatReader {
         core[1].rgb = false;
         int bits = ifds.get(0).getBitsPerSample()[0];
         while ((bits % 8) != 0) bits++;
-        switch (bits) {
-          case 8:
-            core[1].pixelType = FormatTools.UINT8;
-            break;
-          case 16:
-            core[1].pixelType = FormatTools.UINT16;
-            break;
-          case 32:
-            core[1].pixelType = FormatTools.UINT32;
-        }
+        bits /= 8;
+        core[1].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
         core[1].dimensionOrder = "XYCZT";
         core[1].indexed = false;
       }
@@ -733,19 +725,8 @@ public class FV1000Reader extends FormatReader {
     if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
     if (getDimensionOrder().indexOf("T") == -1) core[0].dimensionOrder += "T";
 
-    switch (imageDepth) {
-      case 1:
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 2:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      case 4:
-        core[0].pixelType = FormatTools.UINT32;
-        break;
-      default:
-        throw new RuntimeException("Unsupported pixel depth: " + imageDepth);
-    }
+    core[0].pixelType =
+      FormatTools.pixelTypeFromBytes(imageDepth, false, false);
 
     // set up thumbnail file mapping
 

@@ -155,8 +155,7 @@ public class PSDReader extends FormatReader {
 
     int bits = in.readShort();
     addGlobalMeta("Bits per pixel", bits);
-    if (bits == 16) core[0].pixelType = FormatTools.UINT16;
-    else core[0].pixelType = FormatTools.UINT8;
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
 
     int colorMode = in.readShort();
     String modeString = null;

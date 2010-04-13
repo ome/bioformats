@@ -121,12 +121,9 @@ public class ARFReader extends FormatReader {
     core[0].sizeC = 1;
     core[0].sizeT = numImages;
 
-    if (bitsPerPixel > 32) {
-      throw new FormatException("Too many bits per pixel: " + bitsPerPixel);
-    }
-    else if (bitsPerPixel > 16) core[0].pixelType = FormatTools.UINT32;
-    else if (bitsPerPixel > 8) core[0].pixelType = FormatTools.UINT16;
-    else core[0].pixelType = FormatTools.UINT8;
+    int bpp = bitsPerPixel / 8;
+    if ((bitsPerPixel % 8) != 0) bpp++;
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
 
     core[0].bitsPerPixel = bitsPerPixel;
     core[0].imageCount = numImages;

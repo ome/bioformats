@@ -184,7 +184,7 @@ public class AliconaReader extends FormatReader {
     core[0].interleaved = false;
     core[0].littleEndian = true;
 
-    core[0].pixelType = numBytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(numBytes, false, false);
     core[0].dimensionOrder = "XYCTZ";
     core[0].metadataComplete = true;
     core[0].indexed = false;

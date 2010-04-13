@@ -149,17 +149,7 @@ public class CellomicsReader extends FormatReader {
     core[0].imageCount = getSizeZ();
     core[0].littleEndian = true;
     core[0].dimensionOrder = "XYCZT";
-
-    switch (nBits) {
-      case 8:
-       core[0].pixelType = FormatTools.UINT8;
-       break;
-      case 16:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      default:
-        throw new FormatException("Unsupported bits per pixel: " + nBits);
-    }
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(nBits / 8, false, false);
 
     LOGGER.info("Populating metadata store");
 

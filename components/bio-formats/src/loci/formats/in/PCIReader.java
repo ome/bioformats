@@ -210,22 +210,12 @@ public class PCIReader extends FormatReader {
         byte[] b = poi.getDocumentBytes(name, 8);
         int bits = (int) DataTools.bytesToDouble(b, true);
         while (bits % 8 != 0 || bits == 0) bits++;
-        switch (bits) {
-          case 8:
-            core[0].pixelType = FormatTools.UINT8;
-            break;
-          case 16:
-            core[0].pixelType = FormatTools.UINT16;
-            break;
-          case 32:
-            core[0].pixelType = FormatTools.UINT32;
-            break;
-          case 48:
-            core[0].pixelType = FormatTools.UINT16;
-            break;
-          default:
-            throw new FormatException("Unsupported bits per pixel : " + bits);
+        if (bits % 3 == 0) {
+          core[0].sizeC = 3;
+          bits /= 3;
         }
+        bits /= 8;
+        core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);

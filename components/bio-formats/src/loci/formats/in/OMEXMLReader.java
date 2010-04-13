@@ -326,21 +326,7 @@ public class OMEXMLReader extends FormatReader {
       core[i].interleaved = false;
       core[i].indexed = false;
       core[i].falseColor = true;
-
-      String type = pixType.toLowerCase();
-      boolean signed = type.charAt(0) != 'u';
-      if (type.endsWith("16")) {
-        core[i].pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
-      }
-      else if (type.endsWith("32")) {
-        core[i].pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
-      }
-      else if (type.equals("float")) {
-        core[i].pixelType = FormatTools.FLOAT;
-      }
-      else {
-        core[i].pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
-      }
+      core[i].pixelType = FormatTools.pixelTypeFromString(pixType);
       core[i].orderCertain = true;
     }
     setSeries(oldSeries);

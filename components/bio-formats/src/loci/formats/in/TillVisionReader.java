@@ -440,18 +440,9 @@ public class TillVisionReader extends FormatReader {
   // -- Helper methods --
 
   private int convertPixelType(int type) throws FormatException {
-    switch (type) {
-      case 1:
-        return FormatTools.INT8;
-      case 2:
-        return FormatTools.UINT8;
-      case 3:
-        return FormatTools.INT16;
-      case 4:
-        return FormatTools.UINT16;
-      default:
-        throw new FormatException("Unsupported data type: " + type);
-    }
+    boolean signed = type % 2 == 1;
+    int bytes = (type / 2) + (signed ? 1 : 0);
+    return FormatTools.pixelTypeFromBytes(bytes, signed, false);
   }
 
   private byte[] getMarker(byte[] s) throws IOException {

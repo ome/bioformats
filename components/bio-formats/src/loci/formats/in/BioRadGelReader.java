@@ -145,19 +145,9 @@ public class BioRadGelReader extends FormatReader {
     }
     in.skipBytes(2);
 
-    int bytesPerPixel = in.readShort();
+    int bpp = in.readShort();
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
 
-    switch (bytesPerPixel) {
-      case 1:
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 2:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      default:
-        throw new FormatException("Unsupported bytes per pixel: " +
-          bytesPerPixel);
-    }
     offset = in.getFilePointer();
 
     core[0].sizeZ = 1;

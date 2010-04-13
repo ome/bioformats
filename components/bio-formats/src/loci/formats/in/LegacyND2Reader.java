@@ -152,17 +152,7 @@ public class LegacyND2Reader extends FormatReader {
         }
         else core[i].rgb = false;
 
-        switch (bytes) {
-          case 1:
-            core[i].pixelType = FormatTools.UINT8;
-            break;
-          case 2:
-            core[i].pixelType = FormatTools.UINT16;
-            break;
-          case 4:
-            core[i].pixelType = FormatTools.FLOAT;
-            break;
-        }
+        core[i].pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
         core[i].imageCount = core[i].sizeZ * core[i].sizeT;
         if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
         core[i].interleaved = true;

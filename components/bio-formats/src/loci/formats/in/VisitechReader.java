@@ -188,16 +188,9 @@ public class VisitechReader extends FormatReader {
           else if (key.equals("Image bit depth")) {
             int bits = Integer.parseInt(value);
             while ((bits % 8) != 0) bits++;
-            switch (bits) {
-              case 16:
-                core[0].pixelType = FormatTools.UINT16;
-                break;
-              case 32:
-                core[0].pixelType = FormatTools.UINT32;
-                break;
-              default:
-                core[0].pixelType = FormatTools.UINT8;
-            }
+            bits /= 8;
+            core[0].pixelType =
+              FormatTools.pixelTypeFromBytes(bits, false, false);
           }
           else if (key.equals("Image dimensions")) {
             int n = value.indexOf(",");

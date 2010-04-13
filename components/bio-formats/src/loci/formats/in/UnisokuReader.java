@@ -162,25 +162,10 @@ public class UnisokuReader extends FormatReader {
         else if (key.startsWith(":ascii flag; data type")) {
           value = value.substring(value.indexOf(" ") + 1);
           int type = Integer.parseInt(value);
-          switch (type) {
-            case 2:
-              core[0].pixelType = FormatTools.UINT8;
-              break;
-            case 3:
-              core[0].pixelType = FormatTools.INT8;
-              break;
-            case 4:
-              core[0].pixelType = FormatTools.UINT16;
-              break;
-            case 5:
-              core[0].pixelType = FormatTools.INT16;
-              break;
-            case 8:
-              core[0].pixelType = FormatTools.FLOAT;
-              break;
-            default:
-              throw new FormatException("Unsupported data type: " + type);
-          }
+          boolean signed = type % 2 == 1;
+          int bytes = type / 2;
+          core[0].pixelType =
+            FormatTools.pixelTypeFromBytes(bytes, signed, bytes == 4);
         }
       }
     }

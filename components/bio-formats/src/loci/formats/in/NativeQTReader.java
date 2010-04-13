@@ -287,7 +287,7 @@ public class NativeQTReader extends FormatReader {
 
     int bytesPerPixel = (bitsPerPixel / 8) % 4;
     core[0].pixelType =
-      bytesPerPixel == 2 ?  FormatTools.UINT16 : FormatTools.UINT8;
+      FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
 
     core[0].sizeZ = 1;
     core[0].dimensionOrder = "XYCZT";

@@ -574,17 +574,8 @@ public class DicomReader extends FormatReader {
       core[0].bitsPerPixel /= 3;
     }
 
-    switch (bitsPerPixel) {
-      case 8:
-        core[0].pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
-        break;
-      case 16:
-        core[0].pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
-        break;
-      case 32:
-        core[0].pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
-        break;
-    }
+    core[0].pixelType =
+      FormatTools.pixelTypeFromBytes(bitsPerPixel / 8, signed, false);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int plane = getSizeX() * getSizeY() * (lut == null ? getSizeC() : 1) * bpp;

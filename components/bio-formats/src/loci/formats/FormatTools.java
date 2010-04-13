@@ -593,6 +593,30 @@ public final class FormatTools {
     throw new IllegalArgumentException("Unknown pixel type: " + pixelType);
   }
 
+  /**
+   * Returns an appropriate pixel type given the number of bytes per pixel.
+   *
+   * @param bytes number of bytes per pixel.
+   * @param signed whether or not the pixel type should be signed.
+   * @param fp whether or not these are floating point pixels.
+   */
+  public static int pixelTypeFromBytes(int bytes, boolean signed, boolean fp)
+    throws FormatException
+  {
+    switch (bytes) {
+      case 1:
+        return signed ? INT8 : UINT8;
+      case 2:
+        return signed ? INT16: UINT16;
+      case 4:
+        return fp ? FLOAT : signed ? INT32: UINT32;
+      case 8:
+        return DOUBLE;
+      default:
+        throw new FormatException("Unsupported byte depth: " + bytes);
+    }
+  }
+
   // -- Utility methods - sanity checking
 
   /**

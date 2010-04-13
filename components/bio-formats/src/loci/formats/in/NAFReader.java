@@ -129,20 +129,9 @@ public class NAFReader extends FormatReader {
       core[i].sizeT = in.readInt();
 
       core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
-      switch (numBits) {
-        case 8:
-          core[i].pixelType = FormatTools.UINT8;
-          break;
-        case 16:
-          core[i].pixelType = FormatTools.UINT16;
-          break;
-        case 32:
-          core[i].pixelType = FormatTools.UINT32;
-          break;
-        case 64:
-          core[i].pixelType = FormatTools.DOUBLE;
-          break;
-      }
+      int nBytes = numBits / 8;
+      core[i].pixelType =
+        FormatTools.pixelTypeFromBytes(nBytes, false, nBytes == 8);
 
       core[i].dimensionOrder = "XYCZT";
       core[i].rgb = false;

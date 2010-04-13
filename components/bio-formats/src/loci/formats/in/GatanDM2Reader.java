@@ -104,20 +104,7 @@ public class GatanDM2Reader extends FormatReader {
     core[0].sizeY = in.readShort();
     int bpp = (int) ((footerOffset - HEADER_SIZE) / (getSizeX() * getSizeY()));
 
-    switch (bpp) {
-      case 1:
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 2:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      case 4:
-        core[0].pixelType = FormatTools.UINT32;
-        break;
-      default:
-        throw new FormatException("Unsupported bytes per pixel: " + bpp);
-    }
-
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
     core[0].sizeC = 1;
     core[0].sizeT = 1;
     core[0].sizeZ = 1;
@@ -125,7 +112,6 @@ public class GatanDM2Reader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].littleEndian = false;
 
-    in.skipBytes(FormatTools.getPlaneSize(this) + 39);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -135,9 +121,18 @@ public class GatanDM2Reader extends FormatReader {
     store.setInstrumentID(instrumentID, 0);
     store.setImageInstrumentRef(instrumentID, 0);
 
-    String date = null, time = null;
+    String date = null, time = null, name = null;
+    in.skipBytes(FormatTools.getPlaneSize(this) + 39);
+
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     while (in.getFilePointer() < in.length()) {
+      if (level != MetadataLevel.ALL && date != null &&
+        time != null && name != null)
+      {
+        break;
+      }
+
       int strlen = in.readShort();
       if (strlen == 0) {
         in.skipBytes(35);
@@ -186,9 +181,6 @@ public class GatanDM2Reader extends FormatReader {
           if (i < count - 1) value.append(", ");
         }
       }
-      else if (type.equals("sing")) {
-        in.skipBytes(count);
-      }
       else {
         in.skipBytes(count);
       }
@@ -210,13 +202,13 @@ public class GatanDM2Reader extends FormatReader {
         store.setDetectorSettingsDetector(detectorID, 0, 0);
       }
       else if (label.equals("Name")) {
-        store.setImageName(value.toString(), 0);
+        name = value.toString();
       }
       else if (label.equals("Operator")) {
-        String[] name = value.toString().split(" ");
-        store.setExperimenterFirstName(name[0], 0);
-        if (name.length > 1) {
-          store.setExperimenterLastName(name[1], 0);
+        String[] experimenterName = value.toString().split(" ");
+        store.setExperimenterFirstName(experimenterName[0], 0);
+        if (experimenterName.length > 1) {
+          store.setExperimenterLastName(experimenterName[1], 0);
         }
         String expID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(expID, 0);
@@ -230,6 +222,9 @@ public class GatanDM2Reader extends FormatReader {
         "M/d/yy H:mm:ss", "d/M/yy H:mm:ss"};
       date += " " + time;
       store.setImageCreationDate(DateTools.formatDate(date, format), 0);
+    }
+    if (name != null) {
+      store.setImageName(name, 0);
     }
   }
 

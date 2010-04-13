@@ -92,20 +92,7 @@ public class VGSAMReader extends FormatReader {
     in.skipBytes(4);
 
     int bpp = in.readInt();
-    switch (bpp) {
-      case 1:
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 2:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      case 4:
-        core[0].pixelType = FormatTools.FLOAT;
-        break;
-      default:
-        throw new FormatException("Unsupported bytes per pixel: " + bpp);
-    }
-
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, bpp == 4);
     core[0].littleEndian = false;
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
