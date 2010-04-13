@@ -13,7 +13,8 @@ Steps to try out the plugin:
    where "/path/to/mipav" is the location of your MIPAV installation.
 
 3) Copy the resultant PlugInBioFormatsImporter*.class files into your user
-   mipav/plugins folder.
+   mipav/plugins folder. On some systems and/or with some versions of MIPAV,
+	 you may need to copy the class files to your main mipav folder instead.
 
 4) Add loci_tools.jar to MIPAV's class path:
      * On Mac OS X, edit the mipav.app/Contents/Info.plist file.
