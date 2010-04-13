@@ -24,6 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import loci.common.Location;
 import loci.common.ZipHandle;
@@ -68,11 +71,6 @@ public class ZipReader extends FormatReader {
     if (reader != null) reader.setGroupFiles(groupFiles);
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
-  public String[] getSeriesUsedFiles(boolean noPixels) {
-    return reader.getSeriesUsedFiles(noPixels);
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -102,14 +100,16 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
-    ZipHandle zip = new ZipHandle(id);
-    if (zip.getEntryCount() > 1) {
-      throw new FormatException(
-        "Zip files that contain more than one file are not supported.");
+    ZipFile zip = new ZipFile(id);
+    Enumeration<? extends ZipEntry> e = zip.entries();
+    while (e.hasMoreElements()) {
+      ZipEntry ze = e.nextElement();
+      ZipHandle handle = new ZipHandle(id, ze);
+      Location.mapFile(ze.getName(), handle);
     }
-    String name = zip.getEntryName();
-    Location.mapFile(name, zip);
-    reader.setId(name);
+
+    ZipHandle base = new ZipHandle(id);
+    reader.setId(base.getEntryName());
 
     metadataStore = reader.getMetadataStore();
     core = reader.getCoreMetadata();

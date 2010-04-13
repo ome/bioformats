@@ -263,9 +263,7 @@ public abstract class StreamHandle implements IRandomAccess {
 
   /* @see java.io.DataInput#readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    fp += 2;
-    int v = stream.readUnsignedShort();
-    return order.equals(ByteOrder.LITTLE_ENDIAN) ? DataTools.swap(v) : v;
+    return readShort() & 0xffff;
   }
 
   /* @see java.io.DataInput#readUTF() */

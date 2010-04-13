@@ -53,19 +53,8 @@ public class ZipHandle extends StreamHandle {
 
   // -- Constructor --
 
-  /**
-   * Constructs a new ZipHandle corresponding to the given file.
-   *
-   * @throws HandleException if:
-   *   <li>The given file is not a Zip file.<br>
-   *   <li>The Zip file contains more than one entry.<br>
-   */
   public ZipHandle(String file) throws IOException {
     super();
-    this.file = file;
-    if (!isZipFile(file)) {
-      throw new HandleException(file + " is not a Zip file.");
-    }
     zip = new ZipFile(file);
 
     // strip off .zip extension and directory prefix
@@ -84,12 +73,25 @@ public class ZipHandle extends StreamHandle {
         entry = ze;
         break;
       }
-      else if (entry == null) entry = ze; // default to first entry
     }
     if (entry == null) {
-      throw new HandleException("Zip file '" + file + "' has no entries");
+      entry = zip.entries().nextElement();
     }
 
+    length = entry.getSize();
+    resetStream();
+  }
+
+  /**
+   * Constructs a new ZipHandle corresponding to the given file.
+   *
+   * @throws HandleException if:
+   *   <li>The given file is not a Zip file.<br>
+   */
+  public ZipHandle(String file, ZipEntry entry) throws IOException {
+    super();
+    zip = new ZipFile(file);
+    this.entry = entry;
     length = entry.getSize();
     resetStream();
   }
@@ -107,12 +109,12 @@ public class ZipHandle extends StreamHandle {
     return new String(b).equals("PK");
   }
 
-  /** Get the name of the first entry. */
+  /** Get the name of the backing Zip entry. */
   public String getEntryName() {
     return entry.getName();
   }
 
-  /** Returns the DataInputStream corresponding to the first entry. */
+  /** Returns the DataInputStream corresponding to the backing Zip entry. */
   public DataInputStream getInputStream() {
     return stream;
   }
@@ -126,9 +128,11 @@ public class ZipHandle extends StreamHandle {
 
   /* @see IRandomAccess#close() */
   public void close() throws IOException {
-    super.close();
-    zip = null;
-    entry = null;
+    if (!Location.getIdMap().containsValue(this)) {
+      super.close();
+      zip = null;
+      entry = null;
+    }
   }
 
   // -- StreamHandle API methods --
@@ -137,7 +141,7 @@ public class ZipHandle extends StreamHandle {
   protected void resetStream() throws IOException {
     if (stream != null) stream.close();
     stream = new DataInputStream(new BufferedInputStream(
-     zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
+      zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
   }
 
 }

@@ -343,7 +343,11 @@ public class Location {
         return false;
       }
     }
-    return file.exists();
+    if (file.exists()) return true;
+    if (getMappedFile(file.getPath()) != null) return true;
+
+    String mappedId = getMappedId(file.getPath());
+    return mappedId != null && new File(mappedId).exists();
   }
 
   /* @see java.io.File#getAbsoluteFile() */

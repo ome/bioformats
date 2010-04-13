@@ -76,6 +76,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   public RandomAccessInputStream(IRandomAccess handle) throws IOException {
     raf = handle;
     raf.setOrder(ByteOrder.BIG_ENDIAN);
+    seek(0);
   }
 
   /** Constructs a random access stream around the given byte array. */
