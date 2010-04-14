@@ -495,10 +495,17 @@ public final class DataTools {
   /**
    * Translates nBytes of the given long and places the result in the
    * given byte array.
+   *
+   * @throws IllegalArgumentException
+   *   if the specified indices fall outside the buffer
    */
   public static void unpackBytes(long value, byte[] buf, int ndx,
     int nBytes, boolean little)
   {
+    if (buf.length < ndx + nBytes) {
+      throw new IllegalArgumentException("Invalid indices: buf.length=" +
+        buf.length + ", ndx=" + ndx + ", nBytes=" + nBytes);
+    }
     if (little) {
       for (int i=0; i<nBytes; i++) {
         buf[ndx + i] = (byte) ((value >> (8*i)) & 0xff);
