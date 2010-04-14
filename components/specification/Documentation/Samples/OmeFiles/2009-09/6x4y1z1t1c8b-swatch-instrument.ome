@@ -33,12 +33,19 @@
 		<Filter ID="Filter:1" Manufacturer="OME Filters" Model="Delux Mk4" Type="BandPass">
 			<TransmittanceRange CutIn="560" CutOut="630" CutInTolerance="25" CutOutTolerance="30" Transmittance="0.8"/>
 		</Filter>
+		<Filter ID="Filter:2" Manufacturer="OME Filters" Model="Delux Mk5" Type="BandPass">
+			<TransmittanceRange CutIn="562" CutOut="633" CutInTolerance="11" CutOutTolerance="23" Transmittance="0.5"/>
+		</Filter>
+		<Filter ID="Filter:3" Manufacturer="OME Filters" Model="Delux Mk6" Type="BandPass">
+			<TransmittanceRange CutIn="463" CutOut="535" CutInTolerance="21" CutOutTolerance="34" Transmittance="0.7"/>
+		</Filter>
 		<Dichroic ID="Dichroic:0" Model="Standard Mk3" Manufacturer="OME Insturuments"/>
 	</Instrument>
 	<Image ID="Image:0" Name="6x6x1x8-swatch.tif"><AcquiredDate>2010-02-23T12:51:30</AcquiredDate>
 		<Description>This image is linked to the Control Set</Description>
 		<InstrumentRef ID="Instrument:0"/>
-		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1"><Channel Color="4294967295" ID="Channel:0:1"/>
+		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+			<Channel Color="4294967295" ID="Channel:0:1" SecondaryEmissionFilter="Filter:2" SecondaryExcitationFilter="Filter:3"/>
 			<Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
 		</Pixels>
 	</Image>

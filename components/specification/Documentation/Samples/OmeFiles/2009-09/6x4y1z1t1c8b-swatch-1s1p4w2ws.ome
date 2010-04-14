@@ -28,6 +28,15 @@
 			<SPW:WellSample ID="WellSample:1.1.2.2">
 				<SPW:ImageRef ID="Image:0"/>
 			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.1.2.3">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.1.2.4">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:1.1.2.5">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
 			<SPW:ReagentRef ID="Reagent:1"/>
 		</SPW:Well>
 		<SPW:Well ID="Well:1.2.2" Column="2" Row="2">

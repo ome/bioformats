@@ -199,25 +199,59 @@
 	
 	<xsl:template match="SPW:ScreenAcquisition"/> <!-- Remove as converted to PlateAcquisition -->
 	
-	
+	<!-- OME:FilterRef - adding index to well sample -->
 	<xsl:template match="OME:ExcitationFilterRef">
-		<xsl:element name="ExcitationFilterList" namespace="{newOMENS}">
-			<xsl:element name="FilterRef" namespace="{newOMENS}">
+		<xsl:element name="ExcitationFilterList" namespace="{$newOMENS}">
+			<xsl:element name="FilterRef" namespace="{$newOMENS}">
 				<xsl:attribute name="ID"><xsl:value-of select="@ID"/></xsl:attribute>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
 	
 	<xsl:template match="OME:EmissionFilterRef">
-		<xsl:element name="EmissionFilterList" namespace="{newOMENS}">
-			<xsl:element name="FilterRef" namespace="{newOMENS}">
+		<xsl:element name="EmissionFilterList" namespace="{$newOMENS}">
+			<xsl:element name="FilterRef" namespace="{$newOMENS}">
 				<xsl:attribute name="ID"><xsl:value-of select="@ID"/></xsl:attribute>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
 	
-	
+	<xsl:template match="OME:Channel">
+		<xsl:element name="Channel" namespace="{$newOMENS}">
+			<xsl:for-each
+				select="@* [not((name(.) = 'SecondaryEmissionFilter') or (name(.) = 'SecondaryExcitationFilter'))]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+			<xsl:if test="@SecondaryEmissionFilter or @SecondaryExcitationFilter">
+				<xsl:element name="LightPath" namespace="{$newOMENS}">
+					<xsl:for-each select="@* [(name(.) = 'SecondaryExcitationFilter')]">
+						<xsl:element name="ExcitationFilterPath" namespace="{$newOMENS}">
+							<xsl:comment> Was SecondaryExcitationFilter attribute on Channel</xsl:comment>
+							<xsl:element name="FilterRef" namespace="{$newOMENS}">
+								<xsl:attribute name="ID">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:element>
+						</xsl:element>
+					</xsl:for-each>
+					<xsl:for-each select="@* [(name(.) = 'SecondaryEmissionFilter')]">
+						<xsl:element name="EmissionFilterPath" namespace="{$newOMENS}">
+							<xsl:comment> Was SecondaryEmissionFilter attribute on Channel</xsl:comment>
+							<xsl:element name="FilterRef" namespace="{$newOMENS}">
+								<xsl:attribute name="ID">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:element>
+						</xsl:element>
+					</xsl:for-each>
+				</xsl:element>
+			</xsl:if>
+		</xsl:element>
+	</xsl:template>
+		
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
