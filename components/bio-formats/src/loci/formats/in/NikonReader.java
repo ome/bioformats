@@ -58,6 +58,7 @@ public class NikonReader extends BaseTiffReader {
 
   // Tags that give a good indication of whether this is an NEF file.
   private static final int TIFF_EPS_STANDARD = 37398;
+  private static final int COLOR_MAP = 33422;
 
   // Maker Note tags.
   private static final int FIRMWARE_VERSION = 1;
@@ -176,17 +177,21 @@ public class NikonReader extends BaseTiffReader {
 
     src.close();
 
-    int[] colorMap = new int[4];
-    short[] s = (short[]) ifd.get(new Integer(33422));
-    for (int q=0; q<colorMap.length; q++) {
-      colorMap[q] = s[q];
-      if (colorMap[q] > 2) {
-        // found invalid channel index, use default color map instead
-        colorMap[0] = 1;
-        colorMap[1] = 0;
-        colorMap[2] = 2;
-        colorMap[3] = 1;
-        break;
+    int[] colorMap = {1, 0, 2, 1}; // default color map
+    short[] ifdColors = (short[]) ifd.get(COLOR_MAP);
+    if (ifdColors != null && ifdColors.length >= colorMap.length) {
+      boolean colorsValid = true;
+      for (int q=0; q<colorMap.length; q++) {
+        if (ifdColors[q] < 0 || ifdColors[q] > 2) {
+          // found invalid channel index, use default color map instead
+          colorsValid = false;
+          break;
+        }
+      }
+      if (colorsValid) {
+        for (int q=0; q<colorMap.length; q++) {
+          colorMap[q] = ifdColors[q];
+        }
       }
     }
 
