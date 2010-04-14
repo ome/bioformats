@@ -282,7 +282,22 @@ public final class XMLTools {
   public static void parseXML(byte[] xml, DefaultHandler handler)
     throws IOException
   {
-    parseXML(new RandomAccessInputStream(xml), handler);
+    Exception e = null;
+    try {
+      SAXParser parser = SAX_FACTORY.newSAXParser();
+      parser.parse(new ByteArrayInputStream(xml), handler);
+    }
+    catch (ParserConfigurationException exc) {
+      e = exc; 
+    }
+    catch (SAXException exc) {
+      e = exc;
+    }
+    if (e != null) {
+      IOException io = new IOException();
+      io.initCause(e);
+      throw io;
+    }
   }
 
   // -- XSLT --
