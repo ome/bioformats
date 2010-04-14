@@ -279,7 +279,7 @@ public class TiffSaver {
       writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
     }
     writeIntValue(out, nextOffset);
-    out.write(extra.getBytes());
+    out.write(extra.getBytes(), 0, (int) extra.length());
   }
 
   /**
