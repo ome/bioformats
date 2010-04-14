@@ -65,7 +65,8 @@ public class IvisionReader extends FormatReader {
   private String exposureTime;
   private String gain, offset;
   private String deltaT;
-  private String magnification, lensNA, refractiveIndex;
+  private Integer magnification;
+  private Double lensNA, refractiveIndex;
   private String wavelength;
 
   // -- Constructor --
@@ -134,7 +135,8 @@ public class IvisionReader extends FormatReader {
       exposureTime = null;
       gain = offset = null;
       deltaT = null;
-      magnification = lensNA = refractiveIndex = null;
+      magnification = null;
+      lensNA = refractiveIndex = null;
       wavelength = null;
     }
   }
@@ -204,24 +206,15 @@ public class IvisionReader extends FormatReader {
 
     imageOffset = in.getFilePointer();
 
-    in.skipBytes(getSizeZ() * getSizeC() * getSizeT() * getSizeX() *
-      getSizeY() * FormatTools.getBytesPerPixel(getPixelType()));
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.skipBytes(getSizeZ() * getSizeC() * getSizeT() * getSizeX() *
+        getSizeY() * FormatTools.getBytesPerPixel(getPixelType()));
 
-    // look for block of XML data
-    LOGGER.info("Looking for XML metadata");
-    boolean xmlFound = false;
-    while (!xmlFound && in.getFilePointer() < in.length() - 6) {
-      int len = (int) Math.min(8192, in.length() - in.getFilePointer());
-      String check = in.readString(len);
-      int xmlIndex = check.indexOf("<?xml");
-      xmlFound = xmlIndex != -1;
-      if (xmlFound) {
-        in.seek(in.getFilePointer() - check.length() + xmlIndex);
-      }
-      else in.seek(in.getFilePointer() - 6);
-    }
+      // look for block of XML data
+      LOGGER.info("Looking for XML metadata");
+      in.findString(false, "<?xml");
+      in.seek(in.getFilePointer() - 5);
 
-    if (xmlFound) {
       String xml = in.readString((int) (in.length() - in.getFilePointer()));
       xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf(">") + 1);
       IvisionHandler handler = new IvisionHandler();
@@ -247,38 +240,40 @@ public class IvisionReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
 
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    if (deltaT != null) {
-      store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
+      if (deltaT != null) {
+        store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
+      }
+
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
+
+      store.setObjectiveCorrection("Unknown", 0, 0);
+      store.setObjectiveImmersion("Unknown", 0, 0);
+
+      if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
+      if (magnification != null) {
+        store.setObjectiveNominalMagnification(magnification, 0, 0);
+      }
+      if (refractiveIndex != null) {
+        store.setObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
+      }
+
+      String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+      store.setDetectorID(detectorID, 0, 0);
+      store.setDetectorSettingsDetector(detectorID, 0, 0);
+
+      store.setDetectorType("Unknown", 0, 0);
+
+      store.setDetectorSettingsBinning(binX + "x" + binY, 0, 0);
+      if (gain != null) store.setDetectorSettingsGain(new Double(gain), 0, 0);
     }
-
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
-
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
-
-    if (lensNA != null) store.setObjectiveLensNA(new Double(lensNA), 0, 0);
-    if (magnification != null) {
-      store.setObjectiveNominalMagnification(new Integer(magnification), 0, 0);
-    }
-    if (refractiveIndex != null) {
-      store.setObjectiveSettingsRefractiveIndex(new Double(refractiveIndex), 0);
-    }
-
-    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
-    store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorSettingsDetector(detectorID, 0, 0);
-
-    store.setDetectorType("Unknown", 0, 0);
-
-    store.setDetectorSettingsBinning(binX + "x" + binY, 0, 0);
-    if (gain != null) store.setDetectorSettingsGain(new Double(gain), 0, 0);
   }
 
   // -- Helper class --
@@ -301,9 +296,24 @@ public class IvisionReader extends FormatReader {
       else if ("iplab:Gain".equals(key)) gain = value;
       else if ("iplab:Offset".equals(key)) offset = value;
       else if ("iplab:Interval_T".equals(key)) deltaT = value;
-      else if ("iplab:Objective_Mag".equals(key)) magnification = value;
-      else if ("iplab:Objective_NA".equals(key)) lensNA = value;
-      else if ("iplab:Objective_RI".equals(key)) refractiveIndex = value;
+      else if ("iplab:Objective_Mag".equals(key)) {
+        try {
+          magnification = new Integer((int) Double.parseDouble(value));
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if ("iplab:Objective_NA".equals(key)) {
+        try {
+          lensNA = new Double(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if ("iplab:Objective_RI".equals(key)) {
+        try {
+          refractiveIndex = new Double(value);
+        }
+        catch (NumberFormatException e) { }
+      }
       else if ("iplab:Wavelength".equals(key)) wavelength = value;
     }
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
+import java.util.Arrays;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -94,9 +94,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     String comment = ifds.get(0).getComment();
     String tz = null, tc = null, tt = null;
     if (comment != null) {
-      StringTokenizer st = new StringTokenizer(comment, "\n");
-      while (st.hasMoreTokens()) {
-        String line = st.nextToken();
+      String[] lines = comment.split("\n");
+      for (String line : lines) {
         int equals = line.indexOf("=");
         if (equals < 0) continue;
         String key = line.substring(0, equals);
@@ -118,17 +117,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       metadata.remove("Comment");
     }
 
-    if (tz == null) tz = "1";
-    if (tc == null) tc = "1";
-    if (tt == null) tt = "1";
-
     core[0].sizeT = 1;
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     if (getSizeC() == 0) core[0].sizeC = 1;
 
-    core[0].sizeZ *= Integer.parseInt(tz);
-    core[0].sizeC *= Integer.parseInt(tc);
-    core[0].sizeT *= Integer.parseInt(tt);
+    if (tz != null) core[0].sizeZ *= Integer.parseInt(tz);
+    if (tc != null) core[0].sizeC *= Integer.parseInt(tc);
+    if (tt != null) core[0].sizeT *= Integer.parseInt(tt);
 
     if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {
       core[0].sizeC *= getImageCount();
@@ -142,13 +137,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     cNames = new String[getSizeC()];
 
     for (int i=0; i<ifds.size(); i++) {
+      Arrays.fill(coords[i], -1);
       comment = ifds.get(i).getComment();
       comment = comment.replaceAll("\r\n", "\n");
       comment = comment.replaceAll("\r", "\n");
-      StringTokenizer st = new StringTokenizer(comment, "\n");
       String channelName = null;
-      while (st.hasMoreTokens()) {
-        String line = st.nextToken();
+      String[] lines = comment.split("\n");
+      for (String line : lines) {
         int equals = line.indexOf("=");
         if (equals < 0) continue;
         String key = line.substring(0, equals);
@@ -171,16 +166,25 @@ public class ImprovisionTiffReader extends BaseTiffReader {
           int ndx = Integer.parseInt(value);
           if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
+
+        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL &&
+          coords[i][0] >= 0 && coords[i][1] >= 0 && coords[i][2] >= 0)
+        {
+          break;
+        }
       }
     }
-    // determine average time per plane
 
-    long sum = 0;
-    for (int i=1; i<stamps.length; i++) {
-      long diff = stamps[i] - stamps[i - 1];
-      if (diff > 0) sum += diff;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // determine average time per plane
+
+      long sum = 0;
+      for (int i=1; i<stamps.length; i++) {
+        long diff = stamps[i] - stamps[i - 1];
+        if (diff > 0) sum += diff;
+      }
+      pixelSizeT = (int) (sum / getSizeT());
     }
-    pixelSizeT = (int) (sum / getSizeT());
 
     // determine dimension order
 
@@ -214,10 +218,17 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
-    store.setDimensionsTimeIncrement(pixelSizeT / 1000000.0, 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+      store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
+      store.setDimensionsTimeIncrement(pixelSizeT / 1000000.0, 0, 0);
+      for (int i=0; i<getEffectiveSizeC(); i++) {
+        if (cNames != null && i < cNames.length) {
+          store.setLogicalChannelName(cNames[i], 0, i); 
+        } 
+      }
+    }
   }
 
 }

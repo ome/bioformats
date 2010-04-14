@@ -59,17 +59,13 @@ public class JPEG2000Reader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    int b1 = stream.read() & 0xff;
-    int b2 = stream.read() & 0xff;
-    boolean validStart = b1 == 0xff && b2 == 0x4f;
+    boolean validStart = (stream.readShort() & 0xffff) == 0xff4f;
     if (!validStart) {
       stream.skipBytes(2);
       validStart = stream.readInt() == 0x6a502020;
     }
     stream.seek(stream.length() - 2);
-    b1 = stream.read() & 0xff;
-    b2 = stream.read() & 0xff;
-    boolean validEnd = b1 == 0xff && b2 == 0xd9;
+    boolean validEnd = (stream.readShort() & 0xffff) == 0xffd9;
     return validStart && validEnd;
   }
 
@@ -86,7 +82,11 @@ public class JPEG2000Reader extends FormatReader {
     options.littleEndian = isLittleEndian();
 
     in.seek(0);
-    return new JPEG2000Codec().decompress(in, options);
+    byte[] plane = new JPEG2000Codec().decompress(in, options);
+    RandomAccessInputStream s = new RandomAccessInputStream(plane);
+    readPlane(s, x, y, w, h, buf);
+    s.close();
+    return buf;
   }
 
   // -- Internal FormatReader API methods --
@@ -120,10 +120,7 @@ public class JPEG2000Reader extends FormatReader {
           core[0].sizeX = in.readInt();
           core[0].sizeC = in.readShort();
           int type = in.readInt();
-          if (type == 0xf070100 || type == 0xf070000) {
-            core[0].pixelType = FormatTools.UINT16;
-          }
-          else core[0].pixelType = FormatTools.UINT8;
+          core[0].pixelType = convertPixelType(type);
           lastBoxFound = true;
         }
       }
@@ -133,11 +130,7 @@ public class JPEG2000Reader extends FormatReader {
         in.skipBytes(24);
         core[0].sizeC = in.readShort();
         int type = in.readInt();
-        if (type == 0xf070100 || type == 0xf070000) {
-          core[0].pixelType = FormatTools.UINT16;
-        }
-        else core[0].pixelType = FormatTools.UINT8;
-
+        core[0].pixelType = convertPixelType(type);
         lastBoxFound = true;
       }
       if (!lastBoxFound) in.seek(pos + length);
@@ -155,6 +148,15 @@ public class JPEG2000Reader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
+  }
+
+  // -- Helper methods --
+
+  private int convertPixelType(int type) {
+    if (type == 0xf070100 || type == 0xf070000) {
+      return FormatTools.UINT16;
+    }
+    return FormatTools.UINT8;
   }
 
 }

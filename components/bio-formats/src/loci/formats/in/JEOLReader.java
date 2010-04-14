@@ -43,8 +43,6 @@ import loci.formats.meta.MetadataStore;
  */
 public class JEOLReader extends FormatReader {
 
-  // -- Constants --
-
   // -- Fields --
 
   private long pixelOffset;
@@ -138,9 +136,7 @@ public class JEOLReader extends FormatReader {
     else if (magic.equals("IM")) {
       int commentLength = in.readShort();
       core[0].sizeX = 1024;
-      in.skipBytes(56);
-      String comment = in.readString(commentLength);
-      pixelOffset = in.getFilePointer();
+      pixelOffset = in.getFilePointer() + commentLength + 56;
       core[0].sizeY = (int) ((in.length() - pixelOffset) / getSizeX());
     }
     else {
@@ -148,6 +144,8 @@ public class JEOLReader extends FormatReader {
       core[0].sizeY = 1024;
       pixelOffset = 0;
     }
+
+    addGlobalMeta("Pixel data offset", pixelOffset);
 
     core[0].pixelType = FormatTools.UINT8;
     core[0].sizeZ = 1;
