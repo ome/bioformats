@@ -30,6 +30,14 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import loci.common.services.AbstractService;
+import loci.common.services.ServiceException;
+import loci.common.xml.XMLTools;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import ome.xml.OMEXMLFactory;
 import ome.xml.OMEXMLNode;
 
@@ -39,15 +47,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import loci.common.services.AbstractService;
-import loci.common.services.ServiceException;
-import loci.common.xml.XMLTools;
-import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataConverter;
-import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEXMLMetadata;
 
 /**
  * @author callan

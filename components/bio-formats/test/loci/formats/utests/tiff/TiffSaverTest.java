@@ -22,7 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package loci.formats.utests.tiff;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
 
@@ -31,7 +33,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.tiff.IFD;
-import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 

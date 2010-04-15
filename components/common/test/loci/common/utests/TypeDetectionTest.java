@@ -23,14 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common.utests;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import loci.common.BZip2Handle;
 import loci.common.GZipHandle;
 import loci.common.ZipHandle;
-
-import static org.testng.AssertJUnit.*;
 
 import org.testng.annotations.Test;
 

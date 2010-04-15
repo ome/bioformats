@@ -24,15 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.services;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.io.InputStream;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.services.AbstractService;
-
 import loci.poi.poifs.filesystem.DirectoryEntry;
 import loci.poi.poifs.filesystem.DocumentEntry;
 import loci.poi.poifs.filesystem.DocumentInputStream;

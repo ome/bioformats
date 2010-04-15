@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.utests;
 
 import static org.testng.AssertJUnit.assertNotNull;
-
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.services.OMEXMLService;

@@ -73,7 +73,7 @@ public class FormatEntry implements Comparable {
     IFormatWidgets fw = null;
     String fwClassName = "loci.plugins.config." + readerName + "Widgets";
     try {
-      Class fwClass = Class.forName(fwClassName);
+      Class<?> fwClass = Class.forName(fwClassName);
       fw = (IFormatWidgets) fwClass.newInstance();
       log.println("Initialized extra widgets for " + readerName + " reader.");
     }

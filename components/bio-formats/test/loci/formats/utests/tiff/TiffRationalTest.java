@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.utests.tiff;
 
-import static org.testng.AssertJUnit.*;
-
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 import loci.formats.tiff.TiffRational;
 
 import org.testng.annotations.Test;

@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.TreeSet;
 
 import loci.common.ByteArrayHandle;
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;

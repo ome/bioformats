@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
@@ -63,10 +61,8 @@ import loci.formats.services.OMEXMLService;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * ImageInfo is a utility class for reading a file

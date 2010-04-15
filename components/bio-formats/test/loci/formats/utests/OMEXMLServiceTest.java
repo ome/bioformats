@@ -26,8 +26,8 @@ package loci.formats.utests;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;

@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common.utests;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -30,8 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import loci.common.Location;
-
-import static org.testng.AssertJUnit.*;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

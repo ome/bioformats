@@ -48,11 +48,11 @@ import loci.formats.cache.ICacheSource;
 import loci.formats.cache.ICacheStrategy;
 import loci.formats.cache.RectangleStrategy;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * GUI component for managing a cache.

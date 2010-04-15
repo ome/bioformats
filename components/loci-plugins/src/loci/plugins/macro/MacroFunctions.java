@@ -73,7 +73,7 @@ public class MacroFunctions implements PlugIn, MacroExtension {
   }
 
   public String handleExtension(String name, Object[] args) {
-    Class[] c = null;
+    Class<?>[] c = null;
     if (args != null) {
       c = new Class[args.length];
       for (int i=0; i<args.length; i++) c[i] = args[i].getClass();
@@ -109,7 +109,7 @@ public class MacroFunctions implements PlugIn, MacroExtension {
     Method[] m = getClass().getMethods();
     ExtensionDescriptor[] desc = new ExtensionDescriptor[m.length];
     for (int i=0; i<m.length; i++) {
-      Class[] c = m[i].getParameterTypes();
+      Class<?>[] c = m[i].getParameterTypes();
       int[] types = new int[c.length];
       for (int j=0; j<c.length; j++) {
         if (c[j] == String.class) types[j] = ARG_STRING;

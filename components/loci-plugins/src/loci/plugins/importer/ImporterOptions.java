@@ -30,7 +30,6 @@ import ij.IJ;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 import loci.common.Location;
 import loci.formats.FilePattern;
@@ -203,6 +202,8 @@ public class ImporterOptions extends OptionsList {
    */
   public boolean showDialogs() throws FormatException, IOException {
     reader = null;
+
+    if (!promptUpgrade()) return false;
 
     if (!promptLocation()) return false;
     if (!promptId()) return false;
@@ -441,6 +442,11 @@ public class ImporterOptions extends OptionsList {
   public Rectangle getCropRegion(int s) { return cropRegion[s]; }
 
   // -- Helper methods --
+
+  private boolean promptUpgrade() {
+    UpgradeDialog dialog = new UpgradeDialog(this);
+    return dialog.showDialog() == OptionsDialog.STATUS_OK;
+  }
 
   private boolean promptLocation() {
     LocationDialog dialog = new LocationDialog(this);

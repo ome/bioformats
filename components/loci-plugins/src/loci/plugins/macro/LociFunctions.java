@@ -40,7 +40,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.util.ImagePlusReader;

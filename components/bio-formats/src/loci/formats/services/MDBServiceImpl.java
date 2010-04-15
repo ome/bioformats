@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Vector;
 
 import loci.common.services.AbstractService;
-
 import mdbtools.jdbc2.File;
 import mdbtools.libmdb.Catalog;
 import mdbtools.libmdb.Constants;

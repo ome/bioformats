@@ -91,7 +91,7 @@ public class LibraryEntry implements Comparable {
 
     // check library status
     try {
-      Class c = Class.forName(libClass);
+      Class<?> c = Class.forName(libClass);
       if (version == null) {
         // try to detect version from the package
         version = "";

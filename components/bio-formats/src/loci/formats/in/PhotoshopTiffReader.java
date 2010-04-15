@@ -24,10 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -41,7 +38,6 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
-import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
 /**

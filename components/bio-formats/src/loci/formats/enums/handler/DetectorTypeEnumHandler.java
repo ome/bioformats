@@ -39,11 +39,10 @@
 package loci.formats.enums.handler;
 
 import java.util.Hashtable;
-import java.util.List;
 
+import loci.formats.enums.DetectorType;
 import loci.formats.enums.Enumeration;
 import loci.formats.enums.EnumerationException;
-import loci.formats.enums.DetectorType;
 
 /**
  * Enumeration handler for DetectorType.

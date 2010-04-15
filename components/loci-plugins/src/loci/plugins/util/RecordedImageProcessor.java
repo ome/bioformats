@@ -65,7 +65,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   private ImageProcessor proc;
   private boolean doRecording;
-  private Vector methodStack;
+  private Vector<MethodEntry> methodStack;
   private int sliceNumber;
 
   private int channelNumber;
@@ -75,7 +75,7 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   public RecordedImageProcessor(ImageProcessor proc, int num) {
     this.proc = proc;
-    methodStack = new Vector();
+    methodStack = new Vector<MethodEntry>();
     doRecording = true;
     sliceNumber = num;
   }
@@ -84,7 +84,7 @@ public class RecordedImageProcessor extends ImageProcessor {
     ImageProcessor[] otherChannels)
   {
     this.proc = proc;
-    methodStack = new Vector();
+    methodStack = new Vector<MethodEntry>();
     doRecording = true;
     sliceNumber = num;
     this.channelNumber = channelNum;
@@ -97,11 +97,11 @@ public class RecordedImageProcessor extends ImageProcessor {
     this.doRecording = doRecording;
   }
 
-  public Vector getMethodStack() {
+  public Vector<MethodEntry> getMethodStack() {
     return methodStack;
   }
 
-  public void applyMethodStack(Vector stack) {
+  public void applyMethodStack(Vector<MethodEntry> stack) {
     for (int i=0; i<stack.size(); i++) {
       MethodEntry m = (MethodEntry) stack.get(i);
       try {
@@ -121,7 +121,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   // -- ImageProcessor API methods --
 
   public void abs() {
-    record("abs", null, (Class) null);
+    record("abs");
     proc.abs();
   }
 
@@ -146,7 +146,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void autoThreshold() {
-    record("autoThreshold", null, (Class) null);
+    record("autoThreshold");
     proc.autoThreshold();
   }
 
@@ -156,12 +156,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public ImageProcessor convertToFloat() {
-    record("convertToFloat", null, (Class) null);
+    record("convertToFloat");
     return proc.convertToFloat();
   }
 
   public ImageProcessor convertToRGB() {
-    record("convertToRGB", null, (Class) null);
+    record("convertToRGB");
     return proc.convertToRGB();
   }
 
@@ -311,12 +311,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public ImageProcessor crop() {
-    record("crop", null, (Class) null);
+    record("crop");
     return proc.crop();
   }
 
   public void dilate() {
-    record("dilate", null, (Class) null);
+    record("dilate");
     proc.dilate();
   }
 
@@ -376,22 +376,22 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public ImageProcessor duplicate() {
-    record("duplicate", null, (Class) null);
+    record("duplicate");
     return proc.duplicate();
   }
 
   public void erode() {
-    record("erode", null, (Class) null);
+    record("erode");
     proc.erode();
   }
 
   public void exp() {
-    record("exp", null, (Class) null);
+    record("exp");
     proc.exp();
   }
 
   public void fill() {
-    record("fill", null, (Class) null);
+    record("fill");
     proc.fill();
   }
 
@@ -418,17 +418,17 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void findEdges() {
-    record("findEdges", null, (Class) null);
+    record("findEdges");
     proc.findEdges();
   }
 
   public void flipHorizontal() {
-    record("flipHorizontal", null, (Class) null);
+    record("flipHorizontal");
     proc.flipHorizontal();
   }
 
   public void flipVertical() {
-    record("flipVertical", null, (Class) null);
+    record("flipVertical");
     proc.flipVertical();
   }
 
@@ -449,12 +449,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public int getAutoThreshold() {
-    record("getAutoThreshold", null, (Class) null);
+    record("getAutoThreshold");
     return proc.getAutoThreshold();
   }
 
   public double getBackgroundValue() {
-    record("getBackgroundValue", null, (Class) null);
+    record("getBackgroundValue");
     return proc.getBackgroundValue();
   }
 
@@ -469,17 +469,17 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public BufferedImage getBufferedImage() {
-    record("getBufferedImage", null, (Class) null);
+    record("getBufferedImage");
     return proc.getBufferedImage();
   }
 
   public float[] getCalibrationTable() {
-    record("getCalibrationTable", null, (Class) null);
+    record("getCalibrationTable");
     return proc.getCalibrationTable();
   }
 
   public ColorModel getColorModel() {
-    record("getColorModel", null, (Class) null);
+    record("getColorModel");
     return proc.getColorModel();
   }
 
@@ -491,12 +491,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public ColorModel getCurrentColorModel() {
-    record("getCurrentColorModel", null, (Class) null);
+    record("getCurrentColorModel");
     return proc.getCurrentColorModel();
   }
 
   public IndexColorModel getDefaultColorModel() {
-    record("getDefaultColorModel", null, (Class) null);
+    record("getDefaultColorModel");
     return proc.getDefaultColorModel();
   }
 
@@ -512,47 +512,47 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public float[][] getFloatArray() {
-    record("getFloatArray", null, (Class) null);
+    record("getFloatArray");
     return proc.getFloatArray();
   }
 
   public FontMetrics getFontMetrics() {
-    record("getFontMetrics", null, (Class) null);
+    record("getFontMetrics");
     return proc.getFontMetrics();
   }
 
   public int getHeight() {
-    record("getHeight", null, (Class) null);
+    record("getHeight");
     return proc.getHeight();
   }
 
   public int[] getHistogram() {
-    record("getHistogram", null, (Class) null);
+    record("getHistogram");
     return proc.getHistogram();
   }
 
   public double getHistogramMax() {
-    record("getHistogramMax", null, (Class) null);
+    record("getHistogramMax");
     return proc.getHistogramMax();
   }
 
   public double getHistogramMin() {
-    record("getHistogramMin", null, (Class) null);
+    record("getHistogramMin");
     return proc.getHistogramMin();
   }
 
   public int getHistogramSize() {
-    record("getHistogramSize", null, (Class) null);
+    record("getHistogramSize");
     return proc.getHistogramSize();
   }
 
   public int[][] getIntArray() {
-    record("getIntArray", null, (Class) null);
+    record("getIntArray");
     return proc.getIntArray();
   }
 
   public boolean getInterpolate() {
-    record("getInterpolate", null, (Class) null);
+    record("getInterpolate");
     return proc.getInterpolate();
   }
 
@@ -570,42 +570,42 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public int getLutUpdateMode() {
-    record("getLutUpdateMode", null, (Class) null);
+    record("getLutUpdateMode");
     return proc.getLutUpdateMode();
   }
 
   public ImageProcessor getMask() {
-    record("getMask", null, (Class) null);
+    record("getMask");
     return proc.getMask();
   }
 
   public byte[] getMaskArray() {
-    record("getMaskArray", null, (Class) null);
+    record("getMaskArray");
     return proc.getMaskArray();
   }
 
   public double getMax() {
-    record("getMax", null, (Class) null);
+    record("getMax");
     return proc.getMax();
   }
 
   public double getMaxThreshold() {
-    record("getMaxThreshold", null, (Class) null);
+    record("getMaxThreshold");
     return proc.getMaxThreshold();
   }
 
   public double getMin() {
-    record("getMin", null, (Class) null);
+    record("getMin");
     return proc.getMin();
   }
 
   public double getMinThreshold() {
-    record("getMinThreshold", null, (Class) null);
+    record("getMinThreshold");
     return proc.getMinThreshold();
   }
 
   public int getNChannels() {
-    record("getNChannels", null, (Class) null);
+    record("getNChannels");
     return proc.getNChannels();
   }
 
@@ -628,17 +628,17 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public int getPixelCount() {
-    record("getPixelCount", null, (Class) null);
+    record("getPixelCount");
     return proc.getPixelCount();
   }
 
   public Object getPixels() {
-    record("getPixels", null, (Class) null);
+    record("getPixels");
     return proc.getPixels();
   }
 
   public Object getPixelsCopy() {
-    record("getPixelsCopy", null, (Class) null);
+    record("getPixelsCopy");
     return proc.getPixelsCopy();
   }
 
@@ -649,7 +649,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public Rectangle getRoi() {
-    record("getRoi", null, (Class) null);
+    record("getRoi");
     return proc.getRoi();
   }
 
@@ -661,7 +661,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public Object getSnapshotPixels() {
-    record("getSnapshotPixels", null, (Class) null);
+    record("getSnapshotPixels");
     return proc.getSnapshotPixels();
   }
 
@@ -671,7 +671,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public int getWidth() {
-    record("getWidth", null, (Class) null);
+    record("getWidth");
     return proc.getWidth();
   }
 
@@ -682,32 +682,32 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void invert() {
-    record("invert", null, (Class) null);
+    record("invert");
     proc.invert();
   }
 
   public void invertLut() {
-    record("invertLut", null, (Class) null);
+    record("invertLut");
     proc.invertLut();
   }
 
   public boolean isColorLut() {
-    record("isColorLut", null, (Class) null);
+    record("isColorLut");
     return proc.isColorLut();
   }
 
   public boolean isInvertedLut() {
-    record("isInvertedLut", null, (Class) null);
+    record("isInvertedLut");
     return proc.isInvertedLut();
   }
 
   public boolean isKillable() {
-    record("isKillable", null, (Class) null);
+    record("isKillable");
     return proc.isKillable();
   }
 
   public boolean isPseudoColorLut() {
-    record("isPseudoColorLut", null, (Class) null);
+    record("isPseudoColorLut");
     return proc.isPseudoColorLut();
   }
 
@@ -718,7 +718,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void log() {
-    record("log", null, (Class) null);
+    record("log");
     proc.log();
   }
 
@@ -728,12 +728,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public double maxValue() {
-    record("maxValue", null, (Class) null);
+    record("maxValue");
     return proc.maxValue();
   }
 
   public void medianFilter() {
-    record("medianFilter", null, (Class) null);
+    record("medianFilter");
     proc.medianFilter();
   }
 
@@ -743,7 +743,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public double minValue() {
-    record("minValue", null, (Class) null);
+    record("minValue");
     return proc.minValue();
   }
 
@@ -801,7 +801,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void reset() {
-    record("reset", null, (Class) null);
+    record("reset");
     proc.reset();
   }
 
@@ -811,22 +811,22 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void resetBinaryThreshold() {
-    record("resetBinaryThreshold", null, (Class) null);
+    record("resetBinaryThreshold");
     proc.resetBinaryThreshold();
   }
 
   public void resetMinAndMax() {
-    record("resetMinAndMax", null, (Class) null);
+    record("resetMinAndMax");
     proc.resetMinAndMax();
   }
 
   public void resetRoi() {
-    record("resetRoi", null, (Class) null);
+    record("resetRoi");
     proc.resetRoi();
   }
 
   public void resetThreshold() {
-    record("resetThreshold", null, (Class) null);
+    record("resetThreshold");
     proc.resetThreshold();
   }
 
@@ -847,12 +847,12 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public ImageProcessor rotateLeft() {
-    record("rotateLeft", null, (Class) null);
+    record("rotateLeft");
     return proc.rotateLeft();
   }
 
   public ImageProcessor rotateRight() {
-    record("rotateRight", null, (Class) null);
+    record("rotateRight");
     return proc.rotateRight();
   }
 
@@ -1047,27 +1047,27 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public void sharpen() {
-    record("sharpen", null, (Class) null);
+    record("sharpen");
     proc.sharpen();
   }
 
   public void smooth() {
-    record("smooth", null, (Class) null);
+    record("smooth");
     proc.smooth();
   }
 
   public void snapshot() {
-    record("snapshot", null, (Class) null);
+    record("snapshot");
     proc.snapshot();
   }
 
   public void sqr() {
-    record("sqr", null, (Class) null);
+    record("sqr");
     proc.sqr();
   }
 
   public void sqrt() {
-    record("sqrt", null, (Class) null);
+    record("sqrt");
     proc.sqrt();
   }
 
@@ -1083,7 +1083,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   }
 
   public String toString() {
-    record("toString", null, (Class) null);
+    record("toString");
     return proc.toString();
   }
 
@@ -1107,12 +1107,16 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   // -- Helper methods --
 
-  private void record(String method, Object v, Class c) {
+  private void record(String method) {
+    record(method, (Object[]) null, (Class<?>) null);
+  }
+  
+  private void record(String method, Object v, Class<?> c) {
     record(method, v == null ? null : new Object[] {v},
-      c == null ? null : new Class[] {c});
+      c == null ? null : new Class<?>[] {c});
   }
 
-  private void record(String method, Object[] v, Class[] c) {
+  private void record(String method, Object[] v, Class<?>[] c) {
     if (!doRecording) return;
 
     MethodEntry m = new MethodEntry();

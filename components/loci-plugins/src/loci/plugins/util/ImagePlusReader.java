@@ -42,7 +42,6 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageTools;
 import loci.formats.MinMaxCalculator;
-import loci.formats.ReaderWrapper;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;

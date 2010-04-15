@@ -22,12 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package loci.formats.utests.tiff;
 
-import static org.testng.AssertJUnit.*;
-
-import org.testng.annotations.Test;
-
+import static org.testng.AssertJUnit.assertEquals;
 import loci.common.enumeration.EnumException;
 import loci.formats.tiff.PhotoInterp;
+
+import org.testng.annotations.Test;
 
 /**
  * @author callan

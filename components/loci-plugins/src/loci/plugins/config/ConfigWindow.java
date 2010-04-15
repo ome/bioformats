@@ -604,7 +604,7 @@ public class ConfigWindow extends JFrame
     }
   }
 
-  private static final Class[] PARAMS = {String.class, boolean.class};
+  private static final Class<?>[] PARAMS = {String.class, boolean.class};
 
   private Object invokeMethod(String fieldName, String methodName,
     FormatEntry entry, boolean value) throws ClassNotFoundException,

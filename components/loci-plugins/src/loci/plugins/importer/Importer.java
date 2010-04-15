@@ -43,10 +43,6 @@ import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -63,11 +59,9 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.XMLWindow;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.Colorizer;
 import loci.plugins.LociImporter;
-import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.BF;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.DataBrowser;
@@ -115,137 +109,117 @@ public class Importer {
 
   /** Executes the plugin. */
   public void run(String arg) {
-    ImporterOptions options = parseOptions(arg, false);
-
-    checkNewVersion(options);
-    if (plugin.canceled) return;
-
+    ImporterOptions options = null;
     try {
-      harvestAdditionalOptions(options);
+      BF.debug("parse core options");
+      options = parseOptions(arg, false);
       if (plugin.canceled) return;
 
-      displayMetadata(options);
+      BF.debug("display option dialogs");
+      showOptionDialogs(options);
       if (plugin.canceled) return;
 
-      readPixelData(options);
-      if (plugin.canceled) return;
+      if (options.isShowMetadata()) {
+        BF.debug("display metadata");
+        IJ.showStatus("Populating metadata");
+        displayOriginalMetadata(options);
+        if (plugin.canceled) return;
+      }
+      else BF.debug("skip metadata");
 
-      displayROIs(options);
-      if (plugin.canceled) return;
+      if (options.isShowOMEXML()) {
+        BF.debug("show OME-XML");
+        displayOMEXML(options);
+        if (plugin.canceled) return;
+      }
+      else BF.debug("skip OME-XML");
 
-      finishUp(options);
+      if (!options.isViewNone()) {
+        BF.debug("read pixel data");
+        readPixelData(options);
+        if (plugin.canceled) return;
+      }
+      else BF.debug("skip pixel data"); // nothing to display
+
+      if (options.showROIs()) {
+        BF.debug("display ROIs");
+        displayROIs(options);
+        if (plugin.canceled) return;
+      }
+      else BF.debug("skip ROIs");
+
+      BF.debug("finish");
+      finish(options);
       if (plugin.canceled) return;
     }
     catch (FormatException exc) {
-      WindowTools.reportException(exc, options.isQuiet(),
-        "Sorry, there was a problem reading the data.");
+      boolean quiet = options == null ? false : options.isQuiet();
+      WindowTools.reportException(exc, quiet,
+        "Sorry, there was a problem during import.");
     }
     catch (IOException exc) {
-      WindowTools.reportException(exc, options.isQuiet(),
-        "Sorry, there was an I/O problem reading the data.");
+      boolean quiet = options == null ? false : options.isQuiet();
+      WindowTools.reportException(exc, quiet,
+        "Sorry, there was an I/O problem during import.");
     }
   }
 
-  // -- Helper methods --
-
-  // -- CTR BEGIN TEMP helper methods --
-
-  // Step 0: parse core options
-  private ImporterOptions parseOptions(String arg, boolean quiet) {
-    BF.debug("parse core options");
-    ImporterOptions options = null;
-    try {
-      options = new ImporterOptions();
-    }
-    catch (IOException exc) {
-      WindowTools.reportException(exc, quiet);
-    }
+  /** Parses core options. */
+  public ImporterOptions parseOptions(String arg, boolean quiet)
+    throws IOException
+  {
+    ImporterOptions options = new ImporterOptions();
     options.loadOptions();
     options.parseArg(arg);
     return options;
   }
 
-  // Step 1: check if new version is available
-  /** Checks if a new version of the LOCI plugins is available. */
-  private void checkNewVersion(ImporterOptions options) {
-    BF.debug("check if new version is available");
-
-    UpgradeDialog upgradeDialog = new UpgradeDialog(options);
-    int status = upgradeDialog.showDialog();
-    if (!statusOk(status)) return;
-  }
-
-  // Step 2: harvest additional options
-  private void harvestAdditionalOptions(ImporterOptions options)
+  public void showOptionDialogs(ImporterOptions options)
     throws FormatException, IOException
   {
-    BF.debug("get parameter values");
     boolean success = options.showDialogs();
-    if (!success) {
-      plugin.canceled = true;
-      return;
-    }
-    ImagePlusReader r = options.getReader();
-
-    BF.debug("analyze and read from data source");
-
-    IJ.showStatus("Analyzing " + options.getIdName());
+    if (!success) plugin.canceled = true;
   }
 
-  // Step 3: display metadata, if appropriate
-  private void displayMetadata(ImporterOptions options) throws IOException {
-    if (options.isShowMetadata()) {
-      BF.debug("display metadata");
-      IJ.showStatus("Populating metadata");
-
-      // display standard metadata in a table in its own window
-      ImporterMetadata meta = options.getOriginalMetadata();
-      meta.showMetadataWindow(options.getIdName());
-    }
-    else BF.debug("skip metadata");
-
-    if (options.isShowOMEXML()) {
-      BF.debug("show OME-XML");
-      if (options.isViewBrowser()) {
-        // NB: Data Browser has its own internal OME-XML metadata window,
-        // which we'll trigger once we have created a Data Browser.
-        // So there is no need to pop up a separate OME-XML here.
-      }
-      else {
-        XMLWindow metaWindow =
-          new XMLWindow("OME Metadata - " + options.getIdName());
-        Exception exc = null;
-        try {
-          ServiceFactory factory = new ServiceFactory();
-          OMEXMLService service = factory.getInstance(OMEXMLService.class);
-          metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
-          WindowTools.placeWindow(metaWindow);
-          metaWindow.setVisible(true);
-        }
-        catch (DependencyException e) { exc = e; }
-        catch (ServiceException e) { exc = e; }
-        catch (ParserConfigurationException e) { exc = e; }
-        catch (SAXException e) { exc = e; }
-
-        if (exc != null) {
-          WindowTools.reportException(exc, options.isQuiet(),
-            "Sorry, there was a problem displaying the OME metadata");
-        }
-      }
-    }
-    else BF.debug("skip OME-XML");
+  /** Displays standard metadata in a table in its own window. */
+  public void displayOriginalMetadata(ImporterOptions options)
+    throws IOException
+  {
+    ImporterMetadata meta = options.getOriginalMetadata();
+    meta.showMetadataWindow(options.getIdName());
   }
 
-  // Step 5: read pixel data
-  private void readPixelData(ImporterOptions options)
+  public void displayOMEXML(ImporterOptions options)
     throws FormatException, IOException
   {
-    if (options.isViewNone()) return; // nothing to display
+    if (options.isViewBrowser()) {
+      // NB: Data Browser has its own internal OME-XML metadata window,
+      // which we'll trigger once we have created a Data Browser.
+      // So there is no need to pop up a separate OME-XML here.
+    }
+    else {
+      XMLWindow metaWindow =
+        new XMLWindow("OME Metadata - " + options.getIdName());
+      Exception exc = null;
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
+        WindowTools.placeWindow(metaWindow);
+        metaWindow.setVisible(true);
+      }
+      catch (DependencyException e) { exc = e; }
+      catch (ServiceException e) { exc = e; }
+      catch (ParserConfigurationException e) { exc = e; }
+      catch (SAXException e) { exc = e; }
 
-    BF.debug("read pixel data");
+      if (exc != null) throw new FormatException(exc);
+    }
+  }
 
-    IJ.showStatus("Reading " + options.getCurrentFile());
-
+  public void readPixelData(ImporterOptions options)
+    throws FormatException, IOException
+  {
     ImagePlusReader r = options.getReader();
 
     if (options.isVirtual()) {
@@ -518,8 +492,7 @@ public class Importer {
     }
   }
 
-  // Step 6: display ROIs, if necessary
-  private void displayROIs(ImporterOptions options) {
+  public void displayROIs(ImporterOptions options) {
     if (options.showROIs()) {
       BF.debug("display ROIs");
 
@@ -529,24 +502,12 @@ public class Importer {
     else BF.debug("skip ROIs");
   }
 
-  // Step 7: finish up
-  private void finishUp(ImporterOptions options) {
-    BF.debug("finish up");
-
-    ImagePlusReader r = options.getReader();
-
-    try {
-      if (!options.isVirtual()) r.close();
-    }
-    catch (IOException exc) {
-      WindowTools.reportException(exc, options.isQuiet(),
-        "Sorry, there was a problem closing the file");
-    }
-
+  public void finish(ImporterOptions options) throws IOException {
+    if (!options.isVirtual()) options.getReader().close();
     plugin.success = true;
   }
 
-  // -- CTR END TEMP helper methods --
+  // -- Helper methods --
 
   /**
    * Displays the given image stack according to
@@ -800,12 +761,6 @@ public class Importer {
       sb.append(imageName);
     }
     return sb.toString();
-  }
-
-  /** Verifies that the given status result is OK. */
-  private boolean statusOk(int status) {
-    if (status == OptionsDialog.STATUS_CANCELED) plugin.canceled = true;
-    return status == OptionsDialog.STATUS_OK;
   }
 
   // -- Main method --

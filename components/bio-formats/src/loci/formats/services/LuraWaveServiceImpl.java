@@ -26,11 +26,11 @@ package loci.formats.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.luratech.lwf.lwfDecoder;
-
 import loci.common.services.AbstractService;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
+
+import com.luratech.lwf.lwfDecoder;
 
 /**
  * @author callan

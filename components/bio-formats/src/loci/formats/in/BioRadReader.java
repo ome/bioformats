@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;

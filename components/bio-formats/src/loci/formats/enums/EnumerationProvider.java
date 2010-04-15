@@ -26,18 +26,14 @@ package loci.formats.enums;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
-import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.enums.handler.HandlerFactory;
 import loci.formats.enums.handler.IEnumerationHandler;
-import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
-import loci.formats.tools.ImageConverter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link loci.formats.enums.IEnumerationProvider} for

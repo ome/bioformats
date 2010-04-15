@@ -23,15 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.services;
 
-import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriter;
-import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
-
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
@@ -45,6 +39,12 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
+
+import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
+import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
+import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi;
+import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriter;
+import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
 
 /**
  * Implementation of JAIIIOService for reading and writing JPEG-2000 data.

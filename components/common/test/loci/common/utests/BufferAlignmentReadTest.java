@@ -23,14 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common.utests;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.io.EOFException;
 import java.io.IOException;
 
 import loci.common.IRandomAccess;
 import loci.common.utests.providers.IRandomAccessProvider;
 import loci.common.utests.providers.IRandomAccessProviderFactory;
-
-import static org.testng.AssertJUnit.*;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;

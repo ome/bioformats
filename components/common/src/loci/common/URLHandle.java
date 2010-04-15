@@ -25,10 +25,9 @@ package loci.common;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Provides random access to URLs using the IRandomAccess interface.

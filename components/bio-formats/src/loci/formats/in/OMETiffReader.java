@@ -42,7 +42,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MissingLibraryException;
-import loci.formats.meta.IMetadata;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;

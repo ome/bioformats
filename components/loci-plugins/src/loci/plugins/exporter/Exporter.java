@@ -57,7 +57,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
-import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
@@ -343,7 +342,7 @@ public class Exporter {
 
       // convert and save slices
 
-      Class c = null;
+      Class<?> c = null;
       try {
         c = Class.forName("ij.CompositeImage");
       }
