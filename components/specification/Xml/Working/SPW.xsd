@@ -383,7 +383,7 @@
 					<xsd:documentation>
 						The maximum number of fields (well samples) in any well 
 						in this PlateAcquisition.
-						This is only used to speed up user interaction by stoping 
+						This is only used to speed up user interaction by stopping 
 						the reading of every well sample.
 					</xsd:documentation>
 				</xsd:annotation>
