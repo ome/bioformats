@@ -88,10 +88,10 @@
 		<xsd:key name="ChannelIDKey"><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:OpticalElement/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:OpticalElement/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="GroupIDKey"><xsd:selector xpath="OME:Group"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
