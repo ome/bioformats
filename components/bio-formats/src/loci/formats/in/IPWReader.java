@@ -71,12 +71,6 @@ public class IPWReader extends FormatReader {
   /** Helper reader - parses embedded files from the OLE document. */
   private POIService poi;
 
-  /** Image description. */
-  private String description;
-
-  /** Creation date of the images in this file. */
-  private String creationDate;
-
   // -- Constructor --
 
   /** Constructs a new IPW reader. */
@@ -97,11 +91,9 @@ public class IPWReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    RandomAccessInputStream stream =
-      poi.getDocumentStream(imageFiles.get(new Integer(0)));
+    RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(0));
     TiffParser tp = new TiffParser(stream);
-    IFDList ifds = tp.getIFDs();
-    IFD firstIFD = ifds.get(0);
+    IFD firstIFD = tp.getFirstIFD();
     int[] bits = firstIFD.getBitsPerSample();
     if (bits[0] <= 8) {
       int[] colorMap = (int[]) firstIFD.getIFDValue(IFD.COLOR_MAP);
@@ -128,11 +120,10 @@ public class IPWReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    RandomAccessInputStream stream =
-      poi.getDocumentStream(imageFiles.get(new Integer(no)));
+    RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(no));
     TiffParser tp = new TiffParser(stream);
-    IFDList ifds = tp.getIFDs();
-    tp.getSamples(ifds.get(0), buf, x, y, w, h);
+    IFD ifd = tp.getFirstIFD();
+    tp.getSamples(ifd, buf, x, y, w, h);
     stream.close();
     return buf;
   }
@@ -144,8 +135,6 @@ public class IPWReader extends FormatReader {
       if (poi != null) poi.close();
       poi = null;
       imageFiles = null;
-      description = null;
-      creationDate = null;
     }
   }
 
@@ -171,25 +160,31 @@ public class IPWReader extends FormatReader {
 
     Vector<String> fileList = poi.getDocumentList();
 
+    String description = null, creationDate = null;
+
     for (String name : fileList) {
       String relativePath =
         name.substring(name.lastIndexOf(File.separator) + 1);
 
-      if (relativePath.equals("CONTENTS")) {
-        addGlobalMeta("Version", new String(poi.getDocumentBytes(name)).trim());
-      }
-      else if (relativePath.equals("FrameRate")) {
-        byte[] b = poi.getDocumentBytes(name, 4);
-        addGlobalMeta("Frame Rate", DataTools.bytesToInt(b, true));
-      }
-      else if (relativePath.equals("FrameInfo")) {
-        byte[] b = poi.getDocumentBytes(name);
-        for (int q=0; q<b.length/2; q++) {
-          addGlobalMeta("FrameInfo " + q,
-            DataTools.bytesToShort(b, q*2, 2, true));
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        if (relativePath.equals("CONTENTS")) {
+          addGlobalMeta("Version", new String(poi.getDocumentBytes(name)).trim());
+        }
+        else if (relativePath.equals("FrameRate")) {
+          byte[] b = poi.getDocumentBytes(name, 4);
+          addGlobalMeta("Frame Rate", DataTools.bytesToInt(b, true));
+        }
+        else if (relativePath.equals("FrameInfo")) {
+          RandomAccessInputStream s = poi.getDocumentStream(name);
+          s.order(true);
+          for (int q=0; q<s.length()/2; q++) {
+            addGlobalMeta("FrameInfo " + q, s.readShort());
+          }
+          s.close();
         }
       }
-      else if (relativePath.equals("ImageInfo")) {
+
+      if (relativePath.equals("ImageInfo")) {
         description = new String(poi.getDocumentBytes(name)).trim();
         addGlobalMeta("Image Description", description);
 
@@ -198,16 +193,14 @@ public class IPWReader extends FormatReader {
         // parse the description to get channels/slices/times where applicable
         // basically the same as in SEQReader
         if (description != null) {
-          StringTokenizer tokenizer = new StringTokenizer(description, "\n");
-          while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
+          String[] tokens = description.split("\n");
+          for (String token : tokens) {
             String label = "Timestamp";
-            String data;
+            String data = token.trim();
             if (token.indexOf("=") != -1) {
               label = token.substring(0, token.indexOf("=")).trim();
               data = token.substring(token.indexOf("=") + 1).trim();
             }
-            else data = token.trim();
             addGlobalMeta(label, data);
             if (label.equals("frames")) core[0].sizeT = Integer.parseInt(data);
             else if (label.equals("slices")) {
@@ -238,19 +231,17 @@ public class IPWReader extends FormatReader {
         }
 
         imageFiles.put(new Integer(idx), name);
-        core[0].imageCount++;
       }
     }
 
     LOGGER.info("Populating metadata");
 
-    RandomAccessInputStream stream =
-      poi.getDocumentStream(imageFiles.get(new Integer(0)));
-    TiffParser tp = new TiffParser(stream);
-    IFDList ifds = tp.getIFDs();
-    stream.close();
+    core[0].imageCount = imageFiles.size();
 
-    IFD firstIFD = ifds.get(0);
+    RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(0));
+    TiffParser tp = new TiffParser(stream);
+    IFD firstIFD = tp.getFirstIFD();
+    stream.close();
 
     core[0].rgb = firstIFD.getSamplesPerPixel() > 1;
 
@@ -286,16 +277,7 @@ public class IPWReader extends FormatReader {
     if (isRGB()) core[0].sizeC *= 3;
 
     int bitsPerSample = firstIFD.getBitsPerSample()[0];
-    int bitFormat = firstIFD.getIFDIntValue(IFD.SAMPLE_FORMAT);
-
-    while (bitsPerSample % 8 != 0) bitsPerSample++;
-    if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
-
-    boolean fp = bitFormat == 3;
-    boolean signed = bitFormat == 2;
-
-    core[0].pixelType =
-      FormatTools.pixelTypeFromBytes(bitsPerSample / 4, signed, fp);
+    core[0].pixelType = firstIFD.getPixelType();
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());

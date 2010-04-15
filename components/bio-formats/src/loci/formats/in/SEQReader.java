@@ -67,6 +67,7 @@ public class SEQReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
+    parser.setDoCaching(false);
     IFD ifd = parser.getFirstIFD();
     if (ifd == null) return false;
     return ifd.containsKey(IMAGE_PRO_TAG_1);

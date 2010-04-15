@@ -25,12 +25,11 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -55,7 +54,7 @@ public class L2DReader extends FormatReader {
   // -- Fields --
 
   /** List of constituent TIFF files. */
-  private Vector[] tiffs;
+  private String[][] tiffs;
 
   /** List of all metadata files in the dataset. */
   private Vector[] metadataFiles;
@@ -100,7 +99,7 @@ public class L2DReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    reader.setId((String) tiffs[series].get(no));
+    reader.setId(tiffs[series][no]);
     return reader.openBytes(0, buf, x, y, w, h);
   }
 
@@ -117,7 +116,11 @@ public class L2DReader extends FormatReader {
     if (metadataFiles != null && getSeries() < metadataFiles.length) {
       files.addAll(metadataFiles[getSeries()]);
     }
-    if (!noPixels) files.addAll(tiffs[series]);
+    if (!noPixels) {
+      for (String tiff : tiffs[series]) {
+        files.add(tiff);
+      }
+    }
     return files.toArray(new String[files.size()]);
   }
 
@@ -155,9 +158,7 @@ public class L2DReader extends FormatReader {
     else if (!isGroupFiles()) {
       super.initFile(id);
 
-      tiffs = new Vector[1];
-      tiffs[0] = new Vector<String>();
-      tiffs[0].add(id);
+      tiffs = new String[][] {{id}};
 
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
@@ -175,63 +176,36 @@ public class L2DReader extends FormatReader {
     }
 
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
 
-    Location parent = new Location(id).getAbsoluteFile().getParentFile();
-
-    // parse key/value pairs from file - this gives us a list of scans
-
-    Vector<String> scans = new Vector<String>();
-
-    String line = in.readLine().trim();
-    while (line != null && line.length() > 0) {
-      if (!line.startsWith("#")) {
-        String key = line.substring(0, line.indexOf("="));
-        String value = line.substring(line.indexOf("=") + 1);
-        addGlobalMeta(key, value);
-
-        if (key.equals("ScanNames")) {
-          StringTokenizer names = new StringTokenizer(value, ",");
-          while (names.hasMoreTokens()) {
-            scans.add(names.nextToken().trim());
-          }
-        }
-      }
-      if (in.getFilePointer() < in.length()) {
-        line = in.readLine().trim();
-      }
-      else line = null;
-    }
-    in.close();
+    String[] scans = getScanNames();
 
     // read metadata from each scan
 
-    tiffs = new Vector[scans.size()];
-    metadataFiles = new Vector[scans.size()];
+    tiffs = new String[scans.length][];
+    metadataFiles = new Vector[scans.length];
 
-    core = new CoreMetadata[scans.size()];
+    core = new CoreMetadata[scans.length];
 
-    Vector<String> comments = new Vector<String>();
-    Vector<String> wavelengths = new Vector<String>();
-    Vector<String> dates = new Vector<String>();
+    String[] comments = new String[scans.length];
+    String[] wavelengths = new String[scans.length];
+    String[] dates = new String[scans.length];
     String model = null;
 
-    for (int i=0; i<scans.size(); i++) {
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
+    for (int i=0; i<scans.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
-      tiffs[i] = new Vector();
       metadataFiles[i] = new Vector();
-      String scanName = scans.get(i);
-      Location scanDir = new Location(parent, scanName);
+      String scanName = scans[i] + ".scn";
+      Location scanDir = new Location(parent, scans[i]);
 
       // read .scn file from each scan
 
-      String scanPath =
-        new Location(scanDir, scanName + ".scn").getAbsolutePath();
+      String scanPath = new Location(scanDir, scanName).getAbsolutePath();
       addDirectory(scanDir.getAbsolutePath(), i);
-      RandomAccessInputStream scan = new RandomAccessInputStream(scanPath);
-      line = scan.readLine().trim();
-      while (line != null && line.length() > 0) {
+      String scanData = DataTools.readFile(scanPath);
+      String[] lines = scanData.split("\n");
+      for (String line : lines) {
         if (!line.startsWith("#")) {
           String key = line.substring(0, line.indexOf("="));
           String value = line.substring(line.indexOf("=") + 1);
@@ -242,34 +216,26 @@ public class L2DReader extends FormatReader {
             //        overlay shapes, or analysis data
           }
           else if (key.equals("ImageNames")) {
-            StringTokenizer names = new StringTokenizer(value, ",");
-            while (names.hasMoreTokens()) {
-              String path = names.nextToken().trim();
-              String tiff = new Location(scanDir, path).getAbsolutePath();
-              tiffs[i].add(tiff);
+            tiffs[i] = value.split(",");
+            for (int t=0; t<tiffs[i].length; t++) {
+              tiffs[i][t] =
+                new Location(scanDir, tiffs[i][t].trim()).getAbsolutePath();
             }
           }
           else if (key.equals("Comments")) {
-            comments.add(value);
+            comments[i] = value;
           }
           else if (key.equals("ScanDate")) {
-            dates.add(value);
+            dates[i] = value;
           }
           else if (key.equals("ScannerName")) {
             model = value;
           }
           else if (key.equals("ScanChannels")) {
-            wavelengths.add(value);
+            wavelengths[i] = value;
           }
         }
-        if (scan.getFilePointer() < scan.length()) {
-          line = scan.readLine().trim();
-        }
-        else line = null;
       }
-      if (comments.size() == i) comments.add(null);
-      if (dates.size() == i) dates.add(null);
-      if (wavelengths.size() == i) wavelengths.add(null);
     }
     setSeries(0);
 
@@ -278,65 +244,63 @@ public class L2DReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    for (int i=0; i<scans.size(); i++) {
-      core[i].imageCount = tiffs[i].size();
-      core[i].sizeC = tiffs[i].size();
+    for (int i=0; i<getSeriesCount(); i++) {
+      core[i].imageCount = tiffs[i].length;
+      core[i].sizeC = tiffs[i].length;
       core[i].sizeT = 1;
       core[i].sizeZ = 1;
       core[i].dimensionOrder = "XYCZT";
 
-      for (int t=0; t<tiffs[i].size(); t++) {
-        reader.setId((String) tiffs[i].get(t));
-        if (t == 0) {
-          core[i].sizeX = reader.getSizeX();
-          core[i].sizeY = reader.getSizeY();
-          core[i].sizeC *= reader.getSizeC();
-          core[i].rgb = reader.isRGB();
-          core[i].indexed = reader.isIndexed();
-          core[i].littleEndian = reader.isLittleEndian();
-          core[i].pixelType = reader.getPixelType();
-        }
-      }
+      reader.setId(tiffs[i][0]);
+      core[i].sizeX = reader.getSizeX();
+      core[i].sizeY = reader.getSizeY();
+      core[i].sizeC *= reader.getSizeC();
+      core[i].rgb = reader.isRGB();
+      core[i].indexed = reader.isIndexed();
+      core[i].littleEndian = reader.isLittleEndian();
+      core[i].pixelType = reader.getPixelType();
     }
 
     MetadataTools.populatePixels(store, this);
 
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-
-    for (int i=0; i<scans.size(); i++) {
-      store.setImageInstrumentRef(instrumentID, i);
-
-      store.setImageName(scans.get(i), i);
-      store.setImageDescription(comments.get(i), i);
-
-      String date = dates.get(i);
-      if (date != null) {
-        date = DateTools.formatDate(date, DATE_FORMAT);
-        store.setImageCreationDate(date, i);
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageName(scans[i], i);
+      if (dates[i] != null) {
+        dates[i] = DateTools.formatDate(dates[i], DATE_FORMAT);
+        store.setImageCreationDate(dates[i], i);
       }
       else MetadataTools.setDefaultCreationDate(store, id, i);
-
-      String c = wavelengths.get(i);
-      if (c != null) {
-        String[] waves = c.split("[, ]");
-        if (waves.length < getEffectiveSizeC()) {
-          LOGGER.debug("Expected {} wavelengths; got {} wavelengths.",
-            getEffectiveSizeC(), waves.length);
-        }
-        for (int q=0; q<waves.length; q++) {
-          String lightSourceID = MetadataTools.createLSID("LightSource", 0, q);
-          store.setLightSourceID(lightSourceID, 0, q);
-          store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
-          store.setLaserType("Unknown", 0, q);
-          store.setLaserLaserMedium("Unknown", 0, q);
-          store.setLogicalChannelLightSource(lightSourceID, i, q);
-        }
-      }
     }
 
-    store.setMicroscopeModel(model, 0);
-    store.setMicroscopeType("Unknown", 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageInstrumentRef(instrumentID, i);
+
+        store.setImageDescription(comments[i], i);
+
+        if (wavelengths[i] != null) {
+          String[] waves = wavelengths[i].split("[, ]");
+          if (waves.length < getEffectiveSizeC()) {
+            LOGGER.debug("Expected {} wavelengths; got {} wavelengths.",
+              getEffectiveSizeC(), waves.length);
+          }
+          for (int q=0; q<waves.length; q++) {
+            String lightSource = MetadataTools.createLSID("LightSource", 0, q);
+            store.setLightSourceID(lightSource, 0, q);
+            store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
+            store.setLaserType("Unknown", 0, q);
+            store.setLaserLaserMedium("Unknown", 0, q);
+            store.setLogicalChannelLightSource(lightSource, i, q);
+          }
+        }
+      }
+
+      store.setMicroscopeModel(model, 0);
+      store.setMicroscopeType("Unknown", 0);
+    }
   }
 
   // -- Helper methods --
@@ -349,18 +313,38 @@ public class L2DReader extends FormatReader {
     Location dir = new Location(path);
     String[] files = dir.list();
     if (files == null) return;
-    for (int i=0; i<files.length; i++) {
-      Location file = new Location(path, files[i]);
+    for (String f : files) {
+      Location file = new Location(path, f);
       if (file.isDirectory()) {
         addDirectory(file.getAbsolutePath(), series);
       }
-      else {
-        String check = files[i].toLowerCase();
-        if (check.endsWith(".scn")) {
-          metadataFiles[series].add(file.getAbsolutePath());
+      else if (checkSuffix(f, "scn")) {
+        metadataFiles[series].add(file.getAbsolutePath());
+      }
+    }
+  }
+
+  /** Return a list of scan names. */
+  private String[] getScanNames() throws IOException {
+    String[] scans = null;
+
+    String data = DataTools.readFile(currentId);
+    String[] lines = data.split("\n");
+    for (String line : lines) {
+      if (!line.startsWith("#")) {
+        String key = line.substring(0, line.indexOf("=")).trim();
+        String value = line.substring(line.indexOf("=") + 1).trim();
+        addGlobalMeta(key, value);
+
+        if (key.equals("ScanNames")) {
+          scans = value.split(",");
+          for (int i=0; i<scans.length; i++) {
+            scans[i] = scans[i].trim();
+          }
         }
       }
     }
+    return scans;
   }
 
 }

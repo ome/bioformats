@@ -47,12 +47,6 @@ public class IPLabReader extends FormatReader {
 
   // -- Fields --
 
-  /** Bytes per pixel. */
-  private int bps;
-
-  /** Total number of pixel bytes. */
-  private int dataSize;
-
   private Double pixelSize, timeIncrement;
 
   // -- Constructor --
@@ -101,7 +95,6 @@ public class IPLabReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      bps = dataSize = 0;
       pixelSize = timeIncrement = null;
     }
   }
@@ -123,7 +116,7 @@ public class IPLabReader extends FormatReader {
 
     // read axis sizes from header
 
-    dataSize = in.readInt() - 28;
+    int dataSize = in.readInt() - 28;
     core[0].sizeX = in.readInt();
     core[0].sizeY = in.readInt();
     core[0].sizeC = in.readInt();
@@ -132,12 +125,6 @@ public class IPLabReader extends FormatReader {
     int filePixelType = in.readInt();
 
     core[0].imageCount = getSizeZ() * getSizeT();
-
-    addGlobalMeta("Width", getSizeX());
-    addGlobalMeta("Height", getSizeY());
-    addGlobalMeta("Channels", getSizeC());
-    addGlobalMeta("ZDepth", getSizeZ());
-    addGlobalMeta("TDepth", getSizeT());
 
     String ptype;
     switch (filePixelType) {
@@ -177,11 +164,6 @@ public class IPLabReader extends FormatReader {
         ptype = "reserved"; // for values 7-9
     }
 
-    bps = FormatTools.getBytesPerPixel(getPixelType());
-
-    addGlobalMeta("PixelType", ptype);
-    in.skipBytes(dataSize);
-
     core[0].dimensionOrder = "XY";
     if (getSizeC() > 1) core[0].dimensionOrder += "CZT";
     else core[0].dimensionOrder += "ZTC";
@@ -192,16 +174,39 @@ public class IPLabReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
+    addGlobalMeta("PixelType", ptype);
+    addGlobalMeta("Width", getSizeX());
+    addGlobalMeta("Height", getSizeY());
+    addGlobalMeta("Channels", getSizeC());
+    addGlobalMeta("ZDepth", getSizeZ());
+    addGlobalMeta("TDepth", getSizeT());
+
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.skipBytes(dataSize);
+      parseTags(store);
+
+      if (pixelSize != null) {
+        store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+        store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+      }
+      if (timeIncrement != null) {
+        store.setDimensionsTimeIncrement(timeIncrement, 0, 0);
+      }
+    }
+  }
+
+  // -- Helper methods --
+
+  private void parseTags(MetadataStore store) throws FormatException, IOException {
     LOGGER.info("Reading tags");
 
-    byte[] tagBytes = new byte[4];
-    in.read(tagBytes);
-    String tag = new String(tagBytes);
+    String tag = in.readString(4);
     while (!tag.equals("fini") && in.getFilePointer() < in.length() - 4) {
       int size = in.readInt();
       if (tag.equals("clut")) {
@@ -256,9 +261,6 @@ public class IPLabReader extends FormatReader {
           addGlobalMeta("NormalizationGamma" + i, gamma);
           addGlobalMeta("NormalizationBlack" + i, black);
           addGlobalMeta("NormalizationWhite" + i, white);
-
-          // CTR CHECK
-          //store.setDisplayChannel(core[0].sizeC, black, white, gamma, null);
         }
       }
       else if (tag.equals("head")) {
@@ -282,15 +284,10 @@ public class IPLabReader extends FormatReader {
         int roiBottom = in.readInt();
         int numRoiPts = in.readInt();
 
-        Integer x0 = new Integer(roiLeft);
-        Integer x1 = new Integer(roiRight);
-        Integer y0 = new Integer(roiBottom);
-        Integer y1 = new Integer(roiTop);
-        // TODO
-        //store.setDisplayROIX0(x0, 0, 0);
-        //store.setDisplayROIY0(y0, 0, 0);
-        //store.setDisplayROIX1(x1, 0, 0);
-        //store.setDisplayROIY1(y1, 0, 0);
+        store.setRectX(String.valueOf(roiLeft), 0, 0, 0);
+        store.setRectY(String.valueOf(roiTop), 0, 0, 0);
+        store.setRectWidth(String.valueOf(roiRight - roiLeft), 0, 0, 0);
+        store.setRectHeight(String.valueOf(roiBottom - roiTop), 0, 0, 0);
 
         in.skipBytes(8 * numRoiPts);
       }
@@ -349,10 +346,9 @@ public class IPLabReader extends FormatReader {
         addGlobalMeta("Notes", notes);
 
         store.setImageDescription(notes, 0);
-        MetadataTools.setDefaultCreationDate(store, id, 0);
       }
-      else if (tagBytes[0] == 0x1a && tagBytes[1] == (byte) 0xd9 &&
-        tagBytes[2] == (byte) 0x8b && tagBytes[3] == (byte) 0xef)
+      else if (tag.charAt(0) == (char) 0x1a && tag.charAt(1) == (char) 0xd9 &&
+        tag.charAt(2) == (char) 0x8b && tag.charAt(3) == (char) 0xef)
       {
         int units = in.readInt();
 
@@ -390,8 +386,7 @@ public class IPLabReader extends FormatReader {
       else in.skipBytes(size);
 
       if (in.getFilePointer() + 4 <= in.length()) {
-        in.read(tagBytes);
-        tag = new String(tagBytes);
+        tag = in.readString(4);
       }
       else {
         tag = "fini";
@@ -399,14 +394,6 @@ public class IPLabReader extends FormatReader {
       if (in.getFilePointer() >= in.length() && !tag.equals("fini")) {
         tag = "fini";
       }
-    }
-
-    if (pixelSize != null) {
-      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-    }
-    if (timeIncrement != null) {
-      store.setDimensionsTimeIncrement(timeIncrement, 0, 0);
     }
   }
 

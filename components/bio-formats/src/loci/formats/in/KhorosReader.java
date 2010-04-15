@@ -49,7 +49,7 @@ public class KhorosReader extends FormatReader {
   // -- Fields --
 
   /** Global lookup table. */
-  private byte[] lut;
+  private byte[][] lut;
 
   /** Image offset. */
   private long offset;
@@ -74,15 +74,7 @@ public class KhorosReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (lut == null) return null;
-    byte[][] table = new byte[3][lut.length / 3];
-    int next = 0;
-    for (int i=0; i<table[0].length; i++) {
-      for (int j=0; j<table.length; j++) {
-        table[j][i] = lut[next++];
-      }
-    }
-    return table;
+    return lut;    
   }
 
   /**
@@ -162,21 +154,12 @@ public class KhorosReader extends FormatReader {
     if (c > 1) {
       core[0].sizeC = c;
       int n = in.readInt();
-      lut = new byte[n * c];
+      lut = new byte[c][n];
       in.skipBytes(436);
 
-      for (int i=0; i<lut.length; i++) {
-        int value = in.read();
-        if (i < n) {
-          lut[i*3] = (byte) value;
-          lut[i*3 + 1] = (byte) value;
-          lut[i*3 + 2] = (byte) value;
-        }
-        else if (i < n*2) {
-          lut[(i % n)*3 + 1] = (byte) value;
-        }
-        else if (i < n*3) {
-          lut[(i % n)*3 + 2] = (byte) value;
+      for (int i=0; i<lut[0].length; i++) {
+        for (int j=0; j<lut.length; j++) {
+          lut[j][i] = in.readByte();
         }
       }
     }

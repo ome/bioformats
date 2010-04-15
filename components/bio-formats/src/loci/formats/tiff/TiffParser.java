@@ -69,6 +69,12 @@ public class TiffParser {
 
   private boolean doCaching;
 
+  /** Cached list of IFDs in the current file. */
+  private IFDList ifdList;
+
+  /** Cached first IFD in the current file. */
+  private IFD firstIFD;
+
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
@@ -146,6 +152,8 @@ public class TiffParser {
 
   /** Returns all IFDs in the file.  */
   public IFDList getIFDs() throws IOException {
+    if (ifdList != null) return ifdList;
+
     long[] offsets = getIFDOffsets();
     IFDList ifds = new IFDList();
 
@@ -167,6 +175,7 @@ public class TiffParser {
         }
       }
     }
+    if (doCaching) ifdList = ifds;
 
     return ifds;
   }
@@ -174,27 +183,29 @@ public class TiffParser {
   /** Returns thumbnail IFDs. */
   public IFDList getThumbnailIFDs() throws IOException {
     IFDList ifds = getIFDs();
-    for (int i=0; i<ifds.size(); i++) {
-      Number subfile = (Number) ifds.get(i).getIFDValue(IFD.NEW_SUBFILE_TYPE);
+    IFDList thumbnails = new IFDList();
+    for (IFD ifd : ifds) {
+      Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
-      if (subfileType != 1) {
-        ifds.remove(i--);
+      if (subfileType == 1) {
+        thumbnails.add(ifd);
       }
     }
-    return ifds;
+    return thumbnails;
   }
 
   /** Returns non-thumbnail IFDs. */
   public IFDList getNonThumbnailIFDs() throws IOException {
     IFDList ifds = getIFDs();
-    for (int i=0; i<ifds.size(); i++) {
-      Number subfile = (Number) ifds.get(i).getIFDValue(IFD.NEW_SUBFILE_TYPE);
+    IFDList nonThumbs = new IFDList();
+    for (IFD ifd : ifds) {
+      Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
-      if (subfileType == 1 && ifds.size() > 1) {
-        ifds.remove(i--);
+      if (subfileType != 1 || ifds.size() <= 1) {
+        nonThumbs.add(ifd);
       }
     }
-    return ifds;
+    return nonThumbs;
   }
 
   /** Returns EXIF IFDs. */
@@ -242,8 +253,11 @@ public class TiffParser {
    * if the input source is not a valid TIFF file.
    */
   public IFD getFirstIFD() throws IOException {
+    if (firstIFD != null) return firstIFD;
     long offset = getFirstOffset();
-    return getIFD(offset);
+    IFD ifd = getIFD(offset);
+    if (doCaching) firstIFD = ifd;
+    return ifd;
   }
 
   /**
@@ -368,6 +382,9 @@ public class TiffParser {
     IFDType type = entry.getType();
     int count = entry.getValueCount();
     long offset = entry.getValueOffset();
+
+    LOGGER.debug("Reading entry {} from {}; type={}, count={}",
+      new Object[] {entry.getTag(), offset, type, count});
 
     if (offset != in.getFilePointer()) {
       in.seek(offset);

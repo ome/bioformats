@@ -56,6 +56,7 @@ public class ImaconReader extends BaseTiffReader {
 
   private static final int CREATOR_TAG = 34377;
   private static final int XML_TAG = 50457;
+  private static final int PIXELS_TAG = 46275;
 
   // -- Fields --
 
@@ -76,6 +77,7 @@ public class ImaconReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
+    parser.setDoCaching(false);
     IFD ifd = parser.getFirstIFD();
     if (ifd == null) return false;
     return ifd.containsKey(XML_TAG);
@@ -104,6 +106,7 @@ public class ImaconReader extends BaseTiffReader {
       core[i] = new CoreMetadata();
       core[i].imageCount = 1;
       IFD ifd = ifds.get(i);
+      ifd.remove(PIXELS_TAG);
 
       PhotoInterp photo = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
@@ -123,36 +126,26 @@ public class ImaconReader extends BaseTiffReader {
     }
 
     IFD firstIFD = ifds.get(0);
-    String xml = firstIFD.getIFDTextValue(XML_TAG).trim();
-    xml = xml.substring(xml.indexOf("<"));
 
-    XMLTools.parseXML(xml, new ImaconHandler());
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      String xml = firstIFD.getIFDTextValue(XML_TAG).trim();
+      xml = xml.substring(xml.indexOf("<"));
+      XMLTools.parseXML(xml, new ImaconHandler());
+    }
 
     String[] creationInfo = firstIFD.getIFDTextValue(CREATOR_TAG).split("\n");
 
-    int lineNumber = 0;
-    for (String s : creationInfo) {
-      if (s.trim().length() == 0) continue;
-      switch (lineNumber) {
-        case 4:
-          // creator's name
-          experimenterName = s.trim();
-          break;
-        case 6:
-          // image name
-          imageName = s.trim();
-          break;
-        case 8:
-          // creation date
-          creationDate = s.trim();
-          break;
-        case 10:
-          // creation time
-          creationDate += " " + s.trim();
-          break;
-      }
-
-      lineNumber++;
+    if (creationInfo.length > 4) {
+      experimenterName = creationInfo[4].trim();
+    }
+    if (creationInfo.length > 6) {
+      imageName = creationInfo[6].trim();
+    }
+    if (creationInfo.length > 8) {
+      creationDate = creationInfo[8].trim();
+    }
+    if (creationInfo.length > 10) {
+      creationDate += " " + creationInfo[10].trim();
     }
   }
 
@@ -163,31 +156,36 @@ public class ImaconReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    if (experimenterName == null) experimenterName = "";
-
-    int nameSpace = experimenterName.indexOf(" ");
-    String firstName =
-      nameSpace == -1 ? "" : experimenterName.substring(0, nameSpace);
-    String lastName = nameSpace == -1 ? experimenterName :
-      experimenterName.substring(nameSpace + 1);
-
-    String experimenter = MetadataTools.createLSID("Experimenter", 0);
-
-    store.setExperimenterID(experimenter, 0);
-    store.setExperimenterFirstName(firstName, 0);
-    store.setExperimenterLastName(lastName, 0);
-
     if (creationDate != null) {
       creationDate = DateTools.formatDate(creationDate, "yyyyMMdd HHmmSSZ");
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageExperimenterRef(experimenter, i);
       store.setImageName(imageName + " #" + (i + 1), i);
       if (creationDate != null) {
         store.setImageCreationDate(creationDate, i);
       }
       else MetadataTools.setDefaultCreationDate(store, currentId, i);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (experimenterName == null) experimenterName = "";
+
+      int nameSpace = experimenterName.indexOf(" ");
+      String firstName =
+        nameSpace == -1 ? "" : experimenterName.substring(0, nameSpace);
+      String lastName = nameSpace == -1 ? experimenterName :
+        experimenterName.substring(nameSpace + 1);
+
+      String experimenter = MetadataTools.createLSID("Experimenter", 0);
+
+      store.setExperimenterID(experimenter, 0);
+      store.setExperimenterFirstName(firstName, 0);
+      store.setExperimenterLastName(lastName, 0);
+  
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageExperimenterRef(experimenter, i);
+      }
     }
   }
 
