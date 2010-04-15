@@ -740,13 +740,29 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="OpticalElement" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="OTF" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
 	</xsd:element>
+
+	<xsd:element name="OpticalElement"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
+			<xsd:documentation>
+				An OpticalElement in the instrument.  An instrument may have many optical elements.
+				These consist of Filters and Dichroics and are combined to form FilterSets and LightPaths
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice minOccurs="1" maxOccurs="1">
+				<xsd:element ref="Filter" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Dichroic" minOccurs="1" maxOccurs="1"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
 	<xsd:element name="Microscope"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The microscope's manufacturer specification.</xsd:documentation>
@@ -1459,6 +1475,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								<xsd:enumeration value="ShortPass"/>
 								<xsd:enumeration value="BandPass"/>
 								<xsd:enumeration value="MultiPass"/>
+								<xsd:enumeration value="NeutralDensity"/>
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>

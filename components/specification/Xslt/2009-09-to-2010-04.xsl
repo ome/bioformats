@@ -99,9 +99,14 @@
 				in a Well 
 				in the current Plate
 			-->
-			<xsl:variable name="allWellSamples"><xsl:value-of select="descendant::* [local-name(.)='WellSample']"/></xsl:variable>
-			<xsl:for-each select="exsl:node-set($allWellSamples)">
-				<xsl:comment>Wellsample</xsl:comment>
+			<xsl:variable name="allWellSamples">
+				<xsl:value-of select="descendant::* [local-name(.)='WellSample']"/>
+			</xsl:variable>
+			<xsl:for-each select="descendant::* [local-name(.)='WellSample']">
+				<xsl:comment>Wellsample1</xsl:comment>
+			</xsl:for-each>
+			<xsl:for-each select="$allWellSamples">
+				<xsl:comment>Wellsample2</xsl:comment>
 			</xsl:for-each>
 			<xsl:for-each select="* [local-name(.)='ScreenRef']">
 				<xsl:variable name="associatedScreenAcquisitions">
