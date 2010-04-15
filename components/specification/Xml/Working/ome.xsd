@@ -88,7 +88,6 @@
 		<xsd:key name="ChannelIDKey"><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:OpticalElement/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="OpticalElementIDKey"><xsd:selector xpath="OME:Instrument/OME:OpticalElement"/><xsd:field xpath="@ID"/></xsd:key>
@@ -129,11 +128,9 @@
 		<xsd:keyref name="ImageObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Image/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelDetectorSettingsDetectorIDKeyRef" refer="OME:DetectorIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:DetectorSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelLightPathExcitationFilterIDKeyRef" refer="OME:OpticalElementIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:ExcitationFilterPath/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelLightPathExcitationDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:ExcitationFilterPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelLightPathDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelLightPathEmissionFilterIDKeyRef" refer="OME:OpticalElementIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelLightPathEmissionDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelLightPathExcitationOpticalElementIDKeyRef" refer="OME:OpticalElementIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:ExcitationPath/OME:OpticalElementRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelLightPathOpticalElementIDKeyRef" refer="OME:OpticalElementIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:OpticalElementRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImagePixelsChannelLightPathEmissionOpticalElementIDKeyRef" refer="OME:OpticalElementIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionPath/OME:OpticalElementRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelOTFIDKeyRef" refer="OME:OTFIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:OTFRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:OpticalElementIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterList/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
