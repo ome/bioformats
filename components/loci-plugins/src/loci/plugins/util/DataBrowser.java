@@ -98,11 +98,17 @@ public class DataBrowser extends StackWindow implements ActionListener {
   // -- Constructors --
 
   public DataBrowser(ImagePlus imp) {
-    this(imp, null, null, null);
+    this(imp, null, null, null, null);
   }
 
   public DataBrowser(final ImagePlus imp, ImageCanvas ic,
     String[] channels, int[] cLengths)
+  {
+    this(imp, ic, channels, cLengths, null);
+  }
+
+  public DataBrowser(final ImagePlus imp, ImageCanvas ic,
+    String[] channels, int[] cLengths, XMLWindow xmlWindow)
   {
     super(imp, ic);
 
@@ -116,7 +122,10 @@ public class DataBrowser extends StackWindow implements ActionListener {
     cIndex = new int[cLengths.length];
 
     // build metadata window
-    metaWindow = new XMLWindow("OME Metadata - " + getTitle());
+    metaWindow = xmlWindow;
+    if (metaWindow == null) {
+      metaWindow = new XMLWindow("OME Metadata - " + getTitle());
+    }
 
     // build fancy UI widgets
     while (getComponentCount() > 1) remove(1);

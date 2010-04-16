@@ -33,7 +33,6 @@ import java.util.Hashtable;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
-import loci.plugins.util.SearchableWindow;
 
 /**
  * Helper class for storing original metadata key/value pairs.
@@ -112,15 +111,6 @@ public class ImporterMetadata extends HashMap<String, Object> {
       sb.append("\n");
     }
     return sb.toString();
-  }
-
-  /** Displays the metadata in a searchable window. */
-  public void showMetadataWindow(String name) {
-    // sort metadata keys
-    String metaString = getMetadataString("\t");
-    SearchableWindow w = new SearchableWindow("Original Metadata - " + name,
-      "Key\tValue", metaString, 400, 400);
-    w.setVisible(true);
   }
 
   // -- Object API methods --

@@ -25,28 +25,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
-import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 
-import java.awt.image.IndexColorModel;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
-import loci.formats.gui.XMLWindow;
-import loci.formats.services.OMEXMLService;
 import loci.plugins.LociImporter;
 import loci.plugins.util.BF;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.WindowTools;
-
-import org.xml.sax.SAXException;
 
 /**
  * Core logic for the Bio-Formats Importer ImageJ plugin.
@@ -68,11 +56,6 @@ public class Importer {
    */
   private LociImporter plugin;
 
-  private ArrayList<ImagePlus> imps = new ArrayList<ImagePlus>();
-  private String stackOrder = null;
-
-  private IndexColorModel[] colorModels;
-
   // -- Constructor --
 
   public Importer(LociImporter plugin) {
@@ -93,38 +76,19 @@ public class Importer {
       showOptionDialogs(options);
       if (plugin.canceled) return;
 
-      if (options.isShowMetadata()) {
-        BF.debug("display metadata");
-        IJ.showStatus("Populating metadata");
-        displayOriginalMetadata(options);
-        if (plugin.canceled) return;
-      }
-      else BF.debug("skip metadata");
+      BF.debug("display metadata");
+      DisplayHandler displayHandler = new DisplayHandler(options);
+      displayHandler.displayOriginalMetadata();
+      displayHandler.displayOMEXML();
 
-      if (options.isShowOMEXML()) {
-        BF.debug("show OME-XML");
-        displayOMEXML(options);
-        if (plugin.canceled) return;
-      }
-      else BF.debug("skip OME-XML");
+      BF.debug("read pixel data");
+      ImagePlus[] imps = readPixels(options, displayHandler);
 
-      if (!options.isViewNone()) {
-        BF.debug("read pixel data");
-        readPixelData(options);
-        if (plugin.canceled) return;
-      }
-      else BF.debug("skip pixel data"); // nothing to display
-
-      if (options.showROIs()) {
-        BF.debug("display ROIs");
-        displayROIs(options);
-        if (plugin.canceled) return;
-      }
-      else BF.debug("skip ROIs");
+      BF.debug("display ROIs");
+      displayHandler.displayROIs(imps);
 
       BF.debug("finish");
       finish(options);
-      if (plugin.canceled) return;
     }
     catch (FormatException exc) {
       boolean quiet = options == null ? false : options.isQuiet();
@@ -159,52 +123,35 @@ public class Importer {
   public void displayOriginalMetadata(ImporterOptions options)
     throws IOException
   {
-    ImporterMetadata meta = options.getOriginalMetadata();
-    meta.showMetadataWindow(options.getIdName());
+    DisplayHandler displayHandler = new DisplayHandler(options);
+    displayHandler.displayOriginalMetadata();
   }
 
   public void displayOMEXML(ImporterOptions options)
     throws FormatException, IOException
   {
-    if (options.isViewBrowser()) {
-      // NB: Data Browser has its own internal OME-XML metadata window,
-      // which we'll trigger once we have created a Data Browser.
-      // So there is no need to pop up a separate OME-XML here.
-    }
-    else {
-      XMLWindow metaWindow =
-        new XMLWindow("OME Metadata - " + options.getIdName());
-      Exception exc = null;
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        OMEXMLService service = factory.getInstance(OMEXMLService.class);
-        metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
-        WindowTools.placeWindow(metaWindow);
-        metaWindow.setVisible(true);
-      }
-      catch (DependencyException e) { exc = e; }
-      catch (ServiceException e) { exc = e; }
-      catch (ParserConfigurationException e) { exc = e; }
-      catch (SAXException e) { exc = e; }
-
-      if (exc != null) throw new FormatException(exc);
-    }
+    DisplayHandler displayHandler = new DisplayHandler(options);
+    displayHandler.displayOMEXML();
+    // TODO - register resultant XMLWindow with Data Browser when relevant.
   }
 
-  public void readPixelData(ImporterOptions options)
-    throws FormatException, IOException
+  public ImagePlus[] readPixels(ImporterOptions options,
+    DisplayHandler displayHandler) throws FormatException, IOException
   {
+    if (options.isViewNone()) return null;
     ImagePlusReader ipr = new ImagePlusReader(options);
-    ipr.openImagePlus();
-    // TODO - migrate display logic here
+    ImagePlus[] imps = ipr.openImagePlus();
+
+    // TEMP!
+    displayHandler.displayImages(imps, ipr.stackOrder, ipr.colorModels);
+    
+    return imps;
   }
 
-  public void displayROIs(ImporterOptions options) {
+  public void displayROIs(ImporterOptions options, ImagePlus[] imps) {
     if (options.showROIs()) {
       BF.debug("display ROIs");
-
-      ImagePlus[] impsArray = imps.toArray(new ImagePlus[0]);
-      ROIHandler.openROIs(options.getOMEMetadata(), impsArray);
+      ROIHandler.openROIs(options.getOMEMetadata(), imps);
     }
     else BF.debug("skip ROIs");
   }

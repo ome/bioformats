@@ -28,9 +28,7 @@ package loci.plugins.importer;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.WindowManager;
 import ij.io.FileInfo;
-import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -42,10 +40,9 @@ import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Location;
-import loci.common.ReflectException;
-import loci.common.ReflectedUniverse;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -56,14 +53,11 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-import loci.plugins.Colorizer;
 import loci.plugins.util.BFVirtualStack;
-import loci.plugins.util.DataBrowser;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
 import loci.plugins.util.VirtualReader;
-import loci.plugins.util.WindowTools;
 
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
@@ -79,6 +73,9 @@ public class ImagePlusReader {
   /** Importer options that control the reader's behavior. */
   protected ImporterOptions options;
 
+  public String stackOrder;//TEMP!
+  public IndexColorModel[] colorModels;//TEMP!
+  
   // -- Constructors --
 
   /**
@@ -97,23 +94,23 @@ public class ImagePlusReader {
   // -- ImagePlusReader methods --
 
   /**
-   * Creates an ImageJ image processor object
-   * for the image plane at the given position.
+   * Opens one or more {@link ij.ImagePlus} objects
+   * corresponding to the reader's associated options.
    */
-  public ImagePlus[] openImagePlus()
-    throws FormatException, IOException
-  {
-    readPixelData();
-    // TODO - disentangle data and display logic
-    return null;
+  public ImagePlus[] openImagePlus() throws FormatException, IOException {
+    List<ImagePlus> imps = readPixelData();
+    return imps.toArray(new ImagePlus[0]);
   }
 
-  private void readPixelData() throws FormatException, IOException
+  // -- Helper methods --
+
+  private List<ImagePlus> readPixelData()
+    throws FormatException, IOException
   {
     ImageProcessorReader r = options.getReader();
-    ArrayList<ImagePlus> imps = new ArrayList<ImagePlus>();
-    String stackOrder = null;
-    IndexColorModel[] colorModels = null;
+    List<ImagePlus> imps = new ArrayList<ImagePlus>();
+    stackOrder = null;
+    colorModels = null;
 
     if (options.isVirtual()) {
       int totalSeries = 0;
@@ -171,8 +168,6 @@ public class ImagePlusReader {
       Rectangle cropRegion = options.getCropRegion(s);
       int w = options.doCrop() ? cropRegion.width : r.getSizeX();
       int h = options.doCrop() ? cropRegion.height : r.getSizeY();
-      int c = r.getRGBChannelCount();
-      int type = r.getPixelType();
 
       int q = 0;
       stackOrder = options.getStackOrder();
@@ -184,7 +179,6 @@ public class ImagePlusReader {
       options.getOMEMetadata().setPixelsDimensionOrder(stackOrder, s, 0);
 
       // dump OME-XML to ImageJ's description field, if available
-
       try {
         ServiceFactory factory = new ServiceFactory();
         OMEXMLService service = factory.getInstance(OMEXMLService.class);
@@ -194,12 +188,7 @@ public class ImagePlusReader {
       catch (ServiceException se) { }
 
       if (options.isVirtual()) {
-        int cSize = r.getSizeC();
-        int pt = r.getPixelType();
         boolean doMerge = options.isMergeChannels();
-        boolean eight = pt != FormatTools.UINT8 && pt != FormatTools.INT8;
-        boolean needComposite = doMerge && (cSize > 3 || eight);
-        int merge = (needComposite || !doMerge) ? 1 : cSize;
 
         r.setSeries(s);
         // NB: ImageJ 1.39+ is required for VirtualStack
@@ -297,10 +286,14 @@ public class ImagePlusReader {
       IJ.showStatus("Creating image");
       IJ.showProgress(1);
 
-      showStack(stackB, s, fi, options, imps, stackOrder, colorModels);
-      showStack(stackS, s, fi, options, imps, stackOrder, colorModels);
-      showStack(stackF, s, fi, options, imps, stackOrder, colorModels);
-      showStack(stackO, s, fi, options, imps, stackOrder, colorModels);
+      ImagePlus impB = createImage(stackB, s, fi, stackOrder, colorModels);
+      ImagePlus impS = createImage(stackS, s, fi, stackOrder, colorModels);
+      ImagePlus impF = createImage(stackF, s, fi, stackOrder, colorModels);
+      ImagePlus impO = createImage(stackO, s, fi, stackOrder, colorModels);
+      if (impB != null) imps.add(impB);
+      if (impS != null) imps.add(impS);
+      if (impF != null) imps.add(impF);
+      if (impO != null) imps.add(impO);
 
       long endTime = System.currentTimeMillis();
       double elapsed = (endTime - startTime) / 1000.0;
@@ -314,76 +307,99 @@ public class ImagePlusReader {
       }
     }
 
-    if (options.isConcatenate()) {
-      ArrayList<Integer> widths = new ArrayList<Integer>();
-      ArrayList<Integer> heights = new ArrayList<Integer>();
-      ArrayList<Integer> types = new ArrayList<Integer>();
-      ArrayList<ImagePlus> newImps = new ArrayList<ImagePlus>();
+    imps = concatenate(imps, stackOrder);
 
-      for (int j=0; j<imps.size(); j++) {
-        ImagePlus imp = imps.get(j);
-        int wj = imp.getWidth();
-        int hj = imp.getHeight();
-        int tj = imp.getBitDepth();
-        boolean append = false;
-        for (int k=0; k<widths.size(); k++) {
-          int wk = ((Integer) widths.get(k)).intValue();
-          int hk = ((Integer) heights.get(k)).intValue();
-          int tk = ((Integer) types.get(k)).intValue();
+    return imps;
+  }
 
-          if (wj == wk && hj == hk && tj == tk) {
-            ImagePlus oldImp = newImps.get(k);
-            ImageStack is = oldImp.getStack();
-            ImageStack newStack = imp.getStack();
-            for (int s=0; s<newStack.getSize(); s++) {
-              is.addSlice(newStack.getSliceLabel(s + 1),
-                newStack.getProcessor(s + 1));
-            }
-            oldImp.setStack(oldImp.getTitle(), is);
-            newImps.set(k, oldImp);
-            append = true;
-            k = widths.size();
+  /**
+   * Displays the given image stack according to
+   * the specified parameters and import options.
+   */
+  private ImagePlus createImage(ImageStack stack,
+    int series, FileInfo fi, String stackOrder, IndexColorModel[] colorModels)
+    throws FormatException, IOException
+  {
+    if (stack == null) return null;
+
+    String seriesName = options.getOMEMetadata().getImageName(series);
+    String file = options.getCurrentFile();
+    IMetadata meta = options.getOMEMetadata();
+    int cCount = options.getCCount(series);
+    int zCount = options.getZCount(series);
+    int tCount = options.getTCount(series);
+    IFormatReader r = options.getReader();
+
+    String title = getTitle(r, file, seriesName, options.isGroupFiles());
+    ImagePlus imp = null;
+    if (options.isVirtual()) {
+      imp = new VirtualImagePlus(title, stack);
+      ((VirtualImagePlus) imp).setReader(r);
+    }
+    else imp = new ImagePlus(title, stack);
+
+    // place metadata key/value pairs in ImageJ's info field
+    String metadata = options.getOriginalMetadata().toString();
+    imp.setProperty("Info", metadata);
+
+    // retrieve the spatial calibration information, if available
+    ImagePlusTools.applyCalibration(meta, imp, r.getSeries());
+    imp.setFileInfo(fi);
+    imp.setDimensions(cCount, zCount, tCount);
+
+    boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
+    imp.setOpenAsHyperStack(hyper);
+    int nSlices = imp.getNSlices();
+    int nFrames = imp.getNFrames();
+
+    if (options.isAutoscale() && !options.isVirtual()) {
+      ImagePlusTools.adjustColorRange(imp, r);
+    }
+    else if (!(imp.getProcessor() instanceof ColorProcessor)) {
+      // ImageJ may autoscale the images anyway, so we need to manually
+      // set the display range to the min/max values allowed for
+      // this pixel type
+      imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
+    }
+
+    imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
+      nSlices, nFrames);
+
+    return imp;
+  }
+
+  /** Get an appropriate stack title, given the file name. */
+  private String getTitle(IFormatReader r, String file, String seriesName,
+    boolean groupFiles)
+  {
+    String[] used = r.getUsedFiles();
+    String title = file.substring(file.lastIndexOf(File.separator) + 1);
+    if (used.length > 1 && groupFiles) {
+      FilePattern fp = new FilePattern(new Location(file));
+      if (fp != null) {
+        title = fp.getPattern();
+        if (title == null) {
+          title = file;
+          if (title.indexOf(".") != -1) {
+            title = title.substring(0, title.lastIndexOf("."));
           }
         }
-        if (!append) {
-          widths.add(new Integer(wj));
-          heights.add(new Integer(hj));
-          types.add(new Integer(tj));
-          newImps.add(imp);
-        }
-      }
-
-      boolean splitC = options.isSplitChannels();
-      boolean splitZ = options.isSplitFocalPlanes();
-      boolean splitT = options.isSplitTimepoints();
-
-      for (int j=0; j<newImps.size(); j++) {
-        ImagePlus imp = (ImagePlus) newImps.get(j);
-        imp.show();
-        if (splitC || splitZ || splitT) {
-          IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-            " slice_c=" + splitC + " slice_t=" + splitT +
-            " stack_order=" + stackOrder + " keep_original=false " +
-            "hyper_stack=" + options.isViewHyperstack() + " ");
-          imp.close();
-        }
-        if (options.isMergeChannels() && options.isWindowless()) {
-          IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-            " merge=true merge_option=[" + options.getMergeOption() + "] " +
-            "series=" + r.getSeries() + " hyper_stack=" +
-            options.isViewHyperstack() + " ");
-          imp.close();
-        }
-        else if (options.isMergeChannels()) {
-          IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-            " merge=true series=" + r.getSeries() + " hyper_stack=" +
-            options.isViewHyperstack() + " ");
-          imp.close();
-        }
+        title = title.substring(title.lastIndexOf(File.separator) + 1);
       }
     }
+    if (seriesName != null && !file.endsWith(seriesName) &&
+      r.getSeriesCount() > 1)
+    {
+      title += " - " + seriesName;
+    }
+    if (title.length() > 128) {
+      String a = title.substring(0, 62);
+      String b = title.substring(title.length() - 62);
+      title = a + "..." + b;
+    }
+    return title;
   }
-  
+
   /** Constructs slice label. */
   private String constructSliceLabel(int ndx, IFormatReader r,
     IMetadata meta, int series, int zCount, int cCount, int tCount)
@@ -433,212 +449,82 @@ public class ImagePlusReader {
     return sb.toString();
   }
 
-  
-  /**
-   * Displays the given image stack according to
-   * the specified parameters and import options.
-   */
-  private void showStack(ImageStack stack, int series, FileInfo fi,
-    ImporterOptions options, ArrayList<ImagePlus> imps,
-    String stackOrder, IndexColorModel[] colorModels)
-    throws FormatException, IOException
-  {
-    if (stack == null) return;
+  /** Concatenates the list of images as appropriate. */
+  private List<ImagePlus> concatenate(List<ImagePlus> imps, String stackOrder) {
+    if (!options.isConcatenate()) return imps;
 
-    String seriesName = options.getOMEMetadata().getImageName(series);
-    String file = options.getCurrentFile();
-    IMetadata meta = options.getOMEMetadata();
-    int cCount = options.getCCount(series);
-    int zCount = options.getZCount(series);
-    int tCount = options.getTCount(series);
     IFormatReader r = options.getReader();
-    int sizeZ = r.getSizeZ();
-    int sizeC = r.getEffectiveSizeC();
-    int sizeT = r.getSizeT();
-    boolean windowless = options.isWindowless();
 
-    String title = getTitle(r, file, seriesName, options.isGroupFiles());
-    ImagePlus imp = null;
-    if (options.isVirtual()) {
-      imp = new VirtualImagePlus(title, stack);
-      ((VirtualImagePlus) imp).setReader(r);
-    }
-    else imp = new ImagePlus(title, stack);
+    List<Integer> widths = new ArrayList<Integer>();
+    List<Integer> heights = new ArrayList<Integer>();
+    List<Integer> types = new ArrayList<Integer>();
+    List<ImagePlus> newImps = new ArrayList<ImagePlus>();
 
-    // place metadata key/value pairs in ImageJ's info field
-    String metadata = options.getOriginalMetadata().toString();
-    imp.setProperty("Info", metadata);
+    for (int j=0; j<imps.size(); j++) {
+      ImagePlus imp = imps.get(j);
+      int wj = imp.getWidth();
+      int hj = imp.getHeight();
+      int tj = imp.getBitDepth();
+      boolean append = false;
+      for (int k=0; k<widths.size(); k++) {
+        int wk = ((Integer) widths.get(k)).intValue();
+        int hk = ((Integer) heights.get(k)).intValue();
+        int tk = ((Integer) types.get(k)).intValue();
 
-    // retrieve the spatial calibration information, if available
-    ImagePlusTools.applyCalibration(meta, imp, r.getSeries());
-    imp.setFileInfo(fi);
-    imp.setDimensions(cCount, zCount, tCount);
-
-    // display the image stack using the appropriate plugin
-
-    boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-    imp.setOpenAsHyperStack(hyper);
-    int nSlices = imp.getNSlices();
-    int nFrames = imp.getNFrames();
-
-    if (options.isAutoscale() && !options.isVirtual()) {
-      ImagePlusTools.adjustColorRange(imp, r);
-    }
-    else if (!(imp.getProcessor() instanceof ColorProcessor)) {
-      // ImageJ may autoscale the images anyway, so we need to manually
-      // set the display range to the min/max values allowed for
-      // this pixel type
-      imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
+        if (wj == wk && hj == hk && tj == tk) {
+          ImagePlus oldImp = newImps.get(k);
+          ImageStack is = oldImp.getStack();
+          ImageStack newStack = imp.getStack();
+          for (int s=0; s<newStack.getSize(); s++) {
+            is.addSlice(newStack.getSliceLabel(s + 1),
+              newStack.getProcessor(s + 1));
+          }
+          oldImp.setStack(oldImp.getTitle(), is);
+          newImps.set(k, oldImp);
+          append = true;
+          k = widths.size();
+        }
+      }
+      if (!append) {
+        widths.add(new Integer(wj));
+        heights.add(new Integer(hj));
+        types.add(new Integer(tj));
+        newImps.add(imp);
+      }
     }
 
     boolean splitC = options.isSplitChannels();
     boolean splitZ = options.isSplitFocalPlanes();
     boolean splitT = options.isSplitTimepoints();
 
-    int z = r.getSizeZ();
-    int c = r.getSizeC();
-    int t = r.getSizeT();
-
-    if (!options.isConcatenate() && options.isMergeChannels()) imp.show();
-
-    if (imp.isVisible() && !options.isVirtual()) {
-      String arg = "stack_order=" + stackOrder + " merge=true series=" +
-        r.getSeries() + " hyper_stack=" + options.isViewHyperstack();
-      if (windowless) arg += " merge_option=[" + options.getMergeOption() + "]";
-      arg += " ";
-      IJ.runPlugIn("loci.plugins.Colorizer", arg);
-      if (WindowManager.getCurrentImage().getID() != imp.getID()) {
+    // TODO: Change IJ.runPlugIn to direct API calls in relevant plugins.
+    // Should not be calling show() here just to make other plugins happy! :-(
+    for (int j=0; j<newImps.size(); j++) {
+      ImagePlus imp = (ImagePlus) newImps.get(j);
+      imp.show();
+      if (splitC || splitZ || splitT) {
+        IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
+          " slice_c=" + splitC + " slice_t=" + splitT +
+          " stack_order=" + stackOrder + " keep_original=false " +
+          "hyper_stack=" + options.isViewHyperstack() + " ");
+        imp.close();
+      }
+      if (options.isMergeChannels() && options.isWindowless()) {
+        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+          " merge=true merge_option=[" + options.getMergeOption() + "] " +
+          "series=" + r.getSeries() + " hyper_stack=" +
+          options.isViewHyperstack() + " ");
+        imp.close();
+      }
+      else if (options.isMergeChannels()) {
+        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
+          " merge=true series=" + r.getSeries() + " hyper_stack=" +
+          options.isViewHyperstack() + " ");
         imp.close();
       }
     }
 
-    imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
-      nSlices, nFrames);
-
-    if (options.isViewVisBio()) {
-      // NB: avoid dependency on optional loci.visbio packages
-      ReflectedUniverse ru = new ReflectedUniverse();
-      try {
-        ru.exec("import loci.visbio.data.Dataset");
-        //ru.setVar("name", name);
-        //ru.setVar("pattern", pattern);
-        ru.exec("dataset = new Dataset(name, pattern)");
-        // TODO: finish VisBio logic
-      }
-      catch (ReflectException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was a problem interfacing with VisBio");
-        return;
-      }
-    }
-    else if (options.isViewImage5D()) {
-      ReflectedUniverse ru = new ReflectedUniverse();
-      try {
-        ru.exec("import i5d.Image5D");
-        ru.setVar("title", imp.getTitle());
-        ru.setVar("stack", imp.getStack());
-        ru.setVar("sizeC", c);
-        ru.setVar("sizeZ", z);
-        ru.setVar("sizeT", t);
-        ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
-        ru.setVar("cal", imp.getCalibration());
-        ru.setVar("fi", imp.getOriginalFileInfo());
-        ru.exec("i5d.setCalibration(cal)");
-        ru.exec("i5d.setFileInfo(fi)");
-        //ru.exec("i5d.setDimensions(sizeC, sizeZ, sizeT)");
-        ru.exec("i5d.show()");
-      }
-      catch (ReflectException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was a problem interfacing with Image5D");
-        return;
-      }
-    }
-    else if (options.isViewView5D()) {
-      WindowManager.setTempCurrentImage(imp);
-      IJ.run("start viewer", "");
-    }
-    else {
-      // NB: ImageJ 1.39+ is required for hyperstacks
-
-      if (!options.isConcatenate()) {
-        if (options.isViewBrowser()) {
-          DataBrowser dataBrowser = new DataBrowser(imp, null,
-            r.getChannelDimTypes(), r.getChannelDimLengths());
-          if (options.isShowOMEXML()) dataBrowser.showMetadataWindow();
-        }
-        else if (!imp.isVisible()) imp.show();
-
-        boolean customColorize = options.isCustomColorize();
-        boolean browser = options.isViewBrowser();
-        boolean virtual = options.isVirtual();
-
-        if (options.isColorize() || customColorize) {
-          IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-            " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
-            " series=" + r.getSeries() + " hyper_stack=" +
-            options.isViewHyperstack() + " ");
-          imp.close();
-        }
-        else if (colorModels != null && !browser && !virtual) {
-          Colorizer colorizer = new Colorizer();
-          String arg = "stack_order=" + stackOrder + " merge=false " +
-            "colorize=true series=" + r.getSeries() + " hyper_stack=" +
-            hyper + " ";
-          colorizer.setup(arg, imp);
-          for (int channel=0; channel<colorModels.length; channel++) {
-            byte[][] lut = new byte[3][256];
-            colorModels[channel].getReds(lut[0]);
-            colorModels[channel].getGreens(lut[1]);
-            colorModels[channel].getBlues(lut[2]);
-            colorizer.setLookupTable(lut, channel);
-          }
-          new PlugInFilterRunner(colorizer, "", arg);
-          imp.close();
-        }
-
-        if (splitC || splitZ || splitT) {
-          IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-            " slice_c=" + splitC + " slice_t=" + splitT +
-            " stack_order=" + stackOrder + " keep_original=false " +
-            "hyper_stack=" + hyper + " ");
-          imp.close();
-        }
-      }
-      imps.add(imp);
-    }
-  }
-
-  /** Get an appropriate stack title, given the file name. */
-  private String getTitle(IFormatReader r, String file, String seriesName,
-    boolean groupFiles)
-  {
-    String[] used = r.getUsedFiles();
-    String title = file.substring(file.lastIndexOf(File.separator) + 1);
-    if (used.length > 1 && groupFiles) {
-      FilePattern fp = new FilePattern(new Location(file));
-      if (fp != null) {
-        title = fp.getPattern();
-        if (title == null) {
-          title = file;
-          if (title.indexOf(".") != -1) {
-            title = title.substring(0, title.lastIndexOf("."));
-          }
-        }
-        title = title.substring(title.lastIndexOf(File.separator) + 1);
-      }
-    }
-    if (seriesName != null && !file.endsWith(seriesName) &&
-      r.getSeriesCount() > 1)
-    {
-      title += " - " + seriesName;
-    }
-    if (title.length() > 128) {
-      String a = title.substring(0, 62);
-      String b = title.substring(title.length() - 62);
-      title = a + "..." + b;
-    }
-    return title;
+    return newImps;
   }
 
 }
