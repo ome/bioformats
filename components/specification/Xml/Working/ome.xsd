@@ -1407,25 +1407,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
 					<xsd:sequence>
-						<!--
-						<xsd:element name="ExcitationFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
 									The Filters placed in the Excitation light path.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
-						-->
 						<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
-						<!--
-						<xsd:element name="EmissionFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
 									The Filters placed in the Emission light path.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
-						-->
 					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
 				</xsd:extension>
@@ -1537,25 +1533,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<!--
-					<xsd:element name="ExcitationFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							The Filters placed in the Excitation light path.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				-->
 				<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
-				<!--
-				<xsd:element name="EmissionFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							The Filters placed in the Emission light path.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				-->
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -1564,15 +1556,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="DichroicID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="FilterRef">  <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="FilterID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -1880,6 +1863,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:complexContent>
 			<xsd:extension base="Reference">
 				<xsd:attribute name="ID" use="required" type="LSID"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FilterRef"> <!-- top level definition -->
+		<xsd:complexContent>
+			<xsd:extension base="Reference">
+				<xsd:attribute name="ID" use="required" type="FilterID"/>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
