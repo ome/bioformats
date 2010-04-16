@@ -464,11 +464,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="WideField"/>
-						<xsd:enumeration value="LaserScanningMicroscopy"/> <!-- LSM -->
-						<xsd:enumeration value="LaserScanningConfocal"/> <!-- CLSM or LSCM -->
+						<xsd:enumeration value="LaserScanningConfocalMicroscopy"/> <!-- CLSM or LSCM -->
 						<xsd:enumeration value="SpinningDiskConfocal"/>
 						<xsd:enumeration value="SlitScanConfocal"/>
-						<xsd:enumeration value="MultiPhotonMicroscopy"/><!-- laser scanning multiphoton microscopy (LSMM) -->
+						<xsd:enumeration value="MultiPhotonMicroscopy"/><!-- laser scanning multiphoton microscopy (LSMM), two photon microscopy -->
 						<xsd:enumeration value="StructuredIllumination"/>
 						<xsd:enumeration value="SingleMoleculeImaging"/>
 						<xsd:enumeration value="TotalInternalReflection"/>
@@ -477,10 +476,12 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="FluorescenceCorrelationSpectroscopy"/>
 						<xsd:enumeration value="NearFieldScanningOpticalMicroscopy"/><!-- NSOM -->
 						<xsd:enumeration value="SecondHarmonicGenerationImaging"/><!-- Second harmonic imaging microscopy (SHIM) -->
-						<xsd:enumeration value="PALM"/><!-- photo-activated localization microscopy -->
+						<xsd:enumeration value="PALM"/><!-- photo-activated localization microscopy, photo-activation localization microscopy -->
 						<xsd:enumeration value="STORM"/><!-- stochastic optical reconstruction microscopy -->
 						<xsd:enumeration value="STED"/><!-- stimulated emission depletion -->
 						<xsd:enumeration value="TIRF"/><!-- total internal reflection fluorescence (TIRFM) -->
+						<xsd:enumeration value="FSM"/><!-- Fluorescence speckle microscopy -->
+						<xsd:enumeration value="LCM"/><!-- Laser capture microdissection -->
 						<xsd:enumeration value="Other"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -498,7 +499,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="DIC"/><!-- Differential Interference Contrast -->
 						<xsd:enumeration value="HoffmanModulation"/><!-- Hoffman Modulation Contrast (HMC) -->
 						<xsd:enumeration value="ObliqueIllumination"/>
-						<xsd:enumeration value="PolarizedLight"/>
+						<xsd:enumeration value="PolarizedLight"/> <!-- Polarization Microscopy -->
 						<xsd:enumeration value="Darkfield"/><!-- Dark Field Imaging -->
 						<xsd:enumeration value="Fluorescence"/>
 						<xsd:enumeration value="Other"/>
@@ -697,6 +698,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="FRAP"/><!-- Fluorescence recovery after photobleaching -->
+								<xsd:enumeration value="FLIP"/><!-- Fluorescence Loss in Photobleaching -->
+								<xsd:enumeration value="InverseFRAP"/><!-- iFRAP, inverse FRAP -->
 								<xsd:enumeration value="Photoablation"/>
 								<xsd:enumeration value="Photoactivation"/>
 								<xsd:enumeration value="Uncaging"/>
@@ -1385,6 +1388,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								<xsd:enumeration value="EMCCD"/><!-- Electron Multiplying Charge Coupled Device -->
 								<xsd:enumeration value="APD"/><!-- Avalanche Photodiode -->
 								<xsd:enumeration value="CMOS"/><!-- complementary metal oxide semiconductor -->
+								<xsd:enumeration value="EBCCD"/><!-- electron-bombarded charge-coupled device -->
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
@@ -1403,6 +1407,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
 					<xsd:sequence>
+						<!--
 						<xsd:element name="ExcitationFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
@@ -1410,7 +1415,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
+						-->
 						<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
+						<!--
 						<xsd:element name="EmissionFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
@@ -1418,6 +1425,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
+						-->
 					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
 				</xsd:extension>
@@ -1529,14 +1537,17 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="ExcitationFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
+				<!--
+					<xsd:element name="ExcitationFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							The Filters placed in the Excitation light path.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
+				-->
 				<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
+				<!--
 				<xsd:element name="EmissionFilterRef" ref="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -1544,6 +1555,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
+				-->
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
