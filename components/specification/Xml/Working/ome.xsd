@@ -1570,7 +1570,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						</xsd:sequence>
 					</xsd:complexType>
 				</xsd:element>
-				<xsd:element ref="OpticalElementRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="OpticalElementRef" minOccurs="1" maxOccurs="1"/>
 				<xsd:element name="EmissionPath" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>

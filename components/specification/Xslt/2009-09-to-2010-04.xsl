@@ -256,7 +256,22 @@
 			</xsl:if>
 		</xsl:element>
 	</xsl:template>
-		
+
+	<xsl:template match="OME:Instrument">
+		<xsl:element name="Instrument" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="node()"/>
+			<!-- FIX ME
+			<xsl:for-each
+				select="@* [not((name(.) = 'SecondaryEmissionFilter') or (name(.) = 'SecondaryExcitationFilter'))]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			-->
+		</xsl:element>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">

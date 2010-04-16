@@ -17,70 +17,63 @@
 		<Objective Correction="Achromat" Immersion="Air" LensNA="0.3" NominalMagnification="10"
 			ID="Objective:0:0"/>
 		<FilterSet ID="FilterSet:1" Manufacturer="Ink Inc." Model="Mk 3" LotNumber="K753">
-			<ExcitationFilterList>
-				<FilterRef ID="Filter:1"/>
-				<FilterRef ID="Filter:2"/>
-				<FilterRef ID="Filter:3"/>
-				<FilterRef ID="Filter:4"/>
-			</ExcitationFilterList>
-			<DichroicRef ID="Dichroic:1"/>
-			<EmissionFilterList>
-				<FilterRef ID="Filter:5"/>
-				<FilterRef ID="Filter:6"/>
-			</EmissionFilterList>
+			<ExcitationList>
+				<OpticalElementRef ID="OpticalElement:Filter:1"/>
+				<OpticalElementRef ID="OpticalElement:Filter:2"/>
+				<OpticalElementRef ID="OpticalElement:Filter:3"/>
+				<OpticalElementRef ID="OpticalElement:Filter:4"/>
+			</ExcitationList>
+			<OpticalElementRef ID="OpticalElement:Dichroic:1"/>
+			<EmissionList>
+				<OpticalElementRef ID="OpticalElement:Filter:5"/>
+				<OpticalElementRef ID="OpticalElement:Filter:6"/>
+			</EmissionList>
 		</FilterSet>
 
 		<FilterSet ID="FilterSet:2" Manufacturer="Ink Inc." Model="Mk 3" LotNumber="K753"/>
-		<OpticalElement>
-			<Filter ID="Filter:1" Manufacturer="Ink Inc." Model="Medium 490" LotNumber="J23"
-				Type="BandPass" FilterWheel="Disk 7">
+		<OpticalElement  ID="OpticalElement:Filter:1" Manufacturer="Ink Inc." Model="Medium 490" LotNumber="J23">
+			<Filter	Type="BandPass" FilterWheel="Disk 7">
 				<TransmittanceRange Transmittance="0.80" CutIn="450" CutOut="530"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Filter ID="Filter:2" Manufacturer="Ink Inc." Model="Medium 520" LotNumber="J34"
-				Type="BandPass" FilterWheel="Disk 7">
+		<OpticalElement ID="OpticalElement:Filter:2" Manufacturer="Ink Inc." Model="Medium 520" LotNumber="J34">
+			<Filter Type="BandPass" FilterWheel="Disk 7">
 				<TransmittanceRange Transmittance="0.75" CutIn="500" CutOut="570"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Filter ID="Filter:3" Manufacturer="Ink Inc." Model="Medium 580" LotNumber="J12"
-				Type="BandPass" FilterWheel="Disk 7">
+		<OpticalElement ID="OpticalElement:Filter:3" Manufacturer="Ink Inc." Model="Medium 580" LotNumber="J12">
+			<Filter Type="BandPass" FilterWheel="Disk 7">
 				<TransmittanceRange Transmittance="0.85" CutIn="550" CutOut="620"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Filter ID="Filter:4" Manufacturer="Ink Inc." Model="Medium 630" LotNumber="J09"
-				Type="BandPass" FilterWheel="Disk 7">
+		<OpticalElement ID="OpticalElement:Filter:4" Manufacturer="Ink Inc." Model="Medium 630" LotNumber="J09">
+			<Filter	Type="BandPass" FilterWheel="Disk 7">
 				<TransmittanceRange Transmittance="0.90" CutIn="590" CutOut="680"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Filter ID="Filter:5" Manufacturer="Ink Inc." Model="Output 724" LotNumber="J34"
-				Type="MultiPass">
+		<OpticalElement ID="OpticalElement:Filter:5" Manufacturer="Ink Inc." Model="Output 724" LotNumber="J34">
+			<Filter	Type="MultiPass">
 				<TransmittanceRange Transmittance="0.75" CutIn="500" CutOut="570"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Filter ID="Filter:6" Manufacturer="Ink Inc." Model="Medium 762" LotNumber="J12"
-				Type="MultiPass">
+		<OpticalElement ID="OpticalElement:Filter:6" Manufacturer="Ink Inc." Model="Medium 762" LotNumber="J12">
+			<Filter Type="MultiPass">
 				<TransmittanceRange Transmittance="0.85" CutIn="550" CutOut="620"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Filter ID="Filter:7" Manufacturer="Ink Inc." Model="Medium 672" LotNumber="J09"
-				Type="ShortPass">
+		<OpticalElement ID="OpticalElement:Filter:7" Manufacturer="Ink Inc." Model="Medium 672" LotNumber="J09">
+			<Filter	Type="ShortPass">
 				<TransmittanceRange Transmittance="0.90" CutIn="590" CutOut="680"/>
 			</Filter>
 		</OpticalElement>
-		<OpticalElement>
-			<Dichroic ID="Dichroic:1" Model="HFT 405/488/543/633"/>
+		<OpticalElement ID="OpticalElement:Dichroic:1" Model="HFT 405/488/543/633">
+			<Dichroic/>
 		</OpticalElement>
-		<OpticalElement>
-			<Dichroic ID="Dichroic:2" Model="MirrorBlock Mk II" LotNumber="M538"/>
+		<OpticalElement ID="OpticalElement:Dichroic:2" Model="MirrorBlock Mk II" LotNumber="M538">
+			<Dichroic/>
 		</OpticalElement>
-		<OpticalElement>
-			<Dichroic ID="Dichroic:3" Model="MirrorBlock MK II" LotNumber="M539"/>
+		<OpticalElement ID="OpticalElement:Dichroic:3" Model="MirrorBlock MK II" LotNumber="M539">
+			<Dichroic/>
 		</OpticalElement>
 	</Instrument>
 	<Image ID="Image:0" Name="405100percentsetting">
@@ -93,22 +86,22 @@
 			<Channel ID="Channel:1">
 				<LightPath>
 					<!-- ordered collection -->
-					<ExcitationFilterPath>
-						<FilterRef ID="Filter:1"/>
-						<DichroicRef ID="Dichroic:2"/>
-					</ExcitationFilterPath>
-					<DichroicRef ID="Dichroic:1"/>
-					<EmissionFilterPath>
-						<FilterRef ID="Filter:5"/>
-					</EmissionFilterPath>
+					<ExcitationPath>
+						<OpticalElementRef ID="OpticalElement:Filter:1"/>
+						<OpticalElementRef ID="OpticalElement:Dichroic:2"/>
+					</ExcitationPath>
+					<OpticalElementRef ID="OpticalElement:Dichroic:1"/>
+					<EmissionPath>
+						<OpticalElementRef ID="OpticalElement:Filter:5"/>
+					</EmissionPath>
 				</LightPath>
 			</Channel>
 			<Channel ID="Channel:2">
 				<FilterSetRef ID="FilterSet:2"/>
 				<LightPath>
-					<EmissionFilterPath>
-						<FilterRef ID="Filter:6"/>
-					</EmissionFilterPath>
+					<EmissionPath>
+						<OpticalElementRef ID="OpticalElement:Filter:6"/>
+					</EmissionPath>
 				</LightPath>
 			</Channel>
 			<Channel ID="Channel:3">
