@@ -39,7 +39,7 @@ import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.prefs.OptionsList;
 import loci.plugins.prefs.StringOption;
 import loci.plugins.util.BF;
-import loci.plugins.util.ImagePlusReader;
+import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
 
 /**
@@ -419,7 +419,7 @@ public class ImporterOptions extends OptionsList {
   public String getIdName() { return reader.idName; }
   public Location getIdLocation() { return reader.idLoc; }
   public String getCurrentFile() { return reader.currentFile; }
-  public ImagePlusReader getReader() { return reader.r; }
+  public ImageProcessorReader getReader() { return reader.r; }
   public IMetadata getOMEMetadata() { return reader.meta; }
   public ImporterMetadata getOriginalMetadata() { return metadata; }
 

@@ -54,7 +54,7 @@ public class BFVirtualStack extends VirtualStack {
 
   // -- Fields --
 
-  protected ImagePlusReader reader;
+  protected ImageProcessorReader reader;
   protected String id;
   protected Cache cache;
 
@@ -93,7 +93,7 @@ public class BFVirtualStack extends VirtualStack {
     throws FormatException, IOException, CacheException
   {
     super(getWidth(r, path), getHeight(r, path), null, path);
-    reader = new ImagePlusReader(r);
+    reader = new ImageProcessorReader(r);
     id = path;
 
     this.colorize = colorize;
@@ -123,7 +123,7 @@ public class BFVirtualStack extends VirtualStack {
 
   public String getPath() { return id; }
 
-  public ImagePlusReader getReader() { return reader; }
+  public ImageProcessorReader getReader() { return reader; }
 
   public Cache getCache() { return cache; }
 

@@ -44,7 +44,7 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEReaderWriterService;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.util.IJStatusEchoer;
-import loci.plugins.util.ImagePlusReader;
+import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
@@ -71,7 +71,7 @@ public class ImporterReader {
 
   protected String currentFile;
 
-  protected ImagePlusReader r;
+  protected ImageProcessorReader r;
   protected VirtualReader virtualReader;
 
   protected IMetadata meta;
@@ -114,7 +114,7 @@ public class ImporterReader {
       baseReader = new ChannelSeparator(baseReader);
     }
     virtualReader = new VirtualReader(baseReader);
-    r = new ImagePlusReader(virtualReader);
+    r = new ImageProcessorReader(virtualReader);
     r.setId(options.getId());
   }
 
@@ -160,7 +160,7 @@ public class ImporterReader {
   private void createBaseReader() {
     if (options.isLocal() || options.isHTTP()) {
       if (!options.isQuiet()) IJ.showStatus("Identifying " + idName);
-      ImageReader reader = ImagePlusReader.makeImageReader();
+      ImageReader reader = ImageProcessorReader.makeImageReader();
       try { baseReader = reader.getReader(options.getId()); }
       catch (FormatException exc) {
         WindowTools.reportException(exc, options.isQuiet(),

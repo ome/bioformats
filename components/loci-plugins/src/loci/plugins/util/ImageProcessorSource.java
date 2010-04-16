@@ -46,16 +46,16 @@ public class ImageProcessorSource implements ICacheSource {
   // -- Fields --
 
   /** Image reader from which to draw ImageProcessors. */
-  protected ImagePlusReader reader;
+  protected ImageProcessorReader reader;
 
   // -- Constructors --
 
   public ImageProcessorSource(IFormatReader reader) throws CacheException {
-    if (reader instanceof ImagePlusReader) {
-      this.reader = (ImagePlusReader) reader;
+    if (reader instanceof ImageProcessorReader) {
+      this.reader = (ImageProcessorReader) reader;
     }
     else {
-      this.reader = new ImagePlusReader(reader);
+      this.reader = new ImageProcessorReader(reader);
     }
   }
 

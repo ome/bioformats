@@ -1,5 +1,5 @@
 //
-// ImagePlusReader.java
+// ImageProcessorReader.java
 //
 
 /*
@@ -49,20 +49,22 @@ import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
 
 /**
- * Bio-Formats reader for reading ImagePlus objects.
+ * A low-level reader for {@link ij.process.ImageProcessor} objects.
+ * For a higher-level reader that returns {@link ij.ImagePlus} objects,
+ * see {@link loci.plugins.importer.ImagePlusReader} instead.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusReader.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">SVN</a></dd></dl>
  */
-public class ImagePlusReader extends MinMaxCalculator {
+public class ImageProcessorReader extends MinMaxCalculator {
 
   // -- Utility methods --
 
-  /** Converts the given reader into a ImagePlusReader, wrapping if needed. */
-  public static ImagePlusReader makeImagePlusReader(IFormatReader r) {
-    if (r instanceof ImagePlusReader) return (ImagePlusReader) r;
-    return new ImagePlusReader(r);
+  /** Converts the given reader into a ImageProcessorReader, wrapping if needed. */
+  public static ImageProcessorReader makeImageProcessorReader(IFormatReader r) {
+    if (r instanceof ImageProcessorReader) return (ImageProcessorReader) r;
+    return new ImageProcessorReader(r);
   }
 
   /**
@@ -72,7 +74,7 @@ public class ImagePlusReader extends MinMaxCalculator {
    */
   public static ImageReader makeImageReader() {
     // include only enabled classes
-    Class[] c = null;
+    Class<?>[] c = null;
     try {
       ClassList defaultClasses =
         new ClassList("readers.txt", IFormatReader.class);
@@ -130,13 +132,13 @@ public class ImagePlusReader extends MinMaxCalculator {
 
   // -- Constructors --
 
-  /** Constructs an ImagePlusReader around a new image reader. */
-  public ImagePlusReader() { super(makeImageReader()); }
+  /** Constructs an ImageProcessorReader around a new image reader. */
+  public ImageProcessorReader() { super(makeImageReader()); }
 
-  /** Constructs an ImagePlusReader with the given reader. */
-  public ImagePlusReader(IFormatReader r) { super(r); }
+  /** Constructs an ImageProcessorReader with the given reader. */
+  public ImageProcessorReader(IFormatReader r) { super(r); }
 
-  // -- ImagePlusReader methods --
+  // -- ImageProcessorReader methods --
 
   /**
    * Creates an ImageJ image processor object

@@ -42,7 +42,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
-import loci.plugins.util.ImagePlusReader;
+import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.ImagePlusTools;
 
 /**
@@ -67,13 +67,13 @@ public class LociFunctions extends MacroFunctions {
 
   // -- Fields --
 
-  private ImagePlusReader r;
+  private ImageProcessorReader r;
 
   // -- Constructor --
 
   public LociFunctions() {
-    r = new ImagePlusReader(new ChannelSeparator(
-      new FileStitcher(ImagePlusReader.makeImageReader(), true)));
+    r = new ImageProcessorReader(new ChannelSeparator(
+      new FileStitcher(ImageProcessorReader.makeImageReader(), true)));
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
