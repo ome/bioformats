@@ -212,7 +212,8 @@ class OMEModelProperty(object):
 	def _get_maxOccurs(self):
 		if self.isAttribute:
 			return 1
-		if self.delegate.choice is not None:
+		if hasattr(self.delegate, 'choice') \
+		   and self.delegate.choice is not None:
 			return self.delegate.choice.getMaxOccurs()
 		return self.delegate.getMaxOccurs()
 	maxOccurs = property(_get_maxOccurs,
@@ -223,7 +224,8 @@ class OMEModelProperty(object):
 			if self.delegate.getUse() == "optional":
 				return 0
 			return 1
-		if self.delegate.choice is not None:
+		if hasattr(self.delegate, 'choice') \
+		   and self.delegate.choice is not None:
 			return self.delegate.choice.getMinOccurs()
 		return self.delegate.getMinOccurs()
 	minOccurs = property(_get_minOccurs,
