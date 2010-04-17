@@ -68,8 +68,6 @@ public class SwapDialog extends OptionsDialog {
    * @return status of operation
    */
   public int showDialog() {
-    boolean valid = false;
-
     GenericDialog gd = new GenericDialog("Dimension swapping options");
 
     int oldSeries = r.getSeries();

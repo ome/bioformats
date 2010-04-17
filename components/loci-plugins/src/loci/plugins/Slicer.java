@@ -40,8 +40,8 @@ import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LibraryChecker;
 
 /**
- * A plugin for splitting an image stack into separate channels, focal planes
- * and/or time points.
+ * A plugin for splitting an image stack into separate
+ * channels, focal planes and/or time points.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/Slicer.java">Trac</a>,
@@ -73,8 +73,8 @@ public class Slicer implements PlugInFilter {
   public void run(ImageProcessor ip) {
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
 
-    boolean sliceZ = false;
     boolean sliceC = false;
+    boolean sliceZ = false;
     boolean sliceT = false;
     String stackOrder = null;
     boolean keepOriginal = false;
@@ -106,25 +106,42 @@ public class Slicer implements PlugInFilter {
       stackOrder = gd.getNextChoice();
     }
     else {
-      sliceZ =
-        Boolean.valueOf(Macro.getValue(arg, "slice_z", "false")).booleanValue();
-      sliceC =
-        Boolean.valueOf(Macro.getValue(arg, "slice_c", "false")).booleanValue();
-      sliceT =
-        Boolean.valueOf(Macro.getValue(arg, "slice_t", "false")).booleanValue();
-      keepOriginal = Boolean.valueOf(Macro.getValue(arg,
-        "keep_original", "false")).booleanValue();
-      hyperstack = Boolean.valueOf(
-        Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
+      sliceC = getBooleanValue("slice_c");
+      sliceZ = getBooleanValue("slice_z");
+      sliceT = getBooleanValue("slice_t");
+      keepOriginal = getBooleanValue("keep_original");
+      hyperstack = getBooleanValue("hyper_stack");
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
     }
 
+    if (imp.getImageStack().isVirtual()) {
+      IJ.error("Slicer plugin cannot be used with virtual stacks.\n" +
+      "Please convert the virtual stack using Image>Duplicate.");
+      return;
+    }
+    ImagePlus newImp = Slicer.reslice(imp,
+      sliceC, sliceZ, sliceT, hyperstack, stackOrder);
+    if (!keepOriginal) imp.close();
+    newImp.show();
+  }
+
+  // -- Helper methods --
+
+  /** Gets the value of the given macro key as a boolean. */
+  private boolean getBooleanValue(String key) {
+    return Boolean.valueOf(Macro.getValue(arg, key, "false"));
+  }
+  
+  // -- Static utility methods --
+
+  public static ImagePlus reslice(ImagePlus imp,
+    boolean sliceC, boolean sliceZ, boolean sliceT,
+    boolean hyperstack, String stackOrder)
+  {
     ImageStack stack = imp.getImageStack();
 
     if (stack.isVirtual()) {
-      IJ.error("Slicer plugin cannot be used with virtual stacks.\n" +
-        "Please convert the virtual stack using Image>Duplicate.");
-      return;
+      throw new IllegalArgumentException("Cannot reslice virtual stacks");
     }
 
     Calibration calibration = imp.getCalibration();
@@ -155,6 +172,7 @@ public class Slicer implements PlugInFilter {
         stack.getProcessor(i + 1));
     }
 
+    ImagePlus newImp = null;
     for (int i=0; i<newStacks.length; i++) {
       int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
         sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
@@ -183,11 +201,11 @@ public class Slicer implements PlugInFilter {
       if (imp.isComposite() && !sliceC) {
         p = ImagePlusTools.reorder(p, stackOrder, "XYCZT");
         int mode = ((CompositeImage) imp).getMode();
-        new CompositeImage(p, mode).show();
+        newImp = new CompositeImage(p, mode);
       }
-      else p.show();
+      else newImp = p;
     }
-    if (!keepOriginal) imp.close();
+    return newImp;
   }
-
+  
 }

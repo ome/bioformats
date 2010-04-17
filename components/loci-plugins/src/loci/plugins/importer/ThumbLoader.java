@@ -144,8 +144,8 @@ public class ThumbLoader implements Runnable {
 
   // -- Helper classes --
 
-  /** Helper class for sorting series by iamge plane size. */
-  public class SeriesInfo implements Comparable {
+  /** Helper class for sorting series by image plane size. */
+  public class SeriesInfo implements Comparable<SeriesInfo> {
 
     private int index, size;
 
@@ -154,8 +154,7 @@ public class ThumbLoader implements Runnable {
       this.size = size;
     }
 
-    public int compareTo(Object o) {
-      SeriesInfo info = (SeriesInfo) o;
+    public int compareTo(SeriesInfo info) {
       return size - info.size;
     }
 

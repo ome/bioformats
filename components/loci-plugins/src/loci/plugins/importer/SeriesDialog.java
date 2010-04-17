@@ -196,7 +196,6 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
       protected void dispatchEventImpl(AWTEvent e) { }
     };
     masterPanel.setLayout(new GridLayout(seriesCount, 2));
-    int nextComponent = 0;
 
     for (int i=0; i<seriesCount; i++) {
       masterPanel.add(boxes[i]);

@@ -37,6 +37,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -45,6 +47,7 @@ import loci.formats.IFormatReader;
 import loci.formats.gui.XMLWindow;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.Colorizer;
+import loci.plugins.Slicer;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.WindowTools;
@@ -61,7 +64,7 @@ import org.xml.sax.SAXException;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class DisplayHandler {
+public class DisplayHandler implements StatusListener {
 
   // -- Fields --
   
@@ -141,7 +144,7 @@ public class DisplayHandler {
   {
     IFormatReader r = options.getReader();
     boolean windowless = options.isWindowless();
-    
+
     if (!options.isConcatenate() && options.isMergeChannels()) imp.show();
 
     if (imp.isVisible() && !options.isVirtual()) {
@@ -193,10 +196,7 @@ public class DisplayHandler {
       }
 
       if (splitC || splitZ || splitT) {
-        IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-          " slice_c=" + splitC + " slice_t=" + splitT +
-          " stack_order=" + stackOrder + " keep_original=false " +
-          "hyper_stack=" + hyper + " ");
+        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
         imp.close();
       }
     }
@@ -270,6 +270,17 @@ public class DisplayHandler {
   public void displayROIs(ImagePlus[] imps) {
     if (!options.showROIs()) return;
     ROIHandler.openROIs(options.getOMEMetadata(), imps);
+  }
+
+  // -- StatusListener methods --
+
+  /** Reports status updates via ImageJ's status bar mechanism. */
+  public void statusUpdated(StatusEvent e) {
+    String msg = e.getStatusMessage();
+    if (msg != null) IJ.showStatus(msg);
+    int value = e.getProgressValue();
+    int max = e.getProgressMaximum();
+    if (value >= 0 && max >= 0) IJ.showProgress(value, max);
   }
 
 }

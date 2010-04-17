@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileInfo;
@@ -41,8 +40,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import loci.common.Location;
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
+import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -66,12 +69,14 @@ import loci.plugins.util.VirtualReader;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/ImagePlusReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/ImagePlusReader.java">SVN</a></dd></dl>
  */
-public class ImagePlusReader {
+public class ImagePlusReader implements StatusReporter {
 
   // -- Fields --
 
   /** Importer options that control the reader's behavior. */
   protected ImporterOptions options;
+
+  protected List<StatusListener> listeners = new Vector<StatusListener>();
 
   public String stackOrder;//TEMP!
   public IndexColorModel[] colorModels;//TEMP!
@@ -98,15 +103,33 @@ public class ImagePlusReader {
    * corresponding to the reader's associated options.
    */
   public ImagePlus[] openImagePlus() throws FormatException, IOException {
-    List<ImagePlus> imps = readPixelData();
+    List<ImagePlus> imps = readImages();
     return imps.toArray(new ImagePlus[0]);
+  }
+
+  // -- StatusReporter methods --
+
+  public void addStatusListener(StatusListener l) {
+    listeners.add(l);
+  }
+
+  public void removeStatusListener(StatusListener l) {
+    listeners.remove(l);
+  }
+
+  public void notifyListeners(StatusEvent e) {
+    for (StatusListener l : listeners) l.statusUpdated(e);
   }
 
   // -- Helper methods --
 
-  private List<ImagePlus> readPixelData()
+  private List<ImagePlus> readImages()
     throws FormatException, IOException
   {
+    // beginning timing
+    long startTime = System.currentTimeMillis();
+    long time = startTime;
+
     ImageProcessorReader r = options.getReader();
     List<ImagePlus> imps = new ArrayList<ImagePlus>();
     stackOrder = null;
@@ -156,9 +179,6 @@ public class ImagePlusReader {
       }
       fi.fileName = options.getIdName();
       fi.directory = idDir;
-
-      long startTime = System.currentTimeMillis();
-      long time = startTime;
 
       ImageStack stackB = null; // for byte images (8-bit)
       ImageStack stackS = null; // for short images (16-bit)
@@ -228,10 +248,10 @@ public class ImagePlusReader {
             String sLabel = r.getSeriesCount() > 1 ?
               ("series " + (s + 1) + ", ") : "";
             String pLabel = "plane " + (i + 1) + "/" + total;
-            IJ.showStatus("Reading " + sLabel + pLabel);
+            notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
             time = clock;
           }
-          IJ.showProgress((double) q++ / total);
+          notifyListeners(new StatusEvent(q++, total, null));
 
           String label = constructSliceLabel(i, r,
             options.getOMEMetadata(), s, options.getZCount(s),
@@ -283,8 +303,7 @@ public class ImagePlusReader {
         }
       }
 
-      IJ.showStatus("Creating image");
-      IJ.showProgress(1);
+      notifyListeners(new StatusEvent(1, 1, "Creating image"));
 
       ImagePlus impB = createImage(stackB, s, fi, stackOrder, colorModels);
       ImagePlus impS = createImage(stackS, s, fi, stackOrder, colorModels);
@@ -294,20 +313,22 @@ public class ImagePlusReader {
       if (impS != null) imps.add(impS);
       if (impF != null) imps.add(impF);
       if (impO != null) imps.add(impO);
-
-      long endTime = System.currentTimeMillis();
-      double elapsed = (endTime - startTime) / 1000.0;
-      if (r.getImageCount() == 1) {
-        IJ.showStatus("Bio-Formats: " + elapsed + " seconds");
-      }
-      else {
-        long average = (endTime - startTime) / r.getImageCount();
-        IJ.showStatus("Bio-Formats: " + elapsed + " seconds (" +
-          average + " ms per plane)");
-      }
     }
 
-    imps = concatenate(imps, stackOrder);
+    Concatenator concatenator = new Concatenator(options);
+    imps = concatenator.concatenate(imps, stackOrder);
+
+    // end timing
+    long endTime = System.currentTimeMillis();
+    double elapsed = (endTime - startTime) / 1000.0;
+    if (r.getImageCount() == 1) {
+      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
+    }
+    else {
+      long average = (endTime - startTime) / r.getImageCount();
+      notifyListeners(new StatusEvent("Bio-Formats: " +
+        elapsed + " seconds (" + average + " ms per plane)"));
+    }
 
     return imps;
   }
@@ -447,84 +468,6 @@ public class ImagePlusReader {
       sb.append(imageName);
     }
     return sb.toString();
-  }
-
-  /** Concatenates the list of images as appropriate. */
-  private List<ImagePlus> concatenate(List<ImagePlus> imps, String stackOrder) {
-    if (!options.isConcatenate()) return imps;
-
-    IFormatReader r = options.getReader();
-
-    List<Integer> widths = new ArrayList<Integer>();
-    List<Integer> heights = new ArrayList<Integer>();
-    List<Integer> types = new ArrayList<Integer>();
-    List<ImagePlus> newImps = new ArrayList<ImagePlus>();
-
-    for (int j=0; j<imps.size(); j++) {
-      ImagePlus imp = imps.get(j);
-      int wj = imp.getWidth();
-      int hj = imp.getHeight();
-      int tj = imp.getBitDepth();
-      boolean append = false;
-      for (int k=0; k<widths.size(); k++) {
-        int wk = ((Integer) widths.get(k)).intValue();
-        int hk = ((Integer) heights.get(k)).intValue();
-        int tk = ((Integer) types.get(k)).intValue();
-
-        if (wj == wk && hj == hk && tj == tk) {
-          ImagePlus oldImp = newImps.get(k);
-          ImageStack is = oldImp.getStack();
-          ImageStack newStack = imp.getStack();
-          for (int s=0; s<newStack.getSize(); s++) {
-            is.addSlice(newStack.getSliceLabel(s + 1),
-              newStack.getProcessor(s + 1));
-          }
-          oldImp.setStack(oldImp.getTitle(), is);
-          newImps.set(k, oldImp);
-          append = true;
-          k = widths.size();
-        }
-      }
-      if (!append) {
-        widths.add(new Integer(wj));
-        heights.add(new Integer(hj));
-        types.add(new Integer(tj));
-        newImps.add(imp);
-      }
-    }
-
-    boolean splitC = options.isSplitChannels();
-    boolean splitZ = options.isSplitFocalPlanes();
-    boolean splitT = options.isSplitTimepoints();
-
-    // TODO: Change IJ.runPlugIn to direct API calls in relevant plugins.
-    // Should not be calling show() here just to make other plugins happy! :-(
-    for (int j=0; j<newImps.size(); j++) {
-      ImagePlus imp = (ImagePlus) newImps.get(j);
-      imp.show();
-      if (splitC || splitZ || splitT) {
-        IJ.runPlugIn("loci.plugins.Slicer", "slice_z=" + splitZ +
-          " slice_c=" + splitC + " slice_t=" + splitT +
-          " stack_order=" + stackOrder + " keep_original=false " +
-          "hyper_stack=" + options.isViewHyperstack() + " ");
-        imp.close();
-      }
-      if (options.isMergeChannels() && options.isWindowless()) {
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true merge_option=[" + options.getMergeOption() + "] " +
-          "series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-        imp.close();
-      }
-      else if (options.isMergeChannels()) {
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-        imp.close();
-      }
-    }
-
-    return newImps;
   }
 
 }

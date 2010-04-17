@@ -132,7 +132,6 @@ public class Importer {
   {
     DisplayHandler displayHandler = new DisplayHandler(options);
     displayHandler.displayOMEXML();
-    // TODO - register resultant XMLWindow with Data Browser when relevant.
   }
 
   public ImagePlus[] readPixels(ImporterOptions options,
@@ -140,11 +139,12 @@ public class Importer {
   {
     if (options.isViewNone()) return null;
     ImagePlusReader ipr = new ImagePlusReader(options);
+    ipr.addStatusListener(displayHandler);
     ImagePlus[] imps = ipr.openImagePlus();
 
     // TEMP!
     displayHandler.displayImages(imps, ipr.stackOrder, ipr.colorModels);
-    
+
     return imps;
   }
 
