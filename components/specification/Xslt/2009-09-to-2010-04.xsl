@@ -60,6 +60,36 @@
 	<!-- default value for non-numerical value when transforming the attribute of concrete shape -->
 	<xsl:variable name="numberDefault" select="1"/>
 
+	<!-- The Enumeration terms to be modified. -->
+	<xsl:variable name="enumeration-maps">
+		<mapping name="ChannelAcquisitionMode">
+			<map from="LaserScanningMicroscopy" to="LaserScanningConfocalMicroscopy"/>
+			<map from="LaserScanningConfocal" to="LaserScanningConfocalMicroscopy"/>
+		</mapping>
+	</xsl:variable>
+
+	<!-- Transform the value coming from an enumeration -->
+	<xsl:template name="transformEnumerationValue">
+		<xsl:param name="mappingName"/>
+		<xsl:param name="value"/>
+		<!-- read the values from the mapping node -->
+		<xsl:variable name="mappingNode"
+			select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
+		<xsl:variable name="newValue" select="($mappingNode)/map[@from=$value]/@to"/>
+		<xsl:variable name="isOptional" select="($mappingNode)/@optional"/>
+		<xsl:choose>
+			<xsl:when test="string-length($newValue) > 0">
+				<xsl:value-of select="$newValue"/>
+			</xsl:when>
+			<xsl:when test="$value = 'Unknown'">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$value"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 	<!-- Actual schema changes -->
 
 	<xsl:template match="SPW:Plate">
@@ -208,9 +238,23 @@
 		<xsl:element name="Channel" namespace="{$newOMENS}">
 			<xsl:for-each
 				select="@* [not((name(.) = 'SecondaryEmissionFilter') or (name(.) = 'SecondaryExcitationFilter'))]">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
+				<xsl:choose>
+					<xsl:when test="local-name(.)='AcquisitionMode'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName" select="'ChannelAcquisitionMode'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 			<xsl:if test="@SecondaryEmissionFilter or @SecondaryExcitationFilter">
