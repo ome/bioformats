@@ -38,7 +38,7 @@
 	</ROI:ROI>
 	<ROI:ROI ID="ROI:2">
 		<ROI:Union>
-			<ROI:Shape ID="Shape:1XXXX?">
+			<ROI:Shape ID="Shape:2">
 				<ChannelRef ID="Channel:3"/>
 				<ROI:Point X="1" Y="1"/>
 			</ROI:Shape>
