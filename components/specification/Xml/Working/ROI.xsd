@@ -129,12 +129,19 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FillRule" use="optional" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>
-						MISSING
-					</xsd:documentation>
-				</xsd:annotation>
+			<xsd:attribute name="FillRule" use="optional">
+				<xsd:simpleType>
+					<xsd:annotation>
+						<xsd:documentation>
+							The rule used to decide which parts of the shape to
+							fill. [enumeration]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="EvenOdd"/>
+						<xsd:enumeration value="NonZero"/>
+					</xsd:restriction>
+				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
 				<xsd:annotation>
@@ -153,7 +160,7 @@
 			<xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						e.g. "none", "10 20 30 10"
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
