@@ -109,7 +109,7 @@
 		<xsd:key name="WellIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ROIIDKey"><xsd:selector xpath="ROI:ROI"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Union/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
 		
 		<xsd:keyref name="DatasetExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Dataset/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="DatasetGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Dataset/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
