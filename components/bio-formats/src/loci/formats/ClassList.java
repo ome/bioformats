@@ -168,7 +168,7 @@ public class ClassList<T> {
 
   @SuppressWarnings("unchecked")
   private Class<? extends T> cast(Class<?> rawClass) {
-    if (!rawClass.isAssignableFrom(base)) return null;
+    if (!base.isAssignableFrom(rawClass)) return null;
     return (Class<? extends T>) rawClass;
   }
 
