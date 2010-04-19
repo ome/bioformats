@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
+ * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,7 +40,7 @@ package loci.formats.enums;
 
 public enum AcquisitionMode implements Enumeration
 {
-  WIDEFIELD("WideField"), LASERSCANNINGMICROSCOPY("LaserScanningMicroscopy"), LASERSCANNINGCONFOCAL("LaserScanningConfocal"), SPINNINGDISKCONFOCAL("SpinningDiskConfocal"), SLITSCANCONFOCAL("SlitScanConfocal"), MULTIPHOTONMICROSCOPY("MultiPhotonMicroscopy"), STRUCTUREDILLUMINATION("StructuredIllumination"), SINGLEMOLECULEIMAGING("SingleMoleculeImaging"), TOTALINTERNALREFLECTION("TotalInternalReflection"), FLUORESCENCELIFETIME("FluorescenceLifetime"), SPECTRALIMAGING("SpectralImaging"), FLUORESCENCECORRELATIONSPECTROSCOPY("FluorescenceCorrelationSpectroscopy"), NEARFIELDSCANNINGOPTICALMICROSCOPY("NearFieldScanningOpticalMicroscopy"), SECONDHARMONICGENERATIONIMAGING("SecondHarmonicGenerationImaging"), OTHER("Other");
+  WIDEFIELD("WideField"), LASERSCANNINGCONFOCALMICROSCOPY("LaserScanningConfocalMicroscopy"), SPINNINGDISKCONFOCAL("SpinningDiskConfocal"), SLITSCANCONFOCAL("SlitScanConfocal"), MULTIPHOTONMICROSCOPY("MultiPhotonMicroscopy"), STRUCTUREDILLUMINATION("StructuredIllumination"), SINGLEMOLECULEIMAGING("SingleMoleculeImaging"), TOTALINTERNALREFLECTION("TotalInternalReflection"), FLUORESCENCELIFETIME("FluorescenceLifetime"), SPECTRALIMAGING("SpectralImaging"), FLUORESCENCECORRELATIONSPECTROSCOPY("FluorescenceCorrelationSpectroscopy"), NEARFIELDSCANNINGOPTICALMICROSCOPY("NearFieldScanningOpticalMicroscopy"), SECONDHARMONICGENERATIONIMAGING("SecondHarmonicGenerationImaging"), PALM("PALM"), STORM("STORM"), STED("STED"), TIRF("TIRF"), FSM("FSM"), LCM("LCM"), OTHER("Other");
   
   private AcquisitionMode(String value)
   {
@@ -54,13 +54,9 @@ public enum AcquisitionMode implements Enumeration
     {
       return WIDEFIELD;
     }
-    if ("LaserScanningMicroscopy".equals(value))
+    if ("LaserScanningConfocalMicroscopy".equals(value))
     {
-      return LASERSCANNINGMICROSCOPY;
-    }
-    if ("LaserScanningConfocal".equals(value))
-    {
-      return LASERSCANNINGCONFOCAL;
+      return LASERSCANNINGCONFOCALMICROSCOPY;
     }
     if ("SpinningDiskConfocal".equals(value))
     {
@@ -105,6 +101,30 @@ public enum AcquisitionMode implements Enumeration
     if ("SecondHarmonicGenerationImaging".equals(value))
     {
       return SECONDHARMONICGENERATIONIMAGING;
+    }
+    if ("PALM".equals(value))
+    {
+      return PALM;
+    }
+    if ("STORM".equals(value))
+    {
+      return STORM;
+    }
+    if ("STED".equals(value))
+    {
+      return STED;
+    }
+    if ("TIRF".equals(value))
+    {
+      return TIRF;
+    }
+    if ("FSM".equals(value))
+    {
+      return FSM;
+    }
+    if ("LCM".equals(value))
+    {
+      return LCM;
     }
     if ("Other".equals(value))
     {

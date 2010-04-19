@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
+ * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,7 +40,7 @@ package loci.formats.enums;
 
 public enum FilterType implements Enumeration
 {
-  LONGPASS("LongPass"), SHORTPASS("ShortPass"), BANDPASS("BandPass"), MULTIPASS("MultiPass"), OTHER("Other");
+  DICHROIC("Dichroic"), LONGPASS("LongPass"), SHORTPASS("ShortPass"), BANDPASS("BandPass"), MULTIPASS("MultiPass"), NEUTRALDENSITY("NeutralDensity"), OTHER("Other");
   
   private FilterType(String value)
   {
@@ -50,6 +50,10 @@ public enum FilterType implements Enumeration
   public static FilterType fromString(String value)
     throws EnumerationException
   {
+    if ("Dichroic".equals(value))
+    {
+      return DICHROIC;
+    }
     if ("LongPass".equals(value))
     {
       return LONGPASS;
@@ -65,6 +69,10 @@ public enum FilterType implements Enumeration
     if ("MultiPass".equals(value))
     {
       return MULTIPASS;
+    }
+    if ("NeutralDensity".equals(value))
+    {
+      return NEUTRALDENSITY;
     }
     if ("Other".equals(value))
     {

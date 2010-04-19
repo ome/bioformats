@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:41:25+0000
+ * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,7 +40,7 @@ package loci.formats.enums;
 
 public enum MicrobeamManipulationType implements Enumeration
 {
-  FRAP("FRAP"), PHOTOABLATION("Photoablation"), PHOTOACTIVATION("Photoactivation"), UNCAGING("Uncaging"), OPTICALTRAPPING("OpticalTrapping"), OTHER("Other");
+  FRAP("FRAP"), FLIP("FLIP"), INVERSEFRAP("InverseFRAP"), PHOTOABLATION("Photoablation"), PHOTOACTIVATION("Photoactivation"), UNCAGING("Uncaging"), OPTICALTRAPPING("OpticalTrapping"), OTHER("Other");
   
   private MicrobeamManipulationType(String value)
   {
@@ -53,6 +53,14 @@ public enum MicrobeamManipulationType implements Enumeration
     if ("FRAP".equals(value))
     {
       return FRAP;
+    }
+    if ("FLIP".equals(value))
+    {
+      return FLIP;
+    }
+    if ("InverseFRAP".equals(value))
+    {
+      return INVERSEFRAP;
     }
     if ("Photoablation".equals(value))
     {
