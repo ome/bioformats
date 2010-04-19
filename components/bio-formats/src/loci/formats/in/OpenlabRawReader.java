@@ -51,6 +51,8 @@ public class OpenlabRawReader extends FormatReader {
 
   public static final String OPENLAB_RAW_MAGIC_STRING = "OLRW";
 
+  private static final int HEADER_SIZE = 288;
+
   // -- Fields --
 
   /** Offset to each image's pixel data. */
@@ -85,7 +87,7 @@ public class OpenlabRawReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(offsets[no / getSizeC()] + 288);
+    in.seek(offsets[no / getSizeC()] + HEADER_SIZE);
     readPlane(in, x, y, w, h, buf);
 
     if (FormatTools.getBytesPerPixel(getPixelType()) == 1) {
@@ -123,7 +125,7 @@ public class OpenlabRawReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    addGlobalMeta("Version", in.readInt());
+    int version = in.readInt();
 
     core[0].imageCount = in.readInt();
     offsets = new int[getImageCount()];
@@ -145,27 +147,23 @@ public class OpenlabRawReader extends FormatReader {
     else stampMs = System.currentTimeMillis();
 
     String stamp = DateTools.convertDate(stampMs, DateTools.UNIX);
-    addGlobalMeta("Timestamp", stamp);
 
     in.skipBytes(4);
     int len = in.read() & 0xff;
-    addGlobalMeta("Image name", in.readString(len - 1).trim());
+    String imageName = in.readString(len - 1).trim();
 
     if (getSizeC() <= 1) core[0].sizeC = 1;
     else core[0].sizeC = 3;
-    addGlobalMeta("Width", getSizeX());
-    addGlobalMeta("Height", getSizeY());
-    addGlobalMeta("Bytes per pixel", bytesPerPixel);
 
     int plane = getSizeX() * getSizeY() * bytesPerPixel;
     for (int i=1; i<getImageCount(); i++) {
-      offsets[i] = offsets[i - 1] + 288 + plane;
+      offsets[i] = offsets[i - 1] + HEADER_SIZE + plane;
     }
 
     core[0].sizeZ = getImageCount();
     core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYZTC";
     core[0].rgb = getSizeC() > 1;
+    core[0].dimensionOrder = isRGB() ? "XYCZT" : "XYZTC";
     core[0].interleaved = false;
     core[0].littleEndian = false;
     core[0].metadataComplete = true;
@@ -184,11 +182,19 @@ public class OpenlabRawReader extends FormatReader {
         core[0].pixelType = FormatTools.FLOAT;
     }
 
+    addGlobalMeta("Width", getSizeX());
+    addGlobalMeta("Height", getSizeY());
+    addGlobalMeta("Bytes per pixel", bytesPerPixel);
+    addGlobalMeta("Image name", imageName);
+    addGlobalMeta("Timestamp", stamp);
+    addGlobalMeta("Version", version);
+
     // The metadata store we're working with.
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     store.setImageCreationDate(stamp, 0);
+    store.setImageName(imageName, 0);
   }
 
 }

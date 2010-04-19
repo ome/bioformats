@@ -132,7 +132,7 @@ public class PCXReader extends FormatReader {
     LOGGER.info("Reading file header");
 
     core[0].littleEndian = true;
-    in.order(true);
+    in.order(isLittleEndian());
     in.seek(1);
     int version = in.read();
     in.skipBytes(1);
@@ -145,16 +145,15 @@ public class PCXReader extends FormatReader {
     core[0].sizeX = xMax - xMin;
     core[0].sizeY = yMax - yMin;
 
-    int vertDPI = in.readShort();
-    int horizDPI = version == 5 ? in.readShort() : 1;
-
-    in.skipBytes(49);
+    in.skipBytes(version == 5 ? 53 : 51);
 
     nColorPlanes = in.read();
     bytesPerLine = in.readShort();
     int paletteType = in.readShort();
 
     offset = in.getFilePointer() + 58;
+
+    addGlobalMeta("Palette type", paletteType);
 
     core[0].sizeZ = 1;
     core[0].sizeT = 1;

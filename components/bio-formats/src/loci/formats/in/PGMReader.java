@@ -26,8 +26,10 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -87,22 +89,28 @@ public class PGMReader extends FormatReader {
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      int pt = 0;
-      while (true) {
+      ByteArrayHandle handle = new ByteArrayHandle();
+      RandomAccessOutputStream out = new RandomAccessOutputStream(handle);
+      out.order(isLittleEndian());
+
+      while (in.getFilePointer() < in.length()) {
         String line = in.readLine().trim();
         line = line.replaceAll("[^0-9]", " ");
         StringTokenizer t = new StringTokenizer(line, " ");
         while (t.hasMoreTokens()) {
           int q = Integer.parseInt(t.nextToken().trim());
           if (getPixelType() == FormatTools.UINT16) {
-            DataTools.unpackBytes(q, buf, pt, 2, isLittleEndian());
-            pt += 2;
+            out.writeShort(q);
           }
-          else {
-            buf[pt++] = (byte) q;
-          }
+          else out.writeByte(q);
         }
       }
+
+      out.close();
+      RandomAccessInputStream s = new RandomAccessInputStream(handle);
+      s.seek(0);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
     }
 
     return buf;
@@ -136,10 +144,9 @@ public class PGMReader extends FormatReader {
     while (line.startsWith("#") || line.length() == 0) line = in.readLine();
 
     line = line.replaceAll("[^0-9]", " ");
-    core[0].sizeX =
-      Integer.parseInt(line.substring(0, line.indexOf(" ")).trim());
-    core[0].sizeY =
-      Integer.parseInt(line.substring(line.indexOf(" ") + 1).trim());
+    int space = line.indexOf(" ");
+    core[0].sizeX = Integer.parseInt(line.substring(0, space).trim());
+    core[0].sizeY = Integer.parseInt(line.substring(space + 1).trim());
 
     if (!isBlackAndWhite) {
       int max = Integer.parseInt(in.readLine().trim());
@@ -148,6 +155,8 @@ public class PGMReader extends FormatReader {
     }
 
     offset = in.getFilePointer();
+
+    addGlobalMeta("Black and white", isBlackAndWhite);
 
     core[0].rgb = getSizeC() == 3;
     core[0].dimensionOrder = "XYCZT";
