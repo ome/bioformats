@@ -68,6 +68,15 @@
 			<map from="LaserScanningMicroscopy" to="LaserScanningConfocalMicroscopy"/>
 			<map from="LaserScanningConfocal" to="LaserScanningConfocalMicroscopy"/>
 		</mapping>
+		<mapping name="ShapeFillRule">
+			<map from="even-odd" to="EvenOdd"/>
+			<map from="Even-Odd" to="EvenOdd"/>
+			<map from="evenodd" to="EvenOdd"/>
+			<map from="Non-Zero" to="NonZero"/>
+			<map from="Nonzero" to="NonZero"/>
+			<map from="nonzero" to="NonZero"/>
+			<map from="non-zero" to="NonZero"/>
+		</mapping>
 	</xsl:variable>
 
 	<!-- Transform the value coming from an enumeration -->
@@ -101,42 +110,38 @@
 		</xsl:variable>
 		<xsl:element name="{name()}" namespace="{$newSPWNS}">
 			<!-- copy all attributes except DefaultSample -->
+			<xsl:apply-templates select="@*"/>
 			<xsl:for-each select="@* [not(name(.) = 'DefaultSample')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
 			
-			<!-- PlateAcquisition -->
-			<xsl:variable name="wellCount">
-				<xsl:value-of select="count(* [local-name(.)='Well'])"/>
-			</xsl:variable>
+			<!-- Copy unchanged children -->
 			<xsl:apply-templates select="* [local-name(.)='Description']"/>
 			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
 
-			<xsl:comment> Total Wells: <xsl:number value="$wellCount"/>
-			</xsl:comment>
+
+			<!-- begin copying Well (and adding WellSampleIndex) -->
+			<xsl:variable name="wellCount">
+				<xsl:value-of select="count(* [local-name(.)='Well'])"/>
+			</xsl:variable>
 			<xsl:for-each select="* [local-name(.)='Well']">
 				<xsl:variable name="wellNumber">
 					<xsl:number value="position()"/>
 				</xsl:variable>
-				<xsl:comment> Process Well #<xsl:number value="$wellNumber"/>
-				</xsl:comment>
 				<xsl:call-template name="convertWell">
 					<xsl:with-param name="wellNode" select="."/>
 					<xsl:with-param name="wellCount" select="$wellCount"/>
 					<xsl:with-param name="wellNumber" select="$wellNumber"/>
 				</xsl:call-template>
 			</xsl:for-each>
+			<!-- end copying Well -->
+			
+			<!-- Copy unchanged children -->
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
 
-			<!--
-				get a list of all the ScreenAcquisitions that 
-				have a WellSampleRef 
-				to a WellSample 
-				in a Well 
-				in the current Plate
-			-->
+			<!-- begin creating PlateAcquisition -->
 			<xsl:variable name="allWellSamples">
 				<xsl:value-of select="descendant::* [local-name(.)='WellSample']"/>
 			</xsl:variable>
@@ -147,6 +152,13 @@
 				<xsl:comment>Wellsample2</xsl:comment>
 			</xsl:for-each>
 			<xsl:for-each select="* [local-name(.)='ScreenRef']">
+				<!--
+					get a list of all the ScreenAcquisitions that 
+					have a WellSampleRef 
+					to a WellSample 
+					in a Well 
+					in the current Plate
+				-->
 				<xsl:variable name="associatedScreenAcquisitions">
 					<xsl:call-template name="getAssociatedScreenAcquisitions">
 						<xsl:with-param name="allScreenAcquisitions">
@@ -169,12 +181,14 @@
 					</xsl:element>
 				</xsl:for-each>
 			</xsl:for-each>
+			<!-- end creating PlateAcquisition -->
 		</xsl:element>
 	</xsl:template>
 
 	<xsl:template name="getAssociatedScreenAcquisitions">
 		<xsl:param name="allScreenAcquisitions"/>
 		<xsl:param name="allWellSamples"/>
+		<!-- FIX -->
 	</xsl:template>
 
 	<!-- SPW:Well - passing values through to well sample template -->
@@ -265,43 +279,68 @@
 		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="OME:Instrument">
-		<xsl:element name="Instrument" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:apply-templates select="node() [not (local-name(.)='CCCCC')]"/>
-			<!-- FIX ME
-				<xsl:for-each
-				select="@* [not((name(.) = 'AAAAA') or (name(.) = 'BBBBB'))]">
-				<xsl:attribute name="{local-name(.)}">
-				<xsl:value-of select="."/>
-				</xsl:attribute>
-				</xsl:for-each>
-			-->
-		</xsl:element>
-	</xsl:template>
-
-	<xsl:template match="OME:Image">
-		<xsl:element name="Image" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:apply-templates select="node()"/>
-			<!-- FIX ME
-				Need to add an ROIRef for each ROI that has a channel Ref pointing
-				to this Image
-			-->
-		</xsl:element>
-	</xsl:template>
-
+	<!-- Convert ChannelRef to TheC, Move ShapeDisplayOptions attributes onto Shape -->
 	<xsl:template match="ROI:Shape">
 		<xsl:element name="Shape" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*"/>
-			<xsl:apply-templates select="node()"/>
+			<!-- Move ShapeDisplayOptions attributes onto Shape -->
+			<xsl:for-each select="* [local-name(.)='ShapeDisplayOptions']">
+				<xsl:for-each select="@*">
+					<xsl:choose>
+						<xsl:when test="local-name(.)='FillRule'">
+							<xsl:attribute name="{local-name(.)}">
+								<xsl:call-template name="transformEnumerationValue">
+									<xsl:with-param name="mappingName" select="'ShapeFillRule'"/>
+									<xsl:with-param name="value">
+										<xsl:value-of select="."/>
+									</xsl:with-param>
+								</xsl:call-template>
+							</xsl:attribute>
+						</xsl:when>
+						<xsl:when test="local-name(.)='Text'">
+							<xsl:attribute name="Label">
+								<xsl:value-of select="."/>
+							</xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:attribute name="{local-name(.)}">
+								<xsl:value-of select="."/>
+							</xsl:attribute>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:for-each>
+			</xsl:for-each>
+
+			<!-- If there is only ONE ChannelRef -->
+			<!-- Find the Channel number of the ChannelRef and store it in TheC -->
+			<xsl:if test="count(* [local-name(.)='ChannelRef']) = 1">
+				<xsl:for-each select="* [local-name(.)='ChannelRef']">
+					<xsl:variable name="theChannelID">
+						<xsl:value-of select="@ID"/>
+					</xsl:variable>
+					<xsl:variable name="theChannelNumber">
+						<xsl:for-each select="//Channel [@ID='{$theChannelID}']">
+							<xsl:value-of select="."/>
+						</xsl:for-each>
+						<xsl:text/>
+					</xsl:variable>
+					<xsl:attribute name="TheC">
+						<xsl:value-of select="$theChannelNumber"/>
+					</xsl:attribute>
+				</xsl:for-each>
+			</xsl:if>
+			<!-- Else do not store a TheC value so the ROI applies to all channels of the image-->
+
 			<!-- 
-				FIX ME
-				Need to convert the ChannelRef to theC and make duplicate shapes
-				under union of have more than one ChannelRef.
-				
-				Need to move display options to attributes of Shape
+				TODO: Enhancement
+				If there are multiple ChannelRef make duplicate shapes
+				under Union each with one TheC
 			-->
+
+			<!-- Copy any children apart from ChannelRef and ShapeDisplayOptions -->
+			<xsl:apply-templates
+				select="node() [not((local-name(.)='ChannelRef') or (local-name(.)='ShapeDisplayOptions'))]"
+			/>
 		</xsl:element>
 	</xsl:template>
 

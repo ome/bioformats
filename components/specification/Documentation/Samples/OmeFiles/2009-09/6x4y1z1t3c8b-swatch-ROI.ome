@@ -41,6 +41,7 @@
 			<ROI:Shape ID="Shape:2">
 				<ChannelRef ID="Channel:3"/>
 				<ROI:Point X="1" Y="1"/>
+				<ROI:ShapeDisplayOptions Fill="1" FillRule="non-zero" FontFamily="Arial" FontSize="1" FontStyle="Bold" LineCap="Butt" MarkerStart="Arrow" MarkerEnd="Circle" Stroke="1" StrokeDashArray="1" StrokeWidth="1" Text="Hello"/>
 			</ROI:Shape>
 		</ROI:Union>
 	</ROI:ROI>
@@ -50,6 +51,15 @@
 				<ChannelRef ID="Channel:1"/>
 				<ChannelRef ID="Channel:2"/>
 				<ROI:Point X="1" Y="1"/>
+				<ROI:ShapeDisplayOptions FillRule="EvenOdd" Text="Hi There!"/>
+			</ROI:Shape>
+			<ROI:Shape ID="Shape:4">
+				<ChannelRef ID="Channel:1"/>
+				<ChannelRef ID="Channel:2"/>
+				<ROI:Text X="1" Y="1">
+					<ROI:Value>Hello World!</ROI:Value>
+				</ROI:Text>
+				<ROI:ShapeDisplayOptions FillRule="EvenOdd"/>
 			</ROI:Shape>
 		</ROI:Union>
 	</ROI:ROI>
