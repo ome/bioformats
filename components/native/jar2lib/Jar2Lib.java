@@ -121,6 +121,43 @@ public class Jar2Lib {
 		}
 	}
 
+	public void createCMakeList() {
+		String headerFile = "CMakeLists.txt";
+		String headerLabel = headerFileName;
+
+		// initialize Velocity
+		VelocityEngine ve = null;
+		VelocityContext context = null;
+		try {
+			ve = VelocityTools.createEngine();
+			context = VelocityTools.createContext();
+		} catch (Exception e) {
+			System.err.println("Exception caught from Velocity");
+			e.printStackTrace();
+		}
+	
+		// parse header file template
+		SourceList cList = null;
+		try {
+			cList = new SourceList(sourceOutputPath, ".c:.cxx:.cpp");
+		} catch (IOException ioe) {
+			System.err.println("IO Exception caught from SourceList");
+			ioe.printStackTrace();
+		}
+	
+		context.put("headerFile", headerFile);
+		context.put("headerLabel", headerLabel);
+		context.put("q", cList);
+	
+		// generate CMakeLists.txt file
+		try {
+			VelocityTools.processTemplate(ve, context, "jace/cmake.vm", headerFile);
+		} catch (Exception e) {
+				System.err.println("Exception caught from VelocityTools.processTemplate");
+				e.printStackTrace();
+		}
+	}
+
 	public void createJaceHeader() {
 		String headerFile = headerFileName + ".h";
 		String headerLabel = headerFile.toUpperCase().replaceAll("\\W", "_");
@@ -139,11 +176,7 @@ public class Jar2Lib {
 		// parse header file template
 		SourceList javaList = null;
 		try {
-			if (jarFileName != null) {
-				javaList = new SourceList(new JarFile(jarFileName));
-			} else {
-				javaList = new SourceList(sourceInputPath);
-			}
+			javaList = new SourceList(sourceInputPath, ".java");
 		} catch (IOException ioe) {
 			System.err.println("IO Exception caught from SourceList");
 			ioe.printStackTrace();
@@ -296,5 +329,7 @@ public class Jar2Lib {
 		jar2Lib.createJaceHeader();
 
 		jar2Lib.runAutoProxy();
+
+		jar2Lib.createCMakeList();
 	}
 }
