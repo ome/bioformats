@@ -41,13 +41,15 @@
 	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2010-04</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2010-04</xsl:variable>
-	<xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04</xsl:variable>
+	<xsl:variable name="newBINNS"
+		>http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04</xsl:variable>
 	<xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2010-04</xsl:variable>
 	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2010-04</xsl:variable>
 
@@ -92,28 +94,34 @@
 
 	<!-- Actual schema changes -->
 
+	<!-- Create PlateAcquisition, Remove DefaultSample -->
 	<xsl:template match="SPW:Plate">
-		<xsl:variable name="plateID"><xsl:value-of select="@* [name() = 'ID']"/></xsl:variable>
+		<xsl:variable name="plateID">
+			<xsl:value-of select="@* [name() = 'ID']"/>
+		</xsl:variable>
 		<xsl:element name="{name()}" namespace="{$newSPWNS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="wellCount"><xsl:value-of select="count(* [local-name(.)='Well'])"/></xsl:variable>
+			<!-- copy all attributes except DefaultSample -->
+			<xsl:for-each select="@* [not(name(.) = 'DefaultSample')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			
+			<!-- PlateAcquisition -->
+			<xsl:variable name="wellCount">
+				<xsl:value-of select="count(* [local-name(.)='Well'])"/>
+			</xsl:variable>
 			<xsl:apply-templates select="* [local-name(.)='Description']"/>
 			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
-			
-			<!-- unused wellSampleCount
-			<xsl:variable name="wellSampleCount">
-				<xsl:call-template name="maxWellSampleCount">
-					<xsl:with-param name="wellList" select="* [local-name(.)='Well']"/>
-					<xsl:with-param name="wellIndex" select="count(* [local-name(.)='Well'])"/>
-				</xsl:call-template>
-			</xsl:variable>
-			<xsl:comment> Max Well Sample: <xsl:number value="$wellSampleCount"/> </xsl:comment>
-			-->
-			
-			<xsl:comment> Total Wells: <xsl:number value="$wellCount"/> </xsl:comment>
+
+			<xsl:comment> Total Wells: <xsl:number value="$wellCount"/>
+			</xsl:comment>
 			<xsl:for-each select="* [local-name(.)='Well']">
-				<xsl:variable name="wellNumber"><xsl:number value="position()"/></xsl:variable>
-				<xsl:comment> Process Well #<xsl:number value="$wellNumber"/> </xsl:comment>
+				<xsl:variable name="wellNumber">
+					<xsl:number value="position()"/>
+				</xsl:variable>
+				<xsl:comment> Process Well #<xsl:number value="$wellNumber"/>
+				</xsl:comment>
 				<xsl:call-template name="convertWell">
 					<xsl:with-param name="wellNode" select="."/>
 					<xsl:with-param name="wellCount" select="$wellCount"/>
@@ -121,7 +129,7 @@
 				</xsl:call-template>
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
-			
+
 			<!--
 				get a list of all the ScreenAcquisitions that 
 				have a WellSampleRef 
@@ -141,13 +149,18 @@
 			<xsl:for-each select="* [local-name(.)='ScreenRef']">
 				<xsl:variable name="associatedScreenAcquisitions">
 					<xsl:call-template name="getAssociatedScreenAcquisitions">
-						<xsl:with-param name="allScreenAcquisitions"><xsl:value-of select="$allWellSamples"/></xsl:with-param>
-						<xsl:with-param name="allWellSamples"><xsl:value-of select="$allWellSamples"/></xsl:with-param>
+						<xsl:with-param name="allScreenAcquisitions">
+							<xsl:value-of select="$allWellSamples"/>
+						</xsl:with-param>
+						<xsl:with-param name="allWellSamples">
+							<xsl:value-of select="$allWellSamples"/>
+						</xsl:with-param>
 					</xsl:call-template>
 				</xsl:variable>
 				<xsl:for-each select="$associatedScreenAcquisitions">
 					<xsl:element name="PlateAcquisition" namespace="{$newSPWNS}">
-						<xsl:attribute name="ID">PlateAcquisition:<xsl:value-of select="$plateID"/>:<xsl:value-of select="@* [name() = 'ID']"/></xsl:attribute>
+						<xsl:attribute name="ID">PlateAcquisition:<xsl:value-of select="$plateID"
+								/>:<xsl:value-of select="@* [name() = 'ID']"/></xsl:attribute>
 						<xsl:for-each select="@* [not(name() = 'ID')]">
 							<xsl:attribute name="{local-name(.)}">
 								<xsl:value-of select="."/>
@@ -158,47 +171,12 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template name="getAssociatedScreenAcquisitions">
 		<xsl:param name="allScreenAcquisitions"/>
 		<xsl:param name="allWellSamples"/>
 	</xsl:template>
-	
-	<!-- unused maxWellSampleCount
-	<xsl:template name="maxWellSampleCount">
-		<xsl:param name="wellList"/>
-		<xsl:param name="wellIndex"/>
-		<xsl:variable name="currentWellCount">
-			<xsl:for-each select="$wellList">
-				<xsl:if test="position() = $wellIndex">
-					<xsl:value-of select="count(* [local-name(.)='WellSample'])"/>
-				</xsl:if>
-			</xsl:for-each>
-		</xsl:variable>
-		<xsl:variable name="currentMaxWellCount">
-			<xsl:choose>
-				<xsl:when test="$wellIndex &lt; 0">
-					<xsl:value-of select="0"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:call-template name="maxWellSampleCount">
-						<xsl:with-param name="wellList" select="$wellList"/>
-						<xsl:with-param name="wellIndex" select="$wellIndex - 1"/>
-					</xsl:call-template>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:choose>
-			<xsl:when test="$currentMaxWellCount &lt; $currentWellCount">
-				<xsl:value-of select="$currentWellCount"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="$currentMaxWellCount"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-	-->
-	
+
 	<!-- SPW:Well - passing values through to well sample template -->
 	<xsl:template name="convertWell">
 		<xsl:param name="wellNode"/>
@@ -231,9 +209,16 @@
 			<xsl:apply-templates select="*"/>
 		</xsl:element>
 	</xsl:template>
-	
-	<xsl:template match="SPW:ScreenAcquisition"/> <!-- Remove as converted to PlateAcquisition -->
-	
+
+	<xsl:template match="SPW:ScreenAcquisition"/>
+	<!-- Remove as converted to PlateAcquisition -->
+
+	<!-- 
+		Althought FilterSet has changed the old content is compatible with the 
+		new structure so no processing needed.
+	-->
+
+	<!-- Remove Secondary Filters, Create LightPath, Update AcquisitionMode enumeration -->
 	<xsl:template match="OME:Channel">
 		<xsl:element name="Channel" namespace="{$newOMENS}">
 			<xsl:for-each
@@ -283,14 +268,39 @@
 	<xsl:template match="OME:Instrument">
 		<xsl:element name="Instrument" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="node() [not (local-name(.)='CCCCC')]"/>
+			<!-- FIX ME
+				<xsl:for-each
+				select="@* [not((name(.) = 'AAAAA') or (name(.) = 'BBBBB'))]">
+				<xsl:attribute name="{local-name(.)}">
+				<xsl:value-of select="."/>
+				</xsl:attribute>
+				</xsl:for-each>
+			-->
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Image">
+		<xsl:element name="Image" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="node()"/>
 			<!-- FIX ME
-			<xsl:for-each
-				select="@* [not((name(.) = 'AAA') or (name(.) = 'BBB'))]">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
-			</xsl:for-each>
+				Need to add an ROIRef for each ROI that has a channel Ref pointing
+				to this Image
+			-->
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="ROI:Shape">
+		<xsl:element name="Shape" namespace="{$newROINS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="node()"/>
+			<!-- 
+				FIX ME
+				Need to convert the ChannelRef to theC and make duplicate shapes
+				under union of have more than one ChannelRef.
+				
+				Need to move display options to attributes of Shape
 			-->
 		</xsl:element>
 	</xsl:template>
@@ -305,7 +315,7 @@
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd">
-<!-- FIX SCHEMA LOCATION -->
+			<!-- FIX SCHEMA LOCATION -->
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>
@@ -334,19 +344,29 @@
 		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="CA:*"> <!-- Removed -->
+	<xsl:template match="ROI:*">
+		<xsl:element name="{name()}" namespace="{$newROINS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="CA:*">
+		<!-- Removed -->
 		<xsl:comment> Old Custom Attributes Removed </xsl:comment>
 	</xsl:template>
-	
-	<xsl:template match="STD:*"> <!-- Removed -->
+
+	<xsl:template match="STD:*">
+		<!-- Removed -->
 		<xsl:comment> Old Semantic Type Definitions Removed </xsl:comment>
 	</xsl:template>
 
-	<xsl:template match="MLI:*"> <!-- Removed -->
+	<xsl:template match="MLI:*">
+		<!-- Removed -->
 		<xsl:comment> Old Matlab Interface Removed </xsl:comment>
 	</xsl:template>
 
-	<xsl:template match="CLI:*"> <!-- Removed -->
+	<xsl:template match="CLI:*">
+		<!-- Removed -->
 		<xsl:comment> Old Command Line Interface Removed </xsl:comment>
 	</xsl:template>
 
