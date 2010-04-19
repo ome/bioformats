@@ -128,7 +128,7 @@ def main(args):
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
-		f = open(os.path.join(outputDirectory, "%sNode.java" % obj.name), "w")
+		f = open(os.path.join(outputDirectory, "%s.java" % obj.name), "w")
 		classContent = template.generate(fu=fu, klass=obj).render()
 		f.write(classContent)
 		f.close()
@@ -389,7 +389,7 @@ def debugMain(args):
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
-		if obj.name in ["Detector"]:
+		if obj.name in ["FilterSet"]:
 			print " +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type)
 			for prop in obj.properties.values():
 				print " +---- %s(%s) [%d:%d]" % \

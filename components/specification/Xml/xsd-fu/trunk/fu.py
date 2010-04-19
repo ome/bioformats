@@ -33,6 +33,8 @@ from xml import sax
 from posix import getuid
 from pwd import getpwuid
 
+from util import odict
+
 try:
 	import mx.DateTime as DateTime
 	def now():
@@ -84,12 +86,12 @@ def updateTypeMaps(namespace):
 		'NamingConvention': 'String',
 		'PercentFraction': 'Double',
 		'MIMEtype': 'String',
-		'RedChannel': 'ChannelSpecTypeNode',
-		'GreenChannel': 'ChannelSpecTypeNode',
-		'BlueChannel': 'ChannelSpecTypeNode',
+#		'RedChannel': 'ChannelSpecTypeNode',
+#		'GreenChannel': 'ChannelSpecTypeNode',
+#		'BlueChannel': 'ChannelSpecTypeNode',
 		'AcquiredPixelsRef': 'PixelsNode',
 		'Description': 'String',
-		'Leader': 'ExperimenterRefNode',
+#		'Leader': 'ExperimenterRefNode',
 	}
 	
 	global JAVA_BASE_TYPE_MAP
@@ -98,13 +100,13 @@ def updateTypeMaps(namespace):
 	}
 
 # The list of properties not to process.
-DO_NOT_PROCESS = ["ID"]
+DO_NOT_PROCESS = [] #["ID"]
 
 # Default root XML Schema namespace
 DEFAULT_NAMESPACE = "xsd:"
 
 # The default Java base class for OME XML model objects.
-DEFAULT_BASE_CLASS = "OMEXMLNode"
+DEFAULT_BASE_CLASS = "Object"
 
 # The default Java package for OME XML model objects.
 DEFAULT_PACKAGE = "ome.xml.r2008"
@@ -116,7 +118,7 @@ ENUM_TEMPLATE = "templates/Enum.template"
 ENUM_HANDLER_TEMPLATE = "templates/EnumHandler.template"
 
 # The default template for class processing.
-CLASS_TEMPLATE = "templates/Class.template"
+CLASS_TEMPLATE = "templates/Pojo.template"
 
 # The default template for MetadataStore processing.
 METADATA_STORE_TEMPLATE = "templates/MetadataStore.template"
@@ -195,7 +197,11 @@ class OMEModelProperty(object):
 	oriented language instance variable which may be of a singular type or a 
 	collection.
 	"""
-	
+
+	REF_REGEX = re.compile(r'Ref$|RefNode$')
+
+	LOWER_CASE_REGEX = re.compile(r'[a-z]')
+
 	def __init__(self, delegate, parent, model):
 		self.model = model
 		self.delegate = delegate
@@ -258,52 +264,95 @@ class OMEModelProperty(object):
 			# Handle XML Schema types that directly map to Java types
 			return JAVA_TYPE_MAP[self.type]
 		except KeyError:
-			# Hand back the type of references
-			if self.isReference:
-				return self.type
+			# Hand back the type of references or complex types with the
+			# useless OME XML 'Ref' suffix removed.
+			if self.isReference or \
+			   (not self.isAttribute and self.delegate.isComplex()):
+				return self.REF_REGEX.sub('', self.type)
 			# Hand back the type of complex types
 			if not self.isAttribute and self.delegate.isComplex():
-				return self.type + "Node"
-			# Handle OME XML Schema "ID" types
-			if self.type[-2:] == "ID":
-				return self.type[:-2] + "Node"
-			elif not self.isEnumeration:
+				return self.type
+			if not self.isEnumeration:
 				# We have a property whose type was defined by a top level 
 				# simpleType. 
 				getSimpleType = self.model.getTopLevelSimpleType
-				simpleType = getSimpleType(self.type)
-				if simpleType is not None:
-					try:
-						# It's possible the simpleType is a union of other
-						# simpleTypes so we need to handle that. We assume
-						# that all the unioned simpleTypes are of the same
-						# base type (ex. "xsd:string" or "xsd:float").
-						if simpleType.unionOf:
-							union = getSimpleType(simpleType.unionOf[0])
+				simpleTypeName = self.type
+				while True:
+					simpleType = getSimpleType(simpleTypeName)
+					if simpleType is None:
+						logging.debug("No simpleType found with name: %s" % \
+								simpleTypeName)
+						# Handle cases where the simple type is prefixes by
+						# a namespace definition. (ex. OME:LSID).
+						namespaceless = simpleTypeName.split(':')[-1]
+						if namespaceless != simpleTypeName:
+							simpleTypeName = namespaceless
+							continue
+						break
+					logging.debug("%s simpleType dump: %s" % \
+							(self, simpleType.__dict__))
+					# It's possible the simpleType is a union of other
+					# simpleTypes so we need to handle that. We assume
+					# that all the unioned simpleTypes are of the same
+					# base type (ex. "xsd:string" or "xsd:float").
+					if simpleType.unionOf:
+						union = getSimpleType(simpleType.unionOf[0])
+						try:
 							return JAVA_TYPE_MAP[union.getBase()]
+						except KeyError:
+							simpleTypeName = union.getBase()
+					"""
+					base = simpleType.base
+
+					match = self.BASE_NAMESPACE_REGEX.match(base)
+					if match:
+						base = match.group(1)
+					simpleTypeBase = getSimpleType(base)
+					if simpleTypeBase is not None:
+						base = simpleTypeBase.getBase()
+						return JAVA_TYPE_MAP[base]
+					"""
+					try:
 						return JAVA_TYPE_MAP[simpleType.getBase()]
 					except KeyError:
-						pass
+						simpleTypeName = simpleType.getBase()
+			logging.debug("%s dump: %s" % (self, self.__dict__))
+			logging.debug("%s delegate dump: %s" % (self, self.delegate.__dict__))
 			raise ModelProcessingError, \
 				"Unable to find %s Java type for %s" % (self.name, self.type)
 	javaType = property(_get_javaType, doc="""The property's Java type.""")
 
 	def _get_metadataStoreType(self):
-		javaType = self.javaType
-		if javaType[-4:] == "Node":
-			return "String"
+		# FIXME: No more node
+		#javaType = self.javaType
+		#if javaType[-4:] == "Node":
+		#	return "String"
 		return javaType
 	metadataStoreType = property(_get_metadataStoreType,
 			                     doc="""The property's MetadataStore type.""")
 	
 	def _get_javaArgumentName(self):
-		m = re.search ('[a-z]', self.name)
-		if not m: return self.name.lower()
+		argumentName = self.REF_REGEX.sub('', self.name)
+		m = self.LOWER_CASE_REGEX.search(argumentName)
+		if not m:
+			return argumentName.lower()
 		i = m.start()
-		return self.name[:i].lower() + self.name[i:]
+		return argumentName[:i].lower() + argumentName[i:]
 	javaArgumentName = property(_get_javaArgumentName,
 		doc="""The property's Java argument name (camelCase).""")
-		
+	
+	def _get_javaMethodName(self):
+		return self.REF_REGEX.sub('', self.name)
+	javaMethodName = property(_get_javaMethodName,
+		doc="""The property's Java method name.""")
+
+	def _get_javaInstanceVariableName(self):
+		if self.maxOccurs > 1:
+			return self.javaArgumentName + 'List';
+		return self.javaArgumentName
+	javaInstanceVariableName = property(_get_javaInstanceVariableName,
+		doc="""The property's Java instance variable name.""")
+
 	def _get_isEnumeration(self):
 		v = self.delegate.getValues()
 		if v is not None and len(v) > 0:
@@ -368,7 +417,7 @@ class OMEModelObject(object):
 		self.base = element.getBase()
 		self.name = element.getName()
 		self.type = element.getType()
-		self.properties = dict()
+		self.properties = odict()
 		if hasattr(element, 'appinfo') and element.appinfo == 'abstract':
 			self.isAbstract = True
 		else:
@@ -398,7 +447,7 @@ class OMEModelObject(object):
 			base = self.element.attrs['type']
 		if base is None:
 			return DEFAULT_BASE_CLASS
-		return base + "Node"
+		return base
 	javaBase = property(_get_javaBase, 
 		doc="""The model object's Java base class.""")
 
@@ -425,7 +474,7 @@ class OMEModelObject(object):
 	
 class OMEModel(object):
 	def __init__(self):
-		self.objects = dict()
+		self.objects = odict()
 		self.parents = dict()
 		
 	def addObject(self, element, obj):

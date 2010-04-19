@@ -1,0 +1,217 @@
+/*
+ * ${fu.package}.${klass.name}
+ *
+ *-----------------------------------------------------------------------------
+ *
+ *  Copyright (C) 2010 Open Microscopy Environment
+ *      Massachusetts Institute of Technology,
+ *      National Institutes of Health,
+ *      University of Dundee,
+ *      University of Wisconsin-Madison
+ *
+ *
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by ${fu.user} via xsd-fu on ${fu.date}
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package ${fu.package};
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import ${fu.package}.enums.*;
+
+public class ${klass.name} extends ${klass.javaBase}
+{
+	// -- Instance variables --
+{% for prop in klass.properties.values() %}\
+{% choose %}\
+{% when prop.isReference %}
+	// Back reference ${prop.name}
+	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
+{% end %}\
+{% when prop.maxOccurs == 1 %}
+	// Property
+	private ${prop.javaType} ${prop.javaInstanceVariableName};
+{% end %}\
+{% when prop.maxOccurs > 1 %}
+	// Property which occurs more than once
+	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
+{% end %}\
+{% otherwise %}
+	// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end %}\
+{% end %}\
+{% end %}\
+
+	// -- Constructors --
+
+	/** Constructs a ${klass.name}. */
+	public ${klass.name}()
+	{
+	}
+
+	// -- ${klass.name} API methods --
+{% for prop in klass.properties.values() %}\
+{% choose %}\
+{% when prop.isReference %}
+	// Back reference ${prop.name}
+	public int sizeOfLinked${prop.javaType}List()
+	{
+		return ${prop.javaInstanceVariableName}.size();
+	}
+
+	public List<${prop.javaType}> copyLinked${prop.javaType}List()
+	{
+		return new ArrayList<${prop.javaType}>(${prop.javaInstanceVariableName});
+	}
+
+	public ${prop.javaType} getLinked${prop.javaType}(int index)
+	{
+		return ${prop.javaInstanceVariableName}.get(index);
+	}
+
+	public ${prop.javaType} setLinked${prop.javaType}(int index, ${prop.javaType} ${prop.javaArgumentName})
+	{
+		return ${prop.javaInstanceVariableName}.set(index, ${prop.javaArgumentName});
+	}
+
+	public void link${prop.javaType}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		this.${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
+	}
+
+	public void unlink${prop.javaType}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		this.${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
+	}
+{% end %}\
+{% when prop.maxOccurs == 1 %}
+	// Property
+	public ${prop.javaType} get${prop.javaMethodName}()
+	{
+		return ${prop.javaArgumentName};
+	}
+
+	public void set${prop.javaMethodName}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		this.${prop.javaInstanceVariableName} = ${prop.javaArgumentName};
+	}
+{% end %}\
+{% when prop.maxOccurs > 1 %}
+	// Property which occurs more than once
+	public int sizeOf${prop.javaMethodName}List()
+	{
+		return ${prop.javaArgumentName}List.size();
+	}
+
+	public List<${prop.javaType}> copy${prop.javaMethodName}List()
+	{
+		return new ArrayList<${prop.javaType}>(${prop.javaInstanceVariableName});
+	}
+
+	public ${prop.javaType} get${prop.javaMethodName}(int index)
+	{
+		return ${prop.javaInstanceVariableName}.get(index);
+	}
+
+	public ${prop.javaType} set${prop.javaMethodName}(int index, ${prop.javaType} ${prop.javaArgumentName})
+	{
+		return ${prop.javaInstanceVariableName}.set(index, ${prop.javaArgumentName});
+	}
+
+	public void add${prop.javaMethodName}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
+	}
+
+	public void remove${prop.javaMethodName}(${prop.javaType} ${prop.javaArgumentName})
+	{
+		${prop.javaInstanceVariableName}.remove(${prop.javaArgumentName});
+	}
+{% end %}\
+{% otherwise %}
+	// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end %}\
+{% end %}\
+{% end %}\
+
+	public Element asXMLElement(Document document)
+	{
+		// Creating XML block for ${klass.name}
+		Element ${klass.name}_element = document.createElement("${klass.name}");
+{% for prop in klass.properties.values() %}\
+		if (${prop.javaInstanceVariableName} != null)
+		{
+{% choose %}\
+{% when prop.isReference %}\
+			// *** IGNORING *** Skipped back reference ${prop.name}
+{% end %}\
+{% when prop.maxOccurs == 1 and prop.isAttribute %}\
+			// Attribute property ${prop.name}
+			${klass.name}_element.setAttribute("${prop.name}", ${prop.javaInstanceVariableName}.toString());
+{% end %}\
+{% when prop.maxOccurs == 1 and prop.isComplex() %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements)
+			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}.asXMLElement(document));
+{% end %}\
+{% when prop.maxOccurs == 1 %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements)
+			Element ${prop.javaInstanceVariableName}_element = document.createElement("${prop.name}");
+			${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName});
+			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
+{% end %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements) and occurs more than once
+			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
+			{
+				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_value.asXMLElement(document));
+			}
+{% end %}\
+{% when prop.maxOccurs > 1 %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements) which occurs more than once
+			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
+			{
+				Element ${prop.javaInstanceVariableName}_element = document.createElement("${prop.name}");
+				${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}_value);
+				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
+			}
+{% end %}\
+{% otherwise %}\
+			// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end %}\
+{% end %}\
+		}
+{% end %}\
+		return ${klass.name}_element;
+	}
+}
