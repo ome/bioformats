@@ -15,15 +15,14 @@ import java.lang.reflect.Method;
  */
 public class DumpClass {
 
-  @SuppressWarnings("unchecked")
   public static void main(String[] args) throws Exception {
     for (int i=0; i<args.length; i++) {
-      Class c = Class.forName(args[i]);
+      Class<?> c = Class.forName(args[i]);
       System.out.println("Class = " + c);
 
       System.out.println();
       System.out.println("[Constructors]");
-      Constructor[] con = c.getDeclaredConstructors();
+      Constructor<?>[] con = c.getDeclaredConstructors();
       for (int j=0; j<con.length; j++) System.out.println(con[j]);
 
       System.out.println();
