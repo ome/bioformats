@@ -99,7 +99,7 @@
 					<xsd:element ref="Point" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Polyline" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Path" minOccurs="1" maxOccurs="1"/>
-					<xsd:element ref="Label" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="Text" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
@@ -180,6 +180,7 @@
 			</xsd:attribute>
 			<xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
 			<xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
+			<xsd:attribute name="Label" use="optional" type="xsd:string"/>
 			<xsd:attribute name="FontFamily" use="optional">
 				<xsd:simpleType>
 					<xsd:annotation>
@@ -495,7 +496,7 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Label"> <!-- top level definition -->
+	<xsd:element name="Text"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				The text annotation. Any transformation should be applied at the 
