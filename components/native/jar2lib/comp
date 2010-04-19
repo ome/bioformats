@@ -1,0 +1,9 @@
+javac GetOpt.java
+javac -cp .:\
+/Users/bselinsky/autogen:\
+/Users/bselinsky/jace/lib/jace1.1.1/source/java/classes:\
+/Users/bselinsky/javaProjects/components/autogen/build/classes/:\
+/Users/bselinsky/autogen/velocity-tools-1.4/lib/velocity-1.5.jar:\
+/Users/bselinsky/autogen/velocity-tools-1.4/lib/commons-collections-3.2.jar:\
+/Users/bselinsky/autogen/velocity-tools-1.4/lib/commons-lang-2.2.jar:\
+/Users/bselinsky/autogen Jar2Lib.java
