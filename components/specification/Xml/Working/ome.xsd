@@ -336,6 +336,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The Z-section this plane is for. [units:none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -343,6 +344,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The timepoint this plane is for. [units:none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -350,6 +352,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The channel this plane is for. [units:none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute> 

@@ -319,10 +319,13 @@
 						<xsl:value-of select="@ID"/>
 					</xsl:variable>
 					<xsl:variable name="theChannelNumber">
-						<xsl:for-each select="//Channel [@ID='{$theChannelID}']">
-							<xsl:value-of select="."/>
+						<xsl:for-each select="//OME:Pixels [./OME:Channel/@ID=$theChannelID]">
+							<xsl:for-each select="* [local-name(.)='Channel']">
+								<xsl:if test="@ID=$theChannelID">
+									<xsl:value-of select="position() - 1"/>
+								</xsl:if>
+							</xsl:for-each>
 						</xsl:for-each>
-						<xsl:text/>
 					</xsl:variable>
 					<xsl:attribute name="TheC">
 						<xsl:value-of select="$theChannelNumber"/>

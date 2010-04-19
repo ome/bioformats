@@ -224,6 +224,7 @@
 					<xsd:documentation>
 						The z-section the ROI applies to. If not specified then 
 						the ROI applies to all the z-sections of the image. [units none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -232,6 +233,7 @@
 					<xsd:documentation>
 						The timepoint the ROI applies to. If not specified then 
 						the ROI applies to all the timepoints of the image. [units none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -240,6 +242,7 @@
 					<xsd:documentation>
 						The channel the ROI applies to. If not specified then 
 						the ROI applies to all the channels of the image. [units none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
