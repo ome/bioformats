@@ -608,6 +608,8 @@ class XschemaElement(XschemaElementBase):
             self.complex = 1
             # type_val = ''
         type_val = self.resolve_type_1()
+        logging.debug("%s type resolution type_val:%s complex? %s" % \
+                (self, type_val, self.complex))
         if type_val:
             if type_val in ElementDict:
                 type_val1 = type_val
@@ -623,14 +625,22 @@ class XschemaElement(XschemaElementBase):
                 i = 0
                 while True:
                     element = ElementDict[type_val1]
+                    logging.debug(
+                        "%s type resolution iteration %d type_val:%s " \
+                        "type_val1: %s" % (element, i, type_val, type_val1))
                     # Resolve our potential values if present
                     self.values = element.values
                     # If the type is available in the SimpleTypeDict, we
                     # know we've gone far enough in the Element hierarchy
                     # and can return the correct base type.
                     t = element.resolve_type_1()
+                    logging.debug(
+                        "%s type resolution iteration %d t:%s " % \
+                                (self, i, t))
                     if t in SimpleTypeDict:
                         type_val1 = SimpleTypeDict[t].getBase()
+                        logging.debug("t:%s is in SimpleTypeDict type_val1:%s" % \
+                                (t, type_val1))
                         break
                     # If the type name is the same as the previous type name
                     # then we know we've fully resolved the Element hierarchy
@@ -686,21 +696,30 @@ class XschemaElement(XschemaElementBase):
                     type_val = StringType[0]
         else:
             type_val = StringType[0]
+        logging.debug("%s type resolution, resulting type: %s" % \
+                (self, type_val))
         return type_val
 
     def resolve_type_1(self):
+        logging.debug("%s resolve_type_1 dump: %s" % (self, self.__dict__))
         type_val = ''
         if 'type' in self.attrs:
+            logging.debug("Using 'type' %s type resolution attrs: %s" % \
+                    (self, self.attrs))
             # fix
             #type_val = strip_namespace(self.attrs['type'])
             type_val = self.attrs['type']
             if type_val in SimpleTypeDict:
                 self.simpleType = type_val
         elif 'ref' in self.attrs:
+            logging.debug("Using 'ref' %s type resolution attrs: %s" % \
+                    (self, self.attrs))
             # fix
             type_val = strip_namespace(self.attrs['ref'])
             #type_val = self.attrs['ref']
         elif 'name' in self.attrs:
+            logging.debug("Using 'name' %s type resolution attrs: %s" % \
+                    (self, self.attrs))
             # fix
             type_val = strip_namespace(self.attrs['name'])
             #type_val = self.attrs['name']
