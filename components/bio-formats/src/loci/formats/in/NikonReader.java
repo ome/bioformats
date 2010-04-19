@@ -133,8 +133,13 @@ public class NikonReader extends BaseTiffReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     IFD ifd = ifds.get(no);
+    int[] bps = ifd.getBitsPerSample();
 
-    int dataSize = ifd.getBitsPerSample()[0];
+    if (bps.length > 1) {
+      return super.openBytes(no, buf, x, y, w, h);
+    }
+
+    int dataSize = bps[0];
 
     long[] byteCounts = ifd.getStripByteCounts();
     long[] offsets = ifd.getStripOffsets();
@@ -395,7 +400,9 @@ public class NikonReader extends BaseTiffReader {
     ifds.set(0, original);
 
     core[0].imageCount = 1;
-    core[0].interleaved = true;
+    if (ifds.get(0).getSamplesPerPixel() == 1) {
+      core[0].interleaved = true;
+    }
   }
 
   // -- Helper methods --
