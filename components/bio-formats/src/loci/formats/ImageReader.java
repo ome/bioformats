@@ -24,11 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -60,18 +61,19 @@ public class ImageReader implements IFormatReader {
   // -- Static fields --
 
   /** Default list of reader classes, for use with noargs constructor. */
-  private static ClassList defaultClasses;
+  private static ClassList<IFormatReader> defaultClasses;
 
   // -- Static helper methods --
 
-  private static ClassList getDefaultReaderClasses() {
+  private static ClassList<IFormatReader> getDefaultReaderClasses() {
     if (defaultClasses == null) {
       // load built-in reader classes from readers.txt file
       try {
-        defaultClasses = new ClassList("readers.txt", IFormatReader.class);
+        defaultClasses =
+          new ClassList<IFormatReader>("readers.txt", IFormatReader.class);
       }
       catch (IOException exc) {
-        defaultClasses = new ClassList(IFormatReader.class);
+        defaultClasses = new ClassList<IFormatReader>(IFormatReader.class);
         LOGGER.info("Could not parse class list; using default classes", exc);
       }
     }
@@ -106,14 +108,14 @@ public class ImageReader implements IFormatReader {
   }
 
   /** Constructs a new ImageReader from the given list of reader classes. */
-  public ImageReader(ClassList classList) {
+  public ImageReader(ClassList<IFormatReader> classList) {
     // add readers to the list
-    Vector v = new Vector();
-    Class[] c = classList.getClasses();
+    List<IFormatReader> list = new ArrayList<IFormatReader>();
+    Class<? extends IFormatReader>[] c = classList.getClasses();
     for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
-        reader = (IFormatReader) c[i].newInstance();
+        reader = c[i].newInstance();
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
@@ -121,10 +123,10 @@ public class ImageReader implements IFormatReader {
         LOGGER.error("{} cannot be instantiated.", c[i].getName());
         continue;
       }
-      v.add(reader);
+      list.add(reader);
     }
-    readers = new IFormatReader[v.size()];
-    v.copyInto(readers);
+    readers = new IFormatReader[list.size()];
+    list.toArray(readers);
   }
 
   // -- ImageReader API methods --
@@ -167,7 +169,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /** Gets the file format reader instance matching the given class. */
-  public IFormatReader getReader(Class c) {
+  public IFormatReader getReader(Class<? extends IFormatReader> c) {
     for (int i=0; i<readers.length; i++) {
       if (readers[i].getClass().equals(c)) return readers[i];
     }
@@ -452,17 +454,17 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
-  public Hashtable getGlobalMetadata() {
+  public Hashtable<String, Object> getGlobalMetadata() {
     return getReader().getGlobalMetadata();
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
-  public Hashtable getSeriesMetadata() {
+  public Hashtable<String, Object> getSeriesMetadata() {
     return getReader().getSeriesMetadata();
   }
 
   /** @deprecated */
-  public Hashtable getMetadata() {
+  public Hashtable<String, Object> getMetadata() {
     return getReader().getMetadata();
   }
 
@@ -612,7 +614,7 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     if (suffixes == null) {
-      HashSet suffixSet = new HashSet();
+      HashSet<String> suffixSet = new HashSet<String>();
       for (int i=0; i<readers.length; i++) {
         String[] suf = readers[i].getSuffixes();
         for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
@@ -625,7 +627,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     return getReader().getNativeDataType();
   }
 

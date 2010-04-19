@@ -50,7 +50,7 @@ public interface IFormatHandler {
    * call external APIs that work with other types such as
    * {@link java.awt.image.BufferedImage}.
    */
-  Class getNativeDataType();
+  Class<?> getNativeDataType();
 
   /** Sets the current file name. */
   void setId(String id) throws FormatException, IOException;

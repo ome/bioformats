@@ -120,8 +120,7 @@ public class ICSWriter extends FormatWriter {
         if (i == sizes.length - 1) out.writeBytes("\n");
       }
 
-      boolean signed = pixelType == FormatTools.INT8 ||
-        pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+      boolean signed = FormatTools.isSigned(pixelType);
       boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
 
       out.writeBytes("representation\tformat\t" +

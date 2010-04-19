@@ -173,7 +173,9 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /** Adds an entry to the specified Hashtable. */
-  protected void addMeta(String key, Object value, Hashtable meta) {
+  protected void addMeta(String key, Object value,
+    Hashtable<String, Object> meta)
+  {
     if (key == null || value == null || !isMetadataCollected()) {
       return;
     }
@@ -888,21 +890,22 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
-  public Hashtable getGlobalMetadata() {
+  public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 1);
     return metadata;
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
-  public Hashtable getSeriesMetadata() {
+  public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
     return core[series].seriesMetadata;
   }
 
   /** @deprecated */
-  public Hashtable getMetadata() {
+  public Hashtable<String, Object> getMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    Hashtable h = new Hashtable(getGlobalMetadata());
+    Hashtable<String, Object> h =
+      new Hashtable<String, Object>(getGlobalMetadata());
     int oldSeries = getSeries();
 
     IMetadata meta = getMetadataStore() instanceof IMetadata ?

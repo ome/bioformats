@@ -291,10 +291,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int pixelType = getPixelType();
 
-    boolean fp = pixelType == FormatTools.FLOAT ||
-      pixelType == FormatTools.DOUBLE;
-    boolean signed = pixelType == FormatTools.INT8 ||
-      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+    boolean signed = FormatTools.isSigned(pixelType);
 
     long threshold = (long) Math.pow(2, bytes * 8 - 1);
     for (int i=0; i<pixels; i++) {

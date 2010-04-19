@@ -87,7 +87,7 @@ public class AVIWriter extends FormatWriter {
   private int xDim, yDim, zDim, tDim, xPad;
   private int microSecPerFrame;
 
-  private Vector savedbLength;
+  private Vector<Long> savedbLength;
   private long idx1Pos;
   private long endPos;
   private long saveidx1Length;
@@ -135,7 +135,7 @@ public class AVIWriter extends FormatWriter {
     if (!initialized) {
       initialized = true;
       bytesPerPixel = nChannels == 2 ? 3 : nChannels;
-      savedbLength = new Vector();
+      savedbLength = new Vector<Long>();
 
       out = new RandomAccessOutputStream(currentId);
 
@@ -509,8 +509,7 @@ public class AVIWriter extends FormatWriter {
       // AVIIF_LIST 0x00000001L Marks a LIST CHUNK.
       // AVIIF_TWOCC 2L
       // AVIIF_COMPUSE 0x0FFF0000L These bits are for compressor use.
-      out.writeInt((int) (((Long)
-        savedbLength.get(z)).longValue() - 4 - SAVE_MOVI));
+      out.writeInt((int) (savedbLength.get(z) - 4 - SAVE_MOVI));
 
       // Write the offset (relative to the 'movi' field) to the relevant
       // CHUNK. Write the length of the relevant CHUNK. Note that this length

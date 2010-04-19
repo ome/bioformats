@@ -60,7 +60,7 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- Fields --
 
-  private Vector xmlFragments;
+  private Vector<String> xmlFragments;
   private RandomAccessOutputStream out;
   private String currentFragment;
 
@@ -107,13 +107,13 @@ public class OMEXMLWriter extends FormatWriter {
         throw new FormatException(se);
       }
 
-      xmlFragments = new Vector();
+      xmlFragments = new Vector<String>();
       currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
       XMLTools.parseXML(xml, new OMEHandler());
 
       xmlFragments.add(currentFragment);
 
-      out.writeBytes((String) xmlFragments.get(0));
+      out.writeBytes(xmlFragments.get(0));
       initialized = true;
     }
     boolean littleEndian =

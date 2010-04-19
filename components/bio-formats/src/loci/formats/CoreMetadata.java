@@ -126,7 +126,7 @@ public class CoreMetadata {
   public boolean metadataComplete;
 
   /** Non-core metadata associated with this series. */
-  public Hashtable seriesMetadata;
+  public Hashtable<String, Object> seriesMetadata;
 
   /**
    * Indicates whether or not this series is a lower-resolution copy of
@@ -135,7 +135,7 @@ public class CoreMetadata {
   public boolean thumbnail;
 
   public CoreMetadata() {
-    seriesMetadata = new Hashtable();
+    seriesMetadata = new Hashtable<String, Object>();
   }
 
 }

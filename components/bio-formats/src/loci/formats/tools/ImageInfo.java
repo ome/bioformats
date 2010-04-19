@@ -53,6 +53,9 @@ import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
+import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -223,7 +226,6 @@ public class ImageInfo {
   }
 
   public void printUsage() {
-    String className = reader.getClass().getName();
     String fmt = reader instanceof ImageReader ? "any" : reader.getFormat();
     String[] s = {
       "To test read a file in " + fmt + " format, run:",
@@ -273,7 +275,7 @@ public class ImageInfo {
     if (format != null) {
       // create reader of a specific format type
       try {
-        Class c = Class.forName("loci.formats.in." + format + "Reader");
+        Class<?> c = Class.forName("loci.formats.in." + format + "Reader");
         reader = (IFormatReader) c.newInstance();
       }
       catch (ClassNotFoundException exc) {
@@ -364,7 +366,9 @@ public class ImageInfo {
     reader.close();
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
-    reader.setMetadataCollected(doMeta);
+    MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
+      MetadataLevel.ALL : MetadataLevel.MINIMUM);
+    reader.setMetadataOptions(metaOptions);
   }
 
   public void configureReaderPostInit() {
@@ -668,8 +672,6 @@ public class ImageInfo {
 
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
-    int sizeC = reader.getSizeC();
-
     if (width == 0) width = sizeX;
     if (height == 0) height = sizeY;
 
@@ -773,7 +775,7 @@ public class ImageInfo {
   public void printGlobalMetadata() {
     LOGGER.info("");
     LOGGER.info("Reading global metadata");
-    Hashtable meta = reader.getGlobalMetadata();
+    Hashtable<String, Object> meta = reader.getGlobalMetadata();
     String[] keys = MetadataTools.keys(meta);
     for (String key : keys) {
       LOGGER.info("{}: {}", key,  meta.get(key));
@@ -785,7 +787,7 @@ public class ImageInfo {
       (" series #" + series) : "";
     LOGGER.info("");
     LOGGER.info("Reading{} metadata", seriesLabel);
-    Hashtable meta = reader.getSeriesMetadata();
+    Hashtable<String, Object> meta = reader.getSeriesMetadata();
     String[] keys = MetadataTools.keys(meta);
     for (int i=0; i<keys.length; i++) {
       LOGGER.info("{}: {}", keys[i], meta.get(keys[i]));

@@ -38,7 +38,7 @@ public class FileInfo {
   public String filename;
 
   /** IFormatReader implementation that would be used to read this file. */
-  public Class reader;
+  public Class<?> reader;
 
   /**
    * Whether or not this file can be passed to the appropriate reader's
@@ -52,4 +52,5 @@ public class FileInfo {
     return "filename = " + filename + "\nreader = " + reader.getName() +
       "\nused to initialize = " + usedToInitialize;
   }
+
 }

@@ -566,7 +566,7 @@ public final class ImageTools {
 
     for (int row=0; row<height; row++) {
       for (int col=0; col<width; col++) {
-        boolean evenRow = (row % 2) == 0;
+        //boolean evenRow = (row % 2) == 0;
         boolean evenCol = (col % 2) == 0;
 
         int index = (row % 2) * 2 + (col % 2);

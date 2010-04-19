@@ -91,8 +91,8 @@ public abstract class WriterWrapper implements IFormatWriter {
    * @param id Id to use as a basis when unwrapping any nested
    *   {@link ImageWriter}s. If null, the current id is used.
    */
-  public IFormatWriter unwrap(Class writerClass, String id)
-    throws FormatException, IOException
+  public IFormatWriter unwrap(Class<? extends IFormatWriter> writerClass,
+    String id) throws FormatException, IOException
   {
     IFormatWriter w = this;
     while (w instanceof WriterWrapper || w instanceof ImageWriter) {
@@ -120,8 +120,8 @@ public abstract class WriterWrapper implements IFormatWriter {
    *   writer stack will be replaced with instances of the given class.
    * @throws FormatException If something goes wrong during the duplication.
    */
-  public WriterWrapper duplicate(Class imageWriterClass)
-    throws FormatException
+  public WriterWrapper duplicate(
+    Class<? extends IFormatWriter> imageWriterClass) throws FormatException
   {
     WriterWrapper wrapperCopy = duplicateRecurse(imageWriterClass);
 
@@ -237,7 +237,7 @@ public abstract class WriterWrapper implements IFormatWriter {
     return writer.getSuffixes();
   }
 
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     return writer.getNativeDataType();
   }
 
@@ -251,8 +251,8 @@ public abstract class WriterWrapper implements IFormatWriter {
 
   // -- Helper methods --
 
-  private WriterWrapper duplicateRecurse(Class imageWriterClass)
-    throws FormatException
+  private WriterWrapper duplicateRecurse(
+    Class<? extends IFormatWriter> imageWriterClass) throws FormatException
   {
     IFormatWriter childCopy = null;
     if (writer instanceof WriterWrapper) {
@@ -260,7 +260,7 @@ public abstract class WriterWrapper implements IFormatWriter {
       childCopy = ((WriterWrapper) writer).duplicateRecurse(imageWriterClass);
     }
     else {
-      Class c = null;
+      Class<? extends IFormatWriter> c = null;
       if (writer instanceof ImageWriter) {
         // found an image writer; if given, substitute the writer class
         c = imageWriterClass == null ? ImageWriter.class : imageWriterClass;
@@ -277,10 +277,10 @@ public abstract class WriterWrapper implements IFormatWriter {
     }
 
     // use crazy reflection to instantiate a writer of the proper type
-    Class wrapperClass = getClass();
+    Class<? extends WriterWrapper> wrapperClass = getClass();
     WriterWrapper wrapperCopy = null;
     try {
-      wrapperCopy = (WriterWrapper) wrapperClass.getConstructor(new Class[]
+      wrapperCopy = wrapperClass.getConstructor(new Class[]
         {IFormatWriter.class}).newInstance(new Object[] {childCopy});
     }
     catch (InstantiationException exc) { throw new FormatException(exc); }

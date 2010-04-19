@@ -26,9 +26,11 @@ package loci.formats;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -117,7 +119,7 @@ public class FileStitcher implements IFormatReader {
   private String[] originalOrder;
 
   private String[] seriesBlocks;
-  private Vector fileVector;
+  private Vector<String[]> fileVector;
   private Vector<String> seriesNames;
   private boolean seriesInFile;
 
@@ -722,7 +724,7 @@ public class FileStitcher implements IFormatReader {
     // assume every constituent file has no other used files
     // this logic could fail if the first constituent has no extra used files,
     // but later constituents do; in practice, this scenario seems unlikely
-    Vector v = new Vector();
+    Vector<String> v = new Vector<String>();
     for (int i=0; i<files.length; i++) {
       for (int j=0; j<files[i].length; j++) {
         v.add(files[i][j]);
@@ -815,19 +817,19 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
-  public Hashtable getGlobalMetadata() {
+  public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 2);
     return reader.getGlobalMetadata();
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
-  public Hashtable getSeriesMetadata() {
+  public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 2);
     return reader.getSeriesMetadata();
   }
 
   /** @deprecated */
-  public Hashtable getMetadata() {
+  public Hashtable<String, Object> getMetadata() {
     FormatTools.assertId(currentId, true ,2);
     return reader.getMetadata();
   }
@@ -869,13 +871,13 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatReader#getUnderlyingReaders() */
   public IFormatReader[] getUnderlyingReaders() {
-    Vector v = new Vector();
+    List<IFormatReader> list = new ArrayList<IFormatReader>();
     for (int i=0; i<readers.length; i++) {
       for (int j=0; j<readers[i].length; j++) {
-        v.add(readers[i][j]);
+        list.add(readers[i][j]);
       }
     }
-    return (IFormatReader[]) v.toArray(new IFormatReader[0]);
+    return list.toArray(new IFormatReader[0]);
   }
 
   /* @see IFormatReader#isSingleFile(String) */
@@ -914,7 +916,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     FormatTools.assertId(currentId, true, 2);
     return reader.getNativeDataType();
   }
@@ -982,14 +984,14 @@ public class FileStitcher implements IFormatReader {
       seriesInFile = false;
 
       String[] blockPrefixes = fp.getPrefixes();
-      Vector sBlock = new Vector();
+      Vector<String> sBlock = new Vector<String>();
 
       for (int i=0; i<axes.length; i++) {
         if (axes[i] == AxisGuesser.S_AXIS) sBlock.add(blockPrefixes[i]);
       }
 
       seriesBlocks = (String[]) sBlock.toArray(new String[0]);
-      fileVector = new Vector();
+      fileVector = new Vector<String[]>();
       seriesNames = new Vector<String>();
 
       String file = fp.getFiles()[0];
@@ -1002,7 +1004,7 @@ public class FileStitcher implements IFormatReader {
         ext = file.substring(file.lastIndexOf(".") + 1);
       }
 
-      Vector tmpFiles = new Vector();
+      Vector<String> tmpFiles = new Vector<String>();
       for (int i=0; i<fs.length; i++) {
         if (fs[i].endsWith(ext)) tmpFiles.add(fs[i]);
       }
@@ -1044,7 +1046,8 @@ public class FileStitcher implements IFormatReader {
     }
 
     // determine reader type for these files; assume all are the same type
-    Class readerClass = reader.unwrap(files[0][0]).getClass();
+    Class<? extends IFormatReader> readerClass =
+      reader.unwrap(files[0][0]).getClass();
 
     // construct list of readers for all files
     readers = new DimensionSwapper[files.length][];
@@ -1340,7 +1343,7 @@ public class FileStitcher implements IFormatReader {
   }
 
   private FilePattern getPattern(String[] f, String dir, String block) {
-    Vector v = new Vector();
+    Vector<String> v = new Vector<String>();
     for (int i=0; i<f.length; i++) {
       if (f[i].indexOf(File.separator) != -1) {
         f[i] = f[i].substring(f[i].lastIndexOf(File.separator) + 1);

@@ -74,26 +74,20 @@ public class ImageProcessorReader extends MinMaxCalculator {
    */
   public static ImageReader makeImageReader() {
     // include only enabled classes
-    Class<?>[] c = null;
+    Class<? extends IFormatReader>[] c = null;
     try {
-      ClassList defaultClasses =
-        new ClassList("readers.txt", IFormatReader.class);
+      ClassList<IFormatReader> defaultClasses =
+        new ClassList<IFormatReader>("readers.txt", IFormatReader.class);
       c = defaultClasses.getClasses();
     }
     catch (IOException exc) {
       return new ImageReader();
     }
-    ClassList enabledClasses = new ClassList(IFormatReader.class);
+    ClassList<IFormatReader> enabledClasses =
+      new ClassList<IFormatReader>(IFormatReader.class);
     for (int i=0; i<c.length; i++) {
       boolean on = LociPrefs.isReaderEnabled(c[i]);
-      if (on) {
-        try {
-          enabledClasses.addClass(c[i]);
-        }
-        catch (FormatException exc) {
-          exc.printStackTrace();
-        }
-      }
+      if (on) enabledClasses.addClass(c[i]);
     }
     ImageReader reader = new ImageReader(enabledClasses);
 

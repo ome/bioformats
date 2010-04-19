@@ -772,7 +772,7 @@ public final class FormatTools {
   public static String[] getFilenames(String pattern, IFormatReader r)
     throws FormatException, IOException
   {
-    Vector filenames = new Vector();
+    Vector<String> filenames = new Vector<String>();
     String filename = null;
     for (int series=0; series<r.getSeriesCount(); series++) {
       r.setSeries(series);
@@ -802,7 +802,9 @@ public final class FormatTools {
    * Recursively look for the first underlying reader that is an
    * instance of the given class.
    */
-  public static IFormatReader getReader(IFormatReader r, Class c) {
+  public static IFormatReader getReader(IFormatReader r,
+    Class<? extends IFormatReader> c)
+  {
     IFormatReader[] underlying = r.getUnderlyingReaders();
     if (underlying != null) {
       for (int i=0; i<underlying.length; i++) {

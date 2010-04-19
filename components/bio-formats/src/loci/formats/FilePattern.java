@@ -120,8 +120,8 @@ public class FilePattern {
 
     // locate numerical blocks
     int len = pattern.length();
-    Vector lt = new Vector(len);
-    Vector gt = new Vector(len);
+    Vector<Integer> lt = new Vector<Integer>(len);
+    Vector<Integer> gt = new Vector<Integer>(len);
     int left = -1;
     while (true) {
       left = pattern.indexOf("<", left + 1);
@@ -213,7 +213,7 @@ public class FilePattern {
     }
 
     // build file listing
-    Vector v = new Vector();
+    Vector<String> v = new Vector<String>();
     buildFiles("", num, v);
     files = new String[v.size()];
     v.copyInto(files);
@@ -547,7 +547,7 @@ public class FilePattern {
 
   /** Filters the given list of filenames according to the specified filter. */
   private static String[] matchFiles(String[] inFiles, NumberFilter filter) {
-    Vector v = new Vector();
+    Vector<String> v = new Vector<String>();
     for (int i=0; i<inFiles.length; i++) {
       if (filter.accept(inFiles[i])) v.add(inFiles[i]);
     }
@@ -559,7 +559,7 @@ public class FilePattern {
   // -- Helper methods --
 
   /** Recursive method for building filenames for the file listing. */
-  private void buildFiles(String prefix, int ndx, Vector fileList) {
+  private void buildFiles(String prefix, int ndx, Vector<String> fileList) {
     // compute bounds for constant (non-block) pattern fragment
     int num = startIndex.length;
     int n1 = ndx == 0 ? 0 : endIndex[ndx - 1];

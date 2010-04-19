@@ -27,7 +27,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class ClassList {
+public class ClassList<T> {
 
   // -- Constants --
 
@@ -51,10 +52,10 @@ public class ClassList {
   // -- Fields --
 
   /** Base class to which all classes are assignable. */
-  private Class base;
+  private Class<T> base;
 
   /** List of classes. */
-  private Vector classes;
+  private List<Class<? extends T>> classes;
 
   // -- Constructor --
 
@@ -62,9 +63,9 @@ public class ClassList {
    * Constructs a list of classes, initially empty.
    * @param base Base class to which all classes are assignable.
    */
-  public ClassList(Class base) {
+  public ClassList(Class<T> base) {
     this.base = base;
-    classes = new Vector();
+    classes = new ArrayList<Class<? extends T>>();
   }
 
   /**
@@ -73,7 +74,7 @@ public class ClassList {
    * @param base Base class to which all classes are assignable.
    * @throws IOException if the file cannot be read.
    */
-  public ClassList(String file, Class base) throws IOException {
+  public ClassList(String file, Class<T> base) throws IOException {
     this(file, base, ClassList.class);
   }
 
@@ -85,9 +86,11 @@ public class ClassList {
    *  If null, 'file' is interpreted as an absolute path name.
    * @throws IOException if the file cannot be read.
    */
-  public ClassList(String file, Class base, Class location) throws IOException {
+  public ClassList(String file, Class<T> base, Class<?> location)
+    throws IOException
+  {
     this.base = base;
-    classes = new Vector();
+    classes = new ArrayList<Class<? extends T>>();
     if (file == null) return;
 
     // read classes from file
@@ -110,14 +113,17 @@ public class ClassList {
       line = line.trim();
       if (line.equals("")) continue;
 
-      // load reader class
-      Class c = null;
-      try { c = Class.forName(line); }
+      // load class
+      Class<? extends T> c = null;
+      try {
+        Class<?> rawClass = Class.forName(line);
+        c = cast(rawClass);
+      }
       catch (ClassNotFoundException exc) {
         LOGGER.debug("Could not find {}", line, exc);
       }
       catch (NoClassDefFoundError err) {
-        LOGGER.debug("Could not find{}", line, err);
+        LOGGER.debug("Could not find {}", line, err);
       }
       catch (ExceptionInInitializerError err) {
         LOGGER.debug("Failed to create an instance of {}", line, err);
@@ -128,7 +134,7 @@ public class ClassList {
         if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
         LOGGER.debug("", exc);
       }
-      if (c == null || (base != null && !base.isAssignableFrom(c))) {
+      if (c == null) {
         LOGGER.error("\"{}\" is not valid.", line);
         continue;
       }
@@ -142,27 +148,28 @@ public class ClassList {
   /**
    * Adds the given class, which must be assignable
    * to the base class, to the list.
-   *
-   * @throws FormatException if the class is not assignable to the base class.
    */
-  public void addClass(Class c) throws FormatException {
-    if (base != null && !base.isAssignableFrom(c)) {
-      throw new FormatException(
-        "Class is not assignable to the base class");
-    }
+  public void addClass(Class<? extends T> c) {
     classes.add(c);
   }
 
   /** Removes the given class from the list. */
-  public void removeClass(Class c) {
+  public void removeClass(Class<T> c) {
     classes.remove(c);
   }
 
   /** Gets the list of classes as an array. */
-  public Class[] getClasses() {
-    Class[] c = new Class[classes.size()];
-    classes.copyInto(c);
-    return c;
+  @SuppressWarnings("unchecked")
+  public Class<? extends T>[] getClasses() {
+    return classes.toArray(new Class[0]);
+  }
+
+  // -- Helper methods --
+
+  @SuppressWarnings("unchecked")
+  private Class<? extends T> cast(Class<?> rawClass) {
+    if (!rawClass.isAssignableFrom(base)) return null;
+    return (Class<? extends T>) rawClass;
   }
 
 }

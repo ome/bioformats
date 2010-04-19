@@ -296,7 +296,7 @@ public class LegacyQTWriter extends FormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     return Image.class;
   }
 

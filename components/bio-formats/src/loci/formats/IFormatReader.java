@@ -394,7 +394,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * @return the hashtable containing all non-series-specific metadata
    * from the file
    */
-  Hashtable getGlobalMetadata();
+  Hashtable<String, Object> getGlobalMetadata();
 
   /**
    * Returns a hashtable containing the union of all of the field/value pairs
@@ -403,13 +403,13 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    *
    * @deprecated Use getGlobalMetadata() or getSeriesMetadata() instead.
    */
-  Hashtable getMetadata();
+  Hashtable<String, Object> getMetadata();
 
   /**
    * Obtains the hashtable containing metadata field/value pairs from the
    * current series in the current file.
    */
-  Hashtable getSeriesMetadata();
+  Hashtable<String, Object> getSeriesMetadata();
 
   /** Obtains the core metadata values for the current file. */
   CoreMetadata[] getCoreMetadata();

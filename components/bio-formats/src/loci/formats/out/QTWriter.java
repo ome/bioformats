@@ -107,7 +107,7 @@ public class QTWriter extends FormatWriter {
   protected int numBytes;
 
   /** Vector of plane offsets. */
-  protected Vector offsets;
+  protected Vector<Integer> offsets;
 
   /** Time the file was created. */
   protected int created;
@@ -208,7 +208,7 @@ public class QTWriter extends FormatWriter {
 
       // -- write the header --
 
-      offsets = new Vector();
+      offsets = new Vector<Integer>();
       out = new RandomAccessOutputStream(currentId);
       created = (int) System.currentTimeMillis();
       numWritten = 0;
@@ -239,7 +239,7 @@ public class QTWriter extends FormatWriter {
         out.write(numBytes + 8);
 
         for (int i=0; i<numWritten; i++) {
-          offsets.add(new Integer(16 + i * (buf.length + pad * height)));
+          offsets.add(16 + i * (buf.length + pad * height));
         }
 
         out.seek(out.length());
@@ -247,7 +247,7 @@ public class QTWriter extends FormatWriter {
 
       // -- write the first plane of pixel data (mdat) --
 
-      offsets.add(new Integer((int) out.length()));
+      offsets.add((int) out.length());
     }
     else {
       // update the number of pixel bytes written
@@ -259,7 +259,7 @@ public class QTWriter extends FormatWriter {
       // write this plane's pixel data
       out.seek(out.length());
 
-      offsets.add(new Integer(planeOffset + 16));
+      offsets.add(planeOffset + 16);
     }
 
     // invert each pixel
@@ -573,7 +573,7 @@ public class QTWriter extends FormatWriter {
       out.writeInt(numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
         // write the plane offset
-        out.writeInt(((Integer) offsets.get(i)).intValue());
+        out.writeInt(offsets.get(i));
       }
 
       out.close();

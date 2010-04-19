@@ -25,9 +25,10 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.List;
 
 import loci.formats.meta.MetadataRetrieve;
 
@@ -55,18 +56,19 @@ public class ImageWriter implements IFormatWriter {
   // -- Static fields --
 
   /** Default list of writer classes, for use with noargs constructor. */
-  private static ClassList defaultClasses;
+  private static ClassList<IFormatWriter> defaultClasses;
 
   // -- Static helper methods --
 
-  private static ClassList getDefaultWriterClasses() {
+  private static ClassList<IFormatWriter> getDefaultWriterClasses() {
     if (defaultClasses == null) {
       // load built-in writer classes from writers.txt file
       try {
-        defaultClasses = new ClassList("writers.txt", IFormatWriter.class);
+        defaultClasses =
+          new ClassList<IFormatWriter>("writers.txt", IFormatWriter.class);
       }
       catch (IOException exc) {
-        defaultClasses = new ClassList(IFormatWriter.class);
+        defaultClasses = new ClassList<IFormatWriter>(IFormatWriter.class);
         LOGGER.info("Could not parse class list; using default classes", exc);
       }
     }
@@ -107,10 +109,10 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Constructs a new ImageWriter from the given list of writer classes. */
-  public ImageWriter(ClassList classList) {
+  public ImageWriter(ClassList<IFormatWriter> classList) {
     // add writers to the list
-    Vector<IFormatWriter> v = new Vector<IFormatWriter>();
-    Class<IFormatWriter>[] c = classList.getClasses();
+    List<IFormatWriter> list = new ArrayList<IFormatWriter>();
+    Class<? extends IFormatWriter>[] c = classList.getClasses();
     for (int i=0; i<c.length; i++) {
       IFormatWriter writer = null;
       try {
@@ -122,10 +124,10 @@ public class ImageWriter implements IFormatWriter {
         LOGGER.error("{} cannot be instantiated.", c[i].getName());
         continue;
       }
-      v.add(writer);
+      list.add(writer);
     }
-    writers = new IFormatWriter[v.size()];
-    v.copyInto(writers);
+    writers = new IFormatWriter[list.size()];
+    list.toArray(writers);
   }
 
   // -- ImageWriter API methods --
@@ -161,7 +163,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Gets the file format writer instance matching the given class. */
-  public IFormatWriter getWriter(Class<IFormatWriter> c) {
+  public IFormatWriter getWriter(Class<? extends IFormatWriter> c) {
     for (int i=0; i<writers.length; i++) {
       if (writers[i].getClass().equals(c)) return writers[i];
     }
@@ -336,7 +338,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     return getWriter().getNativeDataType();
   }
 

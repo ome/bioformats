@@ -85,7 +85,7 @@ public abstract class FormatHandler implements IFormatHandler {
   public String[] getSuffixes() { return suffixes; }
 
   /* @see IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     // NB: Handlers use byte arrays by default as the native type.
     return byte[].class;
   }

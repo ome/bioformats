@@ -62,7 +62,7 @@ public class Cache implements CacheReporter {
   protected boolean[] inCache;
 
   /** List of cache event listeners. */
-  protected Vector listeners;
+  protected Vector<CacheListener> listeners;
 
   /** Whether the cache should automatically update when a parameter changes. */
   protected boolean autoUpdate;
@@ -78,7 +78,7 @@ public class Cache implements CacheReporter {
     this.strategy = strategy;
     this.source = source;
     this.autoUpdate = autoUpdate;
-    listeners = new Vector();
+    listeners = new Vector<CacheListener>();
     reset();
     if (autoUpdate) recache();
   }
@@ -130,7 +130,7 @@ public class Cache implements CacheReporter {
     if (strategy == null) throw new CacheException("strategy is null");
     synchronized (listeners) {
       for (int i=0; i<listeners.size(); i++) {
-        CacheListener l = (CacheListener) listeners.elementAt(i);
+        CacheListener l = listeners.elementAt(i);
         this.strategy.removeCacheListener(l);
         strategy.addCacheListener(l);
       }
@@ -254,7 +254,7 @@ public class Cache implements CacheReporter {
   protected void notifyListeners(CacheEvent e) {
     synchronized (listeners) {
       for (int i=0; i<listeners.size(); i++) {
-        CacheListener l = (CacheListener) listeners.elementAt(i);
+        CacheListener l = listeners.elementAt(i);
         l.cacheUpdated(e);
       }
     }

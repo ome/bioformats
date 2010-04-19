@@ -95,8 +95,8 @@ public abstract class ReaderWrapper implements IFormatReader {
    * @param id Id to use as a basis when unwrapping any nested
    *   {@link ImageReader}s. If null, the current id is used.
    */
-  public IFormatReader unwrap(Class readerClass, String id)
-    throws FormatException, IOException
+  public IFormatReader unwrap(Class<? extends IFormatReader> readerClass,
+    String id) throws FormatException, IOException
   {
     IFormatReader r = this;
     while (r instanceof ReaderWrapper || r instanceof ImageReader) {
@@ -124,8 +124,8 @@ public abstract class ReaderWrapper implements IFormatReader {
    *   reader stack will be replaced with instances of the given class.
    * @throws FormatException If something goes wrong during the duplication.
    */
-  public ReaderWrapper duplicate(Class imageReaderClass)
-    throws FormatException
+  public ReaderWrapper duplicate(
+    Class<? extends IFormatReader> imageReaderClass) throws FormatException
   {
     ReaderWrapper wrapperCopy = duplicateRecurse(imageReaderClass);
 
@@ -406,16 +406,16 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadataValue(field);
   }
 
-  public Hashtable getGlobalMetadata() {
+  public Hashtable<String, Object> getGlobalMetadata() {
     return reader.getGlobalMetadata();
   }
 
-  public Hashtable getSeriesMetadata() {
+  public Hashtable<String, Object> getSeriesMetadata() {
     return reader.getSeriesMetadata();
   }
 
   /** @deprecated */
-  public Hashtable getMetadata() {
+  public Hashtable<String, Object> getMetadata() {
     return reader.getMetadata();
   }
 
@@ -473,7 +473,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSuffixes();
   }
 
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     return reader.getNativeDataType();
   }
 
@@ -487,8 +487,8 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   // -- Helper methods --
 
-  private ReaderWrapper duplicateRecurse(Class imageReaderClass)
-    throws FormatException
+  private ReaderWrapper duplicateRecurse(
+    Class<? extends IFormatReader> imageReaderClass) throws FormatException
   {
     IFormatReader childCopy = null;
     if (reader instanceof ReaderWrapper) {
@@ -496,7 +496,7 @@ public abstract class ReaderWrapper implements IFormatReader {
       childCopy = ((ReaderWrapper) reader).duplicateRecurse(imageReaderClass);
     }
     else {
-      Class c = null;
+      Class<? extends IFormatReader> c = null;
       if (reader instanceof ImageReader) {
         // found an image reader; if given, substitute the reader class
         c = imageReaderClass == null ? ImageReader.class : imageReaderClass;
@@ -520,10 +520,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     }
 
     // use crazy reflection to instantiate a reader of the proper type
-    Class wrapperClass = getClass();
+    Class<? extends ReaderWrapper> wrapperClass = getClass();
     ReaderWrapper wrapperCopy = null;
     try {
-      wrapperCopy = (ReaderWrapper) wrapperClass.getConstructor(new Class[]
+      wrapperCopy = wrapperClass.getConstructor(new Class[]
         {IFormatReader.class}).newInstance(new Object[] {childCopy});
     }
     catch (InstantiationException exc) { throw new FormatException(exc); }

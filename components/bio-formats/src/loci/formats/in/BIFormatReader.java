@@ -74,7 +74,7 @@ public abstract class BIFormatReader extends FormatReader {
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
-  public Class getNativeDataType() {
+  public Class<?> getNativeDataType() {
     return BufferedImage.class;
   }
 
