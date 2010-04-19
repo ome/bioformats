@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.LaserMedium
+ * ome.xml.r201004.enums.LaserMedium
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,12 +31,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
 public enum LaserMedium implements Enumeration
 {

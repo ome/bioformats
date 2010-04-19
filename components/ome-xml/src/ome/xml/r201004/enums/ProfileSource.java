@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.Marker
+ * ome.xml.r201004.enums.ProfileSource
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,39 +31,35 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum Marker implements Enumeration
+public enum ProfileSource implements Enumeration
 {
-  ARROW("Arrow"), CIRCLE("Circle"), SQUARE("Square");
+  USER("User"), FILE("File");
   
-  private Marker(String value)
+  private ProfileSource(String value)
   {
     this.value = value;
   }
 
-  public static Marker fromString(String value)
+  public static ProfileSource fromString(String value)
     throws EnumerationException
   {
-    if ("Arrow".equals(value))
+    if ("User".equals(value))
     {
-      return ARROW;
+      return USER;
     }
-    if ("Circle".equals(value))
+    if ("File".equals(value))
     {
-      return CIRCLE;
-    }
-    if ("Square".equals(value))
-    {
-      return SQUARE;
+      return FILE;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Marker.class);
+                             value, ProfileSource.class);
     throw new EnumerationException(s);
   }
 

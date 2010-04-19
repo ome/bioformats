@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.FontStyle
+ * ome.xml.r201004.enums.LaserType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,43 +31,59 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum FontStyle implements Enumeration
+public enum LaserType implements Enumeration
 {
-  BOLD("Bold"), BOLDITALIC("BoldItalic"), ITALIC("Italic"), REGULAR("Regular");
+  EXCIMER("Excimer"), GAS("Gas"), METALVAPOR("MetalVapor"), SOLIDSTATE("SolidState"), DYE("Dye"), SEMICONDUCTOR("Semiconductor"), FREEELECTRON("FreeElectron"), OTHER("Other");
   
-  private FontStyle(String value)
+  private LaserType(String value)
   {
     this.value = value;
   }
 
-  public static FontStyle fromString(String value)
+  public static LaserType fromString(String value)
     throws EnumerationException
   {
-    if ("Bold".equals(value))
+    if ("Excimer".equals(value))
     {
-      return BOLD;
+      return EXCIMER;
     }
-    if ("BoldItalic".equals(value))
+    if ("Gas".equals(value))
     {
-      return BOLDITALIC;
+      return GAS;
     }
-    if ("Italic".equals(value))
+    if ("MetalVapor".equals(value))
     {
-      return ITALIC;
+      return METALVAPOR;
     }
-    if ("Regular".equals(value))
+    if ("SolidState".equals(value))
     {
-      return REGULAR;
+      return SOLIDSTATE;
+    }
+    if ("Dye".equals(value))
+    {
+      return DYE;
+    }
+    if ("Semiconductor".equals(value))
+    {
+      return SEMICONDUCTOR;
+    }
+    if ("FreeElectron".equals(value))
+    {
+      return FREEELECTRON;
+    }
+    if ("Other".equals(value))
+    {
+      return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, FontStyle.class);
+                             value, LaserType.class);
     throw new EnumerationException(s);
   }
 

@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.FontFamily
+ * ome.xml.r201004.enums.ContrastMethod
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,43 +31,63 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum FontFamily implements Enumeration
+public enum ContrastMethod implements Enumeration
 {
-  ARIAL("Arial"), COURIER("Courier"), HELVETICA("Helvetica"), TIMESNEWROMAN("TimesNewRoman");
+  BRIGHTFIELD("Brightfield"), PHASE("Phase"), DIC("DIC"), HOFFMANMODULATION("HoffmanModulation"), OBLIQUEILLUMINATION("ObliqueIllumination"), POLARIZEDLIGHT("PolarizedLight"), DARKFIELD("Darkfield"), FLUORESCENCE("Fluorescence"), OTHER("Other");
   
-  private FontFamily(String value)
+  private ContrastMethod(String value)
   {
     this.value = value;
   }
 
-  public static FontFamily fromString(String value)
+  public static ContrastMethod fromString(String value)
     throws EnumerationException
   {
-    if ("Arial".equals(value))
+    if ("Brightfield".equals(value))
     {
-      return ARIAL;
+      return BRIGHTFIELD;
     }
-    if ("Courier".equals(value))
+    if ("Phase".equals(value))
     {
-      return COURIER;
+      return PHASE;
     }
-    if ("Helvetica".equals(value))
+    if ("DIC".equals(value))
     {
-      return HELVETICA;
+      return DIC;
     }
-    if ("TimesNewRoman".equals(value))
+    if ("HoffmanModulation".equals(value))
     {
-      return TIMESNEWROMAN;
+      return HOFFMANMODULATION;
+    }
+    if ("ObliqueIllumination".equals(value))
+    {
+      return OBLIQUEILLUMINATION;
+    }
+    if ("PolarizedLight".equals(value))
+    {
+      return POLARIZEDLIGHT;
+    }
+    if ("Darkfield".equals(value))
+    {
+      return DARKFIELD;
+    }
+    if ("Fluorescence".equals(value))
+    {
+      return FLUORESCENCE;
+    }
+    if ("Other".equals(value))
+    {
+      return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, FontFamily.class);
+                             value, ContrastMethod.class);
     throw new EnumerationException(s);
   }
 

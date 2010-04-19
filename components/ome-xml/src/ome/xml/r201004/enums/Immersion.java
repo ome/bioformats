@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ArcType
+ * ome.xml.r201004.enums.Immersion
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,43 +31,55 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum ArcType implements Enumeration
+public enum Immersion implements Enumeration
 {
-  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
+  OIL("Oil"), WATER("Water"), WATERDIPPING("WaterDipping"), AIR("Air"), MULTI("Multi"), GLYCEROL("Glycerol"), OTHER("Other");
   
-  private ArcType(String value)
+  private Immersion(String value)
   {
     this.value = value;
   }
 
-  public static ArcType fromString(String value)
+  public static Immersion fromString(String value)
     throws EnumerationException
   {
-    if ("Hg".equals(value))
+    if ("Oil".equals(value))
     {
-      return HG;
+      return OIL;
     }
-    if ("Xe".equals(value))
+    if ("Water".equals(value))
     {
-      return XE;
+      return WATER;
     }
-    if ("HgXe".equals(value))
+    if ("WaterDipping".equals(value))
     {
-      return HGXE;
+      return WATERDIPPING;
+    }
+    if ("Air".equals(value))
+    {
+      return AIR;
+    }
+    if ("Multi".equals(value))
+    {
+      return MULTI;
+    }
+    if ("Glycerol".equals(value))
+    {
+      return GLYCEROL;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ArcType.class);
+                             value, Immersion.class);
     throw new EnumerationException(s);
   }
 

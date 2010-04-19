@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.IlluminationType
+ * ome.xml.r201004.enums.Medium
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,47 +31,47 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum IlluminationType implements Enumeration
+public enum Medium implements Enumeration
 {
-  TRANSMITTED("Transmitted"), EPIFLUORESCENCE("Epifluorescence"), OBLIQUE("Oblique"), NONLINEAR("NonLinear"), OTHER("Other");
+  AIR("Air"), OIL("Oil"), WATER("Water"), GLYCEROL("Glycerol"), OTHER("Other");
   
-  private IlluminationType(String value)
+  private Medium(String value)
   {
     this.value = value;
   }
 
-  public static IlluminationType fromString(String value)
+  public static Medium fromString(String value)
     throws EnumerationException
   {
-    if ("Transmitted".equals(value))
+    if ("Air".equals(value))
     {
-      return TRANSMITTED;
+      return AIR;
     }
-    if ("Epifluorescence".equals(value))
+    if ("Oil".equals(value))
     {
-      return EPIFLUORESCENCE;
+      return OIL;
     }
-    if ("Oblique".equals(value))
+    if ("Water".equals(value))
     {
-      return OBLIQUE;
+      return WATER;
     }
-    if ("NonLinear".equals(value))
+    if ("Glycerol".equals(value))
     {
-      return NONLINEAR;
+      return GLYCEROL;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, IlluminationType.class);
+                             value, Medium.class);
     throw new EnumerationException(s);
   }
 

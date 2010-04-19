@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.enums.handler;
 
-import loci.formats.enums.Enumeration;
-import loci.formats.enums.EnumerationException;
+import ome.xml.r201004.enums.Enumeration;
+import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * A factory for producing an IEnumerationHandler instance given an

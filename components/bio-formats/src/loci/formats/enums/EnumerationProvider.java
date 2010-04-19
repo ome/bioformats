@@ -32,6 +32,9 @@ import loci.formats.enums.handler.HandlerFactory;
 import loci.formats.enums.handler.IEnumerationHandler;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.r201004.enums.Enumeration;
+import ome.xml.r201004.enums.EnumerationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

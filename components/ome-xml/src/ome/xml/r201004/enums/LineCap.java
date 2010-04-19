@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.MicroscopeType
+ * ome.xml.r201004.enums.LineCap
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,47 +31,39 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum MicroscopeType implements Enumeration
+public enum LineCap implements Enumeration
 {
-  UPRIGHT("Upright"), INVERTED("Inverted"), DISSECTION("Dissection"), ELECTROPHYSIOLOGY("Electrophysiology"), OTHER("Other");
+  BUTT("Butt"), LINE("Line"), SQUARE("Square");
   
-  private MicroscopeType(String value)
+  private LineCap(String value)
   {
     this.value = value;
   }
 
-  public static MicroscopeType fromString(String value)
+  public static LineCap fromString(String value)
     throws EnumerationException
   {
-    if ("Upright".equals(value))
+    if ("Butt".equals(value))
     {
-      return UPRIGHT;
+      return BUTT;
     }
-    if ("Inverted".equals(value))
+    if ("Line".equals(value))
     {
-      return INVERTED;
+      return LINE;
     }
-    if ("Dissection".equals(value))
+    if ("Square".equals(value))
     {
-      return DISSECTION;
-    }
-    if ("Electrophysiology".equals(value))
-    {
-      return ELECTROPHYSIOLOGY;
-    }
-    if ("Other".equals(value))
-    {
-      return OTHER;
+      return SQUARE;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, MicroscopeType.class);
+                             value, LineCap.class);
     throw new EnumerationException(s);
   }
 

@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.PixelType
+ * ome.xml.r201004.enums.Binning
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,71 +31,47 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum PixelType implements Enumeration
+public enum Binning implements Enumeration
 {
-  INT8("int8"), INT16("int16"), INT32("int32"), UINT8("uint8"), UINT16("uint16"), UINT32("uint32"), FLOAT("float"), BIT("bit"), DOUBLE("double"), COMPLEX("complex"), DOUBLECOMPLEX("double-complex");
+  ONEXONE("1x1"), TWOXTWO("2x2"), FOURXFOUR("4x4"), EIGHTXEIGHT("8x8"), OTHER("Other");
   
-  private PixelType(String value)
+  private Binning(String value)
   {
     this.value = value;
   }
 
-  public static PixelType fromString(String value)
+  public static Binning fromString(String value)
     throws EnumerationException
   {
-    if ("int8".equals(value))
+    if ("1x1".equals(value))
     {
-      return INT8;
+      return ONEXONE;
     }
-    if ("int16".equals(value))
+    if ("2x2".equals(value))
     {
-      return INT16;
+      return TWOXTWO;
     }
-    if ("int32".equals(value))
+    if ("4x4".equals(value))
     {
-      return INT32;
+      return FOURXFOUR;
     }
-    if ("uint8".equals(value))
+    if ("8x8".equals(value))
     {
-      return UINT8;
+      return EIGHTXEIGHT;
     }
-    if ("uint16".equals(value))
+    if ("Other".equals(value))
     {
-      return UINT16;
-    }
-    if ("uint32".equals(value))
-    {
-      return UINT32;
-    }
-    if ("float".equals(value))
-    {
-      return FLOAT;
-    }
-    if ("bit".equals(value))
-    {
-      return BIT;
-    }
-    if ("double".equals(value))
-    {
-      return DOUBLE;
-    }
-    if ("complex".equals(value))
-    {
-      return COMPLEX;
-    }
-    if ("double-complex".equals(value))
-    {
-      return DOUBLECOMPLEX;
+      return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, PixelType.class);
+                             value, Binning.class);
     throw new EnumerationException(s);
   }
 

@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.Correction
+ * ome.xml.r201004.enums.ArcType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,87 +31,43 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum Correction implements Enumeration
+public enum ArcType implements Enumeration
 {
-  UV("UV"), PLANAPO("PlanApo"), PLANFLUOR("PlanFluor"), SUPERFLUOR("SuperFluor"), VIOLETCORRECTED("VioletCorrected"), ACHRO("Achro"), ACHROMAT("Achromat"), FLUOR("Fluor"), FL("Fl"), FLUAR("Fluar"), NEOFLUAR("Neofluar"), FLUOTAR("Fluotar"), APO("Apo"), PLANNEOFLUAR("PlanNeofluar"), OTHER("Other");
+  HG("Hg"), XE("Xe"), HGXE("HgXe"), OTHER("Other");
   
-  private Correction(String value)
+  private ArcType(String value)
   {
     this.value = value;
   }
 
-  public static Correction fromString(String value)
+  public static ArcType fromString(String value)
     throws EnumerationException
   {
-    if ("UV".equals(value))
+    if ("Hg".equals(value))
     {
-      return UV;
+      return HG;
     }
-    if ("PlanApo".equals(value))
+    if ("Xe".equals(value))
     {
-      return PLANAPO;
+      return XE;
     }
-    if ("PlanFluor".equals(value))
+    if ("HgXe".equals(value))
     {
-      return PLANFLUOR;
-    }
-    if ("SuperFluor".equals(value))
-    {
-      return SUPERFLUOR;
-    }
-    if ("VioletCorrected".equals(value))
-    {
-      return VIOLETCORRECTED;
-    }
-    if ("Achro".equals(value))
-    {
-      return ACHRO;
-    }
-    if ("Achromat".equals(value))
-    {
-      return ACHROMAT;
-    }
-    if ("Fluor".equals(value))
-    {
-      return FLUOR;
-    }
-    if ("Fl".equals(value))
-    {
-      return FL;
-    }
-    if ("Fluar".equals(value))
-    {
-      return FLUAR;
-    }
-    if ("Neofluar".equals(value))
-    {
-      return NEOFLUAR;
-    }
-    if ("Fluotar".equals(value))
-    {
-      return FLUOTAR;
-    }
-    if ("Apo".equals(value))
-    {
-      return APO;
-    }
-    if ("PlanNeofluar".equals(value))
-    {
-      return PLANNEOFLUAR;
+      return HGXE;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Correction.class);
+                             value, ArcType.class);
     throw new EnumerationException(s);
   }
 

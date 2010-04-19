@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ExperimentType
+ * ome.xml.r201004.enums.MicrobeamManipulationType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,91 +31,59 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum ExperimentType implements Enumeration
+public enum MicrobeamManipulationType implements Enumeration
 {
-  FP("FP"), FRET("FRET"), TIMELAPSE("TimeLapse"), FOURDPLUS("FourDPlus"), SCREEN("Screen"), IMMUNOCYTOCHEMISTRY("Immunocytochemistry"), IMMUNOFLUORESCENCE("Immunofluorescence"), FISH("FISH"), ELECTROPHYSIOLOGY("Electrophysiology"), IONIMAGING("IonImaging"), COLOCALIZATION("Colocalization"), PGIDOCUMENTATION("PGIDocumentation"), FLUORESCENCELIFETIME("FluorescenceLifetime"), SPECTRALIMAGING("SpectralImaging"), PHOTOBLEACHING("Photobleaching"), OTHER("Other");
+  FRAP("FRAP"), FLIP("FLIP"), INVERSEFRAP("InverseFRAP"), PHOTOABLATION("Photoablation"), PHOTOACTIVATION("Photoactivation"), UNCAGING("Uncaging"), OPTICALTRAPPING("OpticalTrapping"), OTHER("Other");
   
-  private ExperimentType(String value)
+  private MicrobeamManipulationType(String value)
   {
     this.value = value;
   }
 
-  public static ExperimentType fromString(String value)
+  public static MicrobeamManipulationType fromString(String value)
     throws EnumerationException
   {
-    if ("FP".equals(value))
+    if ("FRAP".equals(value))
     {
-      return FP;
+      return FRAP;
     }
-    if ("FRET".equals(value))
+    if ("FLIP".equals(value))
     {
-      return FRET;
+      return FLIP;
     }
-    if ("TimeLapse".equals(value))
+    if ("InverseFRAP".equals(value))
     {
-      return TIMELAPSE;
+      return INVERSEFRAP;
     }
-    if ("FourDPlus".equals(value))
+    if ("Photoablation".equals(value))
     {
-      return FOURDPLUS;
+      return PHOTOABLATION;
     }
-    if ("Screen".equals(value))
+    if ("Photoactivation".equals(value))
     {
-      return SCREEN;
+      return PHOTOACTIVATION;
     }
-    if ("Immunocytochemistry".equals(value))
+    if ("Uncaging".equals(value))
     {
-      return IMMUNOCYTOCHEMISTRY;
+      return UNCAGING;
     }
-    if ("Immunofluorescence".equals(value))
+    if ("OpticalTrapping".equals(value))
     {
-      return IMMUNOFLUORESCENCE;
-    }
-    if ("FISH".equals(value))
-    {
-      return FISH;
-    }
-    if ("Electrophysiology".equals(value))
-    {
-      return ELECTROPHYSIOLOGY;
-    }
-    if ("IonImaging".equals(value))
-    {
-      return IONIMAGING;
-    }
-    if ("Colocalization".equals(value))
-    {
-      return COLOCALIZATION;
-    }
-    if ("PGIDocumentation".equals(value))
-    {
-      return PGIDOCUMENTATION;
-    }
-    if ("FluorescenceLifetime".equals(value))
-    {
-      return FLUORESCENCELIFETIME;
-    }
-    if ("SpectralImaging".equals(value))
-    {
-      return SPECTRALIMAGING;
-    }
-    if ("Photobleaching".equals(value))
-    {
-      return PHOTOBLEACHING;
+      return OPTICALTRAPPING;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ExperimentType.class);
+                             value, MicrobeamManipulationType.class);
     throw new EnumerationException(s);
   }
 

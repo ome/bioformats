@@ -25,6 +25,9 @@ package loci.formats.enums;
 
 import java.util.List;
 
+import ome.xml.r201004.enums.Enumeration;
+import ome.xml.r201004.enums.EnumerationException;
+
 /**
  * Interface for retrieving enumerations for an entity.
  *

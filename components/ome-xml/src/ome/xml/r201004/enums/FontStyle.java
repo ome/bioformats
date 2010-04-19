@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.FilterType
+ * ome.xml.r201004.enums.FontStyle
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,55 +31,43 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum FilterType implements Enumeration
+public enum FontStyle implements Enumeration
 {
-  DICHROIC("Dichroic"), LONGPASS("LongPass"), SHORTPASS("ShortPass"), BANDPASS("BandPass"), MULTIPASS("MultiPass"), NEUTRALDENSITY("NeutralDensity"), OTHER("Other");
+  BOLD("Bold"), BOLDITALIC("BoldItalic"), ITALIC("Italic"), REGULAR("Regular");
   
-  private FilterType(String value)
+  private FontStyle(String value)
   {
     this.value = value;
   }
 
-  public static FilterType fromString(String value)
+  public static FontStyle fromString(String value)
     throws EnumerationException
   {
-    if ("Dichroic".equals(value))
+    if ("Bold".equals(value))
     {
-      return DICHROIC;
+      return BOLD;
     }
-    if ("LongPass".equals(value))
+    if ("BoldItalic".equals(value))
     {
-      return LONGPASS;
+      return BOLDITALIC;
     }
-    if ("ShortPass".equals(value))
+    if ("Italic".equals(value))
     {
-      return SHORTPASS;
+      return ITALIC;
     }
-    if ("BandPass".equals(value))
+    if ("Regular".equals(value))
     {
-      return BANDPASS;
-    }
-    if ("MultiPass".equals(value))
-    {
-      return MULTIPASS;
-    }
-    if ("NeutralDensity".equals(value))
-    {
-      return NEUTRALDENSITY;
-    }
-    if ("Other".equals(value))
-    {
-      return OTHER;
+      return REGULAR;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, FilterType.class);
+                             value, FontStyle.class);
     throw new EnumerationException(s);
   }
 

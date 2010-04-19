@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.Medium
+ * ome.xml.r201004.enums.Correction
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,47 +31,87 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum Medium implements Enumeration
+public enum Correction implements Enumeration
 {
-  AIR("Air"), OIL("Oil"), WATER("Water"), GLYCEROL("Glycerol"), OTHER("Other");
+  UV("UV"), PLANAPO("PlanApo"), PLANFLUOR("PlanFluor"), SUPERFLUOR("SuperFluor"), VIOLETCORRECTED("VioletCorrected"), ACHRO("Achro"), ACHROMAT("Achromat"), FLUOR("Fluor"), FL("Fl"), FLUAR("Fluar"), NEOFLUAR("Neofluar"), FLUOTAR("Fluotar"), APO("Apo"), PLANNEOFLUAR("PlanNeofluar"), OTHER("Other");
   
-  private Medium(String value)
+  private Correction(String value)
   {
     this.value = value;
   }
 
-  public static Medium fromString(String value)
+  public static Correction fromString(String value)
     throws EnumerationException
   {
-    if ("Air".equals(value))
+    if ("UV".equals(value))
     {
-      return AIR;
+      return UV;
     }
-    if ("Oil".equals(value))
+    if ("PlanApo".equals(value))
     {
-      return OIL;
+      return PLANAPO;
     }
-    if ("Water".equals(value))
+    if ("PlanFluor".equals(value))
     {
-      return WATER;
+      return PLANFLUOR;
     }
-    if ("Glycerol".equals(value))
+    if ("SuperFluor".equals(value))
     {
-      return GLYCEROL;
+      return SUPERFLUOR;
+    }
+    if ("VioletCorrected".equals(value))
+    {
+      return VIOLETCORRECTED;
+    }
+    if ("Achro".equals(value))
+    {
+      return ACHRO;
+    }
+    if ("Achromat".equals(value))
+    {
+      return ACHROMAT;
+    }
+    if ("Fluor".equals(value))
+    {
+      return FLUOR;
+    }
+    if ("Fl".equals(value))
+    {
+      return FL;
+    }
+    if ("Fluar".equals(value))
+    {
+      return FLUAR;
+    }
+    if ("Neofluar".equals(value))
+    {
+      return NEOFLUAR;
+    }
+    if ("Fluotar".equals(value))
+    {
+      return FLUOTAR;
+    }
+    if ("Apo".equals(value))
+    {
+      return APO;
+    }
+    if ("PlanNeofluar".equals(value))
+    {
+      return PLANNEOFLUAR;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Medium.class);
+                             value, Correction.class);
     throw new EnumerationException(s);
   }
 

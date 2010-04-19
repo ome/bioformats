@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.NamingConvention
+ * ome.xml.r201004.enums.FillRule
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,35 +31,35 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum NamingConvention implements Enumeration
+public enum FillRule implements Enumeration
 {
-  LETTER("letter"), NUMBER("number");
+  EVENODD("EvenOdd"), NONZERO("NonZero");
   
-  private NamingConvention(String value)
+  private FillRule(String value)
   {
     this.value = value;
   }
 
-  public static NamingConvention fromString(String value)
+  public static FillRule fromString(String value)
     throws EnumerationException
   {
-    if ("letter".equals(value))
+    if ("EvenOdd".equals(value))
     {
-      return LETTER;
+      return EVENODD;
     }
-    if ("number".equals(value))
+    if ("NonZero".equals(value))
     {
-      return NUMBER;
+      return NONZERO;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, NamingConvention.class);
+                             value, FillRule.class);
     throw new EnumerationException(s);
   }
 

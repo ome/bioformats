@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.ContrastMethod
+ * ome.xml.r201004.enums.FilamentType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,63 +31,39 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum ContrastMethod implements Enumeration
+public enum FilamentType implements Enumeration
 {
-  BRIGHTFIELD("Brightfield"), PHASE("Phase"), DIC("DIC"), HOFFMANMODULATION("HoffmanModulation"), OBLIQUEILLUMINATION("ObliqueIllumination"), POLARIZEDLIGHT("PolarizedLight"), DARKFIELD("Darkfield"), FLUORESCENCE("Fluorescence"), OTHER("Other");
+  INCANDESCENT("Incandescent"), HALOGEN("Halogen"), OTHER("Other");
   
-  private ContrastMethod(String value)
+  private FilamentType(String value)
   {
     this.value = value;
   }
 
-  public static ContrastMethod fromString(String value)
+  public static FilamentType fromString(String value)
     throws EnumerationException
   {
-    if ("Brightfield".equals(value))
+    if ("Incandescent".equals(value))
     {
-      return BRIGHTFIELD;
+      return INCANDESCENT;
     }
-    if ("Phase".equals(value))
+    if ("Halogen".equals(value))
     {
-      return PHASE;
-    }
-    if ("DIC".equals(value))
-    {
-      return DIC;
-    }
-    if ("HoffmanModulation".equals(value))
-    {
-      return HOFFMANMODULATION;
-    }
-    if ("ObliqueIllumination".equals(value))
-    {
-      return OBLIQUEILLUMINATION;
-    }
-    if ("PolarizedLight".equals(value))
-    {
-      return POLARIZEDLIGHT;
-    }
-    if ("Darkfield".equals(value))
-    {
-      return DARKFIELD;
-    }
-    if ("Fluorescence".equals(value))
-    {
-      return FLUORESCENCE;
+      return HALOGEN;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, ContrastMethod.class);
+                             value, FilamentType.class);
     throw new EnumerationException(s);
   }
 

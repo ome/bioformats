@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.LineCap
+ * ome.xml.r201004.enums.IlluminationType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,39 +31,47 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum LineCap implements Enumeration
+public enum IlluminationType implements Enumeration
 {
-  BUTT("Butt"), LINE("Line"), SQUARE("Square");
+  TRANSMITTED("Transmitted"), EPIFLUORESCENCE("Epifluorescence"), OBLIQUE("Oblique"), NONLINEAR("NonLinear"), OTHER("Other");
   
-  private LineCap(String value)
+  private IlluminationType(String value)
   {
     this.value = value;
   }
 
-  public static LineCap fromString(String value)
+  public static IlluminationType fromString(String value)
     throws EnumerationException
   {
-    if ("Butt".equals(value))
+    if ("Transmitted".equals(value))
     {
-      return BUTT;
+      return TRANSMITTED;
     }
-    if ("Line".equals(value))
+    if ("Epifluorescence".equals(value))
     {
-      return LINE;
+      return EPIFLUORESCENCE;
     }
-    if ("Square".equals(value))
+    if ("Oblique".equals(value))
     {
-      return SQUARE;
+      return OBLIQUE;
+    }
+    if ("NonLinear".equals(value))
+    {
+      return NONLINEAR;
+    }
+    if ("Other".equals(value))
+    {
+      return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, LineCap.class);
+                             value, IlluminationType.class);
     throw new EnumerationException(s);
   }
 

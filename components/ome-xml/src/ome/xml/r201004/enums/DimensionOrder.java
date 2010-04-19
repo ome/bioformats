@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.Pulse
+ * ome.xml.r201004.enums.DimensionOrder
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,51 +31,51 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum Pulse implements Enumeration
+public enum DimensionOrder implements Enumeration
 {
-  CW("CW"), SINGLE("Single"), QSWITCHED("QSwitched"), REPETITIVE("Repetitive"), MODELOCKED("ModeLocked"), OTHER("Other");
+  XYZCT("XYZCT"), XYZTC("XYZTC"), XYCTZ("XYCTZ"), XYCZT("XYCZT"), XYTCZ("XYTCZ"), XYTZC("XYTZC");
   
-  private Pulse(String value)
+  private DimensionOrder(String value)
   {
     this.value = value;
   }
 
-  public static Pulse fromString(String value)
+  public static DimensionOrder fromString(String value)
     throws EnumerationException
   {
-    if ("CW".equals(value))
+    if ("XYZCT".equals(value))
     {
-      return CW;
+      return XYZCT;
     }
-    if ("Single".equals(value))
+    if ("XYZTC".equals(value))
     {
-      return SINGLE;
+      return XYZTC;
     }
-    if ("QSwitched".equals(value))
+    if ("XYCTZ".equals(value))
     {
-      return QSWITCHED;
+      return XYCTZ;
     }
-    if ("Repetitive".equals(value))
+    if ("XYCZT".equals(value))
     {
-      return REPETITIVE;
+      return XYCZT;
     }
-    if ("ModeLocked".equals(value))
+    if ("XYTCZ".equals(value))
     {
-      return MODELOCKED;
+      return XYTCZ;
     }
-    if ("Other".equals(value))
+    if ("XYTZC".equals(value))
     {
-      return OTHER;
+      return XYTZC;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Pulse.class);
+                             value, DimensionOrder.class);
     throw new EnumerationException(s);
   }
 

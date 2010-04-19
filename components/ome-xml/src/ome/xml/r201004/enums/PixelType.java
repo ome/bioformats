@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.LaserType
+ * ome.xml.r201004.enums.PixelType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,59 +31,71 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum LaserType implements Enumeration
+public enum PixelType implements Enumeration
 {
-  EXCIMER("Excimer"), GAS("Gas"), METALVAPOR("MetalVapor"), SOLIDSTATE("SolidState"), DYE("Dye"), SEMICONDUCTOR("Semiconductor"), FREEELECTRON("FreeElectron"), OTHER("Other");
+  INT8("int8"), INT16("int16"), INT32("int32"), UINT8("uint8"), UINT16("uint16"), UINT32("uint32"), FLOAT("float"), BIT("bit"), DOUBLE("double"), COMPLEX("complex"), DOUBLECOMPLEX("double-complex");
   
-  private LaserType(String value)
+  private PixelType(String value)
   {
     this.value = value;
   }
 
-  public static LaserType fromString(String value)
+  public static PixelType fromString(String value)
     throws EnumerationException
   {
-    if ("Excimer".equals(value))
+    if ("int8".equals(value))
     {
-      return EXCIMER;
+      return INT8;
     }
-    if ("Gas".equals(value))
+    if ("int16".equals(value))
     {
-      return GAS;
+      return INT16;
     }
-    if ("MetalVapor".equals(value))
+    if ("int32".equals(value))
     {
-      return METALVAPOR;
+      return INT32;
     }
-    if ("SolidState".equals(value))
+    if ("uint8".equals(value))
     {
-      return SOLIDSTATE;
+      return UINT8;
     }
-    if ("Dye".equals(value))
+    if ("uint16".equals(value))
     {
-      return DYE;
+      return UINT16;
     }
-    if ("Semiconductor".equals(value))
+    if ("uint32".equals(value))
     {
-      return SEMICONDUCTOR;
+      return UINT32;
     }
-    if ("FreeElectron".equals(value))
+    if ("float".equals(value))
     {
-      return FREEELECTRON;
+      return FLOAT;
     }
-    if ("Other".equals(value))
+    if ("bit".equals(value))
     {
-      return OTHER;
+      return BIT;
+    }
+    if ("double".equals(value))
+    {
+      return DOUBLE;
+    }
+    if ("complex".equals(value))
+    {
+      return COMPLEX;
+    }
+    if ("double-complex".equals(value))
+    {
+      return DOUBLECOMPLEX;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, LaserType.class);
+                             value, PixelType.class);
     throw new EnumerationException(s);
   }
 

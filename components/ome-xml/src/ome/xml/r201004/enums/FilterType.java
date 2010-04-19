@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.Binning
+ * ome.xml.r201004.enums.FilterType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,47 +31,55 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum Binning implements Enumeration
+public enum FilterType implements Enumeration
 {
-  ONEXONE("1x1"), TWOXTWO("2x2"), FOURXFOUR("4x4"), EIGHTXEIGHT("8x8"), OTHER("Other");
+  DICHROIC("Dichroic"), LONGPASS("LongPass"), SHORTPASS("ShortPass"), BANDPASS("BandPass"), MULTIPASS("MultiPass"), NEUTRALDENSITY("NeutralDensity"), OTHER("Other");
   
-  private Binning(String value)
+  private FilterType(String value)
   {
     this.value = value;
   }
 
-  public static Binning fromString(String value)
+  public static FilterType fromString(String value)
     throws EnumerationException
   {
-    if ("1x1".equals(value))
+    if ("Dichroic".equals(value))
     {
-      return ONEXONE;
+      return DICHROIC;
     }
-    if ("2x2".equals(value))
+    if ("LongPass".equals(value))
     {
-      return TWOXTWO;
+      return LONGPASS;
     }
-    if ("4x4".equals(value))
+    if ("ShortPass".equals(value))
     {
-      return FOURXFOUR;
+      return SHORTPASS;
     }
-    if ("8x8".equals(value))
+    if ("BandPass".equals(value))
     {
-      return EIGHTXEIGHT;
+      return BANDPASS;
+    }
+    if ("MultiPass".equals(value))
+    {
+      return MULTIPASS;
+    }
+    if ("NeutralDensity".equals(value))
+    {
+      return NEUTRALDENSITY;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Binning.class);
+                             value, FilterType.class);
     throw new EnumerationException(s);
   }
 

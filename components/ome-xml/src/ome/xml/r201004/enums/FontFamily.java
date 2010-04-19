@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.FilamentType
+ * ome.xml.r201004.enums.FontFamily
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,39 +31,43 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum FilamentType implements Enumeration
+public enum FontFamily implements Enumeration
 {
-  INCANDESCENT("Incandescent"), HALOGEN("Halogen"), OTHER("Other");
+  ARIAL("Arial"), COURIER("Courier"), HELVETICA("Helvetica"), TIMESNEWROMAN("TimesNewRoman");
   
-  private FilamentType(String value)
+  private FontFamily(String value)
   {
     this.value = value;
   }
 
-  public static FilamentType fromString(String value)
+  public static FontFamily fromString(String value)
     throws EnumerationException
   {
-    if ("Incandescent".equals(value))
+    if ("Arial".equals(value))
     {
-      return INCANDESCENT;
+      return ARIAL;
     }
-    if ("Halogen".equals(value))
+    if ("Courier".equals(value))
     {
-      return HALOGEN;
+      return COURIER;
     }
-    if ("Other".equals(value))
+    if ("Helvetica".equals(value))
     {
-      return OTHER;
+      return HELVETICA;
+    }
+    if ("TimesNewRoman".equals(value))
+    {
+      return TIMESNEWROMAN;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, FilamentType.class);
+                             value, FontFamily.class);
     throw new EnumerationException(s);
   }
 

@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.Immersion
+ * ome.xml.r201004.enums.Pulse
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,55 +31,51 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum Immersion implements Enumeration
+public enum Pulse implements Enumeration
 {
-  OIL("Oil"), WATER("Water"), WATERDIPPING("WaterDipping"), AIR("Air"), MULTI("Multi"), GLYCEROL("Glycerol"), OTHER("Other");
+  CW("CW"), SINGLE("Single"), QSWITCHED("QSwitched"), REPETITIVE("Repetitive"), MODELOCKED("ModeLocked"), OTHER("Other");
   
-  private Immersion(String value)
+  private Pulse(String value)
   {
     this.value = value;
   }
 
-  public static Immersion fromString(String value)
+  public static Pulse fromString(String value)
     throws EnumerationException
   {
-    if ("Oil".equals(value))
+    if ("CW".equals(value))
     {
-      return OIL;
+      return CW;
     }
-    if ("Water".equals(value))
+    if ("Single".equals(value))
     {
-      return WATER;
+      return SINGLE;
     }
-    if ("WaterDipping".equals(value))
+    if ("QSwitched".equals(value))
     {
-      return WATERDIPPING;
+      return QSWITCHED;
     }
-    if ("Air".equals(value))
+    if ("Repetitive".equals(value))
     {
-      return AIR;
+      return REPETITIVE;
     }
-    if ("Multi".equals(value))
+    if ("ModeLocked".equals(value))
     {
-      return MULTI;
-    }
-    if ("Glycerol".equals(value))
-    {
-      return GLYCEROL;
+      return MODELOCKED;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Immersion.class);
+                             value, Pulse.class);
     throw new EnumerationException(s);
   }
 

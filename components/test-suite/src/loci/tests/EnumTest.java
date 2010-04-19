@@ -33,7 +33,9 @@ package loci.tests;
 
 import java.util.Vector;
 import loci.common.services.DependencyException;
-import loci.formats.enums.*;
+import loci.formats.enums.EnumerationProvider;
+import loci.formats.enums.IEnumerationProvider;
+import ome.xml.r201004.enums.*;
 
 /**
  * A class for testing the {@link loci.formats.enums} package.

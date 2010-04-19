@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.DimensionOrder
+ * ome.xml.r201004.enums.Marker
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,51 +31,39 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum DimensionOrder implements Enumeration
+public enum Marker implements Enumeration
 {
-  XYZCT("XYZCT"), XYZTC("XYZTC"), XYCTZ("XYCTZ"), XYCZT("XYCZT"), XYTCZ("XYTCZ"), XYTZC("XYTZC");
+  ARROW("Arrow"), CIRCLE("Circle"), SQUARE("Square");
   
-  private DimensionOrder(String value)
+  private Marker(String value)
   {
     this.value = value;
   }
 
-  public static DimensionOrder fromString(String value)
+  public static Marker fromString(String value)
     throws EnumerationException
   {
-    if ("XYZCT".equals(value))
+    if ("Arrow".equals(value))
     {
-      return XYZCT;
+      return ARROW;
     }
-    if ("XYZTC".equals(value))
+    if ("Circle".equals(value))
     {
-      return XYZTC;
+      return CIRCLE;
     }
-    if ("XYCTZ".equals(value))
+    if ("Square".equals(value))
     {
-      return XYCTZ;
-    }
-    if ("XYCZT".equals(value))
-    {
-      return XYCZT;
-    }
-    if ("XYTCZ".equals(value))
-    {
-      return XYTCZ;
-    }
-    if ("XYTZC".equals(value))
-    {
-      return XYTZC;
+      return SQUARE;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, DimensionOrder.class);
+                             value, Marker.class);
     throw new EnumerationException(s);
   }
 

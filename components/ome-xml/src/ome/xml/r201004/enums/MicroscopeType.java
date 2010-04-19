@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.DetectorType
+ * ome.xml.r201004.enums.MicroscopeType
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,83 +31,47 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 18:11:21+0100
+ * Created by callan via xsd-fu on 2010-04-19 18:31:26+0100
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums;
+package ome.xml.r201004.enums;
 
-public enum DetectorType implements Enumeration
+public enum MicroscopeType implements Enumeration
 {
-  CCD("CCD"), INTENSIFIEDCCD("IntensifiedCCD"), ANALOGVIDEO("AnalogVideo"), PMT("PMT"), PHOTODIODE("Photodiode"), SPECTROSCOPY("Spectroscopy"), LIFETIMEIMAGING("LifetimeImaging"), CORRELATIONSPECTROSCOPY("CorrelationSpectroscopy"), FTIR("FTIR"), EMCCD("EMCCD"), APD("APD"), CMOS("CMOS"), EBCCD("EBCCD"), OTHER("Other");
+  UPRIGHT("Upright"), INVERTED("Inverted"), DISSECTION("Dissection"), ELECTROPHYSIOLOGY("Electrophysiology"), OTHER("Other");
   
-  private DetectorType(String value)
+  private MicroscopeType(String value)
   {
     this.value = value;
   }
 
-  public static DetectorType fromString(String value)
+  public static MicroscopeType fromString(String value)
     throws EnumerationException
   {
-    if ("CCD".equals(value))
+    if ("Upright".equals(value))
     {
-      return CCD;
+      return UPRIGHT;
     }
-    if ("IntensifiedCCD".equals(value))
+    if ("Inverted".equals(value))
     {
-      return INTENSIFIEDCCD;
+      return INVERTED;
     }
-    if ("AnalogVideo".equals(value))
+    if ("Dissection".equals(value))
     {
-      return ANALOGVIDEO;
+      return DISSECTION;
     }
-    if ("PMT".equals(value))
+    if ("Electrophysiology".equals(value))
     {
-      return PMT;
-    }
-    if ("Photodiode".equals(value))
-    {
-      return PHOTODIODE;
-    }
-    if ("Spectroscopy".equals(value))
-    {
-      return SPECTROSCOPY;
-    }
-    if ("LifetimeImaging".equals(value))
-    {
-      return LIFETIMEIMAGING;
-    }
-    if ("CorrelationSpectroscopy".equals(value))
-    {
-      return CORRELATIONSPECTROSCOPY;
-    }
-    if ("FTIR".equals(value))
-    {
-      return FTIR;
-    }
-    if ("EMCCD".equals(value))
-    {
-      return EMCCD;
-    }
-    if ("APD".equals(value))
-    {
-      return APD;
-    }
-    if ("CMOS".equals(value))
-    {
-      return CMOS;
-    }
-    if ("EBCCD".equals(value))
-    {
-      return EBCCD;
+      return ELECTROPHYSIOLOGY;
     }
     if ("Other".equals(value))
     {
       return OTHER;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, DetectorType.class);
+                             value, MicroscopeType.class);
     throw new EnumerationException(s);
   }
 

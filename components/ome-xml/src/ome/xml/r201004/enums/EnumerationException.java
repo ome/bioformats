@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2005-2010 UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.enums;
-
-import loci.formats.FormatException;
+package ome.xml.r201004.enums;
 
 /**
  * EnumerationException is the exception thrown when an enumeration is
@@ -33,7 +31,7 @@ import loci.formats.FormatException;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/EnumerationException.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/EnumerationException.java">SVN</a></dd></dl>
  */
-public class EnumerationException extends FormatException {
+public class EnumerationException extends Exception {
 
   public EnumerationException() { super(); }
   public EnumerationException(String s) { super(s); }

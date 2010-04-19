@@ -40,9 +40,9 @@ package loci.formats.enums.handler;
 
 import java.util.Hashtable;
 
-import loci.formats.enums.Enumeration;
-import loci.formats.enums.EnumerationException;
-import loci.formats.enums.FilterType;
+import ome.xml.r201004.enums.Enumeration;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.FilterType;
 
 /**
  * Enumeration handler for FilterType.
