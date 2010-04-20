@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -86,5 +89,34 @@ public class TimestampAnnotation extends Annotation
 			TimestampAnnotation_element.appendChild(value_element);
 		}
 		return TimestampAnnotation_element;
+	}
+
+	public static TimestampAnnotation fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"TimestampAnnotation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of TimestampAnnotation got %s",
+					tagName));
+		}
+		TimestampAnnotation instance = new TimestampAnnotation();
+		NodeList Value_nodeList = element.getElementsByTagName("Value");
+		if (Value_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Value node list size %d != 1",
+					Value_nodeList.getLength()));
+		}
+		else if (Value_nodeList.getLength() != 0)
+		{
+			// Element property Value which is not complex (has no
+			// sub-elements)
+			instance.setValue(Value_nodeList.item(0).getTextContent());
+		}
+		return instance;
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -246,5 +249,64 @@ public class MicrobeamManipulation extends Object
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}
 		return MicrobeamManipulation_element;
+	}
+
+	public static MicrobeamManipulation fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"MicrobeamManipulation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of MicrobeamManipulation got %s",
+					tagName));
+		}
+		MicrobeamManipulation instance = new MicrobeamManipulation();
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			instance.setType(MicrobeamManipulationType.fromString(
+					element.getAttribute("Type")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Element property ROIRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
+		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
+		{
+			instance.addROI(ROI.fromXMLElement(
+					(Element) ROIRef_nodeList.item(i)));
+		}
+		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
+		if (ExperimenterRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ExperimenterRef node list size %d != 1",
+					ExperimenterRef_nodeList.getLength()));
+		}
+		else if (ExperimenterRef_nodeList.getLength() != 0)
+		{
+			// Element property ExperimenterRef which is complex (has
+			// sub-elements)
+			instance.setExperimenter(Experimenter.fromXMLElement(
+					(Element) ExperimenterRef_nodeList.item(0)));
+		}
+		// Element property LightSourceSettings which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
+		for (int i = 0; i < LightSourceSettings_nodeList.getLength(); i++)
+		{
+			instance.addLightSourceSettings(LightSourceSettings.fromXMLElement(
+					(Element) LightSourceSettings_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		return instance;
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -631,5 +634,270 @@ public class Shape extends Object
 			Shape_element.appendChild(description_element);
 		}
 		return Shape_element;
+	}
+
+	public static Shape fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Shape".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Shape got %s",
+					tagName));
+		}
+		Shape instance = new Shape();
+		if (element.hasAttribute("StrokeDashArray"))
+		{
+			// Attribute property StrokeDashArray
+			instance.setStrokeDashArray(String.valueOf(
+					element.getAttribute("StrokeDashArray")));
+		}
+		if (element.hasAttribute("StrokeWidth"))
+		{
+			// Attribute property StrokeWidth
+			instance.setStrokeWidth(Double.valueOf(
+					element.getAttribute("StrokeWidth")));
+		}
+		if (element.hasAttribute("FillRule"))
+		{
+			// Attribute property which is an enumeration FillRule
+			instance.setFillRule(FillRule.fromString(
+					element.getAttribute("FillRule")));
+		}
+		if (element.hasAttribute("LineCap"))
+		{
+			// Attribute property which is an enumeration LineCap
+			instance.setLineCap(LineCap.fromString(
+					element.getAttribute("LineCap")));
+		}
+		if (element.hasAttribute("TheC"))
+		{
+			// Attribute property TheC
+			instance.setTheC(Integer.valueOf(
+					element.getAttribute("TheC")));
+		}
+		if (element.hasAttribute("TheT"))
+		{
+			// Attribute property TheT
+			instance.setTheT(Integer.valueOf(
+					element.getAttribute("TheT")));
+		}
+		if (element.hasAttribute("Transform"))
+		{
+			// Attribute property Transform
+			instance.setTransform(String.valueOf(
+					element.getAttribute("Transform")));
+		}
+		if (element.hasAttribute("Label"))
+		{
+			// Attribute property Label
+			instance.setLabel(String.valueOf(
+					element.getAttribute("Label")));
+		}
+		if (element.hasAttribute("FontFamily"))
+		{
+			// Attribute property which is an enumeration FontFamily
+			instance.setFontFamily(FontFamily.fromString(
+					element.getAttribute("FontFamily")));
+		}
+		if (element.hasAttribute("Stroke"))
+		{
+			// Attribute property Stroke
+			instance.setStroke(Integer.valueOf(
+					element.getAttribute("Stroke")));
+		}
+		if (element.hasAttribute("FontStyle"))
+		{
+			// Attribute property which is an enumeration FontStyle
+			instance.setFontStyle(FontStyle.fromString(
+					element.getAttribute("FontStyle")));
+		}
+		if (element.hasAttribute("MarkerEnd"))
+		{
+			// Attribute property which is an enumeration MarkerEnd
+			instance.setMarkerEnd(Marker.fromString(
+					element.getAttribute("MarkerEnd")));
+		}
+		if (element.hasAttribute("TheZ"))
+		{
+			// Attribute property TheZ
+			instance.setTheZ(Integer.valueOf(
+					element.getAttribute("TheZ")));
+		}
+		if (element.hasAttribute("FontSize"))
+		{
+			// Attribute property FontSize
+			instance.setFontSize(Integer.valueOf(
+					element.getAttribute("FontSize")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("Fill"))
+		{
+			// Attribute property Fill
+			instance.setFill(Integer.valueOf(
+					element.getAttribute("Fill")));
+		}
+		if (element.hasAttribute("MarkerStart"))
+		{
+			// Attribute property which is an enumeration MarkerStart
+			instance.setMarkerStart(Marker.fromString(
+					element.getAttribute("MarkerStart")));
+		}
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			instance.setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		NodeList Line_nodeList = element.getElementsByTagName("Line");
+		if (Line_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Line node list size %d != 1",
+					Line_nodeList.getLength()));
+		}
+		else if (Line_nodeList.getLength() != 0)
+		{
+			// Element property Line which is complex (has
+			// sub-elements)
+			instance.setLine(Line.fromXMLElement(
+					(Element) Line_nodeList.item(0)));
+		}
+		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
+		if (Rectangle_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Rectangle node list size %d != 1",
+					Rectangle_nodeList.getLength()));
+		}
+		else if (Rectangle_nodeList.getLength() != 0)
+		{
+			// Element property Rectangle which is complex (has
+			// sub-elements)
+			instance.setRectangle(Rectangle.fromXMLElement(
+					(Element) Rectangle_nodeList.item(0)));
+		}
+		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
+		if (Mask_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Mask node list size %d != 1",
+					Mask_nodeList.getLength()));
+		}
+		else if (Mask_nodeList.getLength() != 0)
+		{
+			// Element property Mask which is complex (has
+			// sub-elements)
+			instance.setMask(Mask.fromXMLElement(
+					(Element) Mask_nodeList.item(0)));
+		}
+		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
+		if (Ellipse_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Ellipse node list size %d != 1",
+					Ellipse_nodeList.getLength()));
+		}
+		else if (Ellipse_nodeList.getLength() != 0)
+		{
+			// Element property Ellipse which is complex (has
+			// sub-elements)
+			instance.setEllipse(Ellipse.fromXMLElement(
+					(Element) Ellipse_nodeList.item(0)));
+		}
+		NodeList Point_nodeList = element.getElementsByTagName("Point");
+		if (Point_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Point node list size %d != 1",
+					Point_nodeList.getLength()));
+		}
+		else if (Point_nodeList.getLength() != 0)
+		{
+			// Element property Point which is complex (has
+			// sub-elements)
+			instance.setPoint(Point.fromXMLElement(
+					(Element) Point_nodeList.item(0)));
+		}
+		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
+		if (Polyline_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Polyline node list size %d != 1",
+					Polyline_nodeList.getLength()));
+		}
+		else if (Polyline_nodeList.getLength() != 0)
+		{
+			// Element property Polyline which is complex (has
+			// sub-elements)
+			instance.setPolyline(Polyline.fromXMLElement(
+					(Element) Polyline_nodeList.item(0)));
+		}
+		NodeList Path_nodeList = element.getElementsByTagName("Path");
+		if (Path_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Path node list size %d != 1",
+					Path_nodeList.getLength()));
+		}
+		else if (Path_nodeList.getLength() != 0)
+		{
+			// Element property Path which is complex (has
+			// sub-elements)
+			instance.setPath(Path.fromXMLElement(
+					(Element) Path_nodeList.item(0)));
+		}
+		NodeList Text_nodeList = element.getElementsByTagName("Text");
+		if (Text_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Text node list size %d != 1",
+					Text_nodeList.getLength()));
+		}
+		else if (Text_nodeList.getLength() != 0)
+		{
+			// Element property Text which is complex (has
+			// sub-elements)
+			instance.setText(Text.fromXMLElement(
+					(Element) Text_nodeList.item(0)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			instance.setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		return instance;
 	}
 }

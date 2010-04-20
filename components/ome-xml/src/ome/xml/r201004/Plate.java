@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -486,5 +489,127 @@ public class Plate extends Object
 			// *** IGNORING *** Skipped back reference Screen_BackReference
 		}
 		return Plate_element;
+	}
+
+	public static Plate fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Plate".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Plate got %s",
+					tagName));
+		}
+		Plate instance = new Plate();
+		if (element.hasAttribute("Status"))
+		{
+			// Attribute property Status
+			instance.setStatus(String.valueOf(
+					element.getAttribute("Status")));
+		}
+		if (element.hasAttribute("Rows"))
+		{
+			// Attribute property Rows
+			instance.setRows(Integer.valueOf(
+					element.getAttribute("Rows")));
+		}
+		if (element.hasAttribute("ExternalIdentifier"))
+		{
+			// Attribute property ExternalIdentifier
+			instance.setExternalIdentifier(String.valueOf(
+					element.getAttribute("ExternalIdentifier")));
+		}
+		if (element.hasAttribute("RowNamingConvention"))
+		{
+			// Attribute property which is an enumeration RowNamingConvention
+			instance.setRowNamingConvention(NamingConvention.fromString(
+					element.getAttribute("RowNamingConvention")));
+		}
+		if (element.hasAttribute("ColumnNamingConvention"))
+		{
+			// Attribute property which is an enumeration ColumnNamingConvention
+			instance.setColumnNamingConvention(NamingConvention.fromString(
+					element.getAttribute("ColumnNamingConvention")));
+		}
+		if (element.hasAttribute("WellOriginY"))
+		{
+			// Attribute property WellOriginY
+			instance.setWellOriginY(Double.valueOf(
+					element.getAttribute("WellOriginY")));
+		}
+		if (element.hasAttribute("WellOriginX"))
+		{
+			// Attribute property WellOriginX
+			instance.setWellOriginX(Double.valueOf(
+					element.getAttribute("WellOriginX")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("Columns"))
+		{
+			// Attribute property Columns
+			instance.setColumns(Integer.valueOf(
+					element.getAttribute("Columns")));
+		}
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			instance.setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			instance.setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Element property ScreenRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ScreenRef_nodeList = element.getElementsByTagName("ScreenRef");
+		for (int i = 0; i < ScreenRef_nodeList.getLength(); i++)
+		{
+			instance.addScreen(Screen.fromXMLElement(
+					(Element) ScreenRef_nodeList.item(i)));
+		}
+		// Element property Well which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Well_nodeList = element.getElementsByTagName("Well");
+		for (int i = 0; i < Well_nodeList.getLength(); i++)
+		{
+			instance.addWell(Well.fromXMLElement(
+					(Element) Well_nodeList.item(i)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		// Element property PlateAcquisition which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList PlateAcquisition_nodeList = element.getElementsByTagName("PlateAcquisition");
+		for (int i = 0; i < PlateAcquisition_nodeList.getLength(); i++)
+		{
+			instance.addPlateAcquisition(PlateAcquisition.fromXMLElement(
+					(Element) PlateAcquisition_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Screen_BackReference
+		return instance;
 	}
 }

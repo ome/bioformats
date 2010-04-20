@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -480,5 +483,99 @@ public class Instrument extends Object
 			// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 		}
 		return Instrument_element;
+	}
+
+	public static Instrument fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Instrument".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Instrument got %s",
+					tagName));
+		}
+		Instrument instance = new Instrument();
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		NodeList Microscope_nodeList = element.getElementsByTagName("Microscope");
+		if (Microscope_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Microscope node list size %d != 1",
+					Microscope_nodeList.getLength()));
+		}
+		else if (Microscope_nodeList.getLength() != 0)
+		{
+			// Element property Microscope which is complex (has
+			// sub-elements)
+			instance.setMicroscope(Microscope.fromXMLElement(
+					(Element) Microscope_nodeList.item(0)));
+		}
+		// Element property LightSource which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList LightSource_nodeList = element.getElementsByTagName("LightSource");
+		for (int i = 0; i < LightSource_nodeList.getLength(); i++)
+		{
+			instance.addLightSource(LightSource.fromXMLElement(
+					(Element) LightSource_nodeList.item(i)));
+		}
+		// Element property Detector which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Detector_nodeList = element.getElementsByTagName("Detector");
+		for (int i = 0; i < Detector_nodeList.getLength(); i++)
+		{
+			instance.addDetector(Detector.fromXMLElement(
+					(Element) Detector_nodeList.item(i)));
+		}
+		// Element property Objective which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Objective_nodeList = element.getElementsByTagName("Objective");
+		for (int i = 0; i < Objective_nodeList.getLength(); i++)
+		{
+			instance.addObjective(Objective.fromXMLElement(
+					(Element) Objective_nodeList.item(i)));
+		}
+		// Element property FilterSet which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList FilterSet_nodeList = element.getElementsByTagName("FilterSet");
+		for (int i = 0; i < FilterSet_nodeList.getLength(); i++)
+		{
+			instance.addFilterSet(FilterSet.fromXMLElement(
+					(Element) FilterSet_nodeList.item(i)));
+		}
+		// Element property Filter which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Filter_nodeList = element.getElementsByTagName("Filter");
+		for (int i = 0; i < Filter_nodeList.getLength(); i++)
+		{
+			instance.addFilter(Filter.fromXMLElement(
+					(Element) Filter_nodeList.item(i)));
+		}
+		// Element property Dichroic which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Dichroic_nodeList = element.getElementsByTagName("Dichroic");
+		for (int i = 0; i < Dichroic_nodeList.getLength(); i++)
+		{
+			instance.addDichroic(Dichroic.fromXMLElement(
+					(Element) Dichroic_nodeList.item(i)));
+		}
+		// Element property OTF which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList OTF_nodeList = element.getElementsByTagName("OTF");
+		for (int i = 0; i < OTF_nodeList.getLength(); i++)
+		{
+			instance.addOTF(OTF.fromXMLElement(
+					(Element) OTF_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// *** IGNORING *** Skipped back reference ImageProfile_BackReference
+		return instance;
 	}
 }

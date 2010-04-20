@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -217,5 +220,55 @@ public class Filter extends ManufacturerSpec
 			// *** IGNORING *** Skipped back reference LightPath_BackReference
 		}
 		return Filter_element;
+	}
+
+	public static Filter fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Filter".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Filter got %s",
+					tagName));
+		}
+		Filter instance = new Filter();
+		if (element.hasAttribute("FilterWheel"))
+		{
+			// Attribute property FilterWheel
+			instance.setFilterWheel(String.valueOf(
+					element.getAttribute("FilterWheel")));
+		}
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			instance.setType(FilterType.fromString(
+					element.getAttribute("Type")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		NodeList TransmittanceRange_nodeList = element.getElementsByTagName("TransmittanceRange");
+		if (TransmittanceRange_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"TransmittanceRange node list size %d != 1",
+					TransmittanceRange_nodeList.getLength()));
+		}
+		else if (TransmittanceRange_nodeList.getLength() != 0)
+		{
+			// Element property TransmittanceRange which is complex (has
+			// sub-elements)
+			instance.setTransmittanceRange(TransmittanceRange.fromXMLElement(
+					(Element) TransmittanceRange_nodeList.item(0)));
+		}
+		// *** IGNORING *** Skipped back reference FilterSet_BackReference
+		// *** IGNORING *** Skipped back reference LightPath_BackReference
+		return instance;
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -316,5 +319,80 @@ public class Group extends Object
 			// *** IGNORING *** Skipped back reference Experimenter_BackReference
 		}
 		return Group_element;
+	}
+
+	public static Group fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Group".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Group got %s",
+					tagName));
+		}
+		Group instance = new Group();
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			instance.setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			instance.setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
+		if (Leader_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Leader node list size %d != 1",
+					Leader_nodeList.getLength()));
+		}
+		else if (Leader_nodeList.getLength() != 0)
+		{
+			// Element property Leader which is complex (has
+			// sub-elements)
+			instance.setLeader(Leader.fromXMLElement(
+					(Element) Leader_nodeList.item(0)));
+		}
+		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
+		if (Contact_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Contact node list size %d != 1",
+					Contact_nodeList.getLength()));
+		}
+		else if (Contact_nodeList.getLength() != 0)
+		{
+			// Element property Contact which is complex (has
+			// sub-elements)
+			instance.setContact(Contact.fromXMLElement(
+					(Element) Contact_nodeList.item(0)));
+		}
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// *** IGNORING *** Skipped back reference Project_BackReference
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
+		// *** IGNORING *** Skipped back reference Experimenter_BackReference
+		return instance;
 	}
 }

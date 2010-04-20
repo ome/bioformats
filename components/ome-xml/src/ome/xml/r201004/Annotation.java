@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -710,5 +713,48 @@ public class Annotation extends Object
 			// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
 		}
 		return Annotation_element;
+	}
+
+	public static Annotation fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Annotation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Annotation got %s",
+					tagName));
+		}
+		Annotation instance = new Annotation();
+		if (element.hasAttribute("Namespace"))
+		{
+			// Attribute property Namespace
+			instance.setNamespace(String.valueOf(
+					element.getAttribute("Namespace")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// *** IGNORING *** Skipped back reference Pixels_BackReference
+		// *** IGNORING *** Skipped back reference Plane_BackReference
+		// *** IGNORING *** Skipped back reference Channel_BackReference
+		// *** IGNORING *** Skipped back reference Project_BackReference
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
+		// *** IGNORING *** Skipped back reference Experimenter_BackReference
+		// *** IGNORING *** Skipped back reference Plate_BackReference
+		// *** IGNORING *** Skipped back reference Reagent_BackReference
+		// *** IGNORING *** Skipped back reference Screen_BackReference
+		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
+		// *** IGNORING *** Skipped back reference Well_BackReference
+		// *** IGNORING *** Skipped back reference WellSample_BackReference
+		// *** IGNORING *** Skipped back reference ROI_BackReference
+		// *** IGNORING *** Skipped back reference Shape_BackReference
+		// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
+		return instance;
 	}
 }

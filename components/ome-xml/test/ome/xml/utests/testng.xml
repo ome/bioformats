@@ -1,0 +1,8 @@
+<suite name="OMEXMLTests">
+    <test name="2010-04Schema">
+        <groups/>
+        <packages>
+            <package name="ome.xml.utests"/>
+        </packages>
+    </test>
+</suite>

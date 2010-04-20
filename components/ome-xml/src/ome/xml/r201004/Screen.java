@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -386,5 +389,101 @@ public class Screen extends Object
 			// *** IGNORING *** Skipped back reference Plate_BackReference
 		}
 		return Screen_element;
+	}
+
+	public static Screen fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Screen".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Screen got %s",
+					tagName));
+		}
+		Screen instance = new Screen();
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			instance.setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		if (element.hasAttribute("ProtocolDescription"))
+		{
+			// Attribute property ProtocolDescription
+			instance.setProtocolDescription(String.valueOf(
+					element.getAttribute("ProtocolDescription")));
+		}
+		if (element.hasAttribute("ProtocolIdentifier"))
+		{
+			// Attribute property ProtocolIdentifier
+			instance.setProtocolIdentifier(String.valueOf(
+					element.getAttribute("ProtocolIdentifier")));
+		}
+		if (element.hasAttribute("ReagentSetDescription"))
+		{
+			// Attribute property ReagentSetDescription
+			instance.setReagentSetDescription(String.valueOf(
+					element.getAttribute("ReagentSetDescription")));
+		}
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property Type
+			instance.setType(String.valueOf(
+					element.getAttribute("Type")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("ReagentSetIdentifier"))
+		{
+			// Attribute property ReagentSetIdentifier
+			instance.setReagentSetIdentifier(String.valueOf(
+					element.getAttribute("ReagentSetIdentifier")));
+		}
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			instance.setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Element property Reagent which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Reagent_nodeList = element.getElementsByTagName("Reagent");
+		for (int i = 0; i < Reagent_nodeList.getLength(); i++)
+		{
+			instance.addReagent(Reagent.fromXMLElement(
+					(Element) Reagent_nodeList.item(i)));
+		}
+		// Element property PlateRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList PlateRef_nodeList = element.getElementsByTagName("PlateRef");
+		for (int i = 0; i < PlateRef_nodeList.getLength(); i++)
+		{
+			instance.addPlate(Plate.fromXMLElement(
+					(Element) PlateRef_nodeList.item(i)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Plate_BackReference
+		return instance;
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -140,5 +143,44 @@ public class Line extends Object
 			Line_element.setAttribute("Y2", y2.toString());
 		}
 		return Line_element;
+	}
+
+	public static Line fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Line".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Line got %s",
+					tagName));
+		}
+		Line instance = new Line();
+		if (element.hasAttribute("Y1"))
+		{
+			// Attribute property Y1
+			instance.setY1(Double.valueOf(
+					element.getAttribute("Y1")));
+		}
+		if (element.hasAttribute("X2"))
+		{
+			// Attribute property X2
+			instance.setX2(Double.valueOf(
+					element.getAttribute("X2")));
+		}
+		if (element.hasAttribute("X1"))
+		{
+			// Attribute property X1
+			instance.setX1(Double.valueOf(
+					element.getAttribute("X1")));
+		}
+		if (element.hasAttribute("Y2"))
+		{
+			// Attribute property Y2
+			instance.setY2(Double.valueOf(
+					element.getAttribute("Y2")));
+		}
+		return instance;
 	}
 }

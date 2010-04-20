@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -303,5 +306,93 @@ public class Well extends Object
 			}
 		}
 		return Well_element;
+	}
+
+	public static Well fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Well".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Well got %s",
+					tagName));
+		}
+		Well instance = new Well();
+		if (element.hasAttribute("Status"))
+		{
+			// Attribute property Status
+			instance.setStatus(String.valueOf(
+					element.getAttribute("Status")));
+		}
+		if (element.hasAttribute("ExternalIdentifier"))
+		{
+			// Attribute property ExternalIdentifier
+			instance.setExternalIdentifier(String.valueOf(
+					element.getAttribute("ExternalIdentifier")));
+		}
+		if (element.hasAttribute("Column"))
+		{
+			// Attribute property Column
+			instance.setColumn(Integer.valueOf(
+					element.getAttribute("Column")));
+		}
+		if (element.hasAttribute("ExternalDescription"))
+		{
+			// Attribute property ExternalDescription
+			instance.setExternalDescription(String.valueOf(
+					element.getAttribute("ExternalDescription")));
+		}
+		if (element.hasAttribute("Color"))
+		{
+			// Attribute property Color
+			instance.setColor(Integer.valueOf(
+					element.getAttribute("Color")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("Row"))
+		{
+			// Attribute property Row
+			instance.setRow(Integer.valueOf(
+					element.getAttribute("Row")));
+		}
+		// Element property WellSample which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList WellSample_nodeList = element.getElementsByTagName("WellSample");
+		for (int i = 0; i < WellSample_nodeList.getLength(); i++)
+		{
+			instance.addWellSample(WellSample.fromXMLElement(
+					(Element) WellSample_nodeList.item(i)));
+		}
+		NodeList ReagentRef_nodeList = element.getElementsByTagName("ReagentRef");
+		if (ReagentRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ReagentRef node list size %d != 1",
+					ReagentRef_nodeList.getLength()));
+		}
+		else if (ReagentRef_nodeList.getLength() != 0)
+		{
+			// Element property ReagentRef which is complex (has
+			// sub-elements)
+			instance.setReagent(Reagent.fromXMLElement(
+					(Element) ReagentRef_nodeList.item(0)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		return instance;
 	}
 }

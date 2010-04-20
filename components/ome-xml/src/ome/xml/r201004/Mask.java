@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -147,5 +150,40 @@ public class Mask extends Object
 			}
 		}
 		return Mask_element;
+	}
+
+	public static Mask fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Mask".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Mask got %s",
+					tagName));
+		}
+		Mask instance = new Mask();
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			instance.setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			instance.setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
+		// Element property BinData which is not complex (has no
+		// sub-elements) which occurs more than once
+		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
+		for (int i = 0; i < BinData_nodeList.getLength(); i++)
+		{
+			instance.addBinData(String.valueOf(
+					BinData_nodeList.item(i).getTextContent()));
+		}
+		return instance;
 	}
 }

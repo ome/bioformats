@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -197,5 +200,62 @@ public class Detector extends ManufacturerSpec
 			Detector_element.setAttribute("Voltage", voltage.toString());
 		}
 		return Detector_element;
+	}
+
+	public static Detector fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Detector".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Detector got %s",
+					tagName));
+		}
+		Detector instance = new Detector();
+		if (element.hasAttribute("Zoom"))
+		{
+			// Attribute property Zoom
+			instance.setZoom(Double.valueOf(
+					element.getAttribute("Zoom")));
+		}
+		if (element.hasAttribute("AmplificationGain"))
+		{
+			// Attribute property AmplificationGain
+			instance.setAmplificationGain(Double.valueOf(
+					element.getAttribute("AmplificationGain")));
+		}
+		if (element.hasAttribute("Gain"))
+		{
+			// Attribute property Gain
+			instance.setGain(Double.valueOf(
+					element.getAttribute("Gain")));
+		}
+		if (element.hasAttribute("Offset"))
+		{
+			// Attribute property Offset
+			instance.setOffset(Double.valueOf(
+					element.getAttribute("Offset")));
+		}
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			instance.setType(DetectorType.fromString(
+					element.getAttribute("Type")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("Voltage"))
+		{
+			// Attribute property Voltage
+			instance.setVoltage(Double.valueOf(
+					element.getAttribute("Voltage")));
+		}
+		return instance;
 	}
 }

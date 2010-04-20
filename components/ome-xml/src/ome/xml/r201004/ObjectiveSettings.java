@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -140,5 +143,44 @@ public class ObjectiveSettings extends Settings
 			ObjectiveSettings_element.setAttribute("Medium", medium.toString());
 		}
 		return ObjectiveSettings_element;
+	}
+
+	public static ObjectiveSettings fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"ObjectiveSettings".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ObjectiveSettings got %s",
+					tagName));
+		}
+		ObjectiveSettings instance = new ObjectiveSettings();
+		if (element.hasAttribute("RefractiveIndex"))
+		{
+			// Attribute property RefractiveIndex
+			instance.setRefractiveIndex(Double.valueOf(
+					element.getAttribute("RefractiveIndex")));
+		}
+		if (element.hasAttribute("CorrectionCollar"))
+		{
+			// Attribute property CorrectionCollar
+			instance.setCorrectionCollar(Double.valueOf(
+					element.getAttribute("CorrectionCollar")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("Medium"))
+		{
+			// Attribute property which is an enumeration Medium
+			instance.setMedium(Medium.fromString(
+					element.getAttribute("Medium")));
+		}
+		return instance;
 	}
 }

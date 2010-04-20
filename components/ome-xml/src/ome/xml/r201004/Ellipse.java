@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -140,5 +143,44 @@ public class Ellipse extends Object
 			Ellipse_element.setAttribute("RadiusX", radiusX.toString());
 		}
 		return Ellipse_element;
+	}
+
+	public static Ellipse fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Ellipse".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Ellipse got %s",
+					tagName));
+		}
+		Ellipse instance = new Ellipse();
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			instance.setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			instance.setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
+		if (element.hasAttribute("RadiusY"))
+		{
+			// Attribute property RadiusY
+			instance.setRadiusY(Double.valueOf(
+					element.getAttribute("RadiusY")));
+		}
+		if (element.hasAttribute("RadiusX"))
+		{
+			// Attribute property RadiusX
+			instance.setRadiusX(Double.valueOf(
+					element.getAttribute("RadiusX")));
+		}
+		return instance;
 	}
 }

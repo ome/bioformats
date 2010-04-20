@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -303,5 +306,60 @@ public class FilterSet extends ManufacturerSpec
 			// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 		}
 		return FilterSet_element;
+	}
+
+	public static FilterSet fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"FilterSet".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of FilterSet got %s",
+					tagName));
+		}
+		FilterSet instance = new FilterSet();
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Element property ExcitationFilterRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ExcitationFilterRef_nodeList = element.getElementsByTagName("ExcitationFilterRef");
+		for (int i = 0; i < ExcitationFilterRef_nodeList.getLength(); i++)
+		{
+			instance.addExcitationFilter(Filter.fromXMLElement(
+					(Element) ExcitationFilterRef_nodeList.item(i)));
+		}
+		NodeList DichroicRef_nodeList = element.getElementsByTagName("DichroicRef");
+		if (DichroicRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"DichroicRef node list size %d != 1",
+					DichroicRef_nodeList.getLength()));
+		}
+		else if (DichroicRef_nodeList.getLength() != 0)
+		{
+			// Element property DichroicRef which is complex (has
+			// sub-elements)
+			instance.setDichroic(Dichroic.fromXMLElement(
+					(Element) DichroicRef_nodeList.item(0)));
+		}
+		// Element property EmissionFilterRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList EmissionFilterRef_nodeList = element.getElementsByTagName("EmissionFilterRef");
+		for (int i = 0; i < EmissionFilterRef_nodeList.getLength(); i++)
+		{
+			instance.addEmissionFilter(Filter.fromXMLElement(
+					(Element) EmissionFilterRef_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Channel_BackReference
+		// *** IGNORING *** Skipped back reference OTF_BackReference
+		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
+		return instance;
 	}
 }

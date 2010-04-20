@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -179,5 +182,65 @@ public class TiffData extends Object
 			TiffData_element.appendChild(uuid.asXMLElement(document));
 		}
 		return TiffData_element;
+	}
+
+	public static TiffData fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"TiffData".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of TiffData got %s",
+					tagName));
+		}
+		TiffData instance = new TiffData();
+		if (element.hasAttribute("IFD"))
+		{
+			// Attribute property IFD
+			instance.setIFD(Integer.valueOf(
+					element.getAttribute("IFD")));
+		}
+		if (element.hasAttribute("PlaneCount"))
+		{
+			// Attribute property PlaneCount
+			instance.setPlaneCount(Integer.valueOf(
+					element.getAttribute("PlaneCount")));
+		}
+		if (element.hasAttribute("FirstZ"))
+		{
+			// Attribute property FirstZ
+			instance.setFirstZ(Integer.valueOf(
+					element.getAttribute("FirstZ")));
+		}
+		if (element.hasAttribute("FirstC"))
+		{
+			// Attribute property FirstC
+			instance.setFirstC(Integer.valueOf(
+					element.getAttribute("FirstC")));
+		}
+		if (element.hasAttribute("FirstT"))
+		{
+			// Attribute property FirstT
+			instance.setFirstT(Integer.valueOf(
+					element.getAttribute("FirstT")));
+		}
+		NodeList UUID_nodeList = element.getElementsByTagName("UUID");
+		if (UUID_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"UUID node list size %d != 1",
+					UUID_nodeList.getLength()));
+		}
+		else if (UUID_nodeList.getLength() != 0)
+		{
+			// Element property UUID which is complex (has
+			// sub-elements)
+			instance.setUUID(UUID.fromXMLElement(
+					(Element) UUID_nodeList.item(0)));
+		}
+		return instance;
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -140,5 +143,44 @@ public class ImagingEnvironment extends Object
 			ImagingEnvironment_element.setAttribute("Humidity", humidity.toString());
 		}
 		return ImagingEnvironment_element;
+	}
+
+	public static ImagingEnvironment fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"ImagingEnvironment".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ImagingEnvironment got %s",
+					tagName));
+		}
+		ImagingEnvironment instance = new ImagingEnvironment();
+		if (element.hasAttribute("CO2Percent"))
+		{
+			// Attribute property CO2Percent
+			instance.setCO2Percent(Double.valueOf(
+					element.getAttribute("CO2Percent")));
+		}
+		if (element.hasAttribute("Temperature"))
+		{
+			// Attribute property Temperature
+			instance.setTemperature(Double.valueOf(
+					element.getAttribute("Temperature")));
+		}
+		if (element.hasAttribute("AirPressure"))
+		{
+			// Attribute property AirPressure
+			instance.setAirPressure(Double.valueOf(
+					element.getAttribute("AirPressure")));
+		}
+		if (element.hasAttribute("Humidity"))
+		{
+			// Attribute property Humidity
+			instance.setHumidity(Double.valueOf(
+					element.getAttribute("Humidity")));
+		}
+		return instance;
 	}
 }

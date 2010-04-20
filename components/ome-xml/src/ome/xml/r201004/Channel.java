@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -454,5 +457,181 @@ public class Channel extends Object
 			Channel_element.appendChild(lightPath.asXMLElement(document));
 		}
 		return Channel_element;
+	}
+
+	public static Channel fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Channel".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Channel got %s",
+					tagName));
+		}
+		Channel instance = new Channel();
+		if (element.hasAttribute("PinholeSize"))
+		{
+			// Attribute property PinholeSize
+			instance.setPinholeSize(Double.valueOf(
+					element.getAttribute("PinholeSize")));
+		}
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			instance.setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		if (element.hasAttribute("AcquisitionMode"))
+		{
+			// Attribute property which is an enumeration AcquisitionMode
+			instance.setAcquisitionMode(AcquisitionMode.fromString(
+					element.getAttribute("AcquisitionMode")));
+		}
+		if (element.hasAttribute("Color"))
+		{
+			// Attribute property Color
+			instance.setColor(Integer.valueOf(
+					element.getAttribute("Color")));
+		}
+		if (element.hasAttribute("ContrastMethod"))
+		{
+			// Attribute property which is an enumeration ContrastMethod
+			instance.setContrastMethod(ContrastMethod.fromString(
+					element.getAttribute("ContrastMethod")));
+		}
+		if (element.hasAttribute("ExcitationWavelength"))
+		{
+			// Attribute property ExcitationWavelength
+			instance.setExcitationWavelength(Integer.valueOf(
+					element.getAttribute("ExcitationWavelength")));
+		}
+		if (element.hasAttribute("IlluminationType"))
+		{
+			// Attribute property which is an enumeration IlluminationType
+			instance.setIlluminationType(IlluminationType.fromString(
+					element.getAttribute("IlluminationType")));
+		}
+		if (element.hasAttribute("Fluor"))
+		{
+			// Attribute property Fluor
+			instance.setFluor(String.valueOf(
+					element.getAttribute("Fluor")));
+		}
+		if (element.hasAttribute("PockelCellSetting"))
+		{
+			// Attribute property PockelCellSetting
+			instance.setPockelCellSetting(Integer.valueOf(
+					element.getAttribute("PockelCellSetting")));
+		}
+		if (element.hasAttribute("EmissionWavelength"))
+		{
+			// Attribute property EmissionWavelength
+			instance.setEmissionWavelength(Integer.valueOf(
+					element.getAttribute("EmissionWavelength")));
+		}
+		if (element.hasAttribute("NDFilter"))
+		{
+			// Attribute property NDFilter
+			instance.setNDFilter(Double.valueOf(
+					element.getAttribute("NDFilter")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("SamplesPerPixel"))
+		{
+			// Attribute property SamplesPerPixel
+			instance.setSamplesPerPixel(Integer.valueOf(
+					element.getAttribute("SamplesPerPixel")));
+		}
+		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
+		if (LightSourceSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"LightSourceSettings node list size %d != 1",
+					LightSourceSettings_nodeList.getLength()));
+		}
+		else if (LightSourceSettings_nodeList.getLength() != 0)
+		{
+			// Element property LightSourceSettings which is complex (has
+			// sub-elements)
+			instance.setLightSourceSettings(LightSourceSettings.fromXMLElement(
+					(Element) LightSourceSettings_nodeList.item(0)));
+		}
+		NodeList OTFRef_nodeList = element.getElementsByTagName("OTFRef");
+		if (OTFRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"OTFRef node list size %d != 1",
+					OTFRef_nodeList.getLength()));
+		}
+		else if (OTFRef_nodeList.getLength() != 0)
+		{
+			// Element property OTFRef which is complex (has
+			// sub-elements)
+			instance.setOTF(OTF.fromXMLElement(
+					(Element) OTFRef_nodeList.item(0)));
+		}
+		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
+		if (DetectorSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"DetectorSettings node list size %d != 1",
+					DetectorSettings_nodeList.getLength()));
+		}
+		else if (DetectorSettings_nodeList.getLength() != 0)
+		{
+			// Element property DetectorSettings which is complex (has
+			// sub-elements)
+			instance.setDetectorSettings(DetectorSettings.fromXMLElement(
+					(Element) DetectorSettings_nodeList.item(0)));
+		}
+		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
+		if (FilterSetRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"FilterSetRef node list size %d != 1",
+					FilterSetRef_nodeList.getLength()));
+		}
+		else if (FilterSetRef_nodeList.getLength() != 0)
+		{
+			// Element property FilterSetRef which is complex (has
+			// sub-elements)
+			instance.setFilterSet(FilterSet.fromXMLElement(
+					(Element) FilterSetRef_nodeList.item(0)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		NodeList LightPath_nodeList = element.getElementsByTagName("LightPath");
+		if (LightPath_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"LightPath node list size %d != 1",
+					LightPath_nodeList.getLength()));
+		}
+		else if (LightPath_nodeList.getLength() != 0)
+		{
+			// Element property LightPath which is complex (has
+			// sub-elements)
+			instance.setLightPath(LightPath.fromXMLElement(
+					(Element) LightPath_nodeList.item(0)));
+		}
+		return instance;
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -216,5 +219,68 @@ public class Objective extends ManufacturerSpec
 			Objective_element.setAttribute("ID", id.toString());
 		}
 		return Objective_element;
+	}
+
+	public static Objective fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Objective".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Objective got %s",
+					tagName));
+		}
+		Objective instance = new Objective();
+		if (element.hasAttribute("Iris"))
+		{
+			// Attribute property Iris
+			instance.setIris(Boolean.valueOf(
+					element.getAttribute("Iris")));
+		}
+		if (element.hasAttribute("WorkingDistance"))
+		{
+			// Attribute property WorkingDistance
+			instance.setWorkingDistance(Double.valueOf(
+					element.getAttribute("WorkingDistance")));
+		}
+		if (element.hasAttribute("Immersion"))
+		{
+			// Attribute property which is an enumeration Immersion
+			instance.setImmersion(Immersion.fromString(
+					element.getAttribute("Immersion")));
+		}
+		if (element.hasAttribute("Correction"))
+		{
+			// Attribute property which is an enumeration Correction
+			instance.setCorrection(Correction.fromString(
+					element.getAttribute("Correction")));
+		}
+		if (element.hasAttribute("LensNA"))
+		{
+			// Attribute property LensNA
+			instance.setLensNA(Double.valueOf(
+					element.getAttribute("LensNA")));
+		}
+		if (element.hasAttribute("NominalMagnification"))
+		{
+			// Attribute property NominalMagnification
+			instance.setNominalMagnification(Integer.valueOf(
+					element.getAttribute("NominalMagnification")));
+		}
+		if (element.hasAttribute("CalibratedMagnification"))
+		{
+			// Attribute property CalibratedMagnification
+			instance.setCalibratedMagnification(Double.valueOf(
+					element.getAttribute("CalibratedMagnification")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		return instance;
 	}
 }

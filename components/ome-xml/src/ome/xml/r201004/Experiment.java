@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -225,5 +228,70 @@ public class Experiment extends Object
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}
 		return Experiment_element;
+	}
+
+	public static Experiment fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Experiment".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Experiment got %s",
+					tagName));
+		}
+		Experiment instance = new Experiment();
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			instance.setType(ExperimentType.fromString(
+					element.getAttribute("Type")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			instance.setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
+		if (ExperimenterRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ExperimenterRef node list size %d != 1",
+					ExperimenterRef_nodeList.getLength()));
+		}
+		else if (ExperimenterRef_nodeList.getLength() != 0)
+		{
+			// Element property ExperimenterRef which is complex (has
+			// sub-elements)
+			instance.setExperimenter(Experimenter.fromXMLElement(
+					(Element) ExperimenterRef_nodeList.item(0)));
+		}
+		// Element property MicrobeamManipulation which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList MicrobeamManipulation_nodeList = element.getElementsByTagName("MicrobeamManipulation");
+		for (int i = 0; i < MicrobeamManipulation_nodeList.getLength(); i++)
+		{
+			instance.addMicrobeamManipulation(MicrobeamManipulation.fromXMLElement(
+					(Element) MicrobeamManipulation_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		return instance;
 	}
 }

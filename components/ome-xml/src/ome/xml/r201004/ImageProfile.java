@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -167,5 +170,84 @@ public class ImageProfile extends Object
 			ImageProfile_element.appendChild(objectiveSettings.asXMLElement(document));
 		}
 		return ImageProfile_element;
+	}
+
+	public static ImageProfile fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"ImageProfile".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ImageProfile got %s",
+					tagName));
+		}
+		ImageProfile instance = new ImageProfile();
+		if (element.hasAttribute("origin"))
+		{
+			// Attribute property which is an enumeration origin
+			instance.setorigin(ProfileSource.fromString(
+					element.getAttribute("origin")));
+		}
+		NodeList Name_nodeList = element.getElementsByTagName("Name");
+		if (Name_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Name node list size %d != 1",
+					Name_nodeList.getLength()));
+		}
+		else if (Name_nodeList.getLength() != 0)
+		{
+			// Element property Name which is not complex (has no
+			// sub-elements)
+			instance.setName(Name_nodeList.item(0).getTextContent());
+		}
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			instance.setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
+		if (InstrumentRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"InstrumentRef node list size %d != 1",
+					InstrumentRef_nodeList.getLength()));
+		}
+		else if (InstrumentRef_nodeList.getLength() != 0)
+		{
+			// Element property InstrumentRef which is complex (has
+			// sub-elements)
+			instance.setInstrument(Instrument.fromXMLElement(
+					(Element) InstrumentRef_nodeList.item(0)));
+		}
+		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ObjectiveSettings node list size %d != 1",
+					ObjectiveSettings_nodeList.getLength()));
+		}
+		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		{
+			// Element property ObjectiveSettings which is complex (has
+			// sub-elements)
+			instance.setObjectiveSettings(ObjectiveSettings.fromXMLElement(
+					(Element) ObjectiveSettings_nodeList.item(0)));
+		}
+		return instance;
 	}
 }

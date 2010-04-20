@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -260,5 +263,74 @@ public class WellSample extends Object
 			// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 		}
 		return WellSample_element;
+	}
+
+	public static WellSample fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"WellSample".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of WellSample got %s",
+					tagName));
+		}
+		WellSample instance = new WellSample();
+		if (element.hasAttribute("Index"))
+		{
+			// Attribute property Index
+			instance.setIndex(Integer.valueOf(
+					element.getAttribute("Index")));
+		}
+		if (element.hasAttribute("PositionX"))
+		{
+			// Attribute property PositionX
+			instance.setPositionX(Double.valueOf(
+					element.getAttribute("PositionX")));
+		}
+		if (element.hasAttribute("PositionY"))
+		{
+			// Attribute property PositionY
+			instance.setPositionY(Double.valueOf(
+					element.getAttribute("PositionY")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		if (element.hasAttribute("Timepoint"))
+		{
+			// Attribute property Timepoint
+			instance.setTimepoint(Integer.valueOf(
+					element.getAttribute("Timepoint")));
+		}
+		NodeList ImageRef_nodeList = element.getElementsByTagName("ImageRef");
+		if (ImageRef_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ImageRef node list size %d != 1",
+					ImageRef_nodeList.getLength()));
+		}
+		else if (ImageRef_nodeList.getLength() != 0)
+		{
+			// Element property ImageRef which is complex (has
+			// sub-elements)
+			instance.setImage(Image.fromXMLElement(
+					(Element) ImageRef_nodeList.item(0)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
+		return instance;
 	}
 }

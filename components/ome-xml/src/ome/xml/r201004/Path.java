@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -83,5 +86,26 @@ public class Path extends Object
 			Path_element.setAttribute("Definition", definition.toString());
 		}
 		return Path_element;
+	}
+
+	public static Path fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Path".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Path got %s",
+					tagName));
+		}
+		Path instance = new Path();
+		if (element.hasAttribute("Definition"))
+		{
+			// Attribute property Definition
+			instance.setDefinition(String.valueOf(
+					element.getAttribute("Definition")));
+		}
+		return instance;
 	}
 }

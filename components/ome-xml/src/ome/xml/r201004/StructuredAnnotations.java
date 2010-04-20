@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -224,5 +227,140 @@ public class StructuredAnnotations extends Object
 			StructuredAnnotations_element.appendChild(timestampAnnotation.asXMLElement(document));
 		}
 		return StructuredAnnotations_element;
+	}
+
+	public static StructuredAnnotations fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"StructuredAnnotations".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of StructuredAnnotations got %s",
+					tagName));
+		}
+		StructuredAnnotations instance = new StructuredAnnotations();
+		NodeList XMLAnnotation_nodeList = element.getElementsByTagName("XMLAnnotation");
+		if (XMLAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"XMLAnnotation node list size %d != 1",
+					XMLAnnotation_nodeList.getLength()));
+		}
+		else if (XMLAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property XMLAnnotation which is complex (has
+			// sub-elements)
+			instance.setXMLAnnotation(XMLAnnotation.fromXMLElement(
+					(Element) XMLAnnotation_nodeList.item(0)));
+		}
+		NodeList FileAnnotation_nodeList = element.getElementsByTagName("FileAnnotation");
+		if (FileAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"FileAnnotation node list size %d != 1",
+					FileAnnotation_nodeList.getLength()));
+		}
+		else if (FileAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property FileAnnotation which is complex (has
+			// sub-elements)
+			instance.setFileAnnotation(FileAnnotation.fromXMLElement(
+					(Element) FileAnnotation_nodeList.item(0)));
+		}
+		NodeList ListAnnotation_nodeList = element.getElementsByTagName("ListAnnotation");
+		if (ListAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ListAnnotation node list size %d != 1",
+					ListAnnotation_nodeList.getLength()));
+		}
+		else if (ListAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property ListAnnotation which is complex (has
+			// sub-elements)
+			instance.setListAnnotation(ListAnnotation.fromXMLElement(
+					(Element) ListAnnotation_nodeList.item(0)));
+		}
+		NodeList LongAnnotation_nodeList = element.getElementsByTagName("LongAnnotation");
+		if (LongAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"LongAnnotation node list size %d != 1",
+					LongAnnotation_nodeList.getLength()));
+		}
+		else if (LongAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property LongAnnotation which is complex (has
+			// sub-elements)
+			instance.setLongAnnotation(LongAnnotation.fromXMLElement(
+					(Element) LongAnnotation_nodeList.item(0)));
+		}
+		NodeList DoubleAnnotation_nodeList = element.getElementsByTagName("DoubleAnnotation");
+		if (DoubleAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"DoubleAnnotation node list size %d != 1",
+					DoubleAnnotation_nodeList.getLength()));
+		}
+		else if (DoubleAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property DoubleAnnotation which is complex (has
+			// sub-elements)
+			instance.setDoubleAnnotation(DoubleAnnotation.fromXMLElement(
+					(Element) DoubleAnnotation_nodeList.item(0)));
+		}
+		NodeList StringAnnotation_nodeList = element.getElementsByTagName("StringAnnotation");
+		if (StringAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"StringAnnotation node list size %d != 1",
+					StringAnnotation_nodeList.getLength()));
+		}
+		else if (StringAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property StringAnnotation which is complex (has
+			// sub-elements)
+			instance.setStringAnnotation(StringAnnotation.fromXMLElement(
+					(Element) StringAnnotation_nodeList.item(0)));
+		}
+		NodeList BooleanAnnotation_nodeList = element.getElementsByTagName("BooleanAnnotation");
+		if (BooleanAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"BooleanAnnotation node list size %d != 1",
+					BooleanAnnotation_nodeList.getLength()));
+		}
+		else if (BooleanAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property BooleanAnnotation which is complex (has
+			// sub-elements)
+			instance.setBooleanAnnotation(BooleanAnnotation.fromXMLElement(
+					(Element) BooleanAnnotation_nodeList.item(0)));
+		}
+		NodeList TimestampAnnotation_nodeList = element.getElementsByTagName("TimestampAnnotation");
+		if (TimestampAnnotation_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"TimestampAnnotation node list size %d != 1",
+					TimestampAnnotation_nodeList.getLength()));
+		}
+		else if (TimestampAnnotation_nodeList.getLength() != 0)
+		{
+			// Element property TimestampAnnotation which is complex (has
+			// sub-elements)
+			instance.setTimestampAnnotation(TimestampAnnotation.fromXMLElement(
+					(Element) TimestampAnnotation_nodeList.item(0)));
+		}
+		return instance;
 	}
 }

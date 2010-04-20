@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-19 19:23:58+0100
+ * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,8 +41,11 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
@@ -492,5 +495,89 @@ public class Experimenter extends Object
 			// *** IGNORING *** Skipped back reference Experiment_BackReference
 		}
 		return Experimenter_element;
+	}
+
+	public static Experimenter fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"Experimenter".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Experimenter got %s",
+					tagName));
+		}
+		Experimenter instance = new Experimenter();
+		if (element.hasAttribute("UserName"))
+		{
+			// Attribute property UserName
+			instance.setUserName(String.valueOf(
+					element.getAttribute("UserName")));
+		}
+		if (element.hasAttribute("DisplayName"))
+		{
+			// Attribute property DisplayName
+			instance.setDisplayName(String.valueOf(
+					element.getAttribute("DisplayName")));
+		}
+		if (element.hasAttribute("FirstName"))
+		{
+			// Attribute property FirstName
+			instance.setFirstName(String.valueOf(
+					element.getAttribute("FirstName")));
+		}
+		if (element.hasAttribute("MiddleName"))
+		{
+			// Attribute property MiddleName
+			instance.setMiddleName(String.valueOf(
+					element.getAttribute("MiddleName")));
+		}
+		if (element.hasAttribute("LastName"))
+		{
+			// Attribute property LastName
+			instance.setLastName(String.valueOf(
+					element.getAttribute("LastName")));
+		}
+		if (element.hasAttribute("Email"))
+		{
+			// Attribute property Email
+			instance.setEmail(String.valueOf(
+					element.getAttribute("Email")));
+		}
+		if (element.hasAttribute("Institution"))
+		{
+			// Attribute property Institution
+			instance.setInstitution(String.valueOf(
+					element.getAttribute("Institution")));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			instance.setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Element property GroupRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
+		for (int i = 0; i < GroupRef_nodeList.getLength(); i++)
+		{
+			instance.addGroup(Group.fromXMLElement(
+					(Element) GroupRef_nodeList.item(i)));
+		}
+		// Element property AnnotationRef which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			instance.addAnnotation(Annotation.fromXMLElement(
+					(Element) AnnotationRef_nodeList.item(i)));
+		}
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
+		// *** IGNORING *** Skipped back reference Project_BackReference
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
+		// *** IGNORING *** Skipped back reference Experiment_BackReference
+		return instance;
 	}
 }
