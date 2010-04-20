@@ -41,8 +41,11 @@ package ${fu.package};
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ${fu.package}.enums.*;
 
@@ -213,5 +216,89 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 {% end %}\
 		return ${klass.name}_element;
+	}
+
+	public static ${klass.name} fromXMLElement(Element element)
+		throws EnumerationException
+	{
+		String tagName = element.getTagName();
+		if (!"${klass.name}".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ${klass.name} got %s",
+					tagName));
+		}
+		${klass.name} instance = new ${klass.name}();
+{% for prop in klass.properties.values() %}\
+{% choose %}\
+{% when prop.isReference %}\
+		// *** IGNORING *** Skipped back reference ${prop.name}
+{% end %}\
+{% when prop.isAttribute %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+{% if prop.isEnumeration %}\
+			// Attribute property which is an enumeration ${prop.name}
+			instance.set${prop.javaMethodName}(${prop.javaType}.fromString(
+					element.getAttribute("${prop.name}")));
+{% end %}\
+{% if not prop.isEnumeration %}\
+			// Attribute property ${prop.name}
+			instance.set${prop.javaMethodName}(${prop.javaType}.valueOf(
+					element.getAttribute("${prop.name}")));
+{% end %}\
+		}
+{% end %}\
+{% when prop.maxOccurs == 1 %}\
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		if (${prop.name}_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"${prop.name} node list size %d != 1",
+					${prop.name}_nodeList.getLength()));
+		}
+		else if (${prop.name}_nodeList.getLength() != 0)
+		{
+{% if prop.isComplex() %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements)
+			instance.set${prop.javaMethodName}(${prop.javaType}.fromXMLElement(
+					(Element) ${prop.name}_nodeList.item(0)));
+{% end %}\
+{% if not prop.isComplex() %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements)
+			instance.set${prop.javaMethodName}(${prop.name}_nodeList.item(0).getTextContent());
+{% end %}\
+		}
+{% end %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() %}\
+		// Element property ${prop.name} which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		{
+			instance.add${prop.javaMethodName}(${prop.javaType}.fromXMLElement(
+					(Element) ${prop.name}_nodeList.item(i)));
+		}
+{% end %}\
+{% when prop.maxOccurs > 1 %}\
+		// Element property ${prop.name} which is not complex (has no
+		// sub-elements) which occurs more than once
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		{
+			instance.add${prop.javaMethodName}(${prop.javaType}.valueOf(
+					${prop.name}_nodeList.item(i).getTextContent()));
+		}
+{% end %}\
+{% otherwise %}\
+		// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end %}\
+{% end %}\
+{% end %}\
+		return instance;
 	}
 }
