@@ -142,46 +142,69 @@
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
 
 			<!-- begin creating PlateAcquisition -->
-			<xsl:variable name="allWellSamples" select="descendant::SPW:WellSample"/>
+			<xsl:variable name="allWellSamplesInCurrentPlate" select="descendant::SPW:WellSample"/>
 			<xsl:for-each select="* [local-name(.)='ScreenRef']">
 				<!--
-					get a list of all the ScreenAcquisitions that 
+					get a list of all the ScreenAcquisitions 
+					in screens referenced by the current plate that 
 					have a WellSampleRef 
 					to a WellSample 
 					in a Well 
 					in the current Plate
 				-->
 				<xsl:variable name="theScreenID"><xsl:value-of select="@ID"/></xsl:variable>
-				<xsl:variable name="allThisPlatesScreenAcquisitions" select="//SPW:ScreenAcquisition [ancestor::node()/@ID=$theScreenID]"/>
-				<xsl:variable name="associatedScreenAcquisitions">
-					<xsl:call-template name="getAssociatedScreenAcquisitions">
-						<xsl:with-param name="allScreenAcquisitions" select="//SPW:ScreenAcquisition [ancestor::node()/@ID=$theScreenID]"/>
-						<xsl:with-param name="allWellSamples">
-							<xsl:value-of select="$allWellSamples"/>
-						</xsl:with-param>
-					</xsl:call-template>
-				</xsl:variable>
-				<xsl:for-each select="$associatedScreenAcquisitions">
-					<xsl:element name="PlateAcquisition" namespace="{$newSPWNS}">
-						<xsl:attribute name="ID">PlateAcquisition:<xsl:value-of select="$plateID"
-								/>:<xsl:value-of select="@* [name() = 'ID']"/></xsl:attribute>
-						<xsl:for-each select="@* [not(name() = 'ID')]">
-							<xsl:attribute name="{local-name(.)}">
-								<xsl:value-of select="."/>
-							</xsl:attribute>
-						</xsl:for-each>
-					</xsl:element>
-				</xsl:for-each>
+				<xsl:call-template name="getAssociatedScreenAcquisitions">
+					<xsl:with-param name="allAcquisitionsInReferencedScreens"
+						select="//SPW:ScreenAcquisition [ancestor::node()/@ID=$theScreenID]"/>
+					<xsl:with-param name="allWellSamplesInCurrentPlate" select="$allWellSamplesInCurrentPlate"/>
+					<xsl:with-param name="plateID" select="$plateID"/>
+				</xsl:call-template>
 			</xsl:for-each>
 			<!-- end creating PlateAcquisition -->
 		</xsl:element>
 	</xsl:template>
 
 	<xsl:template name="getAssociatedScreenAcquisitions">
-		<xsl:param name="allScreenAcquisitions"/>
-		<xsl:param name="allWellSamples"/>
-		<!-- FIX -->
-		<xsl:value-of select="$allScreenAcquisitions"/>
+		<xsl:param name="allAcquisitionsInReferencedScreens"/>
+		<xsl:param name="allWellSamplesInCurrentPlate"/>
+		<xsl:param name="plateID"/>
+		<xsl:for-each select="$allAcquisitionsInReferencedScreens">
+
+			<!-- FIX
+				if 
+				the ID WellSampleRef in the ScreenAcquisition
+				matches an ID in the list allWellSamplesInCurrentPlate
+				then 
+				make a PlateAcquisition
+				else 
+				do nothing
+			-->
+			
+			<xsl:variable name="myFlag">
+				<xsl:for-each select="child::SPW:WellSampleRef">
+					<xsl:variable name="theSearchID">
+						<xsl:value-of select="@ID"/>
+					</xsl:variable>
+					<xsl:if test="count($allWellSamplesInCurrentPlate [@ID = $theSearchID] ) &gt; 0">
+						<!-- <xsl:comment> Match: <xsl:value-of select="$theSearchID"/></xsl:comment> -->
+						<xsl:value-of select="'hit'"/>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+			
+			<xsl:if test="contains($myFlag,'hit')">
+				<xsl:element name="PlateAcquisition" namespace="{$newSPWNS}">
+					<xsl:attribute name="ID">PlateAcquisition:<xsl:value-of select="$plateID"
+							/>:<xsl:value-of select="@* [name() = 'ID']"/></xsl:attribute>
+					<xsl:for-each select="@* [not(name() = 'ID')]">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:for-each>
+					<xsl:apply-templates select="*"/>
+				</xsl:element>
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 
 	<!-- SPW:Well - passing values through to well sample template -->

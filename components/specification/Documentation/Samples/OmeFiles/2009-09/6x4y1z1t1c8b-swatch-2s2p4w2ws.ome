@@ -49,6 +49,55 @@
 			<SPW:ReagentRef ID="Reagent:1"/>
 		</SPW:Well>
 	</SPW:Plate>
+	<SPW:Plate ID="Plate:2">
+		<SPW:Description>Plate 2 description.</SPW:Description>
+		<SPW:ScreenRef ID="Screen:1"/>
+		<SPW:Well ID="Well:2.1.1" Column="1" Row="1">
+			<SPW:WellSample ID="WellSample:2.1.1.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.1.1.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:2"/>
+		</SPW:Well>
+		<SPW:Well ID="Well:2.2.1" Column="2" Row="1">
+			<SPW:WellSample ID="WellSample:2.2.1.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.2.1.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+		<SPW:Well ID="Well:2.1.2" Column="1" Row="2">
+			<SPW:WellSample ID="WellSample:2.1.2.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.1.2.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.1.2.3">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.1.2.4">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.1.2.5">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+		<SPW:Well ID="Well:2.2.2" Column="2" Row="2">
+			<SPW:WellSample ID="WellSample:2.2.2.1">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:WellSample ID="WellSample:2.2.2.2">
+				<SPW:ImageRef ID="Image:0"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+		</SPW:Well>
+	</SPW:Plate>
 	<SPW:Screen ID="Screen:1" 
 		ProtocolDescription="" 
 		ProtocolIdentifier="" 
@@ -61,6 +110,7 @@
 			<SPW:Description></SPW:Description>
 		</SPW:Reagent>
 		<SPW:PlateRef ID="Plate:1"/>
+		<SPW:PlateRef ID="Plate:2"/>
 		<SPW:ScreenAcquisition ID="ScreenAcquisition:1" StartTime="2010-02-23T12:49:30" EndTime="2010-02-23T12:50:30">
 			<SPW:WellSampleRef ID="WellSample:1.1.1.1"/>
 			<SPW:WellSampleRef ID="WellSample:1.2.1.1"/>
@@ -72,6 +122,12 @@
 			<SPW:WellSampleRef ID="WellSample:1.2.1.2"/>
 			<SPW:WellSampleRef ID="WellSample:1.1.2.2"/>
 			<SPW:WellSampleRef ID="WellSample:1.2.2.2"/>
+		</SPW:ScreenAcquisition>
+		<SPW:ScreenAcquisition ID="ScreenAcquisition:5"  StartTime="2010-02-23T12:50:30" EndTime="2010-02-23T12:51:29">
+			<SPW:WellSampleRef ID="WellSample:2.1.1.2"/>
+			<SPW:WellSampleRef ID="WellSample:2.2.1.2"/>
+			<SPW:WellSampleRef ID="WellSample:2.1.2.2"/>
+			<SPW:WellSampleRef ID="WellSample:2.2.2.2"/>
 		</SPW:ScreenAcquisition>
 	</SPW:Screen>
 	<SPW:Screen ID="Screen:2" 
