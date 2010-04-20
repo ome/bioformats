@@ -42,6 +42,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class LIMReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final int PIXELS_OFFSET = 0x94b;
+
   // -- Fields --
 
   private boolean isCompressed;
@@ -64,7 +68,7 @@ public class LIMReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(0x94b);
+    in.seek(PIXELS_OFFSET);
     readPlane(in, x, y, w, h, buf);
 
     // swap red and blue channels
@@ -107,6 +111,7 @@ public class LIMReader extends FormatReader {
     core[0].pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
 
     isCompressed = in.readShort() != 0;
+    addGlobalMeta("Is compressed", isCompressed);
     if (isCompressed) {
       throw new FormatException("Compressed LIM files not supported.");
     }

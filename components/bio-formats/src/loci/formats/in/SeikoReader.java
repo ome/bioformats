@@ -80,17 +80,23 @@ public class SeikoReader extends FormatReader {
     core[0].littleEndian = true;
     in.order(isLittleEndian());
 
-    in.seek(40);
+    String comment = null;
+    double xSize = 0d, ySize = 0d;
 
-    String comment = in.readCString();
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.seek(40);
+      comment = in.readCString();
 
-    in.seek(156);
+      in.seek(156);
 
-    double xSize = in.readFloat();
-    in.skipBytes(4);
-    double ySize = in.readFloat();
+      xSize = in.readFloat();
+      in.skipBytes(4);
+      ySize = in.readFloat();
 
-    in.skipBytes(1234);
+      addGlobalMeta("Comment", comment);
+    }
+
+    in.seek(1402);
 
     core[0].sizeX = in.readShort();
     core[0].sizeY = in.readShort();
@@ -107,9 +113,11 @@ public class SeikoReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    store.setImageDescription(comment, 0);
-    store.setDimensionsPhysicalSizeX(xSize, 0, 0);
-    store.setDimensionsPhysicalSizeY(ySize, 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(comment, 0);
+      store.setDimensionsPhysicalSizeX(xSize, 0, 0);
+      store.setDimensionsPhysicalSizeY(ySize, 0, 0);
+    }
   }
 
 }

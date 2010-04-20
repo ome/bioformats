@@ -83,13 +83,6 @@ public class LEOReader extends BaseTiffReader {
     String tag = ifds.get(0).getIFDTextValue(LEO_TAG);
     String[] lines = tag.split("\n");
 
-    // physical sizes stored in meters
-    xSize = Double.parseDouble(lines[3]) * 1000000;
-
-    double eht = Double.parseDouble(lines[6]);
-    double filament = Double.parseDouble(lines[7]);
-    workingDistance = Double.parseDouble(lines[9]);
-
     date = "";
 
     for (int line=10; line<lines.length; line++) {
@@ -101,11 +94,19 @@ public class LEOReader extends BaseTiffReader {
       }
     }
 
-    addGlobalMeta("Acquisition date", date);
-    addGlobalMeta("EHT", eht);
-    addGlobalMeta("Filament", filament);
-    addGlobalMeta("Working Distance", workingDistance);
-    addGlobalMeta("Physical pixel size", xSize + " um");
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // physical sizes stored in meters
+      xSize = Double.parseDouble(lines[3]) * 1000000;
+
+      double eht = Double.parseDouble(lines[6]);
+      double filament = Double.parseDouble(lines[7]);
+      workingDistance = Double.parseDouble(lines[9]);
+      addGlobalMeta("EHT", eht);
+      addGlobalMeta("Filament", filament);
+      addGlobalMeta("Working Distance", workingDistance);
+      addGlobalMeta("Physical pixel size", xSize + " um");
+      addGlobalMeta("Acquisition date", date);
+    }
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
@@ -115,13 +116,14 @@ public class LEOReader extends BaseTiffReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
 
-    store.setDimensionsPhysicalSizeX(xSize, 0, 0);
-    store.setDimensionsPhysicalSizeY(xSize, 0, 0);
-
-    store.setObjectiveWorkingDistance(workingDistance, 0, 0);
-
     date = DateTools.formatDate(date, "HH:mm dd-MMM-yyyy");
     store.setImageCreationDate(date, 0);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setDimensionsPhysicalSizeX(xSize, 0, 0);
+      store.setDimensionsPhysicalSizeY(xSize, 0, 0);
+      store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+    }
   }
 
 }

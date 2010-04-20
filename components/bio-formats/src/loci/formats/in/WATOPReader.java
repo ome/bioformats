@@ -89,8 +89,13 @@ public class WATOPReader extends FormatReader {
     core[0].littleEndian = true;
     in.order(isLittleEndian());
 
-    in.seek(49);
-    String comment = in.readString(33);
+    String comment = null;
+
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+    if (level == MetadataLevel.ALL) {
+      in.seek(49);
+      comment = in.readString(33);
+    }
 
     in.seek(211);
     int year = in.readInt();
@@ -110,23 +115,25 @@ public class WATOPReader extends FormatReader {
     core[0].sizeX = in.readInt();
     core[0].sizeY = in.readInt();
 
-    double tunnelCurrent = in.readInt() / 1000d;
-    double sampleVolts = in.readInt() / 1000d;
+    if (level == MetadataLevel.ALL) {
+      double tunnelCurrent = in.readInt() / 1000d;
+      double sampleVolts = in.readInt() / 1000d;
 
-    in.skipBytes(180);
+      in.skipBytes(180);
 
-    int originalZMax = in.readInt();
-    int originalZMin = in.readInt();
-    int zMax = in.readInt();
-    int zMin = in.readInt();
+      int originalZMax = in.readInt();
+      int originalZMin = in.readInt();
+      int zMax = in.readInt();
+      int zMin = in.readInt();
 
-    addGlobalMeta("Comment", comment);
-    addGlobalMeta("X size (in um)", xSize);
-    addGlobalMeta("Y size (in um)", ySize);
-    addGlobalMeta("Z size (in um)", zSize);
-    addGlobalMeta("Tunnel current (in amps)", tunnelCurrent);
-    addGlobalMeta("Sample volts", sampleVolts);
-    addGlobalMeta("Acquisition date", date);
+      addGlobalMeta("Comment", comment);
+      addGlobalMeta("X size (in um)", xSize);
+      addGlobalMeta("Y size (in um)", ySize);
+      addGlobalMeta("Z size (in um)", zSize);
+      addGlobalMeta("Tunnel current (in amps)", tunnelCurrent);
+      addGlobalMeta("Sample volts", sampleVolts);
+      addGlobalMeta("Acquisition date", date);
+    }
 
     core[0].pixelType = FormatTools.INT16;
     core[0].sizeC = 1;
@@ -140,10 +147,13 @@ public class WATOPReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    store.setImageDescription(comment, 0);
     store.setImageCreationDate(date, 0);
-    store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
+
+    if (level == MetadataLevel.ALL) {
+      store.setImageDescription(comment, 0);
+      store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
+      store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
+    }
   }
 
 }

@@ -63,11 +63,6 @@ public class TargaReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return false;
-  }
-
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -243,7 +238,9 @@ public class TargaReader extends FormatReader {
     // populate Image data
 
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageDescription(identification, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(identification, 0);
+    }
   }
 
 }

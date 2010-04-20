@@ -50,6 +50,8 @@ public class QuesantReader extends FormatReader {
   // -- Fields --
 
   private int pixelsOffset;
+  private double xSize = 0d;
+  private String date = null, comment = null;
 
   // -- Constructor --
 
@@ -79,6 +81,8 @@ public class QuesantReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelsOffset = 0;
+      xSize = 0d;
+      date = comment = null;
     }
   }
 
@@ -92,57 +96,8 @@ public class QuesantReader extends FormatReader {
     core[0].littleEndian = true;
     in.order(isLittleEndian());
 
-    double xSize = 0d;
-    String date = null, comment = null;
-
     while (in.getFilePointer() < MAX_HEADER_SIZE) {
-      String code = in.readString(4);
-      int offset = in.readInt();
-      long fp = in.getFilePointer();
-      if (offset <= 0 || offset > in.length()) continue;
-
-      if (code.equals("SDES")) {
-        in.seek(offset);
-        String sdes = in.readCString().trim();
-        if (comment == null) comment = sdes;
-        else comment += " " + sdes;
-      }
-      else if (code.equals("DESC")) {
-        in.seek(offset);
-        int length = in.readShort();
-        String desc = in.readString(length);
-        if (comment == null) comment = desc;
-        else comment += " " + desc;
-      }
-      else if (code.equals("DATE")) {
-        in.seek(offset);
-        date = in.readCString();
-      }
-      else if (code.equals("IMAG")) {
-        pixelsOffset = offset;
-      }
-      else if (code.equals("HARD")) {
-        in.seek(offset);
-        xSize = in.readFloat();
-
-        float scanRate = in.readFloat();
-        float tunnelCurrent = (in.readFloat() * 10) / 32768;
-
-        in.skipBytes(12);
-
-        float integralGain = in.readFloat();
-        float proportGain = in.readFloat();
-        boolean isSTM = in.readShort() == 10;
-        float dynamicRange = in.readFloat();
-
-        addGlobalMeta("Scan rate (Hz)", scanRate);
-        addGlobalMeta("Tunnel current", tunnelCurrent);
-        addGlobalMeta("Is STM image", isSTM);
-        addGlobalMeta("Integral gain", integralGain);
-        addGlobalMeta("Proportional gain", proportGain);
-        addGlobalMeta("Z dynamic range", dynamicRange);
-      }
-      in.seek(fp);
+      readVariable();
     }
 
     in.seek(pixelsOffset);
@@ -166,9 +121,69 @@ public class QuesantReader extends FormatReader {
       store.setImageCreationDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageDescription(comment, 0);
-    store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY((double) xSize / getSizeY(), 0, 0);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(comment, 0);
+      store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
+      store.setDimensionsPhysicalSizeY((double) xSize / getSizeY(), 0, 0);
+    }
+  }
+
+  // -- Helper methods --
+
+  private void readVariable() throws IOException {
+    String code = in.readString(4);
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL &&
+      !code.equals("IMAG"))
+    {
+      in.skipBytes(4);
+      return;
+    }
+
+    int offset = in.readInt();
+    long fp = in.getFilePointer();
+    if (offset <= 0 || offset > in.length()) return;
+
+    in.seek(offset);
+
+    if (code.equals("SDES")) {
+      String sdes = in.readCString().trim();
+      if (comment == null) comment = sdes;
+      else comment += " " + sdes;
+    }
+    else if (code.equals("DESC")) {
+      int length = in.readShort();
+      String desc = in.readString(length);
+      if (comment == null) comment = desc;
+      else comment += " " + desc;
+    }
+    else if (code.equals("DATE")) {
+      date = in.readCString();
+    }
+    else if (code.equals("IMAG")) {
+      pixelsOffset = offset;
+    }
+    else if (code.equals("HARD")) {
+      xSize = in.readFloat();
+
+      float scanRate = in.readFloat();
+      float tunnelCurrent = (in.readFloat() * 10) / 32768;
+
+      in.skipBytes(12);
+
+      float integralGain = in.readFloat();
+      float proportGain = in.readFloat();
+      boolean isSTM = in.readShort() == 10;
+      float dynamicRange = in.readFloat();
+
+      addGlobalMeta("Scan rate (Hz)", scanRate);
+      addGlobalMeta("Tunnel current", tunnelCurrent);
+      addGlobalMeta("Is STM image", isSTM);
+      addGlobalMeta("Integral gain", integralGain);
+      addGlobalMeta("Proportional gain", proportGain);
+      addGlobalMeta("Z dynamic range", dynamicRange);
+    }
+    in.seek(fp);
   }
 
 }

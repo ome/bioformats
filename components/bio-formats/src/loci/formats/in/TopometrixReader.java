@@ -119,50 +119,51 @@ public class TopometrixReader extends FormatReader {
     core[0].sizeX = in.readShort();
     in.skipBytes(2);
     core[0].sizeY = in.readShort();
-    in.skipBytes(2);
-    in.skipBytes(8);
 
     double xSize = 0d, ySize = 0d;
     double adc = 0d, dacToWorldZero = 0d;
 
-    if (version == 5) {
-      in.skipBytes(4);
-      xSize = in.readDouble();
-      in.skipBytes(8);
-      ySize = in.readDouble();
-      adc = in.readDouble();
-      dacToWorldZero = in.readDouble();
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.skipBytes(10);
+      if (version == 5) {
+        in.skipBytes(4);
+        xSize = in.readDouble();
+        in.skipBytes(8);
+        ySize = in.readDouble();
+        adc = in.readDouble();
+        dacToWorldZero = in.readDouble();
 
-      in.skipBytes(1176);
+        in.skipBytes(1176);
 
-      double sampleVolts = in.readDouble();
-      double tunnelCurrent = in.readDouble();
-      in.skipBytes(16);
-      double timePerPixel = in.readDouble();
-      in.skipBytes(40);
-      double scanAngle = in.readDouble();
+        double sampleVolts = in.readDouble();
+        double tunnelCurrent = in.readDouble();
+        in.skipBytes(16);
+        double timePerPixel = in.readDouble();
+        in.skipBytes(40);
+        double scanAngle = in.readDouble();
 
-      addGlobalMeta("Sample volts", sampleVolts);
-      addGlobalMeta("Tunnel current", tunnelCurrent);
-      addGlobalMeta("Scan rate", timePerPixel);
-      addGlobalMeta("Scan angle", scanAngle);
+        addGlobalMeta("Sample volts", sampleVolts);
+        addGlobalMeta("Tunnel current", tunnelCurrent);
+        addGlobalMeta("Scan rate", timePerPixel);
+        addGlobalMeta("Scan angle", scanAngle);
+      }
+      else {
+        xSize = in.readFloat();
+        in.skipBytes(4);
+        ySize = in.readFloat();
+        adc = in.readFloat();
+        in.skipBytes(764);
+        dacToWorldZero = in.readFloat();
+      }
+
+      addGlobalMeta("Version", version);
+      addGlobalMeta("X size (in um)", xSize);
+      addGlobalMeta("Y size (in um)", ySize);
+      addGlobalMeta("ADC", adc);
+      addGlobalMeta("DAC to world zero", dacToWorldZero);
+      addGlobalMeta("Comment", comment);
+      addGlobalMeta("Acquisition date", date);
     }
-    else {
-      xSize = in.readFloat();
-      in.skipBytes(4);
-      ySize = in.readFloat();
-      adc = in.readFloat();
-      in.skipBytes(764);
-      dacToWorldZero = in.readFloat();
-    }
-
-    addGlobalMeta("Version", version);
-    addGlobalMeta("X size (in um)", xSize);
-    addGlobalMeta("Y size (in um)", ySize);
-    addGlobalMeta("ADC", adc);
-    addGlobalMeta("DAC to world zero", dacToWorldZero);
-    addGlobalMeta("Comment", comment);
-    addGlobalMeta("Acquisition date", date);
 
     core[0].pixelType = FormatTools.UINT16;
     core[0].sizeZ = 1;
@@ -174,12 +175,14 @@ public class TopometrixReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
-
-    store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
-    store.setImageDescription(comment, 0);
     store.setImageCreationDate(DateTools.formatDate(date,
       new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"}), 0);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
+      store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
+      store.setImageDescription(comment, 0);
+    }
   }
 
 }

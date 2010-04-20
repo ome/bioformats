@@ -79,7 +79,6 @@ public class OxfordInstrumentsReader extends FormatReader {
 
     in.seek(headerSize);
     readPlane(in, x, y, w, h, buf);
-
     return buf;
   }
 
@@ -96,25 +95,7 @@ public class OxfordInstrumentsReader extends FormatReader {
 
     String comment = in.readString(32);
 
-    StringBuffer dateTime = new StringBuffer();
-    dateTime.append(String.valueOf(in.readInt())); // year
-    dateTime.append("-");
-    int month = in.readInt();
-    dateTime.append(String.format("%02d", month));
-    dateTime.append("-");
-    int day = in.readInt();
-    dateTime.append(String.format("%02d", day));
-    dateTime.append("T");
-    int hour = in.readInt();
-    dateTime.append(String.format("%02d", hour));
-    dateTime.append(":");
-    int minute = in.readInt();
-    dateTime.append(String.format("%02d", minute));
-    dateTime.append(":");
-    in.skipBytes(4);
-
-    float scanTime = in.readInt() / 100f;
-    dateTime.append(String.valueOf((int) scanTime));
+    String dateTime = readDate();
 
     in.skipBytes(8);
 
@@ -153,37 +134,65 @@ public class OxfordInstrumentsReader extends FormatReader {
     int lutSize = in.readInt();
     in.skipBytes(lutSize);
     headerSize = in.getFilePointer();
-    in.skipBytes(FormatTools.getPlaneSize(this));
 
-    int nMetadataStrings = in.readInt();
-    for (int i=0; i<nMetadataStrings; i++) {
-      int length = in.readInt();
-      String s = in.readString(length);
-      if (s.indexOf(":") != -1) {
-        String key = s.substring(0, s.indexOf(":")).trim();
-        String value = s.substring(s.indexOf(":") + 1).trim();
-        if (!value.equals("-")) {
-          addGlobalMeta(key, value);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      in.skipBytes(FormatTools.getPlaneSize(this));
+
+      int nMetadataStrings = in.readInt();
+      for (int i=0; i<nMetadataStrings; i++) {
+        int length = in.readInt();
+        String s = in.readString(length);
+        if (s.indexOf(":") != -1) {
+          String key = s.substring(0, s.indexOf(":")).trim();
+          String value = s.substring(s.indexOf(":") + 1).trim();
+          if (!value.equals("-")) {
+            addGlobalMeta(key, value);
+          }
         }
       }
-    }
 
-    addGlobalMeta("Description", comment);
-    addGlobalMeta("Acquisition date", dateTime.toString());
-    addGlobalMeta("Scan time (s)", scanTime);
-    addGlobalMeta("X size (um)", xSize);
-    addGlobalMeta("Y size (um)", ySize);
-    addGlobalMeta("Z minimum (um)", zMin);
-    addGlobalMeta("Z maximum (um)", zMax);
+      addGlobalMeta("Description", comment);
+      addGlobalMeta("Acquisition date", dateTime);
+      addGlobalMeta("X size (um)", xSize);
+      addGlobalMeta("Y size (um)", ySize);
+      addGlobalMeta("Z minimum (um)", zMin);
+      addGlobalMeta("Z maximum (um)", zMax);
+    }
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
     store.setImageDescription(comment, 0);
-    store.setImageCreationDate(dateTime.toString(), 0);
+    store.setImageCreationDate(dateTime, 0);
     store.setDimensionsPhysicalSizeX(xSize / getSizeX(), 0, 0);
     store.setDimensionsPhysicalSizeY(ySize / getSizeY(), 0, 0);
+  }
+
+  // -- Helper methods --
+
+  private String readDate() throws IOException {
+    StringBuffer dateTime = new StringBuffer();
+    dateTime.append(String.valueOf(in.readInt())); // year
+    dateTime.append("-");
+    int month = in.readInt();
+    dateTime.append(String.format("%02d", month));
+    dateTime.append("-");
+    int day = in.readInt();
+    dateTime.append(String.format("%02d", day));
+    dateTime.append("T");
+    int hour = in.readInt();
+    dateTime.append(String.format("%02d", hour));
+    dateTime.append(":");
+    int minute = in.readInt();
+    dateTime.append(String.format("%02d", minute));
+    dateTime.append(":");
+    in.skipBytes(4);
+
+    float scanTime = in.readInt() / 100f;
+    dateTime.append(String.valueOf((int) scanTime));
+    addGlobalMeta("Scan time (s)", scanTime);
+    return dateTime.toString();
   }
 
 }

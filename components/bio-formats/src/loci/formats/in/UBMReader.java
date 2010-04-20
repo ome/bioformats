@@ -60,14 +60,6 @@ public class UBMReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    //final int blockLen = 16;
-    //if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    //return (stream.readString(blockLen)).indexOf(AL3D_MAGIC_STRING) >= 0;
-    return false;
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

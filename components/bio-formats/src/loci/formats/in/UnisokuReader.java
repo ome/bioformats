@@ -137,28 +137,6 @@ public class UnisokuReader extends FormatReader {
         else if (key.equals(":date; time")) {
           date = DateTools.formatDate(value, "MM/dd/yy HH:mm:ss");
         }
-        else if (key.equals(":sample name")) {
-          imageName = value;
-        }
-        else if (key.equals(":remark")) {
-          remark = value;
-        }
-        else if (key.startsWith(":x_data ->")) {
-          String unit = v[0];
-          pixelSizeX = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
-          pixelSizeX /= getSizeX();
-          if (unit.equals("nm")) {
-            pixelSizeX /= 1000;
-          }
-        }
-        else if (key.startsWith(":y_data ->")) {
-          String unit = v[0];
-          pixelSizeY = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
-          pixelSizeY /= getSizeY();
-          if (unit.equals("nm")) {
-            pixelSizeY /= 1000;
-          }
-        }
         else if (key.startsWith(":ascii flag; data type")) {
           value = value.substring(value.indexOf(" ") + 1);
           int type = Integer.parseInt(value);
@@ -166,6 +144,30 @@ public class UnisokuReader extends FormatReader {
           int bytes = type / 2;
           core[0].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, signed, bytes == 4);
+        }
+        else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          if (key.equals(":sample name")) {
+            imageName = value;
+          }
+          else if (key.equals(":remark")) {
+            remark = value;
+          }
+          else if (key.startsWith(":x_data ->")) {
+            String unit = v[0];
+            pixelSizeX = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
+            pixelSizeX /= getSizeX();
+            if (unit.equals("nm")) {
+              pixelSizeX /= 1000;
+            }
+          }
+          else if (key.startsWith(":y_data ->")) {
+            String unit = v[0];
+            pixelSizeY = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
+            pixelSizeY /= getSizeY();
+            if (unit.equals("nm")) {
+              pixelSizeY /= 1000;
+            }
+          }
         }
       }
     }
@@ -185,10 +187,13 @@ public class UnisokuReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageDescription(remark, 0);
     store.setImageCreationDate(date, 0);
-    store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-    store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(remark, 0);
+      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+    }
   }
 
 }
