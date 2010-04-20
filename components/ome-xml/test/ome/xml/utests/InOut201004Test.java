@@ -65,6 +65,7 @@ import ome.xml.r201004.ROI;
 import ome.xml.r201004.Shape;
 import ome.xml.r201004.Union;
 import ome.xml.r201004.Well;
+import ome.xml.r201004.WellSample;
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
 import ome.xml.r201004.enums.LaserType;
@@ -167,12 +168,10 @@ public class InOut201004Test {
     Element root = ome.asXMLElement(document);
     root.setAttribute("xmlns", XML_NS);
     root.setAttribute("xmlns:xsi", XSI_NS);
-    root.setAttribute("xsi:schemaLocation",
-        XML_NS + " " + SCHEMA_LOCATION);
+    root.setAttribute("xsi:schemaLocation", XML_NS + " " + SCHEMA_LOCATION);
     document.appendChild(root);
     // Produce string XML
     asString = asString();
-    /* debug */ System.err.println(asString);
     // Read string XML in as a DOM tree and parse into the object hierarchy
     ome = new OME(document.getDocumentElement());
   }
@@ -226,6 +225,22 @@ public class InOut201004Test {
     assertEquals(DETECTOR_ID, detector.getID());
   }
 
+  @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
+  public void testImageInstrumentLinkage() {
+    Instrument instrument = ome.getInstrument(0);
+    Image image = ome.getImage(0);
+
+    assertEquals(1, image.sizeOfLinkedInstrumentList());
+    Instrument linkedInstrument = image.getLinkedInstrument(0);
+    assertNotNull(linkedInstrument);
+    assertEquals(instrument.getID(), linkedInstrument.getID());
+
+    assertEquals(1, instrument.sizeOfImageList());
+    Image linkedImage = instrument.getImage(0);
+    assertNotNull(linkedImage);
+    assertEquals(image.getID(), linkedImage.getID());
+  }
+
   @Test(dependsOnMethods={"testValidOMENode"})
   public void testValidPlateNode() {
     Plate plate = ome.getPlate(0);
@@ -246,6 +261,23 @@ public class InOut201004Test {
     }
   }
 
+  @Test(dependsOnMethods={"testValidPlateNode"})
+  public void testValidWellSamples() {
+    Plate plate = ome.getPlate(0);
+    for (int row=0; row<plate.getRows(); row++) {
+      for (int col=0; col<plate.getColumns(); col++) {
+        Well well = plate.getWell(row * plate.getColumns() + col);
+        assertEquals(1, well.sizeOfWellSampleList());
+        WellSample sample = well.getWellSample(0);
+        assertNotNull(sample);
+        assertEquals(1, sample.sizeOfLinkedImageList());
+        Image image = sample.getLinkedImage(0);
+        assertNotNull(image);
+        assertEquals(IMAGE_ID, image.getID());
+      }
+    }
+  }
+
   @Test(dependsOnMethods={"testValidOMENode"})
   public void testValidROINode() {
     ROI roi = ome.getROI(0);
@@ -254,23 +286,16 @@ public class InOut201004Test {
 
     Union shapeUnion = roi.getUnion();
     assertNotNull(shapeUnion);
+    assertEquals(1, shapeUnion.sizeOfShapeList());
     Shape s = shapeUnion.getShape(0);
     assertNotNull(s);
+    assertTrue(s instanceof Rectangle);
 
-    Rectangle rect = s.getRectangle();
-    assertNotNull(rect);
+    Rectangle rect = (Rectangle) s;
     assertEquals(RECTANGLE_X, rect.getX());
     assertEquals(RECTANGLE_Y, rect.getY());
     assertEquals(RECTANGLE_WIDTH, rect.getWidth());
     assertEquals(RECTANGLE_HEIGHT, rect.getHeight());
-
-    assertNull(s.getMask());
-    assertNull(s.getEllipse());
-    assertNull(s.getPoint());
-    assertNull(s.getPolyline());
-    assertNull(s.getLine());
-    assertNull(s.getPath());
-    assertNull(s.getText());
   }
 
   private Image makeImage() {
@@ -312,6 +337,12 @@ public class InOut201004Test {
     //laser.setID(LIGHTSOURCE_ID);  /// XXX: Missing ID!?!
     laser.setType(LaserType.DYE);
     //instrument.addLightSource(laser);  // XXX: Fucked type hierarchy!?!
+
+    // link Instrument to the first Image
+    Image image = ome.getImage(0);
+    instrument.addImage(image);
+    image.linkInstrument(instrument);
+
     return instrument;
   }
 
@@ -328,6 +359,11 @@ public class InOut201004Test {
         Well well = new Well();
         well.setRow(row);
         well.setColumn(col);
+
+        WellSample sample = new WellSample();
+        sample.setIndex(0);
+        sample.linkImage(ome.getImage(0));
+        well.addWellSample(sample);
         plate.addWell(well);
       }
     }
@@ -339,15 +375,13 @@ public class InOut201004Test {
     ROI roi = new ROI();
     roi.setID(ROI_ID);
     Union shapeUnion = new Union();
-    Shape s = new Shape();
     Rectangle rect = new Rectangle();
     rect.setX(RECTANGLE_X);
     rect.setY(RECTANGLE_Y);
     rect.setWidth(RECTANGLE_WIDTH);
     rect.setHeight(RECTANGLE_HEIGHT);
 
-    s.setRectangle(rect);
-    shapeUnion.addShape(s);
+    shapeUnion.addShape(rect);
     roi.setUnion(shapeUnion);
 
     return roi;
