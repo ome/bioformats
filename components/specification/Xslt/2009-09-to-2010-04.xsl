@@ -142,15 +142,7 @@
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
 
 			<!-- begin creating PlateAcquisition -->
-			<xsl:variable name="allWellSamples">
-				<xsl:value-of select="descendant::* [local-name(.)='WellSample']"/>
-			</xsl:variable>
-			<xsl:for-each select="descendant::* [local-name(.)='WellSample']">
-				<xsl:comment>Wellsample1</xsl:comment>
-			</xsl:for-each>
-			<xsl:for-each select="$allWellSamples">
-				<xsl:comment>Wellsample2</xsl:comment>
-			</xsl:for-each>
+			<xsl:variable name="allWellSamples" select="descendant::SPW:WellSample"/>
 			<xsl:for-each select="* [local-name(.)='ScreenRef']">
 				<!--
 					get a list of all the ScreenAcquisitions that 
@@ -159,11 +151,11 @@
 					in a Well 
 					in the current Plate
 				-->
+				<xsl:variable name="theScreenID"><xsl:value-of select="@ID"/></xsl:variable>
+				<xsl:variable name="allThisPlatesScreenAcquisitions" select="//SPW:ScreenAcquisition [ancestor::node()/@ID=$theScreenID]"/>
 				<xsl:variable name="associatedScreenAcquisitions">
 					<xsl:call-template name="getAssociatedScreenAcquisitions">
-						<xsl:with-param name="allScreenAcquisitions">
-							<xsl:value-of select="$allWellSamples"/>
-						</xsl:with-param>
+						<xsl:with-param name="allScreenAcquisitions" select="//SPW:ScreenAcquisition [ancestor::node()/@ID=$theScreenID]"/>
 						<xsl:with-param name="allWellSamples">
 							<xsl:value-of select="$allWellSamples"/>
 						</xsl:with-param>
@@ -189,6 +181,7 @@
 		<xsl:param name="allScreenAcquisitions"/>
 		<xsl:param name="allWellSamples"/>
 		<!-- FIX -->
+		<xsl:value-of select="$allScreenAcquisitions"/>
 	</xsl:template>
 
 	<!-- SPW:Well - passing values through to well sample template -->
