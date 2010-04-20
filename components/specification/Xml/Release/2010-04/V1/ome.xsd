@@ -82,10 +82,10 @@
 		<xsd:key name="ChannelIDKey"><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:OpticalElement/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="DichroicIDKey"><xsd:selector xpath="OME:Instrument/OME:Dichroic"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:OpticalElement/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="GroupIDKey"><xsd:selector xpath="OME:Group"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
@@ -103,7 +103,7 @@
 		<xsd:key name="WellIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ROIIDKey"><xsd:selector xpath="ROI:ROI"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Union/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
 		
 		<xsd:keyref name="DatasetExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Dataset/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="DatasetGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Dataset/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -330,6 +330,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The Z-section this plane is for. [units:none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -337,6 +338,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The timepoint this plane is for. [units:none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -344,6 +346,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The channel this plane is for. [units:none]
+						This is numbered from 0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute> 
@@ -458,11 +461,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="WideField"/>
-						<xsd:enumeration value="LaserScanningMicroscopy"/> <!-- LSM -->
-						<xsd:enumeration value="LaserScanningConfocal"/> <!-- CLSM or LSCM -->
+						<xsd:enumeration value="LaserScanningConfocalMicroscopy"/> <!-- CLSM or LSCM -->
 						<xsd:enumeration value="SpinningDiskConfocal"/>
 						<xsd:enumeration value="SlitScanConfocal"/>
-						<xsd:enumeration value="MultiPhotonMicroscopy"/><!-- laser scanning multiphoton microscopy (LSMM) -->
+						<xsd:enumeration value="MultiPhotonMicroscopy"/><!-- laser scanning multiphoton microscopy (LSMM), two photon microscopy -->
 						<xsd:enumeration value="StructuredIllumination"/>
 						<xsd:enumeration value="SingleMoleculeImaging"/>
 						<xsd:enumeration value="TotalInternalReflection"/>
@@ -471,10 +473,12 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="FluorescenceCorrelationSpectroscopy"/>
 						<xsd:enumeration value="NearFieldScanningOpticalMicroscopy"/><!-- NSOM -->
 						<xsd:enumeration value="SecondHarmonicGenerationImaging"/><!-- Second harmonic imaging microscopy (SHIM) -->
-						<xsd:enumeration value="PALM"/><!-- photo-activated localization microscopy -->
+						<xsd:enumeration value="PALM"/><!-- photo-activated localization microscopy, photo-activation localization microscopy -->
 						<xsd:enumeration value="STORM"/><!-- stochastic optical reconstruction microscopy -->
 						<xsd:enumeration value="STED"/><!-- stimulated emission depletion -->
 						<xsd:enumeration value="TIRF"/><!-- total internal reflection fluorescence (TIRFM) -->
+						<xsd:enumeration value="FSM"/><!-- Fluorescence speckle microscopy -->
+						<xsd:enumeration value="LCM"/><!-- Laser capture microdissection -->
 						<xsd:enumeration value="Other"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -492,7 +496,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="DIC"/><!-- Differential Interference Contrast -->
 						<xsd:enumeration value="HoffmanModulation"/><!-- Hoffman Modulation Contrast (HMC) -->
 						<xsd:enumeration value="ObliqueIllumination"/>
-						<xsd:enumeration value="PolarizedLight"/>
+						<xsd:enumeration value="PolarizedLight"/> <!-- Polarization Microscopy -->
 						<xsd:enumeration value="Darkfield"/><!-- Dark Field Imaging -->
 						<xsd:enumeration value="Fluorescence"/>
 						<xsd:enumeration value="Other"/>
@@ -691,6 +695,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="FRAP"/><!-- Fluorescence recovery after photobleaching -->
+								<xsd:enumeration value="FLIP"/><!-- Fluorescence Loss in Photobleaching -->
+								<xsd:enumeration value="InverseFRAP"/><!-- iFRAP, inverse FRAP -->
 								<xsd:enumeration value="Photoablation"/>
 								<xsd:enumeration value="Photoactivation"/>
 								<xsd:enumeration value="Uncaging"/>
@@ -734,29 +740,13 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="OpticalElement" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="OTF" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
 	</xsd:element>
-
-	<xsd:element name="OpticalElement"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:appinfo>abstract</xsd:appinfo>
-			<xsd:documentation>
-				An OpticalElement in the instrument.  An instrument may have many optical elements.
-				These consist of Filters and Dichroics and are combined to form FilterSets and LightPaths
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:choice minOccurs="1" maxOccurs="1">
-				<xsd:element ref="Filter" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="Dichroic" minOccurs="1" maxOccurs="1"/>
-			</xsd:choice>
-		</xsd:complexType>
-	</xsd:element>
-
 	<xsd:element name="Microscope"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>The microscope's manufacturer specification.</xsd:documentation>
@@ -1395,6 +1385,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								<xsd:enumeration value="EMCCD"/><!-- Electron Multiplying Charge Coupled Device -->
 								<xsd:enumeration value="APD"/><!-- Avalanche Photodiode -->
 								<xsd:enumeration value="CMOS"/><!-- complementary metal oxide semiconductor -->
+								<xsd:enumeration value="EBCCD"/><!-- electron-bombarded charge-coupled device -->
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
@@ -1413,30 +1404,20 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
 					<xsd:sequence>
-						<xsd:element name="ExcitationFilterList" minOccurs="0" maxOccurs="1" >
+						<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
 									The Filters placed in the Excitation light path.
 								</xsd:documentation>
 							</xsd:annotation>
-							<xsd:complexType>
-								<xsd:sequence>
-									<xsd:element ref="FilterRef" minOccurs="0" maxOccurs="unbounded"/>									
-								</xsd:sequence>
-							</xsd:complexType>
 						</xsd:element>
 						<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
-						<xsd:element name="EmissionFilterList" minOccurs="0" maxOccurs="1" >
+						<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
 									The Filters placed in the Emission light path.
 								</xsd:documentation>
 							</xsd:annotation>
-							<xsd:complexType>
-								<xsd:sequence>
-									<xsd:element ref="FilterRef" minOccurs="0" maxOccurs="unbounded"/>									
-								</xsd:sequence>
-							</xsd:complexType>
 						</xsd:element>
 					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
@@ -1465,6 +1446,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Type" use="optional">
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="Dichroic"/>
 								<xsd:enumeration value="LongPass"/>
 								<xsd:enumeration value="ShortPass"/>
 								<xsd:enumeration value="BandPass"/>
@@ -1548,32 +1530,20 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="ExcitationFilterPath" minOccurs="0" maxOccurs="1">
+				<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
-						<xsd:documentation>A description of the excitation light path</xsd:documentation>
+						<xsd:documentation>
+							The Filters placed in the Excitation light path.
+						</xsd:documentation>
 					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:choice minOccurs="0" maxOccurs="unbounded">
-								<xsd:element ref="FilterRef" minOccurs="0" maxOccurs="1"/>
-								<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
-							</xsd:choice>
-						</xsd:sequence>
-					</xsd:complexType>
 				</xsd:element>
 				<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element name="EmissionFilterPath" minOccurs="0" maxOccurs="1">
+				<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
-						<xsd:documentation>A description of the emission light path</xsd:documentation>
+						<xsd:documentation>
+							The Filters placed in the Emission light path.
+						</xsd:documentation>
 					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:choice minOccurs="1" maxOccurs="unbounded">
-								<xsd:element ref="FilterRef" minOccurs="1" maxOccurs="1"/>
-								<xsd:element ref="DichroicRef" minOccurs="1" maxOccurs="1"/>
-							</xsd:choice>
-						</xsd:sequence>
-					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
@@ -1583,15 +1553,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
 					<xsd:attribute name="ID" use="required" type="DichroicID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="FilterRef">  <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="FilterID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -1899,6 +1860,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:complexContent>
 			<xsd:extension base="Reference">
 				<xsd:attribute name="ID" use="required" type="LSID"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FilterRef"> <!-- top level definition -->
+		<xsd:complexContent>
+			<xsd:extension base="Reference">
+				<xsd:attribute name="ID" use="required" type="FilterID"/>
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

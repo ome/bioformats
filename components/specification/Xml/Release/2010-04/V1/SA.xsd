@@ -89,8 +89,9 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:complexType name="CommonAnnotation" abstract="true">
+	<xsd:complexType name="Annotation">
 		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				An annotation from which the other are derived.
 			</xsd:documentation>
@@ -111,7 +112,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element ref="Bin:BinaryFile" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -127,7 +128,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" minOccurs="1" maxOccurs="1">
 							<xsd:complexType>
@@ -149,7 +150,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element ref="AnnotationRef" minOccurs="1" maxOccurs="unbounded"/>
 					</xsd:sequence>
@@ -165,7 +166,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -181,7 +182,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:long" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -197,7 +198,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:double" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -213,7 +214,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
@@ -229,7 +230,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="CommonAnnotation">
+				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
