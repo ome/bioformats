@@ -125,7 +125,8 @@ public class ServiceFactory {
    * service instance requested.
    */
   public <T extends Service> T getInstance(Class<T> type)
-    throws DependencyException {
+    throws DependencyException
+  {
     Class<T> impl = (Class<T>) services.get(type);
     if (impl == null && services.containsKey(type)) {
       throw new DependencyException(

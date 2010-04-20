@@ -51,13 +51,13 @@ public interface IRandomAccess extends DataInput, DataOutput {
 
   /** Returns the length of this stream. */
   long length() throws IOException;
-  
+
   /**
    * Returns the current order of the stream.
    * @return See above.
    */
   ByteOrder getOrder();
-  
+
   /**
    * Sets the byte order of the stream.
    * @param order Order to set.

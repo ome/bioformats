@@ -362,7 +362,7 @@ public class ImporterDialog extends OptionsDialog
   /** Handles information pane updates when component focus changes. */
   public void focusGained(FocusEvent e) {
     Object src = e.getSource();
-    String text = (String) infoTable.get(src);
+    String text = infoTable.get(src);
     infoPane.setText("<html>" + text);
     infoPane.setCaretPosition(0);
   }

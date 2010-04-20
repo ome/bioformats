@@ -78,7 +78,7 @@ public class ImporterMetadata extends HashMap<String, Object> {
       }
 
       // merge series metadata
-      Hashtable seriesMeta = r.getSeriesMetadata();
+      Hashtable<String, Object> seriesMeta = r.getSeriesMetadata();
       MetadataTools.merge(seriesMeta, this, s);
 
       // merge core values

@@ -466,7 +466,7 @@ public class ImporterOptions extends OptionsList {
   }
 
   /** Prompts for the file pattern, if necessary. May override id value. */
-  private boolean promptFilePattern() throws FormatException, IOException {
+  private boolean promptFilePattern() {
     if (!isGroupFiles()) {
       BF.debug("no need to prompt for file pattern");
       return true;
@@ -496,7 +496,7 @@ public class ImporterOptions extends OptionsList {
   }
 
   /** Prompts for which series to import, if necessary. */
-  private boolean promptSeries() throws FormatException, IOException {
+  private boolean promptSeries() {
     // initialize series-related derived values
     series = new boolean[reader.r.getSeriesCount()];
     series[0] = true;

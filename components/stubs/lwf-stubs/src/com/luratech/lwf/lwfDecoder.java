@@ -45,6 +45,12 @@ import java.io.InputStream;
  */
 public class lwfDecoder {
 
+  /**
+	 * @param stream
+   * @param password
+   * @param licenseCode
+   * @throws IOException
+	 */
   public lwfDecoder(InputStream stream, String password, String licenseCode)
     throws IOException, SecurityException
   {
@@ -58,11 +64,31 @@ public class lwfDecoder {
     return -1;
   }
 
+  /**
+	 * @param image
+   * @param limit
+   * @param quality
+   * @param scale
+	 */
   public void decodeToMemoryGray8(byte[] image, int limit,
     int quality, int scale) throws SecurityException
   {
   }
 
+  /**
+   * @param image
+   * @param imageoffset
+   * @param limit
+   * @param quality
+   * @param scale
+   * @param pdx
+   * @param pdy
+   * @param clip_x
+   * @param clip_y
+   * @param clip_w
+   * @param clip_h
+   * @throws SecurityException
+   */
   public void decodeToMemoryGray16(short[] image, int imageoffset, int limit,
     int quality, int scale, int pdx, int pdy, int clip_x, int clip_y,
     int clip_w, int clip_h) throws SecurityException

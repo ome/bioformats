@@ -27,8 +27,10 @@ package loci.plugins.util;
 
 import ij.IJ;
 import ij.ImageJ;
+import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -39,11 +41,13 @@ import java.awt.Panel;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.ScrollPane;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * Utility methods for managing ImageJ dialogs and windows.
@@ -189,4 +193,14 @@ public final class WindowTools {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  public static Vector<TextField> getNumericFields(GenericDialog gd) {
+    return gd.getNumericFields();
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static Vector<Checkbox> getCheckboxes(GenericDialog gd) {
+    return gd.getCheckboxes();
+  }
+  
 }

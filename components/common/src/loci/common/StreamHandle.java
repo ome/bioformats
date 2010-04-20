@@ -74,7 +74,7 @@ public abstract class StreamHandle implements IRandomAccess {
    * The file pointer will be set to 0, and the byte ordering
    * will be big-endian.
    */
-  public StreamHandle() throws IOException {
+  public StreamHandle() {
     fp = 0;
     order = ByteOrder.BIG_ENDIAN;
   }
@@ -417,7 +417,7 @@ public abstract class StreamHandle implements IRandomAccess {
   protected abstract void resetStream() throws IOException;
 
   /** Reset the marked position, if necessary. */
-  private void markManager() throws IOException {
+  private void markManager() {
     if (fp >= mark + RandomAccessInputStream.MAX_OVERHEAD - 1) {
       mark = fp;
       stream.mark(RandomAccessInputStream.MAX_OVERHEAD);

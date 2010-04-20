@@ -50,7 +50,7 @@ public class ImageProcessorSource implements ICacheSource {
 
   // -- Constructors --
 
-  public ImageProcessorSource(IFormatReader reader) throws CacheException {
+  public ImageProcessorSource(IFormatReader reader) {
     if (reader instanceof ImageProcessorReader) {
       this.reader = (ImageProcessorReader) reader;
     }

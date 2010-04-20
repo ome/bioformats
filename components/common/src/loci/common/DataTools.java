@@ -111,7 +111,7 @@ public final class DataTools {
     if (bytes.length - off < len) len = bytes.length - off;
     short total = 0;
     for (int i=0, ndx=off; i<len; i++, ndx++) {
-      total |= ((int) bytes[ndx]) << ((little ? i : len - i - 1) * 8);
+      total |= bytes[ndx] << ((little ? i : len - i - 1) * 8);
     }
     return total;
   }
@@ -180,7 +180,7 @@ public final class DataTools {
     if (bytes.length - off < len) len = bytes.length - off;
     int total = 0;
     for (int i=0, ndx=off; i<len; i++, ndx++) {
-      total |= ((int) bytes[ndx]) << ((little ? i : len - i - 1) * 8);
+      total |= bytes[ndx] << ((little ? i : len - i - 1) * 8);
     }
     return total;
   }
@@ -571,6 +571,7 @@ public final class DataTools {
   }
 
   /**
+   * @param signed The signed parameter is ignored.
    * @deprecated Use {@link #makeDataArray(byte[], int, boolean, boolean)}
    *   regardless of signedness.
    */
@@ -591,12 +592,11 @@ public final class DataTools {
   }
 
   public static int swap(int x) {
-    return (int) ((swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF));
+    return (swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF);
   }
 
   public static long swap(long x) {
-    return (long) (((long) swap((int) x) << 32) |
-      ((long) swap((int) (x >> 32)) & 0xFFFFFFFFL));
+    return ((long) swap((int) x) << 32) | (swap((int) (x >> 32)) & 0xFFFFFFFFL);
   }
 
   public static float swap(float x) {

@@ -140,34 +140,32 @@ public class ChannelFiller extends ReaderWrapper {
         }
         return buf;
       }
-      else {
-        short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
-          pix, isLittleEndian());
+      short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
+        pix, isLittleEndian());
 
-        if (isInterleaved()) {
-          int pt = 0;
-          for (int i=0; i<s[0].length; i++) {
-            for (int j=0; j<s.length; j++) {
-              buf[pt++] = (byte) (isLittleEndian() ?
-                (s[j][i] & 0xff) : (s[j][i] >> 8));
-              buf[pt++] = (byte) (isLittleEndian() ?
-                (s[j][i] >> 8) : (s[j][i] & 0xff));
-            }
+      if (isInterleaved()) {
+        int pt = 0;
+        for (int i=0; i<s[0].length; i++) {
+          for (int j=0; j<s.length; j++) {
+            buf[pt++] = (byte) (isLittleEndian() ?
+              (s[j][i] & 0xff) : (s[j][i] >> 8));
+            buf[pt++] = (byte) (isLittleEndian() ?
+              (s[j][i] >> 8) : (s[j][i] & 0xff));
           }
         }
-        else {
-          int pt = 0;
-          for (int i=0; i<s.length; i++) {
-            for (int j=0; j<s[i].length; j++) {
-              buf[pt++] = (byte) (isLittleEndian() ?
-                (s[i][j] & 0xff) : (s[i][j] >> 8));
-              buf[pt++] = (byte) (isLittleEndian() ?
-                (s[i][j] >> 8) : (s[i][j] & 0xff));
-            }
-          }
-        }
-        return buf;
       }
+      else {
+        int pt = 0;
+        for (int i=0; i<s.length; i++) {
+          for (int j=0; j<s[i].length; j++) {
+            buf[pt++] = (byte) (isLittleEndian() ?
+              (s[i][j] & 0xff) : (s[i][j] >> 8));
+            buf[pt++] = (byte) (isLittleEndian() ?
+              (s[i][j] >> 8) : (s[i][j] & 0xff));
+          }
+        }
+      }
+      return buf;
     }
     return reader.openBytes(no, buf, x, y, w, h);
   }

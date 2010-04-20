@@ -144,7 +144,7 @@ public class CBZip2InputStream extends InputStream {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(CBZip2InputStream.class);
 
-  private static void reportCRCError() throws IOException {
+  private static void reportCRCError() {
     // The clean way would be to throw an exception.
     //throw new IOException("crc error");
 
@@ -249,7 +249,7 @@ public class CBZip2InputStream extends InputStream {
 
   public int read() throws IOException {
     if (this.in != null) return read0();
-    else throw new IOException("stream closed");
+    throw new IOException("stream closed");
   }
 
   public int read(final byte[] dest, final int offs, final int len)
@@ -379,7 +379,7 @@ public class CBZip2InputStream extends InputStream {
     }
   }
 
-  private void endBlock() throws IOException {
+  private void endBlock() {
     this.computedBlockCRC = this.crc.getFinalCRC();
 
     // A bad CRC is considered a fatal error.
@@ -660,7 +660,7 @@ public class CBZip2InputStream extends InputStream {
               bsLiveShadow += 8;
               continue;
             }
-            else throw new IOException("unexpected end of stream");
+            throw new IOException("unexpected end of stream");
           }
           int zvec = (bsBuffShadow >> (bsLiveShadow - zn)) & ((1 << zn) - 1);
           bsLiveShadow -= zn;
@@ -674,7 +674,7 @@ public class CBZip2InputStream extends InputStream {
                 bsLiveShadow += 8;
                 continue;
               }
-              else throw new IOException("unexpected end of stream");
+              throw new IOException("unexpected end of stream");
             }
             bsLiveShadow--;
             zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);
@@ -731,7 +731,7 @@ public class CBZip2InputStream extends InputStream {
             bsLiveShadow += 8;
             continue;
           }
-          else throw new IOException("unexpected end of stream");
+          throw new IOException("unexpected end of stream");
         }
         int zvec = (bsBuffShadow >> (bsLiveShadow - zn)) & ((1 << zn) - 1);
         bsLiveShadow -= zn;
@@ -745,7 +745,7 @@ public class CBZip2InputStream extends InputStream {
               bsLiveShadow += 8;
               continue;
             }
-            else throw new IOException("unexpected end of stream");
+            throw new IOException("unexpected end of stream");
           }
           bsLiveShadow--;
           zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);
@@ -781,7 +781,7 @@ public class CBZip2InputStream extends InputStream {
           bsLiveShadow += 8;
           continue;
         }
-        else throw new IOException("unexpected end of stream");
+        throw new IOException("unexpected end of stream");
       }
       bsLiveShadow--;
       zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);

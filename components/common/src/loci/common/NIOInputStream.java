@@ -71,9 +71,7 @@ public class NIOInputStream extends InputStream implements DataInput {
 
   // -- Constructors --
 
-  /**
-   * Constructs an NIOInputStream around the given file.
-   */
+  /** Constructs an NIOInputStream around the given file. */
   public NIOInputStream(String filename) throws IOException {
     this.filename = filename;
     file = new File(filename);
@@ -81,12 +79,12 @@ public class NIOInputStream extends InputStream implements DataInput {
   }
 
   /** Constructs a random access stream around the given handle. */
-  public NIOInputStream(IRandomAccess handle) throws IOException {
+  public NIOInputStream(IRandomAccess handle) {
     raf = handle;
   }
 
   /** Constructs a random access stream around the given byte array. */
-  public NIOInputStream(byte[] array) throws IOException {
+  public NIOInputStream(byte[] array) {
     this(new ByteArrayHandle(array));
   }
 
@@ -95,7 +93,7 @@ public class NIOInputStream extends InputStream implements DataInput {
   /** Returns the underlying InputStream. */
   public DataInputStream getInputStream() {
     // FIXME: To be implemented.
-	  return null;
+    return null;
   }
 
   /**
@@ -153,13 +151,12 @@ public class NIOInputStream extends InputStream implements DataInput {
    */
   public String readString(String lastChars) throws IOException {
     if (lastChars.length() == 1) return findString(lastChars);
-    else {
-      String[] terminators = new String[lastChars.length()];
-      for (int i=0; i<terminators.length; i++) {
-        terminators[i] = lastChars.substring(i, i + 1);
-      }
-      return findString(terminators);
+
+    String[] terminators = new String[lastChars.length()];
+    for (int i=0; i<terminators.length; i++) {
+      terminators[i] = lastChars.substring(i, i + 1);
     }
+    return findString(terminators);
   }
 
   /**
@@ -251,8 +248,6 @@ public class NIOInputStream extends InputStream implements DataInput {
     long loc = 0;
     while (loc < maxLen) {
       long pos = startPos + loc;
-      int num = blockSize;
-      if (pos + blockSize > inputLen) num = (int) (inputLen - pos);
 
       // if we're not saving the string, drop any old, unnecessary output
       if (!saveString) {
@@ -267,7 +262,9 @@ public class NIOInputStream extends InputStream implements DataInput {
       }
 
       // read block from stream
-      int r = in.read(buf, 0, blockSize);
+      int num = blockSize;
+      if (pos + blockSize > inputLen) num = (int) (inputLen - pos);
+      int r = in.read(buf, 0, num);
       if (r <= 0) throw new IOException("Cannot read from stream: " + r);
 
       // append block to output
@@ -295,7 +292,7 @@ public class NIOInputStream extends InputStream implements DataInput {
           out.setLength(min + tagLen);
           return out.toString();
         }
-        else return null;
+        return null;
       }
 
       loc += r;

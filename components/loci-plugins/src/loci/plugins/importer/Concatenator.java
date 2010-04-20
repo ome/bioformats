@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.importer;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 
@@ -33,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.formats.IFormatReader;
+import loci.plugins.Colorizer;
 import loci.plugins.Slicer;
 
 /**
@@ -70,9 +70,9 @@ public class Concatenator {
       int tj = imp.getBitDepth();
       boolean append = false;
       for (int k=0; k<widths.size(); k++) {
-        int wk = ((Integer) widths.get(k)).intValue();
-        int hk = ((Integer) heights.get(k)).intValue();
-        int tk = ((Integer) types.get(k)).intValue();
+        int wk = widths.get(k);
+        int hk = heights.get(k);
+        int tk = types.get(k);
 
         if (wj == wk && hj == hk && tj == tk) {
           ImagePlus oldImp = newImps.get(k);
@@ -101,28 +101,20 @@ public class Concatenator {
     boolean splitT = options.isSplitTimepoints();
 
     for (int j=0; j<newImps.size(); j++) {
-      ImagePlus imp = (ImagePlus) newImps.get(j);
+      ImagePlus imp = newImps.get(j);
       if (splitC || splitZ || splitT) {
-        boolean hyper = options.isViewHyperstack();
-        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
+        imp = Slicer.reslice(imp, splitC, splitZ, splitT,
+          options.isViewHyperstack(), stackOrder);
       }
-      // TODO: Change IJ.runPlugIn to direct API calls in relevant plugins.
-      // Should not be calling show() here just to make other plugins happy! :-(
       if (options.isMergeChannels() && options.isWindowless()) {
-        imp.show();
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true merge_option=[" + options.getMergeOption() + "] " +
-          "series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-        imp.close();
+        imp = Colorizer.colorize(imp, true, stackOrder, null,
+          r.getSeries(), options.getMergeOption(), options.isViewHyperstack());
       }
       else if (options.isMergeChannels()) {
-        imp.show();
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=true series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-        imp.close();
+        imp = Colorizer.colorize(imp, true, stackOrder, null,
+          r.getSeries(), null, options.isViewHyperstack());
       }
+      newImps.set(j, imp);
     }
 
     return newImps;

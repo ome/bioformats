@@ -33,10 +33,6 @@ import java.util.Vector;
 import loci.common.Location;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
@@ -61,9 +57,6 @@ public class NetCDFServiceImpl extends AbstractService
     "NetCDF is required to read NetCDF/HDF variants.  Please obtain " +
     "the necessary JAR files from http://loci.wisc.edu/ome/formats.html.\n" +
     "Required JAR files are netcdf-4.0.jar and slf4j-jdk14.jar.";
-
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(NetCDFServiceImpl.class);
 
   // -- Fields --
 
@@ -163,9 +156,7 @@ public class NetCDFServiceImpl extends AbstractService
       if (origin != null && shape != null) {
         return variable.read(origin, shape).reduce().copyToNDJavaArray();
       }
-      else {
-        return variable.read().copyToNDJavaArray();
-      }
+	    return variable.read().copyToNDJavaArray();
     }
     catch (InvalidRangeException e) {
       throw new ServiceException(e);

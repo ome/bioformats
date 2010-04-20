@@ -80,13 +80,11 @@ public class ImporterReader {
 
   // -- Constructors --
 
-  public ImporterReader() throws FormatException, IOException {
+  public ImporterReader() throws IOException {
     this(new ImporterOptions());
   }
 
-  public ImporterReader(ImporterOptions options)
-    throws FormatException, IOException
-  {
+  public ImporterReader(ImporterOptions options) {
     this.options = options;
     computeNameAndLocation();
     createBaseReader();
@@ -160,7 +158,7 @@ public class ImporterReader {
   private void createBaseReader() {
     if (options.isLocal() || options.isHTTP()) {
       if (!options.isQuiet()) IJ.showStatus("Identifying " + idName);
-      ImageReader reader = ImageProcessorReader.makeImageReader();
+      ImageReader reader = LociPrefs.makeImageReader();
       try { baseReader = reader.getReader(options.getId()); }
       catch (FormatException exc) {
         WindowTools.reportException(exc, options.isQuiet(),

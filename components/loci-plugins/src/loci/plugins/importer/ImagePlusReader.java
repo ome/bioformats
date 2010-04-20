@@ -339,7 +339,6 @@ public class ImagePlusReader implements StatusReporter {
    */
   private ImagePlus createImage(ImageStack stack,
     int series, FileInfo fi, String stackOrder, IndexColorModel[] colorModels)
-    throws FormatException, IOException
   {
     if (stack == null) return null;
 
@@ -397,16 +396,14 @@ public class ImagePlusReader implements StatusReporter {
     String title = file.substring(file.lastIndexOf(File.separator) + 1);
     if (used.length > 1 && groupFiles) {
       FilePattern fp = new FilePattern(new Location(file));
-      if (fp != null) {
-        title = fp.getPattern();
-        if (title == null) {
-          title = file;
-          if (title.indexOf(".") != -1) {
-            title = title.substring(0, title.lastIndexOf("."));
-          }
-        }
-        title = title.substring(title.lastIndexOf(File.separator) + 1);
-      }
+	    title = fp.getPattern();
+	    if (title == null) {
+	      title = file;
+	      if (title.indexOf(".") != -1) {
+	        title = title.substring(0, title.lastIndexOf("."));
+	      }
+	    }
+	    title = title.substring(title.lastIndexOf(File.separator) + 1);
     }
     if (seriesName != null && !file.endsWith(seriesName) &&
       r.getSeriesCount() > 1)

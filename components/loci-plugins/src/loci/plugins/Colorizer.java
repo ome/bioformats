@@ -35,21 +35,11 @@ import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
-import ij.util.Tools;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Panel;
-import java.awt.TextField;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Vector;
 
 import loci.formats.FormatTools;
 import loci.plugins.importer.ImporterOptions;
@@ -81,14 +71,6 @@ public class Colorizer implements PlugInFilter {
   /** Current image stack. */
   private ImagePlus imp;
 
-  private String stackOrder;
-  private boolean color;
-  private boolean hyperstack;
-  private byte[][][] lut;
-  private String mergeOption;
-
-  private int series = 0;
-
   // -- PlugInFilter API methods --
 
   public int setup(String arg, ImagePlus imp) {
@@ -100,9 +82,12 @@ public class Colorizer implements PlugInFilter {
   public void run(ImageProcessor ip) {
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
 
-    stackOrder = "XYCZT";
-
-    boolean doPrompt = false;
+    String stackOrder = "XYCZT";
+    boolean color = false;
+    boolean hyperstack = false;
+    byte[][][] lut = null;
+    String mergeOption = null;
+    int series = 0;
 
     if (arg == null || arg.trim().equals("")) {
       // prompt for colorizing options
@@ -123,8 +108,6 @@ public class Colorizer implements PlugInFilter {
       color = gd.getNextBoolean();
       stackOrder = gd.getNextChoice();
       hyperstack = gd.getNextBoolean();
-
-      if (color && lut == null) doPrompt = true;
     }
     else {
       series = Integer.parseInt(Macro.getValue(arg, "series", "0"));
@@ -132,18 +115,7 @@ public class Colorizer implements PlugInFilter {
       color = Boolean.valueOf(
         Macro.getValue(arg, "colorize", "false")).booleanValue();
       int colorNdx = Integer.parseInt(Macro.getValue(arg, "ndx", "-1"));
-      if (color) {
-        if (colorNdx >= 0 && colorNdx < 3) {
-          lut = new byte[imp.getNChannels()][3][256];
-          for (int channel=0; channel<lut.length; channel++) {
-            if (colorNdx + channel >= lut[channel].length) break;
-            for (int q=0; q<lut[channel][colorNdx + channel].length; q++) {
-              lut[channel][colorNdx + channel][q] = (byte) q;
-            }
-          }
-        }
-        else if (lut == null) doPrompt = true;
-      }
+      if (color) lut = makeDefaultLut(imp.getNChannels(), colorNdx);
       mergeOption = Macro.getValue(arg, "merge_option", null);
       hyperstack = Boolean.valueOf(
         Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
@@ -156,6 +128,28 @@ public class Colorizer implements PlugInFilter {
         "Please convert the virtual stack using Image>Duplicate.");
       return;
     }
+    
+    ImagePlus newImp = Colorizer.colorize(imp, color, stackOrder, lut, series, mergeOption, hyperstack);
+
+    if (newImp != null) {
+      imp.close(); // close original
+      newImp.show();
+    }
+
+    lut = null;
+  }
+
+  // -- Colorizer API methods --
+
+  public static ImagePlus colorize(ImagePlus imp, boolean color,
+    String stackOrder, byte[][][] lut, int series,
+    String mergeOption, boolean hyperstack)
+  {
+    ImageStack stack = imp.getImageStack();
+
+    if (stack.isVirtual()) {
+      throw new IllegalArgumentException("Cannot colorize virtual stack");
+    }
 
     Calibration calibration = imp.getCalibration();
 
@@ -166,21 +160,22 @@ public class Colorizer implements PlugInFilter {
     IJ.showStatus("Running colorizer on " + (nTimes * nSlices) + " images");
 
     if (imp.isComposite() || stack.isRGB() || (nChannels == 1 && !color)) {
-      return;
+      return null;
     }
 
     ImagePlus newImp = new ImagePlus();
-    boolean closeOriginal = true;
 
     if (color) {
+      if (lut == null) lut = promptForColors(nChannels, series);
+
       if (nChannels > 1) {
         imp = ImagePlusTools.reorder(imp, stackOrder, "XYCZT");
         // NB: ImageJ v1.39+ is required for CompositeImage
         CompositeImage composite =
           new CompositeImage(imp, CompositeImage.COLOR);
+
         for (int i=0; i<nChannels; i++) {
           composite.setPosition(i + 1, 1, 1);
-          if (doPrompt) promptForColor(i);
           if (lut != null) {
             LUT channelLut = new LUT(lut[i][0], lut[i][1], lut[i][2]);
             composite.setChannelLut(channelLut);
@@ -190,19 +185,15 @@ public class Colorizer implements PlugInFilter {
         newImp.setPosition(1, 1, 1);
       }
       else {
+        if (lut == null) return null;
+
         ImageStack newStack =
           new ImageStack(stack.getWidth(), stack.getHeight());
         for (int i=1; i<=stack.getSize(); i++) {
           newStack.addSlice(stack.getSliceLabel(i), stack.getProcessor(i));
         }
-
-        if (doPrompt) {
-          promptForColor(0);
-        }
-        if (lut == null) return;
-
-        IndexColorModel model = new IndexColorModel(8, 256, lut[0][0],
-          lut[0][1], lut[0][2]);
+        IndexColorModel model = new IndexColorModel(8, 256,
+          lut[0][0], lut[0][1], lut[0][2]);
         newStack.setColorModel(model);
         newImp.setStack(imp.getTitle(), newStack);
       }
@@ -211,7 +202,7 @@ public class Colorizer implements PlugInFilter {
       int type = imp.getType();
 
       if (nChannels < 4 && type == ImagePlus.GRAY8) {
-        newImp = makeRGB(newImp, stack, nChannels);
+        newImp = makeRGB(imp, stackOrder, newImp, stack, nChannels);
       }
       else if (nChannels <= 7 && type != ImagePlus.COLOR_256) {
         imp = ImagePlusTools.reorder(imp, stackOrder, "XYCZT");
@@ -263,7 +254,7 @@ public class Colorizer implements PlugInFilter {
             }
 
             if (imp.getType() == ImagePlus.GRAY8 && n < 4) {
-              newImp = makeRGB(newImp, stack, n);
+              newImp = makeRGB(imp, stackOrder, newImp, stack, n);
             }
             imp.setDimensions(n, imp.getNSlices()*num[n - 2],
               imp.getNFrames());
@@ -284,24 +275,27 @@ public class Colorizer implements PlugInFilter {
       newImp.setCalibration(calibration);
       newImp.setFileInfo(imp.getOriginalFileInfo());
       if (!newImp.isComposite()) newImp.setOpenAsHyperStack(hyperstack);
-      newImp.show();
     }
-    if (closeOriginal) imp.close();
-    lut = null;
+
+    return newImp;
   }
 
-  // -- Colorizer API methods --
+  public static byte[][][] makeDefaultLut(int nChannels, int index) {
+    if (index < 0 || index >= 3) return null;
 
-  public void setLookupTable(byte[][] lut, int channel) {
-    if (this.lut == null) {
-      this.lut = new byte[imp.getNChannels()][][];
+    byte[][][] lut = new byte[nChannels][3][256];
+    for (int channel = 0; channel < nChannels; channel++) {
+      if (index + channel >= lut[channel].length) break;
+      for (int q = 0; q < lut[channel][index + channel].length; q++) {
+        lut[channel][index + channel][q] = (byte) q;
+      }
     }
-    if (channel < this.lut.length) this.lut[channel] = lut;
+    return lut;
   }
-
+  
   // -- Helper methods --
 
-  private ImagePlus makeRGB(ImagePlus ip, ImageStack s, int c) {
+  private static ImagePlus makeRGB(ImagePlus imp, String stackOrder, ImagePlus ip, ImageStack s, int c) {
     ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
 
     int z = imp.getNSlices();
@@ -330,126 +324,32 @@ public class Colorizer implements PlugInFilter {
     return ip;
   }
 
-  private void promptForColor(int channel) {
+  private static byte[][] promptForColor(int channel, int series) {
     CustomColorChooser chooser = new CustomColorChooser(
       "Color Chooser - Channel " + channel, null, series, channel);
 
     Color color = chooser.getColor();
-    if (color == null) return;
+    if (color == null) return null;
     double redIncrement = ((double) color.getRed()) / 255;
     double greenIncrement = ((double) color.getGreen()) / 255;
     double blueIncrement = ((double) color.getBlue()) / 255;
 
-    if (lut == null) lut = new byte[imp.getNChannels()][3][256];
+    byte[][] channelLut = new byte[3][256];
     for (int i=0; i<256; i++) {
-      lut[channel][0][i] = (byte) (i * redIncrement);
-      lut[channel][1][i] = (byte) (i * greenIncrement);
-      lut[channel][2][i] = (byte) (i * blueIncrement);
+      channelLut[0][i] = (byte) (i * redIncrement);
+      channelLut[1][i] = (byte) (i * greenIncrement);
+      channelLut[2][i] = (byte) (i * blueIncrement);
     }
+    return channelLut;
   }
-
-  // -- Helper class --
-
-  /**
-   * Adapted from ij.gui.ColorChooser.  ColorChooser is not used because
-   * there is no way to change the slider labels - this means that we can't
-   * record macros in which custom colors are chosen for multiple channels.
-   */
-  class CustomColorChooser implements TextListener {
-    Vector colors;
-    ColorPanel panel;
-    Color initialColor;
-    int red, green, blue;
-    String title;
-
-    private int series, channel;
-
-    public CustomColorChooser(String title, Color initialColor, int series,
-      int channel)
-    {
-        this.title = title;
-        if (initialColor == null) initialColor = Color.BLACK;
-        this.initialColor = initialColor;
-        red = initialColor.getRed();
-        green = initialColor.getGreen();
-        blue = initialColor.getBlue();
-        this.series = series;
-        this.channel = channel;
+  
+  private static byte[][][] promptForColors(int nChannels, int series) {
+    byte[][][] lut = new byte[nChannels][][];
+    for (int i=0; i<nChannels; i++) {
+      lut[i] = promptForColor(i, series);
+      if (lut[i] == null) return null;
     }
-
-    // -- ColorChooser API methods --
-
-    /**
-     * Displays a color selection dialog and returns the color
-     *  selected by the user.
-     */
-    public Color getColor() {
-      GenericDialog gd = new GenericDialog(title);
-      gd.addSlider(makeLabel("Red:"), 0, 255, red);
-      gd.addSlider(makeLabel("Green:"), 0, 255, green);
-      gd.addSlider(makeLabel("Blue:"), 0, 255, blue);
-      panel = new ColorPanel(initialColor);
-      gd.addPanel(panel, GridBagConstraints.CENTER, new Insets(10, 0, 0, 0));
-      colors = gd.getNumericFields();
-      for (int i=0; i<colors.size(); i++) {
-        ((TextField) colors.elementAt(i)).addTextListener(this);
-      }
-      gd.showDialog();
-      if (gd.wasCanceled()) return null;
-      int red = (int) gd.getNextNumber();
-      int green = (int) gd.getNextNumber();
-      int blue = (int) gd.getNextNumber();
-      return new Color(red, green, blue);
-    }
-
-    public void textValueChanged(TextEvent e) {
-      int red = getColorValue(0);
-      int green = getColorValue(1);
-      int blue = getColorValue(2);
-      panel.setColor(new Color(red, green, blue));
-      panel.repaint();
-    }
-
-    // -- Helper methods --
-
-    private int getColorValue(int index) {
-      int color =
-        (int) Tools.parseDouble(((TextField) colors.get(index)).getText());
-      if (color < 0) color = 0;
-      if (color > 255) color = 255;
-      return color;
-    }
-
-    private String makeLabel(String baseLabel) {
-      return "Series_" + series + "_Channel_" + channel + "_" + baseLabel;
-    }
-  }
-
-  static class ColorPanel extends Panel {
-    private static final int WIDTH = 100, HEIGHT = 50;
-    private Color c;
-
-    public ColorPanel(Color c) {
-      this.c = c;
-    }
-
-    public Dimension getPreferredSize() {
-      return new Dimension(WIDTH, HEIGHT);
-    }
-
-    void setColor(Color c) { this.c = c; }
-
-    public Dimension getMinimumSize() {
-      return new Dimension(WIDTH, HEIGHT);
-    }
-
-    public void paint(Graphics g) {
-      g.setColor(c);
-      g.fillRect(0, 0, WIDTH, HEIGHT);
-      g.setColor(Color.black);
-      g.drawRect(0, 0, WIDTH-1, HEIGHT-1);
-    }
-
+    return lut;
   }
 
 }

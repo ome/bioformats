@@ -78,10 +78,10 @@ public class Region {
    * empty Region.
    */
   public Region intersection(Region r) {
-    int x = (int) Math.max(this.x, r.x);
-    int y = (int) Math.max(this.y, r.y);
-    int w = (int) Math.min(this.x + this.width, r.x + r.width) - x;
-    int h = (int) Math.min(this.y + this.height, r.y + r.height) - y;
+    int x = Math.max(this.x, r.x);
+    int y = Math.max(this.y, r.y);
+    int w = Math.min(this.x + this.width, r.x + r.width) - x;
+    int h = Math.min(this.y + this.height, r.y + r.height) - y;
 
     if (w < 0) w = 0;
     if (h < 0) h = 0;

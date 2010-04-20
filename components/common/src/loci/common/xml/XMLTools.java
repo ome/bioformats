@@ -409,7 +409,7 @@ public final class XMLTools {
       LOGGER.error("No schema path found. Validation cannot continue.");
       return false;
     }
-    else LOGGER.info(schemaPath);
+    LOGGER.info(schemaPath);
 
     LOGGER.info("Validating {}", label);
 

@@ -26,7 +26,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.util;
 
 import ij.Prefs;
+
+import loci.formats.ClassList;
 import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.in.ND2Reader;
+import loci.formats.in.PictReader;
+import loci.formats.in.QTReader;
+import loci.formats.in.SDTReader;
+import loci.formats.in.TiffDelegateReader;
 
 /**
  * Utility methods for ImageJ preferences for LOCI plugins.
@@ -55,6 +63,58 @@ public final class LociPrefs {
   // -- Utility methods --
 
   /**
+   * Creates an image reader according to the current configuration settings,
+   * including which format readers are currently enabled, as well as
+   * format-specific configuration settings.
+   */
+  public static ImageReader makeImageReader() {
+    ClassList<IFormatReader> defaultClasses =
+      ImageReader.getDefaultReaderClasses();
+    Class<? extends IFormatReader>[] c = defaultClasses.getClasses();
+
+    // include only enabled classes
+    ClassList<IFormatReader> enabledClasses =
+      new ClassList<IFormatReader>(IFormatReader.class);
+    for (int i=0; i<c.length; i++) {
+      boolean on = LociPrefs.isReaderEnabled(c[i]);
+      if (on) enabledClasses.addClass(c[i]);
+    }
+    ImageReader reader = new ImageReader(enabledClasses);
+
+    // toggle reader-specific options
+    boolean nd2Nikon = LociPrefs.isND2Nikon();
+    boolean pictQTJava = LociPrefs.isPictQTJava();
+    boolean qtQTJava = LociPrefs.isQTQTJava();
+    boolean sdtIntensity = LociPrefs.isSDTIntensity();
+    boolean tiffImageIO = LociPrefs.isTiffImageIO();
+    IFormatReader[] r = reader.getReaders();
+    for (int i=0; i<r.length; i++) {
+      if (r[i] instanceof ND2Reader) {
+        ND2Reader nd2 = (ND2Reader) r[i];
+        nd2.setLegacy(nd2Nikon);
+      }
+      else if (r[i] instanceof PictReader) {
+        PictReader pict = (PictReader) r[i];
+        pict.setLegacy(pictQTJava);
+      }
+      else if (r[i] instanceof QTReader) {
+        QTReader qt = (QTReader) r[i];
+        qt.setLegacy(qtQTJava);
+      }
+      else if (r[i] instanceof SDTReader) {
+        SDTReader sdt = (SDTReader) r[i];
+        sdt.setIntensity(sdtIntensity);
+      }
+      else if (r[i] instanceof TiffDelegateReader) {
+        TiffDelegateReader tiff = (TiffDelegateReader) r[i];
+        tiff.setLegacy(tiffImageIO);
+      }
+    }
+
+    return reader;
+  }
+
+  /**
    * Gets whether windowless mode should be used when
    * opening this reader's currently initialized dataset.
    */
@@ -62,7 +122,7 @@ public final class LociPrefs {
     return getPref(PREF_READER_WINDOWLESS, r.getClass(), false);
   }
 
-  public static boolean isReaderEnabled(Class c) {
+  public static boolean isReaderEnabled(Class<? extends IFormatReader> c) {
     return getPref(PREF_READER_ENABLED, c, true);
   }
 
@@ -88,7 +148,9 @@ public final class LociPrefs {
 
   // -- Helper methods --
 
-  private static boolean getPref(String pref, Class c, boolean defaultValue) {
+  private static boolean getPref(String pref,
+    Class<? extends IFormatReader> c, boolean defaultValue)
+  {
     String n = c.getName();
     String readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
     String key = pref + "." + readerName;

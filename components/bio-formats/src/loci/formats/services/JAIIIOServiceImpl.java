@@ -31,8 +31,8 @@ import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -95,7 +95,7 @@ public class JAIIIOServiceImpl extends AbstractService
     IIOImage iioImage = new IIOImage(img, null, null);
     J2KImageWriteParam param =
       (J2KImageWriteParam) writer.getDefaultWriteParam();
-    param.setCompressionMode(J2KImageWriteParam.MODE_EXPLICIT);
+    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
     param.setCompressionType("JPEG2000");
     param.setLossless(lossless);
     param.setFilter(filter);
@@ -116,7 +116,7 @@ public class JAIIIOServiceImpl extends AbstractService
     registry.registerServiceProviders(iter);
     J2KImageReaderSpi spi = 
       registry.getServiceProviderByClass(J2KImageReaderSpi.class);
-    J2KImageReader reader = new J2KImageReader((ImageReaderSpi) spi);
+    J2KImageReader reader = new J2KImageReader(spi);
     reader.setInput(mciis);
     return reader.read(0);
   }

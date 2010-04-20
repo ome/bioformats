@@ -320,12 +320,12 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataInput.readUnsignedByte() */
   public int readUnsignedByte() throws IOException {
-    return (int) (readByte() & 0xFF);
+    return readByte() & 0xFF;
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    return (int) readShort() & 0xFFFF;
+    return readShort() & 0xFFFF;
   }
 
   /* @see java.io.DataInput.readUTF() */

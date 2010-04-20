@@ -92,12 +92,8 @@ public class IdDialog extends OptionsDialog {
     }
 
     // verify that id is valid
-    Location idLoc = id == null ? null : new Location(id);
-    if (idLoc == null) {
-      if (!options.isQuiet()) IJ.error("Bio-Formats", "No file was specified.");
-      return STATUS_FINISHED;
-    }
-    else if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
+    Location idLoc = new Location(id);
+    if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
       if (!options.isQuiet()) {
         IJ.error("Bio-Formats",
           "The specified file (" + id + ") does not exist.");

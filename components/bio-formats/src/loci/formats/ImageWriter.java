@@ -58,9 +58,9 @@ public class ImageWriter implements IFormatWriter {
   /** Default list of writer classes, for use with noargs constructor. */
   private static ClassList<IFormatWriter> defaultClasses;
 
-  // -- Static helper methods --
+  // -- Static utility methods --
 
-  private static ClassList<IFormatWriter> getDefaultWriterClasses() {
+  public static ClassList<IFormatWriter> getDefaultWriterClasses() {
     if (defaultClasses == null) {
       // load built-in writer classes from writers.txt file
       try {

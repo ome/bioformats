@@ -35,18 +35,11 @@ import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
 import loci.common.DataTools;
-import loci.formats.ClassList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-import loci.formats.ImageReader;
 import loci.formats.ImageTools;
 import loci.formats.MinMaxCalculator;
-import loci.formats.in.ND2Reader;
-import loci.formats.in.PictReader;
-import loci.formats.in.QTReader;
-import loci.formats.in.SDTReader;
-import loci.formats.in.TiffDelegateReader;
 
 /**
  * A low-level reader for {@link ij.process.ImageProcessor} objects.
@@ -61,73 +54,18 @@ public class ImageProcessorReader extends MinMaxCalculator {
 
   // -- Utility methods --
 
-  /** Converts the given reader into a ImageProcessorReader, wrapping if needed. */
+  /**
+   * Converts the given reader into a ImageProcessorReader, wrapping if needed.
+   */
   public static ImageProcessorReader makeImageProcessorReader(IFormatReader r) {
     if (r instanceof ImageProcessorReader) return (ImageProcessorReader) r;
     return new ImageProcessorReader(r);
   }
 
-  /**
-   * Creates an image reader according to the current configuration settings,
-   * including which format readers are currently enabled, as well as
-   * format-specific configuration settings.
-   */
-  public static ImageReader makeImageReader() {
-    // include only enabled classes
-    Class<? extends IFormatReader>[] c = null;
-    try {
-      ClassList<IFormatReader> defaultClasses =
-        new ClassList<IFormatReader>("readers.txt", IFormatReader.class);
-      c = defaultClasses.getClasses();
-    }
-    catch (IOException exc) {
-      return new ImageReader();
-    }
-    ClassList<IFormatReader> enabledClasses =
-      new ClassList<IFormatReader>(IFormatReader.class);
-    for (int i=0; i<c.length; i++) {
-      boolean on = LociPrefs.isReaderEnabled(c[i]);
-      if (on) enabledClasses.addClass(c[i]);
-    }
-    ImageReader reader = new ImageReader(enabledClasses);
-
-    // toggle reader-specific options
-    boolean nd2Nikon = LociPrefs.isND2Nikon();
-    boolean pictQTJava = LociPrefs.isPictQTJava();
-    boolean qtQTJava = LociPrefs.isQTQTJava();
-    boolean sdtIntensity = LociPrefs.isSDTIntensity();
-    boolean tiffImageIO = LociPrefs.isTiffImageIO();
-    IFormatReader[] r = reader.getReaders();
-    for (int i=0; i<r.length; i++) {
-      if (r[i] instanceof ND2Reader) {
-        ND2Reader nd2 = (ND2Reader) r[i];
-        nd2.setLegacy(nd2Nikon);
-      }
-      else if (r[i] instanceof PictReader) {
-        PictReader pict = (PictReader) r[i];
-        pict.setLegacy(pictQTJava);
-      }
-      else if (r[i] instanceof QTReader) {
-        QTReader qt = (QTReader) r[i];
-        qt.setLegacy(qtQTJava);
-      }
-      else if (r[i] instanceof SDTReader) {
-        SDTReader sdt = (SDTReader) r[i];
-        sdt.setIntensity(sdtIntensity);
-      }
-      else if (r[i] instanceof TiffDelegateReader) {
-        TiffDelegateReader tiff = (TiffDelegateReader) r[i];
-        tiff.setLegacy(tiffImageIO);
-      }
-    }
-
-    return reader;
-  }
-
   // -- Constructors --
 
   /** Constructs an ImageProcessorReader around a new image reader. */
-  public ImageProcessorReader() { super(makeImageReader()); }
+  public ImageProcessorReader() { super(LociPrefs.makeImageReader()); }
 
   /** Constructs an ImageProcessorReader with the given reader. */
   public ImageProcessorReader(IFormatReader r) { super(r); }
@@ -152,8 +90,8 @@ public class ImageProcessorReader extends MinMaxCalculator {
    * i.e., length of returned array == getRGBChannelCount().
    *
    * @param no Position of image plane.
-   * @param crop Image cropping specifications, or null if no cropping
-   *   is to be done.
+   * @param crop Image cropping specifications,
+   *   or null if no cropping is to be done.
    */
   public ImageProcessor[] openProcessors(int no, Rectangle crop)
     throws FormatException, IOException
@@ -230,7 +168,7 @@ public class ImageProcessorReader extends MinMaxCalculator {
         if (q.length != w * h) {
           byte[] tmp = q;
           q = new byte[w * h];
-          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
         }
         if (isSigned) q = DataTools.makeSigned(q);
 
@@ -242,7 +180,7 @@ public class ImageProcessorReader extends MinMaxCalculator {
         if (q.length != w * h) {
           short[] tmp = q;
           q = new short[w * h];
-          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
         }
         if (isSigned) q = DataTools.makeSigned(q);
 
@@ -253,7 +191,7 @@ public class ImageProcessorReader extends MinMaxCalculator {
         if (q.length != w * h) {
           int[] tmp = q;
           q = new int[w * h];
-          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
         }
 
         ip[i] = new FloatProcessor(w, h, q);
@@ -263,7 +201,7 @@ public class ImageProcessorReader extends MinMaxCalculator {
         if (q.length != w * h) {
           float[] tmp = q;
           q = new float[w * h];
-          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
         }
         ip[i] = new FloatProcessor(w, h, q, null);
       }
@@ -272,13 +210,27 @@ public class ImageProcessorReader extends MinMaxCalculator {
         if (q.length != w * h) {
           double[] tmp = q;
           q = new double[w * h];
-          System.arraycopy(tmp, 0, q, 0, (int) Math.min(q.length, tmp.length));
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
         }
         ip[i] = new FloatProcessor(w, h, q);
       }
     }
 
     return ip;
+  }
+  
+  // -- IFormatReader methods --
+  
+  /** @Override */
+  public Class<?> getNativeDataType() {
+    return ImageProcessor[].class;
+  }
+  
+  /** @Override */
+  public Object openPlane(int no, int x, int y, int w, int h)
+    throws FormatException, IOException 
+  {
+    return openProcessors(no, new Rectangle(x, y, w, h));
   }
 
 }

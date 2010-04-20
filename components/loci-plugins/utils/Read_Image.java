@@ -15,6 +15,7 @@ import loci.formats.ChannelSeparator;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.plugins.util.ImageProcessorReader;
+import loci.plugins.util.LociPrefs;
 
 /** A very simple example of using Bio-Formats in an ImageJ plugin. */
 public class Read_Image implements PlugIn {
@@ -24,7 +25,7 @@ public class Read_Image implements PlugIn {
     String name = od.getFileName();
     String id = dir + name;
     ImageProcessorReader r = new ImageProcessorReader(
-      new ChannelSeparator(ImageProcessorReader.makeImageReader()));
+      new ChannelSeparator(LociPrefs.makeImageReader()));
     try {
       IJ.showStatus("Examining file " + name);
       r.setId(id);

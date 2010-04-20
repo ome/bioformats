@@ -126,16 +126,12 @@ public class IniParser {
   // -- Utility methods --
 
   /** Opens a buffered reader for the given resource. */
-  public static BufferedReader openTextResource(String path)
-    throws IOException
-  {
+  public static BufferedReader openTextResource(String path) {
     return openTextResource(path, IniParser.class);
   }
 
   /** Opens a buffered reader for the given resource. */
-  public static BufferedReader openTextResource(String path, Class<?> c)
-    throws IOException
-  {
+  public static BufferedReader openTextResource(String path, Class<?> c) {
     return new BufferedReader(new InputStreamReader(
       c.getResourceAsStream(path)));
   }

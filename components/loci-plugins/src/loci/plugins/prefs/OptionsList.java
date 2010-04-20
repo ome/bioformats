@@ -60,7 +60,7 @@ public class OptionsList {
 
   // -- Constructor --
 
-  public OptionsList(String path, Class c) throws IOException {
+  public OptionsList(String path, Class<?> c) throws IOException {
     this(new IniParser().parseINI(path, c));
   }
 

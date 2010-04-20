@@ -28,7 +28,6 @@ package loci.plugins.importer;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
-import ij.plugin.filter.PlugInFilterRunner;
 
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
@@ -80,7 +79,7 @@ public class DisplayHandler implements StatusListener {
   // -- DisplayHandler API methods --
 
   /** Displays standard metadata in a table in its own window. */
-  public SearchableWindow displayOriginalMetadata() throws IOException {
+  public SearchableWindow displayOriginalMetadata() {
     if (!options.isShowMetadata()) return null;
     
     String name = options.getIdName();
@@ -148,11 +147,9 @@ public class DisplayHandler implements StatusListener {
     if (!options.isConcatenate() && options.isMergeChannels()) imp.show();
 
     if (imp.isVisible() && !options.isVirtual()) {
-      String arg = "stack_order=" + stackOrder + " merge=true series=" +
-        r.getSeries() + " hyper_stack=" + options.isViewHyperstack();
-      if (windowless) arg += " merge_option=[" + options.getMergeOption() + "]";
-      arg += " ";
-      IJ.runPlugIn("loci.plugins.Colorizer", arg);
+      String mergeOptions = windowless ? options.getMergeOption() : null;
+      imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
+      // CTR TODO finish this
       if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
     }
     
@@ -165,41 +162,33 @@ public class DisplayHandler implements StatusListener {
       boolean splitZ = options.isSplitFocalPlanes();
       boolean splitT = options.isSplitTimepoints();
 
-      if (!imp.isVisible()) imp.show();
-
       boolean customColorize = options.isCustomColorize();
       boolean browser = options.isViewBrowser();
       boolean virtual = options.isVirtual();
 
       if (options.isColorize() || customColorize) {
-        IJ.runPlugIn("loci.plugins.Colorizer", "stack_order=" + stackOrder +
-          " merge=false colorize=true ndx=" + (customColorize ? "-1" : "0") +
-          " series=" + r.getSeries() + " hyper_stack=" +
-          options.isViewHyperstack() + " ");
-        imp.close();
+        byte[][][] lut =
+          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
+        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
       }
       else if (colorModels != null && !browser && !virtual) {
-        Colorizer colorizer = new Colorizer();
-        String arg = "stack_order=" + stackOrder + " merge=false " +
-          "colorize=true series=" + r.getSeries() + " hyper_stack=" +
-          hyper + " ";
-        colorizer.setup(arg, imp);
-        for (int channel=0; channel<colorModels.length; channel++) {
-          byte[][] lut = new byte[3][256];
-          colorModels[channel].getReds(lut[0]);
-          colorModels[channel].getGreens(lut[1]);
-          colorModels[channel].getBlues(lut[2]);
-          colorizer.setLookupTable(lut, channel);
+        byte[][][] lut = new byte[colorModels.length][][];
+        for (int channel=0; channel<lut.length; channel++) {
+          lut[channel] = new byte[3][256];
+          colorModels[channel].getReds(lut[channel][0]);
+          colorModels[channel].getGreens(lut[channel][1]);
+          colorModels[channel].getBlues(lut[channel][2]);
         }
-        new PlugInFilterRunner(colorizer, "", arg);
-        imp.close();
+        imp = Colorizer.colorize(imp, true,
+          stackOrder, lut, r.getSeries(), null, hyper);
       }
 
       if (splitC || splitZ || splitT) {
         imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
-        imp.close();
       }
     }
+
+    imp.show();
   }
   
   public void displayDataBrowser(ImagePlus imp, String stackOrder,
@@ -258,6 +247,7 @@ public class DisplayHandler implements StatusListener {
       //ru.setVar("name", name);
       //ru.setVar("pattern", pattern);
       ru.exec("dataset = new Dataset(name, pattern)");
+      ru.setVar("imp", imp);
       // TODO: finish VisBio logic
     }
     catch (ReflectException exc) {

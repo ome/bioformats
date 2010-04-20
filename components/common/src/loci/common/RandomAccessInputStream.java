@@ -127,13 +127,11 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
    */
   public String readString(String lastChars) throws IOException {
     if (lastChars.length() == 1) return findString(lastChars);
-    else {
-      String[] terminators = new String[lastChars.length()];
-      for (int i=0; i<terminators.length; i++) {
-        terminators[i] = lastChars.substring(i, i + 1);
-      }
-      return findString(terminators);
+    String[] terminators = new String[lastChars.length()];
+    for (int i=0; i<terminators.length; i++) {
+      terminators[i] = lastChars.substring(i, i + 1);
     }
+    return findString(terminators);
   }
 
   /**
@@ -270,7 +268,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
           out.setLength(min + tagLen);
           return out.toString();
         }
-        else return null;
+        return null;
       }
 
       loc += r;
@@ -399,7 +397,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   // -- InputStream API methods --
 
   public int read() throws IOException {
-    int b = (int) readByte();
+    int b = readByte();
     if (b == -1 && (getFilePointer() >= length())) return 0;
     return b;
   }

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131</li>
  *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205</li>
  * </ul>
- * 
+ *
  * @author Chris Allan <callan at blackcat dot ca>
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -55,7 +55,7 @@ public class NIOByteBufferProvider {
   public static final int MINIMUM_JAVA_VERSION = 6;
 
   /** Logger for this class. */
-  private static final Logger LOGGER = 
+  private static final Logger LOGGER =
     LoggerFactory.getLogger(NIOByteBufferProvider.class);
 
   // -- Fields --
@@ -90,7 +90,7 @@ public class NIOByteBufferProvider {
       try {
         // Ensure we have an integer here at least
         Integer.parseInt(tokenizer.nextToken());
-        // This is the actual "major" version number we want to check 
+        // This is the actual "major" version number we want to check
         int y = Integer.parseInt(tokenizer.nextToken());
         if (y >= MINIMUM_JAVA_VERSION) {
           useMappedByteBuffer = true;
@@ -147,7 +147,7 @@ public class NIOByteBufferProvider {
    */
   protected ByteBuffer allocateDirect(long bufferStartPosition, int newSize)
     throws IOException {
-    ByteBuffer buffer = ByteBuffer.allocate((int) newSize);
+    ByteBuffer buffer = ByteBuffer.allocate(newSize);
     channel.read(buffer, bufferStartPosition);
     return buffer;
   }
@@ -163,6 +163,6 @@ public class NIOByteBufferProvider {
    */
   protected ByteBuffer allocateMappedByteBuffer(
       long bufferStartPosition, int newSize) throws IOException {
-    return channel.map(mapMode, bufferStartPosition, newSize); 
+    return channel.map(mapMode, bufferStartPosition, newSize);
   }
 }

@@ -45,5 +45,5 @@ public final class BF {
   public static void debug(String msg) {
     if (IJ.debugMode) IJ.log("LOCI: " + msg);
   }
-
+  
 }

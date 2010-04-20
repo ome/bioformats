@@ -69,7 +69,7 @@ public class Importer {
     ImporterOptions options = null;
     try {
       BF.debug("parse core options");
-      options = parseOptions(arg, false);
+      options = parseOptions(arg);
       if (plugin.canceled) return;
 
       BF.debug("display option dialogs");
@@ -103,9 +103,7 @@ public class Importer {
   }
 
   /** Parses core options. */
-  public ImporterOptions parseOptions(String arg, boolean quiet)
-    throws IOException
-  {
+  public ImporterOptions parseOptions(String arg) throws IOException {
     ImporterOptions options = new ImporterOptions();
     options.loadOptions();
     options.parseArg(arg);
@@ -120,9 +118,7 @@ public class Importer {
   }
 
   /** Displays standard metadata in a table in its own window. */
-  public void displayOriginalMetadata(ImporterOptions options)
-    throws IOException
-  {
+  public void displayOriginalMetadata(ImporterOptions options) {
     DisplayHandler displayHandler = new DisplayHandler(options);
     displayHandler.displayOriginalMetadata();
   }

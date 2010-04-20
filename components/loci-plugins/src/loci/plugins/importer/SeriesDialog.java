@@ -184,7 +184,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
       gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
     }
 
-    boxes = (Checkbox[]) gd.getCheckboxes().toArray(new Checkbox[0]);
+    boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
 
     // remove components and re-add everything so that the thumbnails and
     // checkboxes line up correctly
@@ -193,6 +193,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
 
     Panel masterPanel = new Panel() {
       // ClassCastException is thrown if dispatchEventImpl is not overridden
+      // CTR TODO - there must be a better way
       protected void dispatchEventImpl(AWTEvent e) { }
     };
     masterPanel.setLayout(new GridLayout(seriesCount, 2));

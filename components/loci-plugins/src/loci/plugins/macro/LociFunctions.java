@@ -44,6 +44,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.ImagePlusTools;
+import loci.plugins.util.LociPrefs;
 
 /**
  * This class provides macro extensions for ImageJ for Bio-Formats and other
@@ -73,7 +74,7 @@ public class LociFunctions extends MacroFunctions {
 
   public LociFunctions() {
     r = new ImageProcessorReader(new ChannelSeparator(
-      new FileStitcher(ImageProcessorReader.makeImageReader(), true)));
+      new FileStitcher(LociPrefs.makeImageReader(), true)));
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);

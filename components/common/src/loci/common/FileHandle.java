@@ -283,7 +283,6 @@ public class FileHandle implements IRandomAccess {
 
   public void setOrder(ByteOrder order) {
     // TODO Auto-generated method stub
-    
   }
 
 }

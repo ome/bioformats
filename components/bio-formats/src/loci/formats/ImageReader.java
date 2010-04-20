@@ -63,9 +63,9 @@ public class ImageReader implements IFormatReader {
   /** Default list of reader classes, for use with noargs constructor. */
   private static ClassList<IFormatReader> defaultClasses;
 
-  // -- Static helper methods --
+  // -- Static utility methods --
 
-  private static ClassList<IFormatReader> getDefaultReaderClasses() {
+  public static ClassList<IFormatReader> getDefaultReaderClasses() {
     if (defaultClasses == null) {
       // load built-in reader classes from readers.txt file
       try {
