@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Plane
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Plane extends Object
+public class Plane extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -80,14 +81,108 @@ public class Plane extends Object
 	// Property
 	private String hashSHA1;
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
-	/** Constructs a Plane. */
+	/** Default constructor. */
 	public Plane()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Plane recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Plane(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Plane".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Plane got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("ExposureTime"))
+		{
+			// Attribute property ExposureTime
+			setExposureTime(Double.valueOf(
+					element.getAttribute("ExposureTime")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PositionZ"))
+		{
+			// Attribute property PositionZ
+			setPositionZ(Double.valueOf(
+					element.getAttribute("PositionZ")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PositionX"))
+		{
+			// Attribute property PositionX
+			setPositionX(Double.valueOf(
+					element.getAttribute("PositionX")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PositionY"))
+		{
+			// Attribute property PositionY
+			setPositionY(Double.valueOf(
+					element.getAttribute("PositionY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("DeltaT"))
+		{
+			// Attribute property DeltaT
+			setDeltaT(Double.valueOf(
+					element.getAttribute("DeltaT")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TheC"))
+		{
+			// Attribute property TheC
+			setTheC(Integer.valueOf(
+					element.getAttribute("TheC")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TheZ"))
+		{
+			// Attribute property TheZ
+			setTheZ(Integer.valueOf(
+					element.getAttribute("TheZ")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TheT"))
+		{
+			// Attribute property TheT
+			setTheT(Integer.valueOf(
+					element.getAttribute("TheT")));
+		}
+		// Model object: None
+		NodeList HashSHA1_nodeList = element.getElementsByTagName("HashSHA1");
+		if (HashSHA1_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"HashSHA1 node list size %d != 1",
+					HashSHA1_nodeList.getLength()));
+		}
+		else if (HashSHA1_nodeList.getLength() != 0)
+		{
+			// Element property HashSHA1 which is not complex (has no
+			// sub-elements)
+			setHashSHA1(HashSHA1_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
 	// -- Plane API methods --
@@ -191,35 +286,35 @@ public class Plane extends Object
 		this.hashSHA1 = hashSHA1;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -276,98 +371,8 @@ public class Plane extends Object
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Plane_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		return Plane_element;
-	}
-
-	public static Plane fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Plane".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Plane got %s",
-					tagName));
-		}
-		Plane instance = new Plane();
-		if (element.hasAttribute("ExposureTime"))
-		{
-			// Attribute property ExposureTime
-			instance.setExposureTime(Double.valueOf(
-					element.getAttribute("ExposureTime")));
-		}
-		if (element.hasAttribute("PositionZ"))
-		{
-			// Attribute property PositionZ
-			instance.setPositionZ(Double.valueOf(
-					element.getAttribute("PositionZ")));
-		}
-		if (element.hasAttribute("PositionX"))
-		{
-			// Attribute property PositionX
-			instance.setPositionX(Double.valueOf(
-					element.getAttribute("PositionX")));
-		}
-		if (element.hasAttribute("PositionY"))
-		{
-			// Attribute property PositionY
-			instance.setPositionY(Double.valueOf(
-					element.getAttribute("PositionY")));
-		}
-		if (element.hasAttribute("DeltaT"))
-		{
-			// Attribute property DeltaT
-			instance.setDeltaT(Double.valueOf(
-					element.getAttribute("DeltaT")));
-		}
-		if (element.hasAttribute("TheC"))
-		{
-			// Attribute property TheC
-			instance.setTheC(Integer.valueOf(
-					element.getAttribute("TheC")));
-		}
-		if (element.hasAttribute("TheZ"))
-		{
-			// Attribute property TheZ
-			instance.setTheZ(Integer.valueOf(
-					element.getAttribute("TheZ")));
-		}
-		if (element.hasAttribute("TheT"))
-		{
-			// Attribute property TheT
-			instance.setTheT(Integer.valueOf(
-					element.getAttribute("TheT")));
-		}
-		NodeList HashSHA1_nodeList = element.getElementsByTagName("HashSHA1");
-		if (HashSHA1_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"HashSHA1 node list size %d != 1",
-					HashSHA1_nodeList.getLength()));
-		}
-		else if (HashSHA1_nodeList.getLength() != 0)
-		{
-			// Element property HashSHA1 which is not complex (has no
-			// sub-elements)
-			instance.setHashSHA1(HashSHA1_nodeList.item(0).getTextContent());
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

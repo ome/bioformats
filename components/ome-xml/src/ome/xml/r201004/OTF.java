@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.OTF
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class OTF extends Object
+public class OTF extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -71,8 +72,8 @@ public class OTF extends Object
 	// Property
 	private ObjectiveSettings objectiveSettings;
 
-	// Property
-	private FilterSet filterSet;
+	// Back reference FilterSetRef
+	private List<FilterSet> filterSet = new ArrayList<FilterSet>();
 
 	// Property
 	private String binaryFile;
@@ -85,9 +86,102 @@ public class OTF extends Object
 
 	// -- Constructors --
 
-	/** Constructs a OTF. */
+	/** Default constructor. */
 	public OTF()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs OTF recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public OTF(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"OTF".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of OTF got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeX"))
+		{
+			// Attribute property SizeX
+			setSizeX(Integer.valueOf(
+					element.getAttribute("SizeX")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeY"))
+		{
+			// Attribute property SizeY
+			setSizeY(Integer.valueOf(
+					element.getAttribute("SizeY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			setType(PixelType.fromString(
+					element.getAttribute("Type")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("OpticalAxisAveraged"))
+		{
+			// Attribute property OpticalAxisAveraged
+			setOpticalAxisAveraged(Boolean.valueOf(
+					element.getAttribute("OpticalAxisAveraged")));
+		}
+		// Model object: None
+		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ObjectiveSettings node list size %d != 1",
+					ObjectiveSettings_nodeList.getLength()));
+		}
+		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		{
+			// Element property ObjectiveSettings which is complex (has
+			// sub-elements)
+			setObjectiveSettings(new ObjectiveSettings(
+					(Element) ObjectiveSettings_nodeList.item(0)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference FilterSetRef
+		// Model object: None
+		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
+		if (BinaryFile_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"BinaryFile node list size %d != 1",
+					BinaryFile_nodeList.getLength()));
+		}
+		else if (BinaryFile_nodeList.getLength() != 0)
+		{
+			// Element property BinaryFile which is not complex (has no
+			// sub-elements)
+			setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Channel_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 	}
 
 	// -- OTF API methods --
@@ -158,15 +252,35 @@ public class OTF extends Object
 		this.objectiveSettings = objectiveSettings;
 	}
 
-	// Property
-	public FilterSet getFilterSet()
+	// Reference FilterSetRef
+	public int sizeOfLinkedFilterSetList()
 	{
-		return filterSet;
+		return filterSet.size();
 	}
 
-	public void setFilterSet(FilterSet filterSet)
+	public List<FilterSet> copyLinkedFilterSetList()
 	{
-		this.filterSet = filterSet;
+		return new ArrayList<FilterSet>(filterSet);
+	}
+
+	public FilterSet getLinkedFilterSet(int index)
+	{
+		return filterSet.get(index);
+	}
+
+	public FilterSet setLinkedFilterSet(int index, FilterSet o)
+	{
+		return filterSet.set(index, o);
+	}
+
+	public void linkFilterSet(FilterSet o)
+	{
+		this.filterSet.add(o);
+	}
+
+	public void unlinkFilterSet(FilterSet o)
+	{
+		this.filterSet.add(o);
 	}
 
 	// Property
@@ -180,66 +294,66 @@ public class OTF extends Object
 		this.binaryFile = binaryFile;
 	}
 
-	// Back reference Channel_BackReference
-	public int sizeOfLinkedChannelList()
+	// Property which occurs more than once
+	public int sizeOfChannelList()
 	{
 		return channel_BackReferenceList.size();
 	}
 
-	public List<Channel> copyLinkedChannelList()
+	public List<Channel> copyChannelList()
 	{
 		return new ArrayList<Channel>(channel_BackReferenceList);
 	}
 
-	public Channel getLinkedChannel(int index)
+	public Channel getChannel(int index)
 	{
 		return channel_BackReferenceList.get(index);
 	}
 
-	public Channel setLinkedChannel(int index, Channel channel_BackReference)
+	public Channel setChannel(int index, Channel channel_BackReference)
 	{
 		return channel_BackReferenceList.set(index, channel_BackReference);
 	}
 
-	public void linkChannel(Channel channel_BackReference)
+	public void addChannel(Channel channel_BackReference)
 	{
-		this.channel_BackReferenceList.add(channel_BackReference);
+		channel_BackReferenceList.add(channel_BackReference);
 	}
 
-	public void unlinkChannel(Channel channel_BackReference)
+	public void removeChannel(Channel channel_BackReference)
 	{
-		this.channel_BackReferenceList.add(channel_BackReference);
+		channel_BackReferenceList.remove(channel_BackReference);
 	}
 
-	// Back reference ChannelProfile_BackReference
-	public int sizeOfLinkedChannelProfileList()
+	// Property which occurs more than once
+	public int sizeOfChannelProfileList()
 	{
 		return channelProfile_BackReferenceList.size();
 	}
 
-	public List<ChannelProfile> copyLinkedChannelProfileList()
+	public List<ChannelProfile> copyChannelProfileList()
 	{
 		return new ArrayList<ChannelProfile>(channelProfile_BackReferenceList);
 	}
 
-	public ChannelProfile getLinkedChannelProfile(int index)
+	public ChannelProfile getChannelProfile(int index)
 	{
 		return channelProfile_BackReferenceList.get(index);
 	}
 
-	public ChannelProfile setLinkedChannelProfile(int index, ChannelProfile channelProfile_BackReference)
+	public ChannelProfile setChannelProfile(int index, ChannelProfile channelProfile_BackReference)
 	{
 		return channelProfile_BackReferenceList.set(index, channelProfile_BackReference);
 	}
 
-	public void linkChannelProfile(ChannelProfile channelProfile_BackReference)
+	public void addChannelProfile(ChannelProfile channelProfile_BackReference)
 	{
-		this.channelProfile_BackReferenceList.add(channelProfile_BackReference);
+		channelProfile_BackReferenceList.add(channelProfile_BackReference);
 	}
 
-	public void unlinkChannelProfile(ChannelProfile channelProfile_BackReference)
+	public void removeChannelProfile(ChannelProfile channelProfile_BackReference)
 	{
-		this.channelProfile_BackReferenceList.add(channelProfile_BackReference);
+		channelProfile_BackReferenceList.remove(channelProfile_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -279,9 +393,7 @@ public class OTF extends Object
 		}
 		if (filterSet != null)
 		{
-			// Element property FilterSetRef which is complex (has
-			// sub-elements)
-			OTF_element.appendChild(filterSet.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference FilterSetRef
 		}
 		if (binaryFile != null)
 		{
@@ -300,96 +412,5 @@ public class OTF extends Object
 			// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 		}
 		return OTF_element;
-	}
-
-	public static OTF fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"OTF".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of OTF got %s",
-					tagName));
-		}
-		OTF instance = new OTF();
-		if (element.hasAttribute("SizeX"))
-		{
-			// Attribute property SizeX
-			instance.setSizeX(Integer.valueOf(
-					element.getAttribute("SizeX")));
-		}
-		if (element.hasAttribute("SizeY"))
-		{
-			// Attribute property SizeY
-			instance.setSizeY(Integer.valueOf(
-					element.getAttribute("SizeY")));
-		}
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property which is an enumeration Type
-			instance.setType(PixelType.fromString(
-					element.getAttribute("Type")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("OpticalAxisAveraged"))
-		{
-			// Attribute property OpticalAxisAveraged
-			instance.setOpticalAxisAveraged(Boolean.valueOf(
-					element.getAttribute("OpticalAxisAveraged")));
-		}
-		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
-		if (ObjectiveSettings_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ObjectiveSettings node list size %d != 1",
-					ObjectiveSettings_nodeList.getLength()));
-		}
-		else if (ObjectiveSettings_nodeList.getLength() != 0)
-		{
-			// Element property ObjectiveSettings which is complex (has
-			// sub-elements)
-			instance.setObjectiveSettings(ObjectiveSettings.fromXMLElement(
-					(Element) ObjectiveSettings_nodeList.item(0)));
-		}
-		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
-		if (FilterSetRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"FilterSetRef node list size %d != 1",
-					FilterSetRef_nodeList.getLength()));
-		}
-		else if (FilterSetRef_nodeList.getLength() != 0)
-		{
-			// Element property FilterSetRef which is complex (has
-			// sub-elements)
-			instance.setFilterSet(FilterSet.fromXMLElement(
-					(Element) FilterSetRef_nodeList.item(0)));
-		}
-		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
-		if (BinaryFile_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"BinaryFile node list size %d != 1",
-					BinaryFile_nodeList.getLength()));
-		}
-		else if (BinaryFile_nodeList.getLength() != 0)
-		{
-			// Element property BinaryFile which is not complex (has no
-			// sub-elements)
-			instance.setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
-		}
-		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
-		return instance;
 	}
 }

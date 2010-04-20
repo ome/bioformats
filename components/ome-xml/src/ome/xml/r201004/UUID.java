@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.UUID
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class UUID extends Object
+public class UUID extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -58,9 +59,37 @@ public class UUID extends Object
 
 	// -- Constructors --
 
-	/** Constructs a UUID. */
+	/** Default constructor. */
 	public UUID()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs UUID recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public UUID(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"UUID".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of UUID got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("FileName"))
+		{
+			// Attribute property FileName
+			setFileName(String.valueOf(
+					element.getAttribute("FileName")));
+		}
 	}
 
 	// -- UUID API methods --
@@ -86,26 +115,5 @@ public class UUID extends Object
 			UUID_element.setAttribute("FileName", fileName.toString());
 		}
 		return UUID_element;
-	}
-
-	public static UUID fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"UUID".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of UUID got %s",
-					tagName));
-		}
-		UUID instance = new UUID();
-		if (element.hasAttribute("FileName"))
-		{
-			// Attribute property FileName
-			instance.setFileName(String.valueOf(
-					element.getAttribute("FileName")));
-		}
-		return instance;
 	}
 }

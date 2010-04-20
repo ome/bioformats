@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Rectangle
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Rectangle extends Object
+public class Rectangle extends Shape
 {
 	// -- Instance variables --
 
@@ -67,9 +68,58 @@ public class Rectangle extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Rectangle. */
+	/** Default constructor. */
 	public Rectangle()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Rectangle recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Rectangle(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Rectangle".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Rectangle got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Height"))
+		{
+			// Attribute property Height
+			setHeight(Double.valueOf(
+					element.getAttribute("Height")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Width"))
+		{
+			// Attribute property Width
+			setWidth(Double.valueOf(
+					element.getAttribute("Width")));
+		}
 	}
 
 	// -- Rectangle API methods --
@@ -143,44 +193,5 @@ public class Rectangle extends Object
 			Rectangle_element.setAttribute("Width", width.toString());
 		}
 		return Rectangle_element;
-	}
-
-	public static Rectangle fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Rectangle".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Rectangle got %s",
-					tagName));
-		}
-		Rectangle instance = new Rectangle();
-		if (element.hasAttribute("Y"))
-		{
-			// Attribute property Y
-			instance.setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			instance.setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		if (element.hasAttribute("Height"))
-		{
-			// Attribute property Height
-			instance.setHeight(Double.valueOf(
-					element.getAttribute("Height")));
-		}
-		if (element.hasAttribute("Width"))
-		{
-			// Attribute property Width
-			instance.setWidth(Double.valueOf(
-					element.getAttribute("Width")));
-		}
-		return instance;
 	}
 }

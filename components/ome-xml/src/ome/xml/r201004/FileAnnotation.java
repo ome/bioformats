@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.FileAnnotation
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,9 +59,45 @@ public class FileAnnotation extends Annotation
 
 	// -- Constructors --
 
-	/** Constructs a FileAnnotation. */
+	/** Default constructor. */
 	public FileAnnotation()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs FileAnnotation recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public FileAnnotation(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"FileAnnotation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of FileAnnotation got %s",
+					tagName));
+		}
+		// Model object: None
+		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
+		if (BinaryFile_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"BinaryFile node list size %d != 1",
+					BinaryFile_nodeList.getLength()));
+		}
+		else if (BinaryFile_nodeList.getLength() != 0)
+		{
+			// Element property BinaryFile which is not complex (has no
+			// sub-elements)
+			setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
+		}
 	}
 
 	// -- FileAnnotation API methods --
@@ -89,34 +126,5 @@ public class FileAnnotation extends Annotation
 			FileAnnotation_element.appendChild(binaryFile_element);
 		}
 		return FileAnnotation_element;
-	}
-
-	public static FileAnnotation fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"FileAnnotation".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of FileAnnotation got %s",
-					tagName));
-		}
-		FileAnnotation instance = new FileAnnotation();
-		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
-		if (BinaryFile_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"BinaryFile node list size %d != 1",
-					BinaryFile_nodeList.getLength()));
-		}
-		else if (BinaryFile_nodeList.getLength() != 0)
-		{
-			// Element property BinaryFile which is not complex (has no
-			// sub-elements)
-			instance.setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
-		}
-		return instance;
 	}
 }

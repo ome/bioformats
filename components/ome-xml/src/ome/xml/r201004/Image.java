@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Image
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Image extends Object
+public class Image extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -62,23 +63,23 @@ public class Image extends Object
 	// Property
 	private String acquiredDate;
 
-	// Property
-	private Experimenter experimenter;
+	// Back reference ExperimenterRef
+	private List<Experimenter> experimenter = new ArrayList<Experimenter>();
 
 	// Property
 	private String description;
 
-	// Property
-	private Experiment experiment;
+	// Back reference ExperimentRef
+	private List<Experiment> experiment = new ArrayList<Experiment>();
 
-	// Property
-	private Group group;
+	// Back reference GroupRef
+	private List<Group> group = new ArrayList<Group>();
 
-	// Property which occurs more than once
+	// Back reference DatasetRef
 	private List<Dataset> datasetList = new ArrayList<Dataset>();
 
-	// Property
-	private Instrument instrument;
+	// Back reference InstrumentRef
+	private List<Instrument> instrument = new ArrayList<Instrument>();
 
 	// Property
 	private ObjectiveSettings objectiveSettings;
@@ -92,13 +93,13 @@ public class Image extends Object
 	// Property
 	private Pixels pixels;
 
-	// Property which occurs more than once
+	// Back reference ROIRef
 	private List<ROI> roiList = new ArrayList<ROI>();
 
-	// Property which occurs more than once
+	// Back reference MicrobeamManipulationRef
 	private List<MicrobeamManipulation> microbeamManipulationList = new ArrayList<MicrobeamManipulation>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference WellSample_BackReference
@@ -106,9 +107,156 @@ public class Image extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Image. */
+	/** Default constructor. */
 	public Image()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Image recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Image(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Image".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Image got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		NodeList AcquiredDate_nodeList = element.getElementsByTagName("AcquiredDate");
+		if (AcquiredDate_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"AcquiredDate node list size %d != 1",
+					AcquiredDate_nodeList.getLength()));
+		}
+		else if (AcquiredDate_nodeList.getLength() != 0)
+		{
+			// Element property AcquiredDate which is not complex (has no
+			// sub-elements)
+			setAcquiredDate(AcquiredDate_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ExperimenterRef
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ExperimentRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference GroupRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference DatasetRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference InstrumentRef
+		// Model object: None
+		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ObjectiveSettings node list size %d != 1",
+					ObjectiveSettings_nodeList.getLength()));
+		}
+		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		{
+			// Element property ObjectiveSettings which is complex (has
+			// sub-elements)
+			setObjectiveSettings(new ObjectiveSettings(
+					(Element) ObjectiveSettings_nodeList.item(0)));
+		}
+		// Model object: None
+		NodeList ImagingEnvironment_nodeList = element.getElementsByTagName("ImagingEnvironment");
+		if (ImagingEnvironment_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ImagingEnvironment node list size %d != 1",
+					ImagingEnvironment_nodeList.getLength()));
+		}
+		else if (ImagingEnvironment_nodeList.getLength() != 0)
+		{
+			// Element property ImagingEnvironment which is complex (has
+			// sub-elements)
+			setImagingEnvironment(new ImagingEnvironment(
+					(Element) ImagingEnvironment_nodeList.item(0)));
+		}
+		// Model object: None
+		NodeList StageLabel_nodeList = element.getElementsByTagName("StageLabel");
+		if (StageLabel_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"StageLabel node list size %d != 1",
+					StageLabel_nodeList.getLength()));
+		}
+		else if (StageLabel_nodeList.getLength() != 0)
+		{
+			// Element property StageLabel which is complex (has
+			// sub-elements)
+			setStageLabel(new StageLabel(
+					(Element) StageLabel_nodeList.item(0)));
+		}
+		// Model object: None
+		NodeList Pixels_nodeList = element.getElementsByTagName("Pixels");
+		if (Pixels_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Pixels node list size %d != 1",
+					Pixels_nodeList.getLength()));
+		}
+		else if (Pixels_nodeList.getLength() != 0)
+		{
+			// Element property Pixels which is complex (has
+			// sub-elements)
+			setPixels(new Pixels(
+					(Element) Pixels_nodeList.item(0)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ROIRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference MicrobeamManipulationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference WellSample_BackReference
 	}
 
 	// -- Image API methods --
@@ -146,15 +294,35 @@ public class Image extends Object
 		this.acquiredDate = acquiredDate;
 	}
 
-	// Property
-	public Experimenter getExperimenter()
+	// Reference ExperimenterRef
+	public int sizeOfLinkedExperimenterList()
 	{
-		return experimenter;
+		return experimenter.size();
 	}
 
-	public void setExperimenter(Experimenter experimenter)
+	public List<Experimenter> copyLinkedExperimenterList()
 	{
-		this.experimenter = experimenter;
+		return new ArrayList<Experimenter>(experimenter);
+	}
+
+	public Experimenter getLinkedExperimenter(int index)
+	{
+		return experimenter.get(index);
+	}
+
+	public Experimenter setLinkedExperimenter(int index, Experimenter o)
+	{
+		return experimenter.set(index, o);
+	}
+
+	public void linkExperimenter(Experimenter o)
+	{
+		this.experimenter.add(o);
+	}
+
+	public void unlinkExperimenter(Experimenter o)
+	{
+		this.experimenter.add(o);
 	}
 
 	// Property
@@ -168,68 +336,128 @@ public class Image extends Object
 		this.description = description;
 	}
 
-	// Property
-	public Experiment getExperiment()
+	// Reference ExperimentRef
+	public int sizeOfLinkedExperimentList()
 	{
-		return experiment;
+		return experiment.size();
 	}
 
-	public void setExperiment(Experiment experiment)
+	public List<Experiment> copyLinkedExperimentList()
 	{
-		this.experiment = experiment;
+		return new ArrayList<Experiment>(experiment);
 	}
 
-	// Property
-	public Group getGroup()
+	public Experiment getLinkedExperiment(int index)
 	{
-		return group;
+		return experiment.get(index);
 	}
 
-	public void setGroup(Group group)
+	public Experiment setLinkedExperiment(int index, Experiment o)
 	{
-		this.group = group;
+		return experiment.set(index, o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfDatasetList()
+	public void linkExperiment(Experiment o)
+	{
+		this.experiment.add(o);
+	}
+
+	public void unlinkExperiment(Experiment o)
+	{
+		this.experiment.add(o);
+	}
+
+	// Reference GroupRef
+	public int sizeOfLinkedGroupList()
+	{
+		return group.size();
+	}
+
+	public List<Group> copyLinkedGroupList()
+	{
+		return new ArrayList<Group>(group);
+	}
+
+	public Group getLinkedGroup(int index)
+	{
+		return group.get(index);
+	}
+
+	public Group setLinkedGroup(int index, Group o)
+	{
+		return group.set(index, o);
+	}
+
+	public void linkGroup(Group o)
+	{
+		this.group.add(o);
+	}
+
+	public void unlinkGroup(Group o)
+	{
+		this.group.add(o);
+	}
+
+	// Reference DatasetRef
+	public int sizeOfLinkedDatasetList()
 	{
 		return datasetList.size();
 	}
 
-	public List<Dataset> copyDatasetList()
+	public List<Dataset> copyLinkedDatasetList()
 	{
 		return new ArrayList<Dataset>(datasetList);
 	}
 
-	public Dataset getDataset(int index)
+	public Dataset getLinkedDataset(int index)
 	{
 		return datasetList.get(index);
 	}
 
-	public Dataset setDataset(int index, Dataset dataset)
+	public Dataset setLinkedDataset(int index, Dataset o)
 	{
-		return datasetList.set(index, dataset);
+		return datasetList.set(index, o);
 	}
 
-	public void addDataset(Dataset dataset)
+	public void linkDataset(Dataset o)
 	{
-		datasetList.add(dataset);
+		this.datasetList.add(o);
 	}
 
-	public void removeDataset(Dataset dataset)
+	public void unlinkDataset(Dataset o)
 	{
-		datasetList.remove(dataset);
+		this.datasetList.add(o);
 	}
 
-	// Property
-	public Instrument getInstrument()
+	// Reference InstrumentRef
+	public int sizeOfLinkedInstrumentList()
 	{
-		return instrument;
+		return instrument.size();
 	}
 
-	public void setInstrument(Instrument instrument)
+	public List<Instrument> copyLinkedInstrumentList()
 	{
-		this.instrument = instrument;
+		return new ArrayList<Instrument>(instrument);
+	}
+
+	public Instrument getLinkedInstrument(int index)
+	{
+		return instrument.get(index);
+	}
+
+	public Instrument setLinkedInstrument(int index, Instrument o)
+	{
+		return instrument.set(index, o);
+	}
+
+	public void linkInstrument(Instrument o)
+	{
+		this.instrument.add(o);
+	}
+
+	public void unlinkInstrument(Instrument o)
+	{
+		this.instrument.add(o);
 	}
 
 	// Property
@@ -276,128 +504,128 @@ public class Image extends Object
 		this.pixels = pixels;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfROIList()
+	// Reference ROIRef
+	public int sizeOfLinkedROIList()
 	{
 		return roiList.size();
 	}
 
-	public List<ROI> copyROIList()
+	public List<ROI> copyLinkedROIList()
 	{
 		return new ArrayList<ROI>(roiList);
 	}
 
-	public ROI getROI(int index)
+	public ROI getLinkedROI(int index)
 	{
 		return roiList.get(index);
 	}
 
-	public ROI setROI(int index, ROI roi)
+	public ROI setLinkedROI(int index, ROI o)
 	{
-		return roiList.set(index, roi);
+		return roiList.set(index, o);
 	}
 
-	public void addROI(ROI roi)
+	public void linkROI(ROI o)
 	{
-		roiList.add(roi);
+		this.roiList.add(o);
 	}
 
-	public void removeROI(ROI roi)
+	public void unlinkROI(ROI o)
 	{
-		roiList.remove(roi);
+		this.roiList.add(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfMicrobeamManipulationList()
+	// Reference MicrobeamManipulationRef
+	public int sizeOfLinkedMicrobeamManipulationList()
 	{
 		return microbeamManipulationList.size();
 	}
 
-	public List<MicrobeamManipulation> copyMicrobeamManipulationList()
+	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
 	{
 		return new ArrayList<MicrobeamManipulation>(microbeamManipulationList);
 	}
 
-	public MicrobeamManipulation getMicrobeamManipulation(int index)
+	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
 	{
 		return microbeamManipulationList.get(index);
 	}
 
-	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation)
+	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation o)
 	{
-		return microbeamManipulationList.set(index, microbeamManipulation);
+		return microbeamManipulationList.set(index, o);
 	}
 
-	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation)
+	public void linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		microbeamManipulationList.add(microbeamManipulation);
+		this.microbeamManipulationList.add(o);
 	}
 
-	public void removeMicrobeamManipulation(MicrobeamManipulation microbeamManipulation)
+	public void unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		microbeamManipulationList.remove(microbeamManipulation);
+		this.microbeamManipulationList.add(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Back reference WellSample_BackReference
-	public int sizeOfLinkedWellSampleList()
+	// Property which occurs more than once
+	public int sizeOfWellSampleList()
 	{
 		return wellSample_BackReferenceList.size();
 	}
 
-	public List<WellSample> copyLinkedWellSampleList()
+	public List<WellSample> copyWellSampleList()
 	{
 		return new ArrayList<WellSample>(wellSample_BackReferenceList);
 	}
 
-	public WellSample getLinkedWellSample(int index)
+	public WellSample getWellSample(int index)
 	{
 		return wellSample_BackReferenceList.get(index);
 	}
 
-	public WellSample setLinkedWellSample(int index, WellSample wellSample_BackReference)
+	public WellSample setWellSample(int index, WellSample wellSample_BackReference)
 	{
 		return wellSample_BackReferenceList.set(index, wellSample_BackReference);
 	}
 
-	public void linkWellSample(WellSample wellSample_BackReference)
+	public void addWellSample(WellSample wellSample_BackReference)
 	{
-		this.wellSample_BackReferenceList.add(wellSample_BackReference);
+		wellSample_BackReferenceList.add(wellSample_BackReference);
 	}
 
-	public void unlinkWellSample(WellSample wellSample_BackReference)
+	public void removeWellSample(WellSample wellSample_BackReference)
 	{
-		this.wellSample_BackReferenceList.add(wellSample_BackReference);
+		wellSample_BackReferenceList.remove(wellSample_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -424,9 +652,7 @@ public class Image extends Object
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			Image_element.appendChild(experimenter.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference ExperimenterRef
 		}
 		if (description != null)
 		{
@@ -438,30 +664,19 @@ public class Image extends Object
 		}
 		if (experiment != null)
 		{
-			// Element property ExperimentRef which is complex (has
-			// sub-elements)
-			Image_element.appendChild(experiment.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference ExperimentRef
 		}
 		if (group != null)
 		{
-			// Element property GroupRef which is complex (has
-			// sub-elements)
-			Image_element.appendChild(group.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference GroupRef
 		}
 		if (datasetList != null)
 		{
-			// Element property DatasetRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Dataset datasetList_value : datasetList)
-			{
-				Image_element.appendChild(datasetList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference DatasetRef
 		}
 		if (instrument != null)
 		{
-			// Element property InstrumentRef which is complex (has
-			// sub-elements)
-			Image_element.appendChild(instrument.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference InstrumentRef
 		}
 		if (objectiveSettings != null)
 		{
@@ -489,243 +704,20 @@ public class Image extends Object
 		}
 		if (roiList != null)
 		{
-			// Element property ROIRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (ROI roiList_value : roiList)
-			{
-				Image_element.appendChild(roiList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference ROIRef
 		}
 		if (microbeamManipulationList != null)
 		{
-			// Element property MicrobeamManipulationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (MicrobeamManipulation microbeamManipulationList_value : microbeamManipulationList)
-			{
-				Image_element.appendChild(microbeamManipulationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference MicrobeamManipulationRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Image_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (wellSample_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference WellSample_BackReference
 		}
 		return Image_element;
-	}
-
-	public static Image fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Image".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Image got %s",
-					tagName));
-		}
-		Image instance = new Image();
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		NodeList AcquiredDate_nodeList = element.getElementsByTagName("AcquiredDate");
-		if (AcquiredDate_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"AcquiredDate node list size %d != 1",
-					AcquiredDate_nodeList.getLength()));
-		}
-		else if (AcquiredDate_nodeList.getLength() != 0)
-		{
-			// Element property AcquiredDate which is not complex (has no
-			// sub-elements)
-			instance.setAcquiredDate(AcquiredDate_nodeList.item(0).getTextContent());
-		}
-		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
-		if (ExperimenterRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ExperimenterRef node list size %d != 1",
-					ExperimenterRef_nodeList.getLength()));
-		}
-		else if (ExperimenterRef_nodeList.getLength() != 0)
-		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			instance.setExperimenter(Experimenter.fromXMLElement(
-					(Element) ExperimenterRef_nodeList.item(0)));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		NodeList ExperimentRef_nodeList = element.getElementsByTagName("ExperimentRef");
-		if (ExperimentRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ExperimentRef node list size %d != 1",
-					ExperimentRef_nodeList.getLength()));
-		}
-		else if (ExperimentRef_nodeList.getLength() != 0)
-		{
-			// Element property ExperimentRef which is complex (has
-			// sub-elements)
-			instance.setExperiment(Experiment.fromXMLElement(
-					(Element) ExperimentRef_nodeList.item(0)));
-		}
-		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
-		if (GroupRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"GroupRef node list size %d != 1",
-					GroupRef_nodeList.getLength()));
-		}
-		else if (GroupRef_nodeList.getLength() != 0)
-		{
-			// Element property GroupRef which is complex (has
-			// sub-elements)
-			instance.setGroup(Group.fromXMLElement(
-					(Element) GroupRef_nodeList.item(0)));
-		}
-		// Element property DatasetRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList DatasetRef_nodeList = element.getElementsByTagName("DatasetRef");
-		for (int i = 0; i < DatasetRef_nodeList.getLength(); i++)
-		{
-			instance.addDataset(Dataset.fromXMLElement(
-					(Element) DatasetRef_nodeList.item(i)));
-		}
-		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
-		if (InstrumentRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"InstrumentRef node list size %d != 1",
-					InstrumentRef_nodeList.getLength()));
-		}
-		else if (InstrumentRef_nodeList.getLength() != 0)
-		{
-			// Element property InstrumentRef which is complex (has
-			// sub-elements)
-			instance.setInstrument(Instrument.fromXMLElement(
-					(Element) InstrumentRef_nodeList.item(0)));
-		}
-		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
-		if (ObjectiveSettings_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ObjectiveSettings node list size %d != 1",
-					ObjectiveSettings_nodeList.getLength()));
-		}
-		else if (ObjectiveSettings_nodeList.getLength() != 0)
-		{
-			// Element property ObjectiveSettings which is complex (has
-			// sub-elements)
-			instance.setObjectiveSettings(ObjectiveSettings.fromXMLElement(
-					(Element) ObjectiveSettings_nodeList.item(0)));
-		}
-		NodeList ImagingEnvironment_nodeList = element.getElementsByTagName("ImagingEnvironment");
-		if (ImagingEnvironment_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ImagingEnvironment node list size %d != 1",
-					ImagingEnvironment_nodeList.getLength()));
-		}
-		else if (ImagingEnvironment_nodeList.getLength() != 0)
-		{
-			// Element property ImagingEnvironment which is complex (has
-			// sub-elements)
-			instance.setImagingEnvironment(ImagingEnvironment.fromXMLElement(
-					(Element) ImagingEnvironment_nodeList.item(0)));
-		}
-		NodeList StageLabel_nodeList = element.getElementsByTagName("StageLabel");
-		if (StageLabel_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"StageLabel node list size %d != 1",
-					StageLabel_nodeList.getLength()));
-		}
-		else if (StageLabel_nodeList.getLength() != 0)
-		{
-			// Element property StageLabel which is complex (has
-			// sub-elements)
-			instance.setStageLabel(StageLabel.fromXMLElement(
-					(Element) StageLabel_nodeList.item(0)));
-		}
-		NodeList Pixels_nodeList = element.getElementsByTagName("Pixels");
-		if (Pixels_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Pixels node list size %d != 1",
-					Pixels_nodeList.getLength()));
-		}
-		else if (Pixels_nodeList.getLength() != 0)
-		{
-			// Element property Pixels which is complex (has
-			// sub-elements)
-			instance.setPixels(Pixels.fromXMLElement(
-					(Element) Pixels_nodeList.item(0)));
-		}
-		// Element property ROIRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
-		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
-		{
-			instance.addROI(ROI.fromXMLElement(
-					(Element) ROIRef_nodeList.item(i)));
-		}
-		// Element property MicrobeamManipulationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList MicrobeamManipulationRef_nodeList = element.getElementsByTagName("MicrobeamManipulationRef");
-		for (int i = 0; i < MicrobeamManipulationRef_nodeList.getLength(); i++)
-		{
-			instance.addMicrobeamManipulation(MicrobeamManipulation.fromXMLElement(
-					(Element) MicrobeamManipulationRef_nodeList.item(i)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference WellSample_BackReference
-		return instance;
 	}
 }

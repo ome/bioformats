@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Path
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Path extends Object
+public class Path extends Shape
 {
 	// -- Instance variables --
 
@@ -58,9 +59,37 @@ public class Path extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Path. */
+	/** Default constructor. */
 	public Path()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Path recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Path(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Path".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Path got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Definition"))
+		{
+			// Attribute property Definition
+			setDefinition(String.valueOf(
+					element.getAttribute("Definition")));
+		}
 	}
 
 	// -- Path API methods --
@@ -86,26 +115,5 @@ public class Path extends Object
 			Path_element.setAttribute("Definition", definition.toString());
 		}
 		return Path_element;
-	}
-
-	public static Path fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Path".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Path got %s",
-					tagName));
-		}
-		Path instance = new Path();
-		if (element.hasAttribute("Definition"))
-		{
-			// Attribute property Definition
-			instance.setDefinition(String.valueOf(
-					element.getAttribute("Definition")));
-		}
-		return instance;
 	}
 }

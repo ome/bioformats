@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Well
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Well extends Object
+public class Well extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -77,17 +78,100 @@ public class Well extends Object
 	// Property which occurs more than once
 	private List<WellSample> wellSampleList = new ArrayList<WellSample>();
 
-	// Property
-	private Reagent reagent;
+	// Back reference ReagentRef
+	private List<Reagent> reagent = new ArrayList<Reagent>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
-	/** Constructs a Well. */
+	/** Default constructor. */
 	public Well()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Well recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Well(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Well".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Well got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Status"))
+		{
+			// Attribute property Status
+			setStatus(String.valueOf(
+					element.getAttribute("Status")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ExternalIdentifier"))
+		{
+			// Attribute property ExternalIdentifier
+			setExternalIdentifier(String.valueOf(
+					element.getAttribute("ExternalIdentifier")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Column"))
+		{
+			// Attribute property Column
+			setColumn(Integer.valueOf(
+					element.getAttribute("Column")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ExternalDescription"))
+		{
+			// Attribute property ExternalDescription
+			setExternalDescription(String.valueOf(
+					element.getAttribute("ExternalDescription")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Color"))
+		{
+			// Attribute property Color
+			setColor(Integer.valueOf(
+					element.getAttribute("Color")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Row"))
+		{
+			// Attribute property Row
+			setRow(Integer.valueOf(
+					element.getAttribute("Row")));
+		}
+		// Model object: None
+		// Element property WellSample which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList WellSample_nodeList = element.getElementsByTagName("WellSample");
+		for (int i = 0; i < WellSample_nodeList.getLength(); i++)
+		{
+			addWellSample(new WellSample(
+					(Element) WellSample_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ReagentRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
 	// -- Well API methods --
@@ -200,46 +284,66 @@ public class Well extends Object
 		wellSampleList.remove(wellSample);
 	}
 
-	// Property
-	public Reagent getReagent()
+	// Reference ReagentRef
+	public int sizeOfLinkedReagentList()
 	{
-		return reagent;
+		return reagent.size();
 	}
 
-	public void setReagent(Reagent reagent)
+	public List<Reagent> copyLinkedReagentList()
 	{
-		this.reagent = reagent;
+		return new ArrayList<Reagent>(reagent);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	public Reagent getLinkedReagent(int index)
+	{
+		return reagent.get(index);
+	}
+
+	public Reagent setLinkedReagent(int index, Reagent o)
+	{
+		return reagent.set(index, o);
+	}
+
+	public void linkReagent(Reagent o)
+	{
+		this.reagent.add(o);
+	}
+
+	public void unlinkReagent(Reagent o)
+	{
+		this.reagent.add(o);
+	}
+
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -292,107 +396,12 @@ public class Well extends Object
 		}
 		if (reagent != null)
 		{
-			// Element property ReagentRef which is complex (has
-			// sub-elements)
-			Well_element.appendChild(reagent.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference ReagentRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Well_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		return Well_element;
-	}
-
-	public static Well fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Well".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Well got %s",
-					tagName));
-		}
-		Well instance = new Well();
-		if (element.hasAttribute("Status"))
-		{
-			// Attribute property Status
-			instance.setStatus(String.valueOf(
-					element.getAttribute("Status")));
-		}
-		if (element.hasAttribute("ExternalIdentifier"))
-		{
-			// Attribute property ExternalIdentifier
-			instance.setExternalIdentifier(String.valueOf(
-					element.getAttribute("ExternalIdentifier")));
-		}
-		if (element.hasAttribute("Column"))
-		{
-			// Attribute property Column
-			instance.setColumn(Integer.valueOf(
-					element.getAttribute("Column")));
-		}
-		if (element.hasAttribute("ExternalDescription"))
-		{
-			// Attribute property ExternalDescription
-			instance.setExternalDescription(String.valueOf(
-					element.getAttribute("ExternalDescription")));
-		}
-		if (element.hasAttribute("Color"))
-		{
-			// Attribute property Color
-			instance.setColor(Integer.valueOf(
-					element.getAttribute("Color")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Row"))
-		{
-			// Attribute property Row
-			instance.setRow(Integer.valueOf(
-					element.getAttribute("Row")));
-		}
-		// Element property WellSample which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList WellSample_nodeList = element.getElementsByTagName("WellSample");
-		for (int i = 0; i < WellSample_nodeList.getLength(); i++)
-		{
-			instance.addWellSample(WellSample.fromXMLElement(
-					(Element) WellSample_nodeList.item(i)));
-		}
-		NodeList ReagentRef_nodeList = element.getElementsByTagName("ReagentRef");
-		if (ReagentRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ReagentRef node list size %d != 1",
-					ReagentRef_nodeList.getLength()));
-		}
-		else if (ReagentRef_nodeList.getLength() != 0)
-		{
-			// Element property ReagentRef which is complex (has
-			// sub-elements)
-			instance.setReagent(Reagent.fromXMLElement(
-					(Element) ReagentRef_nodeList.item(0)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

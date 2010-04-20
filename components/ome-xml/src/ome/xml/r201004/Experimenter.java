@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Experimenter
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Experimenter extends Object
+public class Experimenter extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -77,10 +78,10 @@ public class Experimenter extends Object
 	// Property
 	private String id;
 
-	// Property which occurs more than once
+	// Back reference GroupRef
 	private List<Group> groupList = new ArrayList<Group>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference Image_BackReference
@@ -100,9 +101,100 @@ public class Experimenter extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Experimenter. */
+	/** Default constructor. */
 	public Experimenter()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Experimenter recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Experimenter(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Experimenter".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Experimenter got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("UserName"))
+		{
+			// Attribute property UserName
+			setUserName(String.valueOf(
+					element.getAttribute("UserName")));
+		}
+		// Model object: None
+		if (element.hasAttribute("DisplayName"))
+		{
+			// Attribute property DisplayName
+			setDisplayName(String.valueOf(
+					element.getAttribute("DisplayName")));
+		}
+		// Model object: None
+		if (element.hasAttribute("FirstName"))
+		{
+			// Attribute property FirstName
+			setFirstName(String.valueOf(
+					element.getAttribute("FirstName")));
+		}
+		// Model object: None
+		if (element.hasAttribute("MiddleName"))
+		{
+			// Attribute property MiddleName
+			setMiddleName(String.valueOf(
+					element.getAttribute("MiddleName")));
+		}
+		// Model object: None
+		if (element.hasAttribute("LastName"))
+		{
+			// Attribute property LastName
+			setLastName(String.valueOf(
+					element.getAttribute("LastName")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Email"))
+		{
+			// Attribute property Email
+			setEmail(String.valueOf(
+					element.getAttribute("Email")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Institution"))
+		{
+			// Attribute property Institution
+			setInstitution(String.valueOf(
+					element.getAttribute("Institution")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference GroupRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Project_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Experiment_BackReference
 	}
 
 	// -- Experimenter API methods --
@@ -195,221 +287,221 @@ public class Experimenter extends Object
 		this.id = id;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfGroupList()
+	// Reference GroupRef
+	public int sizeOfLinkedGroupList()
 	{
 		return groupList.size();
 	}
 
-	public List<Group> copyGroupList()
+	public List<Group> copyLinkedGroupList()
 	{
 		return new ArrayList<Group>(groupList);
 	}
 
-	public Group getGroup(int index)
+	public Group getLinkedGroup(int index)
 	{
 		return groupList.get(index);
 	}
 
-	public Group setGroup(int index, Group group)
+	public Group setLinkedGroup(int index, Group o)
 	{
-		return groupList.set(index, group);
+		return groupList.set(index, o);
 	}
 
-	public void addGroup(Group group)
+	public void linkGroup(Group o)
 	{
-		groupList.add(group);
+		this.groupList.add(o);
 	}
 
-	public void removeGroup(Group group)
+	public void unlinkGroup(Group o)
 	{
-		groupList.remove(group);
+		this.groupList.add(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Back reference Image_BackReference
-	public int sizeOfLinkedImageList()
+	// Property which occurs more than once
+	public int sizeOfImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyLinkedImageList()
+	public List<Image> copyImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getLinkedImage(int index)
+	public Image getImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setLinkedImage(int index, Image image_BackReference)
+	public Image setImage(int index, Image image_BackReference)
 	{
 		return image_BackReferenceList.set(index, image_BackReference);
 	}
 
-	public void linkImage(Image image_BackReference)
+	public void addImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.add(image_BackReference);
 	}
 
-	public void unlinkImage(Image image_BackReference)
+	public void removeImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.remove(image_BackReference);
 	}
 
-	// Back reference MicrobeamManipulation_BackReference
-	public int sizeOfLinkedMicrobeamManipulationList()
+	// Property which occurs more than once
+	public int sizeOfMicrobeamManipulationList()
 	{
 		return microbeamManipulation_BackReferenceList.size();
 	}
 
-	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
+	public List<MicrobeamManipulation> copyMicrobeamManipulationList()
 	{
 		return new ArrayList<MicrobeamManipulation>(microbeamManipulation_BackReferenceList);
 	}
 
-	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
+	public MicrobeamManipulation getMicrobeamManipulation(int index)
 	{
 		return microbeamManipulation_BackReferenceList.get(index);
 	}
 
-	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation_BackReference)
+	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation_BackReference)
 	{
 		return microbeamManipulation_BackReferenceList.set(index, microbeamManipulation_BackReference);
 	}
 
-	public void linkMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
 	{
-		this.microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
+		microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
 	}
 
-	public void unlinkMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public void removeMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
 	{
-		this.microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
+		microbeamManipulation_BackReferenceList.remove(microbeamManipulation_BackReference);
 	}
 
-	// Back reference Project_BackReference
-	public int sizeOfLinkedProjectList()
+	// Property which occurs more than once
+	public int sizeOfProjectList()
 	{
 		return project_BackReferenceList.size();
 	}
 
-	public List<Project> copyLinkedProjectList()
+	public List<Project> copyProjectList()
 	{
 		return new ArrayList<Project>(project_BackReferenceList);
 	}
 
-	public Project getLinkedProject(int index)
+	public Project getProject(int index)
 	{
 		return project_BackReferenceList.get(index);
 	}
 
-	public Project setLinkedProject(int index, Project project_BackReference)
+	public Project setProject(int index, Project project_BackReference)
 	{
 		return project_BackReferenceList.set(index, project_BackReference);
 	}
 
-	public void linkProject(Project project_BackReference)
+	public void addProject(Project project_BackReference)
 	{
-		this.project_BackReferenceList.add(project_BackReference);
+		project_BackReferenceList.add(project_BackReference);
 	}
 
-	public void unlinkProject(Project project_BackReference)
+	public void removeProject(Project project_BackReference)
 	{
-		this.project_BackReferenceList.add(project_BackReference);
+		project_BackReferenceList.remove(project_BackReference);
 	}
 
-	// Back reference Dataset_BackReference
-	public int sizeOfLinkedDatasetList()
+	// Property which occurs more than once
+	public int sizeOfDatasetList()
 	{
 		return dataset_BackReferenceList.size();
 	}
 
-	public List<Dataset> copyLinkedDatasetList()
+	public List<Dataset> copyDatasetList()
 	{
 		return new ArrayList<Dataset>(dataset_BackReferenceList);
 	}
 
-	public Dataset getLinkedDataset(int index)
+	public Dataset getDataset(int index)
 	{
 		return dataset_BackReferenceList.get(index);
 	}
 
-	public Dataset setLinkedDataset(int index, Dataset dataset_BackReference)
+	public Dataset setDataset(int index, Dataset dataset_BackReference)
 	{
 		return dataset_BackReferenceList.set(index, dataset_BackReference);
 	}
 
-	public void linkDataset(Dataset dataset_BackReference)
+	public void addDataset(Dataset dataset_BackReference)
 	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
+		dataset_BackReferenceList.add(dataset_BackReference);
 	}
 
-	public void unlinkDataset(Dataset dataset_BackReference)
+	public void removeDataset(Dataset dataset_BackReference)
 	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
+		dataset_BackReferenceList.remove(dataset_BackReference);
 	}
 
-	// Back reference Experiment_BackReference
-	public int sizeOfLinkedExperimentList()
+	// Property which occurs more than once
+	public int sizeOfExperimentList()
 	{
 		return experiment_BackReferenceList.size();
 	}
 
-	public List<Experiment> copyLinkedExperimentList()
+	public List<Experiment> copyExperimentList()
 	{
 		return new ArrayList<Experiment>(experiment_BackReferenceList);
 	}
 
-	public Experiment getLinkedExperiment(int index)
+	public Experiment getExperiment(int index)
 	{
 		return experiment_BackReferenceList.get(index);
 	}
 
-	public Experiment setLinkedExperiment(int index, Experiment experiment_BackReference)
+	public Experiment setExperiment(int index, Experiment experiment_BackReference)
 	{
 		return experiment_BackReferenceList.set(index, experiment_BackReference);
 	}
 
-	public void linkExperiment(Experiment experiment_BackReference)
+	public void addExperiment(Experiment experiment_BackReference)
 	{
-		this.experiment_BackReferenceList.add(experiment_BackReference);
+		experiment_BackReferenceList.add(experiment_BackReference);
 	}
 
-	public void unlinkExperiment(Experiment experiment_BackReference)
+	public void removeExperiment(Experiment experiment_BackReference)
 	{
-		this.experiment_BackReferenceList.add(experiment_BackReference);
+		experiment_BackReferenceList.remove(experiment_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -458,21 +550,11 @@ public class Experimenter extends Object
 		}
 		if (groupList != null)
 		{
-			// Element property GroupRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Group groupList_value : groupList)
-			{
-				Experimenter_element.appendChild(groupList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference GroupRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Experimenter_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (image_BackReferenceList != null)
 		{
@@ -495,89 +577,5 @@ public class Experimenter extends Object
 			// *** IGNORING *** Skipped back reference Experiment_BackReference
 		}
 		return Experimenter_element;
-	}
-
-	public static Experimenter fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Experimenter".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Experimenter got %s",
-					tagName));
-		}
-		Experimenter instance = new Experimenter();
-		if (element.hasAttribute("UserName"))
-		{
-			// Attribute property UserName
-			instance.setUserName(String.valueOf(
-					element.getAttribute("UserName")));
-		}
-		if (element.hasAttribute("DisplayName"))
-		{
-			// Attribute property DisplayName
-			instance.setDisplayName(String.valueOf(
-					element.getAttribute("DisplayName")));
-		}
-		if (element.hasAttribute("FirstName"))
-		{
-			// Attribute property FirstName
-			instance.setFirstName(String.valueOf(
-					element.getAttribute("FirstName")));
-		}
-		if (element.hasAttribute("MiddleName"))
-		{
-			// Attribute property MiddleName
-			instance.setMiddleName(String.valueOf(
-					element.getAttribute("MiddleName")));
-		}
-		if (element.hasAttribute("LastName"))
-		{
-			// Attribute property LastName
-			instance.setLastName(String.valueOf(
-					element.getAttribute("LastName")));
-		}
-		if (element.hasAttribute("Email"))
-		{
-			// Attribute property Email
-			instance.setEmail(String.valueOf(
-					element.getAttribute("Email")));
-		}
-		if (element.hasAttribute("Institution"))
-		{
-			// Attribute property Institution
-			instance.setInstitution(String.valueOf(
-					element.getAttribute("Institution")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		// Element property GroupRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
-		for (int i = 0; i < GroupRef_nodeList.getLength(); i++)
-		{
-			instance.addGroup(Group.fromXMLElement(
-					(Element) GroupRef_nodeList.item(i)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Image_BackReference
-		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
-		// *** IGNORING *** Skipped back reference Project_BackReference
-		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// *** IGNORING *** Skipped back reference Experiment_BackReference
-		return instance;
 	}
 }

@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Annotation
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Annotation extends Object
+public abstract class Annotation extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -109,9 +110,76 @@ public class Annotation extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Annotation. */
+	/** Default constructor. */
 	public Annotation()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Annotation recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Annotation(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Annotation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Annotation got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Namespace"))
+		{
+			// Attribute property Namespace
+			setNamespace(String.valueOf(
+					element.getAttribute("Namespace")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Pixels_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Plane_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Channel_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Project_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Experimenter_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Plate_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Reagent_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Screen_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Well_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference WellSample_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ROI_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Shape_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
 	}
 
 	// -- Annotation API methods --
@@ -138,623 +206,35 @@ public class Annotation extends Object
 		this.id = id;
 	}
 
-	// Back reference Image_BackReference
-	public int sizeOfLinkedImageList()
-	{
-		return image_BackReferenceList.size();
-	}
+	// *** WARNING *** Unhandled or skipped property Image_BackReference
 
-	public List<Image> copyLinkedImageList()
-	{
-		return new ArrayList<Image>(image_BackReferenceList);
-	}
+	// *** WARNING *** Unhandled or skipped property Pixels_BackReference
 
-	public Image getLinkedImage(int index)
-	{
-		return image_BackReferenceList.get(index);
-	}
+	// *** WARNING *** Unhandled or skipped property Plane_BackReference
 
-	public Image setLinkedImage(int index, Image image_BackReference)
-	{
-		return image_BackReferenceList.set(index, image_BackReference);
-	}
+	// *** WARNING *** Unhandled or skipped property Channel_BackReference
 
-	public void linkImage(Image image_BackReference)
-	{
-		this.image_BackReferenceList.add(image_BackReference);
-	}
+	// *** WARNING *** Unhandled or skipped property Project_BackReference
 
-	public void unlinkImage(Image image_BackReference)
-	{
-		this.image_BackReferenceList.add(image_BackReference);
-	}
+	// *** WARNING *** Unhandled or skipped property Dataset_BackReference
 
-	// Back reference Pixels_BackReference
-	public int sizeOfLinkedPixelsList()
-	{
-		return pixels_BackReferenceList.size();
-	}
+	// *** WARNING *** Unhandled or skipped property Experimenter_BackReference
 
-	public List<Pixels> copyLinkedPixelsList()
-	{
-		return new ArrayList<Pixels>(pixels_BackReferenceList);
-	}
+	// *** WARNING *** Unhandled or skipped property Plate_BackReference
 
-	public Pixels getLinkedPixels(int index)
-	{
-		return pixels_BackReferenceList.get(index);
-	}
+	// *** WARNING *** Unhandled or skipped property Reagent_BackReference
 
-	public Pixels setLinkedPixels(int index, Pixels pixels_BackReference)
-	{
-		return pixels_BackReferenceList.set(index, pixels_BackReference);
-	}
+	// *** WARNING *** Unhandled or skipped property Screen_BackReference
 
-	public void linkPixels(Pixels pixels_BackReference)
-	{
-		this.pixels_BackReferenceList.add(pixels_BackReference);
-	}
+	// *** WARNING *** Unhandled or skipped property PlateAcquisition_BackReference
 
-	public void unlinkPixels(Pixels pixels_BackReference)
-	{
-		this.pixels_BackReferenceList.add(pixels_BackReference);
-	}
+	// *** WARNING *** Unhandled or skipped property Well_BackReference
 
-	// Back reference Plane_BackReference
-	public int sizeOfLinkedPlaneList()
-	{
-		return plane_BackReferenceList.size();
-	}
+	// *** WARNING *** Unhandled or skipped property WellSample_BackReference
 
-	public List<Plane> copyLinkedPlaneList()
-	{
-		return new ArrayList<Plane>(plane_BackReferenceList);
-	}
+	// *** WARNING *** Unhandled or skipped property ROI_BackReference
 
-	public Plane getLinkedPlane(int index)
-	{
-		return plane_BackReferenceList.get(index);
-	}
+	// *** WARNING *** Unhandled or skipped property Shape_BackReference
 
-	public Plane setLinkedPlane(int index, Plane plane_BackReference)
-	{
-		return plane_BackReferenceList.set(index, plane_BackReference);
-	}
-
-	public void linkPlane(Plane plane_BackReference)
-	{
-		this.plane_BackReferenceList.add(plane_BackReference);
-	}
-
-	public void unlinkPlane(Plane plane_BackReference)
-	{
-		this.plane_BackReferenceList.add(plane_BackReference);
-	}
-
-	// Back reference Channel_BackReference
-	public int sizeOfLinkedChannelList()
-	{
-		return channel_BackReferenceList.size();
-	}
-
-	public List<Channel> copyLinkedChannelList()
-	{
-		return new ArrayList<Channel>(channel_BackReferenceList);
-	}
-
-	public Channel getLinkedChannel(int index)
-	{
-		return channel_BackReferenceList.get(index);
-	}
-
-	public Channel setLinkedChannel(int index, Channel channel_BackReference)
-	{
-		return channel_BackReferenceList.set(index, channel_BackReference);
-	}
-
-	public void linkChannel(Channel channel_BackReference)
-	{
-		this.channel_BackReferenceList.add(channel_BackReference);
-	}
-
-	public void unlinkChannel(Channel channel_BackReference)
-	{
-		this.channel_BackReferenceList.add(channel_BackReference);
-	}
-
-	// Back reference Project_BackReference
-	public int sizeOfLinkedProjectList()
-	{
-		return project_BackReferenceList.size();
-	}
-
-	public List<Project> copyLinkedProjectList()
-	{
-		return new ArrayList<Project>(project_BackReferenceList);
-	}
-
-	public Project getLinkedProject(int index)
-	{
-		return project_BackReferenceList.get(index);
-	}
-
-	public Project setLinkedProject(int index, Project project_BackReference)
-	{
-		return project_BackReferenceList.set(index, project_BackReference);
-	}
-
-	public void linkProject(Project project_BackReference)
-	{
-		this.project_BackReferenceList.add(project_BackReference);
-	}
-
-	public void unlinkProject(Project project_BackReference)
-	{
-		this.project_BackReferenceList.add(project_BackReference);
-	}
-
-	// Back reference Dataset_BackReference
-	public int sizeOfLinkedDatasetList()
-	{
-		return dataset_BackReferenceList.size();
-	}
-
-	public List<Dataset> copyLinkedDatasetList()
-	{
-		return new ArrayList<Dataset>(dataset_BackReferenceList);
-	}
-
-	public Dataset getLinkedDataset(int index)
-	{
-		return dataset_BackReferenceList.get(index);
-	}
-
-	public Dataset setLinkedDataset(int index, Dataset dataset_BackReference)
-	{
-		return dataset_BackReferenceList.set(index, dataset_BackReference);
-	}
-
-	public void linkDataset(Dataset dataset_BackReference)
-	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
-	}
-
-	public void unlinkDataset(Dataset dataset_BackReference)
-	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
-	}
-
-	// Back reference Experimenter_BackReference
-	public int sizeOfLinkedExperimenterList()
-	{
-		return experimenter_BackReferenceList.size();
-	}
-
-	public List<Experimenter> copyLinkedExperimenterList()
-	{
-		return new ArrayList<Experimenter>(experimenter_BackReferenceList);
-	}
-
-	public Experimenter getLinkedExperimenter(int index)
-	{
-		return experimenter_BackReferenceList.get(index);
-	}
-
-	public Experimenter setLinkedExperimenter(int index, Experimenter experimenter_BackReference)
-	{
-		return experimenter_BackReferenceList.set(index, experimenter_BackReference);
-	}
-
-	public void linkExperimenter(Experimenter experimenter_BackReference)
-	{
-		this.experimenter_BackReferenceList.add(experimenter_BackReference);
-	}
-
-	public void unlinkExperimenter(Experimenter experimenter_BackReference)
-	{
-		this.experimenter_BackReferenceList.add(experimenter_BackReference);
-	}
-
-	// Back reference Plate_BackReference
-	public int sizeOfLinkedPlateList()
-	{
-		return plate_BackReferenceList.size();
-	}
-
-	public List<Plate> copyLinkedPlateList()
-	{
-		return new ArrayList<Plate>(plate_BackReferenceList);
-	}
-
-	public Plate getLinkedPlate(int index)
-	{
-		return plate_BackReferenceList.get(index);
-	}
-
-	public Plate setLinkedPlate(int index, Plate plate_BackReference)
-	{
-		return plate_BackReferenceList.set(index, plate_BackReference);
-	}
-
-	public void linkPlate(Plate plate_BackReference)
-	{
-		this.plate_BackReferenceList.add(plate_BackReference);
-	}
-
-	public void unlinkPlate(Plate plate_BackReference)
-	{
-		this.plate_BackReferenceList.add(plate_BackReference);
-	}
-
-	// Back reference Reagent_BackReference
-	public int sizeOfLinkedReagentList()
-	{
-		return reagent_BackReferenceList.size();
-	}
-
-	public List<Reagent> copyLinkedReagentList()
-	{
-		return new ArrayList<Reagent>(reagent_BackReferenceList);
-	}
-
-	public Reagent getLinkedReagent(int index)
-	{
-		return reagent_BackReferenceList.get(index);
-	}
-
-	public Reagent setLinkedReagent(int index, Reagent reagent_BackReference)
-	{
-		return reagent_BackReferenceList.set(index, reagent_BackReference);
-	}
-
-	public void linkReagent(Reagent reagent_BackReference)
-	{
-		this.reagent_BackReferenceList.add(reagent_BackReference);
-	}
-
-	public void unlinkReagent(Reagent reagent_BackReference)
-	{
-		this.reagent_BackReferenceList.add(reagent_BackReference);
-	}
-
-	// Back reference Screen_BackReference
-	public int sizeOfLinkedScreenList()
-	{
-		return screen_BackReferenceList.size();
-	}
-
-	public List<Screen> copyLinkedScreenList()
-	{
-		return new ArrayList<Screen>(screen_BackReferenceList);
-	}
-
-	public Screen getLinkedScreen(int index)
-	{
-		return screen_BackReferenceList.get(index);
-	}
-
-	public Screen setLinkedScreen(int index, Screen screen_BackReference)
-	{
-		return screen_BackReferenceList.set(index, screen_BackReference);
-	}
-
-	public void linkScreen(Screen screen_BackReference)
-	{
-		this.screen_BackReferenceList.add(screen_BackReference);
-	}
-
-	public void unlinkScreen(Screen screen_BackReference)
-	{
-		this.screen_BackReferenceList.add(screen_BackReference);
-	}
-
-	// Back reference PlateAcquisition_BackReference
-	public int sizeOfLinkedPlateAcquisitionList()
-	{
-		return plateAcquisition_BackReferenceList.size();
-	}
-
-	public List<PlateAcquisition> copyLinkedPlateAcquisitionList()
-	{
-		return new ArrayList<PlateAcquisition>(plateAcquisition_BackReferenceList);
-	}
-
-	public PlateAcquisition getLinkedPlateAcquisition(int index)
-	{
-		return plateAcquisition_BackReferenceList.get(index);
-	}
-
-	public PlateAcquisition setLinkedPlateAcquisition(int index, PlateAcquisition plateAcquisition_BackReference)
-	{
-		return plateAcquisition_BackReferenceList.set(index, plateAcquisition_BackReference);
-	}
-
-	public void linkPlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
-	{
-		this.plateAcquisition_BackReferenceList.add(plateAcquisition_BackReference);
-	}
-
-	public void unlinkPlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
-	{
-		this.plateAcquisition_BackReferenceList.add(plateAcquisition_BackReference);
-	}
-
-	// Back reference Well_BackReference
-	public int sizeOfLinkedWellList()
-	{
-		return well_BackReferenceList.size();
-	}
-
-	public List<Well> copyLinkedWellList()
-	{
-		return new ArrayList<Well>(well_BackReferenceList);
-	}
-
-	public Well getLinkedWell(int index)
-	{
-		return well_BackReferenceList.get(index);
-	}
-
-	public Well setLinkedWell(int index, Well well_BackReference)
-	{
-		return well_BackReferenceList.set(index, well_BackReference);
-	}
-
-	public void linkWell(Well well_BackReference)
-	{
-		this.well_BackReferenceList.add(well_BackReference);
-	}
-
-	public void unlinkWell(Well well_BackReference)
-	{
-		this.well_BackReferenceList.add(well_BackReference);
-	}
-
-	// Back reference WellSample_BackReference
-	public int sizeOfLinkedWellSampleList()
-	{
-		return wellSample_BackReferenceList.size();
-	}
-
-	public List<WellSample> copyLinkedWellSampleList()
-	{
-		return new ArrayList<WellSample>(wellSample_BackReferenceList);
-	}
-
-	public WellSample getLinkedWellSample(int index)
-	{
-		return wellSample_BackReferenceList.get(index);
-	}
-
-	public WellSample setLinkedWellSample(int index, WellSample wellSample_BackReference)
-	{
-		return wellSample_BackReferenceList.set(index, wellSample_BackReference);
-	}
-
-	public void linkWellSample(WellSample wellSample_BackReference)
-	{
-		this.wellSample_BackReferenceList.add(wellSample_BackReference);
-	}
-
-	public void unlinkWellSample(WellSample wellSample_BackReference)
-	{
-		this.wellSample_BackReferenceList.add(wellSample_BackReference);
-	}
-
-	// Back reference ROI_BackReference
-	public int sizeOfLinkedROIList()
-	{
-		return roi_backReferenceList.size();
-	}
-
-	public List<ROI> copyLinkedROIList()
-	{
-		return new ArrayList<ROI>(roi_backReferenceList);
-	}
-
-	public ROI getLinkedROI(int index)
-	{
-		return roi_backReferenceList.get(index);
-	}
-
-	public ROI setLinkedROI(int index, ROI roi_backReference)
-	{
-		return roi_backReferenceList.set(index, roi_backReference);
-	}
-
-	public void linkROI(ROI roi_backReference)
-	{
-		this.roi_backReferenceList.add(roi_backReference);
-	}
-
-	public void unlinkROI(ROI roi_backReference)
-	{
-		this.roi_backReferenceList.add(roi_backReference);
-	}
-
-	// Back reference Shape_BackReference
-	public int sizeOfLinkedShapeList()
-	{
-		return shape_BackReferenceList.size();
-	}
-
-	public List<Shape> copyLinkedShapeList()
-	{
-		return new ArrayList<Shape>(shape_BackReferenceList);
-	}
-
-	public Shape getLinkedShape(int index)
-	{
-		return shape_BackReferenceList.get(index);
-	}
-
-	public Shape setLinkedShape(int index, Shape shape_BackReference)
-	{
-		return shape_BackReferenceList.set(index, shape_BackReference);
-	}
-
-	public void linkShape(Shape shape_BackReference)
-	{
-		this.shape_BackReferenceList.add(shape_BackReference);
-	}
-
-	public void unlinkShape(Shape shape_BackReference)
-	{
-		this.shape_BackReferenceList.add(shape_BackReference);
-	}
-
-	// Back reference ListAnnotation_BackReference
-	public int sizeOfLinkedListAnnotationList()
-	{
-		return listAnnotation_BackReferenceList.size();
-	}
-
-	public List<ListAnnotation> copyLinkedListAnnotationList()
-	{
-		return new ArrayList<ListAnnotation>(listAnnotation_BackReferenceList);
-	}
-
-	public ListAnnotation getLinkedListAnnotation(int index)
-	{
-		return listAnnotation_BackReferenceList.get(index);
-	}
-
-	public ListAnnotation setLinkedListAnnotation(int index, ListAnnotation listAnnotation_BackReference)
-	{
-		return listAnnotation_BackReferenceList.set(index, listAnnotation_BackReference);
-	}
-
-	public void linkListAnnotation(ListAnnotation listAnnotation_BackReference)
-	{
-		this.listAnnotation_BackReferenceList.add(listAnnotation_BackReference);
-	}
-
-	public void unlinkListAnnotation(ListAnnotation listAnnotation_BackReference)
-	{
-		this.listAnnotation_BackReferenceList.add(listAnnotation_BackReference);
-	}
-
-	public Element asXMLElement(Document document)
-	{
-		// Creating XML block for Annotation
-		Element Annotation_element = document.createElement("Annotation");
-		if (namespace != null)
-		{
-			// Attribute property Namespace
-			Annotation_element.setAttribute("Namespace", namespace.toString());
-		}
-		if (id != null)
-		{
-			// Attribute property ID
-			Annotation_element.setAttribute("ID", id.toString());
-		}
-		if (image_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Image_BackReference
-		}
-		if (pixels_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Pixels_BackReference
-		}
-		if (plane_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Plane_BackReference
-		}
-		if (channel_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Channel_BackReference
-		}
-		if (project_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Project_BackReference
-		}
-		if (dataset_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Dataset_BackReference
-		}
-		if (experimenter_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Experimenter_BackReference
-		}
-		if (plate_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Plate_BackReference
-		}
-		if (reagent_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Reagent_BackReference
-		}
-		if (screen_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Screen_BackReference
-		}
-		if (plateAcquisition_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
-		}
-		if (well_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Well_BackReference
-		}
-		if (wellSample_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference WellSample_BackReference
-		}
-		if (roi_backReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference ROI_BackReference
-		}
-		if (shape_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Shape_BackReference
-		}
-		if (listAnnotation_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
-		}
-		return Annotation_element;
-	}
-
-	public static Annotation fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Annotation".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Annotation got %s",
-					tagName));
-		}
-		Annotation instance = new Annotation();
-		if (element.hasAttribute("Namespace"))
-		{
-			// Attribute property Namespace
-			instance.setNamespace(String.valueOf(
-					element.getAttribute("Namespace")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		// *** IGNORING *** Skipped back reference Image_BackReference
-		// *** IGNORING *** Skipped back reference Pixels_BackReference
-		// *** IGNORING *** Skipped back reference Plane_BackReference
-		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// *** IGNORING *** Skipped back reference Project_BackReference
-		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// *** IGNORING *** Skipped back reference Experimenter_BackReference
-		// *** IGNORING *** Skipped back reference Plate_BackReference
-		// *** IGNORING *** Skipped back reference Reagent_BackReference
-		// *** IGNORING *** Skipped back reference Screen_BackReference
-		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
-		// *** IGNORING *** Skipped back reference Well_BackReference
-		// *** IGNORING *** Skipped back reference WellSample_BackReference
-		// *** IGNORING *** Skipped back reference ROI_BackReference
-		// *** IGNORING *** Skipped back reference Shape_BackReference
-		// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
-		return instance;
-	}
+	// *** WARNING *** Unhandled or skipped property ListAnnotation_BackReference
 }

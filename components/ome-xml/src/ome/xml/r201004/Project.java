@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Project
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Project extends Object
+public class Project extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -62,13 +63,13 @@ public class Project extends Object
 	// Property
 	private String description;
 
-	// Property
-	private Experimenter experimenter;
+	// Back reference ExperimenterRef
+	private List<Experimenter> experimenter = new ArrayList<Experimenter>();
 
-	// Property
-	private Group group;
+	// Back reference GroupRef
+	private List<Group> group = new ArrayList<Group>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference Dataset_BackReference
@@ -76,9 +77,67 @@ public class Project extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Project. */
+	/** Default constructor. */
 	public Project()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Project recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Project(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Project".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Project got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ExperimenterRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference GroupRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
 	}
 
 	// -- Project API methods --
@@ -116,88 +175,128 @@ public class Project extends Object
 		this.description = description;
 	}
 
-	// Property
-	public Experimenter getExperimenter()
+	// Reference ExperimenterRef
+	public int sizeOfLinkedExperimenterList()
 	{
-		return experimenter;
+		return experimenter.size();
 	}
 
-	public void setExperimenter(Experimenter experimenter)
+	public List<Experimenter> copyLinkedExperimenterList()
 	{
-		this.experimenter = experimenter;
+		return new ArrayList<Experimenter>(experimenter);
 	}
 
-	// Property
-	public Group getGroup()
+	public Experimenter getLinkedExperimenter(int index)
 	{
-		return group;
+		return experimenter.get(index);
 	}
 
-	public void setGroup(Group group)
+	public Experimenter setLinkedExperimenter(int index, Experimenter o)
 	{
-		this.group = group;
+		return experimenter.set(index, o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	public void linkExperimenter(Experimenter o)
+	{
+		this.experimenter.add(o);
+	}
+
+	public void unlinkExperimenter(Experimenter o)
+	{
+		this.experimenter.add(o);
+	}
+
+	// Reference GroupRef
+	public int sizeOfLinkedGroupList()
+	{
+		return group.size();
+	}
+
+	public List<Group> copyLinkedGroupList()
+	{
+		return new ArrayList<Group>(group);
+	}
+
+	public Group getLinkedGroup(int index)
+	{
+		return group.get(index);
+	}
+
+	public Group setLinkedGroup(int index, Group o)
+	{
+		return group.set(index, o);
+	}
+
+	public void linkGroup(Group o)
+	{
+		this.group.add(o);
+	}
+
+	public void unlinkGroup(Group o)
+	{
+		this.group.add(o);
+	}
+
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Back reference Dataset_BackReference
-	public int sizeOfLinkedDatasetList()
+	// Property which occurs more than once
+	public int sizeOfDatasetList()
 	{
 		return dataset_BackReferenceList.size();
 	}
 
-	public List<Dataset> copyLinkedDatasetList()
+	public List<Dataset> copyDatasetList()
 	{
 		return new ArrayList<Dataset>(dataset_BackReferenceList);
 	}
 
-	public Dataset getLinkedDataset(int index)
+	public Dataset getDataset(int index)
 	{
 		return dataset_BackReferenceList.get(index);
 	}
 
-	public Dataset setLinkedDataset(int index, Dataset dataset_BackReference)
+	public Dataset setDataset(int index, Dataset dataset_BackReference)
 	{
 		return dataset_BackReferenceList.set(index, dataset_BackReference);
 	}
 
-	public void linkDataset(Dataset dataset_BackReference)
+	public void addDataset(Dataset dataset_BackReference)
 	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
+		dataset_BackReferenceList.add(dataset_BackReference);
 	}
 
-	public void unlinkDataset(Dataset dataset_BackReference)
+	public void removeDataset(Dataset dataset_BackReference)
 	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
+		dataset_BackReferenceList.remove(dataset_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -224,109 +323,20 @@ public class Project extends Object
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			Project_element.appendChild(experimenter.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference ExperimenterRef
 		}
 		if (group != null)
 		{
-			// Element property GroupRef which is complex (has
-			// sub-elements)
-			Project_element.appendChild(group.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference GroupRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Project_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (dataset_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference Dataset_BackReference
 		}
 		return Project_element;
-	}
-
-	public static Project fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Project".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Project got %s",
-					tagName));
-		}
-		Project instance = new Project();
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
-		if (ExperimenterRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ExperimenterRef node list size %d != 1",
-					ExperimenterRef_nodeList.getLength()));
-		}
-		else if (ExperimenterRef_nodeList.getLength() != 0)
-		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			instance.setExperimenter(Experimenter.fromXMLElement(
-					(Element) ExperimenterRef_nodeList.item(0)));
-		}
-		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
-		if (GroupRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"GroupRef node list size %d != 1",
-					GroupRef_nodeList.getLength()));
-		}
-		else if (GroupRef_nodeList.getLength() != 0)
-		{
-			// Element property GroupRef which is complex (has
-			// sub-elements)
-			instance.setGroup(Group.fromXMLElement(
-					(Element) GroupRef_nodeList.item(0)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		return instance;
 	}
 }

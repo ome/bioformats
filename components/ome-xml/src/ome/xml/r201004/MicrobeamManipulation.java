@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.MicrobeamManipulation
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class MicrobeamManipulation extends Object
+public class MicrobeamManipulation extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -59,11 +60,11 @@ public class MicrobeamManipulation extends Object
 	// Property
 	private String id;
 
-	// Property which occurs more than once
+	// Back reference ROIRef
 	private List<ROI> roiList = new ArrayList<ROI>();
 
-	// Property
-	private Experimenter experimenter;
+	// Back reference ExperimenterRef
+	private List<Experimenter> experimenter = new ArrayList<Experimenter>();
 
 	// Property which occurs more than once
 	private List<LightSourceSettings> lightSourceSettingsList = new ArrayList<LightSourceSettings>();
@@ -73,9 +74,59 @@ public class MicrobeamManipulation extends Object
 
 	// -- Constructors --
 
-	/** Constructs a MicrobeamManipulation. */
+	/** Default constructor. */
 	public MicrobeamManipulation()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs MicrobeamManipulation recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public MicrobeamManipulation(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"MicrobeamManipulation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of MicrobeamManipulation got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			setType(MicrobeamManipulationType.fromString(
+					element.getAttribute("Type")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ROIRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ExperimenterRef
+		// Model object: None
+		// Element property LightSourceSettings which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
+		for (int i = 0; i < LightSourceSettings_nodeList.getLength(); i++)
+		{
+			addLightSourceSettings(new LightSourceSettings(
+					(Element) LightSourceSettings_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
 	// -- MicrobeamManipulation API methods --
@@ -102,46 +153,66 @@ public class MicrobeamManipulation extends Object
 		this.id = id;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfROIList()
+	// Reference ROIRef
+	public int sizeOfLinkedROIList()
 	{
 		return roiList.size();
 	}
 
-	public List<ROI> copyROIList()
+	public List<ROI> copyLinkedROIList()
 	{
 		return new ArrayList<ROI>(roiList);
 	}
 
-	public ROI getROI(int index)
+	public ROI getLinkedROI(int index)
 	{
 		return roiList.get(index);
 	}
 
-	public ROI setROI(int index, ROI roi)
+	public ROI setLinkedROI(int index, ROI o)
 	{
-		return roiList.set(index, roi);
+		return roiList.set(index, o);
 	}
 
-	public void addROI(ROI roi)
+	public void linkROI(ROI o)
 	{
-		roiList.add(roi);
+		this.roiList.add(o);
 	}
 
-	public void removeROI(ROI roi)
+	public void unlinkROI(ROI o)
 	{
-		roiList.remove(roi);
+		this.roiList.add(o);
 	}
 
-	// Property
-	public Experimenter getExperimenter()
+	// Reference ExperimenterRef
+	public int sizeOfLinkedExperimenterList()
 	{
-		return experimenter;
+		return experimenter.size();
 	}
 
-	public void setExperimenter(Experimenter experimenter)
+	public List<Experimenter> copyLinkedExperimenterList()
 	{
-		this.experimenter = experimenter;
+		return new ArrayList<Experimenter>(experimenter);
+	}
+
+	public Experimenter getLinkedExperimenter(int index)
+	{
+		return experimenter.get(index);
+	}
+
+	public Experimenter setLinkedExperimenter(int index, Experimenter o)
+	{
+		return experimenter.set(index, o);
+	}
+
+	public void linkExperimenter(Experimenter o)
+	{
+		this.experimenter.add(o);
+	}
+
+	public void unlinkExperimenter(Experimenter o)
+	{
+		this.experimenter.add(o);
 	}
 
 	// Property which occurs more than once
@@ -175,35 +246,35 @@ public class MicrobeamManipulation extends Object
 		lightSourceSettingsList.remove(lightSourceSettings);
 	}
 
-	// Back reference Image_BackReference
-	public int sizeOfLinkedImageList()
+	// Property which occurs more than once
+	public int sizeOfImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyLinkedImageList()
+	public List<Image> copyImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getLinkedImage(int index)
+	public Image getImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setLinkedImage(int index, Image image_BackReference)
+	public Image setImage(int index, Image image_BackReference)
 	{
 		return image_BackReferenceList.set(index, image_BackReference);
 	}
 
-	public void linkImage(Image image_BackReference)
+	public void addImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.add(image_BackReference);
 	}
 
-	public void unlinkImage(Image image_BackReference)
+	public void removeImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.remove(image_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -222,18 +293,11 @@ public class MicrobeamManipulation extends Object
 		}
 		if (roiList != null)
 		{
-			// Element property ROIRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (ROI roiList_value : roiList)
-			{
-				MicrobeamManipulation_element.appendChild(roiList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference ROIRef
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			MicrobeamManipulation_element.appendChild(experimenter.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference ExperimenterRef
 		}
 		if (lightSourceSettingsList != null)
 		{
@@ -249,64 +313,5 @@ public class MicrobeamManipulation extends Object
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}
 		return MicrobeamManipulation_element;
-	}
-
-	public static MicrobeamManipulation fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"MicrobeamManipulation".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of MicrobeamManipulation got %s",
-					tagName));
-		}
-		MicrobeamManipulation instance = new MicrobeamManipulation();
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property which is an enumeration Type
-			instance.setType(MicrobeamManipulationType.fromString(
-					element.getAttribute("Type")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		// Element property ROIRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
-		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
-		{
-			instance.addROI(ROI.fromXMLElement(
-					(Element) ROIRef_nodeList.item(i)));
-		}
-		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
-		if (ExperimenterRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ExperimenterRef node list size %d != 1",
-					ExperimenterRef_nodeList.getLength()));
-		}
-		else if (ExperimenterRef_nodeList.getLength() != 0)
-		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			instance.setExperimenter(Experimenter.fromXMLElement(
-					(Element) ExperimenterRef_nodeList.item(0)));
-		}
-		// Element property LightSourceSettings which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
-		for (int i = 0; i < LightSourceSettings_nodeList.getLength(); i++)
-		{
-			instance.addLightSourceSettings(LightSourceSettings.fromXMLElement(
-					(Element) LightSourceSettings_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Image_BackReference
-		return instance;
 	}
 }

@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Group
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Group extends Object
+public class Group extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -82,9 +83,99 @@ public class Group extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Group. */
+	/** Default constructor. */
 	public Group()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Group recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Group(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Group".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Group got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
+		if (Leader_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Leader node list size %d != 1",
+					Leader_nodeList.getLength()));
+		}
+		else if (Leader_nodeList.getLength() != 0)
+		{
+			// Element property Leader which is complex (has
+			// sub-elements)
+			setLeader(new Leader(
+					(Element) Leader_nodeList.item(0)));
+		}
+		// Model object: None
+		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
+		if (Contact_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Contact node list size %d != 1",
+					Contact_nodeList.getLength()));
+		}
+		else if (Contact_nodeList.getLength() != 0)
+		{
+			// Element property Contact which is complex (has
+			// sub-elements)
+			setContact(new Contact(
+					(Element) Contact_nodeList.item(0)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Project_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Dataset_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Experimenter_BackReference
 	}
 
 	// -- Group API methods --
@@ -144,128 +235,128 @@ public class Group extends Object
 		this.contact = contact;
 	}
 
-	// Back reference Image_BackReference
-	public int sizeOfLinkedImageList()
+	// Property which occurs more than once
+	public int sizeOfImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyLinkedImageList()
+	public List<Image> copyImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getLinkedImage(int index)
+	public Image getImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setLinkedImage(int index, Image image_BackReference)
+	public Image setImage(int index, Image image_BackReference)
 	{
 		return image_BackReferenceList.set(index, image_BackReference);
 	}
 
-	public void linkImage(Image image_BackReference)
+	public void addImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.add(image_BackReference);
 	}
 
-	public void unlinkImage(Image image_BackReference)
+	public void removeImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.remove(image_BackReference);
 	}
 
-	// Back reference Project_BackReference
-	public int sizeOfLinkedProjectList()
+	// Property which occurs more than once
+	public int sizeOfProjectList()
 	{
 		return project_BackReferenceList.size();
 	}
 
-	public List<Project> copyLinkedProjectList()
+	public List<Project> copyProjectList()
 	{
 		return new ArrayList<Project>(project_BackReferenceList);
 	}
 
-	public Project getLinkedProject(int index)
+	public Project getProject(int index)
 	{
 		return project_BackReferenceList.get(index);
 	}
 
-	public Project setLinkedProject(int index, Project project_BackReference)
+	public Project setProject(int index, Project project_BackReference)
 	{
 		return project_BackReferenceList.set(index, project_BackReference);
 	}
 
-	public void linkProject(Project project_BackReference)
+	public void addProject(Project project_BackReference)
 	{
-		this.project_BackReferenceList.add(project_BackReference);
+		project_BackReferenceList.add(project_BackReference);
 	}
 
-	public void unlinkProject(Project project_BackReference)
+	public void removeProject(Project project_BackReference)
 	{
-		this.project_BackReferenceList.add(project_BackReference);
+		project_BackReferenceList.remove(project_BackReference);
 	}
 
-	// Back reference Dataset_BackReference
-	public int sizeOfLinkedDatasetList()
+	// Property which occurs more than once
+	public int sizeOfDatasetList()
 	{
 		return dataset_BackReferenceList.size();
 	}
 
-	public List<Dataset> copyLinkedDatasetList()
+	public List<Dataset> copyDatasetList()
 	{
 		return new ArrayList<Dataset>(dataset_BackReferenceList);
 	}
 
-	public Dataset getLinkedDataset(int index)
+	public Dataset getDataset(int index)
 	{
 		return dataset_BackReferenceList.get(index);
 	}
 
-	public Dataset setLinkedDataset(int index, Dataset dataset_BackReference)
+	public Dataset setDataset(int index, Dataset dataset_BackReference)
 	{
 		return dataset_BackReferenceList.set(index, dataset_BackReference);
 	}
 
-	public void linkDataset(Dataset dataset_BackReference)
+	public void addDataset(Dataset dataset_BackReference)
 	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
+		dataset_BackReferenceList.add(dataset_BackReference);
 	}
 
-	public void unlinkDataset(Dataset dataset_BackReference)
+	public void removeDataset(Dataset dataset_BackReference)
 	{
-		this.dataset_BackReferenceList.add(dataset_BackReference);
+		dataset_BackReferenceList.remove(dataset_BackReference);
 	}
 
-	// Back reference Experimenter_BackReference
-	public int sizeOfLinkedExperimenterList()
+	// Property which occurs more than once
+	public int sizeOfExperimenterList()
 	{
 		return experimenter_BackReferenceList.size();
 	}
 
-	public List<Experimenter> copyLinkedExperimenterList()
+	public List<Experimenter> copyExperimenterList()
 	{
 		return new ArrayList<Experimenter>(experimenter_BackReferenceList);
 	}
 
-	public Experimenter getLinkedExperimenter(int index)
+	public Experimenter getExperimenter(int index)
 	{
 		return experimenter_BackReferenceList.get(index);
 	}
 
-	public Experimenter setLinkedExperimenter(int index, Experimenter experimenter_BackReference)
+	public Experimenter setExperimenter(int index, Experimenter experimenter_BackReference)
 	{
 		return experimenter_BackReferenceList.set(index, experimenter_BackReference);
 	}
 
-	public void linkExperimenter(Experimenter experimenter_BackReference)
+	public void addExperimenter(Experimenter experimenter_BackReference)
 	{
-		this.experimenter_BackReferenceList.add(experimenter_BackReference);
+		experimenter_BackReferenceList.add(experimenter_BackReference);
 	}
 
-	public void unlinkExperimenter(Experimenter experimenter_BackReference)
+	public void removeExperimenter(Experimenter experimenter_BackReference)
 	{
-		this.experimenter_BackReferenceList.add(experimenter_BackReference);
+		experimenter_BackReferenceList.remove(experimenter_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -319,80 +410,5 @@ public class Group extends Object
 			// *** IGNORING *** Skipped back reference Experimenter_BackReference
 		}
 		return Group_element;
-	}
-
-	public static Group fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Group".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Group got %s",
-					tagName));
-		}
-		Group instance = new Group();
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
-		if (Leader_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Leader node list size %d != 1",
-					Leader_nodeList.getLength()));
-		}
-		else if (Leader_nodeList.getLength() != 0)
-		{
-			// Element property Leader which is complex (has
-			// sub-elements)
-			instance.setLeader(Leader.fromXMLElement(
-					(Element) Leader_nodeList.item(0)));
-		}
-		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
-		if (Contact_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Contact node list size %d != 1",
-					Contact_nodeList.getLength()));
-		}
-		else if (Contact_nodeList.getLength() != 0)
-		{
-			// Element property Contact which is complex (has
-			// sub-elements)
-			instance.setContact(Contact.fromXMLElement(
-					(Element) Contact_nodeList.item(0)));
-		}
-		// *** IGNORING *** Skipped back reference Image_BackReference
-		// *** IGNORING *** Skipped back reference Project_BackReference
-		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// *** IGNORING *** Skipped back reference Experimenter_BackReference
-		return instance;
 	}
 }

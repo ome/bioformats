@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ProjectRef
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,9 +59,37 @@ public class ProjectRef extends Reference
 
 	// -- Constructors --
 
-	/** Constructs a ProjectRef. */
+	/** Default constructor. */
 	public ProjectRef()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ProjectRef recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ProjectRef(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ProjectRef".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ProjectRef got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
 	}
 
 	// -- ProjectRef API methods --
@@ -86,26 +115,5 @@ public class ProjectRef extends Reference
 			ProjectRef_element.setAttribute("ID", id.toString());
 		}
 		return ProjectRef_element;
-	}
-
-	public static ProjectRef fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ProjectRef".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ProjectRef got %s",
-					tagName));
-		}
-		ProjectRef instance = new ProjectRef();
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		return instance;
 	}
 }

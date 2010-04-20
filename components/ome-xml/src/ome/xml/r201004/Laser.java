@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Laser
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Laser extends Object
+public class Laser extends LightSource
 {
 	// -- Instance variables --
 
@@ -82,9 +83,102 @@ public class Laser extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Laser. */
+	/** Default constructor. */
 	public Laser()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Laser recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Laser(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Laser".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Laser got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("PockelCell"))
+		{
+			// Attribute property PockelCell
+			setPockelCell(Boolean.valueOf(
+					element.getAttribute("PockelCell")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Pulse"))
+		{
+			// Attribute property which is an enumeration Pulse
+			setPulse(Pulse.fromString(
+					element.getAttribute("Pulse")));
+		}
+		// Model object: None
+		if (element.hasAttribute("LaserMedium"))
+		{
+			// Attribute property which is an enumeration LaserMedium
+			setLaserMedium(LaserMedium.fromString(
+					element.getAttribute("LaserMedium")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Tuneable"))
+		{
+			// Attribute property Tuneable
+			setTuneable(Boolean.valueOf(
+					element.getAttribute("Tuneable")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Wavelength"))
+		{
+			// Attribute property Wavelength
+			setWavelength(Integer.valueOf(
+					element.getAttribute("Wavelength")));
+		}
+		// Model object: None
+		if (element.hasAttribute("FrequencyMultiplication"))
+		{
+			// Attribute property FrequencyMultiplication
+			setFrequencyMultiplication(Integer.valueOf(
+					element.getAttribute("FrequencyMultiplication")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			setType(LaserType.fromString(
+					element.getAttribute("Type")));
+		}
+		// Model object: None
+		if (element.hasAttribute("RepetitionRate"))
+		{
+			// Attribute property RepetitionRate
+			setRepetitionRate(Double.valueOf(
+					element.getAttribute("RepetitionRate")));
+		}
+		// Model object: None
+		NodeList Pump_nodeList = element.getElementsByTagName("Pump");
+		if (Pump_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Pump node list size %d != 1",
+					Pump_nodeList.getLength()));
+		}
+		else if (Pump_nodeList.getLength() != 0)
+		{
+			// Element property Pump which is complex (has
+			// sub-elements)
+			setPump(new Pump(
+					(Element) Pump_nodeList.item(0)));
+		}
 	}
 
 	// -- Laser API methods --
@@ -239,83 +333,5 @@ public class Laser extends Object
 			Laser_element.appendChild(pump.asXMLElement(document));
 		}
 		return Laser_element;
-	}
-
-	public static Laser fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Laser".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Laser got %s",
-					tagName));
-		}
-		Laser instance = new Laser();
-		if (element.hasAttribute("PockelCell"))
-		{
-			// Attribute property PockelCell
-			instance.setPockelCell(Boolean.valueOf(
-					element.getAttribute("PockelCell")));
-		}
-		if (element.hasAttribute("Pulse"))
-		{
-			// Attribute property which is an enumeration Pulse
-			instance.setPulse(Pulse.fromString(
-					element.getAttribute("Pulse")));
-		}
-		if (element.hasAttribute("LaserMedium"))
-		{
-			// Attribute property which is an enumeration LaserMedium
-			instance.setLaserMedium(LaserMedium.fromString(
-					element.getAttribute("LaserMedium")));
-		}
-		if (element.hasAttribute("Tuneable"))
-		{
-			// Attribute property Tuneable
-			instance.setTuneable(Boolean.valueOf(
-					element.getAttribute("Tuneable")));
-		}
-		if (element.hasAttribute("Wavelength"))
-		{
-			// Attribute property Wavelength
-			instance.setWavelength(Integer.valueOf(
-					element.getAttribute("Wavelength")));
-		}
-		if (element.hasAttribute("FrequencyMultiplication"))
-		{
-			// Attribute property FrequencyMultiplication
-			instance.setFrequencyMultiplication(Integer.valueOf(
-					element.getAttribute("FrequencyMultiplication")));
-		}
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property which is an enumeration Type
-			instance.setType(LaserType.fromString(
-					element.getAttribute("Type")));
-		}
-		if (element.hasAttribute("RepetitionRate"))
-		{
-			// Attribute property RepetitionRate
-			instance.setRepetitionRate(Double.valueOf(
-					element.getAttribute("RepetitionRate")));
-		}
-		NodeList Pump_nodeList = element.getElementsByTagName("Pump");
-		if (Pump_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Pump node list size %d != 1",
-					Pump_nodeList.getLength()));
-		}
-		else if (Pump_nodeList.getLength() != 0)
-		{
-			// Element property Pump which is complex (has
-			// sub-elements)
-			instance.setPump(Pump.fromXMLElement(
-					(Element) Pump_nodeList.item(0)));
-		}
-		return instance;
 	}
 }

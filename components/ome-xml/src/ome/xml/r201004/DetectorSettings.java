@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.DetectorSettings
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,9 +74,72 @@ public class DetectorSettings extends Settings
 
 	// -- Constructors --
 
-	/** Constructs a DetectorSettings. */
+	/** Default constructor. */
 	public DetectorSettings()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs DetectorSettings recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public DetectorSettings(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"DetectorSettings".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of DetectorSettings got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Binning"))
+		{
+			// Attribute property which is an enumeration Binning
+			setBinning(Binning.fromString(
+					element.getAttribute("Binning")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ReadOutRate"))
+		{
+			// Attribute property ReadOutRate
+			setReadOutRate(Double.valueOf(
+					element.getAttribute("ReadOutRate")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Gain"))
+		{
+			// Attribute property Gain
+			setGain(Double.valueOf(
+					element.getAttribute("Gain")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Offset"))
+		{
+			// Attribute property Offset
+			setOffset(Double.valueOf(
+					element.getAttribute("Offset")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Voltage"))
+		{
+			// Attribute property Voltage
+			setVoltage(Double.valueOf(
+					element.getAttribute("Voltage")));
+		}
 	}
 
 	// -- DetectorSettings API methods --
@@ -181,56 +245,5 @@ public class DetectorSettings extends Settings
 			DetectorSettings_element.setAttribute("Voltage", voltage.toString());
 		}
 		return DetectorSettings_element;
-	}
-
-	public static DetectorSettings fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"DetectorSettings".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of DetectorSettings got %s",
-					tagName));
-		}
-		DetectorSettings instance = new DetectorSettings();
-		if (element.hasAttribute("Binning"))
-		{
-			// Attribute property which is an enumeration Binning
-			instance.setBinning(Binning.fromString(
-					element.getAttribute("Binning")));
-		}
-		if (element.hasAttribute("ReadOutRate"))
-		{
-			// Attribute property ReadOutRate
-			instance.setReadOutRate(Double.valueOf(
-					element.getAttribute("ReadOutRate")));
-		}
-		if (element.hasAttribute("Gain"))
-		{
-			// Attribute property Gain
-			instance.setGain(Double.valueOf(
-					element.getAttribute("Gain")));
-		}
-		if (element.hasAttribute("Offset"))
-		{
-			// Attribute property Offset
-			instance.setOffset(Double.valueOf(
-					element.getAttribute("Offset")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Voltage"))
-		{
-			// Attribute property Voltage
-			instance.setVoltage(Double.valueOf(
-					element.getAttribute("Voltage")));
-		}
-		return instance;
 	}
 }

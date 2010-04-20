@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ProfileSet
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ProfileSet extends Object
+public class ProfileSet extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -61,9 +62,48 @@ public class ProfileSet extends Object
 
 	// -- Constructors --
 
-	/** Constructs a ProfileSet. */
+	/** Default constructor. */
 	public ProfileSet()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ProfileSet recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ProfileSet(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ProfileSet".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ProfileSet got %s",
+					tagName));
+		}
+		// Model object: None
+		// Element property ImageProfile which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ImageProfile_nodeList = element.getElementsByTagName("ImageProfile");
+		for (int i = 0; i < ImageProfile_nodeList.getLength(); i++)
+		{
+			addImageProfile(new ImageProfile(
+					(Element) ImageProfile_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property ChannelProfile which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ChannelProfile_nodeList = element.getElementsByTagName("ChannelProfile");
+		for (int i = 0; i < ChannelProfile_nodeList.getLength(); i++)
+		{
+			addChannelProfile(new ChannelProfile(
+					(Element) ChannelProfile_nodeList.item(i)));
+		}
 	}
 
 	// -- ProfileSet API methods --
@@ -153,36 +193,5 @@ public class ProfileSet extends Object
 			}
 		}
 		return ProfileSet_element;
-	}
-
-	public static ProfileSet fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ProfileSet".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ProfileSet got %s",
-					tagName));
-		}
-		ProfileSet instance = new ProfileSet();
-		// Element property ImageProfile which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ImageProfile_nodeList = element.getElementsByTagName("ImageProfile");
-		for (int i = 0; i < ImageProfile_nodeList.getLength(); i++)
-		{
-			instance.addImageProfile(ImageProfile.fromXMLElement(
-					(Element) ImageProfile_nodeList.item(i)));
-		}
-		// Element property ChannelProfile which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ChannelProfile_nodeList = element.getElementsByTagName("ChannelProfile");
-		for (int i = 0; i < ChannelProfile_nodeList.getLength(); i++)
-		{
-			instance.addChannelProfile(ChannelProfile.fromXMLElement(
-					(Element) ChannelProfile_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

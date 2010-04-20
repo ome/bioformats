@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Screen
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Screen extends Object
+public class Screen extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -80,10 +81,10 @@ public class Screen extends Object
 	// Property which occurs more than once
 	private List<Reagent> reagentList = new ArrayList<Reagent>();
 
-	// Property which occurs more than once
+	// Back reference PlateRef
 	private List<Plate> plateList = new ArrayList<Plate>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference Plate_BackReference
@@ -91,9 +92,109 @@ public class Screen extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Screen. */
+	/** Default constructor. */
 	public Screen()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Screen recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Screen(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Screen".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Screen got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ProtocolDescription"))
+		{
+			// Attribute property ProtocolDescription
+			setProtocolDescription(String.valueOf(
+					element.getAttribute("ProtocolDescription")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ProtocolIdentifier"))
+		{
+			// Attribute property ProtocolIdentifier
+			setProtocolIdentifier(String.valueOf(
+					element.getAttribute("ProtocolIdentifier")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ReagentSetDescription"))
+		{
+			// Attribute property ReagentSetDescription
+			setReagentSetDescription(String.valueOf(
+					element.getAttribute("ReagentSetDescription")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property Type
+			setType(String.valueOf(
+					element.getAttribute("Type")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ReagentSetIdentifier"))
+		{
+			// Attribute property ReagentSetIdentifier
+			setReagentSetIdentifier(String.valueOf(
+					element.getAttribute("ReagentSetIdentifier")));
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// Element property Reagent which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Reagent_nodeList = element.getElementsByTagName("Reagent");
+		for (int i = 0; i < Reagent_nodeList.getLength(); i++)
+		{
+			addReagent(new Reagent(
+					(Element) Reagent_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference PlateRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Plate_BackReference
 	}
 
 	// -- Screen API methods --
@@ -217,97 +318,97 @@ public class Screen extends Object
 		reagentList.remove(reagent);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfPlateList()
+	// Reference PlateRef
+	public int sizeOfLinkedPlateList()
 	{
 		return plateList.size();
 	}
 
-	public List<Plate> copyPlateList()
+	public List<Plate> copyLinkedPlateList()
 	{
 		return new ArrayList<Plate>(plateList);
 	}
 
-	public Plate getPlate(int index)
+	public Plate getLinkedPlate(int index)
 	{
 		return plateList.get(index);
 	}
 
-	public Plate setPlate(int index, Plate plate)
+	public Plate setLinkedPlate(int index, Plate o)
 	{
-		return plateList.set(index, plate);
+		return plateList.set(index, o);
 	}
 
-	public void addPlate(Plate plate)
+	public void linkPlate(Plate o)
 	{
-		plateList.add(plate);
+		this.plateList.add(o);
 	}
 
-	public void removePlate(Plate plate)
+	public void unlinkPlate(Plate o)
 	{
-		plateList.remove(plate);
+		this.plateList.add(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Back reference Plate_BackReference
-	public int sizeOfLinkedPlateList()
+	// Property which occurs more than once
+	public int sizeOfPlateList()
 	{
 		return plate_BackReferenceList.size();
 	}
 
-	public List<Plate> copyLinkedPlateList()
+	public List<Plate> copyPlateList()
 	{
 		return new ArrayList<Plate>(plate_BackReferenceList);
 	}
 
-	public Plate getLinkedPlate(int index)
+	public Plate getPlate(int index)
 	{
 		return plate_BackReferenceList.get(index);
 	}
 
-	public Plate setLinkedPlate(int index, Plate plate_BackReference)
+	public Plate setPlate(int index, Plate plate_BackReference)
 	{
 		return plate_BackReferenceList.set(index, plate_BackReference);
 	}
 
-	public void linkPlate(Plate plate_BackReference)
+	public void addPlate(Plate plate_BackReference)
 	{
-		this.plate_BackReferenceList.add(plate_BackReference);
+		plate_BackReferenceList.add(plate_BackReference);
 	}
 
-	public void unlinkPlate(Plate plate_BackReference)
+	public void removePlate(Plate plate_BackReference)
 	{
-		this.plate_BackReferenceList.add(plate_BackReference);
+		plate_BackReferenceList.remove(plate_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -368,122 +469,16 @@ public class Screen extends Object
 		}
 		if (plateList != null)
 		{
-			// Element property PlateRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Plate plateList_value : plateList)
-			{
-				Screen_element.appendChild(plateList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference PlateRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Screen_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (plate_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference Plate_BackReference
 		}
 		return Screen_element;
-	}
-
-	public static Screen fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Screen".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Screen got %s",
-					tagName));
-		}
-		Screen instance = new Screen();
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		if (element.hasAttribute("ProtocolDescription"))
-		{
-			// Attribute property ProtocolDescription
-			instance.setProtocolDescription(String.valueOf(
-					element.getAttribute("ProtocolDescription")));
-		}
-		if (element.hasAttribute("ProtocolIdentifier"))
-		{
-			// Attribute property ProtocolIdentifier
-			instance.setProtocolIdentifier(String.valueOf(
-					element.getAttribute("ProtocolIdentifier")));
-		}
-		if (element.hasAttribute("ReagentSetDescription"))
-		{
-			// Attribute property ReagentSetDescription
-			instance.setReagentSetDescription(String.valueOf(
-					element.getAttribute("ReagentSetDescription")));
-		}
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property Type
-			instance.setType(String.valueOf(
-					element.getAttribute("Type")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("ReagentSetIdentifier"))
-		{
-			// Attribute property ReagentSetIdentifier
-			instance.setReagentSetIdentifier(String.valueOf(
-					element.getAttribute("ReagentSetIdentifier")));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		// Element property Reagent which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Reagent_nodeList = element.getElementsByTagName("Reagent");
-		for (int i = 0; i < Reagent_nodeList.getLength(); i++)
-		{
-			instance.addReagent(Reagent.fromXMLElement(
-					(Element) Reagent_nodeList.item(i)));
-		}
-		// Element property PlateRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList PlateRef_nodeList = element.getElementsByTagName("PlateRef");
-		for (int i = 0; i < PlateRef_nodeList.getLength(); i++)
-		{
-			instance.addPlate(Plate.fromXMLElement(
-					(Element) PlateRef_nodeList.item(i)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Plate_BackReference
-		return instance;
 	}
 }

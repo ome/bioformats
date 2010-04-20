@@ -174,7 +174,7 @@ public class InOut201004Test {
     asString = asString();
     /* debug */ System.err.println(asString);
     // Read string XML in as a DOM tree and parse into the object hierarchy
-    ome = OME.fromXMLElement(document.getDocumentElement());
+    ome = new OME(document.getDocumentElement());
   }
 
   @Test

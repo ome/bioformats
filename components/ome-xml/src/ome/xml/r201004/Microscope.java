@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Microscope
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,9 +59,37 @@ public class Microscope extends ManufacturerSpec
 
 	// -- Constructors --
 
-	/** Constructs a Microscope. */
+	/** Default constructor. */
 	public Microscope()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Microscope recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Microscope(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Microscope".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Microscope got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			setType(MicroscopeType.fromString(
+					element.getAttribute("Type")));
+		}
 	}
 
 	// -- Microscope API methods --
@@ -86,26 +115,5 @@ public class Microscope extends ManufacturerSpec
 			Microscope_element.setAttribute("Type", type.toString());
 		}
 		return Microscope_element;
-	}
-
-	public static Microscope fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Microscope".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Microscope got %s",
-					tagName));
-		}
-		Microscope instance = new Microscope();
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property which is an enumeration Type
-			instance.setType(MicroscopeType.fromString(
-					element.getAttribute("Type")));
-		}
-		return instance;
 	}
 }

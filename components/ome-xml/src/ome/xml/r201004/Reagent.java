@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Reagent
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Reagent extends Object
+public class Reagent extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -65,7 +66,7 @@ public class Reagent extends Object
 	// Property
 	private String description;
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference Well_BackReference
@@ -73,9 +74,70 @@ public class Reagent extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Reagent. */
+	/** Default constructor. */
 	public Reagent()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Reagent recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Reagent(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Reagent".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Reagent got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("ReagentIdentifier"))
+		{
+			// Attribute property ReagentIdentifier
+			setReagentIdentifier(String.valueOf(
+					element.getAttribute("ReagentIdentifier")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Well_BackReference
 	}
 
 	// -- Reagent API methods --
@@ -124,66 +186,66 @@ public class Reagent extends Object
 		this.description = description;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Back reference Well_BackReference
-	public int sizeOfLinkedWellList()
+	// Property which occurs more than once
+	public int sizeOfWellList()
 	{
 		return well_BackReferenceList.size();
 	}
 
-	public List<Well> copyLinkedWellList()
+	public List<Well> copyWellList()
 	{
 		return new ArrayList<Well>(well_BackReferenceList);
 	}
 
-	public Well getLinkedWell(int index)
+	public Well getWell(int index)
 	{
 		return well_BackReferenceList.get(index);
 	}
 
-	public Well setLinkedWell(int index, Well well_BackReference)
+	public Well setWell(int index, Well well_BackReference)
 	{
 		return well_BackReferenceList.set(index, well_BackReference);
 	}
 
-	public void linkWell(Well well_BackReference)
+	public void addWell(Well well_BackReference)
 	{
-		this.well_BackReferenceList.add(well_BackReference);
+		well_BackReferenceList.add(well_BackReference);
 	}
 
-	public void unlinkWell(Well well_BackReference)
+	public void removeWell(Well well_BackReference)
 	{
-		this.well_BackReferenceList.add(well_BackReference);
+		well_BackReferenceList.remove(well_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -215,73 +277,12 @@ public class Reagent extends Object
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Reagent_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (well_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference Well_BackReference
 		}
 		return Reagent_element;
-	}
-
-	public static Reagent fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Reagent".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Reagent got %s",
-					tagName));
-		}
-		Reagent instance = new Reagent();
-		if (element.hasAttribute("ReagentIdentifier"))
-		{
-			// Attribute property ReagentIdentifier
-			instance.setReagentIdentifier(String.valueOf(
-					element.getAttribute("ReagentIdentifier")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Well_BackReference
-		return instance;
 	}
 }

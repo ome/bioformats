@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Objective
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,9 +80,86 @@ public class Objective extends ManufacturerSpec
 
 	// -- Constructors --
 
-	/** Constructs a Objective. */
+	/** Default constructor. */
 	public Objective()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Objective recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Objective(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Objective".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Objective got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Iris"))
+		{
+			// Attribute property Iris
+			setIris(Boolean.valueOf(
+					element.getAttribute("Iris")));
+		}
+		// Model object: None
+		if (element.hasAttribute("WorkingDistance"))
+		{
+			// Attribute property WorkingDistance
+			setWorkingDistance(Double.valueOf(
+					element.getAttribute("WorkingDistance")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Immersion"))
+		{
+			// Attribute property which is an enumeration Immersion
+			setImmersion(Immersion.fromString(
+					element.getAttribute("Immersion")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Correction"))
+		{
+			// Attribute property which is an enumeration Correction
+			setCorrection(Correction.fromString(
+					element.getAttribute("Correction")));
+		}
+		// Model object: None
+		if (element.hasAttribute("LensNA"))
+		{
+			// Attribute property LensNA
+			setLensNA(Double.valueOf(
+					element.getAttribute("LensNA")));
+		}
+		// Model object: None
+		if (element.hasAttribute("NominalMagnification"))
+		{
+			// Attribute property NominalMagnification
+			setNominalMagnification(Integer.valueOf(
+					element.getAttribute("NominalMagnification")));
+		}
+		// Model object: None
+		if (element.hasAttribute("CalibratedMagnification"))
+		{
+			// Attribute property CalibratedMagnification
+			setCalibratedMagnification(Double.valueOf(
+					element.getAttribute("CalibratedMagnification")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
 	}
 
 	// -- Objective API methods --
@@ -219,68 +297,5 @@ public class Objective extends ManufacturerSpec
 			Objective_element.setAttribute("ID", id.toString());
 		}
 		return Objective_element;
-	}
-
-	public static Objective fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Objective".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Objective got %s",
-					tagName));
-		}
-		Objective instance = new Objective();
-		if (element.hasAttribute("Iris"))
-		{
-			// Attribute property Iris
-			instance.setIris(Boolean.valueOf(
-					element.getAttribute("Iris")));
-		}
-		if (element.hasAttribute("WorkingDistance"))
-		{
-			// Attribute property WorkingDistance
-			instance.setWorkingDistance(Double.valueOf(
-					element.getAttribute("WorkingDistance")));
-		}
-		if (element.hasAttribute("Immersion"))
-		{
-			// Attribute property which is an enumeration Immersion
-			instance.setImmersion(Immersion.fromString(
-					element.getAttribute("Immersion")));
-		}
-		if (element.hasAttribute("Correction"))
-		{
-			// Attribute property which is an enumeration Correction
-			instance.setCorrection(Correction.fromString(
-					element.getAttribute("Correction")));
-		}
-		if (element.hasAttribute("LensNA"))
-		{
-			// Attribute property LensNA
-			instance.setLensNA(Double.valueOf(
-					element.getAttribute("LensNA")));
-		}
-		if (element.hasAttribute("NominalMagnification"))
-		{
-			// Attribute property NominalMagnification
-			instance.setNominalMagnification(Integer.valueOf(
-					element.getAttribute("NominalMagnification")));
-		}
-		if (element.hasAttribute("CalibratedMagnification"))
-		{
-			// Attribute property CalibratedMagnification
-			instance.setCalibratedMagnification(Double.valueOf(
-					element.getAttribute("CalibratedMagnification")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		return instance;
 	}
 }

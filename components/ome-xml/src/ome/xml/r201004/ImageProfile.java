@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ImageProfile
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ImageProfile extends Object
+public class ImageProfile extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -62,17 +63,93 @@ public class ImageProfile extends Object
 	// Property
 	private String description;
 
-	// Property
-	private Instrument instrument;
+	// Back reference InstrumentRef
+	private List<Instrument> instrument = new ArrayList<Instrument>();
 
 	// Property
 	private ObjectiveSettings objectiveSettings;
 
 	// -- Constructors --
 
-	/** Constructs a ImageProfile. */
+	/** Default constructor. */
 	public ImageProfile()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ImageProfile recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ImageProfile(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ImageProfile".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ImageProfile got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("origin"))
+		{
+			// Attribute property which is an enumeration origin
+			setorigin(ProfileSource.fromString(
+					element.getAttribute("origin")));
+		}
+		// Model object: None
+		NodeList Name_nodeList = element.getElementsByTagName("Name");
+		if (Name_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Name node list size %d != 1",
+					Name_nodeList.getLength()));
+		}
+		else if (Name_nodeList.getLength() != 0)
+		{
+			// Element property Name which is not complex (has no
+			// sub-elements)
+			setName(Name_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference InstrumentRef
+		// Model object: None
+		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"ObjectiveSettings node list size %d != 1",
+					ObjectiveSettings_nodeList.getLength()));
+		}
+		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		{
+			// Element property ObjectiveSettings which is complex (has
+			// sub-elements)
+			setObjectiveSettings(new ObjectiveSettings(
+					(Element) ObjectiveSettings_nodeList.item(0)));
+		}
 	}
 
 	// -- ImageProfile API methods --
@@ -110,15 +187,35 @@ public class ImageProfile extends Object
 		this.description = description;
 	}
 
-	// Property
-	public Instrument getInstrument()
+	// Reference InstrumentRef
+	public int sizeOfLinkedInstrumentList()
 	{
-		return instrument;
+		return instrument.size();
 	}
 
-	public void setInstrument(Instrument instrument)
+	public List<Instrument> copyLinkedInstrumentList()
 	{
-		this.instrument = instrument;
+		return new ArrayList<Instrument>(instrument);
+	}
+
+	public Instrument getLinkedInstrument(int index)
+	{
+		return instrument.get(index);
+	}
+
+	public Instrument setLinkedInstrument(int index, Instrument o)
+	{
+		return instrument.set(index, o);
+	}
+
+	public void linkInstrument(Instrument o)
+	{
+		this.instrument.add(o);
+	}
+
+	public void unlinkInstrument(Instrument o)
+	{
+		this.instrument.add(o);
 	}
 
 	// Property
@@ -159,9 +256,7 @@ public class ImageProfile extends Object
 		}
 		if (instrument != null)
 		{
-			// Element property InstrumentRef which is complex (has
-			// sub-elements)
-			ImageProfile_element.appendChild(instrument.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference InstrumentRef
 		}
 		if (objectiveSettings != null)
 		{
@@ -170,84 +265,5 @@ public class ImageProfile extends Object
 			ImageProfile_element.appendChild(objectiveSettings.asXMLElement(document));
 		}
 		return ImageProfile_element;
-	}
-
-	public static ImageProfile fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ImageProfile".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ImageProfile got %s",
-					tagName));
-		}
-		ImageProfile instance = new ImageProfile();
-		if (element.hasAttribute("origin"))
-		{
-			// Attribute property which is an enumeration origin
-			instance.setorigin(ProfileSource.fromString(
-					element.getAttribute("origin")));
-		}
-		NodeList Name_nodeList = element.getElementsByTagName("Name");
-		if (Name_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Name node list size %d != 1",
-					Name_nodeList.getLength()));
-		}
-		else if (Name_nodeList.getLength() != 0)
-		{
-			// Element property Name which is not complex (has no
-			// sub-elements)
-			instance.setName(Name_nodeList.item(0).getTextContent());
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
-		if (InstrumentRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"InstrumentRef node list size %d != 1",
-					InstrumentRef_nodeList.getLength()));
-		}
-		else if (InstrumentRef_nodeList.getLength() != 0)
-		{
-			// Element property InstrumentRef which is complex (has
-			// sub-elements)
-			instance.setInstrument(Instrument.fromXMLElement(
-					(Element) InstrumentRef_nodeList.item(0)));
-		}
-		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
-		if (ObjectiveSettings_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ObjectiveSettings node list size %d != 1",
-					ObjectiveSettings_nodeList.getLength()));
-		}
-		else if (ObjectiveSettings_nodeList.getLength() != 0)
-		{
-			// Element property ObjectiveSettings which is complex (has
-			// sub-elements)
-			instance.setObjectiveSettings(ObjectiveSettings.fromXMLElement(
-					(Element) ObjectiveSettings_nodeList.item(0)));
-		}
-		return instance;
 	}
 }

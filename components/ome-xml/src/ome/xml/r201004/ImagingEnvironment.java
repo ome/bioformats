@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ImagingEnvironment
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ImagingEnvironment extends Object
+public class ImagingEnvironment extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -67,9 +68,58 @@ public class ImagingEnvironment extends Object
 
 	// -- Constructors --
 
-	/** Constructs a ImagingEnvironment. */
+	/** Default constructor. */
 	public ImagingEnvironment()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ImagingEnvironment recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ImagingEnvironment(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ImagingEnvironment".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ImagingEnvironment got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("CO2Percent"))
+		{
+			// Attribute property CO2Percent
+			setCO2Percent(Double.valueOf(
+					element.getAttribute("CO2Percent")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Temperature"))
+		{
+			// Attribute property Temperature
+			setTemperature(Double.valueOf(
+					element.getAttribute("Temperature")));
+		}
+		// Model object: None
+		if (element.hasAttribute("AirPressure"))
+		{
+			// Attribute property AirPressure
+			setAirPressure(Double.valueOf(
+					element.getAttribute("AirPressure")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Humidity"))
+		{
+			// Attribute property Humidity
+			setHumidity(Double.valueOf(
+					element.getAttribute("Humidity")));
+		}
 	}
 
 	// -- ImagingEnvironment API methods --
@@ -143,44 +193,5 @@ public class ImagingEnvironment extends Object
 			ImagingEnvironment_element.setAttribute("Humidity", humidity.toString());
 		}
 		return ImagingEnvironment_element;
-	}
-
-	public static ImagingEnvironment fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ImagingEnvironment".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ImagingEnvironment got %s",
-					tagName));
-		}
-		ImagingEnvironment instance = new ImagingEnvironment();
-		if (element.hasAttribute("CO2Percent"))
-		{
-			// Attribute property CO2Percent
-			instance.setCO2Percent(Double.valueOf(
-					element.getAttribute("CO2Percent")));
-		}
-		if (element.hasAttribute("Temperature"))
-		{
-			// Attribute property Temperature
-			instance.setTemperature(Double.valueOf(
-					element.getAttribute("Temperature")));
-		}
-		if (element.hasAttribute("AirPressure"))
-		{
-			// Attribute property AirPressure
-			instance.setAirPressure(Double.valueOf(
-					element.getAttribute("AirPressure")));
-		}
-		if (element.hasAttribute("Humidity"))
-		{
-			// Attribute property Humidity
-			instance.setHumidity(Double.valueOf(
-					element.getAttribute("Humidity")));
-		}
-		return instance;
 	}
 }

@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.TransmittanceRange
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class TransmittanceRange extends Object
+public class TransmittanceRange extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -70,9 +71,65 @@ public class TransmittanceRange extends Object
 
 	// -- Constructors --
 
-	/** Constructs a TransmittanceRange. */
+	/** Default constructor. */
 	public TransmittanceRange()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs TransmittanceRange recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public TransmittanceRange(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"TransmittanceRange".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of TransmittanceRange got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("CutIn"))
+		{
+			// Attribute property CutIn
+			setCutIn(Integer.valueOf(
+					element.getAttribute("CutIn")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Transmittance"))
+		{
+			// Attribute property Transmittance
+			setTransmittance(Double.valueOf(
+					element.getAttribute("Transmittance")));
+		}
+		// Model object: None
+		if (element.hasAttribute("CutOut"))
+		{
+			// Attribute property CutOut
+			setCutOut(Integer.valueOf(
+					element.getAttribute("CutOut")));
+		}
+		// Model object: None
+		if (element.hasAttribute("CutInTolerance"))
+		{
+			// Attribute property CutInTolerance
+			setCutInTolerance(Integer.valueOf(
+					element.getAttribute("CutInTolerance")));
+		}
+		// Model object: None
+		if (element.hasAttribute("CutOutTolerance"))
+		{
+			// Attribute property CutOutTolerance
+			setCutOutTolerance(Integer.valueOf(
+					element.getAttribute("CutOutTolerance")));
+		}
 	}
 
 	// -- TransmittanceRange API methods --
@@ -162,50 +219,5 @@ public class TransmittanceRange extends Object
 			TransmittanceRange_element.setAttribute("CutOutTolerance", cutOutTolerance.toString());
 		}
 		return TransmittanceRange_element;
-	}
-
-	public static TransmittanceRange fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"TransmittanceRange".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of TransmittanceRange got %s",
-					tagName));
-		}
-		TransmittanceRange instance = new TransmittanceRange();
-		if (element.hasAttribute("CutIn"))
-		{
-			// Attribute property CutIn
-			instance.setCutIn(Integer.valueOf(
-					element.getAttribute("CutIn")));
-		}
-		if (element.hasAttribute("Transmittance"))
-		{
-			// Attribute property Transmittance
-			instance.setTransmittance(Double.valueOf(
-					element.getAttribute("Transmittance")));
-		}
-		if (element.hasAttribute("CutOut"))
-		{
-			// Attribute property CutOut
-			instance.setCutOut(Integer.valueOf(
-					element.getAttribute("CutOut")));
-		}
-		if (element.hasAttribute("CutInTolerance"))
-		{
-			// Attribute property CutInTolerance
-			instance.setCutInTolerance(Integer.valueOf(
-					element.getAttribute("CutInTolerance")));
-		}
-		if (element.hasAttribute("CutOutTolerance"))
-		{
-			// Attribute property CutOutTolerance
-			instance.setCutOutTolerance(Integer.valueOf(
-					element.getAttribute("CutOutTolerance")));
-		}
-		return instance;
 	}
 }

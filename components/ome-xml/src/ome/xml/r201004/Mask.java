@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Mask
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Mask extends Object
+public class Mask extends Shape
 {
 	// -- Instance variables --
 
@@ -64,9 +65,53 @@ public class Mask extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Mask. */
+	/** Default constructor. */
 	public Mask()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Mask recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Mask(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Mask".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Mask got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
+		// Model object: None
+		// Element property BinData which is not complex (has no
+		// sub-elements) which occurs more than once
+		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
+		for (int i = 0; i < BinData_nodeList.getLength(); i++)
+		{
+			addBinData(new String(
+					BinData_nodeList.item(i).getTextContent()));
+		}
 	}
 
 	// -- Mask API methods --
@@ -150,40 +195,5 @@ public class Mask extends Object
 			}
 		}
 		return Mask_element;
-	}
-
-	public static Mask fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Mask".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Mask got %s",
-					tagName));
-		}
-		Mask instance = new Mask();
-		if (element.hasAttribute("Y"))
-		{
-			// Attribute property Y
-			instance.setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			instance.setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		// Element property BinData which is not complex (has no
-		// sub-elements) which occurs more than once
-		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
-		for (int i = 0; i < BinData_nodeList.getLength(); i++)
-		{
-			instance.addBinData(String.valueOf(
-					BinData_nodeList.item(i).getTextContent()));
-		}
-		return instance;
 	}
 }

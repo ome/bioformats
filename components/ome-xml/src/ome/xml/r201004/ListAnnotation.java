@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ListAnnotation
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -53,68 +54,27 @@ public class ListAnnotation extends Annotation
 {
 	// -- Instance variables --
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
-	/** Constructs a ListAnnotation. */
+	/** Default constructor. */
 	public ListAnnotation()
 	{
+		super();
 	}
 
-	// -- ListAnnotation API methods --
-
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	/** 
+	 * Constructs ListAnnotation recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ListAnnotation(Element element) throws EnumerationException
 	{
-		return annotationList.size();
-	}
-
-	public List<Annotation> copyAnnotationList()
-	{
-		return new ArrayList<Annotation>(annotationList);
-	}
-
-	public Annotation getAnnotation(int index)
-	{
-		return annotationList.get(index);
-	}
-
-	public Annotation setAnnotation(int index, Annotation annotation)
-	{
-		return annotationList.set(index, annotation);
-	}
-
-	public void addAnnotation(Annotation annotation)
-	{
-		annotationList.add(annotation);
-	}
-
-	public void removeAnnotation(Annotation annotation)
-	{
-		annotationList.remove(annotation);
-	}
-
-	public Element asXMLElement(Document document)
-	{
-		// Creating XML block for ListAnnotation
-		Element ListAnnotation_element = document.createElement("ListAnnotation");
-		if (annotationList != null)
-		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				ListAnnotation_element.appendChild(annotationList_value.asXMLElement(document));
-			}
-		}
-		return ListAnnotation_element;
-	}
-
-	public static ListAnnotation fromXMLElement(Element element)
-		throws EnumerationException
-	{
+		super(element);
 		String tagName = element.getTagName();
 		if (!"ListAnnotation".equals(tagName))
 		{
@@ -123,15 +83,51 @@ public class ListAnnotation extends Annotation
 					"Expecting node name of ListAnnotation got %s",
 					tagName));
 		}
-		ListAnnotation instance = new ListAnnotation();
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+	}
+
+	// -- ListAnnotation API methods --
+
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
+	{
+		return annotationList.size();
+	}
+
+	public List<Annotation> copyLinkedAnnotationList()
+	{
+		return new ArrayList<Annotation>(annotationList);
+	}
+
+	public Annotation getLinkedAnnotation(int index)
+	{
+		return annotationList.get(index);
+	}
+
+	public Annotation setLinkedAnnotation(int index, Annotation o)
+	{
+		return annotationList.set(index, o);
+	}
+
+	public void linkAnnotation(Annotation o)
+	{
+		this.annotationList.add(o);
+	}
+
+	public void unlinkAnnotation(Annotation o)
+	{
+		this.annotationList.add(o);
+	}
+
+	public Element asXMLElement(Document document)
+	{
+		// Creating XML block for ListAnnotation
+		Element ListAnnotation_element = document.createElement("ListAnnotation");
+		if (annotationList != null)
 		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
-		return instance;
+		return ListAnnotation_element;
 	}
 }

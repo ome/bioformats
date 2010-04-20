@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.StageLabel
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class StageLabel extends Object
+public class StageLabel extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -67,9 +68,58 @@ public class StageLabel extends Object
 
 	// -- Constructors --
 
-	/** Constructs a StageLabel. */
+	/** Default constructor. */
 	public StageLabel()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs StageLabel recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public StageLabel(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"StageLabel".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of StageLabel got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Z"))
+		{
+			// Attribute property Z
+			setZ(Double.valueOf(
+					element.getAttribute("Z")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
 	}
 
 	// -- StageLabel API methods --
@@ -143,44 +193,5 @@ public class StageLabel extends Object
 			StageLabel_element.setAttribute("Name", name.toString());
 		}
 		return StageLabel_element;
-	}
-
-	public static StageLabel fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"StageLabel".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of StageLabel got %s",
-					tagName));
-		}
-		StageLabel instance = new StageLabel();
-		if (element.hasAttribute("Y"))
-		{
-			// Attribute property Y
-			instance.setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			instance.setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		if (element.hasAttribute("Z"))
-		{
-			// Attribute property Z
-			instance.setZ(Double.valueOf(
-					element.getAttribute("Z")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		return instance;
 	}
 }

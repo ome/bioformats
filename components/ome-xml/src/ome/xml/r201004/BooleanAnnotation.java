@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.BooleanAnnotation
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,9 +59,45 @@ public class BooleanAnnotation extends Annotation
 
 	// -- Constructors --
 
-	/** Constructs a BooleanAnnotation. */
+	/** Default constructor. */
 	public BooleanAnnotation()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs BooleanAnnotation recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public BooleanAnnotation(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"BooleanAnnotation".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of BooleanAnnotation got %s",
+					tagName));
+		}
+		// Model object: None
+		NodeList Value_nodeList = element.getElementsByTagName("Value");
+		if (Value_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Value node list size %d != 1",
+					Value_nodeList.getLength()));
+		}
+		else if (Value_nodeList.getLength() != 0)
+		{
+			// Element property Value which is not complex (has no
+			// sub-elements)
+			setValue(Value_nodeList.item(0).getTextContent());
+		}
 	}
 
 	// -- BooleanAnnotation API methods --
@@ -89,34 +126,5 @@ public class BooleanAnnotation extends Annotation
 			BooleanAnnotation_element.appendChild(value_element);
 		}
 		return BooleanAnnotation_element;
-	}
-
-	public static BooleanAnnotation fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"BooleanAnnotation".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of BooleanAnnotation got %s",
-					tagName));
-		}
-		BooleanAnnotation instance = new BooleanAnnotation();
-		NodeList Value_nodeList = element.getElementsByTagName("Value");
-		if (Value_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Value node list size %d != 1",
-					Value_nodeList.getLength()));
-		}
-		else if (Value_nodeList.getLength() != 0)
-		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
-			instance.setValue(Value_nodeList.item(0).getTextContent());
-		}
-		return instance;
 	}
 }

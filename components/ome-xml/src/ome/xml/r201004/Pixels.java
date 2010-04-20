@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Pixels
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Pixels extends Object
+public class Pixels extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -104,14 +105,173 @@ public class Pixels extends Object
 	// Property which occurs more than once
 	private List<Plane> planeList = new ArrayList<Plane>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
-	/** Constructs a Pixels. */
+	/** Default constructor. */
 	public Pixels()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Pixels recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Pixels(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Pixels".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Pixels got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeT"))
+		{
+			// Attribute property SizeT
+			setSizeT(Integer.valueOf(
+					element.getAttribute("SizeT")));
+		}
+		// Model object: None
+		if (element.hasAttribute("DimensionOrder"))
+		{
+			// Attribute property which is an enumeration DimensionOrder
+			setDimensionOrder(DimensionOrder.fromString(
+					element.getAttribute("DimensionOrder")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TimeIncrement"))
+		{
+			// Attribute property TimeIncrement
+			setTimeIncrement(Double.valueOf(
+					element.getAttribute("TimeIncrement")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PhysicalSizeY"))
+		{
+			// Attribute property PhysicalSizeY
+			setPhysicalSizeY(Double.valueOf(
+					element.getAttribute("PhysicalSizeY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PhysicalSizeX"))
+		{
+			// Attribute property PhysicalSizeX
+			setPhysicalSizeX(Double.valueOf(
+					element.getAttribute("PhysicalSizeX")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PhysicalSizeZ"))
+		{
+			// Attribute property PhysicalSizeZ
+			setPhysicalSizeZ(Double.valueOf(
+					element.getAttribute("PhysicalSizeZ")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeX"))
+		{
+			// Attribute property SizeX
+			setSizeX(Integer.valueOf(
+					element.getAttribute("SizeX")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeY"))
+		{
+			// Attribute property SizeY
+			setSizeY(Integer.valueOf(
+					element.getAttribute("SizeY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeZ"))
+		{
+			// Attribute property SizeZ
+			setSizeZ(Integer.valueOf(
+					element.getAttribute("SizeZ")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SizeC"))
+		{
+			// Attribute property SizeC
+			setSizeC(Integer.valueOf(
+					element.getAttribute("SizeC")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			setType(PixelType.fromString(
+					element.getAttribute("Type")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		// Element property Channel which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Channel_nodeList = element.getElementsByTagName("Channel");
+		for (int i = 0; i < Channel_nodeList.getLength(); i++)
+		{
+			addChannel(new Channel(
+					(Element) Channel_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property BinData which is not complex (has no
+		// sub-elements) which occurs more than once
+		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
+		for (int i = 0; i < BinData_nodeList.getLength(); i++)
+		{
+			addBinData(new String(
+					BinData_nodeList.item(i).getTextContent()));
+		}
+		// Model object: None
+		// Element property TiffData which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList TiffData_nodeList = element.getElementsByTagName("TiffData");
+		for (int i = 0; i < TiffData_nodeList.getLength(); i++)
+		{
+			addTiffData(new TiffData(
+					(Element) TiffData_nodeList.item(i)));
+		}
+		// Model object: None
+		NodeList MetadataOnly_nodeList = element.getElementsByTagName("MetadataOnly");
+		if (MetadataOnly_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"MetadataOnly node list size %d != 1",
+					MetadataOnly_nodeList.getLength()));
+		}
+		else if (MetadataOnly_nodeList.getLength() != 0)
+		{
+			// Element property MetadataOnly which is complex (has
+			// sub-elements)
+			setMetadataOnly(new MetadataOnly(
+					(Element) MetadataOnly_nodeList.item(0)));
+		}
+		// Model object: None
+		// Element property Plane which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Plane_nodeList = element.getElementsByTagName("Plane");
+		for (int i = 0; i < Plane_nodeList.getLength(); i++)
+		{
+			addPlane(new Plane(
+					(Element) Plane_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
 	// -- Pixels API methods --
@@ -383,35 +543,35 @@ public class Pixels extends Object
 		planeList.remove(plane);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -524,155 +684,8 @@ public class Pixels extends Object
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Pixels_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		return Pixels_element;
-	}
-
-	public static Pixels fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Pixels".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Pixels got %s",
-					tagName));
-		}
-		Pixels instance = new Pixels();
-		if (element.hasAttribute("SizeT"))
-		{
-			// Attribute property SizeT
-			instance.setSizeT(Integer.valueOf(
-					element.getAttribute("SizeT")));
-		}
-		if (element.hasAttribute("DimensionOrder"))
-		{
-			// Attribute property which is an enumeration DimensionOrder
-			instance.setDimensionOrder(DimensionOrder.fromString(
-					element.getAttribute("DimensionOrder")));
-		}
-		if (element.hasAttribute("TimeIncrement"))
-		{
-			// Attribute property TimeIncrement
-			instance.setTimeIncrement(Double.valueOf(
-					element.getAttribute("TimeIncrement")));
-		}
-		if (element.hasAttribute("PhysicalSizeY"))
-		{
-			// Attribute property PhysicalSizeY
-			instance.setPhysicalSizeY(Double.valueOf(
-					element.getAttribute("PhysicalSizeY")));
-		}
-		if (element.hasAttribute("PhysicalSizeX"))
-		{
-			// Attribute property PhysicalSizeX
-			instance.setPhysicalSizeX(Double.valueOf(
-					element.getAttribute("PhysicalSizeX")));
-		}
-		if (element.hasAttribute("PhysicalSizeZ"))
-		{
-			// Attribute property PhysicalSizeZ
-			instance.setPhysicalSizeZ(Double.valueOf(
-					element.getAttribute("PhysicalSizeZ")));
-		}
-		if (element.hasAttribute("SizeX"))
-		{
-			// Attribute property SizeX
-			instance.setSizeX(Integer.valueOf(
-					element.getAttribute("SizeX")));
-		}
-		if (element.hasAttribute("SizeY"))
-		{
-			// Attribute property SizeY
-			instance.setSizeY(Integer.valueOf(
-					element.getAttribute("SizeY")));
-		}
-		if (element.hasAttribute("SizeZ"))
-		{
-			// Attribute property SizeZ
-			instance.setSizeZ(Integer.valueOf(
-					element.getAttribute("SizeZ")));
-		}
-		if (element.hasAttribute("SizeC"))
-		{
-			// Attribute property SizeC
-			instance.setSizeC(Integer.valueOf(
-					element.getAttribute("SizeC")));
-		}
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property which is an enumeration Type
-			instance.setType(PixelType.fromString(
-					element.getAttribute("Type")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		// Element property Channel which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Channel_nodeList = element.getElementsByTagName("Channel");
-		for (int i = 0; i < Channel_nodeList.getLength(); i++)
-		{
-			instance.addChannel(Channel.fromXMLElement(
-					(Element) Channel_nodeList.item(i)));
-		}
-		// Element property BinData which is not complex (has no
-		// sub-elements) which occurs more than once
-		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
-		for (int i = 0; i < BinData_nodeList.getLength(); i++)
-		{
-			instance.addBinData(String.valueOf(
-					BinData_nodeList.item(i).getTextContent()));
-		}
-		// Element property TiffData which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList TiffData_nodeList = element.getElementsByTagName("TiffData");
-		for (int i = 0; i < TiffData_nodeList.getLength(); i++)
-		{
-			instance.addTiffData(TiffData.fromXMLElement(
-					(Element) TiffData_nodeList.item(i)));
-		}
-		NodeList MetadataOnly_nodeList = element.getElementsByTagName("MetadataOnly");
-		if (MetadataOnly_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"MetadataOnly node list size %d != 1",
-					MetadataOnly_nodeList.getLength()));
-		}
-		else if (MetadataOnly_nodeList.getLength() != 0)
-		{
-			// Element property MetadataOnly which is complex (has
-			// sub-elements)
-			instance.setMetadataOnly(MetadataOnly.fromXMLElement(
-					(Element) MetadataOnly_nodeList.item(0)));
-		}
-		// Element property Plane which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Plane_nodeList = element.getElementsByTagName("Plane");
-		for (int i = 0; i < Plane_nodeList.getLength(); i++)
-		{
-			instance.addPlane(Plane.fromXMLElement(
-					(Element) Plane_nodeList.item(i)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

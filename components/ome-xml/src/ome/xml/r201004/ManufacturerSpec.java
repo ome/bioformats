@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ManufacturerSpec
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ManufacturerSpec extends Object
+public class ManufacturerSpec extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -67,9 +68,58 @@ public class ManufacturerSpec extends Object
 
 	// -- Constructors --
 
-	/** Constructs a ManufacturerSpec. */
+	/** Default constructor. */
 	public ManufacturerSpec()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ManufacturerSpec recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ManufacturerSpec(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ManufacturerSpec".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ManufacturerSpec got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("LotNumber"))
+		{
+			// Attribute property LotNumber
+			setLotNumber(String.valueOf(
+					element.getAttribute("LotNumber")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Model"))
+		{
+			// Attribute property Model
+			setModel(String.valueOf(
+					element.getAttribute("Model")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SerialNumber"))
+		{
+			// Attribute property SerialNumber
+			setSerialNumber(String.valueOf(
+					element.getAttribute("SerialNumber")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Manufacturer"))
+		{
+			// Attribute property Manufacturer
+			setManufacturer(String.valueOf(
+					element.getAttribute("Manufacturer")));
+		}
 	}
 
 	// -- ManufacturerSpec API methods --
@@ -143,44 +193,5 @@ public class ManufacturerSpec extends Object
 			ManufacturerSpec_element.setAttribute("Manufacturer", manufacturer.toString());
 		}
 		return ManufacturerSpec_element;
-	}
-
-	public static ManufacturerSpec fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ManufacturerSpec".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ManufacturerSpec got %s",
-					tagName));
-		}
-		ManufacturerSpec instance = new ManufacturerSpec();
-		if (element.hasAttribute("LotNumber"))
-		{
-			// Attribute property LotNumber
-			instance.setLotNumber(String.valueOf(
-					element.getAttribute("LotNumber")));
-		}
-		if (element.hasAttribute("Model"))
-		{
-			// Attribute property Model
-			instance.setModel(String.valueOf(
-					element.getAttribute("Model")));
-		}
-		if (element.hasAttribute("SerialNumber"))
-		{
-			// Attribute property SerialNumber
-			instance.setSerialNumber(String.valueOf(
-					element.getAttribute("SerialNumber")));
-		}
-		if (element.hasAttribute("Manufacturer"))
-		{
-			// Attribute property Manufacturer
-			instance.setManufacturer(String.valueOf(
-					element.getAttribute("Manufacturer")));
-		}
-		return instance;
 	}
 }

@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Shape
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Shape extends Object
+public abstract class Shape extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -107,41 +108,279 @@ public class Shape extends Object
 	// Property
 	private String name;
 
-	// Property
-	private Line line;
+	// *** WARNING *** Unhandled or skipped property Line
 
-	// Property
-	private Rectangle rectangle;
+	// *** WARNING *** Unhandled or skipped property Rectangle
 
-	// Property
-	private Mask mask;
+	// *** WARNING *** Unhandled or skipped property Mask
 
-	// Property
-	private Ellipse ellipse;
+	// *** WARNING *** Unhandled or skipped property Ellipse
 
-	// Property
-	private Point point;
+	// *** WARNING *** Unhandled or skipped property Point
 
-	// Property
-	private Polyline polyline;
+	// *** WARNING *** Unhandled or skipped property Polyline
 
-	// Property
-	private Path path;
+	// *** WARNING *** Unhandled or skipped property Path
 
-	// Property
-	private Text text;
+	// *** WARNING *** Unhandled or skipped property Text
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
-	// Property
-	private String description;
+	// *** WARNING *** Unhandled or skipped property Description
 
 	// -- Constructors --
 
-	/** Constructs a Shape. */
+	/** Default constructor. */
 	public Shape()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Shape recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Shape(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Shape".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Shape got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("StrokeDashArray"))
+		{
+			// Attribute property StrokeDashArray
+			setStrokeDashArray(String.valueOf(
+					element.getAttribute("StrokeDashArray")));
+		}
+		// Model object: None
+		if (element.hasAttribute("StrokeWidth"))
+		{
+			// Attribute property StrokeWidth
+			setStrokeWidth(Double.valueOf(
+					element.getAttribute("StrokeWidth")));
+		}
+		// Model object: None
+		if (element.hasAttribute("FillRule"))
+		{
+			// Attribute property which is an enumeration FillRule
+			setFillRule(FillRule.fromString(
+					element.getAttribute("FillRule")));
+		}
+		// Model object: None
+		if (element.hasAttribute("LineCap"))
+		{
+			// Attribute property which is an enumeration LineCap
+			setLineCap(LineCap.fromString(
+					element.getAttribute("LineCap")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TheC"))
+		{
+			// Attribute property TheC
+			setTheC(Integer.valueOf(
+					element.getAttribute("TheC")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TheT"))
+		{
+			// Attribute property TheT
+			setTheT(Integer.valueOf(
+					element.getAttribute("TheT")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Transform"))
+		{
+			// Attribute property Transform
+			setTransform(String.valueOf(
+					element.getAttribute("Transform")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Label"))
+		{
+			// Attribute property Label
+			setLabel(String.valueOf(
+					element.getAttribute("Label")));
+		}
+		// Model object: None
+		if (element.hasAttribute("FontFamily"))
+		{
+			// Attribute property which is an enumeration FontFamily
+			setFontFamily(FontFamily.fromString(
+					element.getAttribute("FontFamily")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Stroke"))
+		{
+			// Attribute property Stroke
+			setStroke(Integer.valueOf(
+					element.getAttribute("Stroke")));
+		}
+		// Model object: None
+		if (element.hasAttribute("FontStyle"))
+		{
+			// Attribute property which is an enumeration FontStyle
+			setFontStyle(FontStyle.fromString(
+					element.getAttribute("FontStyle")));
+		}
+		// Model object: None
+		if (element.hasAttribute("MarkerEnd"))
+		{
+			// Attribute property which is an enumeration MarkerEnd
+			setMarkerEnd(Marker.fromString(
+					element.getAttribute("MarkerEnd")));
+		}
+		// Model object: None
+		if (element.hasAttribute("TheZ"))
+		{
+			// Attribute property TheZ
+			setTheZ(Integer.valueOf(
+					element.getAttribute("TheZ")));
+		}
+		// Model object: None
+		if (element.hasAttribute("FontSize"))
+		{
+			// Attribute property FontSize
+			setFontSize(Integer.valueOf(
+					element.getAttribute("FontSize")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Fill"))
+		{
+			// Attribute property Fill
+			setFill(Integer.valueOf(
+					element.getAttribute("Fill")));
+		}
+		// Model object: None
+		if (element.hasAttribute("MarkerStart"))
+		{
+			// Attribute property which is an enumeration MarkerStart
+			setMarkerStart(Marker.fromString(
+					element.getAttribute("MarkerStart")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		NodeList Line_nodeList = element.getElementsByTagName("Line");
+		if (Line_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Line node list size %d != 1",
+					Line_nodeList.getLength()));
+		}
+		else if (Line_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
+		if (Rectangle_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Rectangle node list size %d != 1",
+					Rectangle_nodeList.getLength()));
+		}
+		else if (Rectangle_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
+		if (Mask_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Mask node list size %d != 1",
+					Mask_nodeList.getLength()));
+		}
+		else if (Mask_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
+		if (Ellipse_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Ellipse node list size %d != 1",
+					Ellipse_nodeList.getLength()));
+		}
+		else if (Ellipse_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Point_nodeList = element.getElementsByTagName("Point");
+		if (Point_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Point node list size %d != 1",
+					Point_nodeList.getLength()));
+		}
+		else if (Point_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
+		if (Polyline_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Polyline node list size %d != 1",
+					Polyline_nodeList.getLength()));
+		}
+		else if (Polyline_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Path_nodeList = element.getElementsByTagName("Path");
+		if (Path_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Path node list size %d != 1",
+					Path_nodeList.getLength()));
+		}
+		else if (Path_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		NodeList Text_nodeList = element.getElementsByTagName("Text");
+		if (Text_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Text node list size %d != 1",
+					Text_nodeList.getLength()));
+		}
+		else if (Text_nodeList.getLength() != 0)
+		{
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** WARNING *** Unhandled or skipped property Description
 	}
 
 	// -- Shape API methods --
@@ -344,560 +583,52 @@ public class Shape extends Object
 		this.name = name;
 	}
 
-	// Property
-	public Line getLine()
-	{
-		return line;
-	}
+	// *** WARNING *** Unhandled or skipped property Line
 
-	public void setLine(Line line)
-	{
-		this.line = line;
-	}
+	// *** WARNING *** Unhandled or skipped property Rectangle
 
-	// Property
-	public Rectangle getRectangle()
-	{
-		return rectangle;
-	}
+	// *** WARNING *** Unhandled or skipped property Mask
 
-	public void setRectangle(Rectangle rectangle)
-	{
-		this.rectangle = rectangle;
-	}
+	// *** WARNING *** Unhandled or skipped property Ellipse
 
-	// Property
-	public Mask getMask()
-	{
-		return mask;
-	}
+	// *** WARNING *** Unhandled or skipped property Point
 
-	public void setMask(Mask mask)
-	{
-		this.mask = mask;
-	}
+	// *** WARNING *** Unhandled or skipped property Polyline
 
-	// Property
-	public Ellipse getEllipse()
-	{
-		return ellipse;
-	}
+	// *** WARNING *** Unhandled or skipped property Path
 
-	public void setEllipse(Ellipse ellipse)
-	{
-		this.ellipse = ellipse;
-	}
+	// *** WARNING *** Unhandled or skipped property Text
 
-	// Property
-	public Point getPoint()
-	{
-		return point;
-	}
-
-	public void setPoint(Point point)
-	{
-		this.point = point;
-	}
-
-	// Property
-	public Polyline getPolyline()
-	{
-		return polyline;
-	}
-
-	public void setPolyline(Polyline polyline)
-	{
-		this.polyline = polyline;
-	}
-
-	// Property
-	public Path getPath()
-	{
-		return path;
-	}
-
-	public void setPath(Path path)
-	{
-		this.path = path;
-	}
-
-	// Property
-	public Text getText()
-	{
-		return text;
-	}
-
-	public void setText(Text text)
-	{
-		this.text = text;
-	}
-
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Property
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-
-	public Element asXMLElement(Document document)
-	{
-		// Creating XML block for Shape
-		Element Shape_element = document.createElement("Shape");
-		if (strokeDashArray != null)
-		{
-			// Attribute property StrokeDashArray
-			Shape_element.setAttribute("StrokeDashArray", strokeDashArray.toString());
-		}
-		if (strokeWidth != null)
-		{
-			// Attribute property StrokeWidth
-			Shape_element.setAttribute("StrokeWidth", strokeWidth.toString());
-		}
-		if (fillRule != null)
-		{
-			// Attribute property FillRule
-			Shape_element.setAttribute("FillRule", fillRule.toString());
-		}
-		if (lineCap != null)
-		{
-			// Attribute property LineCap
-			Shape_element.setAttribute("LineCap", lineCap.toString());
-		}
-		if (theC != null)
-		{
-			// Attribute property TheC
-			Shape_element.setAttribute("TheC", theC.toString());
-		}
-		if (theT != null)
-		{
-			// Attribute property TheT
-			Shape_element.setAttribute("TheT", theT.toString());
-		}
-		if (transform != null)
-		{
-			// Attribute property Transform
-			Shape_element.setAttribute("Transform", transform.toString());
-		}
-		if (label != null)
-		{
-			// Attribute property Label
-			Shape_element.setAttribute("Label", label.toString());
-		}
-		if (fontFamily != null)
-		{
-			// Attribute property FontFamily
-			Shape_element.setAttribute("FontFamily", fontFamily.toString());
-		}
-		if (stroke != null)
-		{
-			// Attribute property Stroke
-			Shape_element.setAttribute("Stroke", stroke.toString());
-		}
-		if (fontStyle != null)
-		{
-			// Attribute property FontStyle
-			Shape_element.setAttribute("FontStyle", fontStyle.toString());
-		}
-		if (markerEnd != null)
-		{
-			// Attribute property MarkerEnd
-			Shape_element.setAttribute("MarkerEnd", markerEnd.toString());
-		}
-		if (theZ != null)
-		{
-			// Attribute property TheZ
-			Shape_element.setAttribute("TheZ", theZ.toString());
-		}
-		if (fontSize != null)
-		{
-			// Attribute property FontSize
-			Shape_element.setAttribute("FontSize", fontSize.toString());
-		}
-		if (id != null)
-		{
-			// Attribute property ID
-			Shape_element.setAttribute("ID", id.toString());
-		}
-		if (fill != null)
-		{
-			// Attribute property Fill
-			Shape_element.setAttribute("Fill", fill.toString());
-		}
-		if (markerStart != null)
-		{
-			// Attribute property MarkerStart
-			Shape_element.setAttribute("MarkerStart", markerStart.toString());
-		}
-		if (name != null)
-		{
-			// Attribute property Name
-			Shape_element.setAttribute("Name", name.toString());
-		}
-		if (line != null)
-		{
-			// Element property Line which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(line.asXMLElement(document));
-		}
-		if (rectangle != null)
-		{
-			// Element property Rectangle which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(rectangle.asXMLElement(document));
-		}
-		if (mask != null)
-		{
-			// Element property Mask which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(mask.asXMLElement(document));
-		}
-		if (ellipse != null)
-		{
-			// Element property Ellipse which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(ellipse.asXMLElement(document));
-		}
-		if (point != null)
-		{
-			// Element property Point which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(point.asXMLElement(document));
-		}
-		if (polyline != null)
-		{
-			// Element property Polyline which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(polyline.asXMLElement(document));
-		}
-		if (path != null)
-		{
-			// Element property Path which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(path.asXMLElement(document));
-		}
-		if (text != null)
-		{
-			// Element property Text which is complex (has
-			// sub-elements)
-			Shape_element.appendChild(text.asXMLElement(document));
-		}
-		if (annotationList != null)
-		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Shape_element.appendChild(annotationList_value.asXMLElement(document));
-			}
-		}
-		if (description != null)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			Element description_element = document.createElement("Description");
-			description_element.setTextContent(description);
-			Shape_element.appendChild(description_element);
-		}
-		return Shape_element;
-	}
-
-	public static Shape fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Shape".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Shape got %s",
-					tagName));
-		}
-		Shape instance = new Shape();
-		if (element.hasAttribute("StrokeDashArray"))
-		{
-			// Attribute property StrokeDashArray
-			instance.setStrokeDashArray(String.valueOf(
-					element.getAttribute("StrokeDashArray")));
-		}
-		if (element.hasAttribute("StrokeWidth"))
-		{
-			// Attribute property StrokeWidth
-			instance.setStrokeWidth(Double.valueOf(
-					element.getAttribute("StrokeWidth")));
-		}
-		if (element.hasAttribute("FillRule"))
-		{
-			// Attribute property which is an enumeration FillRule
-			instance.setFillRule(FillRule.fromString(
-					element.getAttribute("FillRule")));
-		}
-		if (element.hasAttribute("LineCap"))
-		{
-			// Attribute property which is an enumeration LineCap
-			instance.setLineCap(LineCap.fromString(
-					element.getAttribute("LineCap")));
-		}
-		if (element.hasAttribute("TheC"))
-		{
-			// Attribute property TheC
-			instance.setTheC(Integer.valueOf(
-					element.getAttribute("TheC")));
-		}
-		if (element.hasAttribute("TheT"))
-		{
-			// Attribute property TheT
-			instance.setTheT(Integer.valueOf(
-					element.getAttribute("TheT")));
-		}
-		if (element.hasAttribute("Transform"))
-		{
-			// Attribute property Transform
-			instance.setTransform(String.valueOf(
-					element.getAttribute("Transform")));
-		}
-		if (element.hasAttribute("Label"))
-		{
-			// Attribute property Label
-			instance.setLabel(String.valueOf(
-					element.getAttribute("Label")));
-		}
-		if (element.hasAttribute("FontFamily"))
-		{
-			// Attribute property which is an enumeration FontFamily
-			instance.setFontFamily(FontFamily.fromString(
-					element.getAttribute("FontFamily")));
-		}
-		if (element.hasAttribute("Stroke"))
-		{
-			// Attribute property Stroke
-			instance.setStroke(Integer.valueOf(
-					element.getAttribute("Stroke")));
-		}
-		if (element.hasAttribute("FontStyle"))
-		{
-			// Attribute property which is an enumeration FontStyle
-			instance.setFontStyle(FontStyle.fromString(
-					element.getAttribute("FontStyle")));
-		}
-		if (element.hasAttribute("MarkerEnd"))
-		{
-			// Attribute property which is an enumeration MarkerEnd
-			instance.setMarkerEnd(Marker.fromString(
-					element.getAttribute("MarkerEnd")));
-		}
-		if (element.hasAttribute("TheZ"))
-		{
-			// Attribute property TheZ
-			instance.setTheZ(Integer.valueOf(
-					element.getAttribute("TheZ")));
-		}
-		if (element.hasAttribute("FontSize"))
-		{
-			// Attribute property FontSize
-			instance.setFontSize(Integer.valueOf(
-					element.getAttribute("FontSize")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Fill"))
-		{
-			// Attribute property Fill
-			instance.setFill(Integer.valueOf(
-					element.getAttribute("Fill")));
-		}
-		if (element.hasAttribute("MarkerStart"))
-		{
-			// Attribute property which is an enumeration MarkerStart
-			instance.setMarkerStart(Marker.fromString(
-					element.getAttribute("MarkerStart")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		NodeList Line_nodeList = element.getElementsByTagName("Line");
-		if (Line_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Line node list size %d != 1",
-					Line_nodeList.getLength()));
-		}
-		else if (Line_nodeList.getLength() != 0)
-		{
-			// Element property Line which is complex (has
-			// sub-elements)
-			instance.setLine(Line.fromXMLElement(
-					(Element) Line_nodeList.item(0)));
-		}
-		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
-		if (Rectangle_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Rectangle node list size %d != 1",
-					Rectangle_nodeList.getLength()));
-		}
-		else if (Rectangle_nodeList.getLength() != 0)
-		{
-			// Element property Rectangle which is complex (has
-			// sub-elements)
-			instance.setRectangle(Rectangle.fromXMLElement(
-					(Element) Rectangle_nodeList.item(0)));
-		}
-		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
-		if (Mask_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Mask node list size %d != 1",
-					Mask_nodeList.getLength()));
-		}
-		else if (Mask_nodeList.getLength() != 0)
-		{
-			// Element property Mask which is complex (has
-			// sub-elements)
-			instance.setMask(Mask.fromXMLElement(
-					(Element) Mask_nodeList.item(0)));
-		}
-		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
-		if (Ellipse_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Ellipse node list size %d != 1",
-					Ellipse_nodeList.getLength()));
-		}
-		else if (Ellipse_nodeList.getLength() != 0)
-		{
-			// Element property Ellipse which is complex (has
-			// sub-elements)
-			instance.setEllipse(Ellipse.fromXMLElement(
-					(Element) Ellipse_nodeList.item(0)));
-		}
-		NodeList Point_nodeList = element.getElementsByTagName("Point");
-		if (Point_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Point node list size %d != 1",
-					Point_nodeList.getLength()));
-		}
-		else if (Point_nodeList.getLength() != 0)
-		{
-			// Element property Point which is complex (has
-			// sub-elements)
-			instance.setPoint(Point.fromXMLElement(
-					(Element) Point_nodeList.item(0)));
-		}
-		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
-		if (Polyline_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Polyline node list size %d != 1",
-					Polyline_nodeList.getLength()));
-		}
-		else if (Polyline_nodeList.getLength() != 0)
-		{
-			// Element property Polyline which is complex (has
-			// sub-elements)
-			instance.setPolyline(Polyline.fromXMLElement(
-					(Element) Polyline_nodeList.item(0)));
-		}
-		NodeList Path_nodeList = element.getElementsByTagName("Path");
-		if (Path_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Path node list size %d != 1",
-					Path_nodeList.getLength()));
-		}
-		else if (Path_nodeList.getLength() != 0)
-		{
-			// Element property Path which is complex (has
-			// sub-elements)
-			instance.setPath(Path.fromXMLElement(
-					(Element) Path_nodeList.item(0)));
-		}
-		NodeList Text_nodeList = element.getElementsByTagName("Text");
-		if (Text_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Text node list size %d != 1",
-					Text_nodeList.getLength()));
-		}
-		else if (Text_nodeList.getLength() != 0)
-		{
-			// Element property Text which is complex (has
-			// sub-elements)
-			instance.setText(Text.fromXMLElement(
-					(Element) Text_nodeList.item(0)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		return instance;
-	}
+	// *** WARNING *** Unhandled or skipped property Description
 }

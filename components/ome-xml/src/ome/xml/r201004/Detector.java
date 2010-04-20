@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Detector
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,9 +77,79 @@ public class Detector extends ManufacturerSpec
 
 	// -- Constructors --
 
-	/** Constructs a Detector. */
+	/** Default constructor. */
 	public Detector()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Detector recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Detector(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Detector".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Detector got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Zoom"))
+		{
+			// Attribute property Zoom
+			setZoom(Double.valueOf(
+					element.getAttribute("Zoom")));
+		}
+		// Model object: None
+		if (element.hasAttribute("AmplificationGain"))
+		{
+			// Attribute property AmplificationGain
+			setAmplificationGain(Double.valueOf(
+					element.getAttribute("AmplificationGain")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Gain"))
+		{
+			// Attribute property Gain
+			setGain(Double.valueOf(
+					element.getAttribute("Gain")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Offset"))
+		{
+			// Attribute property Offset
+			setOffset(Double.valueOf(
+					element.getAttribute("Offset")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Type"))
+		{
+			// Attribute property which is an enumeration Type
+			setType(DetectorType.fromString(
+					element.getAttribute("Type")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Voltage"))
+		{
+			// Attribute property Voltage
+			setVoltage(Double.valueOf(
+					element.getAttribute("Voltage")));
+		}
 	}
 
 	// -- Detector API methods --
@@ -200,62 +271,5 @@ public class Detector extends ManufacturerSpec
 			Detector_element.setAttribute("Voltage", voltage.toString());
 		}
 		return Detector_element;
-	}
-
-	public static Detector fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Detector".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Detector got %s",
-					tagName));
-		}
-		Detector instance = new Detector();
-		if (element.hasAttribute("Zoom"))
-		{
-			// Attribute property Zoom
-			instance.setZoom(Double.valueOf(
-					element.getAttribute("Zoom")));
-		}
-		if (element.hasAttribute("AmplificationGain"))
-		{
-			// Attribute property AmplificationGain
-			instance.setAmplificationGain(Double.valueOf(
-					element.getAttribute("AmplificationGain")));
-		}
-		if (element.hasAttribute("Gain"))
-		{
-			// Attribute property Gain
-			instance.setGain(Double.valueOf(
-					element.getAttribute("Gain")));
-		}
-		if (element.hasAttribute("Offset"))
-		{
-			// Attribute property Offset
-			instance.setOffset(Double.valueOf(
-					element.getAttribute("Offset")));
-		}
-		if (element.hasAttribute("Type"))
-		{
-			// Attribute property which is an enumeration Type
-			instance.setType(DetectorType.fromString(
-					element.getAttribute("Type")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Voltage"))
-		{
-			// Attribute property Voltage
-			instance.setVoltage(Double.valueOf(
-					element.getAttribute("Voltage")));
-		}
-		return instance;
 	}
 }

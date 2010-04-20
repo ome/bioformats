@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ScreenRef
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -55,9 +56,30 @@ public class ScreenRef extends ReferenceWithID
 
 	// -- Constructors --
 
-	/** Constructs a ScreenRef. */
+	/** Default constructor. */
 	public ScreenRef()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ScreenRef recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ScreenRef(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ScreenRef".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ScreenRef got %s",
+					tagName));
+		}
 	}
 
 	// -- ScreenRef API methods --
@@ -67,20 +89,5 @@ public class ScreenRef extends ReferenceWithID
 		// Creating XML block for ScreenRef
 		Element ScreenRef_element = document.createElement("ScreenRef");
 		return ScreenRef_element;
-	}
-
-	public static ScreenRef fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ScreenRef".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ScreenRef got %s",
-					tagName));
-		}
-		ScreenRef instance = new ScreenRef();
-		return instance;
 	}
 }

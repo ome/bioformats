@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.LightSourceSettings
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -64,9 +65,51 @@ public class LightSourceSettings extends Settings
 
 	// -- Constructors --
 
-	/** Constructs a LightSourceSettings. */
+	/** Default constructor. */
 	public LightSourceSettings()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs LightSourceSettings recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public LightSourceSettings(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"LightSourceSettings".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of LightSourceSettings got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Wavelength"))
+		{
+			// Attribute property Wavelength
+			setWavelength(Integer.valueOf(
+					element.getAttribute("Wavelength")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Attenuation"))
+		{
+			// Attribute property Attenuation
+			setAttenuation(Double.valueOf(
+					element.getAttribute("Attenuation")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
 	}
 
 	// -- LightSourceSettings API methods --
@@ -124,38 +167,5 @@ public class LightSourceSettings extends Settings
 			LightSourceSettings_element.setAttribute("ID", id.toString());
 		}
 		return LightSourceSettings_element;
-	}
-
-	public static LightSourceSettings fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"LightSourceSettings".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of LightSourceSettings got %s",
-					tagName));
-		}
-		LightSourceSettings instance = new LightSourceSettings();
-		if (element.hasAttribute("Wavelength"))
-		{
-			// Attribute property Wavelength
-			instance.setWavelength(Integer.valueOf(
-					element.getAttribute("Wavelength")));
-		}
-		if (element.hasAttribute("Attenuation"))
-		{
-			// Attribute property Attenuation
-			instance.setAttenuation(Double.valueOf(
-					element.getAttribute("Attenuation")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		return instance;
 	}
 }

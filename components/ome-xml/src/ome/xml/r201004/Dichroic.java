@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Dichroic
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -64,9 +65,41 @@ public class Dichroic extends ManufacturerSpec
 
 	// -- Constructors --
 
-	/** Constructs a Dichroic. */
+	/** Default constructor. */
 	public Dichroic()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Dichroic recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Dichroic(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Dichroic".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Dichroic got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference FilterSet_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
 
 	// -- Dichroic API methods --
@@ -82,66 +115,66 @@ public class Dichroic extends ManufacturerSpec
 		this.id = id;
 	}
 
-	// Back reference FilterSet_BackReference
-	public int sizeOfLinkedFilterSetList()
+	// Property which occurs more than once
+	public int sizeOfFilterSetList()
 	{
 		return filterSet_BackReferenceList.size();
 	}
 
-	public List<FilterSet> copyLinkedFilterSetList()
+	public List<FilterSet> copyFilterSetList()
 	{
 		return new ArrayList<FilterSet>(filterSet_BackReferenceList);
 	}
 
-	public FilterSet getLinkedFilterSet(int index)
+	public FilterSet getFilterSet(int index)
 	{
 		return filterSet_BackReferenceList.get(index);
 	}
 
-	public FilterSet setLinkedFilterSet(int index, FilterSet filterSet_BackReference)
+	public FilterSet setFilterSet(int index, FilterSet filterSet_BackReference)
 	{
 		return filterSet_BackReferenceList.set(index, filterSet_BackReference);
 	}
 
-	public void linkFilterSet(FilterSet filterSet_BackReference)
+	public void addFilterSet(FilterSet filterSet_BackReference)
 	{
-		this.filterSet_BackReferenceList.add(filterSet_BackReference);
+		filterSet_BackReferenceList.add(filterSet_BackReference);
 	}
 
-	public void unlinkFilterSet(FilterSet filterSet_BackReference)
+	public void removeFilterSet(FilterSet filterSet_BackReference)
 	{
-		this.filterSet_BackReferenceList.add(filterSet_BackReference);
+		filterSet_BackReferenceList.remove(filterSet_BackReference);
 	}
 
-	// Back reference LightPath_BackReference
-	public int sizeOfLinkedLightPathList()
+	// Property which occurs more than once
+	public int sizeOfLightPathList()
 	{
 		return lightPath_BackReferenceList.size();
 	}
 
-	public List<LightPath> copyLinkedLightPathList()
+	public List<LightPath> copyLightPathList()
 	{
 		return new ArrayList<LightPath>(lightPath_BackReferenceList);
 	}
 
-	public LightPath getLinkedLightPath(int index)
+	public LightPath getLightPath(int index)
 	{
 		return lightPath_BackReferenceList.get(index);
 	}
 
-	public LightPath setLinkedLightPath(int index, LightPath lightPath_BackReference)
+	public LightPath setLightPath(int index, LightPath lightPath_BackReference)
 	{
 		return lightPath_BackReferenceList.set(index, lightPath_BackReference);
 	}
 
-	public void linkLightPath(LightPath lightPath_BackReference)
+	public void addLightPath(LightPath lightPath_BackReference)
 	{
-		this.lightPath_BackReferenceList.add(lightPath_BackReference);
+		lightPath_BackReferenceList.add(lightPath_BackReference);
 	}
 
-	public void unlinkLightPath(LightPath lightPath_BackReference)
+	public void removeLightPath(LightPath lightPath_BackReference)
 	{
-		this.lightPath_BackReferenceList.add(lightPath_BackReference);
+		lightPath_BackReferenceList.remove(lightPath_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -162,28 +195,5 @@ public class Dichroic extends ManufacturerSpec
 			// *** IGNORING *** Skipped back reference LightPath_BackReference
 		}
 		return Dichroic_element;
-	}
-
-	public static Dichroic fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Dichroic".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Dichroic got %s",
-					tagName));
-		}
-		Dichroic instance = new Dichroic();
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		// *** IGNORING *** Skipped back reference FilterSet_BackReference
-		// *** IGNORING *** Skipped back reference LightPath_BackReference
-		return instance;
 	}
 }

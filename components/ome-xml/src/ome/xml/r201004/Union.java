@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Union
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Union extends Object
+public class Union extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -58,9 +59,40 @@ public class Union extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Union. */
+	/** Default constructor. */
 	public Union()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Union recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Union(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Union".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Union got %s",
+					tagName));
+		}
+		// Model object: None
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Shape_nodeList = element.getElementsByTagName("Shape");
+		for (int i = 0; i < Shape_nodeList.getLength(); i++)
+		{
+// FIXME: Manual hack!
+//			addShape(new Shape(
+//					(Element) Shape_nodeList.item(i)));
+		}
 	}
 
 	// -- Union API methods --
@@ -110,28 +142,5 @@ public class Union extends Object
 			}
 		}
 		return Union_element;
-	}
-
-	public static Union fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Union".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Union got %s",
-					tagName));
-		}
-		Union instance = new Union();
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Shape_nodeList = element.getElementsByTagName("Shape");
-		for (int i = 0; i < Shape_nodeList.getLength(); i++)
-		{
-			instance.addShape(Shape.fromXMLElement(
-					(Element) Shape_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

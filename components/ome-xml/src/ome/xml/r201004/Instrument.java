@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Instrument
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Instrument extends Object
+public class Instrument extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -88,9 +89,121 @@ public class Instrument extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Instrument. */
+	/** Default constructor. */
 	public Instrument()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Instrument recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Instrument(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Instrument".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Instrument got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		NodeList Microscope_nodeList = element.getElementsByTagName("Microscope");
+		if (Microscope_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Microscope node list size %d != 1",
+					Microscope_nodeList.getLength()));
+		}
+		else if (Microscope_nodeList.getLength() != 0)
+		{
+			// Element property Microscope which is complex (has
+			// sub-elements)
+			setMicroscope(new Microscope(
+					(Element) Microscope_nodeList.item(0)));
+		}
+		// Model object: None
+		// Element property LightSource which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList LightSource_nodeList = element.getElementsByTagName("LightSource");
+		for (int i = 0; i < LightSource_nodeList.getLength(); i++)
+		{
+// FIXME: Manual hack!
+//			addLightSource(new LightSource(
+//					(Element) LightSource_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Detector which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Detector_nodeList = element.getElementsByTagName("Detector");
+		for (int i = 0; i < Detector_nodeList.getLength(); i++)
+		{
+			addDetector(new Detector(
+					(Element) Detector_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Objective which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Objective_nodeList = element.getElementsByTagName("Objective");
+		for (int i = 0; i < Objective_nodeList.getLength(); i++)
+		{
+			addObjective(new Objective(
+					(Element) Objective_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property FilterSet which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList FilterSet_nodeList = element.getElementsByTagName("FilterSet");
+		for (int i = 0; i < FilterSet_nodeList.getLength(); i++)
+		{
+			addFilterSet(new FilterSet(
+					(Element) FilterSet_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Filter which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Filter_nodeList = element.getElementsByTagName("Filter");
+		for (int i = 0; i < Filter_nodeList.getLength(); i++)
+		{
+			addFilter(new Filter(
+					(Element) Filter_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Dichroic which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Dichroic_nodeList = element.getElementsByTagName("Dichroic");
+		for (int i = 0; i < Dichroic_nodeList.getLength(); i++)
+		{
+			addDichroic(new Dichroic(
+					(Element) Dichroic_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property OTF which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList OTF_nodeList = element.getElementsByTagName("OTF");
+		for (int i = 0; i < OTF_nodeList.getLength(); i++)
+		{
+			addOTF(new OTF(
+					(Element) OTF_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 	}
 
 	// -- Instrument API methods --
@@ -334,66 +447,66 @@ public class Instrument extends Object
 		otfList.remove(otf);
 	}
 
-	// Back reference Image_BackReference
-	public int sizeOfLinkedImageList()
+	// Property which occurs more than once
+	public int sizeOfImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyLinkedImageList()
+	public List<Image> copyImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getLinkedImage(int index)
+	public Image getImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setLinkedImage(int index, Image image_BackReference)
+	public Image setImage(int index, Image image_BackReference)
 	{
 		return image_BackReferenceList.set(index, image_BackReference);
 	}
 
-	public void linkImage(Image image_BackReference)
+	public void addImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.add(image_BackReference);
 	}
 
-	public void unlinkImage(Image image_BackReference)
+	public void removeImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.remove(image_BackReference);
 	}
 
-	// Back reference ImageProfile_BackReference
-	public int sizeOfLinkedImageProfileList()
+	// Property which occurs more than once
+	public int sizeOfImageProfileList()
 	{
 		return imageProfile_BackReferenceList.size();
 	}
 
-	public List<ImageProfile> copyLinkedImageProfileList()
+	public List<ImageProfile> copyImageProfileList()
 	{
 		return new ArrayList<ImageProfile>(imageProfile_BackReferenceList);
 	}
 
-	public ImageProfile getLinkedImageProfile(int index)
+	public ImageProfile getImageProfile(int index)
 	{
 		return imageProfile_BackReferenceList.get(index);
 	}
 
-	public ImageProfile setLinkedImageProfile(int index, ImageProfile imageProfile_BackReference)
+	public ImageProfile setImageProfile(int index, ImageProfile imageProfile_BackReference)
 	{
 		return imageProfile_BackReferenceList.set(index, imageProfile_BackReference);
 	}
 
-	public void linkImageProfile(ImageProfile imageProfile_BackReference)
+	public void addImageProfile(ImageProfile imageProfile_BackReference)
 	{
-		this.imageProfile_BackReferenceList.add(imageProfile_BackReference);
+		imageProfile_BackReferenceList.add(imageProfile_BackReference);
 	}
 
-	public void unlinkImageProfile(ImageProfile imageProfile_BackReference)
+	public void removeImageProfile(ImageProfile imageProfile_BackReference)
 	{
-		this.imageProfile_BackReferenceList.add(imageProfile_BackReference);
+		imageProfile_BackReferenceList.remove(imageProfile_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -483,99 +596,5 @@ public class Instrument extends Object
 			// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 		}
 		return Instrument_element;
-	}
-
-	public static Instrument fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Instrument".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Instrument got %s",
-					tagName));
-		}
-		Instrument instance = new Instrument();
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		NodeList Microscope_nodeList = element.getElementsByTagName("Microscope");
-		if (Microscope_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Microscope node list size %d != 1",
-					Microscope_nodeList.getLength()));
-		}
-		else if (Microscope_nodeList.getLength() != 0)
-		{
-			// Element property Microscope which is complex (has
-			// sub-elements)
-			instance.setMicroscope(Microscope.fromXMLElement(
-					(Element) Microscope_nodeList.item(0)));
-		}
-		// Element property LightSource which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList LightSource_nodeList = element.getElementsByTagName("LightSource");
-		for (int i = 0; i < LightSource_nodeList.getLength(); i++)
-		{
-			instance.addLightSource(LightSource.fromXMLElement(
-					(Element) LightSource_nodeList.item(i)));
-		}
-		// Element property Detector which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Detector_nodeList = element.getElementsByTagName("Detector");
-		for (int i = 0; i < Detector_nodeList.getLength(); i++)
-		{
-			instance.addDetector(Detector.fromXMLElement(
-					(Element) Detector_nodeList.item(i)));
-		}
-		// Element property Objective which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Objective_nodeList = element.getElementsByTagName("Objective");
-		for (int i = 0; i < Objective_nodeList.getLength(); i++)
-		{
-			instance.addObjective(Objective.fromXMLElement(
-					(Element) Objective_nodeList.item(i)));
-		}
-		// Element property FilterSet which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList FilterSet_nodeList = element.getElementsByTagName("FilterSet");
-		for (int i = 0; i < FilterSet_nodeList.getLength(); i++)
-		{
-			instance.addFilterSet(FilterSet.fromXMLElement(
-					(Element) FilterSet_nodeList.item(i)));
-		}
-		// Element property Filter which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Filter_nodeList = element.getElementsByTagName("Filter");
-		for (int i = 0; i < Filter_nodeList.getLength(); i++)
-		{
-			instance.addFilter(Filter.fromXMLElement(
-					(Element) Filter_nodeList.item(i)));
-		}
-		// Element property Dichroic which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Dichroic_nodeList = element.getElementsByTagName("Dichroic");
-		for (int i = 0; i < Dichroic_nodeList.getLength(); i++)
-		{
-			instance.addDichroic(Dichroic.fromXMLElement(
-					(Element) Dichroic_nodeList.item(i)));
-		}
-		// Element property OTF which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList OTF_nodeList = element.getElementsByTagName("OTF");
-		for (int i = 0; i < OTF_nodeList.getLength(); i++)
-		{
-			instance.addOTF(OTF.fromXMLElement(
-					(Element) OTF_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Image_BackReference
-		// *** IGNORING *** Skipped back reference ImageProfile_BackReference
-		return instance;
 	}
 }

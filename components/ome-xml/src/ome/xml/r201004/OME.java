@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.OME
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class OME extends Object
+public class OME extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -91,9 +92,143 @@ public class OME extends Object
 
 	// -- Constructors --
 
-	/** Constructs a OME. */
+	/** Default constructor. */
 	public OME()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs OME recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public OME(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"OME".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of OME got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("UUID"))
+		{
+			// Attribute property UUID
+			setUUID(String.valueOf(
+					element.getAttribute("UUID")));
+		}
+		// Model object: None
+		// Element property Project which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Project_nodeList = element.getElementsByTagName("Project");
+		for (int i = 0; i < Project_nodeList.getLength(); i++)
+		{
+			addProject(new Project(
+					(Element) Project_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Dataset which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Dataset_nodeList = element.getElementsByTagName("Dataset");
+		for (int i = 0; i < Dataset_nodeList.getLength(); i++)
+		{
+			addDataset(new Dataset(
+					(Element) Dataset_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Experiment which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Experiment_nodeList = element.getElementsByTagName("Experiment");
+		for (int i = 0; i < Experiment_nodeList.getLength(); i++)
+		{
+			addExperiment(new Experiment(
+					(Element) Experiment_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Plate which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Plate_nodeList = element.getElementsByTagName("Plate");
+		for (int i = 0; i < Plate_nodeList.getLength(); i++)
+		{
+			addPlate(new Plate(
+					(Element) Plate_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Screen which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Screen_nodeList = element.getElementsByTagName("Screen");
+		for (int i = 0; i < Screen_nodeList.getLength(); i++)
+		{
+			addScreen(new Screen(
+					(Element) Screen_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Experimenter which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Experimenter_nodeList = element.getElementsByTagName("Experimenter");
+		for (int i = 0; i < Experimenter_nodeList.getLength(); i++)
+		{
+			addExperimenter(new Experimenter(
+					(Element) Experimenter_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Group which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Group_nodeList = element.getElementsByTagName("Group");
+		for (int i = 0; i < Group_nodeList.getLength(); i++)
+		{
+			addGroup(new Group(
+					(Element) Group_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Instrument which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Instrument_nodeList = element.getElementsByTagName("Instrument");
+		for (int i = 0; i < Instrument_nodeList.getLength(); i++)
+		{
+			addInstrument(new Instrument(
+					(Element) Instrument_nodeList.item(i)));
+		}
+		// Model object: None
+		// Element property Image which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Image_nodeList = element.getElementsByTagName("Image");
+		for (int i = 0; i < Image_nodeList.getLength(); i++)
+		{
+			addImage(new Image(
+					(Element) Image_nodeList.item(i)));
+		}
+		// Model object: None
+		NodeList StructuredAnnotations_nodeList = element.getElementsByTagName("StructuredAnnotations");
+		if (StructuredAnnotations_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"StructuredAnnotations node list size %d != 1",
+					StructuredAnnotations_nodeList.getLength()));
+		}
+		else if (StructuredAnnotations_nodeList.getLength() != 0)
+		{
+			// Element property StructuredAnnotations which is complex (has
+			// sub-elements)
+			setStructuredAnnotations(new StructuredAnnotations(
+					(Element) StructuredAnnotations_nodeList.item(0)));
+		}
+		// Model object: None
+		// Element property ROI which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ROI_nodeList = element.getElementsByTagName("ROI");
+		for (int i = 0; i < ROI_nodeList.getLength(); i++)
+		{
+			addROI(new ROI(
+					(Element) ROI_nodeList.item(i)));
+		}
 	}
 
 	// -- OME API methods --
@@ -536,121 +671,5 @@ public class OME extends Object
 			}
 		}
 		return OME_element;
-	}
-
-	public static OME fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"OME".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of OME got %s",
-					tagName));
-		}
-		OME instance = new OME();
-		if (element.hasAttribute("UUID"))
-		{
-			// Attribute property UUID
-			instance.setUUID(String.valueOf(
-					element.getAttribute("UUID")));
-		}
-		// Element property Project which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Project_nodeList = element.getElementsByTagName("Project");
-		for (int i = 0; i < Project_nodeList.getLength(); i++)
-		{
-			instance.addProject(Project.fromXMLElement(
-					(Element) Project_nodeList.item(i)));
-		}
-		// Element property Dataset which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Dataset_nodeList = element.getElementsByTagName("Dataset");
-		for (int i = 0; i < Dataset_nodeList.getLength(); i++)
-		{
-			instance.addDataset(Dataset.fromXMLElement(
-					(Element) Dataset_nodeList.item(i)));
-		}
-		// Element property Experiment which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Experiment_nodeList = element.getElementsByTagName("Experiment");
-		for (int i = 0; i < Experiment_nodeList.getLength(); i++)
-		{
-			instance.addExperiment(Experiment.fromXMLElement(
-					(Element) Experiment_nodeList.item(i)));
-		}
-		// Element property Plate which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Plate_nodeList = element.getElementsByTagName("Plate");
-		for (int i = 0; i < Plate_nodeList.getLength(); i++)
-		{
-			instance.addPlate(Plate.fromXMLElement(
-					(Element) Plate_nodeList.item(i)));
-		}
-		// Element property Screen which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Screen_nodeList = element.getElementsByTagName("Screen");
-		for (int i = 0; i < Screen_nodeList.getLength(); i++)
-		{
-			instance.addScreen(Screen.fromXMLElement(
-					(Element) Screen_nodeList.item(i)));
-		}
-		// Element property Experimenter which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Experimenter_nodeList = element.getElementsByTagName("Experimenter");
-		for (int i = 0; i < Experimenter_nodeList.getLength(); i++)
-		{
-			instance.addExperimenter(Experimenter.fromXMLElement(
-					(Element) Experimenter_nodeList.item(i)));
-		}
-		// Element property Group which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Group_nodeList = element.getElementsByTagName("Group");
-		for (int i = 0; i < Group_nodeList.getLength(); i++)
-		{
-			instance.addGroup(Group.fromXMLElement(
-					(Element) Group_nodeList.item(i)));
-		}
-		// Element property Instrument which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Instrument_nodeList = element.getElementsByTagName("Instrument");
-		for (int i = 0; i < Instrument_nodeList.getLength(); i++)
-		{
-			instance.addInstrument(Instrument.fromXMLElement(
-					(Element) Instrument_nodeList.item(i)));
-		}
-		// Element property Image which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Image_nodeList = element.getElementsByTagName("Image");
-		for (int i = 0; i < Image_nodeList.getLength(); i++)
-		{
-			instance.addImage(Image.fromXMLElement(
-					(Element) Image_nodeList.item(i)));
-		}
-		NodeList StructuredAnnotations_nodeList = element.getElementsByTagName("StructuredAnnotations");
-		if (StructuredAnnotations_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"StructuredAnnotations node list size %d != 1",
-					StructuredAnnotations_nodeList.getLength()));
-		}
-		else if (StructuredAnnotations_nodeList.getLength() != 0)
-		{
-			// Element property StructuredAnnotations which is complex (has
-			// sub-elements)
-			instance.setStructuredAnnotations(StructuredAnnotations.fromXMLElement(
-					(Element) StructuredAnnotations_nodeList.item(0)));
-		}
-		// Element property ROI which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ROI_nodeList = element.getElementsByTagName("ROI");
-		for (int i = 0; i < ROI_nodeList.getLength(); i++)
-		{
-			instance.addROI(ROI.fromXMLElement(
-					(Element) ROI_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

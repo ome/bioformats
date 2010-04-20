@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Ellipse
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Ellipse extends Object
+public class Ellipse extends Shape
 {
 	// -- Instance variables --
 
@@ -67,9 +68,58 @@ public class Ellipse extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Ellipse. */
+	/** Default constructor. */
 	public Ellipse()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Ellipse recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Ellipse(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Ellipse".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Ellipse got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
+		// Model object: None
+		if (element.hasAttribute("RadiusY"))
+		{
+			// Attribute property RadiusY
+			setRadiusY(Double.valueOf(
+					element.getAttribute("RadiusY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("RadiusX"))
+		{
+			// Attribute property RadiusX
+			setRadiusX(Double.valueOf(
+					element.getAttribute("RadiusX")));
+		}
 	}
 
 	// -- Ellipse API methods --
@@ -143,44 +193,5 @@ public class Ellipse extends Object
 			Ellipse_element.setAttribute("RadiusX", radiusX.toString());
 		}
 		return Ellipse_element;
-	}
-
-	public static Ellipse fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Ellipse".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Ellipse got %s",
-					tagName));
-		}
-		Ellipse instance = new Ellipse();
-		if (element.hasAttribute("Y"))
-		{
-			// Attribute property Y
-			instance.setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			instance.setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		if (element.hasAttribute("RadiusY"))
-		{
-			// Attribute property RadiusY
-			instance.setRadiusY(Double.valueOf(
-					element.getAttribute("RadiusY")));
-		}
-		if (element.hasAttribute("RadiusX"))
-		{
-			// Attribute property RadiusX
-			instance.setRadiusX(Double.valueOf(
-					element.getAttribute("RadiusX")));
-		}
-		return instance;
 	}
 }

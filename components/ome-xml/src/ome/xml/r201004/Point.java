@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Point
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Point extends Object
+public class Point extends Shape
 {
 	// -- Instance variables --
 
@@ -61,9 +62,44 @@ public class Point extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Point. */
+	/** Default constructor. */
 	public Point()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Point recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Point(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Point".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Point got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y"))
+		{
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
+		}
 	}
 
 	// -- Point API methods --
@@ -105,32 +141,5 @@ public class Point extends Object
 			Point_element.setAttribute("X", x.toString());
 		}
 		return Point_element;
-	}
-
-	public static Point fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Point".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Point got %s",
-					tagName));
-		}
-		Point instance = new Point();
-		if (element.hasAttribute("Y"))
-		{
-			// Attribute property Y
-			instance.setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			instance.setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		return instance;
 	}
 }

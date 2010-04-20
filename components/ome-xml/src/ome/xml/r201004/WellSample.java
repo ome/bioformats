@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.WellSample
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class WellSample extends Object
+public class WellSample extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -68,10 +69,10 @@ public class WellSample extends Object
 	// Property
 	private Integer timepoint;
 
-	// Property
-	private Image image;
+	// Back reference ImageRef
+	private List<Image> image = new ArrayList<Image>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference PlateAcquisition_BackReference
@@ -79,9 +80,71 @@ public class WellSample extends Object
 
 	// -- Constructors --
 
-	/** Constructs a WellSample. */
+	/** Default constructor. */
 	public WellSample()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs WellSample recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public WellSample(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"WellSample".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of WellSample got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Index"))
+		{
+			// Attribute property Index
+			setIndex(Integer.valueOf(
+					element.getAttribute("Index")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PositionX"))
+		{
+			// Attribute property PositionX
+			setPositionX(Double.valueOf(
+					element.getAttribute("PositionX")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PositionY"))
+		{
+			// Attribute property PositionY
+			setPositionY(Double.valueOf(
+					element.getAttribute("PositionY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Timepoint"))
+		{
+			// Attribute property Timepoint
+			setTimepoint(Integer.valueOf(
+					element.getAttribute("Timepoint")));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ImageRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 	}
 
 	// -- WellSample API methods --
@@ -141,77 +204,97 @@ public class WellSample extends Object
 		this.timepoint = timepoint;
 	}
 
-	// Property
-	public Image getImage()
+	// Reference ImageRef
+	public int sizeOfLinkedImageList()
 	{
-		return image;
+		return image.size();
 	}
 
-	public void setImage(Image image)
+	public List<Image> copyLinkedImageList()
 	{
-		this.image = image;
+		return new ArrayList<Image>(image);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	public Image getLinkedImage(int index)
+	{
+		return image.get(index);
+	}
+
+	public Image setLinkedImage(int index, Image o)
+	{
+		return image.set(index, o);
+	}
+
+	public void linkImage(Image o)
+	{
+		this.image.add(o);
+	}
+
+	public void unlinkImage(Image o)
+	{
+		this.image.add(o);
+	}
+
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
-	// Back reference PlateAcquisition_BackReference
-	public int sizeOfLinkedPlateAcquisitionList()
+	// Property which occurs more than once
+	public int sizeOfPlateAcquisitionList()
 	{
 		return plateAcquisition_BackReferenceList.size();
 	}
 
-	public List<PlateAcquisition> copyLinkedPlateAcquisitionList()
+	public List<PlateAcquisition> copyPlateAcquisitionList()
 	{
 		return new ArrayList<PlateAcquisition>(plateAcquisition_BackReferenceList);
 	}
 
-	public PlateAcquisition getLinkedPlateAcquisition(int index)
+	public PlateAcquisition getPlateAcquisition(int index)
 	{
 		return plateAcquisition_BackReferenceList.get(index);
 	}
 
-	public PlateAcquisition setLinkedPlateAcquisition(int index, PlateAcquisition plateAcquisition_BackReference)
+	public PlateAcquisition setPlateAcquisition(int index, PlateAcquisition plateAcquisition_BackReference)
 	{
 		return plateAcquisition_BackReferenceList.set(index, plateAcquisition_BackReference);
 	}
 
-	public void linkPlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
+	public void addPlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
 	{
-		this.plateAcquisition_BackReferenceList.add(plateAcquisition_BackReference);
+		plateAcquisition_BackReferenceList.add(plateAcquisition_BackReference);
 	}
 
-	public void unlinkPlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
+	public void removePlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
 	{
-		this.plateAcquisition_BackReferenceList.add(plateAcquisition_BackReference);
+		plateAcquisition_BackReferenceList.remove(plateAcquisition_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -245,92 +328,16 @@ public class WellSample extends Object
 		}
 		if (image != null)
 		{
-			// Element property ImageRef which is complex (has
-			// sub-elements)
-			WellSample_element.appendChild(image.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference ImageRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				WellSample_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (plateAcquisition_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 		}
 		return WellSample_element;
-	}
-
-	public static WellSample fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"WellSample".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of WellSample got %s",
-					tagName));
-		}
-		WellSample instance = new WellSample();
-		if (element.hasAttribute("Index"))
-		{
-			// Attribute property Index
-			instance.setIndex(Integer.valueOf(
-					element.getAttribute("Index")));
-		}
-		if (element.hasAttribute("PositionX"))
-		{
-			// Attribute property PositionX
-			instance.setPositionX(Double.valueOf(
-					element.getAttribute("PositionX")));
-		}
-		if (element.hasAttribute("PositionY"))
-		{
-			// Attribute property PositionY
-			instance.setPositionY(Double.valueOf(
-					element.getAttribute("PositionY")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Timepoint"))
-		{
-			// Attribute property Timepoint
-			instance.setTimepoint(Integer.valueOf(
-					element.getAttribute("Timepoint")));
-		}
-		NodeList ImageRef_nodeList = element.getElementsByTagName("ImageRef");
-		if (ImageRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ImageRef node list size %d != 1",
-					ImageRef_nodeList.getLength()));
-		}
-		else if (ImageRef_nodeList.getLength() != 0)
-		{
-			// Element property ImageRef which is complex (has
-			// sub-elements)
-			instance.setImage(Image.fromXMLElement(
-					(Element) ImageRef_nodeList.item(0)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
-		return instance;
 	}
 }

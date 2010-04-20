@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.PlateAcquisition
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class PlateAcquisition extends Object
+public class PlateAcquisition extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -71,17 +72,92 @@ public class PlateAcquisition extends Object
 	// Property
 	private String description;
 
-	// Property which occurs more than once
+	// Back reference WellSampleRef
 	private List<WellSample> wellSampleList = new ArrayList<WellSample>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
-	/** Constructs a PlateAcquisition. */
+	/** Default constructor. */
 	public PlateAcquisition()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs PlateAcquisition recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public PlateAcquisition(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"PlateAcquisition".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of PlateAcquisition got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("MaximumFieldCount"))
+		{
+			// Attribute property MaximumFieldCount
+			setMaximumFieldCount(Integer.valueOf(
+					element.getAttribute("MaximumFieldCount")));
+		}
+		// Model object: None
+		if (element.hasAttribute("EndTime"))
+		{
+			// Attribute property EndTime
+			setEndTime(String.valueOf(
+					element.getAttribute("EndTime")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("StartTime"))
+		{
+			// Attribute property StartTime
+			setStartTime(String.valueOf(
+					element.getAttribute("StartTime")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference WellSampleRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
 	// -- PlateAcquisition API methods --
@@ -152,66 +228,66 @@ public class PlateAcquisition extends Object
 		this.description = description;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfWellSampleList()
+	// Reference WellSampleRef
+	public int sizeOfLinkedWellSampleList()
 	{
 		return wellSampleList.size();
 	}
 
-	public List<WellSample> copyWellSampleList()
+	public List<WellSample> copyLinkedWellSampleList()
 	{
 		return new ArrayList<WellSample>(wellSampleList);
 	}
 
-	public WellSample getWellSample(int index)
+	public WellSample getLinkedWellSample(int index)
 	{
 		return wellSampleList.get(index);
 	}
 
-	public WellSample setWellSample(int index, WellSample wellSample)
+	public WellSample setLinkedWellSample(int index, WellSample o)
 	{
-		return wellSampleList.set(index, wellSample);
+		return wellSampleList.set(index, o);
 	}
 
-	public void addWellSample(WellSample wellSample)
+	public void linkWellSample(WellSample o)
 	{
-		wellSampleList.add(wellSample);
+		this.wellSampleList.add(o);
 	}
 
-	public void removeWellSample(WellSample wellSample)
+	public void unlinkWellSample(WellSample o)
 	{
-		wellSampleList.remove(wellSample);
+		this.wellSampleList.add(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -253,97 +329,12 @@ public class PlateAcquisition extends Object
 		}
 		if (wellSampleList != null)
 		{
-			// Element property WellSampleRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (WellSample wellSampleList_value : wellSampleList)
-			{
-				PlateAcquisition_element.appendChild(wellSampleList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference WellSampleRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				PlateAcquisition_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		return PlateAcquisition_element;
-	}
-
-	public static PlateAcquisition fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"PlateAcquisition".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of PlateAcquisition got %s",
-					tagName));
-		}
-		PlateAcquisition instance = new PlateAcquisition();
-		if (element.hasAttribute("MaximumFieldCount"))
-		{
-			// Attribute property MaximumFieldCount
-			instance.setMaximumFieldCount(Integer.valueOf(
-					element.getAttribute("MaximumFieldCount")));
-		}
-		if (element.hasAttribute("EndTime"))
-		{
-			// Attribute property EndTime
-			instance.setEndTime(String.valueOf(
-					element.getAttribute("EndTime")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("StartTime"))
-		{
-			// Attribute property StartTime
-			instance.setStartTime(String.valueOf(
-					element.getAttribute("StartTime")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		// Element property WellSampleRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList WellSampleRef_nodeList = element.getElementsByTagName("WellSampleRef");
-		for (int i = 0; i < WellSampleRef_nodeList.getLength(); i++)
-		{
-			instance.addWellSample(WellSample.fromXMLElement(
-					(Element) WellSampleRef_nodeList.item(i)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		return instance;
 	}
 }

@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Channel
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Channel extends Object
+public class Channel extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -95,16 +96,16 @@ public class Channel extends Object
 	// Property
 	private LightSourceSettings lightSourceSettings;
 
-	// Property
-	private OTF otf;
+	// Back reference OTFRef
+	private List<OTF> otf = new ArrayList<OTF>();
 
 	// Property
 	private DetectorSettings detectorSettings;
 
-	// Property
-	private FilterSet filterSet;
+	// Back reference FilterSetRef
+	private List<FilterSet> filterSet = new ArrayList<FilterSet>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Property
@@ -112,9 +113,175 @@ public class Channel extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Channel. */
+	/** Default constructor. */
 	public Channel()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Channel recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Channel(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Channel".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Channel got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("PinholeSize"))
+		{
+			// Attribute property PinholeSize
+			setPinholeSize(Double.valueOf(
+					element.getAttribute("PinholeSize")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		if (element.hasAttribute("AcquisitionMode"))
+		{
+			// Attribute property which is an enumeration AcquisitionMode
+			setAcquisitionMode(AcquisitionMode.fromString(
+					element.getAttribute("AcquisitionMode")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Color"))
+		{
+			// Attribute property Color
+			setColor(Integer.valueOf(
+					element.getAttribute("Color")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ContrastMethod"))
+		{
+			// Attribute property which is an enumeration ContrastMethod
+			setContrastMethod(ContrastMethod.fromString(
+					element.getAttribute("ContrastMethod")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ExcitationWavelength"))
+		{
+			// Attribute property ExcitationWavelength
+			setExcitationWavelength(Integer.valueOf(
+					element.getAttribute("ExcitationWavelength")));
+		}
+		// Model object: None
+		if (element.hasAttribute("IlluminationType"))
+		{
+			// Attribute property which is an enumeration IlluminationType
+			setIlluminationType(IlluminationType.fromString(
+					element.getAttribute("IlluminationType")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Fluor"))
+		{
+			// Attribute property Fluor
+			setFluor(String.valueOf(
+					element.getAttribute("Fluor")));
+		}
+		// Model object: None
+		if (element.hasAttribute("PockelCellSetting"))
+		{
+			// Attribute property PockelCellSetting
+			setPockelCellSetting(Integer.valueOf(
+					element.getAttribute("PockelCellSetting")));
+		}
+		// Model object: None
+		if (element.hasAttribute("EmissionWavelength"))
+		{
+			// Attribute property EmissionWavelength
+			setEmissionWavelength(Integer.valueOf(
+					element.getAttribute("EmissionWavelength")));
+		}
+		// Model object: None
+		if (element.hasAttribute("NDFilter"))
+		{
+			// Attribute property NDFilter
+			setNDFilter(Double.valueOf(
+					element.getAttribute("NDFilter")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("SamplesPerPixel"))
+		{
+			// Attribute property SamplesPerPixel
+			setSamplesPerPixel(Integer.valueOf(
+					element.getAttribute("SamplesPerPixel")));
+		}
+		// Model object: None
+		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
+		if (LightSourceSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"LightSourceSettings node list size %d != 1",
+					LightSourceSettings_nodeList.getLength()));
+		}
+		else if (LightSourceSettings_nodeList.getLength() != 0)
+		{
+			// Element property LightSourceSettings which is complex (has
+			// sub-elements)
+			setLightSourceSettings(new LightSourceSettings(
+					(Element) LightSourceSettings_nodeList.item(0)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference OTFRef
+		// Model object: None
+		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
+		if (DetectorSettings_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"DetectorSettings node list size %d != 1",
+					DetectorSettings_nodeList.getLength()));
+		}
+		else if (DetectorSettings_nodeList.getLength() != 0)
+		{
+			// Element property DetectorSettings which is complex (has
+			// sub-elements)
+			setDetectorSettings(new DetectorSettings(
+					(Element) DetectorSettings_nodeList.item(0)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference FilterSetRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		NodeList LightPath_nodeList = element.getElementsByTagName("LightPath");
+		if (LightPath_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"LightPath node list size %d != 1",
+					LightPath_nodeList.getLength()));
+		}
+		else if (LightPath_nodeList.getLength() != 0)
+		{
+			// Element property LightPath which is complex (has
+			// sub-elements)
+			setLightPath(new LightPath(
+					(Element) LightPath_nodeList.item(0)));
+		}
 	}
 
 	// -- Channel API methods --
@@ -273,15 +440,35 @@ public class Channel extends Object
 		this.lightSourceSettings = lightSourceSettings;
 	}
 
-	// Property
-	public OTF getOTF()
+	// Reference OTFRef
+	public int sizeOfLinkedOTFList()
 	{
-		return otf;
+		return otf.size();
 	}
 
-	public void setOTF(OTF otf)
+	public List<OTF> copyLinkedOTFList()
 	{
-		this.otf = otf;
+		return new ArrayList<OTF>(otf);
+	}
+
+	public OTF getLinkedOTF(int index)
+	{
+		return otf.get(index);
+	}
+
+	public OTF setLinkedOTF(int index, OTF o)
+	{
+		return otf.set(index, o);
+	}
+
+	public void linkOTF(OTF o)
+	{
+		this.otf.add(o);
+	}
+
+	public void unlinkOTF(OTF o)
+	{
+		this.otf.add(o);
 	}
 
 	// Property
@@ -295,46 +482,66 @@ public class Channel extends Object
 		this.detectorSettings = detectorSettings;
 	}
 
-	// Property
-	public FilterSet getFilterSet()
+	// Reference FilterSetRef
+	public int sizeOfLinkedFilterSetList()
 	{
-		return filterSet;
+		return filterSet.size();
 	}
 
-	public void setFilterSet(FilterSet filterSet)
+	public List<FilterSet> copyLinkedFilterSetList()
 	{
-		this.filterSet = filterSet;
+		return new ArrayList<FilterSet>(filterSet);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	public FilterSet getLinkedFilterSet(int index)
+	{
+		return filterSet.get(index);
+	}
+
+	public FilterSet setLinkedFilterSet(int index, FilterSet o)
+	{
+		return filterSet.set(index, o);
+	}
+
+	public void linkFilterSet(FilterSet o)
+	{
+		this.filterSet.add(o);
+	}
+
+	public void unlinkFilterSet(FilterSet o)
+	{
+		this.filterSet.add(o);
+	}
+
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	// Property
@@ -425,9 +632,7 @@ public class Channel extends Object
 		}
 		if (otf != null)
 		{
-			// Element property OTFRef which is complex (has
-			// sub-elements)
-			Channel_element.appendChild(otf.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference OTFRef
 		}
 		if (detectorSettings != null)
 		{
@@ -437,18 +642,11 @@ public class Channel extends Object
 		}
 		if (filterSet != null)
 		{
-			// Element property FilterSetRef which is complex (has
-			// sub-elements)
-			Channel_element.appendChild(filterSet.asXMLElement(document));
+			// *** IGNORING *** Skipped back reference FilterSetRef
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Channel_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (lightPath != null)
 		{
@@ -457,181 +655,5 @@ public class Channel extends Object
 			Channel_element.appendChild(lightPath.asXMLElement(document));
 		}
 		return Channel_element;
-	}
-
-	public static Channel fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Channel".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Channel got %s",
-					tagName));
-		}
-		Channel instance = new Channel();
-		if (element.hasAttribute("PinholeSize"))
-		{
-			// Attribute property PinholeSize
-			instance.setPinholeSize(Double.valueOf(
-					element.getAttribute("PinholeSize")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		if (element.hasAttribute("AcquisitionMode"))
-		{
-			// Attribute property which is an enumeration AcquisitionMode
-			instance.setAcquisitionMode(AcquisitionMode.fromString(
-					element.getAttribute("AcquisitionMode")));
-		}
-		if (element.hasAttribute("Color"))
-		{
-			// Attribute property Color
-			instance.setColor(Integer.valueOf(
-					element.getAttribute("Color")));
-		}
-		if (element.hasAttribute("ContrastMethod"))
-		{
-			// Attribute property which is an enumeration ContrastMethod
-			instance.setContrastMethod(ContrastMethod.fromString(
-					element.getAttribute("ContrastMethod")));
-		}
-		if (element.hasAttribute("ExcitationWavelength"))
-		{
-			// Attribute property ExcitationWavelength
-			instance.setExcitationWavelength(Integer.valueOf(
-					element.getAttribute("ExcitationWavelength")));
-		}
-		if (element.hasAttribute("IlluminationType"))
-		{
-			// Attribute property which is an enumeration IlluminationType
-			instance.setIlluminationType(IlluminationType.fromString(
-					element.getAttribute("IlluminationType")));
-		}
-		if (element.hasAttribute("Fluor"))
-		{
-			// Attribute property Fluor
-			instance.setFluor(String.valueOf(
-					element.getAttribute("Fluor")));
-		}
-		if (element.hasAttribute("PockelCellSetting"))
-		{
-			// Attribute property PockelCellSetting
-			instance.setPockelCellSetting(Integer.valueOf(
-					element.getAttribute("PockelCellSetting")));
-		}
-		if (element.hasAttribute("EmissionWavelength"))
-		{
-			// Attribute property EmissionWavelength
-			instance.setEmissionWavelength(Integer.valueOf(
-					element.getAttribute("EmissionWavelength")));
-		}
-		if (element.hasAttribute("NDFilter"))
-		{
-			// Attribute property NDFilter
-			instance.setNDFilter(Double.valueOf(
-					element.getAttribute("NDFilter")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("SamplesPerPixel"))
-		{
-			// Attribute property SamplesPerPixel
-			instance.setSamplesPerPixel(Integer.valueOf(
-					element.getAttribute("SamplesPerPixel")));
-		}
-		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
-		if (LightSourceSettings_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"LightSourceSettings node list size %d != 1",
-					LightSourceSettings_nodeList.getLength()));
-		}
-		else if (LightSourceSettings_nodeList.getLength() != 0)
-		{
-			// Element property LightSourceSettings which is complex (has
-			// sub-elements)
-			instance.setLightSourceSettings(LightSourceSettings.fromXMLElement(
-					(Element) LightSourceSettings_nodeList.item(0)));
-		}
-		NodeList OTFRef_nodeList = element.getElementsByTagName("OTFRef");
-		if (OTFRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"OTFRef node list size %d != 1",
-					OTFRef_nodeList.getLength()));
-		}
-		else if (OTFRef_nodeList.getLength() != 0)
-		{
-			// Element property OTFRef which is complex (has
-			// sub-elements)
-			instance.setOTF(OTF.fromXMLElement(
-					(Element) OTFRef_nodeList.item(0)));
-		}
-		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
-		if (DetectorSettings_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"DetectorSettings node list size %d != 1",
-					DetectorSettings_nodeList.getLength()));
-		}
-		else if (DetectorSettings_nodeList.getLength() != 0)
-		{
-			// Element property DetectorSettings which is complex (has
-			// sub-elements)
-			instance.setDetectorSettings(DetectorSettings.fromXMLElement(
-					(Element) DetectorSettings_nodeList.item(0)));
-		}
-		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
-		if (FilterSetRef_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"FilterSetRef node list size %d != 1",
-					FilterSetRef_nodeList.getLength()));
-		}
-		else if (FilterSetRef_nodeList.getLength() != 0)
-		{
-			// Element property FilterSetRef which is complex (has
-			// sub-elements)
-			instance.setFilterSet(FilterSet.fromXMLElement(
-					(Element) FilterSetRef_nodeList.item(0)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		NodeList LightPath_nodeList = element.getElementsByTagName("LightPath");
-		if (LightPath_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"LightPath node list size %d != 1",
-					LightPath_nodeList.getLength()));
-		}
-		else if (LightPath_nodeList.getLength() != 0)
-		{
-			// Element property LightPath which is complex (has
-			// sub-elements)
-			instance.setLightPath(LightPath.fromXMLElement(
-					(Element) LightPath_nodeList.item(0)));
-		}
-		return instance;
 	}
 }

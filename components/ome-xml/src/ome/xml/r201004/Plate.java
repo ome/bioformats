@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Plate
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Plate extends Object
+public class Plate extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -86,13 +87,13 @@ public class Plate extends Object
 	// Property
 	private String description;
 
-	// Property which occurs more than once
+	// Back reference ScreenRef
 	private List<Screen> screenList = new ArrayList<Screen>();
 
 	// Property which occurs more than once
 	private List<Well> wellList = new ArrayList<Well>();
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Property which occurs more than once
@@ -103,9 +104,139 @@ public class Plate extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Plate. */
+	/** Default constructor. */
 	public Plate()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Plate recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Plate(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Plate".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Plate got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Status"))
+		{
+			// Attribute property Status
+			setStatus(String.valueOf(
+					element.getAttribute("Status")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Rows"))
+		{
+			// Attribute property Rows
+			setRows(Integer.valueOf(
+					element.getAttribute("Rows")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ExternalIdentifier"))
+		{
+			// Attribute property ExternalIdentifier
+			setExternalIdentifier(String.valueOf(
+					element.getAttribute("ExternalIdentifier")));
+		}
+		// Model object: None
+		if (element.hasAttribute("RowNamingConvention"))
+		{
+			// Attribute property which is an enumeration RowNamingConvention
+			setRowNamingConvention(NamingConvention.fromString(
+					element.getAttribute("RowNamingConvention")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ColumnNamingConvention"))
+		{
+			// Attribute property which is an enumeration ColumnNamingConvention
+			setColumnNamingConvention(NamingConvention.fromString(
+					element.getAttribute("ColumnNamingConvention")));
+		}
+		// Model object: None
+		if (element.hasAttribute("WellOriginY"))
+		{
+			// Attribute property WellOriginY
+			setWellOriginY(Double.valueOf(
+					element.getAttribute("WellOriginY")));
+		}
+		// Model object: None
+		if (element.hasAttribute("WellOriginX"))
+		{
+			// Attribute property WellOriginX
+			setWellOriginX(Double.valueOf(
+					element.getAttribute("WellOriginX")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Columns"))
+		{
+			// Attribute property Columns
+			setColumns(Integer.valueOf(
+					element.getAttribute("Columns")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ScreenRef
+		// Model object: None
+		// Element property Well which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList Well_nodeList = element.getElementsByTagName("Well");
+		for (int i = 0; i < Well_nodeList.getLength(); i++)
+		{
+			addWell(new Well(
+					(Element) Well_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		// Element property PlateAcquisition which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList PlateAcquisition_nodeList = element.getElementsByTagName("PlateAcquisition");
+		for (int i = 0; i < PlateAcquisition_nodeList.getLength(); i++)
+		{
+			addPlateAcquisition(new PlateAcquisition(
+					(Element) PlateAcquisition_nodeList.item(i)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Screen_BackReference
 	}
 
 	// -- Plate API methods --
@@ -231,35 +362,35 @@ public class Plate extends Object
 		this.description = description;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfScreenList()
+	// Reference ScreenRef
+	public int sizeOfLinkedScreenList()
 	{
 		return screenList.size();
 	}
 
-	public List<Screen> copyScreenList()
+	public List<Screen> copyLinkedScreenList()
 	{
 		return new ArrayList<Screen>(screenList);
 	}
 
-	public Screen getScreen(int index)
+	public Screen getLinkedScreen(int index)
 	{
 		return screenList.get(index);
 	}
 
-	public Screen setScreen(int index, Screen screen)
+	public Screen setLinkedScreen(int index, Screen o)
 	{
-		return screenList.set(index, screen);
+		return screenList.set(index, o);
 	}
 
-	public void addScreen(Screen screen)
+	public void linkScreen(Screen o)
 	{
-		screenList.add(screen);
+		this.screenList.add(o);
 	}
 
-	public void removeScreen(Screen screen)
+	public void unlinkScreen(Screen o)
 	{
-		screenList.remove(screen);
+		this.screenList.add(o);
 	}
 
 	// Property which occurs more than once
@@ -293,35 +424,35 @@ public class Plate extends Object
 		wellList.remove(well);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	// Property which occurs more than once
@@ -355,35 +486,35 @@ public class Plate extends Object
 		plateAcquisitionList.remove(plateAcquisition);
 	}
 
-	// Back reference Screen_BackReference
-	public int sizeOfLinkedScreenList()
+	// Property which occurs more than once
+	public int sizeOfScreenList()
 	{
 		return screen_BackReferenceList.size();
 	}
 
-	public List<Screen> copyLinkedScreenList()
+	public List<Screen> copyScreenList()
 	{
 		return new ArrayList<Screen>(screen_BackReferenceList);
 	}
 
-	public Screen getLinkedScreen(int index)
+	public Screen getScreen(int index)
 	{
 		return screen_BackReferenceList.get(index);
 	}
 
-	public Screen setLinkedScreen(int index, Screen screen_BackReference)
+	public Screen setScreen(int index, Screen screen_BackReference)
 	{
 		return screen_BackReferenceList.set(index, screen_BackReference);
 	}
 
-	public void linkScreen(Screen screen_BackReference)
+	public void addScreen(Screen screen_BackReference)
 	{
-		this.screen_BackReferenceList.add(screen_BackReference);
+		screen_BackReferenceList.add(screen_BackReference);
 	}
 
-	public void unlinkScreen(Screen screen_BackReference)
+	public void removeScreen(Screen screen_BackReference)
 	{
-		this.screen_BackReferenceList.add(screen_BackReference);
+		screen_BackReferenceList.remove(screen_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -450,12 +581,7 @@ public class Plate extends Object
 		}
 		if (screenList != null)
 		{
-			// Element property ScreenRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Screen screenList_value : screenList)
-			{
-				Plate_element.appendChild(screenList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference ScreenRef
 		}
 		if (wellList != null)
 		{
@@ -468,12 +594,7 @@ public class Plate extends Object
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				Plate_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (plateAcquisitionList != null)
 		{
@@ -489,127 +610,5 @@ public class Plate extends Object
 			// *** IGNORING *** Skipped back reference Screen_BackReference
 		}
 		return Plate_element;
-	}
-
-	public static Plate fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Plate".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Plate got %s",
-					tagName));
-		}
-		Plate instance = new Plate();
-		if (element.hasAttribute("Status"))
-		{
-			// Attribute property Status
-			instance.setStatus(String.valueOf(
-					element.getAttribute("Status")));
-		}
-		if (element.hasAttribute("Rows"))
-		{
-			// Attribute property Rows
-			instance.setRows(Integer.valueOf(
-					element.getAttribute("Rows")));
-		}
-		if (element.hasAttribute("ExternalIdentifier"))
-		{
-			// Attribute property ExternalIdentifier
-			instance.setExternalIdentifier(String.valueOf(
-					element.getAttribute("ExternalIdentifier")));
-		}
-		if (element.hasAttribute("RowNamingConvention"))
-		{
-			// Attribute property which is an enumeration RowNamingConvention
-			instance.setRowNamingConvention(NamingConvention.fromString(
-					element.getAttribute("RowNamingConvention")));
-		}
-		if (element.hasAttribute("ColumnNamingConvention"))
-		{
-			// Attribute property which is an enumeration ColumnNamingConvention
-			instance.setColumnNamingConvention(NamingConvention.fromString(
-					element.getAttribute("ColumnNamingConvention")));
-		}
-		if (element.hasAttribute("WellOriginY"))
-		{
-			// Attribute property WellOriginY
-			instance.setWellOriginY(Double.valueOf(
-					element.getAttribute("WellOriginY")));
-		}
-		if (element.hasAttribute("WellOriginX"))
-		{
-			// Attribute property WellOriginX
-			instance.setWellOriginX(Double.valueOf(
-					element.getAttribute("WellOriginX")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Columns"))
-		{
-			// Attribute property Columns
-			instance.setColumns(Integer.valueOf(
-					element.getAttribute("Columns")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		// Element property ScreenRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ScreenRef_nodeList = element.getElementsByTagName("ScreenRef");
-		for (int i = 0; i < ScreenRef_nodeList.getLength(); i++)
-		{
-			instance.addScreen(Screen.fromXMLElement(
-					(Element) ScreenRef_nodeList.item(i)));
-		}
-		// Element property Well which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Well_nodeList = element.getElementsByTagName("Well");
-		for (int i = 0; i < Well_nodeList.getLength(); i++)
-		{
-			instance.addWell(Well.fromXMLElement(
-					(Element) Well_nodeList.item(i)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		// Element property PlateAcquisition which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList PlateAcquisition_nodeList = element.getElementsByTagName("PlateAcquisition");
-		for (int i = 0; i < PlateAcquisition_nodeList.getLength(); i++)
-		{
-			instance.addPlateAcquisition(PlateAcquisition.fromXMLElement(
-					(Element) PlateAcquisition_nodeList.item(i)));
-		}
-		// *** IGNORING *** Skipped back reference Screen_BackReference
-		return instance;
 	}
 }

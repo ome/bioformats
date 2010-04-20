@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.LightPath
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,135 +50,37 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class LightPath extends Object
+public class LightPath extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
-	// Property which occurs more than once
+	// Back reference ExcitationFilterRef
 	private List<Filter> excitationFilterList = new ArrayList<Filter>();
 
-	// Property
-	private Dichroic dichroic;
+	// Back reference DichroicRef
+	private List<Dichroic> dichroic = new ArrayList<Dichroic>();
 
-	// Property which occurs more than once
+	// Back reference EmissionFilterRef
 	private List<Filter> emissionFilterList = new ArrayList<Filter>();
 
 	// -- Constructors --
 
-	/** Constructs a LightPath. */
+	/** Default constructor. */
 	public LightPath()
 	{
+		super();
 	}
 
-	// -- LightPath API methods --
-
-	// Property which occurs more than once
-	public int sizeOfExcitationFilterList()
+	/** 
+	 * Constructs LightPath recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public LightPath(Element element) throws EnumerationException
 	{
-		return excitationFilterList.size();
-	}
-
-	public List<Filter> copyExcitationFilterList()
-	{
-		return new ArrayList<Filter>(excitationFilterList);
-	}
-
-	public Filter getExcitationFilter(int index)
-	{
-		return excitationFilterList.get(index);
-	}
-
-	public Filter setExcitationFilter(int index, Filter excitationFilter)
-	{
-		return excitationFilterList.set(index, excitationFilter);
-	}
-
-	public void addExcitationFilter(Filter excitationFilter)
-	{
-		excitationFilterList.add(excitationFilter);
-	}
-
-	public void removeExcitationFilter(Filter excitationFilter)
-	{
-		excitationFilterList.remove(excitationFilter);
-	}
-
-	// Property
-	public Dichroic getDichroic()
-	{
-		return dichroic;
-	}
-
-	public void setDichroic(Dichroic dichroic)
-	{
-		this.dichroic = dichroic;
-	}
-
-	// Property which occurs more than once
-	public int sizeOfEmissionFilterList()
-	{
-		return emissionFilterList.size();
-	}
-
-	public List<Filter> copyEmissionFilterList()
-	{
-		return new ArrayList<Filter>(emissionFilterList);
-	}
-
-	public Filter getEmissionFilter(int index)
-	{
-		return emissionFilterList.get(index);
-	}
-
-	public Filter setEmissionFilter(int index, Filter emissionFilter)
-	{
-		return emissionFilterList.set(index, emissionFilter);
-	}
-
-	public void addEmissionFilter(Filter emissionFilter)
-	{
-		emissionFilterList.add(emissionFilter);
-	}
-
-	public void removeEmissionFilter(Filter emissionFilter)
-	{
-		emissionFilterList.remove(emissionFilter);
-	}
-
-	public Element asXMLElement(Document document)
-	{
-		// Creating XML block for LightPath
-		Element LightPath_element = document.createElement("LightPath");
-		if (excitationFilterList != null)
-		{
-			// Element property ExcitationFilterRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Filter excitationFilterList_value : excitationFilterList)
-			{
-				LightPath_element.appendChild(excitationFilterList_value.asXMLElement(document));
-			}
-		}
-		if (dichroic != null)
-		{
-			// Element property DichroicRef which is complex (has
-			// sub-elements)
-			LightPath_element.appendChild(dichroic.asXMLElement(document));
-		}
-		if (emissionFilterList != null)
-		{
-			// Element property EmissionFilterRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Filter emissionFilterList_value : emissionFilterList)
-			{
-				LightPath_element.appendChild(emissionFilterList_value.asXMLElement(document));
-			}
-		}
-		return LightPath_element;
-	}
-
-	public static LightPath fromXMLElement(Element element)
-		throws EnumerationException
-	{
+		super(element);
 		String tagName = element.getTagName();
 		if (!"LightPath".equals(tagName))
 		{
@@ -186,38 +89,125 @@ public class LightPath extends Object
 					"Expecting node name of LightPath got %s",
 					tagName));
 		}
-		LightPath instance = new LightPath();
-		// Element property ExcitationFilterRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ExcitationFilterRef_nodeList = element.getElementsByTagName("ExcitationFilterRef");
-		for (int i = 0; i < ExcitationFilterRef_nodeList.getLength(); i++)
+		// Model object: None
+		// *** IGNORING *** Skipped back reference ExcitationFilterRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference DichroicRef
+		// Model object: None
+		// *** IGNORING *** Skipped back reference EmissionFilterRef
+	}
+
+	// -- LightPath API methods --
+
+	// Reference ExcitationFilterRef
+	public int sizeOfLinkedExcitationFilterList()
+	{
+		return excitationFilterList.size();
+	}
+
+	public List<Filter> copyLinkedExcitationFilterList()
+	{
+		return new ArrayList<Filter>(excitationFilterList);
+	}
+
+	public Filter getLinkedExcitationFilter(int index)
+	{
+		return excitationFilterList.get(index);
+	}
+
+	public Filter setLinkedExcitationFilter(int index, Filter o)
+	{
+		return excitationFilterList.set(index, o);
+	}
+
+	public void linkExcitationFilter(Filter o)
+	{
+		this.excitationFilterList.add(o);
+	}
+
+	public void unlinkExcitationFilter(Filter o)
+	{
+		this.excitationFilterList.add(o);
+	}
+
+	// Reference DichroicRef
+	public int sizeOfLinkedDichroicList()
+	{
+		return dichroic.size();
+	}
+
+	public List<Dichroic> copyLinkedDichroicList()
+	{
+		return new ArrayList<Dichroic>(dichroic);
+	}
+
+	public Dichroic getLinkedDichroic(int index)
+	{
+		return dichroic.get(index);
+	}
+
+	public Dichroic setLinkedDichroic(int index, Dichroic o)
+	{
+		return dichroic.set(index, o);
+	}
+
+	public void linkDichroic(Dichroic o)
+	{
+		this.dichroic.add(o);
+	}
+
+	public void unlinkDichroic(Dichroic o)
+	{
+		this.dichroic.add(o);
+	}
+
+	// Reference EmissionFilterRef
+	public int sizeOfLinkedEmissionFilterList()
+	{
+		return emissionFilterList.size();
+	}
+
+	public List<Filter> copyLinkedEmissionFilterList()
+	{
+		return new ArrayList<Filter>(emissionFilterList);
+	}
+
+	public Filter getLinkedEmissionFilter(int index)
+	{
+		return emissionFilterList.get(index);
+	}
+
+	public Filter setLinkedEmissionFilter(int index, Filter o)
+	{
+		return emissionFilterList.set(index, o);
+	}
+
+	public void linkEmissionFilter(Filter o)
+	{
+		this.emissionFilterList.add(o);
+	}
+
+	public void unlinkEmissionFilter(Filter o)
+	{
+		this.emissionFilterList.add(o);
+	}
+
+	public Element asXMLElement(Document document)
+	{
+		// Creating XML block for LightPath
+		Element LightPath_element = document.createElement("LightPath");
+		if (excitationFilterList != null)
 		{
-			instance.addExcitationFilter(Filter.fromXMLElement(
-					(Element) ExcitationFilterRef_nodeList.item(i)));
+			// *** IGNORING *** Skipped back reference ExcitationFilterRef
 		}
-		NodeList DichroicRef_nodeList = element.getElementsByTagName("DichroicRef");
-		if (DichroicRef_nodeList.getLength() > 1)
+		if (dichroic != null)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"DichroicRef node list size %d != 1",
-					DichroicRef_nodeList.getLength()));
+			// *** IGNORING *** Skipped back reference DichroicRef
 		}
-		else if (DichroicRef_nodeList.getLength() != 0)
+		if (emissionFilterList != null)
 		{
-			// Element property DichroicRef which is complex (has
-			// sub-elements)
-			instance.setDichroic(Dichroic.fromXMLElement(
-					(Element) DichroicRef_nodeList.item(0)));
+			// *** IGNORING *** Skipped back reference EmissionFilterRef
 		}
-		// Element property EmissionFilterRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList EmissionFilterRef_nodeList = element.getElementsByTagName("EmissionFilterRef");
-		for (int i = 0; i < EmissionFilterRef_nodeList.getLength(); i++)
-		{
-			instance.addEmissionFilter(Filter.fromXMLElement(
-					(Element) EmissionFilterRef_nodeList.item(i)));
-		}
-		return instance;
+		return LightPath_element;
 	}
 }

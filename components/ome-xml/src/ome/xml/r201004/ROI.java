@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.ROI
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ROI extends Object
+public class ROI extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -65,7 +66,7 @@ public class ROI extends Object
 	// Property
 	private Union union;
 
-	// Property which occurs more than once
+	// Back reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Property
@@ -79,9 +80,88 @@ public class ROI extends Object
 
 	// -- Constructors --
 
-	/** Constructs a ROI. */
+	/** Default constructor. */
 	public ROI()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ROI recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ROI(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"ROI".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ROI got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Namespace"))
+		{
+			// Attribute property Namespace
+			setNamespace(String.valueOf(
+					element.getAttribute("Namespace")));
+		}
+		// Model object: None
+		if (element.hasAttribute("ID"))
+		{
+			// Attribute property ID
+			setID(String.valueOf(
+					element.getAttribute("ID")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Name"))
+		{
+			// Attribute property Name
+			setName(String.valueOf(
+					element.getAttribute("Name")));
+		}
+		// Model object: None
+		NodeList Union_nodeList = element.getElementsByTagName("Union");
+		if (Union_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Union node list size %d != 1",
+					Union_nodeList.getLength()));
+		}
+		else if (Union_nodeList.getLength() != 0)
+		{
+			// Element property Union which is complex (has
+			// sub-elements)
+			setUnion(new Union(
+					(Element) Union_nodeList.item(0)));
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Model object: None
+		NodeList Description_nodeList = element.getElementsByTagName("Description");
+		if (Description_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.getLength()));
+		}
+		else if (Description_nodeList.getLength() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(Description_nodeList.item(0).getTextContent());
+		}
+		// Model object: None
+		// *** IGNORING *** Skipped back reference Image_BackReference
+		// Model object: None
+		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 	}
 
 	// -- ROI API methods --
@@ -130,35 +210,35 @@ public class ROI extends Object
 		this.union = union;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfAnnotationList()
+	// Reference AnnotationRef
+	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
 	}
 
-	public List<Annotation> copyAnnotationList()
+	public List<Annotation> copyLinkedAnnotationList()
 	{
 		return new ArrayList<Annotation>(annotationList);
 	}
 
-	public Annotation getAnnotation(int index)
+	public Annotation getLinkedAnnotation(int index)
 	{
 		return annotationList.get(index);
 	}
 
-	public Annotation setAnnotation(int index, Annotation annotation)
+	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, annotation);
+		return annotationList.set(index, o);
 	}
 
-	public void addAnnotation(Annotation annotation)
+	public void linkAnnotation(Annotation o)
 	{
-		annotationList.add(annotation);
+		this.annotationList.add(o);
 	}
 
-	public void removeAnnotation(Annotation annotation)
+	public void unlinkAnnotation(Annotation o)
 	{
-		annotationList.remove(annotation);
+		this.annotationList.add(o);
 	}
 
 	// Property
@@ -172,66 +252,66 @@ public class ROI extends Object
 		this.description = description;
 	}
 
-	// Back reference Image_BackReference
-	public int sizeOfLinkedImageList()
+	// Property which occurs more than once
+	public int sizeOfImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyLinkedImageList()
+	public List<Image> copyImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getLinkedImage(int index)
+	public Image getImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setLinkedImage(int index, Image image_BackReference)
+	public Image setImage(int index, Image image_BackReference)
 	{
 		return image_BackReferenceList.set(index, image_BackReference);
 	}
 
-	public void linkImage(Image image_BackReference)
+	public void addImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.add(image_BackReference);
 	}
 
-	public void unlinkImage(Image image_BackReference)
+	public void removeImage(Image image_BackReference)
 	{
-		this.image_BackReferenceList.add(image_BackReference);
+		image_BackReferenceList.remove(image_BackReference);
 	}
 
-	// Back reference MicrobeamManipulation_BackReference
-	public int sizeOfLinkedMicrobeamManipulationList()
+	// Property which occurs more than once
+	public int sizeOfMicrobeamManipulationList()
 	{
 		return microbeamManipulation_BackReferenceList.size();
 	}
 
-	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
+	public List<MicrobeamManipulation> copyMicrobeamManipulationList()
 	{
 		return new ArrayList<MicrobeamManipulation>(microbeamManipulation_BackReferenceList);
 	}
 
-	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
+	public MicrobeamManipulation getMicrobeamManipulation(int index)
 	{
 		return microbeamManipulation_BackReferenceList.get(index);
 	}
 
-	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation_BackReference)
+	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation_BackReference)
 	{
 		return microbeamManipulation_BackReferenceList.set(index, microbeamManipulation_BackReference);
 	}
 
-	public void linkMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
 	{
-		this.microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
+		microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
 	}
 
-	public void unlinkMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public void removeMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
 	{
-		this.microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
+		microbeamManipulation_BackReferenceList.remove(microbeamManipulation_BackReference);
 	}
 
 	public Element asXMLElement(Document document)
@@ -261,12 +341,7 @@ public class ROI extends Object
 		}
 		if (annotationList != null)
 		{
-			// Element property AnnotationRef which is complex (has
-			// sub-elements) and occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				ROI_element.appendChild(annotationList_value.asXMLElement(document));
-			}
+			// *** IGNORING *** Skipped back reference AnnotationRef
 		}
 		if (description != null)
 		{
@@ -285,77 +360,5 @@ public class ROI extends Object
 			// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		}
 		return ROI_element;
-	}
-
-	public static ROI fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"ROI".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ROI got %s",
-					tagName));
-		}
-		ROI instance = new ROI();
-		if (element.hasAttribute("Namespace"))
-		{
-			// Attribute property Namespace
-			instance.setNamespace(String.valueOf(
-					element.getAttribute("Namespace")));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// Attribute property ID
-			instance.setID(String.valueOf(
-					element.getAttribute("ID")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			instance.setName(String.valueOf(
-					element.getAttribute("Name")));
-		}
-		NodeList Union_nodeList = element.getElementsByTagName("Union");
-		if (Union_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Union node list size %d != 1",
-					Union_nodeList.getLength()));
-		}
-		else if (Union_nodeList.getLength() != 0)
-		{
-			// Element property Union which is complex (has
-			// sub-elements)
-			instance.setUnion(Union.fromXMLElement(
-					(Element) Union_nodeList.item(0)));
-		}
-		// Element property AnnotationRef which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
-		{
-			instance.addAnnotation(Annotation.fromXMLElement(
-					(Element) AnnotationRef_nodeList.item(i)));
-		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
-		}
-		else if (Description_nodeList.getLength() != 0)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			instance.setDescription(Description_nodeList.item(0).getTextContent());
-		}
-		// *** IGNORING *** Skipped back reference Image_BackReference
-		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
-		return instance;
 	}
 }

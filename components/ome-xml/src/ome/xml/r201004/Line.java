@@ -1,9 +1,10 @@
+
 /*
  * ome.xml.r201004.Line
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -31,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 12:31:20+0100
+ * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Line extends Object
+public class Line extends Shape
 {
 	// -- Instance variables --
 
@@ -67,9 +68,58 @@ public class Line extends Object
 
 	// -- Constructors --
 
-	/** Constructs a Line. */
+	/** Default constructor. */
 	public Line()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs Line recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public Line(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"Line".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of Line got %s",
+					tagName));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y1"))
+		{
+			// Attribute property Y1
+			setY1(Double.valueOf(
+					element.getAttribute("Y1")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X2"))
+		{
+			// Attribute property X2
+			setX2(Double.valueOf(
+					element.getAttribute("X2")));
+		}
+		// Model object: None
+		if (element.hasAttribute("X1"))
+		{
+			// Attribute property X1
+			setX1(Double.valueOf(
+					element.getAttribute("X1")));
+		}
+		// Model object: None
+		if (element.hasAttribute("Y2"))
+		{
+			// Attribute property Y2
+			setY2(Double.valueOf(
+					element.getAttribute("Y2")));
+		}
 	}
 
 	// -- Line API methods --
@@ -143,44 +193,5 @@ public class Line extends Object
 			Line_element.setAttribute("Y2", y2.toString());
 		}
 		return Line_element;
-	}
-
-	public static Line fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"Line".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Line got %s",
-					tagName));
-		}
-		Line instance = new Line();
-		if (element.hasAttribute("Y1"))
-		{
-			// Attribute property Y1
-			instance.setY1(Double.valueOf(
-					element.getAttribute("Y1")));
-		}
-		if (element.hasAttribute("X2"))
-		{
-			// Attribute property X2
-			instance.setX2(Double.valueOf(
-					element.getAttribute("X2")));
-		}
-		if (element.hasAttribute("X1"))
-		{
-			// Attribute property X1
-			instance.setX1(Double.valueOf(
-					element.getAttribute("X1")));
-		}
-		if (element.hasAttribute("Y2"))
-		{
-			// Attribute property Y2
-			instance.setY2(Double.valueOf(
-					element.getAttribute("Y2")));
-		}
-		return instance;
 	}
 }
