@@ -59,9 +59,12 @@ import ome.xml.r201004.Laser;
 import ome.xml.r201004.MetadataOnly;
 import ome.xml.r201004.OME;
 import ome.xml.r201004.Pixels;
+import ome.xml.r201004.Plate;
+import ome.xml.r201004.Well;
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
 import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.enums.PixelType;
 
 import org.testng.annotations.BeforeClass;
@@ -90,6 +93,8 @@ public class InOut201004Test {
 
   private static String LIGHTSOURCE_ID = "LightSource:0";
 
+  private static String PLATE_ID = "Plate:0";
+
   private static DimensionOrder dimensionOrder = DimensionOrder.XYZCT;
 
   private static PixelType pixelType = PixelType.UINT16;
@@ -104,8 +109,16 @@ public class InOut201004Test {
 
   private static final Integer SIZE_T = 50;
 
+  private static final Integer WELL_ROWS = 3;
+
+  private static final Integer WELL_COLS = 2;
+
+  private static final NamingConvention WELL_ROW = NamingConvention.LETTER;
+
+  private static final NamingConvention WELL_COL = NamingConvention.NUMBER;
+
   /** XML namespace. */
-  public static final String XML_NS = 
+  public static final String XML_NS =
     "http://www.openmicroscopy.org/Schemas/OME/2010-04";
 
   /** XSI namespace. */
@@ -124,13 +137,16 @@ public class InOut201004Test {
 
   @BeforeClass
   public void setUp()
-  throws ParserConfigurationException, TransformerException, EnumerationException {
+    throws ParserConfigurationException, TransformerException,
+    EnumerationException
+  {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     document = parser.newDocument();
     // Put <Image/> under <OME/>
     ome = new OME();
     ome.addImage(makeImage());
+    ome.addPlate(makePlate());
     ome.addInstrument(makeInstrument());
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
@@ -180,6 +196,40 @@ public class InOut201004Test {
     }
   }
 
+  @Test(dependsOnMethods={"testValidOMENode"})
+  public void testValidInstrumentNode() {
+    Instrument instrument = ome.getInstrument(0);
+    assertNotNull(instrument);
+    assertEquals(INSTRUMENT_ID, instrument.getID());
+  }
+
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidDetectorNode() {
+    Detector detector = ome.getInstrument(0).getDetector(0);
+    assertNotNull(detector);
+    assertEquals(DETECTOR_ID, detector.getID());
+  }
+
+  @Test(dependsOnMethods={"testValidOMENode"})
+  public void testValidPlateNode() {
+    Plate plate = ome.getPlate(0);
+    assertNotNull(plate);
+    assertEquals(PLATE_ID, plate.getID());
+    assertEquals(plate.getRows(), WELL_ROWS);
+    assertEquals(plate.getColumns(), WELL_COLS);
+    assertEquals(plate.getRowNamingConvention(), WELL_ROW);
+    assertEquals(plate.getColumnNamingConvention(), WELL_COL);
+    assertEquals(plate.sizeOfWellList(), WELL_ROWS * WELL_COLS);
+    for (Integer row=0; row<WELL_ROWS; row++) {
+      for (Integer col=0; col<WELL_COLS; col++) {
+        Well well = plate.getWell(row * WELL_COLS + col);
+        assertNotNull(well);
+        assertEquals(well.getRow(), row);
+        assertEquals(well.getColumn(), col);
+      }
+    }
+  }
+
   private Image makeImage() {
     // Create <Image/>
     Image image = new Image();
@@ -220,6 +270,26 @@ public class InOut201004Test {
     laser.setType(LaserType.DYE);
     //instrument.addLightSource(laser);  // XXX: Fucked type hierarchy!?!
     return instrument;
+  }
+
+  private Plate makePlate() {
+    Plate plate = new Plate();
+    plate.setID(PLATE_ID);
+    plate.setRows(WELL_ROWS);
+    plate.setColumns(WELL_COLS);
+    plate.setRowNamingConvention(WELL_ROW);
+    plate.setColumnNamingConvention(WELL_COL);
+
+    for (int row=0; row<WELL_ROWS; row++) {
+      for (int col=0; col<WELL_COLS; col++) {
+        Well well = new Well();
+        well.setRow(row);
+        well.setColumn(col);
+        plate.addWell(well);
+      }
+    }
+
+    return plate;
   }
 
   private String asString() throws TransformerException {
