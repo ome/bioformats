@@ -52,12 +52,16 @@ import javax.xml.transform.stream.StreamResult;
 import static org.testng.AssertJUnit.*;
 
 import ome.xml.r201004.Channel;
+import ome.xml.r201004.Detector;
 import ome.xml.r201004.Image;
+import ome.xml.r201004.Instrument;
+import ome.xml.r201004.Laser;
 import ome.xml.r201004.MetadataOnly;
 import ome.xml.r201004.OME;
 import ome.xml.r201004.Pixels;
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.enums.PixelType;
 
 import org.testng.annotations.BeforeClass;
@@ -79,6 +83,12 @@ public class InOut201004Test {
   private static String IMAGE_ID = "Image:0";
 
   private static String PIXELS_ID = "Pixels:0";
+
+  private static String INSTRUMENT_ID = "Instrument:0";
+
+  private static String DETECTOR_ID = "Detector:0";
+
+  private static String LIGHTSOURCE_ID = "LightSource:0";
 
   private static DimensionOrder dimensionOrder = DimensionOrder.XYZCT;
 
@@ -121,6 +131,7 @@ public class InOut201004Test {
     // Put <Image/> under <OME/>
     ome = new OME();
     ome.addImage(makeImage());
+    ome.addInstrument(makeInstrument());
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     root.setAttribute("xmlns", XML_NS);
@@ -193,6 +204,22 @@ public class InOut201004Test {
     // Put <Pixels/> under <Image/>
     image.setPixels(pixels);
     return image;
+  }
+
+  private Instrument makeInstrument() {
+    // Create <Instrument/>
+    Instrument instrument = new Instrument();
+    instrument.setID(INSTRUMENT_ID);
+    // Create <Detector/> under <Instrument/>
+    Detector detector = new Detector();
+    detector.setID(DETECTOR_ID);
+    instrument.addDetector(detector);
+    // Create <Laser/> under <Instrument/>
+    Laser laser = new Laser();
+    //laser.setID(LIGHTSOURCE_ID);  /// XXX: Missing ID!?!
+    laser.setType(LaserType.DYE);
+    //instrument.addLightSource(laser);  // XXX: Fucked type hierarchy!?!
+    return instrument;
   }
 
   private String asString() throws TransformerException {
