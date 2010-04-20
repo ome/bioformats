@@ -118,8 +118,19 @@ public class InOut201004Test {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     document = parser.newDocument();
-    makeXML();
+    // Put <Image/> under <OME/>
+    ome = new OME();
+    ome.addImage(makeImage());
+    // Produce a valid OME DOM element hierarchy
+    Element root = ome.asXMLElement(document);
+    root.setAttribute("xmlns", XML_NS);
+    root.setAttribute("xmlns:xsi", XSI_NS);
+    root.setAttribute("xsi:schemaLocation",
+        XML_NS + " " + SCHEMA_LOCATION);
+    document.appendChild(root);
+    // Produce string XML
     asString = asString();
+    // Read string XML in as a DOM tree and parse into the object hierarchy
     ome = OME.fromXMLElement(document.getDocumentElement());
   }
 
@@ -158,9 +169,7 @@ public class InOut201004Test {
     }
   }
 
-  private void makeXML() {
-    // Create <OME/>
-    OME ome = new OME();
+  private Image makeImage() {
     // Create <Image/>
     Image image = new Image();
     image.setID(IMAGE_ID);
@@ -183,14 +192,7 @@ public class InOut201004Test {
     }
     // Put <Pixels/> under <Image/>
     image.setPixels(pixels);
-    // Put <Image/> under <OME/>
-    ome.addImage(image);
-    Element root = ome.asXMLElement(document);
-    root.setAttribute("xmlns", XML_NS);
-    root.setAttribute("xmlns:xsi", XSI_NS);
-    root.setAttribute("xsi:schemaLocation",
-        XML_NS + " " + SCHEMA_LOCATION);
-    document.appendChild(root);
+    return image;
   }
 
   private String asString() throws TransformerException {
