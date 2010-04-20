@@ -77,6 +77,9 @@ public class NativeND2Reader extends FormatReader {
   /** Whether or not the pixel data is compressed using JPEG 2000. */
   private boolean isJPEG;
 
+  /** Codec to use when decompressing pixel data. */
+  private Codec codec;
+
   /** Whether or not the pixel data is losslessly compressed. */
   private boolean isLossless;
 
@@ -147,7 +150,7 @@ public class NativeND2Reader extends FormatReader {
     int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
 
     if (isJPEG || isLossless) {
-      Codec codec = isJPEG ? new JPEG2000Codec() : new ZlibCodec();
+      if (codec == null) codec = createCodec(isJPEG);
       byte[] t = codec.decompress(in, options);
       int effectiveX = getSizeX() + scanlinePad;
       for (int row=0; row<h; row++) {
@@ -174,6 +177,7 @@ public class NativeND2Reader extends FormatReader {
       zs.clear();
       ts.clear();
       isJPEG = isLossless = false;
+      codec = null;
       numSeries = 0;
       tsT.clear();
 
@@ -1317,6 +1321,10 @@ public class NativeND2Reader extends FormatReader {
       value = value.replace(usedSeparator, separator);
     }
     return value;
+  }
+
+  private Codec createCodec(boolean isJPEG) {
+    return isJPEG ? new JPEG2000Codec() : new ZlibCodec();
   }
 
 }
