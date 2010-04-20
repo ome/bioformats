@@ -106,7 +106,7 @@ DO_NOT_PROCESS = [] #["ID"]
 DEFAULT_NAMESPACE = "xsd:"
 
 # The default Java base class for OME XML model objects.
-DEFAULT_BASE_CLASS = "Object"
+DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
 
 # The default Java package for OME XML model objects.
 DEFAULT_PACKAGE = "ome.xml.r2008"
@@ -199,6 +199,8 @@ class OMEModelProperty(object):
 	"""
 
 	REF_REGEX = re.compile(r'Ref$|RefNode$')
+
+	BACKREF_REGEX = re.compile(r'_BackReference')
 
 	LOWER_CASE_REGEX = re.compile(r'[a-z]')
 
@@ -301,17 +303,6 @@ class OMEModelProperty(object):
 							return JAVA_TYPE_MAP[union.getBase()]
 						except KeyError:
 							simpleTypeName = union.getBase()
-					"""
-					base = simpleType.base
-
-					match = self.BASE_NAMESPACE_REGEX.match(base)
-					if match:
-						base = match.group(1)
-					simpleTypeBase = getSimpleType(base)
-					if simpleTypeBase is not None:
-						base = simpleTypeBase.getBase()
-						return JAVA_TYPE_MAP[base]
-					"""
 					try:
 						return JAVA_TYPE_MAP[simpleType.getBase()]
 					except KeyError:
@@ -342,7 +333,7 @@ class OMEModelProperty(object):
 		doc="""The property's Java argument name (camelCase).""")
 	
 	def _get_javaMethodName(self):
-		return self.REF_REGEX.sub('', self.name)
+		return self.BACKREF_REGEX.sub('', self.REF_REGEX.sub('', self.name))
 	javaMethodName = property(_get_javaMethodName,
 		doc="""The property's Java method name.""")
 

@@ -1,9 +1,15 @@
+{% python
+	def parent_object():
+		if parents is None:
+			return None
+		return model.getObjectByName(parents.keys()[0])
+%}
 /*
  * ${fu.package}.${klass.name}
  *
  *-----------------------------------------------------------------------------
  *
- *  Copyright (C) 2010 Open Microscopy Environment
+ *  Copyright (C) @year@ Open Microscopy Environment
  *      Massachusetts Institute of Technology,
  *      National Institutes of Health,
  *      University of Dundee,
@@ -49,20 +55,30 @@ import org.w3c.dom.NodeList;
 
 import ${fu.package}.enums.*;
 
+{% choose %}\
+{% when parent_object() is not None and parent_object().isAbstract %}\
+public class ${klass.name} extends ${parent_object().name}
+{% end %}\
+{% when klass.isAbstract %}\
+public abstract class ${klass.name} extends ${klass.javaBase}
+{% end %}\
+{% when parent_object() is None or not parent_object().isAbstract %}\
 public class ${klass.name} extends ${klass.javaBase}
+{% end %}\
+{% end %}\
 {
 	// -- Instance variables --
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.isReference %}
+{% when prop.isReference or prop.name.endswith('Ref') %}
 	// Back reference ${prop.name}
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
-{% when prop.maxOccurs == 1 %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute) %}
 	// Property
 	private ${prop.javaType} ${prop.javaInstanceVariableName};
 {% end %}\
-{% when prop.maxOccurs > 1 %}
+{% when prop.maxOccurs > 1 and not klass.isAbstract %}
 	// Property which occurs more than once
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
@@ -74,47 +90,138 @@ public class ${klass.name} extends ${klass.javaBase}
 
 	// -- Constructors --
 
-	/** Constructs a ${klass.name}. */
+	/** Default constructor. */
 	public ${klass.name}()
 	{
+		super();
+	}
+
+	/** 
+	 * Constructs ${klass.name} recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ${klass.name}(Element element) throws EnumerationException
+	{
+		super(element);
+		String tagName = element.getTagName();
+		if (!"${klass.name}".equals(tagName))
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Expecting node name of ${klass.name} got %s",
+					tagName));
+		}
+{% for prop in klass.properties.values() %}\
+		// Model object: ${str(model.getObjectByName('${prop.name}'))}
+{% choose %}\
+{% when prop.isReference or prop.name.endswith('Ref') %}\
+		// *** IGNORING *** Skipped back reference ${prop.name}
+{% end %}\
+{% when prop.isAttribute %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+{% if prop.isEnumeration %}\
+			// Attribute property which is an enumeration ${prop.name}
+			set${prop.javaMethodName}(${prop.javaType}.fromString(
+					element.getAttribute("${prop.name}")));
+{% end %}\
+{% if not prop.isEnumeration %}\
+			// Attribute property ${prop.name}
+			set${prop.javaMethodName}(${prop.javaType}.valueOf(
+					element.getAttribute("${prop.name}")));
+{% end %}\
+		}
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isComplex()) %}\
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		if (${prop.name}_nodeList.getLength() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"${prop.name} node list size %d != 1",
+					${prop.name}_nodeList.getLength()));
+		}
+		else if (${prop.name}_nodeList.getLength() != 0)
+		{
+{% if prop.isComplex()  and not klass.isAbstract %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements)
+			set${prop.javaMethodName}(new ${prop.javaType}(
+					(Element) ${prop.name}_nodeList.item(0)));
+{% end %}\
+{% if not prop.isComplex() %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements)
+			set${prop.javaMethodName}(${prop.name}_nodeList.item(0).getTextContent());
+{% end %}\
+		}
+{% end %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
+		// Element property ${prop.name} which is complex (has
+		// sub-elements) and occurs more than once
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		{
+			add${prop.javaMethodName}(new ${prop.javaType}(
+					(Element) ${prop.name}_nodeList.item(i)));
+		}
+{% end %}\
+{% when prop.maxOccurs > 1 %}\
+		// Element property ${prop.name} which is not complex (has no
+		// sub-elements) which occurs more than once
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		{
+			add${prop.javaMethodName}(new ${prop.javaType}(
+					${prop.name}_nodeList.item(i).getTextContent()));
+		}
+{% end %}\
+{% otherwise %}\
+		// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end %}\
+{% end %}\
+{% end %}\
 	}
 
 	// -- ${klass.name} API methods --
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.isReference %}
-	// Back reference ${prop.name}
-	public int sizeOfLinked${prop.javaType}List()
+{% when prop.name.endswith('Ref') %}
+	// Reference ${prop.name}
+	public int sizeOfLinked${prop.javaMethodName}List()
 	{
 		return ${prop.javaInstanceVariableName}.size();
 	}
 
-	public List<${prop.javaType}> copyLinked${prop.javaType}List()
+	public List<${prop.javaType}> copyLinked${prop.javaMethodName}List()
 	{
 		return new ArrayList<${prop.javaType}>(${prop.javaInstanceVariableName});
 	}
 
-	public ${prop.javaType} getLinked${prop.javaType}(int index)
+	public ${prop.javaType} getLinked${prop.javaMethodName}(int index)
 	{
 		return ${prop.javaInstanceVariableName}.get(index);
 	}
 
-	public ${prop.javaType} setLinked${prop.javaType}(int index, ${prop.javaType} ${prop.javaArgumentName})
+	public ${prop.javaType} setLinked${prop.javaMethodName}(int index, ${prop.javaType} o)
 	{
-		return ${prop.javaInstanceVariableName}.set(index, ${prop.javaArgumentName});
+		return ${prop.javaInstanceVariableName}.set(index, o);
 	}
 
-	public void link${prop.javaType}(${prop.javaType} ${prop.javaArgumentName})
+	public void link${prop.javaMethodName}(${prop.javaType} o)
 	{
-		this.${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
+		this.${prop.javaInstanceVariableName}.add(o);
 	}
 
-	public void unlink${prop.javaType}(${prop.javaType} ${prop.javaArgumentName})
+	public void unlink${prop.javaMethodName}(${prop.javaType} o)
 	{
-		this.${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
+		this.${prop.javaInstanceVariableName}.add(o);
 	}
 {% end %}\
-{% when prop.maxOccurs == 1 %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute) %}
 	// Property
 	public ${prop.javaType} get${prop.javaMethodName}()
 	{
@@ -126,7 +233,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		this.${prop.javaInstanceVariableName} = ${prop.javaArgumentName};
 	}
 {% end %}\
-{% when prop.maxOccurs > 1 %}
+{% when prop.maxOccurs > 1 and not klass.isAbstract %}
 	// Property which occurs more than once
 	public int sizeOf${prop.javaMethodName}List()
 	{
@@ -163,6 +270,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 {% end %}\
+{% if not klass.isAbstract %}\
 
 	public Element asXMLElement(Document document)
 	{
@@ -172,7 +280,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		if (${prop.javaInstanceVariableName} != null)
 		{
 {% choose %}\
-{% when prop.isReference %}\
+{% when prop.isReference or prop.name.endswith('Ref') %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
@@ -217,88 +325,5 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 		return ${klass.name}_element;
 	}
-
-	public static ${klass.name} fromXMLElement(Element element)
-		throws EnumerationException
-	{
-		String tagName = element.getTagName();
-		if (!"${klass.name}".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ${klass.name} got %s",
-					tagName));
-		}
-		${klass.name} instance = new ${klass.name}();
-{% for prop in klass.properties.values() %}\
-{% choose %}\
-{% when prop.isReference %}\
-		// *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
-{% when prop.isAttribute %}\
-		if (element.hasAttribute("${prop.name}"))
-		{
-{% if prop.isEnumeration %}\
-			// Attribute property which is an enumeration ${prop.name}
-			instance.set${prop.javaMethodName}(${prop.javaType}.fromString(
-					element.getAttribute("${prop.name}")));
-{% end %}\
-{% if not prop.isEnumeration %}\
-			// Attribute property ${prop.name}
-			instance.set${prop.javaMethodName}(${prop.javaType}.valueOf(
-					element.getAttribute("${prop.name}")));
-{% end %}\
-		}
-{% end %}\
-{% when prop.maxOccurs == 1 %}\
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		if (${prop.name}_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"${prop.name} node list size %d != 1",
-					${prop.name}_nodeList.getLength()));
-		}
-		else if (${prop.name}_nodeList.getLength() != 0)
-		{
-{% if prop.isComplex() %}\
-			// Element property ${prop.name} which is complex (has
-			// sub-elements)
-			instance.set${prop.javaMethodName}(${prop.javaType}.fromXMLElement(
-					(Element) ${prop.name}_nodeList.item(0)));
-{% end %}\
-{% if not prop.isComplex() %}\
-			// Element property ${prop.name} which is not complex (has no
-			// sub-elements)
-			instance.set${prop.javaMethodName}(${prop.name}_nodeList.item(0).getTextContent());
-{% end %}\
-		}
-{% end %}\
-{% when prop.maxOccurs > 1 and prop.isComplex() %}\
-		// Element property ${prop.name} which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
-		{
-			instance.add${prop.javaMethodName}(${prop.javaType}.fromXMLElement(
-					(Element) ${prop.name}_nodeList.item(i)));
-		}
-{% end %}\
-{% when prop.maxOccurs > 1 %}\
-		// Element property ${prop.name} which is not complex (has no
-		// sub-elements) which occurs more than once
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
-		{
-			instance.add${prop.javaMethodName}(${prop.javaType}.valueOf(
-					${prop.name}_nodeList.item(i).getTextContent()));
-		}
-{% end %}\
-{% otherwise %}\
-		// *** WARNING *** Unhandled or skipped property ${prop.name}
-{% end %}\
-{% end %}\
-{% end %}\
-		return instance;
-	}
 }
