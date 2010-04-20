@@ -60,6 +60,10 @@ import ome.xml.r201004.MetadataOnly;
 import ome.xml.r201004.OME;
 import ome.xml.r201004.Pixels;
 import ome.xml.r201004.Plate;
+import ome.xml.r201004.Rectangle;
+import ome.xml.r201004.ROI;
+import ome.xml.r201004.Shape;
+import ome.xml.r201004.Union;
 import ome.xml.r201004.Well;
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
@@ -95,6 +99,8 @@ public class InOut201004Test {
 
   private static String PLATE_ID = "Plate:0";
 
+  private static String ROI_ID = "ROI:5";
+
   private static DimensionOrder dimensionOrder = DimensionOrder.XYZCT;
 
   private static PixelType pixelType = PixelType.UINT16;
@@ -116,6 +122,14 @@ public class InOut201004Test {
   private static final NamingConvention WELL_ROW = NamingConvention.LETTER;
 
   private static final NamingConvention WELL_COL = NamingConvention.NUMBER;
+
+  private static final Double RECTANGLE_X = 10.0;
+
+  private static final Double RECTANGLE_Y = 20.0;
+
+  private static final Double RECTANGLE_WIDTH = 128.0;
+
+  private static final Double RECTANGLE_HEIGHT = 256.0;
 
   /** XML namespace. */
   public static final String XML_NS =
@@ -148,6 +162,7 @@ public class InOut201004Test {
     ome.addImage(makeImage());
     ome.addPlate(makePlate());
     ome.addInstrument(makeInstrument());
+    ome.addROI(makeROI());
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     root.setAttribute("xmlns", XML_NS);
@@ -157,6 +172,7 @@ public class InOut201004Test {
     document.appendChild(root);
     // Produce string XML
     asString = asString();
+    /* debug */ System.err.println(asString);
     // Read string XML in as a DOM tree and parse into the object hierarchy
     ome = OME.fromXMLElement(document.getDocumentElement());
   }
@@ -230,6 +246,33 @@ public class InOut201004Test {
     }
   }
 
+  @Test(dependsOnMethods={"testValidOMENode"})
+  public void testValidROINode() {
+    ROI roi = ome.getROI(0);
+    assertNotNull(roi);
+    assertEquals(ROI_ID, roi.getID());
+
+    Union shapeUnion = roi.getUnion();
+    assertNotNull(shapeUnion);
+    Shape s = shapeUnion.getShape(0);
+    assertNotNull(s);
+
+    Rectangle rect = s.getRectangle();
+    assertNotNull(rect);
+    assertEquals(RECTANGLE_X, rect.getX());
+    assertEquals(RECTANGLE_Y, rect.getY());
+    assertEquals(RECTANGLE_WIDTH, rect.getWidth());
+    assertEquals(RECTANGLE_HEIGHT, rect.getHeight());
+
+    assertNull(s.getMask());
+    assertNull(s.getEllipse());
+    assertNull(s.getPoint());
+    assertNull(s.getPolyline());
+    assertNull(s.getLine());
+    assertNull(s.getPath());
+    assertNull(s.getText());
+  }
+
   private Image makeImage() {
     // Create <Image/>
     Image image = new Image();
@@ -290,6 +333,24 @@ public class InOut201004Test {
     }
 
     return plate;
+  }
+
+  private ROI makeROI() {
+    ROI roi = new ROI();
+    roi.setID(ROI_ID);
+    Union shapeUnion = new Union();
+    Shape s = new Shape();
+    Rectangle rect = new Rectangle();
+    rect.setX(RECTANGLE_X);
+    rect.setY(RECTANGLE_Y);
+    rect.setWidth(RECTANGLE_WIDTH);
+    rect.setHeight(RECTANGLE_HEIGHT);
+
+    s.setRectangle(rect);
+    shapeUnion.addShape(s);
+    roi.setUnion(shapeUnion);
+
+    return roi;
   }
 
   private String asString() throws TransformerException {
