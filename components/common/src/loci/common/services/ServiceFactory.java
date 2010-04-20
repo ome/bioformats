@@ -106,13 +106,13 @@ public class ServiceFactory {
           Class.forName((String) entry.getValue());
       }
       catch (Throwable t) {
-        LOGGER.warn(
-            "CLASSPATH missing implementation or implementation dependency: {}",
-            implementationName, t);
+        LOGGER.debug(
+          "CLASSPATH missing implementation or implementation dependency: {}",
+          implementationName, t);
       }
       services.put(interfaceClass, implementationClass);
       LOGGER.debug("Added interface {} and implementation {}",
-          interfaceClass, implementationClass);
+        interfaceClass, implementationClass);
     }
 
   }
