@@ -54,7 +54,9 @@ import loci.formats.services.JAIIIOServiceImpl;
  */
 public class JPEG2000Codec extends BaseCodec {
 
-  // -- Constants --
+  // -- Fields --
+
+  private JAIIIOService service;
 
   // -- Codec API methods --
 
@@ -73,6 +75,8 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
+    initialize();
+
     JPEG2000CodecOptions j2kOptions =
       JPEG2000CodecOptions.getDefaultOptions(options);
 
@@ -133,15 +137,6 @@ public class JPEG2000Codec extends BaseCodec {
         j2kOptions.width, j2kOptions.height, false, true, buffer);
     }
 
-    JAIIIOService service = null;
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      service = factory.getInstance(JAIIIOService.class);
-    }
-    catch (DependencyException de) {
-      throw new MissingLibraryException(JAIIIOServiceImpl.NO_J2K_MSG, de);
-    }
-
     try {
       service.writeImage(out, img, j2kOptions.lossless,
         j2kOptions.codeBlockSize, j2kOptions.quality);
@@ -166,6 +161,8 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    initialize();
+
     if (options == null) {
       options = CodecOptions.getDefaultOptions();
     }
@@ -181,15 +178,6 @@ public class JPEG2000Codec extends BaseCodec {
       buf = new byte[(int) (options.maxBytes - fp)];
     }
     in.read(buf);
-
-    JAIIIOService service = null;
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      service = factory.getInstance(JAIIIOService.class);
-    }
-    catch (DependencyException de) {
-      throw new MissingLibraryException(JAIIIOServiceImpl.NO_J2K_MSG, de);
-    }
 
     try {
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
@@ -227,6 +215,28 @@ public class JPEG2000Codec extends BaseCodec {
     single = null;
 
     return rtn;
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Initializes the JAI ImageIO dependency service. This is called at the
+   * beginning of the {@link #compress} and {@link #decompress} methods to
+   * avoid having the constructor's method definition contain a checked
+   * exception.
+   *
+   * @throws FormatException If there is an error initializing JAI ImageIO
+   *   services.
+   */
+  private void initialize() throws FormatException {
+    if (service != null) return;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(JAIIIOService.class);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(JAIIIOServiceImpl.NO_J2K_MSG, de);
+    }
   }
 
 }

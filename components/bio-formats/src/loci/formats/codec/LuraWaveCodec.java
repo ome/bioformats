@@ -51,35 +51,11 @@ import loci.formats.services.LuraWaveServiceImpl;
  */
 public class LuraWaveCodec extends BaseCodec {
 
-  // -- Constants --
-
-  // -- Static fields --
-
   // -- Fields --
 
   private LuraWaveService service;
 
   // -- Codec API methods --
-
-  /**
-   * Initializes the LuraWave dependency service. This is called at the
-   * beginning of the {@link #decompress()} method to avoid having the
-   * constructor's method definition contain a checked exception.
-   * @throws FormatException If there is an error initializing LuraWave
-   * services.
-   */
-  private void initialize() throws FormatException {
-    if (service != null) {
-      return;
-    }
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      service = factory.getInstance(LuraWaveService.class);
-    }
-    catch (DependencyException e) {
-      throw new MissingLibraryException(LuraWaveServiceImpl.NO_LURAWAVE_MSG, e);
-    }
-  }
 
   /* @see Codec#compress(byte[], CodecOptions) */
   public byte[] compress(byte[] data, CodecOptions options)
@@ -107,7 +83,8 @@ public class LuraWaveCodec extends BaseCodec {
     throws FormatException
   {
     initialize();
-    BufferedInputStream stream = 
+
+    BufferedInputStream stream =
       new BufferedInputStream(new ByteArrayInputStream(buf), 4096);
     try {
       service.initialize(stream);
@@ -154,6 +131,27 @@ public class LuraWaveCodec extends BaseCodec {
     }
 
     throw new FormatException("Unsupported bits per pixel: " + nbits);
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Initializes the LuraWave dependency service. This is called at the
+   * beginning of the {@link #decompress} method to avoid having the
+   * constructor's method definition contain a checked exception.
+   *
+   * @throws FormatException If there is an error initializing LuraWave
+   * services.
+   */
+  private void initialize() throws FormatException {
+    if (service != null) return;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(LuraWaveService.class);
+    }
+    catch (DependencyException e) {
+      throw new MissingLibraryException(LuraWaveServiceImpl.NO_LURAWAVE_MSG, e);
+    }
   }
 
 }
