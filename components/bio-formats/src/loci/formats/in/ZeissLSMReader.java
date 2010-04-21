@@ -299,7 +299,8 @@ public class ZeissLSMReader extends FormatReader {
 
     IFDList ifds = ifdsList.get(getSeries());
 
-    if (splitPlanes && getSizeC() > 1) {
+    if (splitPlanes && getSizeC() > 1 && ifds.size() == getSizeZ() * getSizeT())
+    {
       int plane = no / getSizeC();
       int c = no % getSizeC();
       byte[][] samples = tiffParser.getSamples(ifds.get(plane), x, y, w, h);
@@ -821,8 +822,12 @@ public class ZeissLSMReader extends FormatReader {
       }
     }
     int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
-    if (nLogicalChannels == getSizeC()) {
+    if (nLogicalChannels == getSizeC() || nextDataChannel == 0) {
       if (!splitPlanes) splitPlanes = isRGB();
+      core[series].rgb = false;
+      if (splitPlanes) core[series].imageCount *= getSizeC();
+    }
+    else if (splitPlanes) {
       core[series].rgb = false;
       if (splitPlanes) core[series].imageCount *= getSizeC();
     }
