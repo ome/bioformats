@@ -29,5 +29,5 @@
 	<classpathentry exported="true" kind="lib" path="velocity-1.6.3-dep.jar"/>
 	<classpathentry exported="true" kind="lib" path="visad-lite.jar"/>
 	<classpathentry exported="true" kind="lib" path="xmlrpc-1.2-b1.jar"/>
-	<classpathentry kind="output" path="build-eclipse"/>
+	<classpathentry kind="output" path=""/>
 </classpath>
