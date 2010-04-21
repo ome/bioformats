@@ -106,6 +106,7 @@ public class ${klass.name} extends ${klass.javaBase}
 	public ${klass.name}(Element element) throws EnumerationException
 	{
 		super(element);
+{% if not klass.isAbstract %}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
 		{
@@ -114,6 +115,7 @@ public class ${klass.name} extends ${klass.javaBase}
 					"Expecting node name of ${klass.name} got %s",
 					tagName));
 		}
+{% end %}\
 {% for prop in klass.properties.values() %}\
 		// Model object: ${str(model.getObjectByName('${prop.name}'))}
 {% choose %}\
