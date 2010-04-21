@@ -484,7 +484,7 @@ class OMEModel(object):
 		for obj in self.objects:
 			if obj.getName() == name:
 				return self.objects[obj]
-				
+
 	def getTopLevelSimpleType(self, name):
 		"""
 		Returns the simpleType that has a given name from the list of top

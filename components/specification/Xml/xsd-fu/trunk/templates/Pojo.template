@@ -3,7 +3,12 @@
 		if parents is None:
 			return None
 		return model.getObjectByName(parents.keys()[0])
-%}
+	def is_abstract(name):
+		o = model.getObjectByName(name)
+		if o is None:
+			return False
+		return o.isAbstract
+%}\
 /*
  * ${fu.package}.${klass.name}
  *
@@ -117,7 +122,6 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 {% end %}\
 {% for prop in klass.properties.values() %}\
-		// Model object: ${str(model.getObjectByName('${prop.name}'))}
 {% choose %}\
 {% when prop.isReference or prop.name.endswith('Ref') %}\
 		// *** IGNORING *** Skipped back reference ${prop.name}
@@ -148,9 +152,14 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 		else if (${prop.name}_nodeList.getLength() != 0)
 		{
-{% if prop.isComplex()  and not klass.isAbstract %}\
+{% if prop.isComplex() and not klass.isAbstract %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
+{% if is_abstract(prop.name) %}\
+			// 
+			// LALA: ${repr([inner_prop.isComplex() for inner_prop in model.getObjectByName(prop.name).properties.values()])}
+			//
+{% end %}\
 			set${prop.javaMethodName}(new ${prop.javaType}(
 					(Element) ${prop.name}_nodeList.item(0)));
 {% end %}\
@@ -162,14 +171,34 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
+{% if is_abstract(prop.name) %}\
+{% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
+{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.name.endswith('Ref') %}\
+		// Element property ${prop.name} which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList ${inner_prop.name}_nodeList = element.getElementsByTagName("${inner_prop.name}");
+		for (int i = 0; i < ${inner_prop.name}_nodeList.getLength(); i++)
+		{
+			Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(i);
+			add${prop.javaMethodName}(
+					new ${inner_prop.javaType}(${inner_prop.name}_element));
+		}
+{% end %}\
+{% end %}\
+{% end %}\
+{% if not is_abstract(prop.name) %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
 		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
 		{
-			add${prop.javaMethodName}(new ${prop.javaType}(
-					(Element) ${prop.name}_nodeList.item(i)));
+			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
+			add${prop.javaMethodName}(
+					new ${prop.javaType}(${prop.name}_element));
 		}
+{% end %}\
 {% end %}\
 {% when prop.maxOccurs > 1 %}\
 		// Element property ${prop.name} which is not complex (has no
@@ -272,13 +301,25 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 {% end %}\
-{% if not klass.isAbstract %}\
 
+{% if not klass.isAbstract %}\
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+{% end %}\
+	protected Element asXMLElement(Document document, Element ${klass.name}_element)
+	{
 		// Creating XML block for ${klass.name}
-		Element ${klass.name}_element = document.createElement("${klass.name}");
+		if (${klass.name}_element == null)
+		{
+			${klass.name}_element = document.createElement("${klass.name}");
+		}
+		${klass.name}_element = super.asXMLElement(document, ${klass.name}_element);
+
 {% for prop in klass.properties.values() %}\
+{% if not klass.isAbstract or prop.isAttribute %}\
 		if (${prop.javaInstanceVariableName} != null)
 		{
 {% choose %}\
@@ -325,7 +366,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 		}
 {% end %}\
+{% end %}\
 		return ${klass.name}_element;
 	}
-{% end %}\
 }
