@@ -153,6 +153,12 @@ public class InOut201004Test {
 
   private static final LaserType LASER_TYPE = LaserType.DYE;
 
+  private static final Integer OTF_SIZE_X = 512;
+
+  private static final Integer OTF_SIZE_Y = 512;
+
+  private static final Boolean OTF_OPTICAL_AXIS_AVERAGED = Boolean.FALSE;
+
   private static final Integer WELL_ROWS = 3;
 
   private static final Integer WELL_COLS = 2;
@@ -317,6 +323,9 @@ public class InOut201004Test {
     assertNotNull(otf);
     assertEquals(OTF_ID, otf.getID());
     assertEquals(OTF_PIXELTYPE, otf.getType());
+    assertEquals(OTF_SIZE_X, otf.getSizeX());
+    assertEquals(OTF_SIZE_Y, otf.getSizeY());
+    assertEquals(OTF_OPTICAL_AXIS_AVERAGED, otf.getOpticalAxisAveraged());
     assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getOTF(0));
   }
 
@@ -456,6 +465,9 @@ public class InOut201004Test {
     exFilter.setType(EX_FILTER_TYPE);
     otf.setID(OTF_ID);
     otf.setType(OTF_PIXELTYPE);
+    otf.setSizeX(OTF_SIZE_X);
+    otf.setSizeY(OTF_SIZE_Y);
+    otf.setOpticalAxisAveraged(OTF_OPTICAL_AXIS_AVERAGED);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);
