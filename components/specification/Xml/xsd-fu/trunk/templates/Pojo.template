@@ -110,15 +110,31 @@ public class ${klass.name} extends ${klass.javaBase}
 	 */
 	public ${klass.name}(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ${klass.name} recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 {% if not klass.isAbstract %}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ${klass.name} got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ${klass.name} got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ${klass.name} got %s",
+			//		tagName));
 		}
 {% end %}\
 {% for prop in klass.properties.values() %}\
@@ -155,11 +171,6 @@ public class ${klass.name} extends ${klass.javaBase}
 {% if prop.isComplex() and not klass.isAbstract %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
-{% if is_abstract(prop.name) %}\
-			// 
-			// LALA: ${repr([inner_prop.isComplex() for inner_prop in model.getObjectByName(prop.name).properties.values()])}
-			//
-{% end %}\
 			set${prop.javaMethodName}(new ${prop.javaType}(
 					(Element) ${prop.name}_nodeList.item(0)));
 {% end %}\
@@ -172,21 +183,28 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
 {% if is_abstract(prop.name) %}\
-{% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
-{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.name.endswith('Ref') %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		NodeList ${inner_prop.name}_nodeList = element.getElementsByTagName("${inner_prop.name}");
-		for (int i = 0; i < ${inner_prop.name}_nodeList.getLength(); i++)
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
 		{
-			Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(i);
-			add${prop.javaMethodName}(
-					new ${inner_prop.javaType}(${inner_prop.name}_element));
+			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
+{% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
+{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.name.endswith('Ref') %}\
+			NodeList ${inner_prop.name}_nodeList = 
+					${prop.name}_element.getElementsByTagName("${inner_prop.name}");
+			for (int j = 0; j < ${inner_prop.name}_nodeList.getLength(); j++)
+			{
+				Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(j);
+				${inner_prop.javaType} o = new ${inner_prop.javaType}(${inner_prop.name}_element);
+				o.update(${prop.name}_element);
+				add${prop.javaMethodName}(o);
+			}
+{% end %}\
+{% end %}\
 		}
-{% end %}\
-{% end %}\
 {% end %}\
 {% if not is_abstract(prop.name) %}\
 		// Element property ${prop.name} which is complex (has
@@ -312,11 +330,19 @@ public class ${klass.name} extends ${klass.javaBase}
 	protected Element asXMLElement(Document document, Element ${klass.name}_element)
 	{
 		// Creating XML block for ${klass.name}
+{% if klass.isAbstract %}\
+		// Class is abstract so we may need to create its "container" element
+		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
+		{
+			Element abstractElement = document.createElement("${klass.name}");
+			abstractElement.appendChild(${klass.name}_element);
+			${klass.name}_element = abstractElement;
+		}
+{% end %}\
 		if (${klass.name}_element == null)
 		{
 			${klass.name}_element = document.createElement("${klass.name}");
 		}
-		${klass.name}_element = super.asXMLElement(document, ${klass.name}_element);
 
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstract or prop.isAttribute %}\
@@ -367,6 +393,6 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 {% end %}\
 {% end %}\
-		return ${klass.name}_element;
+		return super.asXMLElement(document, ${klass.name}_element);
 	}
 }
