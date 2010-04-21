@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Mask
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,21 +88,18 @@ public class Mask extends Shape
 					"Expecting node name of Mask got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y"))
 		{
 			// Attribute property Y
 			setY(Double.valueOf(
 					element.getAttribute("Y")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X"))
 		{
 			// Attribute property X
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
-		// Model object: None
 		// Element property BinData which is not complex (has no
 		// sub-elements) which occurs more than once
 		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
@@ -171,8 +167,18 @@ public class Mask extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Mask_element)
+	{
 		// Creating XML block for Mask
-		Element Mask_element = document.createElement("Mask");
+		if (Mask_element == null)
+		{
+			Mask_element = document.createElement("Mask");
+		}
+		Mask_element = super.asXMLElement(document, Mask_element);
+
 		if (y != null)
 		{
 			// Attribute property Y

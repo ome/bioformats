@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ReagentRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class ReagentRef extends Reference
 					"Expecting node name of ReagentRef got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class ReagentRef extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ReagentRef_element)
+	{
 		// Creating XML block for ReagentRef
-		Element ReagentRef_element = document.createElement("ReagentRef");
+		if (ReagentRef_element == null)
+		{
+			ReagentRef_element = document.createElement("ReagentRef");
+		}
+		ReagentRef_element = super.asXMLElement(document, ReagentRef_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

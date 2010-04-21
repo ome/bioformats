@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Dichroic
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,16 +88,13 @@ public class Dichroic extends ManufacturerSpec
 					"Expecting node name of Dichroic got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
 
@@ -179,8 +175,18 @@ public class Dichroic extends ManufacturerSpec
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Dichroic_element)
+	{
 		// Creating XML block for Dichroic
-		Element Dichroic_element = document.createElement("Dichroic");
+		if (Dichroic_element == null)
+		{
+			Dichroic_element = document.createElement("Dichroic");
+		}
+		Dichroic_element = super.asXMLElement(document, Dichroic_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.WellSampleRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class WellSampleRef extends Reference
 					"Expecting node name of WellSampleRef got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class WellSampleRef extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element WellSampleRef_element)
+	{
 		// Creating XML block for WellSampleRef
-		Element WellSampleRef_element = document.createElement("WellSampleRef");
+		if (WellSampleRef_element == null)
+		{
+			WellSampleRef_element = document.createElement("WellSampleRef");
+		}
+		WellSampleRef_element = super.asXMLElement(document, WellSampleRef_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

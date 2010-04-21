@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.FilterSetRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class FilterSetRef extends Reference
 					"Expecting node name of FilterSetRef got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class FilterSetRef extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element FilterSetRef_element)
+	{
 		// Creating XML block for FilterSetRef
-		Element FilterSetRef_element = document.createElement("FilterSetRef");
+		if (FilterSetRef_element == null)
+		{
+			FilterSetRef_element = document.createElement("FilterSetRef");
+		}
+		FilterSetRef_element = super.asXMLElement(document, FilterSetRef_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

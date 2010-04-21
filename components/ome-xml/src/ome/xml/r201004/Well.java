@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Well
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -110,67 +109,58 @@ public class Well extends AbstractOMEModelObject
 					"Expecting node name of Well got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Status"))
 		{
 			// Attribute property Status
 			setStatus(String.valueOf(
 					element.getAttribute("Status")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ExternalIdentifier"))
 		{
 			// Attribute property ExternalIdentifier
 			setExternalIdentifier(String.valueOf(
 					element.getAttribute("ExternalIdentifier")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Column"))
 		{
 			// Attribute property Column
 			setColumn(Integer.valueOf(
 					element.getAttribute("Column")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ExternalDescription"))
 		{
 			// Attribute property ExternalDescription
 			setExternalDescription(String.valueOf(
 					element.getAttribute("ExternalDescription")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Color"))
 		{
 			// Attribute property Color
 			setColor(Integer.valueOf(
 					element.getAttribute("Color")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Row"))
 		{
 			// Attribute property Row
 			setRow(Integer.valueOf(
 					element.getAttribute("Row")));
 		}
-		// Model object: None
 		// Element property WellSample which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList WellSample_nodeList = element.getElementsByTagName("WellSample");
 		for (int i = 0; i < WellSample_nodeList.getLength(); i++)
 		{
-			addWellSample(new WellSample(
-					(Element) WellSample_nodeList.item(i)));
+			Element WellSample_element = (Element) WellSample_nodeList.item(i);
+			addWellSample(
+					new WellSample(WellSample_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ReagentRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
@@ -348,8 +338,18 @@ public class Well extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Well_element)
+	{
 		// Creating XML block for Well
-		Element Well_element = document.createElement("Well");
+		if (Well_element == null)
+		{
+			Well_element = document.createElement("Well");
+		}
+		Well_element = super.asXMLElement(document, Well_element);
+
 		if (status != null)
 		{
 			// Attribute property Status

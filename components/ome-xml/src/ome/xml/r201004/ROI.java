@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ROI
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,28 +103,24 @@ public class ROI extends AbstractOMEModelObject
 					"Expecting node name of ROI got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Namespace"))
 		{
 			// Attribute property Namespace
 			setNamespace(String.valueOf(
 					element.getAttribute("Namespace")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		NodeList Union_nodeList = element.getElementsByTagName("Union");
 		if (Union_nodeList.getLength() > 1)
 		{
@@ -141,9 +136,7 @@ public class ROI extends AbstractOMEModelObject
 			setUnion(new Union(
 					(Element) Union_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -158,9 +151,7 @@ public class ROI extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 	}
 
@@ -316,8 +307,18 @@ public class ROI extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ROI_element)
+	{
 		// Creating XML block for ROI
-		Element ROI_element = document.createElement("ROI");
+		if (ROI_element == null)
+		{
+			ROI_element = document.createElement("ROI");
+		}
+		ROI_element = super.asXMLElement(document, ROI_element);
+
 		if (namespace != null)
 		{
 			// Attribute property Namespace

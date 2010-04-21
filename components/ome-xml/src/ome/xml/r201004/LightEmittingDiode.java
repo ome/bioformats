@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.LightEmittingDiode
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,8 +85,18 @@ public class LightEmittingDiode extends LightSource
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element LightEmittingDiode_element)
+	{
 		// Creating XML block for LightEmittingDiode
-		Element LightEmittingDiode_element = document.createElement("LightEmittingDiode");
+		if (LightEmittingDiode_element == null)
+		{
+			LightEmittingDiode_element = document.createElement("LightEmittingDiode");
+		}
+		LightEmittingDiode_element = super.asXMLElement(document, LightEmittingDiode_element);
+
 		return LightEmittingDiode_element;
 	}
 }

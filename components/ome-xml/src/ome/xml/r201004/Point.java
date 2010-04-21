@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Point
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,14 +85,12 @@ public class Point extends Shape
 					"Expecting node name of Point got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y"))
 		{
 			// Attribute property Y
 			setY(Double.valueOf(
 					element.getAttribute("Y")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X"))
 		{
 			// Attribute property X
@@ -128,8 +125,18 @@ public class Point extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Point_element)
+	{
 		// Creating XML block for Point
-		Element Point_element = document.createElement("Point");
+		if (Point_element == null)
+		{
+			Point_element = document.createElement("Point");
+		}
+		Point_element = super.asXMLElement(document, Point_element);
+
 		if (y != null)
 		{
 			// Attribute property Y

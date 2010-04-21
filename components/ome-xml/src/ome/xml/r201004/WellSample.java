@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.WellSample
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,46 +103,38 @@ public class WellSample extends AbstractOMEModelObject
 					"Expecting node name of WellSample got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Index"))
 		{
 			// Attribute property Index
 			setIndex(Integer.valueOf(
 					element.getAttribute("Index")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PositionX"))
 		{
 			// Attribute property PositionX
 			setPositionX(Double.valueOf(
 					element.getAttribute("PositionX")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PositionY"))
 		{
 			// Attribute property PositionY
 			setPositionY(Double.valueOf(
 					element.getAttribute("PositionY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Timepoint"))
 		{
 			// Attribute property Timepoint
 			setTimepoint(Integer.valueOf(
 					element.getAttribute("Timepoint")));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ImageRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 	}
 
@@ -299,8 +290,18 @@ public class WellSample extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element WellSample_element)
+	{
 		// Creating XML block for WellSample
-		Element WellSample_element = document.createElement("WellSample");
+		if (WellSample_element == null)
+		{
+			WellSample_element = document.createElement("WellSample");
+		}
+		WellSample_element = super.asXMLElement(document, WellSample_element);
+
 		if (index != null)
 		{
 			// Attribute property Index

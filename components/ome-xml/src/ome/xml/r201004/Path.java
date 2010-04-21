@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Path
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class Path extends Shape
 					"Expecting node name of Path got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Definition"))
 		{
 			// Attribute property Definition
@@ -107,8 +105,18 @@ public class Path extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Path_element)
+	{
 		// Creating XML block for Path
-		Element Path_element = document.createElement("Path");
+		if (Path_element == null)
+		{
+			Path_element = document.createElement("Path");
+		}
+		Path_element = super.asXMLElement(document, Path_element);
+
 		if (definition != null)
 		{
 			// Attribute property Definition

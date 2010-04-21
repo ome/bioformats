@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Arc
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class Arc extends LightSource
 					"Expecting node name of Arc got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
@@ -107,8 +105,18 @@ public class Arc extends LightSource
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Arc_element)
+	{
 		// Creating XML block for Arc
-		Element Arc_element = document.createElement("Arc");
+		if (Arc_element == null)
+		{
+			Arc_element = document.createElement("Arc");
+		}
+		Arc_element = super.asXMLElement(document, Arc_element);
+
 		if (type != null)
 		{
 			// Attribute property Type

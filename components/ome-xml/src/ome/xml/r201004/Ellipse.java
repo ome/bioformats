@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Ellipse
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,28 +91,24 @@ public class Ellipse extends Shape
 					"Expecting node name of Ellipse got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y"))
 		{
 			// Attribute property Y
 			setY(Double.valueOf(
 					element.getAttribute("Y")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X"))
 		{
 			// Attribute property X
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
-		// Model object: None
 		if (element.hasAttribute("RadiusY"))
 		{
 			// Attribute property RadiusY
 			setRadiusY(Double.valueOf(
 					element.getAttribute("RadiusY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("RadiusX"))
 		{
 			// Attribute property RadiusX
@@ -170,8 +165,18 @@ public class Ellipse extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Ellipse_element)
+	{
 		// Creating XML block for Ellipse
-		Element Ellipse_element = document.createElement("Ellipse");
+		if (Ellipse_element == null)
+		{
+			Ellipse_element = document.createElement("Ellipse");
+		}
+		Ellipse_element = super.asXMLElement(document, Ellipse_element);
+
 		if (y != null)
 		{
 			// Attribute property Y

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Union
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,15 +82,93 @@ public class Union extends AbstractOMEModelObject
 					"Expecting node name of Union got %s",
 					tagName));
 		}
-		// Model object: None
 		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList Shape_nodeList = element.getElementsByTagName("Shape");
-		for (int i = 0; i < Shape_nodeList.getLength(); i++)
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Line_nodeList = element.getElementsByTagName("Line");
+		for (int i = 0; i < Line_nodeList.getLength(); i++)
 		{
-// FIXME: Manual hack!
-//			addShape(new Shape(
-//					(Element) Shape_nodeList.item(i)));
+			Element Line_element = (Element) Line_nodeList.item(i);
+			addShape(
+					new Line(Line_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
+		for (int i = 0; i < Rectangle_nodeList.getLength(); i++)
+		{
+			Element Rectangle_element = (Element) Rectangle_nodeList.item(i);
+			addShape(
+					new Rectangle(Rectangle_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
+		for (int i = 0; i < Mask_nodeList.getLength(); i++)
+		{
+			Element Mask_element = (Element) Mask_nodeList.item(i);
+			addShape(
+					new Mask(Mask_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
+		for (int i = 0; i < Ellipse_nodeList.getLength(); i++)
+		{
+			Element Ellipse_element = (Element) Ellipse_nodeList.item(i);
+			addShape(
+					new Ellipse(Ellipse_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Point_nodeList = element.getElementsByTagName("Point");
+		for (int i = 0; i < Point_nodeList.getLength(); i++)
+		{
+			Element Point_element = (Element) Point_nodeList.item(i);
+			addShape(
+					new Point(Point_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
+		for (int i = 0; i < Polyline_nodeList.getLength(); i++)
+		{
+			Element Polyline_element = (Element) Polyline_nodeList.item(i);
+			addShape(
+					new Polyline(Polyline_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Path_nodeList = element.getElementsByTagName("Path");
+		for (int i = 0; i < Path_nodeList.getLength(); i++)
+		{
+			Element Path_element = (Element) Path_nodeList.item(i);
+			addShape(
+					new Path(Path_element));
+		}
+		// Element property Shape which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Text_nodeList = element.getElementsByTagName("Text");
+		for (int i = 0; i < Text_nodeList.getLength(); i++)
+		{
+			Element Text_element = (Element) Text_nodeList.item(i);
+			addShape(
+					new Text(Text_element));
 		}
 	}
 
@@ -130,8 +207,18 @@ public class Union extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Union_element)
+	{
 		// Creating XML block for Union
-		Element Union_element = document.createElement("Union");
+		if (Union_element == null)
+		{
+			Union_element = document.createElement("Union");
+		}
+		Union_element = super.asXMLElement(document, Union_element);
+
 		if (shapeList != null)
 		{
 			// Element property Shape which is complex (has

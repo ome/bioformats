@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.FileAnnotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class FileAnnotation extends Annotation
 					"Expecting node name of FileAnnotation got %s",
 					tagName));
 		}
-		// Model object: None
 		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
 		if (BinaryFile_nodeList.getLength() > 1)
 		{
@@ -115,8 +113,18 @@ public class FileAnnotation extends Annotation
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element FileAnnotation_element)
+	{
 		// Creating XML block for FileAnnotation
-		Element FileAnnotation_element = document.createElement("FileAnnotation");
+		if (FileAnnotation_element == null)
+		{
+			FileAnnotation_element = document.createElement("FileAnnotation");
+		}
+		FileAnnotation_element = super.asXMLElement(document, FileAnnotation_element);
+
 		if (binaryFile != null)
 		{
 			// Element property BinaryFile which is not complex (has no

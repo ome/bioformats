@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Dataset
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,21 +103,18 @@ public class Dataset extends AbstractOMEModelObject
 					"Expecting node name of Dataset got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -133,15 +129,10 @@ public class Dataset extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExperimenterRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference GroupRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ProjectRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
@@ -337,8 +328,18 @@ public class Dataset extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Dataset_element)
+	{
 		// Creating XML block for Dataset
-		Element Dataset_element = document.createElement("Dataset");
+		if (Dataset_element == null)
+		{
+			Dataset_element = document.createElement("Dataset");
+		}
+		Dataset_element = super.asXMLElement(document, Dataset_element);
+
 		if (name != null)
 		{
 			// Attribute property Name

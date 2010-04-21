@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ChannelProfile
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -101,14 +100,12 @@ public class ChannelProfile extends AbstractOMEModelObject
 					"Expecting node name of ChannelProfile got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("origin"))
 		{
 			// Attribute property which is an enumeration origin
 			setorigin(ProfileSource.fromString(
 					element.getAttribute("origin")));
 		}
-		// Model object: None
 		NodeList Name_nodeList = element.getElementsByTagName("Name");
 		if (Name_nodeList.getLength() > 1)
 		{
@@ -123,7 +120,6 @@ public class ChannelProfile extends AbstractOMEModelObject
 			// sub-elements)
 			setName(Name_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -138,7 +134,6 @@ public class ChannelProfile extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
 		if (LightSourceSettings_nodeList.getLength() > 1)
 		{
@@ -154,9 +149,7 @@ public class ChannelProfile extends AbstractOMEModelObject
 			setLightSourceSettings(new LightSourceSettings(
 					(Element) LightSourceSettings_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference OTFRef
-		// Model object: None
 		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
 		if (DetectorSettings_nodeList.getLength() > 1)
 		{
@@ -172,7 +165,6 @@ public class ChannelProfile extends AbstractOMEModelObject
 			setDetectorSettings(new DetectorSettings(
 					(Element) DetectorSettings_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference FilterSetRef
 	}
 
@@ -297,8 +289,18 @@ public class ChannelProfile extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ChannelProfile_element)
+	{
 		// Creating XML block for ChannelProfile
-		Element ChannelProfile_element = document.createElement("ChannelProfile");
+		if (ChannelProfile_element == null)
+		{
+			ChannelProfile_element = document.createElement("ChannelProfile");
+		}
+		ChannelProfile_element = super.asXMLElement(document, ChannelProfile_element);
+
 		if (origin != null)
 		{
 			// Attribute property origin

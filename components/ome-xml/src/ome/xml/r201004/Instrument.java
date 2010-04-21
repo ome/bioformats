@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Instrument
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -113,14 +112,12 @@ public class Instrument extends AbstractOMEModelObject
 					"Expecting node name of Instrument got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		NodeList Microscope_nodeList = element.getElementsByTagName("Microscope");
 		if (Microscope_nodeList.getLength() > 1)
 		{
@@ -136,73 +133,105 @@ public class Instrument extends AbstractOMEModelObject
 			setMicroscope(new Microscope(
 					(Element) Microscope_nodeList.item(0)));
 		}
-		// Model object: None
 		// Element property LightSource which is complex (has
-		// sub-elements) and occurs more than once
-		NodeList LightSource_nodeList = element.getElementsByTagName("LightSource");
-		for (int i = 0; i < LightSource_nodeList.getLength(); i++)
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Laser_nodeList = element.getElementsByTagName("Laser");
+		for (int i = 0; i < Laser_nodeList.getLength(); i++)
 		{
-// FIXME: Manual hack!
-//			addLightSource(new LightSource(
-//					(Element) LightSource_nodeList.item(i)));
+			Element Laser_element = (Element) Laser_nodeList.item(i);
+			addLightSource(
+					new Laser(Laser_element));
 		}
-		// Model object: None
+		// Element property LightSource which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Filament_nodeList = element.getElementsByTagName("Filament");
+		for (int i = 0; i < Filament_nodeList.getLength(); i++)
+		{
+			Element Filament_element = (Element) Filament_nodeList.item(i);
+			addLightSource(
+					new Filament(Filament_element));
+		}
+		// Element property LightSource which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList Arc_nodeList = element.getElementsByTagName("Arc");
+		for (int i = 0; i < Arc_nodeList.getLength(); i++)
+		{
+			Element Arc_element = (Element) Arc_nodeList.item(i);
+			addLightSource(
+					new Arc(Arc_element));
+		}
+		// Element property LightSource which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		NodeList LightEmittingDiode_nodeList = element.getElementsByTagName("LightEmittingDiode");
+		for (int i = 0; i < LightEmittingDiode_nodeList.getLength(); i++)
+		{
+			Element LightEmittingDiode_element = (Element) LightEmittingDiode_nodeList.item(i);
+			addLightSource(
+					new LightEmittingDiode(LightEmittingDiode_element));
+		}
 		// Element property Detector which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Detector_nodeList = element.getElementsByTagName("Detector");
 		for (int i = 0; i < Detector_nodeList.getLength(); i++)
 		{
-			addDetector(new Detector(
-					(Element) Detector_nodeList.item(i)));
+			Element Detector_element = (Element) Detector_nodeList.item(i);
+			addDetector(
+					new Detector(Detector_element));
 		}
-		// Model object: None
 		// Element property Objective which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Objective_nodeList = element.getElementsByTagName("Objective");
 		for (int i = 0; i < Objective_nodeList.getLength(); i++)
 		{
-			addObjective(new Objective(
-					(Element) Objective_nodeList.item(i)));
+			Element Objective_element = (Element) Objective_nodeList.item(i);
+			addObjective(
+					new Objective(Objective_element));
 		}
-		// Model object: None
 		// Element property FilterSet which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList FilterSet_nodeList = element.getElementsByTagName("FilterSet");
 		for (int i = 0; i < FilterSet_nodeList.getLength(); i++)
 		{
-			addFilterSet(new FilterSet(
-					(Element) FilterSet_nodeList.item(i)));
+			Element FilterSet_element = (Element) FilterSet_nodeList.item(i);
+			addFilterSet(
+					new FilterSet(FilterSet_element));
 		}
-		// Model object: None
 		// Element property Filter which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Filter_nodeList = element.getElementsByTagName("Filter");
 		for (int i = 0; i < Filter_nodeList.getLength(); i++)
 		{
-			addFilter(new Filter(
-					(Element) Filter_nodeList.item(i)));
+			Element Filter_element = (Element) Filter_nodeList.item(i);
+			addFilter(
+					new Filter(Filter_element));
 		}
-		// Model object: None
 		// Element property Dichroic which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Dichroic_nodeList = element.getElementsByTagName("Dichroic");
 		for (int i = 0; i < Dichroic_nodeList.getLength(); i++)
 		{
-			addDichroic(new Dichroic(
-					(Element) Dichroic_nodeList.item(i)));
+			Element Dichroic_element = (Element) Dichroic_nodeList.item(i);
+			addDichroic(
+					new Dichroic(Dichroic_element));
 		}
-		// Model object: None
 		// Element property OTF which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList OTF_nodeList = element.getElementsByTagName("OTF");
 		for (int i = 0; i < OTF_nodeList.getLength(); i++)
 		{
-			addOTF(new OTF(
-					(Element) OTF_nodeList.item(i)));
+			Element OTF_element = (Element) OTF_nodeList.item(i);
+			addOTF(
+					new OTF(OTF_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 	}
 
@@ -511,8 +540,18 @@ public class Instrument extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Instrument_element)
+	{
 		// Creating XML block for Instrument
-		Element Instrument_element = document.createElement("Instrument");
+		if (Instrument_element == null)
+		{
+			Instrument_element = document.createElement("Instrument");
+		}
+		Instrument_element = super.asXMLElement(document, Instrument_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

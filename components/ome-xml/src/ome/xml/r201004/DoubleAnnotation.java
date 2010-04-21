@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.DoubleAnnotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class DoubleAnnotation extends Annotation
 					"Expecting node name of DoubleAnnotation got %s",
 					tagName));
 		}
-		// Model object: None
 		NodeList Value_nodeList = element.getElementsByTagName("Value");
 		if (Value_nodeList.getLength() > 1)
 		{
@@ -115,8 +113,18 @@ public class DoubleAnnotation extends Annotation
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element DoubleAnnotation_element)
+	{
 		// Creating XML block for DoubleAnnotation
-		Element DoubleAnnotation_element = document.createElement("DoubleAnnotation");
+		if (DoubleAnnotation_element == null)
+		{
+			DoubleAnnotation_element = document.createElement("DoubleAnnotation");
+		}
+		DoubleAnnotation_element = super.asXMLElement(document, DoubleAnnotation_element);
+
 		if (value != null)
 		{
 			// Element property Value which is not complex (has no

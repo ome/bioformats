@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.OME
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -116,95 +115,93 @@ public class OME extends AbstractOMEModelObject
 					"Expecting node name of OME got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("UUID"))
 		{
 			// Attribute property UUID
 			setUUID(String.valueOf(
 					element.getAttribute("UUID")));
 		}
-		// Model object: None
 		// Element property Project which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Project_nodeList = element.getElementsByTagName("Project");
 		for (int i = 0; i < Project_nodeList.getLength(); i++)
 		{
-			addProject(new Project(
-					(Element) Project_nodeList.item(i)));
+			Element Project_element = (Element) Project_nodeList.item(i);
+			addProject(
+					new Project(Project_element));
 		}
-		// Model object: None
 		// Element property Dataset which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Dataset_nodeList = element.getElementsByTagName("Dataset");
 		for (int i = 0; i < Dataset_nodeList.getLength(); i++)
 		{
-			addDataset(new Dataset(
-					(Element) Dataset_nodeList.item(i)));
+			Element Dataset_element = (Element) Dataset_nodeList.item(i);
+			addDataset(
+					new Dataset(Dataset_element));
 		}
-		// Model object: None
 		// Element property Experiment which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Experiment_nodeList = element.getElementsByTagName("Experiment");
 		for (int i = 0; i < Experiment_nodeList.getLength(); i++)
 		{
-			addExperiment(new Experiment(
-					(Element) Experiment_nodeList.item(i)));
+			Element Experiment_element = (Element) Experiment_nodeList.item(i);
+			addExperiment(
+					new Experiment(Experiment_element));
 		}
-		// Model object: None
 		// Element property Plate which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Plate_nodeList = element.getElementsByTagName("Plate");
 		for (int i = 0; i < Plate_nodeList.getLength(); i++)
 		{
-			addPlate(new Plate(
-					(Element) Plate_nodeList.item(i)));
+			Element Plate_element = (Element) Plate_nodeList.item(i);
+			addPlate(
+					new Plate(Plate_element));
 		}
-		// Model object: None
 		// Element property Screen which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Screen_nodeList = element.getElementsByTagName("Screen");
 		for (int i = 0; i < Screen_nodeList.getLength(); i++)
 		{
-			addScreen(new Screen(
-					(Element) Screen_nodeList.item(i)));
+			Element Screen_element = (Element) Screen_nodeList.item(i);
+			addScreen(
+					new Screen(Screen_element));
 		}
-		// Model object: None
 		// Element property Experimenter which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Experimenter_nodeList = element.getElementsByTagName("Experimenter");
 		for (int i = 0; i < Experimenter_nodeList.getLength(); i++)
 		{
-			addExperimenter(new Experimenter(
-					(Element) Experimenter_nodeList.item(i)));
+			Element Experimenter_element = (Element) Experimenter_nodeList.item(i);
+			addExperimenter(
+					new Experimenter(Experimenter_element));
 		}
-		// Model object: None
 		// Element property Group which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Group_nodeList = element.getElementsByTagName("Group");
 		for (int i = 0; i < Group_nodeList.getLength(); i++)
 		{
-			addGroup(new Group(
-					(Element) Group_nodeList.item(i)));
+			Element Group_element = (Element) Group_nodeList.item(i);
+			addGroup(
+					new Group(Group_element));
 		}
-		// Model object: None
 		// Element property Instrument which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Instrument_nodeList = element.getElementsByTagName("Instrument");
 		for (int i = 0; i < Instrument_nodeList.getLength(); i++)
 		{
-			addInstrument(new Instrument(
-					(Element) Instrument_nodeList.item(i)));
+			Element Instrument_element = (Element) Instrument_nodeList.item(i);
+			addInstrument(
+					new Instrument(Instrument_element));
 		}
-		// Model object: None
 		// Element property Image which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Image_nodeList = element.getElementsByTagName("Image");
 		for (int i = 0; i < Image_nodeList.getLength(); i++)
 		{
-			addImage(new Image(
-					(Element) Image_nodeList.item(i)));
+			Element Image_element = (Element) Image_nodeList.item(i);
+			addImage(
+					new Image(Image_element));
 		}
-		// Model object: None
 		NodeList StructuredAnnotations_nodeList = element.getElementsByTagName("StructuredAnnotations");
 		if (StructuredAnnotations_nodeList.getLength() > 1)
 		{
@@ -220,14 +217,14 @@ public class OME extends AbstractOMEModelObject
 			setStructuredAnnotations(new StructuredAnnotations(
 					(Element) StructuredAnnotations_nodeList.item(0)));
 		}
-		// Model object: None
 		// Element property ROI which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList ROI_nodeList = element.getElementsByTagName("ROI");
 		for (int i = 0; i < ROI_nodeList.getLength(); i++)
 		{
-			addROI(new ROI(
-					(Element) ROI_nodeList.item(i)));
+			Element ROI_element = (Element) ROI_nodeList.item(i);
+			addROI(
+					new ROI(ROI_element));
 		}
 	}
 
@@ -567,8 +564,18 @@ public class OME extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element OME_element)
+	{
 		// Creating XML block for OME
-		Element OME_element = document.createElement("OME");
+		if (OME_element == null)
+		{
+			OME_element = document.createElement("OME");
+		}
+		OME_element = super.asXMLElement(document, OME_element);
+
 		if (uuid != null)
 		{
 			// Attribute property UUID

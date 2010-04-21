@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ObjectiveSettings
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,28 +91,24 @@ public class ObjectiveSettings extends Settings
 					"Expecting node name of ObjectiveSettings got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("RefractiveIndex"))
 		{
 			// Attribute property RefractiveIndex
 			setRefractiveIndex(Double.valueOf(
 					element.getAttribute("RefractiveIndex")));
 		}
-		// Model object: None
 		if (element.hasAttribute("CorrectionCollar"))
 		{
 			// Attribute property CorrectionCollar
 			setCorrectionCollar(Double.valueOf(
 					element.getAttribute("CorrectionCollar")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Medium"))
 		{
 			// Attribute property which is an enumeration Medium
@@ -170,8 +165,18 @@ public class ObjectiveSettings extends Settings
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ObjectiveSettings_element)
+	{
 		// Creating XML block for ObjectiveSettings
-		Element ObjectiveSettings_element = document.createElement("ObjectiveSettings");
+		if (ObjectiveSettings_element == null)
+		{
+			ObjectiveSettings_element = document.createElement("ObjectiveSettings");
+		}
+		ObjectiveSettings_element = super.asXMLElement(document, ObjectiveSettings_element);
+
 		if (refractiveIndex != null)
 		{
 			// Attribute property RefractiveIndex

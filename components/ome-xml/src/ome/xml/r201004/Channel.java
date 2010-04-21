@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Channel
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -137,98 +136,84 @@ public class Channel extends AbstractOMEModelObject
 					"Expecting node name of Channel got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("PinholeSize"))
 		{
 			// Attribute property PinholeSize
 			setPinholeSize(Double.valueOf(
 					element.getAttribute("PinholeSize")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		if (element.hasAttribute("AcquisitionMode"))
 		{
 			// Attribute property which is an enumeration AcquisitionMode
 			setAcquisitionMode(AcquisitionMode.fromString(
 					element.getAttribute("AcquisitionMode")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Color"))
 		{
 			// Attribute property Color
 			setColor(Integer.valueOf(
 					element.getAttribute("Color")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ContrastMethod"))
 		{
 			// Attribute property which is an enumeration ContrastMethod
 			setContrastMethod(ContrastMethod.fromString(
 					element.getAttribute("ContrastMethod")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ExcitationWavelength"))
 		{
 			// Attribute property ExcitationWavelength
 			setExcitationWavelength(Integer.valueOf(
 					element.getAttribute("ExcitationWavelength")));
 		}
-		// Model object: None
 		if (element.hasAttribute("IlluminationType"))
 		{
 			// Attribute property which is an enumeration IlluminationType
 			setIlluminationType(IlluminationType.fromString(
 					element.getAttribute("IlluminationType")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Fluor"))
 		{
 			// Attribute property Fluor
 			setFluor(String.valueOf(
 					element.getAttribute("Fluor")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PockelCellSetting"))
 		{
 			// Attribute property PockelCellSetting
 			setPockelCellSetting(Integer.valueOf(
 					element.getAttribute("PockelCellSetting")));
 		}
-		// Model object: None
 		if (element.hasAttribute("EmissionWavelength"))
 		{
 			// Attribute property EmissionWavelength
 			setEmissionWavelength(Integer.valueOf(
 					element.getAttribute("EmissionWavelength")));
 		}
-		// Model object: None
 		if (element.hasAttribute("NDFilter"))
 		{
 			// Attribute property NDFilter
 			setNDFilter(Double.valueOf(
 					element.getAttribute("NDFilter")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SamplesPerPixel"))
 		{
 			// Attribute property SamplesPerPixel
 			setSamplesPerPixel(Integer.valueOf(
 					element.getAttribute("SamplesPerPixel")));
 		}
-		// Model object: None
 		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
 		if (LightSourceSettings_nodeList.getLength() > 1)
 		{
@@ -244,9 +229,7 @@ public class Channel extends AbstractOMEModelObject
 			setLightSourceSettings(new LightSourceSettings(
 					(Element) LightSourceSettings_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference OTFRef
-		// Model object: None
 		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
 		if (DetectorSettings_nodeList.getLength() > 1)
 		{
@@ -262,11 +245,8 @@ public class Channel extends AbstractOMEModelObject
 			setDetectorSettings(new DetectorSettings(
 					(Element) DetectorSettings_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference FilterSetRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		NodeList LightPath_nodeList = element.getElementsByTagName("LightPath");
 		if (LightPath_nodeList.getLength() > 1)
 		{
@@ -557,8 +537,18 @@ public class Channel extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Channel_element)
+	{
 		// Creating XML block for Channel
-		Element Channel_element = document.createElement("Channel");
+		if (Channel_element == null)
+		{
+			Channel_element = document.createElement("Channel");
+		}
+		Channel_element = super.asXMLElement(document, Channel_element);
+
 		if (pinholeSize != null)
 		{
 			// Attribute property PinholeSize

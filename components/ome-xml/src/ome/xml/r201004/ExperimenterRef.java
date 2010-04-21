@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ExperimenterRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class ExperimenterRef extends Reference
 					"Expecting node name of ExperimenterRef got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class ExperimenterRef extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ExperimenterRef_element)
+	{
 		// Creating XML block for ExperimenterRef
-		Element ExperimenterRef_element = document.createElement("ExperimenterRef");
+		if (ExperimenterRef_element == null)
+		{
+			ExperimenterRef_element = document.createElement("ExperimenterRef");
+		}
+		ExperimenterRef_element = super.asXMLElement(document, ExperimenterRef_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

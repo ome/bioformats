@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Reagent
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,28 +97,24 @@ public class Reagent extends AbstractOMEModelObject
 					"Expecting node name of Reagent got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ReagentIdentifier"))
 		{
 			// Attribute property ReagentIdentifier
 			setReagentIdentifier(String.valueOf(
 					element.getAttribute("ReagentIdentifier")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -134,9 +129,7 @@ public class Reagent extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Well_BackReference
 	}
 
@@ -250,8 +243,18 @@ public class Reagent extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Reagent_element)
+	{
 		// Creating XML block for Reagent
-		Element Reagent_element = document.createElement("Reagent");
+		if (Reagent_element == null)
+		{
+			Reagent_element = document.createElement("Reagent");
+		}
+		Reagent_element = super.asXMLElement(document, Reagent_element);
+
 		if (reagentIdentifier != null)
 		{
 			// Attribute property ReagentIdentifier

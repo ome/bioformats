@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.MetadataOnly
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,8 +85,18 @@ public class MetadataOnly extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element MetadataOnly_element)
+	{
 		// Creating XML block for MetadataOnly
-		Element MetadataOnly_element = document.createElement("MetadataOnly");
+		if (MetadataOnly_element == null)
+		{
+			MetadataOnly_element = document.createElement("MetadataOnly");
+		}
+		MetadataOnly_element = super.asXMLElement(document, MetadataOnly_element);
+
 		return MetadataOnly_element;
 	}
 }

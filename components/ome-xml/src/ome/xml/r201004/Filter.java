@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Filter
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,28 +97,24 @@ public class Filter extends ManufacturerSpec
 					"Expecting node name of Filter got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("FilterWheel"))
 		{
 			// Attribute property FilterWheel
 			setFilterWheel(String.valueOf(
 					element.getAttribute("FilterWheel")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(FilterType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		NodeList TransmittanceRange_nodeList = element.getElementsByTagName("TransmittanceRange");
 		if (TransmittanceRange_nodeList.getLength() > 1)
 		{
@@ -135,9 +130,7 @@ public class Filter extends ManufacturerSpec
 			setTransmittanceRange(new TransmittanceRange(
 					(Element) TransmittanceRange_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
 
@@ -251,8 +244,18 @@ public class Filter extends ManufacturerSpec
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Filter_element)
+	{
 		// Creating XML block for Filter
-		Element Filter_element = document.createElement("Filter");
+		if (Filter_element == null)
+		{
+			Filter_element = document.createElement("Filter");
+		}
+		Filter_element = super.asXMLElement(document, Filter_element);
+
 		if (filterWheel != null)
 		{
 			// Attribute property FilterWheel

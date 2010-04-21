@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Annotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -126,59 +125,33 @@ public abstract class Annotation extends AbstractOMEModelObject
 	public Annotation(Element element) throws EnumerationException
 	{
 		super(element);
-		String tagName = element.getTagName();
-		if (!"Annotation".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Annotation got %s",
-					tagName));
-		}
-		// Model object: None
 		if (element.hasAttribute("Namespace"))
 		{
 			// Attribute property Namespace
 			setNamespace(String.valueOf(
 					element.getAttribute("Namespace")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Pixels_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Plane_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Project_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Experimenter_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Plate_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Reagent_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Screen_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Well_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference WellSample_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ROI_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Shape_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
 	}
 
@@ -237,4 +210,26 @@ public abstract class Annotation extends AbstractOMEModelObject
 	// *** WARNING *** Unhandled or skipped property Shape_BackReference
 
 	// *** WARNING *** Unhandled or skipped property ListAnnotation_BackReference
+
+	protected Element asXMLElement(Document document, Element Annotation_element)
+	{
+		// Creating XML block for Annotation
+		if (Annotation_element == null)
+		{
+			Annotation_element = document.createElement("Annotation");
+		}
+		Annotation_element = super.asXMLElement(document, Annotation_element);
+
+		if (namespace != null)
+		{
+			// Attribute property Namespace
+			Annotation_element.setAttribute("Namespace", namespace.toString());
+		}
+		if (id != null)
+		{
+			// Attribute property ID
+			Annotation_element.setAttribute("ID", id.toString());
+		}
+		return Annotation_element;
+	}
 }

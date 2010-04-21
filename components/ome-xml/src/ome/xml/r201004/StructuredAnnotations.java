@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.StructuredAnnotations
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,7 +103,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 					"Expecting node name of StructuredAnnotations got %s",
 					tagName));
 		}
-		// Model object: None
 		NodeList XMLAnnotation_nodeList = element.getElementsByTagName("XMLAnnotation");
 		if (XMLAnnotation_nodeList.getLength() > 1)
 		{
@@ -120,7 +118,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setXMLAnnotation(new XMLAnnotation(
 					(Element) XMLAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList FileAnnotation_nodeList = element.getElementsByTagName("FileAnnotation");
 		if (FileAnnotation_nodeList.getLength() > 1)
 		{
@@ -136,7 +133,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setFileAnnotation(new FileAnnotation(
 					(Element) FileAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList ListAnnotation_nodeList = element.getElementsByTagName("ListAnnotation");
 		if (ListAnnotation_nodeList.getLength() > 1)
 		{
@@ -152,7 +148,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setListAnnotation(new ListAnnotation(
 					(Element) ListAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList LongAnnotation_nodeList = element.getElementsByTagName("LongAnnotation");
 		if (LongAnnotation_nodeList.getLength() > 1)
 		{
@@ -168,7 +163,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setLongAnnotation(new LongAnnotation(
 					(Element) LongAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList DoubleAnnotation_nodeList = element.getElementsByTagName("DoubleAnnotation");
 		if (DoubleAnnotation_nodeList.getLength() > 1)
 		{
@@ -184,7 +178,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setDoubleAnnotation(new DoubleAnnotation(
 					(Element) DoubleAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList StringAnnotation_nodeList = element.getElementsByTagName("StringAnnotation");
 		if (StringAnnotation_nodeList.getLength() > 1)
 		{
@@ -200,7 +193,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setStringAnnotation(new StringAnnotation(
 					(Element) StringAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList BooleanAnnotation_nodeList = element.getElementsByTagName("BooleanAnnotation");
 		if (BooleanAnnotation_nodeList.getLength() > 1)
 		{
@@ -216,7 +208,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			setBooleanAnnotation(new BooleanAnnotation(
 					(Element) BooleanAnnotation_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList TimestampAnnotation_nodeList = element.getElementsByTagName("TimestampAnnotation");
 		if (TimestampAnnotation_nodeList.getLength() > 1)
 		{
@@ -326,8 +317,18 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element StructuredAnnotations_element)
+	{
 		// Creating XML block for StructuredAnnotations
-		Element StructuredAnnotations_element = document.createElement("StructuredAnnotations");
+		if (StructuredAnnotations_element == null)
+		{
+			StructuredAnnotations_element = document.createElement("StructuredAnnotations");
+		}
+		StructuredAnnotations_element = super.asXMLElement(document, StructuredAnnotations_element);
+
 		if (xmlannotation != null)
 		{
 			// Element property XMLAnnotation which is complex (has

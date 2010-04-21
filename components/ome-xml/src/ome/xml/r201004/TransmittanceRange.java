@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.TransmittanceRange
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -95,35 +94,30 @@ public class TransmittanceRange extends AbstractOMEModelObject
 					"Expecting node name of TransmittanceRange got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("CutIn"))
 		{
 			// Attribute property CutIn
 			setCutIn(Integer.valueOf(
 					element.getAttribute("CutIn")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Transmittance"))
 		{
 			// Attribute property Transmittance
 			setTransmittance(Double.valueOf(
 					element.getAttribute("Transmittance")));
 		}
-		// Model object: None
 		if (element.hasAttribute("CutOut"))
 		{
 			// Attribute property CutOut
 			setCutOut(Integer.valueOf(
 					element.getAttribute("CutOut")));
 		}
-		// Model object: None
 		if (element.hasAttribute("CutInTolerance"))
 		{
 			// Attribute property CutInTolerance
 			setCutInTolerance(Integer.valueOf(
 					element.getAttribute("CutInTolerance")));
 		}
-		// Model object: None
 		if (element.hasAttribute("CutOutTolerance"))
 		{
 			// Attribute property CutOutTolerance
@@ -191,8 +185,18 @@ public class TransmittanceRange extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element TransmittanceRange_element)
+	{
 		// Creating XML block for TransmittanceRange
-		Element TransmittanceRange_element = document.createElement("TransmittanceRange");
+		if (TransmittanceRange_element == null)
+		{
+			TransmittanceRange_element = document.createElement("TransmittanceRange");
+		}
+		TransmittanceRange_element = super.asXMLElement(document, TransmittanceRange_element);
+
 		if (cutIn != null)
 		{
 			// Attribute property CutIn

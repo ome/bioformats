@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Detector
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -101,49 +100,42 @@ public class Detector extends ManufacturerSpec
 					"Expecting node name of Detector got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Zoom"))
 		{
 			// Attribute property Zoom
 			setZoom(Double.valueOf(
 					element.getAttribute("Zoom")));
 		}
-		// Model object: None
 		if (element.hasAttribute("AmplificationGain"))
 		{
 			// Attribute property AmplificationGain
 			setAmplificationGain(Double.valueOf(
 					element.getAttribute("AmplificationGain")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Gain"))
 		{
 			// Attribute property Gain
 			setGain(Double.valueOf(
 					element.getAttribute("Gain")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Offset"))
 		{
 			// Attribute property Offset
 			setOffset(Double.valueOf(
 					element.getAttribute("Offset")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(DetectorType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Voltage"))
 		{
 			// Attribute property Voltage
@@ -233,8 +225,18 @@ public class Detector extends ManufacturerSpec
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Detector_element)
+	{
 		// Creating XML block for Detector
-		Element Detector_element = document.createElement("Detector");
+		if (Detector_element == null)
+		{
+			Detector_element = document.createElement("Detector");
+		}
+		Detector_element = super.asXMLElement(document, Detector_element);
+
 		if (zoom != null)
 		{
 			// Attribute property Zoom

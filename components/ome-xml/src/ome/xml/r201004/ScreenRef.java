@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ScreenRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,8 +85,18 @@ public class ScreenRef extends ReferenceWithID
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ScreenRef_element)
+	{
 		// Creating XML block for ScreenRef
-		Element ScreenRef_element = document.createElement("ScreenRef");
+		if (ScreenRef_element == null)
+		{
+			ScreenRef_element = document.createElement("ScreenRef");
+		}
+		ScreenRef_element = super.asXMLElement(document, ScreenRef_element);
+
 		return ScreenRef_element;
 	}
 }

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Shape
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -147,141 +146,114 @@ public abstract class Shape extends AbstractOMEModelObject
 	public Shape(Element element) throws EnumerationException
 	{
 		super(element);
-		String tagName = element.getTagName();
-		if (!"Shape".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Shape got %s",
-					tagName));
-		}
-		// Model object: None
 		if (element.hasAttribute("StrokeDashArray"))
 		{
 			// Attribute property StrokeDashArray
 			setStrokeDashArray(String.valueOf(
 					element.getAttribute("StrokeDashArray")));
 		}
-		// Model object: None
 		if (element.hasAttribute("StrokeWidth"))
 		{
 			// Attribute property StrokeWidth
 			setStrokeWidth(Double.valueOf(
 					element.getAttribute("StrokeWidth")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FillRule"))
 		{
 			// Attribute property which is an enumeration FillRule
 			setFillRule(FillRule.fromString(
 					element.getAttribute("FillRule")));
 		}
-		// Model object: None
 		if (element.hasAttribute("LineCap"))
 		{
 			// Attribute property which is an enumeration LineCap
 			setLineCap(LineCap.fromString(
 					element.getAttribute("LineCap")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TheC"))
 		{
 			// Attribute property TheC
 			setTheC(Integer.valueOf(
 					element.getAttribute("TheC")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TheT"))
 		{
 			// Attribute property TheT
 			setTheT(Integer.valueOf(
 					element.getAttribute("TheT")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Transform"))
 		{
 			// Attribute property Transform
 			setTransform(String.valueOf(
 					element.getAttribute("Transform")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Label"))
 		{
 			// Attribute property Label
 			setLabel(String.valueOf(
 					element.getAttribute("Label")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FontFamily"))
 		{
 			// Attribute property which is an enumeration FontFamily
 			setFontFamily(FontFamily.fromString(
 					element.getAttribute("FontFamily")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Stroke"))
 		{
 			// Attribute property Stroke
 			setStroke(Integer.valueOf(
 					element.getAttribute("Stroke")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FontStyle"))
 		{
 			// Attribute property which is an enumeration FontStyle
 			setFontStyle(FontStyle.fromString(
 					element.getAttribute("FontStyle")));
 		}
-		// Model object: None
 		if (element.hasAttribute("MarkerEnd"))
 		{
 			// Attribute property which is an enumeration MarkerEnd
 			setMarkerEnd(Marker.fromString(
 					element.getAttribute("MarkerEnd")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TheZ"))
 		{
 			// Attribute property TheZ
 			setTheZ(Integer.valueOf(
 					element.getAttribute("TheZ")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FontSize"))
 		{
 			// Attribute property FontSize
 			setFontSize(Integer.valueOf(
 					element.getAttribute("FontSize")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Fill"))
 		{
 			// Attribute property Fill
 			setFill(Integer.valueOf(
 					element.getAttribute("Fill")));
 		}
-		// Model object: None
 		if (element.hasAttribute("MarkerStart"))
 		{
 			// Attribute property which is an enumeration MarkerStart
 			setMarkerStart(Marker.fromString(
 					element.getAttribute("MarkerStart")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		NodeList Line_nodeList = element.getElementsByTagName("Line");
 		if (Line_nodeList.getLength() > 1)
 		{
@@ -293,7 +265,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Line_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
 		if (Rectangle_nodeList.getLength() > 1)
 		{
@@ -305,7 +276,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Rectangle_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
 		if (Mask_nodeList.getLength() > 1)
 		{
@@ -317,7 +287,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Mask_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
 		if (Ellipse_nodeList.getLength() > 1)
 		{
@@ -329,7 +298,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Ellipse_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Point_nodeList = element.getElementsByTagName("Point");
 		if (Point_nodeList.getLength() > 1)
 		{
@@ -341,7 +309,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Point_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
 		if (Polyline_nodeList.getLength() > 1)
 		{
@@ -353,7 +320,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Polyline_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Path_nodeList = element.getElementsByTagName("Path");
 		if (Path_nodeList.getLength() > 1)
 		{
@@ -365,7 +331,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Path_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Text_nodeList = element.getElementsByTagName("Text");
 		if (Text_nodeList.getLength() > 1)
 		{
@@ -377,9 +342,7 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Text_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** WARNING *** Unhandled or skipped property Description
 	}
 
@@ -631,4 +594,106 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// *** WARNING *** Unhandled or skipped property Description
+
+	protected Element asXMLElement(Document document, Element Shape_element)
+	{
+		// Creating XML block for Shape
+		if (Shape_element == null)
+		{
+			Shape_element = document.createElement("Shape");
+		}
+		Shape_element = super.asXMLElement(document, Shape_element);
+
+		if (strokeDashArray != null)
+		{
+			// Attribute property StrokeDashArray
+			Shape_element.setAttribute("StrokeDashArray", strokeDashArray.toString());
+		}
+		if (strokeWidth != null)
+		{
+			// Attribute property StrokeWidth
+			Shape_element.setAttribute("StrokeWidth", strokeWidth.toString());
+		}
+		if (fillRule != null)
+		{
+			// Attribute property FillRule
+			Shape_element.setAttribute("FillRule", fillRule.toString());
+		}
+		if (lineCap != null)
+		{
+			// Attribute property LineCap
+			Shape_element.setAttribute("LineCap", lineCap.toString());
+		}
+		if (theC != null)
+		{
+			// Attribute property TheC
+			Shape_element.setAttribute("TheC", theC.toString());
+		}
+		if (theT != null)
+		{
+			// Attribute property TheT
+			Shape_element.setAttribute("TheT", theT.toString());
+		}
+		if (transform != null)
+		{
+			// Attribute property Transform
+			Shape_element.setAttribute("Transform", transform.toString());
+		}
+		if (label != null)
+		{
+			// Attribute property Label
+			Shape_element.setAttribute("Label", label.toString());
+		}
+		if (fontFamily != null)
+		{
+			// Attribute property FontFamily
+			Shape_element.setAttribute("FontFamily", fontFamily.toString());
+		}
+		if (stroke != null)
+		{
+			// Attribute property Stroke
+			Shape_element.setAttribute("Stroke", stroke.toString());
+		}
+		if (fontStyle != null)
+		{
+			// Attribute property FontStyle
+			Shape_element.setAttribute("FontStyle", fontStyle.toString());
+		}
+		if (markerEnd != null)
+		{
+			// Attribute property MarkerEnd
+			Shape_element.setAttribute("MarkerEnd", markerEnd.toString());
+		}
+		if (theZ != null)
+		{
+			// Attribute property TheZ
+			Shape_element.setAttribute("TheZ", theZ.toString());
+		}
+		if (fontSize != null)
+		{
+			// Attribute property FontSize
+			Shape_element.setAttribute("FontSize", fontSize.toString());
+		}
+		if (id != null)
+		{
+			// Attribute property ID
+			Shape_element.setAttribute("ID", id.toString());
+		}
+		if (fill != null)
+		{
+			// Attribute property Fill
+			Shape_element.setAttribute("Fill", fill.toString());
+		}
+		if (markerStart != null)
+		{
+			// Attribute property MarkerStart
+			Shape_element.setAttribute("MarkerStart", markerStart.toString());
+		}
+		if (name != null)
+		{
+			// Attribute property Name
+			Shape_element.setAttribute("Name", name.toString());
+		}
+		return Shape_element;
+	}
 }

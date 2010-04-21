@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Laser
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -107,63 +106,54 @@ public class Laser extends LightSource
 					"Expecting node name of Laser got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("PockelCell"))
 		{
 			// Attribute property PockelCell
 			setPockelCell(Boolean.valueOf(
 					element.getAttribute("PockelCell")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Pulse"))
 		{
 			// Attribute property which is an enumeration Pulse
 			setPulse(Pulse.fromString(
 					element.getAttribute("Pulse")));
 		}
-		// Model object: None
 		if (element.hasAttribute("LaserMedium"))
 		{
 			// Attribute property which is an enumeration LaserMedium
 			setLaserMedium(LaserMedium.fromString(
 					element.getAttribute("LaserMedium")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Tuneable"))
 		{
 			// Attribute property Tuneable
 			setTuneable(Boolean.valueOf(
 					element.getAttribute("Tuneable")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Wavelength"))
 		{
 			// Attribute property Wavelength
 			setWavelength(Integer.valueOf(
 					element.getAttribute("Wavelength")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FrequencyMultiplication"))
 		{
 			// Attribute property FrequencyMultiplication
 			setFrequencyMultiplication(Integer.valueOf(
 					element.getAttribute("FrequencyMultiplication")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(LaserType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("RepetitionRate"))
 		{
 			// Attribute property RepetitionRate
 			setRepetitionRate(Double.valueOf(
 					element.getAttribute("RepetitionRate")));
 		}
-		// Model object: None
 		NodeList Pump_nodeList = element.getElementsByTagName("Pump");
 		if (Pump_nodeList.getLength() > 1)
 		{
@@ -284,8 +274,18 @@ public class Laser extends LightSource
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Laser_element)
+	{
 		// Creating XML block for Laser
-		Element Laser_element = document.createElement("Laser");
+		if (Laser_element == null)
+		{
+			Laser_element = document.createElement("Laser");
+		}
+		Laser_element = super.asXMLElement(document, Laser_element);
+
 		if (pockelCell != null)
 		{
 			// Attribute property PockelCell

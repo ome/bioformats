@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.OTF
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -110,42 +109,36 @@ public class OTF extends AbstractOMEModelObject
 					"Expecting node name of OTF got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeX"))
 		{
 			// Attribute property SizeX
 			setSizeX(Integer.valueOf(
 					element.getAttribute("SizeX")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeY"))
 		{
 			// Attribute property SizeY
 			setSizeY(Integer.valueOf(
 					element.getAttribute("SizeY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(PixelType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("OpticalAxisAveraged"))
 		{
 			// Attribute property OpticalAxisAveraged
 			setOpticalAxisAveraged(Boolean.valueOf(
 					element.getAttribute("OpticalAxisAveraged")));
 		}
-		// Model object: None
 		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
 		if (ObjectiveSettings_nodeList.getLength() > 1)
 		{
@@ -161,9 +154,7 @@ public class OTF extends AbstractOMEModelObject
 			setObjectiveSettings(new ObjectiveSettings(
 					(Element) ObjectiveSettings_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference FilterSetRef
-		// Model object: None
 		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
 		if (BinaryFile_nodeList.getLength() > 1)
 		{
@@ -178,9 +169,7 @@ public class OTF extends AbstractOMEModelObject
 			// sub-elements)
 			setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 	}
 
@@ -358,8 +347,18 @@ public class OTF extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element OTF_element)
+	{
 		// Creating XML block for OTF
-		Element OTF_element = document.createElement("OTF");
+		if (OTF_element == null)
+		{
+			OTF_element = document.createElement("OTF");
+		}
+		OTF_element = super.asXMLElement(document, OTF_element);
+
 		if (sizeX != null)
 		{
 			// Attribute property SizeX

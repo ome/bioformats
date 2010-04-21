@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.TimestampAnnotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class TimestampAnnotation extends Annotation
 					"Expecting node name of TimestampAnnotation got %s",
 					tagName));
 		}
-		// Model object: None
 		NodeList Value_nodeList = element.getElementsByTagName("Value");
 		if (Value_nodeList.getLength() > 1)
 		{
@@ -115,8 +113,18 @@ public class TimestampAnnotation extends Annotation
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element TimestampAnnotation_element)
+	{
 		// Creating XML block for TimestampAnnotation
-		Element TimestampAnnotation_element = document.createElement("TimestampAnnotation");
+		if (TimestampAnnotation_element == null)
+		{
+			TimestampAnnotation_element = document.createElement("TimestampAnnotation");
+		}
+		TimestampAnnotation_element = super.asXMLElement(document, TimestampAnnotation_element);
+
 		if (value != null)
 		{
 			// Element property Value which is not complex (has no

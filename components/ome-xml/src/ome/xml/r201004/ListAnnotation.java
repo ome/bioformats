@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ListAnnotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class ListAnnotation extends Annotation
 					"Expecting node name of ListAnnotation got %s",
 					tagName));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
@@ -122,8 +120,18 @@ public class ListAnnotation extends Annotation
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ListAnnotation_element)
+	{
 		// Creating XML block for ListAnnotation
-		Element ListAnnotation_element = document.createElement("ListAnnotation");
+		if (ListAnnotation_element == null)
+		{
+			ListAnnotation_element = document.createElement("ListAnnotation");
+		}
+		ListAnnotation_element = super.asXMLElement(document, ListAnnotation_element);
+
 		if (annotationList != null)
 		{
 			// *** IGNORING *** Skipped back reference AnnotationRef

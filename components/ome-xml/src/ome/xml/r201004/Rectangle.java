@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Rectangle
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,28 +91,24 @@ public class Rectangle extends Shape
 					"Expecting node name of Rectangle got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y"))
 		{
 			// Attribute property Y
 			setY(Double.valueOf(
 					element.getAttribute("Y")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X"))
 		{
 			// Attribute property X
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Height"))
 		{
 			// Attribute property Height
 			setHeight(Double.valueOf(
 					element.getAttribute("Height")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Width"))
 		{
 			// Attribute property Width
@@ -170,8 +165,18 @@ public class Rectangle extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Rectangle_element)
+	{
 		// Creating XML block for Rectangle
-		Element Rectangle_element = document.createElement("Rectangle");
+		if (Rectangle_element == null)
+		{
+			Rectangle_element = document.createElement("Rectangle");
+		}
+		Rectangle_element = super.asXMLElement(document, Rectangle_element);
+
 		if (y != null)
 		{
 			// Attribute property Y

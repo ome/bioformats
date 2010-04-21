@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.StageLabel
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,28 +91,24 @@ public class StageLabel extends AbstractOMEModelObject
 					"Expecting node name of StageLabel got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y"))
 		{
 			// Attribute property Y
 			setY(Double.valueOf(
 					element.getAttribute("Y")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X"))
 		{
 			// Attribute property X
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Z"))
 		{
 			// Attribute property Z
 			setZ(Double.valueOf(
 					element.getAttribute("Z")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
@@ -170,8 +165,18 @@ public class StageLabel extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element StageLabel_element)
+	{
 		// Creating XML block for StageLabel
-		Element StageLabel_element = document.createElement("StageLabel");
+		if (StageLabel_element == null)
+		{
+			StageLabel_element = document.createElement("StageLabel");
+		}
+		StageLabel_element = super.asXMLElement(document, StageLabel_element);
+
 		if (y != null)
 		{
 			// Attribute property Y

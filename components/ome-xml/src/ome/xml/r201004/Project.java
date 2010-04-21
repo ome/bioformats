@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Project
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -101,21 +100,18 @@ public class Project extends AbstractOMEModelObject
 					"Expecting node name of Project got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -130,13 +126,9 @@ public class Project extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExperimenterRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference GroupRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
 	}
 
@@ -301,8 +293,18 @@ public class Project extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Project_element)
+	{
 		// Creating XML block for Project
-		Element Project_element = document.createElement("Project");
+		if (Project_element == null)
+		{
+			Project_element = document.createElement("Project");
+		}
+		Project_element = super.asXMLElement(document, Project_element);
+
 		if (name != null)
 		{
 			// Attribute property Name

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Plane
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -110,63 +109,54 @@ public class Plane extends AbstractOMEModelObject
 					"Expecting node name of Plane got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ExposureTime"))
 		{
 			// Attribute property ExposureTime
 			setExposureTime(Double.valueOf(
 					element.getAttribute("ExposureTime")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PositionZ"))
 		{
 			// Attribute property PositionZ
 			setPositionZ(Double.valueOf(
 					element.getAttribute("PositionZ")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PositionX"))
 		{
 			// Attribute property PositionX
 			setPositionX(Double.valueOf(
 					element.getAttribute("PositionX")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PositionY"))
 		{
 			// Attribute property PositionY
 			setPositionY(Double.valueOf(
 					element.getAttribute("PositionY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("DeltaT"))
 		{
 			// Attribute property DeltaT
 			setDeltaT(Double.valueOf(
 					element.getAttribute("DeltaT")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TheC"))
 		{
 			// Attribute property TheC
 			setTheC(Integer.valueOf(
 					element.getAttribute("TheC")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TheZ"))
 		{
 			// Attribute property TheZ
 			setTheZ(Integer.valueOf(
 					element.getAttribute("TheZ")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TheT"))
 		{
 			// Attribute property TheT
 			setTheT(Integer.valueOf(
 					element.getAttribute("TheT")));
 		}
-		// Model object: None
 		NodeList HashSHA1_nodeList = element.getElementsByTagName("HashSHA1");
 		if (HashSHA1_nodeList.getLength() > 1)
 		{
@@ -181,7 +171,6 @@ public class Plane extends AbstractOMEModelObject
 			// sub-elements)
 			setHashSHA1(HashSHA1_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
@@ -319,8 +308,18 @@ public class Plane extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Plane_element)
+	{
 		// Creating XML block for Plane
-		Element Plane_element = document.createElement("Plane");
+		if (Plane_element == null)
+		{
+			Plane_element = document.createElement("Plane");
+		}
+		Plane_element = super.asXMLElement(document, Plane_element);
+
 		if (exposureTime != null)
 		{
 			// Attribute property ExposureTime

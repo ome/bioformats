@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.TiffData
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,42 +97,36 @@ public class TiffData extends AbstractOMEModelObject
 					"Expecting node name of TiffData got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("IFD"))
 		{
 			// Attribute property IFD
 			setIFD(Integer.valueOf(
 					element.getAttribute("IFD")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PlaneCount"))
 		{
 			// Attribute property PlaneCount
 			setPlaneCount(Integer.valueOf(
 					element.getAttribute("PlaneCount")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FirstZ"))
 		{
 			// Attribute property FirstZ
 			setFirstZ(Integer.valueOf(
 					element.getAttribute("FirstZ")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FirstC"))
 		{
 			// Attribute property FirstC
 			setFirstC(Integer.valueOf(
 					element.getAttribute("FirstC")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FirstT"))
 		{
 			// Attribute property FirstT
 			setFirstT(Integer.valueOf(
 					element.getAttribute("FirstT")));
 		}
-		// Model object: None
 		NodeList UUID_nodeList = element.getElementsByTagName("UUID");
 		if (UUID_nodeList.getLength() > 1)
 		{
@@ -221,8 +214,18 @@ public class TiffData extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element TiffData_element)
+	{
 		// Creating XML block for TiffData
-		Element TiffData_element = document.createElement("TiffData");
+		if (TiffData_element == null)
+		{
+			TiffData_element = document.createElement("TiffData");
+		}
+		TiffData_element = super.asXMLElement(document, TiffData_element);
+
 		if (ifd != null)
 		{
 			// Attribute property IFD

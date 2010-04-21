@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.DetectorSettings
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,42 +97,36 @@ public class DetectorSettings extends Settings
 					"Expecting node name of DetectorSettings got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Binning"))
 		{
 			// Attribute property which is an enumeration Binning
 			setBinning(Binning.fromString(
 					element.getAttribute("Binning")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ReadOutRate"))
 		{
 			// Attribute property ReadOutRate
 			setReadOutRate(Double.valueOf(
 					element.getAttribute("ReadOutRate")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Gain"))
 		{
 			// Attribute property Gain
 			setGain(Double.valueOf(
 					element.getAttribute("Gain")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Offset"))
 		{
 			// Attribute property Offset
 			setOffset(Double.valueOf(
 					element.getAttribute("Offset")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Voltage"))
 		{
 			// Attribute property Voltage
@@ -212,8 +205,18 @@ public class DetectorSettings extends Settings
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element DetectorSettings_element)
+	{
 		// Creating XML block for DetectorSettings
-		Element DetectorSettings_element = document.createElement("DetectorSettings");
+		if (DetectorSettings_element == null)
+		{
+			DetectorSettings_element = document.createElement("DetectorSettings");
+		}
+		DetectorSettings_element = super.asXMLElement(document, DetectorSettings_element);
+
 		if (binning != null)
 		{
 			// Attribute property Binning

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Text
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,21 +88,18 @@ public class Text extends Shape
 					"Expecting node name of Text got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y"))
 		{
 			// Attribute property Y
 			setY(Double.valueOf(
 					element.getAttribute("Y")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X"))
 		{
 			// Attribute property X
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
-		// Model object: None
 		NodeList Value_nodeList = element.getElementsByTagName("Value");
 		if (Value_nodeList.getLength() > 1)
 		{
@@ -157,8 +153,18 @@ public class Text extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Text_element)
+	{
 		// Creating XML block for Text
-		Element Text_element = document.createElement("Text");
+		if (Text_element == null)
+		{
+			Text_element = document.createElement("Text");
+		}
+		Text_element = super.asXMLElement(document, Text_element);
+
 		if (y != null)
 		{
 			// Attribute property Y

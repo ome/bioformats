@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Experimenter
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -125,75 +124,60 @@ public class Experimenter extends AbstractOMEModelObject
 					"Expecting node name of Experimenter got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("UserName"))
 		{
 			// Attribute property UserName
 			setUserName(String.valueOf(
 					element.getAttribute("UserName")));
 		}
-		// Model object: None
 		if (element.hasAttribute("DisplayName"))
 		{
 			// Attribute property DisplayName
 			setDisplayName(String.valueOf(
 					element.getAttribute("DisplayName")));
 		}
-		// Model object: None
 		if (element.hasAttribute("FirstName"))
 		{
 			// Attribute property FirstName
 			setFirstName(String.valueOf(
 					element.getAttribute("FirstName")));
 		}
-		// Model object: None
 		if (element.hasAttribute("MiddleName"))
 		{
 			// Attribute property MiddleName
 			setMiddleName(String.valueOf(
 					element.getAttribute("MiddleName")));
 		}
-		// Model object: None
 		if (element.hasAttribute("LastName"))
 		{
 			// Attribute property LastName
 			setLastName(String.valueOf(
 					element.getAttribute("LastName")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Email"))
 		{
 			// Attribute property Email
 			setEmail(String.valueOf(
 					element.getAttribute("Email")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Institution"))
 		{
 			// Attribute property Institution
 			setInstitution(String.valueOf(
 					element.getAttribute("Institution")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference GroupRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Project_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Experiment_BackReference
 	}
 
@@ -506,8 +490,18 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Experimenter_element)
+	{
 		// Creating XML block for Experimenter
-		Element Experimenter_element = document.createElement("Experimenter");
+		if (Experimenter_element == null)
+		{
+			Experimenter_element = document.createElement("Experimenter");
+		}
+		Experimenter_element = super.asXMLElement(document, Experimenter_element);
+
 		if (userName != null)
 		{
 			// Attribute property UserName

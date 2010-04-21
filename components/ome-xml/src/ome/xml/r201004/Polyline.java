@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Polyline
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,14 +85,12 @@ public class Polyline extends Shape
 					"Expecting node name of Polyline got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Points"))
 		{
 			// Attribute property Points
 			setPoints(String.valueOf(
 					element.getAttribute("Points")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Closed"))
 		{
 			// Attribute property Closed
@@ -128,8 +125,18 @@ public class Polyline extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Polyline_element)
+	{
 		// Creating XML block for Polyline
-		Element Polyline_element = document.createElement("Polyline");
+		if (Polyline_element == null)
+		{
+			Polyline_element = document.createElement("Polyline");
+		}
+		Polyline_element = super.asXMLElement(document, Polyline_element);
+
 		if (points != null)
 		{
 			// Attribute property Points

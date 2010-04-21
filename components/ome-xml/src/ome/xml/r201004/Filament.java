@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Filament
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class Filament extends LightSource
 					"Expecting node name of Filament got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
@@ -107,8 +105,18 @@ public class Filament extends LightSource
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Filament_element)
+	{
 		// Creating XML block for Filament
-		Element Filament_element = document.createElement("Filament");
+		if (Filament_element == null)
+		{
+			Filament_element = document.createElement("Filament");
+		}
+		Filament_element = super.asXMLElement(document, Filament_element);
+
 		if (type != null)
 		{
 			// Attribute property Type

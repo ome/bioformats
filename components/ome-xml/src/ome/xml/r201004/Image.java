@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Image
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -131,21 +130,18 @@ public class Image extends AbstractOMEModelObject
 					"Expecting node name of Image got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		NodeList AcquiredDate_nodeList = element.getElementsByTagName("AcquiredDate");
 		if (AcquiredDate_nodeList.getLength() > 1)
 		{
@@ -160,9 +156,7 @@ public class Image extends AbstractOMEModelObject
 			// sub-elements)
 			setAcquiredDate(AcquiredDate_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExperimenterRef
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -177,15 +171,10 @@ public class Image extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExperimentRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference GroupRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference DatasetRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference InstrumentRef
-		// Model object: None
 		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
 		if (ObjectiveSettings_nodeList.getLength() > 1)
 		{
@@ -201,7 +190,6 @@ public class Image extends AbstractOMEModelObject
 			setObjectiveSettings(new ObjectiveSettings(
 					(Element) ObjectiveSettings_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList ImagingEnvironment_nodeList = element.getElementsByTagName("ImagingEnvironment");
 		if (ImagingEnvironment_nodeList.getLength() > 1)
 		{
@@ -217,7 +205,6 @@ public class Image extends AbstractOMEModelObject
 			setImagingEnvironment(new ImagingEnvironment(
 					(Element) ImagingEnvironment_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList StageLabel_nodeList = element.getElementsByTagName("StageLabel");
 		if (StageLabel_nodeList.getLength() > 1)
 		{
@@ -233,7 +220,6 @@ public class Image extends AbstractOMEModelObject
 			setStageLabel(new StageLabel(
 					(Element) StageLabel_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList Pixels_nodeList = element.getElementsByTagName("Pixels");
 		if (Pixels_nodeList.getLength() > 1)
 		{
@@ -249,13 +235,9 @@ public class Image extends AbstractOMEModelObject
 			setPixels(new Pixels(
 					(Element) Pixels_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ROIRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference MicrobeamManipulationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference WellSample_BackReference
 	}
 
@@ -630,8 +612,18 @@ public class Image extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Image_element)
+	{
 		// Creating XML block for Image
-		Element Image_element = document.createElement("Image");
+		if (Image_element == null)
+		{
+			Image_element = document.createElement("Image");
+		}
+		Image_element = super.asXMLElement(document, Image_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

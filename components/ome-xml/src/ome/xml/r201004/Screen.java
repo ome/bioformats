@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Screen
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -116,56 +115,48 @@ public class Screen extends AbstractOMEModelObject
 					"Expecting node name of Screen got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ProtocolDescription"))
 		{
 			// Attribute property ProtocolDescription
 			setProtocolDescription(String.valueOf(
 					element.getAttribute("ProtocolDescription")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ProtocolIdentifier"))
 		{
 			// Attribute property ProtocolIdentifier
 			setProtocolIdentifier(String.valueOf(
 					element.getAttribute("ProtocolIdentifier")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ReagentSetDescription"))
 		{
 			// Attribute property ReagentSetDescription
 			setReagentSetDescription(String.valueOf(
 					element.getAttribute("ReagentSetDescription")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property Type
 			setType(String.valueOf(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ReagentSetIdentifier"))
 		{
 			// Attribute property ReagentSetIdentifier
 			setReagentSetIdentifier(String.valueOf(
 					element.getAttribute("ReagentSetIdentifier")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -180,20 +171,17 @@ public class Screen extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// Element property Reagent which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Reagent_nodeList = element.getElementsByTagName("Reagent");
 		for (int i = 0; i < Reagent_nodeList.getLength(); i++)
 		{
-			addReagent(new Reagent(
-					(Element) Reagent_nodeList.item(i)));
+			Element Reagent_element = (Element) Reagent_nodeList.item(i);
+			addReagent(
+					new Reagent(Reagent_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference PlateRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Plate_BackReference
 	}
 
@@ -413,8 +401,18 @@ public class Screen extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Screen_element)
+	{
 		// Creating XML block for Screen
-		Element Screen_element = document.createElement("Screen");
+		if (Screen_element == null)
+		{
+			Screen_element = document.createElement("Screen");
+		}
+		Screen_element = super.asXMLElement(document, Screen_element);
+
 		if (name != null)
 		{
 			// Attribute property Name

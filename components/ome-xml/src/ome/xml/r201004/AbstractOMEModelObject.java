@@ -50,5 +50,17 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
    * @see ome.xml.r201004.OMEModelObject#asXMLElement(org.w3c.dom.Document)
    */
   public abstract Element asXMLElement(Document document);
+  
+  /**
+   * Takes the entire object hierarchy and produced an XML DOM tree taking
+   * into account class hierarchy.
+   * @param document Destination document for element creation, etc.
+   * @param element Element from the subclass. If </code>null</code> a new
+   * element will be created of this class.
+   * @return <code>element</code> populated with properties from this class.
+   */
+  protected Element asXMLElement(Document document, Element element) {
+    return element;
+  }
 
 }

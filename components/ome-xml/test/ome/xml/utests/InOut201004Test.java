@@ -34,13 +34,17 @@
 
 package ome.xml.utests;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -102,9 +106,9 @@ public class InOut201004Test {
 
   private static String ROI_ID = "ROI:5";
 
-  private static DimensionOrder dimensionOrder = DimensionOrder.XYZCT;
+  private static DimensionOrder DIMENSION_ORDER = DimensionOrder.XYZCT;
 
-  private static PixelType pixelType = PixelType.UINT16;
+  private static PixelType PIXEL_TYPE = PixelType.UINT16;
 
   private static final Integer SIZE_X = 512;
 
@@ -115,6 +119,12 @@ public class InOut201004Test {
   private static final Integer SIZE_C = 3;
 
   private static final Integer SIZE_T = 50;
+
+  private static final String DETECTOR_MODEL = "ReallySensitive!";
+
+  private static final String LIGHTSOURCE_MODEL = "ReallyBright!";
+  
+  private static final LaserType LASER_TYPE = LaserType.DYE;
 
   private static final Integer WELL_ROWS = 3;
 
@@ -146,15 +156,14 @@ public class InOut201004Test {
 
   private Document document;
 
-  private String asString;
+  public String asString;
 
-  private OME ome;
+  public OME ome;
 
   @BeforeClass
   public void setUp()
-    throws ParserConfigurationException, TransformerException,
-    EnumerationException
-  {
+  throws ParserConfigurationException, TransformerException,
+  EnumerationException, UnsupportedEncodingException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     document = parser.newDocument();
@@ -172,12 +181,12 @@ public class InOut201004Test {
     document.appendChild(root);
     // Produce string XML
     asString = asString();
-    // Read string XML in as a DOM tree and parse into the object hierarchy
-    ome = new OME(document.getDocumentElement());
   }
 
   @Test
   public void testValidOMENode() throws EnumerationException {
+    // Read string XML in as a DOM tree and parse into the object hierarchy
+    ome = new OME(document.getDocumentElement());
     assertNotNull(ome);
     assertEquals(1, ome.sizeOfImageList());
   }
@@ -197,8 +206,8 @@ public class InOut201004Test {
     assertEquals(SIZE_Z, pixels.getSizeZ());
     assertEquals(SIZE_C, pixels.getSizeC());
     assertEquals(SIZE_T, pixels.getSizeT());
-    assertEquals(dimensionOrder, pixels.getDimensionOrder());
-    assertEquals(pixelType, pixels.getType());
+    assertEquals(DIMENSION_ORDER, pixels.getDimensionOrder());
+    assertEquals(PIXEL_TYPE, pixels.getType());
     assertNotNull(pixels.getMetadataOnly());
   }
 
@@ -223,6 +232,16 @@ public class InOut201004Test {
     Detector detector = ome.getInstrument(0).getDetector(0);
     assertNotNull(detector);
     assertEquals(DETECTOR_ID, detector.getID());
+    assertEquals(DETECTOR_MODEL, detector.getModel());
+  }
+
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidLaserNode() {
+    Laser laser = (Laser) ome.getInstrument(0).getLightSource(0);
+    assertNotNull(laser);
+    assertEquals(LIGHTSOURCE_ID, laser.getID());
+    assertEquals(LIGHTSOURCE_MODEL, laser.getModel());
+    assertEquals(LASER_TYPE, laser.getType());
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
@@ -310,8 +329,8 @@ public class InOut201004Test {
     pixels.setSizeZ(SIZE_Z);
     pixels.setSizeC(SIZE_C);
     pixels.setSizeT(SIZE_T);
-    pixels.setDimensionOrder(dimensionOrder);
-    pixels.setType(pixelType);
+    pixels.setDimensionOrder(DIMENSION_ORDER);
+    pixels.setType(PIXEL_TYPE);
     pixels.setMetadataOnly(new MetadataOnly());
     // Create <Channel/> under <Pixels/>
     for (int i = 0; i < SIZE_C; i++) {
@@ -331,12 +350,14 @@ public class InOut201004Test {
     // Create <Detector/> under <Instrument/>
     Detector detector = new Detector();
     detector.setID(DETECTOR_ID);
+    detector.setModel(DETECTOR_MODEL);
     instrument.addDetector(detector);
     // Create <Laser/> under <Instrument/>
     Laser laser = new Laser();
-    //laser.setID(LIGHTSOURCE_ID);  /// XXX: Missing ID!?!
-    laser.setType(LaserType.DYE);
-    //instrument.addLightSource(laser);  // XXX: Fucked type hierarchy!?!
+    laser.setID(LIGHTSOURCE_ID);
+    laser.setModel(LIGHTSOURCE_MODEL);
+    laser.setType(LASER_TYPE);
+    instrument.addLightSource(laser);
 
     // link Instrument to the first Image
     Image image = ome.getImage(0);
@@ -387,15 +408,20 @@ public class InOut201004Test {
     return roi;
   }
 
-  private String asString() throws TransformerException {
+  private String asString()
+  throws TransformerException, UnsupportedEncodingException {
     TransformerFactory transformerFactory =
       TransformerFactory.newInstance();
     Transformer transformer = transformerFactory.newTransformer();
+    //Setup indenting to "pretty print"
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    transformer.setOutputProperty(
+        "{http://xml.apache.org/xslt}indent-amount", "4");
     Source source = new DOMSource(document);
-    StringWriter stringWriter = new StringWriter();
-    Result result = new StreamResult(stringWriter);
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    Result result = new StreamResult(new OutputStreamWriter(os, "utf-8"));
     transformer.transform(source, result);
-    return stringWriter.toString();
+    return os.toString();
   }
 
   private Document fromString(String xml)
@@ -403,5 +429,11 @@ public class InOut201004Test {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
     return builder.parse(new InputSource(new StringReader(xml)));
+  }
+
+  public static void main(String[] args) throws Exception {
+    InOut201004Test t = new InOut201004Test();
+    t.setUp();
+    System.out.println(t.asString);
   }
 }

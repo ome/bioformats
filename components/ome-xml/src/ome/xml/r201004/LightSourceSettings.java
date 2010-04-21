@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.LightSourceSettings
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,21 +88,18 @@ public class LightSourceSettings extends Settings
 					"Expecting node name of LightSourceSettings got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Wavelength"))
 		{
 			// Attribute property Wavelength
 			setWavelength(Integer.valueOf(
 					element.getAttribute("Wavelength")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Attenuation"))
 		{
 			// Attribute property Attenuation
 			setAttenuation(Double.valueOf(
 					element.getAttribute("Attenuation")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -149,8 +145,18 @@ public class LightSourceSettings extends Settings
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element LightSourceSettings_element)
+	{
 		// Creating XML block for LightSourceSettings
-		Element LightSourceSettings_element = document.createElement("LightSourceSettings");
+		if (LightSourceSettings_element == null)
+		{
+			LightSourceSettings_element = document.createElement("LightSourceSettings");
+		}
+		LightSourceSettings_element = super.asXMLElement(document, LightSourceSettings_element);
+
 		if (wavelength != null)
 		{
 			// Attribute property Wavelength

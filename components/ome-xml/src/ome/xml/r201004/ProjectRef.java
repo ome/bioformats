@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ProjectRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class ProjectRef extends Reference
 					"Expecting node name of ProjectRef got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class ProjectRef extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ProjectRef_element)
+	{
 		// Creating XML block for ProjectRef
-		Element ProjectRef_element = document.createElement("ProjectRef");
+		if (ProjectRef_element == null)
+		{
+			ProjectRef_element = document.createElement("ProjectRef");
+		}
+		ProjectRef_element = super.asXMLElement(document, ProjectRef_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

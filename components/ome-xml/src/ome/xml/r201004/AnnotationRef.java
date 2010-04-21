@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.AnnotationRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class AnnotationRef extends Reference
 					"Expecting node name of AnnotationRef got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class AnnotationRef extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element AnnotationRef_element)
+	{
 		// Creating XML block for AnnotationRef
-		Element AnnotationRef_element = document.createElement("AnnotationRef");
+		if (AnnotationRef_element == null)
+		{
+			AnnotationRef_element = document.createElement("AnnotationRef");
+		}
+		AnnotationRef_element = super.asXMLElement(document, AnnotationRef_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

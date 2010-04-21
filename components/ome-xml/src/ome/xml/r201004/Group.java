@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Group
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -107,21 +106,18 @@ public class Group extends AbstractOMEModelObject
 					"Expecting node name of Group got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -136,7 +132,6 @@ public class Group extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
 		if (Leader_nodeList.getLength() > 1)
 		{
@@ -152,7 +147,6 @@ public class Group extends AbstractOMEModelObject
 			setLeader(new Leader(
 					(Element) Leader_nodeList.item(0)));
 		}
-		// Model object: None
 		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
 		if (Contact_nodeList.getLength() > 1)
 		{
@@ -168,13 +162,9 @@ public class Group extends AbstractOMEModelObject
 			setContact(new Contact(
 					(Element) Contact_nodeList.item(0)));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Project_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Experimenter_BackReference
 	}
 
@@ -361,8 +351,18 @@ public class Group extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Group_element)
+	{
 		// Creating XML block for Group
-		Element Group_element = document.createElement("Group");
+		if (Group_element == null)
+		{
+			Group_element = document.createElement("Group");
+		}
+		Group_element = super.asXMLElement(document, Group_element);
+
 		if (name != null)
 		{
 			// Attribute property Name

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ManufacturerSpec
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -50,7 +49,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ManufacturerSpec extends AbstractOMEModelObject
+public abstract class ManufacturerSpec extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -84,36 +83,24 @@ public class ManufacturerSpec extends AbstractOMEModelObject
 	public ManufacturerSpec(Element element) throws EnumerationException
 	{
 		super(element);
-		String tagName = element.getTagName();
-		if (!"ManufacturerSpec".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ManufacturerSpec got %s",
-					tagName));
-		}
-		// Model object: None
 		if (element.hasAttribute("LotNumber"))
 		{
 			// Attribute property LotNumber
 			setLotNumber(String.valueOf(
 					element.getAttribute("LotNumber")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Model"))
 		{
 			// Attribute property Model
 			setModel(String.valueOf(
 					element.getAttribute("Model")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SerialNumber"))
 		{
 			// Attribute property SerialNumber
 			setSerialNumber(String.valueOf(
 					element.getAttribute("SerialNumber")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Manufacturer"))
 		{
 			// Attribute property Manufacturer
@@ -168,10 +155,15 @@ public class ManufacturerSpec extends AbstractOMEModelObject
 		this.manufacturer = manufacturer;
 	}
 
-	public Element asXMLElement(Document document)
+	protected Element asXMLElement(Document document, Element ManufacturerSpec_element)
 	{
 		// Creating XML block for ManufacturerSpec
-		Element ManufacturerSpec_element = document.createElement("ManufacturerSpec");
+		if (ManufacturerSpec_element == null)
+		{
+			ManufacturerSpec_element = document.createElement("ManufacturerSpec");
+		}
+		ManufacturerSpec_element = super.asXMLElement(document, ManufacturerSpec_element);
+
 		if (lotNumber != null)
 		{
 			// Attribute property LotNumber

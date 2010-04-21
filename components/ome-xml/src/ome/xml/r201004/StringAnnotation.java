@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.StringAnnotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class StringAnnotation extends Annotation
 					"Expecting node name of StringAnnotation got %s",
 					tagName));
 		}
-		// Model object: None
 		NodeList Value_nodeList = element.getElementsByTagName("Value");
 		if (Value_nodeList.getLength() > 1)
 		{
@@ -115,8 +113,18 @@ public class StringAnnotation extends Annotation
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element StringAnnotation_element)
+	{
 		// Creating XML block for StringAnnotation
-		Element StringAnnotation_element = document.createElement("StringAnnotation");
+		if (StringAnnotation_element == null)
+		{
+			StringAnnotation_element = document.createElement("StringAnnotation");
+		}
+		StringAnnotation_element = super.asXMLElement(document, StringAnnotation_element);
+
 		if (value != null)
 		{
 			// Element property Value which is not complex (has no

@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Plate
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -128,77 +127,66 @@ public class Plate extends AbstractOMEModelObject
 					"Expecting node name of Plate got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Status"))
 		{
 			// Attribute property Status
 			setStatus(String.valueOf(
 					element.getAttribute("Status")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Rows"))
 		{
 			// Attribute property Rows
 			setRows(Integer.valueOf(
 					element.getAttribute("Rows")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ExternalIdentifier"))
 		{
 			// Attribute property ExternalIdentifier
 			setExternalIdentifier(String.valueOf(
 					element.getAttribute("ExternalIdentifier")));
 		}
-		// Model object: None
 		if (element.hasAttribute("RowNamingConvention"))
 		{
 			// Attribute property which is an enumeration RowNamingConvention
 			setRowNamingConvention(NamingConvention.fromString(
 					element.getAttribute("RowNamingConvention")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ColumnNamingConvention"))
 		{
 			// Attribute property which is an enumeration ColumnNamingConvention
 			setColumnNamingConvention(NamingConvention.fromString(
 					element.getAttribute("ColumnNamingConvention")));
 		}
-		// Model object: None
 		if (element.hasAttribute("WellOriginY"))
 		{
 			// Attribute property WellOriginY
 			setWellOriginY(Double.valueOf(
 					element.getAttribute("WellOriginY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("WellOriginX"))
 		{
 			// Attribute property WellOriginX
 			setWellOriginX(Double.valueOf(
 					element.getAttribute("WellOriginX")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Columns"))
 		{
 			// Attribute property Columns
 			setColumns(Integer.valueOf(
 					element.getAttribute("Columns")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -213,29 +201,26 @@ public class Plate extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ScreenRef
-		// Model object: None
 		// Element property Well which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Well_nodeList = element.getElementsByTagName("Well");
 		for (int i = 0; i < Well_nodeList.getLength(); i++)
 		{
-			addWell(new Well(
-					(Element) Well_nodeList.item(i)));
+			Element Well_element = (Element) Well_nodeList.item(i);
+			addWell(
+					new Well(Well_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
-		// Model object: None
 		// Element property PlateAcquisition which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList PlateAcquisition_nodeList = element.getElementsByTagName("PlateAcquisition");
 		for (int i = 0; i < PlateAcquisition_nodeList.getLength(); i++)
 		{
-			addPlateAcquisition(new PlateAcquisition(
-					(Element) PlateAcquisition_nodeList.item(i)));
+			Element PlateAcquisition_element = (Element) PlateAcquisition_nodeList.item(i);
+			addPlateAcquisition(
+					new PlateAcquisition(PlateAcquisition_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Screen_BackReference
 	}
 
@@ -519,8 +504,18 @@ public class Plate extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Plate_element)
+	{
 		// Creating XML block for Plate
-		Element Plate_element = document.createElement("Plate");
+		if (Plate_element == null)
+		{
+			Plate_element = document.createElement("Plate");
+		}
+		Plate_element = super.asXMLElement(document, Plate_element);
+
 		if (status != null)
 		{
 			// Attribute property Status

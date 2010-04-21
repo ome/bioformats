@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Reference
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,8 +85,18 @@ public class Reference extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Reference_element)
+	{
 		// Creating XML block for Reference
-		Element Reference_element = document.createElement("Reference");
+		if (Reference_element == null)
+		{
+			Reference_element = document.createElement("Reference");
+		}
+		Reference_element = super.asXMLElement(document, Reference_element);
+
 		return Reference_element;
 	}
 }

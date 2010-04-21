@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.MicrobeamManipulation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,34 +97,29 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 					"Expecting node name of MicrobeamManipulation got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(MicrobeamManipulationType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ROIRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExperimenterRef
-		// Model object: None
 		// Element property LightSourceSettings which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
 		for (int i = 0; i < LightSourceSettings_nodeList.getLength(); i++)
 		{
-			addLightSourceSettings(new LightSourceSettings(
-					(Element) LightSourceSettings_nodeList.item(i)));
+			Element LightSourceSettings_element = (Element) LightSourceSettings_nodeList.item(i);
+			addLightSourceSettings(
+					new LightSourceSettings(LightSourceSettings_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
@@ -279,8 +273,18 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element MicrobeamManipulation_element)
+	{
 		// Creating XML block for MicrobeamManipulation
-		Element MicrobeamManipulation_element = document.createElement("MicrobeamManipulation");
+		if (MicrobeamManipulation_element == null)
+		{
+			MicrobeamManipulation_element = document.createElement("MicrobeamManipulation");
+		}
+		MicrobeamManipulation_element = super.asXMLElement(document, MicrobeamManipulation_element);
+
 		if (type != null)
 		{
 			// Attribute property Type

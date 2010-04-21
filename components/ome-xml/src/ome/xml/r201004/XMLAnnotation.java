@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.XMLAnnotation
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class XMLAnnotation extends Annotation
 					"Expecting node name of XMLAnnotation got %s",
 					tagName));
 		}
-		// Model object: None
 		NodeList Value_nodeList = element.getElementsByTagName("Value");
 		if (Value_nodeList.getLength() > 1)
 		{
@@ -115,8 +113,18 @@ public class XMLAnnotation extends Annotation
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element XMLAnnotation_element)
+	{
 		// Creating XML block for XMLAnnotation
-		Element XMLAnnotation_element = document.createElement("XMLAnnotation");
+		if (XMLAnnotation_element == null)
+		{
+			XMLAnnotation_element = document.createElement("XMLAnnotation");
+		}
+		XMLAnnotation_element = super.asXMLElement(document, XMLAnnotation_element);
+
 		if (value != null)
 		{
 			// Element property Value which is not complex (has no

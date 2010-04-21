@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Line
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,28 +91,24 @@ public class Line extends Shape
 					"Expecting node name of Line got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y1"))
 		{
 			// Attribute property Y1
 			setY1(Double.valueOf(
 					element.getAttribute("Y1")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X2"))
 		{
 			// Attribute property X2
 			setX2(Double.valueOf(
 					element.getAttribute("X2")));
 		}
-		// Model object: None
 		if (element.hasAttribute("X1"))
 		{
 			// Attribute property X1
 			setX1(Double.valueOf(
 					element.getAttribute("X1")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Y2"))
 		{
 			// Attribute property Y2
@@ -170,8 +165,18 @@ public class Line extends Shape
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Line_element)
+	{
 		// Creating XML block for Line
-		Element Line_element = document.createElement("Line");
+		if (Line_element == null)
+		{
+			Line_element = document.createElement("Line");
+		}
+		Line_element = super.asXMLElement(document, Line_element);
+
 		if (y1 != null)
 		{
 			// Attribute property Y1

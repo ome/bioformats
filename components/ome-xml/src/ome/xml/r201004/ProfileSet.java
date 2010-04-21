@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ProfileSet
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,23 +85,23 @@ public class ProfileSet extends AbstractOMEModelObject
 					"Expecting node name of ProfileSet got %s",
 					tagName));
 		}
-		// Model object: None
 		// Element property ImageProfile which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList ImageProfile_nodeList = element.getElementsByTagName("ImageProfile");
 		for (int i = 0; i < ImageProfile_nodeList.getLength(); i++)
 		{
-			addImageProfile(new ImageProfile(
-					(Element) ImageProfile_nodeList.item(i)));
+			Element ImageProfile_element = (Element) ImageProfile_nodeList.item(i);
+			addImageProfile(
+					new ImageProfile(ImageProfile_element));
 		}
-		// Model object: None
 		// Element property ChannelProfile which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList ChannelProfile_nodeList = element.getElementsByTagName("ChannelProfile");
 		for (int i = 0; i < ChannelProfile_nodeList.getLength(); i++)
 		{
-			addChannelProfile(new ChannelProfile(
-					(Element) ChannelProfile_nodeList.item(i)));
+			Element ChannelProfile_element = (Element) ChannelProfile_nodeList.item(i);
+			addChannelProfile(
+					new ChannelProfile(ChannelProfile_element));
 		}
 	}
 
@@ -172,8 +171,18 @@ public class ProfileSet extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ProfileSet_element)
+	{
 		// Creating XML block for ProfileSet
-		Element ProfileSet_element = document.createElement("ProfileSet");
+		if (ProfileSet_element == null)
+		{
+			ProfileSet_element = document.createElement("ProfileSet");
+		}
+		ProfileSet_element = super.asXMLElement(document, ProfileSet_element);
+
 		if (imageProfileList != null)
 		{
 			// Element property ImageProfile which is complex (has

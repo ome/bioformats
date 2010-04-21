@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Contact
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class Contact extends Reference
 					"Expecting node name of Contact got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -107,8 +105,18 @@ public class Contact extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Contact_element)
+	{
 		// Creating XML block for Contact
-		Element Contact_element = document.createElement("Contact");
+		if (Contact_element == null)
+		{
+			Contact_element = document.createElement("Contact");
+		}
+		Contact_element = super.asXMLElement(document, Contact_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

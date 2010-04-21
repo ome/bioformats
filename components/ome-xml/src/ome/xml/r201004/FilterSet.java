@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.FilterSet
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -101,24 +100,17 @@ public class FilterSet extends ManufacturerSpec
 					"Expecting node name of FilterSet got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExcitationFilterRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference DichroicRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference EmissionFilterRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference OTF_BackReference
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 	}
 
@@ -323,8 +315,18 @@ public class FilterSet extends ManufacturerSpec
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element FilterSet_element)
+	{
 		// Creating XML block for FilterSet
-		Element FilterSet_element = document.createElement("FilterSet");
+		if (FilterSet_element == null)
+		{
+			FilterSet_element = document.createElement("FilterSet");
+		}
+		FilterSet_element = super.asXMLElement(document, FilterSet_element);
+
 		if (id != null)
 		{
 			// Attribute property ID

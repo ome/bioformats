@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.LightSource
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,29 +85,18 @@ public abstract class LightSource extends ManufacturerSpec
 	public LightSource(Element element) throws EnumerationException
 	{
 		super(element);
-		String tagName = element.getTagName();
-		if (!"LightSource".equals(tagName))
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of LightSource got %s",
-					tagName));
-		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Power"))
 		{
 			// Attribute property Power
 			setPower(Double.valueOf(
 					element.getAttribute("Power")));
 		}
-		// Model object: None
 		NodeList Laser_nodeList = element.getElementsByTagName("Laser");
 		if (Laser_nodeList.getLength() > 1)
 		{
@@ -120,7 +108,6 @@ public abstract class LightSource extends ManufacturerSpec
 		else if (Laser_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Filament_nodeList = element.getElementsByTagName("Filament");
 		if (Filament_nodeList.getLength() > 1)
 		{
@@ -132,7 +119,6 @@ public abstract class LightSource extends ManufacturerSpec
 		else if (Filament_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList Arc_nodeList = element.getElementsByTagName("Arc");
 		if (Arc_nodeList.getLength() > 1)
 		{
@@ -144,7 +130,6 @@ public abstract class LightSource extends ManufacturerSpec
 		else if (Arc_nodeList.getLength() != 0)
 		{
 		}
-		// Model object: None
 		NodeList LightEmittingDiode_nodeList = element.getElementsByTagName("LightEmittingDiode");
 		if (LightEmittingDiode_nodeList.getLength() > 1)
 		{
@@ -189,4 +174,26 @@ public abstract class LightSource extends ManufacturerSpec
 	// *** WARNING *** Unhandled or skipped property Arc
 
 	// *** WARNING *** Unhandled or skipped property LightEmittingDiode
+
+	protected Element asXMLElement(Document document, Element LightSource_element)
+	{
+		// Creating XML block for LightSource
+		if (LightSource_element == null)
+		{
+			LightSource_element = document.createElement("LightSource");
+		}
+		LightSource_element = super.asXMLElement(document, LightSource_element);
+
+		if (id != null)
+		{
+			// Attribute property ID
+			LightSource_element.setAttribute("ID", id.toString());
+		}
+		if (power != null)
+		{
+			// Attribute property Power
+			LightSource_element.setAttribute("Power", power.toString());
+		}
+		return LightSource_element;
+	}
 }

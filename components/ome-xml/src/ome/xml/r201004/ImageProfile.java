@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ImageProfile
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -95,14 +94,12 @@ public class ImageProfile extends AbstractOMEModelObject
 					"Expecting node name of ImageProfile got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("origin"))
 		{
 			// Attribute property which is an enumeration origin
 			setorigin(ProfileSource.fromString(
 					element.getAttribute("origin")));
 		}
-		// Model object: None
 		NodeList Name_nodeList = element.getElementsByTagName("Name");
 		if (Name_nodeList.getLength() > 1)
 		{
@@ -117,7 +114,6 @@ public class ImageProfile extends AbstractOMEModelObject
 			// sub-elements)
 			setName(Name_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -132,9 +128,7 @@ public class ImageProfile extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference InstrumentRef
-		// Model object: None
 		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
 		if (ObjectiveSettings_nodeList.getLength() > 1)
 		{
@@ -231,8 +225,18 @@ public class ImageProfile extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ImageProfile_element)
+	{
 		// Creating XML block for ImageProfile
-		Element ImageProfile_element = document.createElement("ImageProfile");
+		if (ImageProfile_element == null)
+		{
+			ImageProfile_element = document.createElement("ImageProfile");
+		}
+		ImageProfile_element = super.asXMLElement(document, ImageProfile_element);
+
 		if (origin != null)
 		{
 			// Attribute property origin

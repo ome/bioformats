@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Settings
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,8 +85,18 @@ public class Settings extends Reference
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Settings_element)
+	{
 		// Creating XML block for Settings
-		Element Settings_element = document.createElement("Settings");
+		if (Settings_element == null)
+		{
+			Settings_element = document.createElement("Settings");
+		}
+		Settings_element = super.asXMLElement(document, Settings_element);
+
 		return Settings_element;
 	}
 }

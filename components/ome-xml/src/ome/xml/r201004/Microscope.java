@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Microscope
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -83,7 +82,6 @@ public class Microscope extends ManufacturerSpec
 					"Expecting node name of Microscope got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
@@ -107,8 +105,18 @@ public class Microscope extends ManufacturerSpec
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Microscope_element)
+	{
 		// Creating XML block for Microscope
-		Element Microscope_element = document.createElement("Microscope");
+		if (Microscope_element == null)
+		{
+			Microscope_element = document.createElement("Microscope");
+		}
+		Microscope_element = super.asXMLElement(document, Microscope_element);
+
 		if (type != null)
 		{
 			// Attribute property Type

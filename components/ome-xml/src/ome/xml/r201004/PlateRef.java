@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.PlateRef
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,8 +85,18 @@ public class PlateRef extends ReferenceWithID
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element PlateRef_element)
+	{
 		// Creating XML block for PlateRef
-		Element PlateRef_element = document.createElement("PlateRef");
+		if (PlateRef_element == null)
+		{
+			PlateRef_element = document.createElement("PlateRef");
+		}
+		PlateRef_element = super.asXMLElement(document, PlateRef_element);
+
 		return PlateRef_element;
 	}
 }

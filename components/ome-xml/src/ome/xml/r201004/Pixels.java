@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Pixels
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -134,100 +133,87 @@ public class Pixels extends AbstractOMEModelObject
 					"Expecting node name of Pixels got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeT"))
 		{
 			// Attribute property SizeT
 			setSizeT(Integer.valueOf(
 					element.getAttribute("SizeT")));
 		}
-		// Model object: None
 		if (element.hasAttribute("DimensionOrder"))
 		{
 			// Attribute property which is an enumeration DimensionOrder
 			setDimensionOrder(DimensionOrder.fromString(
 					element.getAttribute("DimensionOrder")));
 		}
-		// Model object: None
 		if (element.hasAttribute("TimeIncrement"))
 		{
 			// Attribute property TimeIncrement
 			setTimeIncrement(Double.valueOf(
 					element.getAttribute("TimeIncrement")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PhysicalSizeY"))
 		{
 			// Attribute property PhysicalSizeY
 			setPhysicalSizeY(Double.valueOf(
 					element.getAttribute("PhysicalSizeY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PhysicalSizeX"))
 		{
 			// Attribute property PhysicalSizeX
 			setPhysicalSizeX(Double.valueOf(
 					element.getAttribute("PhysicalSizeX")));
 		}
-		// Model object: None
 		if (element.hasAttribute("PhysicalSizeZ"))
 		{
 			// Attribute property PhysicalSizeZ
 			setPhysicalSizeZ(Double.valueOf(
 					element.getAttribute("PhysicalSizeZ")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeX"))
 		{
 			// Attribute property SizeX
 			setSizeX(Integer.valueOf(
 					element.getAttribute("SizeX")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeY"))
 		{
 			// Attribute property SizeY
 			setSizeY(Integer.valueOf(
 					element.getAttribute("SizeY")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeZ"))
 		{
 			// Attribute property SizeZ
 			setSizeZ(Integer.valueOf(
 					element.getAttribute("SizeZ")));
 		}
-		// Model object: None
 		if (element.hasAttribute("SizeC"))
 		{
 			// Attribute property SizeC
 			setSizeC(Integer.valueOf(
 					element.getAttribute("SizeC")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(PixelType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		// Element property Channel which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Channel_nodeList = element.getElementsByTagName("Channel");
 		for (int i = 0; i < Channel_nodeList.getLength(); i++)
 		{
-			addChannel(new Channel(
-					(Element) Channel_nodeList.item(i)));
+			Element Channel_element = (Element) Channel_nodeList.item(i);
+			addChannel(
+					new Channel(Channel_element));
 		}
-		// Model object: None
 		// Element property BinData which is not complex (has no
 		// sub-elements) which occurs more than once
 		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
@@ -236,16 +222,15 @@ public class Pixels extends AbstractOMEModelObject
 			addBinData(new String(
 					BinData_nodeList.item(i).getTextContent()));
 		}
-		// Model object: None
 		// Element property TiffData which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList TiffData_nodeList = element.getElementsByTagName("TiffData");
 		for (int i = 0; i < TiffData_nodeList.getLength(); i++)
 		{
-			addTiffData(new TiffData(
-					(Element) TiffData_nodeList.item(i)));
+			Element TiffData_element = (Element) TiffData_nodeList.item(i);
+			addTiffData(
+					new TiffData(TiffData_element));
 		}
-		// Model object: None
 		NodeList MetadataOnly_nodeList = element.getElementsByTagName("MetadataOnly");
 		if (MetadataOnly_nodeList.getLength() > 1)
 		{
@@ -261,16 +246,15 @@ public class Pixels extends AbstractOMEModelObject
 			setMetadataOnly(new MetadataOnly(
 					(Element) MetadataOnly_nodeList.item(0)));
 		}
-		// Model object: None
 		// Element property Plane which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList Plane_nodeList = element.getElementsByTagName("Plane");
 		for (int i = 0; i < Plane_nodeList.getLength(); i++)
 		{
-			addPlane(new Plane(
-					(Element) Plane_nodeList.item(i)));
+			Element Plane_element = (Element) Plane_nodeList.item(i);
+			addPlane(
+					new Plane(Plane_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
@@ -576,8 +560,18 @@ public class Pixels extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Pixels_element)
+	{
 		// Creating XML block for Pixels
-		Element Pixels_element = document.createElement("Pixels");
+		if (Pixels_element == null)
+		{
+			Pixels_element = document.createElement("Pixels");
+		}
+		Pixels_element = super.asXMLElement(document, Pixels_element);
+
 		if (sizeT != null)
 		{
 			// Attribute property SizeT

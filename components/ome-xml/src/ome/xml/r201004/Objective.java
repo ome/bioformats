@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Objective
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,56 +103,48 @@ public class Objective extends ManufacturerSpec
 					"Expecting node name of Objective got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Iris"))
 		{
 			// Attribute property Iris
 			setIris(Boolean.valueOf(
 					element.getAttribute("Iris")));
 		}
-		// Model object: None
 		if (element.hasAttribute("WorkingDistance"))
 		{
 			// Attribute property WorkingDistance
 			setWorkingDistance(Double.valueOf(
 					element.getAttribute("WorkingDistance")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Immersion"))
 		{
 			// Attribute property which is an enumeration Immersion
 			setImmersion(Immersion.fromString(
 					element.getAttribute("Immersion")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Correction"))
 		{
 			// Attribute property which is an enumeration Correction
 			setCorrection(Correction.fromString(
 					element.getAttribute("Correction")));
 		}
-		// Model object: None
 		if (element.hasAttribute("LensNA"))
 		{
 			// Attribute property LensNA
 			setLensNA(Double.valueOf(
 					element.getAttribute("LensNA")));
 		}
-		// Model object: None
 		if (element.hasAttribute("NominalMagnification"))
 		{
 			// Attribute property NominalMagnification
 			setNominalMagnification(Integer.valueOf(
 					element.getAttribute("NominalMagnification")));
 		}
-		// Model object: None
 		if (element.hasAttribute("CalibratedMagnification"))
 		{
 			// Attribute property CalibratedMagnification
 			setCalibratedMagnification(Double.valueOf(
 					element.getAttribute("CalibratedMagnification")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -254,8 +245,18 @@ public class Objective extends ManufacturerSpec
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Objective_element)
+	{
 		// Creating XML block for Objective
-		Element Objective_element = document.createElement("Objective");
+		if (Objective_element == null)
+		{
+			Objective_element = document.createElement("Objective");
+		}
+		Objective_element = super.asXMLElement(document, Objective_element);
+
 		if (iris != null)
 		{
 			// Attribute property Iris

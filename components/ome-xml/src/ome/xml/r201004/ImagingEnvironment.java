@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.ImagingEnvironment
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,28 +91,24 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 					"Expecting node name of ImagingEnvironment got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("CO2Percent"))
 		{
 			// Attribute property CO2Percent
 			setCO2Percent(Double.valueOf(
 					element.getAttribute("CO2Percent")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Temperature"))
 		{
 			// Attribute property Temperature
 			setTemperature(Double.valueOf(
 					element.getAttribute("Temperature")));
 		}
-		// Model object: None
 		if (element.hasAttribute("AirPressure"))
 		{
 			// Attribute property AirPressure
 			setAirPressure(Double.valueOf(
 					element.getAttribute("AirPressure")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Humidity"))
 		{
 			// Attribute property Humidity
@@ -170,8 +165,18 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element ImagingEnvironment_element)
+	{
 		// Creating XML block for ImagingEnvironment
-		Element ImagingEnvironment_element = document.createElement("ImagingEnvironment");
+		if (ImagingEnvironment_element == null)
+		{
+			ImagingEnvironment_element = document.createElement("ImagingEnvironment");
+		}
+		ImagingEnvironment_element = super.asXMLElement(document, ImagingEnvironment_element);
+
 		if (co2percent != null)
 		{
 			// Attribute property CO2Percent

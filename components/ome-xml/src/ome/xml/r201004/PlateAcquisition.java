@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.PlateAcquisition
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,42 +103,36 @@ public class PlateAcquisition extends AbstractOMEModelObject
 					"Expecting node name of PlateAcquisition got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("MaximumFieldCount"))
 		{
 			// Attribute property MaximumFieldCount
 			setMaximumFieldCount(Integer.valueOf(
 					element.getAttribute("MaximumFieldCount")));
 		}
-		// Model object: None
 		if (element.hasAttribute("EndTime"))
 		{
 			// Attribute property EndTime
 			setEndTime(String.valueOf(
 					element.getAttribute("EndTime")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		if (element.hasAttribute("StartTime"))
 		{
 			// Attribute property StartTime
 			setStartTime(String.valueOf(
 					element.getAttribute("StartTime")));
 		}
-		// Model object: None
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -154,9 +147,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference WellSampleRef
-		// Model object: None
 		// *** IGNORING *** Skipped back reference AnnotationRef
 	}
 
@@ -292,8 +283,18 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element PlateAcquisition_element)
+	{
 		// Creating XML block for PlateAcquisition
-		Element PlateAcquisition_element = document.createElement("PlateAcquisition");
+		if (PlateAcquisition_element == null)
+		{
+			PlateAcquisition_element = document.createElement("PlateAcquisition");
+		}
+		PlateAcquisition_element = super.asXMLElement(document, PlateAcquisition_element);
+
 		if (maximumFieldCount != null)
 		{
 			// Attribute property MaximumFieldCount

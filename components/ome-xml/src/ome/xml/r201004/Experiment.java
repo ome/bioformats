@@ -1,4 +1,3 @@
-
 /*
  * ome.xml.r201004.Experiment
  *
@@ -32,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-20 18:27:32+0100
+ * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,21 +97,18 @@ public class Experiment extends AbstractOMEModelObject
 					"Expecting node name of Experiment got %s",
 					tagName));
 		}
-		// Model object: None
 		if (element.hasAttribute("Type"))
 		{
 			// Attribute property which is an enumeration Type
 			setType(ExperimentType.fromString(
 					element.getAttribute("Type")));
 		}
-		// Model object: None
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
 			setID(String.valueOf(
 					element.getAttribute("ID")));
 		}
-		// Model object: None
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -127,18 +123,16 @@ public class Experiment extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference ExperimenterRef
-		// Model object: None
 		// Element property MicrobeamManipulation which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList MicrobeamManipulation_nodeList = element.getElementsByTagName("MicrobeamManipulation");
 		for (int i = 0; i < MicrobeamManipulation_nodeList.getLength(); i++)
 		{
-			addMicrobeamManipulation(new MicrobeamManipulation(
-					(Element) MicrobeamManipulation_nodeList.item(i)));
+			Element MicrobeamManipulation_element = (Element) MicrobeamManipulation_nodeList.item(i);
+			addMicrobeamManipulation(
+					new MicrobeamManipulation(MicrobeamManipulation_element));
 		}
-		// Model object: None
 		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
@@ -272,8 +266,18 @@ public class Experiment extends AbstractOMEModelObject
 
 	public Element asXMLElement(Document document)
 	{
+		return asXMLElement(document, null);
+	}
+
+	protected Element asXMLElement(Document document, Element Experiment_element)
+	{
 		// Creating XML block for Experiment
-		Element Experiment_element = document.createElement("Experiment");
+		if (Experiment_element == null)
+		{
+			Experiment_element = document.createElement("Experiment");
+		}
+		Experiment_element = super.asXMLElement(document, Experiment_element);
+
 		if (type != null)
 		{
 			// Attribute property Type
