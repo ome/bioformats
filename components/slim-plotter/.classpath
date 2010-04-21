@@ -6,5 +6,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/visbio"/>
 	<classpathentry kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>

@@ -954,8 +954,13 @@ foreach my $c (@components) {
   }
   if (@libDeps > 0) {
     push(@deps, "/External libraries");
+    foreach my $q (@libDeps) {
+      if ($$q{NAME} eq $testng{NAME}) {
+        push(@deps, "org.testng.TESTNG_CONTAINER");
+      }
+    }
   }
-  push(@deps, "build/classes");
+  push(@deps, "build-eclipse");
   @deps = sort @deps;
   @cp = @{$$c{ECLIPSE}};
   my $eclipseError = 0;
