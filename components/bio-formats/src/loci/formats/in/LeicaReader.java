@@ -705,8 +705,7 @@ public class LeicaReader extends FormatReader {
       if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
     }
     else {
-      listing =
-        (String[]) Location.getIdMap().keySet().toArray(new String[0]);
+      listing = Location.getIdMap().keySet().toArray(new String[0]);
     }
 
     Vector<String> list = new Vector<String>();

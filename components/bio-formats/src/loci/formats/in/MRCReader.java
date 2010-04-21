@@ -55,16 +55,13 @@ public class MRCReader extends FormatReader {
 
   private static final String[] MRC_SUFFIXES = {"mrc", "st", "ali", "map"};
 
-  // -- Fields --
+  private static final int HEADER_SIZE = 1024;
+  private static final int ENDIANNESS_OFFSET = 212;
 
-  /** Number of bytes per pixel */
-  private int bpp = 0;
+  // -- Fields --
 
   /** Size of extended header */
   private int extHeaderSize = 0;
-
-  /** Flag set to true if we are using float data. */
-  private boolean isFloat = false;
 
   // -- Constructor --
 
@@ -84,7 +81,7 @@ public class MRCReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(1024 + extHeaderSize + no * FormatTools.getPlaneSize(this));
+    in.seek(HEADER_SIZE + extHeaderSize + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
 
     return buf;
@@ -94,8 +91,7 @@ public class MRCReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      bpp = extHeaderSize = 0;
-      isFloat = false;
+      extHeaderSize = 0;
     }
   }
 
@@ -105,18 +101,19 @@ public class MRCReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     LOGGER.info("Reading header");
 
     // check endianness
 
-    in.seek(212);
+    in.seek(ENDIANNESS_OFFSET);
     core[0].littleEndian = in.read() == 68;
 
     // read dimension information from 1024 byte header
 
     in.seek(0);
-    in.order(core[0].littleEndian);
+    in.order(isLittleEndian());
 
     core[0].sizeX = in.readInt();
     core[0].sizeY = in.readInt();
@@ -136,14 +133,12 @@ public class MRCReader extends FormatReader {
         core[0].pixelType = FormatTools.UINT16;
         break;
       case 2:
-        isFloat = true;
         core[0].pixelType = FormatTools.FLOAT;
         break;
       case 3:
         core[0].pixelType = FormatTools.UINT32;
         break;
       case 4:
-        isFloat = true;
         core[0].pixelType = FormatTools.DOUBLE;
         break;
       case 16:
@@ -152,66 +147,74 @@ public class MRCReader extends FormatReader {
         break;
     }
 
-    bpp = FormatTools.getBytesPerPixel(getPixelType());
-
     in.skipBytes(12);
 
     // pixel size = xlen / mx
 
-    int mx = in.readInt();
-    int my = in.readInt();
-    int mz = in.readInt();
+    double xSize = 0d, ySize = 0d, zSize = 0d;
 
-    float xlen = in.readFloat();
-    float ylen = in.readFloat();
-    float zlen = in.readFloat();
+    if (level == MetadataLevel.ALL) {
+      int mx = in.readInt();
+      int my = in.readInt();
+      int mz = in.readInt();
 
-    addGlobalMeta("Pixel size (X)", xlen / mx);
-    addGlobalMeta("Pixel size (Y)", ylen / my);
-    addGlobalMeta("Pixel size (Z)", zlen / mz);
+      xSize = in.readFloat() / mx;
+      ySize = in.readFloat() / my;
+      zSize = in.readFloat() / mz;
 
-    addGlobalMeta("Alpha angle", in.readFloat());
-    addGlobalMeta("Beta angle", in.readFloat());
-    addGlobalMeta("Gamma angle", in.readFloat());
+      if (xSize == Double.POSITIVE_INFINITY) xSize = 1;
+      if (ySize == Double.POSITIVE_INFINITY) ySize = 1;
+      if (zSize == Double.POSITIVE_INFINITY) zSize = 1;
 
-    in.skipBytes(12);
+      addGlobalMeta("Pixel size (X)", xSize);
+      addGlobalMeta("Pixel size (Y)", ySize);
+      addGlobalMeta("Pixel size (Z)", zSize);
 
-    // min, max and mean pixel values
+      addGlobalMeta("Alpha angle", in.readFloat());
+      addGlobalMeta("Beta angle", in.readFloat());
+      addGlobalMeta("Gamma angle", in.readFloat());
 
-    addGlobalMeta("Minimum pixel value", in.readFloat());
-    addGlobalMeta("Maximum pixel value", in.readFloat());
-    addGlobalMeta("Mean pixel value", in.readFloat());
+      in.skipBytes(12);
 
-    in.skipBytes(4);
+      // min, max and mean pixel values
+
+      addGlobalMeta("Minimum pixel value", in.readFloat());
+      addGlobalMeta("Maximum pixel value", in.readFloat());
+      addGlobalMeta("Mean pixel value", in.readFloat());
+
+      in.skipBytes(4);
+    }
+    else in.skipBytes(64);
+
     extHeaderSize = in.readInt();
 
-    in.skipBytes(64);
+    if (level == MetadataLevel.ALL) {
+      in.skipBytes(64);
 
-    int idtype = in.readShort();
+      int idtype = in.readShort();
 
-    String type = (idtype >= 0 && idtype < TYPES.length) ? TYPES[idtype] :
-      "unknown";
+      String type = "unknown";
+      if (idtype >= 0 && idtype < TYPES.length) type = TYPES[idtype];
 
-    addGlobalMeta("Series type", type);
-    addGlobalMeta("Lens", in.readShort());
-    addGlobalMeta("ND1", in.readShort());
-    addGlobalMeta("ND2", in.readShort());
-    addGlobalMeta("VD1", in.readShort());
-    addGlobalMeta("VD2", in.readShort());
+      addGlobalMeta("Series type", type);
+      addGlobalMeta("Lens", in.readShort());
+      addGlobalMeta("ND1", in.readShort());
+      addGlobalMeta("ND2", in.readShort());
+      addGlobalMeta("VD1", in.readShort());
+      addGlobalMeta("VD2", in.readShort());
 
-    for (int i=0; i<6; i++) {
-      addGlobalMeta("Angle " + (i + 1), in.readFloat());
+      for (int i=0; i<6; i++) {
+        addGlobalMeta("Angle " + (i + 1), in.readFloat());
+      }
+
+      in.skipBytes(24);
+
+      addGlobalMeta("Number of useful labels", in.readInt());
+
+      for (int i=0; i<10; i++) {
+        addGlobalMeta("Label " + (i + 1), in.readString(80));
+      }
     }
-
-    in.skipBytes(24);
-
-    addGlobalMeta("Number of useful labels", in.readInt());
-
-    for (int i=0; i<10; i++) {
-      addGlobalMeta("Label " + (i + 1), in.readString(80));
-    }
-
-    in.skipBytes(extHeaderSize);
 
     LOGGER.info("Populating metadata");
 
@@ -229,13 +232,11 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    double x = (xlen / mx) == Double.POSITIVE_INFINITY ? 1 : (xlen / mx);
-    double y = (ylen / my) == Double.POSITIVE_INFINITY ? 1 : (ylen / my);
-    double z = (zlen / mz) == Double.POSITIVE_INFINITY ? 1 : (zlen / mz);
-
-    store.setDimensionsPhysicalSizeX(x, 0, 0);
-    store.setDimensionsPhysicalSizeY(y, 0, 0);
-    store.setDimensionsPhysicalSizeZ(z, 0, 0);
+    if (level == MetadataLevel.ALL) {
+      store.setDimensionsPhysicalSizeX(xSize, 0, 0);
+      store.setDimensionsPhysicalSizeY(ySize, 0, 0);
+      store.setDimensionsPhysicalSizeZ(zSize, 0, 0);
+    }
   }
 
 }

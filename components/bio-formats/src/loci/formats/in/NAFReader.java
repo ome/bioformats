@@ -72,12 +72,11 @@ public class NAFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (in.getFilePointer() + buf.length > in.length()) {
+    if (compressed) {
       throw new FormatException("Sorry, compressed data is not supported.");
     }
 
     in.seek(offsets[series] + no * FormatTools.getPlaneSize(this));
-
     readPlane(in, x, y, w, h, buf);
     return buf;
   }

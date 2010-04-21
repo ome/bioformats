@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -239,17 +240,14 @@ public class PrairieReader extends FormatReader {
       offsets = new Vector<String>();
       zt = 0;
 
-      RandomAccessInputStream is = new RandomAccessInputStream(id);
-      byte[] b = new byte[(int) is.length()];
-      is.read(b);
-      is.close();
+      String xml = DataTools.readFile(id);
 
       if (checkSuffix(id, XML_SUFFIX)) {
         core[0].imageCount = 0;
       }
 
       DefaultHandler handler = new PrairieHandler();
-      XMLTools.parseXML(b, handler);
+      XMLTools.parseXML(xml, handler);
 
       if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];
@@ -279,59 +277,61 @@ public class PrairieReader extends FormatReader {
           new FilterMetadata(getMetadataStore(), isMetadataFiltered());
         MetadataTools.populatePixels(store, this);
 
-        // link Instrument and Image
-        String instrumentID = MetadataTools.createLSID("Instrument", 0);
-        store.setInstrumentID(instrumentID, 0);
-        store.setImageInstrumentRef(instrumentID, 0);
-
-        store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-        store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
-        for (int i=0; i<getSizeC(); i++) {
-          String gain = i < gains.size() ? gains.get(i) : null;
-          String offset = i < offsets.size() ? offsets.get(i) : null;
-
-          if (offset != null) {
-            store.setDetectorSettingsOffset(new Double(offset), 0, i);
-          }
-          if (gain != null) {
-            store.setDetectorSettingsGain(new Double(gain), 0, i);
-          }
-
-          // link DetectorSettings to an actual Detector
-          String detectorID = MetadataTools.createLSID("Detector", 0, i);
-          store.setDetectorID(detectorID, 0, i);
-          store.setDetectorSettingsDetector(detectorID, 0, i);
-          store.setDetectorType("Unknown", 0, i);
-        }
-
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
           if (date != null) store.setImageCreationDate(date, 0);
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-        /* TODO : check if this is correct
-        if (laserPower != null) {
-          store.setLaserPower(new Double(laserPower), 0, 0);
+        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          // link Instrument and Image
+          String instrumentID = MetadataTools.createLSID("Instrument", 0);
+          store.setInstrumentID(instrumentID, 0);
+          store.setImageInstrumentRef(instrumentID, 0);
+
+          store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
+          store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+          for (int i=0; i<getSizeC(); i++) {
+            String gain = i < gains.size() ? gains.get(i) : null;
+            String offset = i < offsets.size() ? offsets.get(i) : null;
+
+            if (offset != null) {
+              store.setDetectorSettingsOffset(new Double(offset), 0, i);
+            }
+            if (gain != null) {
+              store.setDetectorSettingsGain(new Double(gain), 0, i);
+            }
+
+            // link DetectorSettings to an actual Detector
+            String detectorID = MetadataTools.createLSID("Detector", 0, i);
+            store.setDetectorID(detectorID, 0, i);
+            store.setDetectorSettingsDetector(detectorID, 0, i);
+            store.setDetectorType("Unknown", 0, i);
+          }
+
+          /* TODO : check if this is correct
+          if (laserPower != null) {
+            store.setLaserPower(new Double(laserPower), 0, 0);
+          }
+          */
         }
-        */
       }
 
       if (!readXML || !readCFG) {
         File file = new File(id).getAbsoluteFile();
         File parent = file.getParentFile();
         String[] listing = file.exists() ? parent.list() :
-          (String[]) Location.getIdMap().keySet().toArray(new String[0]);
-        for (int i=0; i<listing.length; i++) {
-          if ((!readXML && checkSuffix(listing[i], XML_SUFFIX)) ||
-            (readXML && checkSuffix(listing[i], CFG_SUFFIX)))
+          Location.getIdMap().keySet().toArray(new String[0]);
+        for (String name : listing) {
+          if ((!readXML && checkSuffix(name, XML_SUFFIX)) ||
+            (readXML && checkSuffix(name, CFG_SUFFIX)))
           {
             String dir = "";
             if (file.exists()) {
               dir = parent.getPath();
               if (!dir.endsWith(File.separator)) dir += File.separator;
             }
-            initFile(dir + listing[i]);
+            initFile(dir + name);
           }
         }
       }
@@ -342,13 +342,12 @@ public class PrairieReader extends FormatReader {
       if (isGroupFiles()) {
         LOGGER.info("Finding XML file");
 
-        Location file = new Location(id);
-        file = file.getAbsoluteFile();
+        Location file = new Location(id).getAbsoluteFile();
         Location parent = file.getParentFile();
         String[] listing = parent.list();
-        for (int i=0; i<listing.length; i++) {
-          if (checkSuffix(listing[i], PRAIRIE_SUFFIXES)) {
-            initFile(new Location(parent, listing[i]).getAbsolutePath());
+        for (String name : listing) {
+          if (checkSuffix(name, PRAIRIE_SUFFIXES)) {
+            initFile(new Location(parent, name).getAbsolutePath());
             return;
           }
         }

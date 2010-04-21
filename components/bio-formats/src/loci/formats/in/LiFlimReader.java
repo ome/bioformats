@@ -59,30 +59,27 @@ public class LiFlimReader extends FormatReader {
 
   // -- Constants --
 
-  // INI keys
-  public static final String VERSION_KEY = "FLIMIMAGE: INFO - version";
-  public static final String COMPRESSION_KEY = "FLIMIMAGE: INFO - compression";
-  public static final String DATATYPE_KEY = "FLIMIMAGE: LAYOUT - datatype";
-  public static final String C_KEY = "FLIMIMAGE: LAYOUT - channels";
-  public static final String X_KEY = "FLIMIMAGE: LAYOUT - x";
-  public static final String Y_KEY = "FLIMIMAGE: LAYOUT - y";
-  public static final String Z_KEY = "FLIMIMAGE: LAYOUT - z";
-  public static final String P_KEY = "FLIMIMAGE: LAYOUT - phases";
-  public static final String F_KEY = "FLIMIMAGE: LAYOUT - frequencies";
-  public static final String T_KEY = "FLIMIMAGE: LAYOUT - timestamps";
+  // INI tables
+  public static final String INFO_TABLE = "FLIMIMAGE: INFO";
+  public static final String LAYOUT_TABLE = "FLIMIMAGE: LAYOUT";
+  public static final String BACKGROUND_TABLE = "FLIMIMAGE: BACKGROUND";
 
+  // relevant keys in info table
+  public static final String VERSION_KEY = "version";
+  public static final String COMPRESSION_KEY = "compression";
+
+  // relevant keys in layout and background tables
+  public static final String DATATYPE_KEY = "datatype";
+  public static final String C_KEY = "channels";
+  public static final String X_KEY = "x";
+  public static final String Y_KEY = "y";
+  public static final String Z_KEY = "z";
+  public static final String P_KEY = "phases";
+  public static final String F_KEY = "frequencies";
+  public static final String T_KEY = "timestamps";
+
+  // relevant keys in timestamp table
   public static final String TIMESTAMP_KEY = "FLIMIMAGE: TIMESTAMPS - t";
-
-  // INI keys for the background image
-  public static final String BG_DATATYPE_KEY =
-    "FLIMIMAGE: BACKGROUND - datatype";
-  public static final String BG_C_KEY = "FLIMIMAGE: BACKGROUND - channels";
-  public static final String BG_X_KEY = "FLIMIMAGE: BACKGROUND - x";
-  public static final String BG_Y_KEY = "FLIMIMAGE: BACKGROUND - y";
-  public static final String BG_Z_KEY = "FLIMIMAGE: BACKGROUND - z";
-  public static final String BG_P_KEY = "FLIMIMAGE: BACKGROUND - phases";
-  public static final String BG_F_KEY = "FLIMIMAGE: BACKGROUND - frequencies";
-  public static final String BG_T_KEY = "FLIMIMAGE: BACKGROUND - timestamps";
 
   // supported versions
   public static final String[] KNOWN_VERSIONS = {"1.0"};
@@ -257,67 +254,74 @@ public class LiFlimReader extends FormatReader {
     rois = new Hashtable<Integer, ROI>();
     stampValues = new Hashtable<Integer, String>();
 
-    // add all INI entries to the global metadata list
-    for (IniTable table : ini) {
-      String name = table.get(IniTable.HEADER_KEY);
-      for (String key : table.keySet()) {
-        if (key.equals(IniTable.HEADER_KEY)) continue;
-        String value = table.get(key);
-        String metaKey = name + " - " + key;
-        addGlobalMeta(metaKey, value);
+    IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
+    datatype = layoutTable.get(DATATYPE_KEY);
+    channels = layoutTable.get(C_KEY);
+    xLen = layoutTable.get(X_KEY);
+    yLen = layoutTable.get(Y_KEY);
+    zLen = layoutTable.get(Z_KEY);
+    phases = layoutTable.get(P_KEY);
+    frequencies = layoutTable.get(F_KEY);
+    timestamps = layoutTable.get(T_KEY);
 
-        // save important values regardless of isMetadataCollected()
-        if (metaKey.equals(VERSION_KEY)) version = value;
-        else if (metaKey.equals(COMPRESSION_KEY)) compression = value;
-        else if (metaKey.equals(DATATYPE_KEY)) datatype = value;
-        else if (metaKey.equals(C_KEY)) channels = value;
-        else if (metaKey.equals(X_KEY)) xLen = value;
-        else if (metaKey.equals(Y_KEY)) yLen = value;
-        else if (metaKey.equals(Z_KEY)) zLen = value;
-        else if (metaKey.equals(P_KEY)) phases = value;
-        else if (metaKey.equals(F_KEY)) frequencies = value;
-        else if (metaKey.equals(T_KEY)) timestamps = value;
-        else if (metaKey.equals(BG_DATATYPE_KEY)) backgroundDatatype = value;
-        else if (metaKey.equals(BG_C_KEY)) backgroundC = value;
-        else if (metaKey.equals(BG_X_KEY)) backgroundX = value;
-        else if (metaKey.equals(BG_Y_KEY)) backgroundY = value;
-        else if (metaKey.equals(BG_Z_KEY)) backgroundZ = value;
-        else if (metaKey.equals(BG_T_KEY)) backgroundT = value;
-        else if (metaKey.equals(BG_P_KEY)) backgroundP = value;
-        else if (metaKey.equals(BG_F_KEY)) backgroundF = value;
-        else if (metaKey.startsWith(TIMESTAMP_KEY)) {
-          int index = Integer.parseInt(metaKey.replaceAll(TIMESTAMP_KEY, ""));
-          stampValues.put(new Integer(index), value);
-        }
-        else if (metaKey.equals("ROI: INFO - numregions")) {
-          numRegions = Integer.parseInt(value);
-        }
-        else if (metaKey.startsWith("ROI: ROI")) {
-          int start = metaKey.lastIndexOf("ROI") + 3;
-          int end = metaKey.indexOf(" ", start);
-          Integer index = new Integer(metaKey.substring(start, end));
-          ROI roi = rois.get(index);
-          if (roi == null) roi = new ROI();
+    IniTable backgroundTable = ini.getTable(BACKGROUND_TABLE);
+    if (backgroundTable != null) {
+      backgroundDatatype = backgroundTable.get(DATATYPE_KEY);
+      backgroundC = backgroundTable.get(C_KEY);
+      backgroundX = backgroundTable.get(X_KEY);
+      backgroundY = backgroundTable.get(Y_KEY);
+      backgroundZ = backgroundTable.get(Z_KEY);
+      backgroundT = backgroundTable.get(T_KEY);
+      backgroundP = backgroundTable.get(P_KEY);
+      backgroundF = backgroundTable.get(F_KEY);
+    }
 
-          if (metaKey.endsWith("name")) {
-            roi.name = value;
+    IniTable infoTable = ini.getTable(INFO_TABLE);
+    version = infoTable.get(VERSION_KEY);
+    compression = infoTable.get(COMPRESSION_KEY);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // add all INI entries to the global metadata list
+      for (IniTable table : ini) {
+        String name = table.get(IniTable.HEADER_KEY);
+        for (String key : table.keySet()) {
+          if (key.equals(IniTable.HEADER_KEY)) continue;
+          String value = table.get(key);
+          String metaKey = name + " - " + key;
+          addGlobalMeta(metaKey, value);
+
+          if (metaKey.startsWith(TIMESTAMP_KEY)) {
+            Integer index = new Integer(metaKey.replaceAll(TIMESTAMP_KEY, ""));
+            stampValues.put(index, value);
           }
-          else if (metaKey.indexOf(" - p") >= 0) {
-            String p = metaKey.substring(metaKey.indexOf(" - p") + 4);
-            Integer pointIndex = new Integer(p);
-            roi.points.put(pointIndex, value.replaceAll(" ", ","));
+          else if (metaKey.equals("ROI: INFO - numregions")) {
+            numRegions = Integer.parseInt(value);
           }
-          rois.put(index, roi);
-        }
-        else if (metaKey.endsWith("ExposureTime")) {
-          String exp = value;
-          double expTime =
-            Double.parseDouble(exp.substring(0, exp.indexOf(" ")));
-          String units = exp.substring(exp.indexOf(" ") + 1).toLowerCase();
-          if (units.equals("ms")) {
-            expTime /= 1000;
+          else if (metaKey.startsWith("ROI: ROI")) {
+            int start = metaKey.lastIndexOf("ROI") + 3;
+            int end = metaKey.indexOf(" ", start);
+            Integer index = new Integer(metaKey.substring(start, end));
+            ROI roi = rois.get(index);
+            if (roi == null) roi = new ROI();
+
+            if (metaKey.endsWith("name")) {
+              roi.name = value;
+            }
+            else if (metaKey.indexOf(" - p") >= 0) {
+              String p = metaKey.substring(metaKey.indexOf(" - p") + 4);
+              roi.points.put(new Integer(p), value.replaceAll(" ", ","));
+            }
+            rois.put(index, roi);
           }
-          exposureTime = new Double(expTime);
+          else if (metaKey.endsWith("ExposureTime")) {
+            int space = value.indexOf(" ");
+            double expTime = Double.parseDouble(value.substring(0, space));
+            String units = value.substring(space + 1).toLowerCase();
+            if (units.equals("ms")) {
+              expTime /= 1000;
+            }
+            exposureTime = new Double(expTime);
+          }
         }
       }
     }
@@ -397,11 +401,17 @@ public class LiFlimReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, times > 0);
+    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     // image data
     store.setImageName(getCurrentFile() + " Primary Image", 0);
     if (getSeriesCount() > 1) {
       store.setImageName(getCurrentFile() + " Background Image", 1);
+      MetadataTools.setDefaultCreationDate(store, currentId, 1);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+      return;
     }
 
     // timestamps
@@ -437,21 +447,11 @@ public class LiFlimReader extends FormatReader {
     }
 
     // regions of interest
-    StringBuilder points = new StringBuilder();
     Integer[] roiIndices = rois.keySet().toArray(new Integer[rois.size()]);
     Arrays.sort(roiIndices);
     for (int roi=0; roi<roiIndices.length; roi++) {
-      points.setLength(0);
       ROI r = rois.get(roiIndices[roi]);
-      Integer[] pointIndices = r.points.keySet().toArray(new Integer[0]);
-      Arrays.sort(pointIndices);
-      for (Integer point : pointIndices) {
-        if (point == null) continue;
-        String p = r.points.get(point);
-        if (points.length() > 0) points.append(" ");
-        points.append(p);
-      }
-      store.setPolygonPoints(points.toString(), 0, roi, 0);
+      store.setPolygonPoints(r.pointsToString(), 0, roi, 0);
     }
   }
 
@@ -516,6 +516,19 @@ public class LiFlimReader extends FormatReader {
   private class ROI {
     public String name;
     public Hashtable<Integer, String> points = new Hashtable<Integer, String>();
+  
+    public String pointsToString() {
+      StringBuilder s = new StringBuilder();
+      Integer[] pointIndices = points.keySet().toArray(new Integer[0]);
+      Arrays.sort(pointIndices);
+      for (Integer point : pointIndices) {
+        if (point == null) continue;
+        String p = points.get(point);
+        if (s.length() > 0) s.append(" ");
+        s.append(p);
+      }
+      return s.toString();
+    }
   }
 
 }

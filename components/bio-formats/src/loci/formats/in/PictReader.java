@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -132,7 +133,7 @@ public class PictReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (jpegOffsets.size() > 0) {
-      ByteVector v = new ByteVector();
+      ByteArrayHandle v = new ByteArrayHandle();
       in.seek(jpegOffsets.get(0));
       byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
       in.read(b);
@@ -144,10 +145,11 @@ public class PictReader extends FormatReader {
         options.interleaved = isInterleaved();
         options.littleEndian = isLittleEndian();
 
-        v.add(new JPEGCodec().decompress(s, options));
+        v.write(new JPEGCodec().decompress(s, options));
       }
 
-      s = new RandomAccessInputStream(v.toByteArray());
+      s = new RandomAccessInputStream(v);
+      s.seek(0);
       readPlane(s, x, y, w, h, buf);
       s.close();
 
@@ -263,7 +265,6 @@ public class PictReader extends FormatReader {
 
     strips = new Vector();
     rowBytes = 0;
-    versionOne = false;
     lookup = null;
 
     int opcode;
@@ -291,6 +292,8 @@ public class PictReader extends FormatReader {
       in.skipBytes(4);
     }
     else throw new FormatException("Invalid PICT file");
+
+    addGlobalMeta("Version", versionOne ? 1 : 2);
 
     do {
       if (versionOne) opcode = in.read();
@@ -392,17 +395,13 @@ public class PictReader extends FormatReader {
   }
 
   /** Extract the image data in a PICT bitmap structure. */
-  private void handleBitmap(int opcode)
-    throws FormatException, IOException
-  {
+  private void handleBitmap(int opcode) throws FormatException, IOException {
     readImageHeader(opcode);
-    handlePixmap(rowBytes, 1, 1);
+    handlePixmap(1, 1);
   }
 
   /** Extracts the image data in a PICT pixmap structure. */
-  private void handlePixmap(int opcode)
-    throws FormatException, IOException
-  {
+  private void handlePixmap(int opcode) throws FormatException, IOException {
     readImageHeader(opcode);
     LOGGER.debug("handlePixmap({})", opcode);
 
@@ -449,28 +448,24 @@ public class PictReader extends FormatReader {
 
     if (opcode == PICT_BITSRGN || opcode == PICT_PACKBITSRGN) in.skipBytes(2);
 
-    handlePixmap(rowBytes, pixelSize, compCount);
+    handlePixmap(pixelSize, compCount);
   }
 
   /** Handles the unpacking of the image data. */
-  private void handlePixmap(int rBytes, int pixelSize, int compCount)
+  private void handlePixmap(int pixelSize, int compCount)
     throws FormatException, IOException
   {
     LOGGER.debug("handlePixmap({}, {}, {})",
-      new Object[] {rBytes, pixelSize, compCount});
+      new Object[] {rowBytes, pixelSize, compCount});
     int rawLen;
     byte[] buf;  // row raw bytes
     byte[] uBuf = null;  // row uncompressed data
     int[] uBufI = null;  // row uncompressed data - 16+ bit pixels
-    int bufSize;
-    int outBufSize;
+    int bufSize = rowBytes;
+    int outBufSize = getSizeX();
     byte[] outBuf = null;  // used to expand pixel data
 
-    boolean compressed = (rBytes >= 8) || (pixelSize == 32);
-
-    bufSize = rBytes;
-
-    outBufSize = getSizeX();
+    boolean compressed = (rowBytes >= 8) || (pixelSize == 32);
 
     // allocate buffers
 
@@ -495,7 +490,7 @@ public class PictReader extends FormatReader {
       LOGGER.debug("Pixel data is uncompressed (pixelSize={}).", pixelSize);
       buf = new byte[bufSize];
       for (int row=0; row<getSizeY(); row++) {
-        in.read(buf, 0, rBytes);
+        in.read(buf, 0, rowBytes);
 
         switch (pixelSize) {
           case 16:
@@ -521,7 +516,7 @@ public class PictReader extends FormatReader {
         pixelSize, compCount);
       buf = new byte[bufSize + 1 + bufSize / 128];
       for (int row=0; row<getSizeY(); row++) {
-        if (rBytes > 250) rawLen = in.readShort();
+        if (rowBytes > 250) rawLen = in.readShort();
         else rawLen = in.read();
 
         if (rawLen > buf.length) rawLen = buf.length;
