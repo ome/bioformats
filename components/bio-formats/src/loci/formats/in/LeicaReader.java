@@ -258,7 +258,7 @@ public class LeicaReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> v = new Vector<String>();
     if (leiFilename != null) v.add(leiFilename);
-    if (!noPixels) {
+    if (!noPixels && files != null) {
       v.addAll(files[getSeries()]);
     }
     return v.toArray(new String[v.size()]);
