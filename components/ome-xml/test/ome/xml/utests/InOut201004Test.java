@@ -311,12 +311,13 @@ public class InOut201004Test {
     assertEquals(EX_FILTER_ID, filterSet.getLinkedExcitationFilter(0).getID());
   }
 
-  @Test(dependsOnMethods={"testValidFilterSetNode"})
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidOTF() {
-    OTF otf = ome.getInstrument(0).getDichroic(0).getFilterSet(0).getOTF(0);
+    OTF otf = ome.getInstrument(0).getOTF(0);
     assertNotNull(otf);
     assertEquals(OTF_ID, otf.getID());
     assertEquals(OTF_PIXELTYPE, otf.getType());
+    assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getOTF(0));
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
