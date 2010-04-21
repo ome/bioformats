@@ -1119,6 +1119,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Common types -->
 	<xsd:complexType name="ManufacturerSpec">
 		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				This is the base from which many microscope components are extended. E.g Objective, Filter etc. 
 				Provides attributes for recording common properties of these components such as Manufacturer name, Model etc, 
