@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,14 +73,30 @@ public class FileAnnotation extends Annotation
 	 */
 	public FileAnnotation(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates FileAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"FileAnnotation".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of FileAnnotation got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of FileAnnotation got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of FileAnnotation got %s",
+			//		tagName));
 		}
 		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
 		if (BinaryFile_nodeList.getLength() > 1)
@@ -123,7 +139,6 @@ public class FileAnnotation extends Annotation
 		{
 			FileAnnotation_element = document.createElement("FileAnnotation");
 		}
-		FileAnnotation_element = super.asXMLElement(document, FileAnnotation_element);
 
 		if (binaryFile != null)
 		{
@@ -133,6 +148,6 @@ public class FileAnnotation extends Annotation
 			binaryFile_element.setTextContent(binaryFile);
 			FileAnnotation_element.appendChild(binaryFile_element);
 		}
-		return FileAnnotation_element;
+		return super.asXMLElement(document, FileAnnotation_element);
 	}
 }

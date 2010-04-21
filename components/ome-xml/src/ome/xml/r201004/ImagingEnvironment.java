@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -82,14 +82,30 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 	 */
 	public ImagingEnvironment(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ImagingEnvironment recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"ImagingEnvironment".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ImagingEnvironment got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ImagingEnvironment got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ImagingEnvironment got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("CO2Percent"))
 		{
@@ -175,7 +191,6 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 		{
 			ImagingEnvironment_element = document.createElement("ImagingEnvironment");
 		}
-		ImagingEnvironment_element = super.asXMLElement(document, ImagingEnvironment_element);
 
 		if (co2percent != null)
 		{
@@ -197,6 +212,6 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 			// Attribute property Humidity
 			ImagingEnvironment_element.setAttribute("Humidity", humidity.toString());
 		}
-		return ImagingEnvironment_element;
+		return super.asXMLElement(document, ImagingEnvironment_element);
 	}
 }

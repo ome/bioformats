@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -118,14 +118,30 @@ public class Plate extends AbstractOMEModelObject
 	 */
 	public Plate(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Plate recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Plate".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Plate got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Plate got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Plate got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Status"))
 		{
@@ -514,7 +530,6 @@ public class Plate extends AbstractOMEModelObject
 		{
 			Plate_element = document.createElement("Plate");
 		}
-		Plate_element = super.asXMLElement(document, Plate_element);
 
 		if (status != null)
 		{
@@ -604,6 +619,6 @@ public class Plate extends AbstractOMEModelObject
 		{
 			// *** IGNORING *** Skipped back reference Screen_BackReference
 		}
-		return Plate_element;
+		return super.asXMLElement(document, Plate_element);
 	}
 }

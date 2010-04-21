@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,14 +73,30 @@ public class DatasetRef extends Reference
 	 */
 	public DatasetRef(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates DatasetRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"DatasetRef".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of DatasetRef got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of DatasetRef got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of DatasetRef got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("ID"))
 		{
@@ -115,13 +131,12 @@ public class DatasetRef extends Reference
 		{
 			DatasetRef_element = document.createElement("DatasetRef");
 		}
-		DatasetRef_element = super.asXMLElement(document, DatasetRef_element);
 
 		if (id != null)
 		{
 			// Attribute property ID
 			DatasetRef_element.setAttribute("ID", id.toString());
 		}
-		return DatasetRef_element;
+		return super.asXMLElement(document, DatasetRef_element);
 	}
 }

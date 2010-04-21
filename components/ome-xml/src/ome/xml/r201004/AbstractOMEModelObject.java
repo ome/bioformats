@@ -42,8 +42,15 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
     super();
   }
 
-  public AbstractOMEModelObject(Element element) {
-    
+  public AbstractOMEModelObject(Element element) throws EnumerationException {
+    update(element);
+  }
+
+  /* (non-Javadoc)
+   * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element)
+   */
+  public void update(Element element) throws EnumerationException {
+    // Nothing to update.
   }
 
   /* (non-Javadoc)

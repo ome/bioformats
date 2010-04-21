@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,14 +73,30 @@ public class ImageRef extends Reference
 	 */
 	public ImageRef(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ImageRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"ImageRef".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ImageRef got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ImageRef got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ImageRef got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("ID"))
 		{
@@ -115,13 +131,12 @@ public class ImageRef extends Reference
 		{
 			ImageRef_element = document.createElement("ImageRef");
 		}
-		ImageRef_element = super.asXMLElement(document, ImageRef_element);
 
 		if (id != null)
 		{
 			// Attribute property ID
 			ImageRef_element.setAttribute("ID", id.toString());
 		}
-		return ImageRef_element;
+		return super.asXMLElement(document, ImageRef_element);
 	}
 }

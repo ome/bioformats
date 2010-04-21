@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -82,14 +82,30 @@ public class Ellipse extends Shape
 	 */
 	public Ellipse(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Ellipse recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Ellipse".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Ellipse got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Ellipse got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Ellipse got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Y"))
 		{
@@ -175,7 +191,6 @@ public class Ellipse extends Shape
 		{
 			Ellipse_element = document.createElement("Ellipse");
 		}
-		Ellipse_element = super.asXMLElement(document, Ellipse_element);
 
 		if (y != null)
 		{
@@ -197,6 +212,6 @@ public class Ellipse extends Shape
 			// Attribute property RadiusX
 			Ellipse_element.setAttribute("RadiusX", radiusX.toString());
 		}
-		return Ellipse_element;
+		return super.asXMLElement(document, Ellipse_element);
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,14 +73,30 @@ public class ProjectRef extends Reference
 	 */
 	public ProjectRef(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ProjectRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"ProjectRef".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ProjectRef got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ProjectRef got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ProjectRef got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("ID"))
 		{
@@ -115,13 +131,12 @@ public class ProjectRef extends Reference
 		{
 			ProjectRef_element = document.createElement("ProjectRef");
 		}
-		ProjectRef_element = super.asXMLElement(document, ProjectRef_element);
 
 		if (id != null)
 		{
 			// Attribute property ID
 			ProjectRef_element.setAttribute("ID", id.toString());
 		}
-		return ProjectRef_element;
+		return super.asXMLElement(document, ProjectRef_element);
 	}
 }

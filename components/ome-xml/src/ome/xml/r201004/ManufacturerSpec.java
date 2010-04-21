@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +49,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public abstract class ManufacturerSpec extends AbstractOMEModelObject
+public class ManufacturerSpec extends AbstractOMEModelObject
 {
 	// -- Instance variables --
 
@@ -82,7 +82,31 @@ public abstract class ManufacturerSpec extends AbstractOMEModelObject
 	 */
 	public ManufacturerSpec(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ManufacturerSpec recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
+		String tagName = element.getTagName();
+		if (!"ManufacturerSpec".equals(tagName))
+		{
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ManufacturerSpec got %s",
+					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ManufacturerSpec got %s",
+			//		tagName));
+		}
 		if (element.hasAttribute("LotNumber"))
 		{
 			// Attribute property LotNumber
@@ -155,6 +179,11 @@ public abstract class ManufacturerSpec extends AbstractOMEModelObject
 		this.manufacturer = manufacturer;
 	}
 
+	public Element asXMLElement(Document document)
+	{
+		return asXMLElement(document, null);
+	}
+
 	protected Element asXMLElement(Document document, Element ManufacturerSpec_element)
 	{
 		// Creating XML block for ManufacturerSpec
@@ -162,7 +191,6 @@ public abstract class ManufacturerSpec extends AbstractOMEModelObject
 		{
 			ManufacturerSpec_element = document.createElement("ManufacturerSpec");
 		}
-		ManufacturerSpec_element = super.asXMLElement(document, ManufacturerSpec_element);
 
 		if (lotNumber != null)
 		{
@@ -184,6 +212,6 @@ public abstract class ManufacturerSpec extends AbstractOMEModelObject
 			// Attribute property Manufacturer
 			ManufacturerSpec_element.setAttribute("Manufacturer", manufacturer.toString());
 		}
-		return ManufacturerSpec_element;
+		return super.asXMLElement(document, ManufacturerSpec_element);
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,14 +79,30 @@ public class Dichroic extends ManufacturerSpec
 	 */
 	public Dichroic(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Dichroic recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Dichroic".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Dichroic got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Dichroic got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Dichroic got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("ID"))
 		{
@@ -185,7 +201,6 @@ public class Dichroic extends ManufacturerSpec
 		{
 			Dichroic_element = document.createElement("Dichroic");
 		}
-		Dichroic_element = super.asXMLElement(document, Dichroic_element);
 
 		if (id != null)
 		{
@@ -200,6 +215,6 @@ public class Dichroic extends ManufacturerSpec
 		{
 			// *** IGNORING *** Skipped back reference LightPath_BackReference
 		}
-		return Dichroic_element;
+		return super.asXMLElement(document, Dichroic_element);
 	}
 }

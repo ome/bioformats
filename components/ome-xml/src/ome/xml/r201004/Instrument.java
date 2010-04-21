@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -103,14 +103,30 @@ public class Instrument extends AbstractOMEModelObject
 	 */
 	public Instrument(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Instrument recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Instrument".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Instrument got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Instrument got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Instrument got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("ID"))
 		{
@@ -137,45 +153,46 @@ public class Instrument extends AbstractOMEModelObject
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		NodeList Laser_nodeList = element.getElementsByTagName("Laser");
-		for (int i = 0; i < Laser_nodeList.getLength(); i++)
+		NodeList LightSource_nodeList = element.getElementsByTagName("LightSource");
+		for (int i = 0; i < LightSource_nodeList.getLength(); i++)
 		{
-			Element Laser_element = (Element) Laser_nodeList.item(i);
-			addLightSource(
-					new Laser(Laser_element));
-		}
-		// Element property LightSource which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Filament_nodeList = element.getElementsByTagName("Filament");
-		for (int i = 0; i < Filament_nodeList.getLength(); i++)
-		{
-			Element Filament_element = (Element) Filament_nodeList.item(i);
-			addLightSource(
-					new Filament(Filament_element));
-		}
-		// Element property LightSource which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Arc_nodeList = element.getElementsByTagName("Arc");
-		for (int i = 0; i < Arc_nodeList.getLength(); i++)
-		{
-			Element Arc_element = (Element) Arc_nodeList.item(i);
-			addLightSource(
-					new Arc(Arc_element));
-		}
-		// Element property LightSource which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList LightEmittingDiode_nodeList = element.getElementsByTagName("LightEmittingDiode");
-		for (int i = 0; i < LightEmittingDiode_nodeList.getLength(); i++)
-		{
-			Element LightEmittingDiode_element = (Element) LightEmittingDiode_nodeList.item(i);
-			addLightSource(
-					new LightEmittingDiode(LightEmittingDiode_element));
+			Element LightSource_element = (Element) LightSource_nodeList.item(i);
+			NodeList Laser_nodeList = 
+					LightSource_element.getElementsByTagName("Laser");
+			for (int j = 0; j < Laser_nodeList.getLength(); j++)
+			{
+				Element Laser_element = (Element) Laser_nodeList.item(j);
+				Laser o = new Laser(Laser_element);
+				o.update(LightSource_element);
+				addLightSource(o);
+			}
+			NodeList Filament_nodeList = 
+					LightSource_element.getElementsByTagName("Filament");
+			for (int j = 0; j < Filament_nodeList.getLength(); j++)
+			{
+				Element Filament_element = (Element) Filament_nodeList.item(j);
+				Filament o = new Filament(Filament_element);
+				o.update(LightSource_element);
+				addLightSource(o);
+			}
+			NodeList Arc_nodeList = 
+					LightSource_element.getElementsByTagName("Arc");
+			for (int j = 0; j < Arc_nodeList.getLength(); j++)
+			{
+				Element Arc_element = (Element) Arc_nodeList.item(j);
+				Arc o = new Arc(Arc_element);
+				o.update(LightSource_element);
+				addLightSource(o);
+			}
+			NodeList LightEmittingDiode_nodeList = 
+					LightSource_element.getElementsByTagName("LightEmittingDiode");
+			for (int j = 0; j < LightEmittingDiode_nodeList.getLength(); j++)
+			{
+				Element LightEmittingDiode_element = (Element) LightEmittingDiode_nodeList.item(j);
+				LightEmittingDiode o = new LightEmittingDiode(LightEmittingDiode_element);
+				o.update(LightSource_element);
+				addLightSource(o);
+			}
 		}
 		// Element property Detector which is complex (has
 		// sub-elements) and occurs more than once
@@ -550,7 +567,6 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Instrument_element = document.createElement("Instrument");
 		}
-		Instrument_element = super.asXMLElement(document, Instrument_element);
 
 		if (id != null)
 		{
@@ -634,6 +650,6 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 		}
-		return Instrument_element;
+		return super.asXMLElement(document, Instrument_element);
 	}
 }

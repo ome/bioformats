@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,7 +84,20 @@ public abstract class LightSource extends ManufacturerSpec
 	 */
 	public LightSource(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates LightSource recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		if (element.hasAttribute("ID"))
 		{
 			// Attribute property ID
@@ -178,11 +191,17 @@ public abstract class LightSource extends ManufacturerSpec
 	protected Element asXMLElement(Document document, Element LightSource_element)
 	{
 		// Creating XML block for LightSource
+		// Class is abstract so we may need to create its "container" element
+		if (!"LightSource".equals(LightSource_element.getTagName()))
+		{
+			Element abstractElement = document.createElement("LightSource");
+			abstractElement.appendChild(LightSource_element);
+			LightSource_element = abstractElement;
+		}
 		if (LightSource_element == null)
 		{
 			LightSource_element = document.createElement("LightSource");
 		}
-		LightSource_element = super.asXMLElement(document, LightSource_element);
 
 		if (id != null)
 		{
@@ -194,6 +213,6 @@ public abstract class LightSource extends ManufacturerSpec
 			// Attribute property Power
 			LightSource_element.setAttribute("Power", power.toString());
 		}
-		return LightSource_element;
+		return super.asXMLElement(document, LightSource_element);
 	}
 }

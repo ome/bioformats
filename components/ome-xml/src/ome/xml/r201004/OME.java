@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -106,14 +106,30 @@ public class OME extends AbstractOMEModelObject
 	 */
 	public OME(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates OME recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"OME".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of OME got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of OME got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of OME got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("UUID"))
 		{
@@ -574,7 +590,6 @@ public class OME extends AbstractOMEModelObject
 		{
 			OME_element = document.createElement("OME");
 		}
-		OME_element = super.asXMLElement(document, OME_element);
 
 		if (uuid != null)
 		{
@@ -677,6 +692,6 @@ public class OME extends AbstractOMEModelObject
 				OME_element.appendChild(roiList_value.asXMLElement(document));
 			}
 		}
-		return OME_element;
+		return super.asXMLElement(document, OME_element);
 	}
 }

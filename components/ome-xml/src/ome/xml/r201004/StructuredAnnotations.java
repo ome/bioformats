@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -94,14 +94,30 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	 */
 	public StructuredAnnotations(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates StructuredAnnotations recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"StructuredAnnotations".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of StructuredAnnotations got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of StructuredAnnotations got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of StructuredAnnotations got %s",
+			//		tagName));
 		}
 		NodeList XMLAnnotation_nodeList = element.getElementsByTagName("XMLAnnotation");
 		if (XMLAnnotation_nodeList.getLength() > 1)
@@ -327,7 +343,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 		{
 			StructuredAnnotations_element = document.createElement("StructuredAnnotations");
 		}
-		StructuredAnnotations_element = super.asXMLElement(document, StructuredAnnotations_element);
 
 		if (xmlannotation != null)
 		{
@@ -377,6 +392,6 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// sub-elements)
 			StructuredAnnotations_element.appendChild(timestampAnnotation.asXMLElement(document));
 		}
-		return StructuredAnnotations_element;
+		return super.asXMLElement(document, StructuredAnnotations_element);
 	}
 }

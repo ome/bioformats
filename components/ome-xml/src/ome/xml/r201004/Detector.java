@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -91,14 +91,30 @@ public class Detector extends ManufacturerSpec
 	 */
 	public Detector(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Detector recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Detector".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Detector got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Detector got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Detector got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Zoom"))
 		{
@@ -235,7 +251,6 @@ public class Detector extends ManufacturerSpec
 		{
 			Detector_element = document.createElement("Detector");
 		}
-		Detector_element = super.asXMLElement(document, Detector_element);
 
 		if (zoom != null)
 		{
@@ -272,6 +287,6 @@ public class Detector extends ManufacturerSpec
 			// Attribute property Voltage
 			Detector_element.setAttribute("Voltage", voltage.toString());
 		}
-		return Detector_element;
+		return super.asXMLElement(document, Detector_element);
 	}
 }

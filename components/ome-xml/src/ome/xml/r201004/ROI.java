@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -94,14 +94,30 @@ public class ROI extends AbstractOMEModelObject
 	 */
 	public ROI(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ROI recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"ROI".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ROI got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ROI got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ROI got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Namespace"))
 		{
@@ -317,7 +333,6 @@ public class ROI extends AbstractOMEModelObject
 		{
 			ROI_element = document.createElement("ROI");
 		}
-		ROI_element = super.asXMLElement(document, ROI_element);
 
 		if (namespace != null)
 		{
@@ -360,6 +375,6 @@ public class ROI extends AbstractOMEModelObject
 		{
 			// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		}
-		return ROI_element;
+		return super.asXMLElement(document, ROI_element);
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -94,14 +94,30 @@ public class Dataset extends AbstractOMEModelObject
 	 */
 	public Dataset(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Dataset recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Dataset".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Dataset got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Dataset got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Dataset got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Name"))
 		{
@@ -338,7 +354,6 @@ public class Dataset extends AbstractOMEModelObject
 		{
 			Dataset_element = document.createElement("Dataset");
 		}
-		Dataset_element = super.asXMLElement(document, Dataset_element);
 
 		if (name != null)
 		{
@@ -378,6 +393,6 @@ public class Dataset extends AbstractOMEModelObject
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}
-		return Dataset_element;
+		return super.asXMLElement(document, Dataset_element);
 	}
 }

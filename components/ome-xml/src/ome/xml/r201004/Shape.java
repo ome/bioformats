@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -145,7 +145,20 @@ public abstract class Shape extends AbstractOMEModelObject
 	 */
 	public Shape(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Shape recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		if (element.hasAttribute("StrokeDashArray"))
 		{
 			// Attribute property StrokeDashArray
@@ -598,11 +611,17 @@ public abstract class Shape extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element Shape_element)
 	{
 		// Creating XML block for Shape
+		// Class is abstract so we may need to create its "container" element
+		if (!"Shape".equals(Shape_element.getTagName()))
+		{
+			Element abstractElement = document.createElement("Shape");
+			abstractElement.appendChild(Shape_element);
+			Shape_element = abstractElement;
+		}
 		if (Shape_element == null)
 		{
 			Shape_element = document.createElement("Shape");
 		}
-		Shape_element = super.asXMLElement(document, Shape_element);
 
 		if (strokeDashArray != null)
 		{
@@ -694,6 +713,6 @@ public abstract class Shape extends AbstractOMEModelObject
 			// Attribute property Name
 			Shape_element.setAttribute("Name", name.toString());
 		}
-		return Shape_element;
+		return super.asXMLElement(document, Shape_element);
 	}
 }

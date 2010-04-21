@@ -123,7 +123,9 @@ public class InOut201004Test {
   private static final String DETECTOR_MODEL = "ReallySensitive!";
 
   private static final String LIGHTSOURCE_MODEL = "ReallyBright!";
-  
+
+  private static final Double LIGHTSOURCE_POWER = 1000.0;
+
   private static final LaserType LASER_TYPE = LaserType.DYE;
 
   private static final Integer WELL_ROWS = 3;
@@ -241,6 +243,7 @@ public class InOut201004Test {
     assertNotNull(laser);
     assertEquals(LIGHTSOURCE_ID, laser.getID());
     assertEquals(LIGHTSOURCE_MODEL, laser.getModel());
+    assertEquals(LIGHTSOURCE_POWER, laser.getPower());
     assertEquals(LASER_TYPE, laser.getType());
   }
 
@@ -357,6 +360,7 @@ public class InOut201004Test {
     laser.setID(LIGHTSOURCE_ID);
     laser.setModel(LIGHTSOURCE_MODEL);
     laser.setType(LASER_TYPE);
+    laser.setPower(LIGHTSOURCE_POWER);
     instrument.addLightSource(laser);
 
     // link Instrument to the first Image

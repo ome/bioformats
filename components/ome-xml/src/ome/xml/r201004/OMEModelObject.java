@@ -44,4 +44,14 @@ public interface OMEModelObject {
    * @return XML DOM tree root element for this model object.
    */
   Element asXMLElement(Document document);
+
+  /** 
+   * Updates ${klass.name} recursively from an XML DOM tree. <b>NOTE:</b> No
+   * properties are removed, only added or updated.
+   * @param element Root of the XML DOM tree to construct a model object
+   * graph from.
+   * @throws EnumerationException If there is an error instantiating an
+   * enumeration during model object creation.
+   */
+  void update(Element element) throws EnumerationException;
 }

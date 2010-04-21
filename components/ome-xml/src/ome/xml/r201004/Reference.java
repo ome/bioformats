@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -70,14 +70,30 @@ public class Reference extends AbstractOMEModelObject
 	 */
 	public Reference(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Reference recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Reference".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Reference got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Reference got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Reference got %s",
+			//		tagName));
 		}
 	}
 
@@ -95,8 +111,7 @@ public class Reference extends AbstractOMEModelObject
 		{
 			Reference_element = document.createElement("Reference");
 		}
-		Reference_element = super.asXMLElement(document, Reference_element);
 
-		return Reference_element;
+		return super.asXMLElement(document, Reference_element);
 	}
 }

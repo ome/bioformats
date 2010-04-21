@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,14 +73,30 @@ public class DoubleAnnotation extends Annotation
 	 */
 	public DoubleAnnotation(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates DoubleAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"DoubleAnnotation".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of DoubleAnnotation got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of DoubleAnnotation got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of DoubleAnnotation got %s",
+			//		tagName));
 		}
 		NodeList Value_nodeList = element.getElementsByTagName("Value");
 		if (Value_nodeList.getLength() > 1)
@@ -123,7 +139,6 @@ public class DoubleAnnotation extends Annotation
 		{
 			DoubleAnnotation_element = document.createElement("DoubleAnnotation");
 		}
-		DoubleAnnotation_element = super.asXMLElement(document, DoubleAnnotation_element);
 
 		if (value != null)
 		{
@@ -133,6 +148,6 @@ public class DoubleAnnotation extends Annotation
 			value_element.setTextContent(value);
 			DoubleAnnotation_element.appendChild(value_element);
 		}
-		return DoubleAnnotation_element;
+		return super.asXMLElement(document, DoubleAnnotation_element);
 	}
 }

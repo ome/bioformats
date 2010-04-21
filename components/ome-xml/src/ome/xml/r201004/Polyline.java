@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,14 +76,30 @@ public class Polyline extends Shape
 	 */
 	public Polyline(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Polyline recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Polyline".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Polyline got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Polyline got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Polyline got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Points"))
 		{
@@ -135,7 +151,6 @@ public class Polyline extends Shape
 		{
 			Polyline_element = document.createElement("Polyline");
 		}
-		Polyline_element = super.asXMLElement(document, Polyline_element);
 
 		if (points != null)
 		{
@@ -147,6 +162,6 @@ public class Polyline extends Shape
 			// Attribute property Closed
 			Polyline_element.setAttribute("Closed", closed.toString());
 		}
-		return Polyline_element;
+		return super.asXMLElement(document, Polyline_element);
 	}
 }

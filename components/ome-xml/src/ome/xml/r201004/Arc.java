@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,14 +73,30 @@ public class Arc extends LightSource
 	 */
 	public Arc(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Arc recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Arc".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Arc got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Arc got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Arc got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("Type"))
 		{
@@ -115,13 +131,12 @@ public class Arc extends LightSource
 		{
 			Arc_element = document.createElement("Arc");
 		}
-		Arc_element = super.asXMLElement(document, Arc_element);
 
 		if (type != null)
 		{
 			// Attribute property Type
 			Arc_element.setAttribute("Type", type.toString());
 		}
-		return Arc_element;
+		return super.asXMLElement(document, Arc_element);
 	}
 }

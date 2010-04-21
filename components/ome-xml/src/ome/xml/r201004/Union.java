@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,102 +73,111 @@ public class Union extends AbstractOMEModelObject
 	 */
 	public Union(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates Union recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"Union".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of Union got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Union got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Union got %s",
+			//		tagName));
 		}
 		// Element property Shape which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		NodeList Line_nodeList = element.getElementsByTagName("Line");
-		for (int i = 0; i < Line_nodeList.getLength(); i++)
+		NodeList Shape_nodeList = element.getElementsByTagName("Shape");
+		for (int i = 0; i < Shape_nodeList.getLength(); i++)
 		{
-			Element Line_element = (Element) Line_nodeList.item(i);
-			addShape(
-					new Line(Line_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
-		for (int i = 0; i < Rectangle_nodeList.getLength(); i++)
-		{
-			Element Rectangle_element = (Element) Rectangle_nodeList.item(i);
-			addShape(
-					new Rectangle(Rectangle_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
-		for (int i = 0; i < Mask_nodeList.getLength(); i++)
-		{
-			Element Mask_element = (Element) Mask_nodeList.item(i);
-			addShape(
-					new Mask(Mask_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
-		for (int i = 0; i < Ellipse_nodeList.getLength(); i++)
-		{
-			Element Ellipse_element = (Element) Ellipse_nodeList.item(i);
-			addShape(
-					new Ellipse(Ellipse_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Point_nodeList = element.getElementsByTagName("Point");
-		for (int i = 0; i < Point_nodeList.getLength(); i++)
-		{
-			Element Point_element = (Element) Point_nodeList.item(i);
-			addShape(
-					new Point(Point_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
-		for (int i = 0; i < Polyline_nodeList.getLength(); i++)
-		{
-			Element Polyline_element = (Element) Polyline_nodeList.item(i);
-			addShape(
-					new Polyline(Polyline_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Path_nodeList = element.getElementsByTagName("Path");
-		for (int i = 0; i < Path_nodeList.getLength(); i++)
-		{
-			Element Path_element = (Element) Path_nodeList.item(i);
-			addShape(
-					new Path(Path_element));
-		}
-		// Element property Shape which is complex (has
-		// sub-elements) and occurs more than once. The element's model
-		// object type is also abstract so we need to have a handler for
-		// each "subclass".
-		NodeList Text_nodeList = element.getElementsByTagName("Text");
-		for (int i = 0; i < Text_nodeList.getLength(); i++)
-		{
-			Element Text_element = (Element) Text_nodeList.item(i);
-			addShape(
-					new Text(Text_element));
+			Element Shape_element = (Element) Shape_nodeList.item(i);
+			NodeList Line_nodeList = 
+					Shape_element.getElementsByTagName("Line");
+			for (int j = 0; j < Line_nodeList.getLength(); j++)
+			{
+				Element Line_element = (Element) Line_nodeList.item(j);
+				Line o = new Line(Line_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Rectangle_nodeList = 
+					Shape_element.getElementsByTagName("Rectangle");
+			for (int j = 0; j < Rectangle_nodeList.getLength(); j++)
+			{
+				Element Rectangle_element = (Element) Rectangle_nodeList.item(j);
+				Rectangle o = new Rectangle(Rectangle_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Mask_nodeList = 
+					Shape_element.getElementsByTagName("Mask");
+			for (int j = 0; j < Mask_nodeList.getLength(); j++)
+			{
+				Element Mask_element = (Element) Mask_nodeList.item(j);
+				Mask o = new Mask(Mask_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Ellipse_nodeList = 
+					Shape_element.getElementsByTagName("Ellipse");
+			for (int j = 0; j < Ellipse_nodeList.getLength(); j++)
+			{
+				Element Ellipse_element = (Element) Ellipse_nodeList.item(j);
+				Ellipse o = new Ellipse(Ellipse_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Point_nodeList = 
+					Shape_element.getElementsByTagName("Point");
+			for (int j = 0; j < Point_nodeList.getLength(); j++)
+			{
+				Element Point_element = (Element) Point_nodeList.item(j);
+				Point o = new Point(Point_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Polyline_nodeList = 
+					Shape_element.getElementsByTagName("Polyline");
+			for (int j = 0; j < Polyline_nodeList.getLength(); j++)
+			{
+				Element Polyline_element = (Element) Polyline_nodeList.item(j);
+				Polyline o = new Polyline(Polyline_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Path_nodeList = 
+					Shape_element.getElementsByTagName("Path");
+			for (int j = 0; j < Path_nodeList.getLength(); j++)
+			{
+				Element Path_element = (Element) Path_nodeList.item(j);
+				Path o = new Path(Path_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
+			NodeList Text_nodeList = 
+					Shape_element.getElementsByTagName("Text");
+			for (int j = 0; j < Text_nodeList.getLength(); j++)
+			{
+				Element Text_element = (Element) Text_nodeList.item(j);
+				Text o = new Text(Text_element);
+				o.update(Shape_element);
+				addShape(o);
+			}
 		}
 	}
 
@@ -217,7 +226,6 @@ public class Union extends AbstractOMEModelObject
 		{
 			Union_element = document.createElement("Union");
 		}
-		Union_element = super.asXMLElement(document, Union_element);
 
 		if (shapeList != null)
 		{
@@ -228,6 +236,6 @@ public class Union extends AbstractOMEModelObject
 				Union_element.appendChild(shapeList_value.asXMLElement(document));
 			}
 		}
-		return Union_element;
+		return super.asXMLElement(document, Union_element);
 	}
 }

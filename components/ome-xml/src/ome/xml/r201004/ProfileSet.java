@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,14 +76,30 @@ public class ProfileSet extends AbstractOMEModelObject
 	 */
 	public ProfileSet(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ProfileSet recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"ProfileSet".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ProfileSet got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ProfileSet got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ProfileSet got %s",
+			//		tagName));
 		}
 		// Element property ImageProfile which is complex (has
 		// sub-elements) and occurs more than once
@@ -181,7 +197,6 @@ public class ProfileSet extends AbstractOMEModelObject
 		{
 			ProfileSet_element = document.createElement("ProfileSet");
 		}
-		ProfileSet_element = super.asXMLElement(document, ProfileSet_element);
 
 		if (imageProfileList != null)
 		{
@@ -201,6 +216,6 @@ public class ProfileSet extends AbstractOMEModelObject
 				ProfileSet_element.appendChild(channelProfileList_value.asXMLElement(document));
 			}
 		}
-		return ProfileSet_element;
+		return super.asXMLElement(document, ProfileSet_element);
 	}
 }

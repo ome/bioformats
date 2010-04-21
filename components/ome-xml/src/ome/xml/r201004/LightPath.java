@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,14 +79,30 @@ public class LightPath extends AbstractOMEModelObject
 	 */
 	public LightPath(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates LightPath recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"LightPath".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of LightPath got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of LightPath got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of LightPath got %s",
+			//		tagName));
 		}
 		// *** IGNORING *** Skipped back reference ExcitationFilterRef
 		// *** IGNORING *** Skipped back reference DichroicRef
@@ -200,7 +216,6 @@ public class LightPath extends AbstractOMEModelObject
 		{
 			LightPath_element = document.createElement("LightPath");
 		}
-		LightPath_element = super.asXMLElement(document, LightPath_element);
 
 		if (excitationFilterList != null)
 		{
@@ -214,6 +229,6 @@ public class LightPath extends AbstractOMEModelObject
 		{
 			// *** IGNORING *** Skipped back reference EmissionFilterRef
 		}
-		return LightPath_element;
+		return super.asXMLElement(document, LightPath_element);
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 11:45:19+0100
+ * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -85,14 +85,30 @@ public class ImageProfile extends AbstractOMEModelObject
 	 */
 	public ImageProfile(Element element) throws EnumerationException
 	{
-		super(element);
+		update(element);
+	}
+
+	/** 
+	 * Updates ImageProfile recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element) throws EnumerationException
+	{	
+		super.update(element);
 		String tagName = element.getTagName();
 		if (!"ImageProfile".equals(tagName))
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Expecting node name of ImageProfile got %s",
+			System.err.println(String.format(
+					"WARNING: Expecting node name of ImageProfile got %s",
 					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of ImageProfile got %s",
+			//		tagName));
 		}
 		if (element.hasAttribute("origin"))
 		{
@@ -235,7 +251,6 @@ public class ImageProfile extends AbstractOMEModelObject
 		{
 			ImageProfile_element = document.createElement("ImageProfile");
 		}
-		ImageProfile_element = super.asXMLElement(document, ImageProfile_element);
 
 		if (origin != null)
 		{
@@ -268,6 +283,6 @@ public class ImageProfile extends AbstractOMEModelObject
 			// sub-elements)
 			ImageProfile_element.appendChild(objectiveSettings.asXMLElement(document));
 		}
-		return ImageProfile_element;
+		return super.asXMLElement(document, ImageProfile_element);
 	}
 }
