@@ -56,12 +56,16 @@ import javax.xml.transform.stream.StreamResult;
 import static org.testng.AssertJUnit.*;
 
 import ome.xml.r201004.Channel;
+import ome.xml.r201004.Dichroic;
 import ome.xml.r201004.Detector;
+import ome.xml.r201004.Filter;
+import ome.xml.r201004.FilterSet;
 import ome.xml.r201004.Image;
 import ome.xml.r201004.Instrument;
 import ome.xml.r201004.Laser;
 import ome.xml.r201004.MetadataOnly;
 import ome.xml.r201004.OME;
+import ome.xml.r201004.OTF;
 import ome.xml.r201004.Pixels;
 import ome.xml.r201004.Plate;
 import ome.xml.r201004.Rectangle;
@@ -72,6 +76,7 @@ import ome.xml.r201004.Well;
 import ome.xml.r201004.WellSample;
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.FilterType;
 import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.enums.PixelType;
@@ -102,6 +107,16 @@ public class InOut201004Test {
 
   private static String LIGHTSOURCE_ID = "LightSource:0";
 
+  private static String DICHROIC_ID = "Dichroic:0";
+
+  private static String FILTERSET_ID = "FilterSet:0";
+
+  private static String EM_FILTER_ID = "Filter:0";
+
+  private static String EX_FILTER_ID = "Filter:1";
+
+  private static String OTF_ID = "OTF:0";
+
   private static String PLATE_ID = "Plate:0";
 
   private static String ROI_ID = "ROI:5";
@@ -123,6 +138,16 @@ public class InOut201004Test {
   private static final String DETECTOR_MODEL = "ReallySensitive!";
 
   private static final String LIGHTSOURCE_MODEL = "ReallyBright!";
+
+  private static final String DICHROIC_SN = "0123456789";
+
+  private static final String FILTERSET_LOT = "RandomLot";
+
+  private static final FilterType EM_FILTER_TYPE = FilterType.LONGPASS;
+
+  private static final FilterType EX_FILTER_TYPE = FilterType.NEUTRALDENSITY;
+
+  private static final PixelType OTF_PIXELTYPE = PixelType.FLOAT;
 
   private static final Double LIGHTSOURCE_POWER = 1000.0;
 
@@ -247,6 +272,53 @@ public class InOut201004Test {
     assertEquals(LASER_TYPE, laser.getType());
   }
 
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidDichroicNode() {
+    Dichroic dichroic = ome.getInstrument(0).getDichroic(0);
+    assertNotNull(dichroic);
+    assertEquals(DICHROIC_ID, dichroic.getID());
+    assertEquals(DICHROIC_SN, dichroic.getSerialNumber());
+  }
+
+  @Test(dependsOnMethods={"testValidDichroicNode"})
+  public void testValidFilterSetNode() {
+    Dichroic dichroic = ome.getInstrument(0).getDichroic(0);
+    assertEquals(1, dichroic.sizeOfFilterSetList());
+    FilterSet filterSet = dichroic.getFilterSet(0);
+    assertNotNull(filterSet);
+    assertEquals(FILTERSET_ID, filterSet.getID());
+    assertEquals(FILTERSET_LOT, filterSet.getLotNumber());
+    assertEquals(filterSet.getLinkedDichroic(0).getID(), dichroic.getID());
+  }
+
+  @Test(dependsOnMethods={"testValidFilterSetNode"})
+  public void testValidEmissionFilter() {
+    Filter emFilter = ome.getInstrument(0).getFilter(0);
+    assertNotNull(emFilter);
+    assertEquals(EM_FILTER_ID, emFilter.getID());
+    assertEquals(EM_FILTER_TYPE, emFilter.getType());
+    FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getFilterSet(0);
+    assertEquals(EM_FILTER_ID, filterSet.getLinkedEmissionFilter(0).getID());
+  }
+
+  @Test(dependsOnMethods={"testValidFilterSetNode"})
+  public void testValidExcitationFilter() {
+    Filter exFilter = ome.getInstrument(0).getFilter(1);
+    assertNotNull(exFilter);
+    assertEquals(EX_FILTER_ID, exFilter.getID());
+    assertEquals(EX_FILTER_TYPE, exFilter.getType());
+    FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getFilterSet(0);
+    assertEquals(EX_FILTER_ID, filterSet.getLinkedExcitationFilter(0).getID());
+  }
+
+  @Test(dependsOnMethods={"testValidFilterSetNode"})
+  public void testValidOTF() {
+    OTF otf = ome.getInstrument(0).getDichroic(0).getFilterSet(0).getOTF(0);
+    assertNotNull(otf);
+    assertEquals(OTF_ID, otf.getID());
+    assertEquals(OTF_PIXELTYPE, otf.getType());
+  }
+
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
   public void testImageInstrumentLinkage() {
     Instrument instrument = ome.getInstrument(0);
@@ -362,6 +434,38 @@ public class InOut201004Test {
     laser.setType(LASER_TYPE);
     laser.setPower(LIGHTSOURCE_POWER);
     instrument.addLightSource(laser);
+
+    // Create <Dichroic/> under <Instrument/>
+    Dichroic dichroic = new Dichroic();
+    dichroic.setID(DICHROIC_ID);
+    dichroic.setSerialNumber(DICHROIC_SN);
+    // Create <FilterSet/> under <Dichroic/>
+    FilterSet filterSet = new FilterSet();
+    filterSet.setID(FILTERSET_ID);
+    filterSet.setLotNumber(FILTERSET_LOT);
+    filterSet.linkDichroic(dichroic);
+
+    Filter emFilter = new Filter();
+    Filter exFilter = new Filter();
+    OTF otf = new OTF();
+
+    emFilter.setID(EM_FILTER_ID);
+    emFilter.setType(EM_FILTER_TYPE);
+    exFilter.setID(EX_FILTER_ID);
+    exFilter.setType(EX_FILTER_TYPE);
+    otf.setID(OTF_ID);
+    otf.setType(OTF_PIXELTYPE);
+
+    instrument.addFilter(emFilter);
+    instrument.addFilter(exFilter);
+    instrument.addOTF(otf);
+
+    filterSet.linkEmissionFilter(emFilter);
+    filterSet.linkExcitationFilter(exFilter);
+    filterSet.addOTF(otf);
+    instrument.addFilterSet(filterSet);
+    dichroic.addFilterSet(filterSet);
+    instrument.addDichroic(dichroic);
 
     // link Instrument to the first Image
     Image image = ome.getImage(0);
