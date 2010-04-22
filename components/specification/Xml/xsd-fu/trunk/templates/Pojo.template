@@ -391,14 +391,23 @@ public class ${klass.name} extends ${klass.javaBase}
 		{
 {% choose %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
-			// Reference property ${prop.name}
-			for (${prop.javaType} o : ${prop.javaInstanceVariableName})
+			// Reference property ${prop.name} which occurs more than once
+			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
-				Element ${prop.javaInstanceVariableName}_element = 
-						document.createElementNS(NAMESPACE, "${prop.name}Ref");
-				${prop.javaInstanceVariableName}_element.setAttribute("ID", o.getID());
-				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
+				Element ${prop.javaInstanceVariableName}_value_element = 
+						document.createElementNS(NAMESPACE, "${prop.name}");
+				${prop.javaInstanceVariableName}_value_element.setAttribute(
+						"ID", ${prop.javaInstanceVariableName}_value.getID());
+				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_value_element);
 			}
+{% end %}\
+{% when prop.isReference %}\
+			// Reference property ${prop.name}
+			Element ${prop.javaInstanceVariableName}_element = 
+					document.createElementNS(NAMESPACE, "${prop.name}");
+			${prop.javaInstanceVariableName}_element.setAttribute(
+					"ID", ${prop.javaInstanceVariableName}.getID());
+			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 {% end %}\
 {% when prop.isBackReference %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
