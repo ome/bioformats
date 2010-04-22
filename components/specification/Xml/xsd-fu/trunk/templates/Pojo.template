@@ -339,7 +339,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
 		{
 			Element abstractElement =
-					document.createElementNS("${klass.namespace}", "${klass.name}");
+					document.createElementNS(NAMESPACE, "${klass.name}");
 			abstractElement.appendChild(${klass.name}_element);
 			${klass.name}_element = abstractElement;
 		}
@@ -347,7 +347,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		if (${klass.name}_element == null)
 		{
 			${klass.name}_element =
-					document.createElementNS("${klass.namespace}", "${klass.name}");
+					document.createElementNS(NAMESPACE, "${klass.name}");
 		}
 
 {% for prop in klass.properties.values() %}\
@@ -371,7 +371,7 @@ public class ${klass.name} extends ${klass.javaBase}
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
 			Element ${prop.javaInstanceVariableName}_element = 
-					document.createElementNS("${klass.namespace}", "${prop.name}");
+					document.createElementNS(NAMESPACE, "${prop.name}");
 			${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName});
 			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 {% end %}\
@@ -389,7 +389,7 @@ public class ${klass.name} extends ${klass.javaBase}
 			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
 				Element ${prop.javaInstanceVariableName}_element =
-						document.createElementNS("${klass.namespace}", "${prop.name}");
+						document.createElementNS(NAMESPACE, "${prop.name}");
 				${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}_value);
 				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 			}
