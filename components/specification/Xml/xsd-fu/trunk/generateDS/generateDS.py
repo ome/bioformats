@@ -316,6 +316,7 @@ def showLevel(outfile, level):
 
 class XschemaElementBase:
     def __init__(self):
+        self.namespace = Targetnamespace
         pass
 
 
@@ -1007,12 +1008,7 @@ class XschemaHandler(handler.ContentHandler):
         global Targetnamespace, NamespacesDict
         logging.debug("Start element: %s %s" % (name, repr(attrs.items())))
 
-        if name == SchemaType and len(self.stack) == 0:
-            self.inSchema = 1
-            element = XschemaElement(attrs)
-            if len(self.stack) == 1:
-                element.setTopLevel(1)
-            self.stack.append(element)
+        if name == SchemaType:
             # If there is an attribute "xmlns" and its value is
             #   "http://www.w3.org/2001/XMLSchema", then remember and
             #   use that namespace prefix.
@@ -1024,6 +1020,12 @@ class XschemaHandler(handler.ContentHandler):
                     NamespacesDict[value] = nameSpace
                 elif name == 'targetNamespace':
                     Targetnamespace = value
+            if len(self.stack) == 0:
+                self.inSchema = 1
+                element = XschemaElement(attrs)
+                if len(self.stack) == 1:
+                    element.setTopLevel(1)
+                self.stack.append(element)
         elif (name == ElementType or 
             ((name == ComplexTypeType) and (len(self.stack) == 1))
             ):

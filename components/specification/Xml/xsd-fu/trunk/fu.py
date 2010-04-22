@@ -442,6 +442,11 @@ class OMEModelObject(object):
 	javaBase = property(_get_javaBase, 
 		doc="""The model object's Java base class.""")
 
+	def _get_namespace(self):
+		return self.element.namespace
+	namespace = property(_get_namespace,
+		doc="""The root namespace of the model object.""")
+
 	def _get_baseObjectProperties(self):
 		base = self.model.getObjectByName(self.base)
 		if base:

@@ -72,6 +72,10 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "${klass.namespace}";
+
 	// -- Instance variables --
 {% for prop in klass.properties.values() %}\
 {% choose %}\
@@ -334,14 +338,16 @@ public class ${klass.name} extends ${klass.javaBase}
 		// Class is abstract so we may need to create its "container" element
 		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
 		{
-			Element abstractElement = document.createElement("${klass.name}");
+			Element abstractElement =
+					document.createElementNS("${klass.namespace}", "${klass.name}");
 			abstractElement.appendChild(${klass.name}_element);
 			${klass.name}_element = abstractElement;
 		}
 {% end %}\
 		if (${klass.name}_element == null)
 		{
-			${klass.name}_element = document.createElement("${klass.name}");
+			${klass.name}_element =
+					document.createElementNS("${klass.namespace}", "${klass.name}");
 		}
 
 {% for prop in klass.properties.values() %}\
@@ -364,7 +370,8 @@ public class ${klass.name} extends ${klass.javaBase}
 {% when prop.maxOccurs == 1 %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
-			Element ${prop.javaInstanceVariableName}_element = document.createElement("${prop.name}");
+			Element ${prop.javaInstanceVariableName}_element = 
+					document.createElementNS("${klass.namespace}", "${prop.name}");
 			${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName});
 			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 {% end %}\
@@ -381,7 +388,8 @@ public class ${klass.name} extends ${klass.javaBase}
 			// sub-elements) which occurs more than once
 			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
-				Element ${prop.javaInstanceVariableName}_element = document.createElement("${prop.name}");
+				Element ${prop.javaInstanceVariableName}_element =
+						document.createElementNS("${klass.namespace}", "${prop.name}");
 				${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}_value);
 				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 			}
