@@ -56,8 +56,10 @@ import javax.xml.transform.stream.StreamResult;
 import static org.testng.AssertJUnit.*;
 
 import ome.xml.r201004.Annotation;
+import ome.xml.r201004.BinaryFile;
 import ome.xml.r201004.BooleanAnnotation;
 import ome.xml.r201004.DoubleAnnotation;
+import ome.xml.r201004.External;
 import ome.xml.r201004.FileAnnotation;
 import ome.xml.r201004.ListAnnotation;
 import ome.xml.r201004.LongAnnotation;
@@ -201,6 +203,15 @@ public class InOut201004Test {
   private static final Double RECTANGLE_WIDTH = 128.0;
 
   private static final Double RECTANGLE_HEIGHT = 256.0;
+
+  private static final String OTF_BINARY_FILE_NAME = "abc.bin";
+
+  private static final Integer OTF_BINARY_FILE_SIZE = 64;
+
+  private static final String OTF_BINARY_FILE_EXTERNAL_HREF = "file:///abc.bin";
+
+  private static final String OTF_BINARY_FILE_EXTERNAL_SHA1 =
+    "1234567890123456789012345678901234567890";
 
   /** XML namespace. */
   public static final String XML_NS =
@@ -393,10 +404,18 @@ public class InOut201004Test {
     assertEquals(OTF_SIZE_X, otf.getSizeX());
     assertEquals(OTF_SIZE_Y, otf.getSizeY());
     assertEquals(OTF_OPTICAL_AXIS_AVERAGED, otf.getOpticalAxisAveraged());
-    ObjectiveSettings otfObjectiveSettings = otf.getObjectiveSettings();
-    assertNotNull(otfObjectiveSettings);
-    assertEquals(OBJECTIVE_ID, otfObjectiveSettings.getID());
+    ObjectiveSettings settings = otf.getObjectiveSettings();
+    assertNotNull(settings);
+    assertEquals(OBJECTIVE_ID, settings.getID());
     assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getLinkedOTF(0));
+    BinaryFile bf = otf.getBinaryFile();
+    assertNotNull(bf);
+    assertEquals(OTF_BINARY_FILE_NAME, bf.getFileName());
+    assertEquals(OTF_BINARY_FILE_SIZE, bf.getSize());
+    External external = bf.getExternal();
+    assertNotNull(external);
+    assertEquals(OTF_BINARY_FILE_EXTERNAL_HREF, external.gethref());
+    assertEquals(OTF_BINARY_FILE_EXTERNAL_SHA1, external.getSHA1());
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
@@ -562,9 +581,19 @@ public class InOut201004Test {
     otf.setSizeX(OTF_SIZE_X);
     otf.setSizeY(OTF_SIZE_Y);
     otf.setOpticalAxisAveraged(OTF_OPTICAL_AXIS_AVERAGED);
+    // Create <ObjectiveSettings/> under <OTF/>
     ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
     otfObjectiveSettings.setID(objective.getID());
     otf.setObjectiveSettings(otfObjectiveSettings);
+    // Create <BinaryFile/> under <OTF/>
+    BinaryFile otfBinaryFile = new BinaryFile();
+    otfBinaryFile.setFileName(OTF_BINARY_FILE_NAME);
+    otfBinaryFile.setSize(OTF_BINARY_FILE_SIZE);
+    External otfBinaryFileExternal = new External();
+    otfBinaryFileExternal.sethref(OTF_BINARY_FILE_EXTERNAL_HREF);
+    otfBinaryFileExternal.setSHA1(OTF_BINARY_FILE_EXTERNAL_SHA1);
+    otfBinaryFile.setExternal(otfBinaryFileExternal);
+    otf.setBinaryFile(otfBinaryFile);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);

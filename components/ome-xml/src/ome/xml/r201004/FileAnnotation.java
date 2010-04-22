@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class FileAnnotation extends Annotation
 	// -- Instance variables --
 
 	// Property
-	private String binaryFile;
+	private BinaryFile binaryFile;
 
 	// -- Constructors --
 
@@ -112,9 +112,10 @@ public class FileAnnotation extends Annotation
 		}
 		else if (BinaryFile_nodeList.getLength() != 0)
 		{
-			// Element property BinaryFile which is not complex (has no
+			// Element property BinaryFile which is complex (has
 			// sub-elements)
-			setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
+			setBinaryFile(new BinaryFile(
+					(Element) BinaryFile_nodeList.item(0)));
 		}
 	}
 
@@ -122,12 +123,12 @@ public class FileAnnotation extends Annotation
 
 
 	// Property
-	public String getBinaryFile()
+	public BinaryFile getBinaryFile()
 	{
 		return binaryFile;
 	}
 
-	public void setBinaryFile(String binaryFile)
+	public void setBinaryFile(BinaryFile binaryFile)
 	{
 		this.binaryFile = binaryFile;
 	}
@@ -148,12 +149,9 @@ public class FileAnnotation extends Annotation
 
 		if (binaryFile != null)
 		{
-			// Element property BinaryFile which is not complex (has no
+			// Element property BinaryFile which is complex (has
 			// sub-elements)
-			Element binaryFile_element = 
-					document.createElementNS(NAMESPACE, "BinaryFile");
-			binaryFile_element.setTextContent(binaryFile);
-			FileAnnotation_element.appendChild(binaryFile_element);
+			FileAnnotation_element.appendChild(binaryFile.asXMLElement(document));
 		}
 		return super.asXMLElement(document, FileAnnotation_element);
 	}

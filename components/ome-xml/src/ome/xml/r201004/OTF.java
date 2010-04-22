@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,7 +79,7 @@ public class OTF extends AbstractOMEModelObject
 	private FilterSet filterSet;
 
 	// Property
-	private String binaryFile;
+	private BinaryFile binaryFile;
 
 	// Back reference Channel_BackReference
 	private List<Channel> channel_BackReferenceList = new ArrayList<Channel>();
@@ -185,9 +185,10 @@ public class OTF extends AbstractOMEModelObject
 		}
 		else if (BinaryFile_nodeList.getLength() != 0)
 		{
-			// Element property BinaryFile which is not complex (has no
+			// Element property BinaryFile which is complex (has
 			// sub-elements)
-			setBinaryFile(BinaryFile_nodeList.item(0).getTextContent());
+			setBinaryFile(new BinaryFile(
+					(Element) BinaryFile_nodeList.item(0)));
 		}
 		// *** IGNORING *** Skipped back reference Channel_BackReference
 		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
@@ -282,12 +283,12 @@ public class OTF extends AbstractOMEModelObject
 	}
 
 	// Property
-	public String getBinaryFile()
+	public BinaryFile getBinaryFile()
 	{
 		return binaryFile;
 	}
 
-	public void setBinaryFile(String binaryFile)
+	public void setBinaryFile(BinaryFile binaryFile)
 	{
 		this.binaryFile = binaryFile;
 	}
@@ -407,12 +408,9 @@ public class OTF extends AbstractOMEModelObject
 		}
 		if (binaryFile != null)
 		{
-			// Element property BinaryFile which is not complex (has no
+			// Element property BinaryFile which is complex (has
 			// sub-elements)
-			Element binaryFile_element = 
-					document.createElementNS(NAMESPACE, "BinaryFile");
-			binaryFile_element.setTextContent(binaryFile);
-			OTF_element.appendChild(binaryFile_element);
+			OTF_element.appendChild(binaryFile.asXMLElement(document));
 		}
 		if (channel_BackReferenceList != null)
 		{

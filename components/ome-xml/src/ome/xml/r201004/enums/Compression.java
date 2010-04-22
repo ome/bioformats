@@ -1,5 +1,5 @@
 /*
- * ome.xml.r201004.enums.Pulse
+ * ome.xml.r201004.enums.Compression
  *
  *-----------------------------------------------------------------------------
  *
@@ -38,44 +38,32 @@
 
 package ome.xml.r201004.enums;
 
-public enum Pulse implements Enumeration
+public enum Compression implements Enumeration
 {
-  CW("CW"), SINGLE("Single"), QSWITCHED("QSwitched"), REPETITIVE("Repetitive"), MODELOCKED("ModeLocked"), OTHER("Other");
+  ZLIB("zlib"), BZIP2("bzip2"), NONE("none");
   
-  private Pulse(String value)
+  private Compression(String value)
   {
     this.value = value;
   }
 
-  public static Pulse fromString(String value)
+  public static Compression fromString(String value)
     throws EnumerationException
   {
-    if ("CW".equals(value))
+    if ("zlib".equals(value))
     {
-      return CW;
+      return ZLIB;
     }
-    if ("Single".equals(value))
+    if ("bzip2".equals(value))
     {
-      return SINGLE;
+      return BZIP2;
     }
-    if ("QSwitched".equals(value))
+    if ("none".equals(value))
     {
-      return QSWITCHED;
-    }
-    if ("Repetitive".equals(value))
-    {
-      return REPETITIVE;
-    }
-    if ("ModeLocked".equals(value))
-    {
-      return MODELOCKED;
-    }
-    if ("Other".equals(value))
-    {
-      return OTHER;
+      return NONE;
     }
     String s = String.format("%s not a supported value of %s",
-                             value, Pulse.class);
+                             value, Compression.class);
     throw new EnumerationException(s);
   }
 

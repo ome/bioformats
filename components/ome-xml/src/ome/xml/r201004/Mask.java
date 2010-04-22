@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -64,7 +64,7 @@ public class Mask extends Shape
 	private Double x;
 
 	// Property which occurs more than once
-	private List<String> binDataList = new ArrayList<String>();
+	private List<BinData> binDataList = new ArrayList<BinData>();
 
 	// -- Constructors --
 
@@ -120,13 +120,14 @@ public class Mask extends Shape
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
-		// Element property BinData which is not complex (has no
-		// sub-elements) which occurs more than once
+		// Element property BinData which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
 		for (int i = 0; i < BinData_nodeList.getLength(); i++)
 		{
-			addBinData(new String(
-					BinData_nodeList.item(i).getTextContent()));
+			Element BinData_element = (Element) BinData_nodeList.item(i);
+			addBinData(
+					new BinData(BinData_element));
 		}
 	}
 
@@ -161,27 +162,27 @@ public class Mask extends Shape
 		return binDataList.size();
 	}
 
-	public List<String> copyBinDataList()
+	public List<BinData> copyBinDataList()
 	{
-		return new ArrayList<String>(binDataList);
+		return new ArrayList<BinData>(binDataList);
 	}
 
-	public String getBinData(int index)
+	public BinData getBinData(int index)
 	{
 		return binDataList.get(index);
 	}
 
-	public String setBinData(int index, String binData)
+	public BinData setBinData(int index, BinData binData)
 	{
 		return binDataList.set(index, binData);
 	}
 
-	public void addBinData(String binData)
+	public void addBinData(BinData binData)
 	{
 		binDataList.add(binData);
 	}
 
-	public void removeBinData(String binData)
+	public void removeBinData(BinData binData)
 	{
 		binDataList.remove(binData);
 	}
@@ -212,14 +213,11 @@ public class Mask extends Shape
 		}
 		if (binDataList != null)
 		{
-			// Element property BinData which is not complex (has no
-			// sub-elements) which occurs more than once
-			for (String binDataList_value : binDataList)
+			// Element property BinData which is complex (has
+			// sub-elements) and occurs more than once
+			for (BinData binDataList_value : binDataList)
 			{
-				Element binDataList_element =
-						document.createElementNS(NAMESPACE, "BinData");
-				binDataList_element.setTextContent(binDataList_value);
-				Mask_element.appendChild(binDataList_element);
+				Mask_element.appendChild(binDataList_value.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, Mask_element);

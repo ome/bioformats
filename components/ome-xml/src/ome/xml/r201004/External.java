@@ -1,5 +1,5 @@
 /*
- * ome.xml.r201004.FilterSetRef
+ * ome.xml.r201004.External
  *
  *-----------------------------------------------------------------------------
  *
@@ -49,39 +49,45 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class FilterSetRef extends Reference
+public class External extends AbstractOMEModelObject
 {
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04";
 
 	// -- Instance variables --
 
 	// Property
-	private String id;
+	private String href;
+
+	// Property
+	private Compression compression;
+
+	// Property
+	private String sha1;
 
 	// -- Constructors --
 
 	/** Default constructor. */
-	public FilterSetRef()
+	public External()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs FilterSetRef recursively from an XML DOM tree.
+	 * Constructs External recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public FilterSetRef(Element element) throws EnumerationException
+	public External(Element element) throws EnumerationException
 	{
 		update(element);
 	}
 
 	/** 
-	 * Updates FilterSetRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates External recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -92,36 +98,70 @@ public class FilterSetRef extends Reference
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
-		if (!"FilterSetRef".equals(tagName))
+		if (!"External".equals(tagName))
 		{
 			System.err.println(String.format(
-					"WARNING: Expecting node name of FilterSetRef got %s",
+					"WARNING: Expecting node name of External got %s",
 					tagName));
 			// TODO: Should be its own Exception
 			//throw new RuntimeException(String.format(
-			//		"Expecting node name of FilterSetRef got %s",
+			//		"Expecting node name of External got %s",
 			//		tagName));
 		}
-		if (element.hasAttribute("ID"))
+		if (element.hasAttribute("href"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// Attribute property href
+			sethref(String.valueOf(
+					element.getAttribute("href")));
+		}
+		if (element.hasAttribute("Compression"))
+		{
+			// Attribute property which is an enumeration Compression
+			setCompression(Compression.fromString(
+					element.getAttribute("Compression")));
+		}
+		if (element.hasAttribute("SHA1"))
+		{
+			// Attribute property SHA1
+			setSHA1(String.valueOf(
+					element.getAttribute("SHA1")));
 		}
 	}
 
-	// -- FilterSetRef API methods --
+	// -- External API methods --
 
 
 	// Property
-	public String getID()
+	public String gethref()
 	{
-		return id;
+		return href;
 	}
 
-	public void setID(String id)
+	public void sethref(String href)
 	{
-		this.id = id;
+		this.href = href;
+	}
+
+	// Property
+	public Compression getCompression()
+	{
+		return compression;
+	}
+
+	public void setCompression(Compression compression)
+	{
+		this.compression = compression;
+	}
+
+	// Property
+	public String getSHA1()
+	{
+		return sha1;
+	}
+
+	public void setSHA1(String sha1)
+	{
+		this.sha1 = sha1;
 	}
 
 	public Element asXMLElement(Document document)
@@ -129,20 +169,30 @@ public class FilterSetRef extends Reference
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element FilterSetRef_element)
+	protected Element asXMLElement(Document document, Element External_element)
 	{
-		// Creating XML block for FilterSetRef
-		if (FilterSetRef_element == null)
+		// Creating XML block for External
+		if (External_element == null)
 		{
-			FilterSetRef_element =
-					document.createElementNS(NAMESPACE, "FilterSetRef");
+			External_element =
+					document.createElementNS(NAMESPACE, "External");
 		}
 
-		if (id != null)
+		if (href != null)
 		{
-			// Attribute property ID
-			FilterSetRef_element.setAttribute("ID", id.toString());
+			// Attribute property href
+			External_element.setAttribute("href", href.toString());
 		}
-		return super.asXMLElement(document, FilterSetRef_element);
+		if (compression != null)
+		{
+			// Attribute property Compression
+			External_element.setAttribute("Compression", compression.toString());
+		}
+		if (sha1 != null)
+		{
+			// Attribute property SHA1
+			External_element.setAttribute("SHA1", sha1.toString());
+		}
+		return super.asXMLElement(document, External_element);
 	}
 }

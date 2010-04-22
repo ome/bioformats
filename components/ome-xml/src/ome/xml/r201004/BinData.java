@@ -1,5 +1,5 @@
 /*
- * ome.xml.r201004.FilterSetRef
+ * ome.xml.r201004.BinData
  *
  *-----------------------------------------------------------------------------
  *
@@ -49,39 +49,45 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class FilterSetRef extends Reference
+public class BinData extends AbstractOMEModelObject
 {
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04";
 
 	// -- Instance variables --
 
 	// Property
-	private String id;
+	private Boolean bigEndian;
+
+	// Property
+	private Integer length;
+
+	// Property
+	private Compression compression;
 
 	// -- Constructors --
 
 	/** Default constructor. */
-	public FilterSetRef()
+	public BinData()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs FilterSetRef recursively from an XML DOM tree.
+	 * Constructs BinData recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public FilterSetRef(Element element) throws EnumerationException
+	public BinData(Element element) throws EnumerationException
 	{
 		update(element);
 	}
 
 	/** 
-	 * Updates FilterSetRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates BinData recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -92,36 +98,70 @@ public class FilterSetRef extends Reference
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
-		if (!"FilterSetRef".equals(tagName))
+		if (!"BinData".equals(tagName))
 		{
 			System.err.println(String.format(
-					"WARNING: Expecting node name of FilterSetRef got %s",
+					"WARNING: Expecting node name of BinData got %s",
 					tagName));
 			// TODO: Should be its own Exception
 			//throw new RuntimeException(String.format(
-			//		"Expecting node name of FilterSetRef got %s",
+			//		"Expecting node name of BinData got %s",
 			//		tagName));
 		}
-		if (element.hasAttribute("ID"))
+		if (element.hasAttribute("BigEndian"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// Attribute property BigEndian
+			setBigEndian(Boolean.valueOf(
+					element.getAttribute("BigEndian")));
+		}
+		if (element.hasAttribute("Length"))
+		{
+			// Attribute property Length
+			setLength(Integer.valueOf(
+					element.getAttribute("Length")));
+		}
+		if (element.hasAttribute("Compression"))
+		{
+			// Attribute property which is an enumeration Compression
+			setCompression(Compression.fromString(
+					element.getAttribute("Compression")));
 		}
 	}
 
-	// -- FilterSetRef API methods --
+	// -- BinData API methods --
 
 
 	// Property
-	public String getID()
+	public Boolean getBigEndian()
 	{
-		return id;
+		return bigEndian;
 	}
 
-	public void setID(String id)
+	public void setBigEndian(Boolean bigEndian)
 	{
-		this.id = id;
+		this.bigEndian = bigEndian;
+	}
+
+	// Property
+	public Integer getLength()
+	{
+		return length;
+	}
+
+	public void setLength(Integer length)
+	{
+		this.length = length;
+	}
+
+	// Property
+	public Compression getCompression()
+	{
+		return compression;
+	}
+
+	public void setCompression(Compression compression)
+	{
+		this.compression = compression;
 	}
 
 	public Element asXMLElement(Document document)
@@ -129,20 +169,30 @@ public class FilterSetRef extends Reference
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element FilterSetRef_element)
+	protected Element asXMLElement(Document document, Element BinData_element)
 	{
-		// Creating XML block for FilterSetRef
-		if (FilterSetRef_element == null)
+		// Creating XML block for BinData
+		if (BinData_element == null)
 		{
-			FilterSetRef_element =
-					document.createElementNS(NAMESPACE, "FilterSetRef");
+			BinData_element =
+					document.createElementNS(NAMESPACE, "BinData");
 		}
 
-		if (id != null)
+		if (bigEndian != null)
 		{
-			// Attribute property ID
-			FilterSetRef_element.setAttribute("ID", id.toString());
+			// Attribute property BigEndian
+			BinData_element.setAttribute("BigEndian", bigEndian.toString());
 		}
-		return super.asXMLElement(document, FilterSetRef_element);
+		if (length != null)
+		{
+			// Attribute property Length
+			BinData_element.setAttribute("Length", length.toString());
+		}
+		if (compression != null)
+		{
+			// Attribute property Compression
+			BinData_element.setAttribute("Compression", compression.toString());
+		}
+		return super.asXMLElement(document, BinData_element);
 	}
 }
