@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -359,11 +359,9 @@ public class PlateAcquisition extends AbstractOMEModelObject
 			// Reference property WellSampleRef which occurs more than once
 			for (WellSample wellSampleList_value : wellSampleList)
 			{
-				Element wellSampleList_value_element = 
-						document.createElementNS(NAMESPACE, "WellSampleRef");
-				wellSampleList_value_element.setAttribute(
-						"ID", wellSampleList_value.getID());
-				PlateAcquisition_element.appendChild(wellSampleList_value_element);
+				WellSampleRef o = new WellSampleRef();
+				o.setID(wellSampleList_value.getID());
+				PlateAcquisition_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (annotationList != null)
@@ -371,11 +369,9 @@ public class PlateAcquisition extends AbstractOMEModelObject
 			// Reference property AnnotationRef which occurs more than once
 			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_value_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRef");
-				annotationList_value_element.setAttribute(
-						"ID", annotationList_value.getID());
-				PlateAcquisition_element.appendChild(annotationList_value_element);
+				AnnotationRef o = new AnnotationRef();
+				o.setID(annotationList_value.getID());
+				PlateAcquisition_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, PlateAcquisition_element);

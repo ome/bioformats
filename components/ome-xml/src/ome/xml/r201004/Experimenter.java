@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -572,11 +572,9 @@ public class Experimenter extends AbstractOMEModelObject
 			// Reference property GroupRef which occurs more than once
 			for (Group groupList_value : groupList)
 			{
-				Element groupList_value_element = 
-						document.createElementNS(NAMESPACE, "GroupRef");
-				groupList_value_element.setAttribute(
-						"ID", groupList_value.getID());
-				Experimenter_element.appendChild(groupList_value_element);
+				GroupRef o = new GroupRef();
+				o.setID(groupList_value.getID());
+				Experimenter_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (annotationList != null)
@@ -584,11 +582,9 @@ public class Experimenter extends AbstractOMEModelObject
 			// Reference property AnnotationRef which occurs more than once
 			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_value_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRef");
-				annotationList_value_element.setAttribute(
-						"ID", annotationList_value.getID());
-				Experimenter_element.appendChild(annotationList_value_element);
+				AnnotationRef o = new AnnotationRef();
+				o.setID(annotationList_value.getID());
+				Experimenter_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (image_BackReferenceList != null)

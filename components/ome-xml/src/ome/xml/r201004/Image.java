@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -627,11 +627,9 @@ public class Image extends AbstractOMEModelObject
 		if (experimenter != null)
 		{
 			// Reference property ExperimenterRef
-			Element experimenter_element = 
-					document.createElementNS(NAMESPACE, "ExperimenterRef");
-			experimenter_element.setAttribute(
-					"ID", experimenter.getID());
-			Image_element.appendChild(experimenter_element);
+			ExperimenterRef o = new ExperimenterRef();
+			o.setID(experimenter.getID());
+			Image_element.appendChild(o.asXMLElement(document));
 		}
 		if (description != null)
 		{
@@ -645,41 +643,33 @@ public class Image extends AbstractOMEModelObject
 		if (experiment != null)
 		{
 			// Reference property ExperimentRef
-			Element experiment_element = 
-					document.createElementNS(NAMESPACE, "ExperimentRef");
-			experiment_element.setAttribute(
-					"ID", experiment.getID());
-			Image_element.appendChild(experiment_element);
+			ExperimentRef o = new ExperimentRef();
+			o.setID(experiment.getID());
+			Image_element.appendChild(o.asXMLElement(document));
 		}
 		if (group != null)
 		{
 			// Reference property GroupRef
-			Element group_element = 
-					document.createElementNS(NAMESPACE, "GroupRef");
-			group_element.setAttribute(
-					"ID", group.getID());
-			Image_element.appendChild(group_element);
+			GroupRef o = new GroupRef();
+			o.setID(group.getID());
+			Image_element.appendChild(o.asXMLElement(document));
 		}
 		if (datasetList != null)
 		{
 			// Reference property DatasetRef which occurs more than once
 			for (Dataset datasetList_value : datasetList)
 			{
-				Element datasetList_value_element = 
-						document.createElementNS(NAMESPACE, "DatasetRef");
-				datasetList_value_element.setAttribute(
-						"ID", datasetList_value.getID());
-				Image_element.appendChild(datasetList_value_element);
+				DatasetRef o = new DatasetRef();
+				o.setID(datasetList_value.getID());
+				Image_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (instrument != null)
 		{
 			// Reference property InstrumentRef
-			Element instrument_element = 
-					document.createElementNS(NAMESPACE, "InstrumentRef");
-			instrument_element.setAttribute(
-					"ID", instrument.getID());
-			Image_element.appendChild(instrument_element);
+			InstrumentRef o = new InstrumentRef();
+			o.setID(instrument.getID());
+			Image_element.appendChild(o.asXMLElement(document));
 		}
 		if (objectiveSettings != null)
 		{
@@ -710,11 +700,9 @@ public class Image extends AbstractOMEModelObject
 			// Reference property ROIRef which occurs more than once
 			for (ROI roiList_value : roiList)
 			{
-				Element roiList_value_element = 
-						document.createElementNS(NAMESPACE, "ROIRef");
-				roiList_value_element.setAttribute(
-						"ID", roiList_value.getID());
-				Image_element.appendChild(roiList_value_element);
+				ROIRef o = new ROIRef();
+				o.setID(roiList_value.getID());
+				Image_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (microbeamManipulationList != null)
@@ -722,11 +710,9 @@ public class Image extends AbstractOMEModelObject
 			// Reference property MicrobeamManipulationRef which occurs more than once
 			for (MicrobeamManipulation microbeamManipulationList_value : microbeamManipulationList)
 			{
-				Element microbeamManipulationList_value_element = 
-						document.createElementNS(NAMESPACE, "MicrobeamManipulationRef");
-				microbeamManipulationList_value_element.setAttribute(
-						"ID", microbeamManipulationList_value.getID());
-				Image_element.appendChild(microbeamManipulationList_value_element);
+				MicrobeamManipulationRef o = new MicrobeamManipulationRef();
+				o.setID(microbeamManipulationList_value.getID());
+				Image_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (annotationList != null)
@@ -734,11 +720,9 @@ public class Image extends AbstractOMEModelObject
 			// Reference property AnnotationRef which occurs more than once
 			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_value_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRef");
-				annotationList_value_element.setAttribute(
-						"ID", annotationList_value.getID());
-				Image_element.appendChild(annotationList_value_element);
+				AnnotationRef o = new AnnotationRef();
+				o.setID(annotationList_value.getID());
+				Image_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (wellSample_BackReferenceList != null)

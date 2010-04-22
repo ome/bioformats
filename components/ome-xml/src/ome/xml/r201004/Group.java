@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -394,20 +394,16 @@ public class Group extends AbstractOMEModelObject
 		if (leader != null)
 		{
 			// Reference property Leader
-			Element leader_element = 
-					document.createElementNS(NAMESPACE, "Leader");
-			leader_element.setAttribute(
-					"ID", leader.getID());
-			Group_element.appendChild(leader_element);
+			Leader o = new Leader();
+			o.setID(leader.getID());
+			Group_element.appendChild(o.asXMLElement(document));
 		}
 		if (contact != null)
 		{
 			// Reference property Contact
-			Element contact_element = 
-					document.createElementNS(NAMESPACE, "Contact");
-			contact_element.setAttribute(
-					"ID", contact.getID());
-			Group_element.appendChild(contact_element);
+			Contact o = new Contact();
+			o.setID(contact.getID());
+			Group_element.appendChild(o.asXMLElement(document));
 		}
 		if (image_BackReferenceList != null)
 		{

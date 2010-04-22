@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -703,11 +703,9 @@ public class Pixels extends AbstractOMEModelObject
 			// Reference property AnnotationRef which occurs more than once
 			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_value_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRef");
-				annotationList_value_element.setAttribute(
-						"ID", annotationList_value.getID());
-				Pixels_element.appendChild(annotationList_value_element);
+				AnnotationRef o = new AnnotationRef();
+				o.setID(annotationList_value.getID());
+				Pixels_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, Pixels_element);

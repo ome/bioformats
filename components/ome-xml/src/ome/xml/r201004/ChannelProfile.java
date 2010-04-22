@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -330,11 +330,9 @@ public class ChannelProfile extends AbstractOMEModelObject
 		if (otf != null)
 		{
 			// Reference property OTFRef
-			Element otf_element = 
-					document.createElementNS(NAMESPACE, "OTFRef");
-			otf_element.setAttribute(
-					"ID", otf.getID());
-			ChannelProfile_element.appendChild(otf_element);
+			OTFRef o = new OTFRef();
+			o.setID(otf.getID());
+			ChannelProfile_element.appendChild(o.asXMLElement(document));
 		}
 		if (detectorSettings != null)
 		{
@@ -345,11 +343,9 @@ public class ChannelProfile extends AbstractOMEModelObject
 		if (filterSet != null)
 		{
 			// Reference property FilterSetRef
-			Element filterSet_element = 
-					document.createElementNS(NAMESPACE, "FilterSetRef");
-			filterSet_element.setAttribute(
-					"ID", filterSet.getID());
-			ChannelProfile_element.appendChild(filterSet_element);
+			FilterSetRef o = new FilterSetRef();
+			o.setID(filterSet.getID());
+			ChannelProfile_element.appendChild(o.asXMLElement(document));
 		}
 		return super.asXMLElement(document, ChannelProfile_element);
 	}

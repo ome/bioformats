@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -363,31 +363,25 @@ public class Dataset extends AbstractOMEModelObject
 		if (experimenter != null)
 		{
 			// Reference property ExperimenterRef
-			Element experimenter_element = 
-					document.createElementNS(NAMESPACE, "ExperimenterRef");
-			experimenter_element.setAttribute(
-					"ID", experimenter.getID());
-			Dataset_element.appendChild(experimenter_element);
+			ExperimenterRef o = new ExperimenterRef();
+			o.setID(experimenter.getID());
+			Dataset_element.appendChild(o.asXMLElement(document));
 		}
 		if (group != null)
 		{
 			// Reference property GroupRef
-			Element group_element = 
-					document.createElementNS(NAMESPACE, "GroupRef");
-			group_element.setAttribute(
-					"ID", group.getID());
-			Dataset_element.appendChild(group_element);
+			GroupRef o = new GroupRef();
+			o.setID(group.getID());
+			Dataset_element.appendChild(o.asXMLElement(document));
 		}
 		if (projectList != null)
 		{
 			// Reference property ProjectRef which occurs more than once
 			for (Project projectList_value : projectList)
 			{
-				Element projectList_value_element = 
-						document.createElementNS(NAMESPACE, "ProjectRef");
-				projectList_value_element.setAttribute(
-						"ID", projectList_value.getID());
-				Dataset_element.appendChild(projectList_value_element);
+				ProjectRef o = new ProjectRef();
+				o.setID(projectList_value.getID());
+				Dataset_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (annotationList != null)
@@ -395,11 +389,9 @@ public class Dataset extends AbstractOMEModelObject
 			// Reference property AnnotationRef which occurs more than once
 			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_value_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRef");
-				annotationList_value_element.setAttribute(
-						"ID", annotationList_value.getID());
-				Dataset_element.appendChild(annotationList_value_element);
+				AnnotationRef o = new AnnotationRef();
+				o.setID(annotationList_value.getID());
+				Dataset_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (image_BackReferenceList != null)

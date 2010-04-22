@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -344,11 +344,9 @@ public class Laser extends LightSource
 		if (pump != null)
 		{
 			// Reference property Pump
-			Element pump_element = 
-					document.createElementNS(NAMESPACE, "Pump");
-			pump_element.setAttribute(
-					"ID", pump.getID());
-			Laser_element.appendChild(pump_element);
+			Pump o = new Pump();
+			o.setID(pump.getID());
+			Laser_element.appendChild(o.asXMLElement(document));
 		}
 		return super.asXMLElement(document, Laser_element);
 	}

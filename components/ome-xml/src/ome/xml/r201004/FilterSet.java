@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -350,32 +350,26 @@ public class FilterSet extends ManufacturerSpec
 			// Reference property ExcitationFilterRef which occurs more than once
 			for (Filter excitationFilterList_value : excitationFilterList)
 			{
-				Element excitationFilterList_value_element = 
-						document.createElementNS(NAMESPACE, "ExcitationFilterRef");
-				excitationFilterList_value_element.setAttribute(
-						"ID", excitationFilterList_value.getID());
-				FilterSet_element.appendChild(excitationFilterList_value_element);
+				FilterRef o = new FilterRef();
+				o.setID(excitationFilterList_value.getID());
+				FilterSet_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (dichroic != null)
 		{
 			// Reference property DichroicRef
-			Element dichroic_element = 
-					document.createElementNS(NAMESPACE, "DichroicRef");
-			dichroic_element.setAttribute(
-					"ID", dichroic.getID());
-			FilterSet_element.appendChild(dichroic_element);
+			DichroicRef o = new DichroicRef();
+			o.setID(dichroic.getID());
+			FilterSet_element.appendChild(o.asXMLElement(document));
 		}
 		if (emissionFilterList != null)
 		{
 			// Reference property EmissionFilterRef which occurs more than once
 			for (Filter emissionFilterList_value : emissionFilterList)
 			{
-				Element emissionFilterList_value_element = 
-						document.createElementNS(NAMESPACE, "EmissionFilterRef");
-				emissionFilterList_value_element.setAttribute(
-						"ID", emissionFilterList_value.getID());
-				FilterSet_element.appendChild(emissionFilterList_value_element);
+				FilterRef o = new FilterRef();
+				o.setID(emissionFilterList_value.getID());
+				FilterSet_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (channel_BackReferenceList != null)

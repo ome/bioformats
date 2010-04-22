@@ -113,13 +113,13 @@ import org.xml.sax.SAXException;
 public class InOut201004Test {
   private static String IMAGE_ID = "Image:0";
 
-  private static String IMAGE_ANNOTATION_ID = "BooleanAnnotation:0";
+  private static String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
 
   private static String PIXELS_ID = "Pixels:0";
 
-  private static String PIXELS_ANNOTATION_ID = "DoubleAnnotation:0";
+  private static String PIXELS_ANNOTATION_ID = "Annotation:Double0";
 
-  private static String CHANNEL_ANNOTATION_ID = "XMLAnnotation:0";
+  private static String CHANNEL_ANNOTATION_ID = "Annotation:Double0";
 
   private static String INSTRUMENT_ID = "Instrument:0";
 
