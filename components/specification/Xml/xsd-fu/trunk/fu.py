@@ -85,6 +85,7 @@ def updateTypeMaps(namespace):
 		namespace + 'nonNegativeInteger': 'Integer',
 		namespace + 'float': 'Double',
 		namespace + 'anyURI': 'String',
+		namespace + 'hexBinary': 'String',
 		# Hacks
 		'PixelType': 'String',
 		'NamingConvention': 'String',
@@ -288,7 +289,7 @@ class OMEModelProperty(object):
 					if simpleType is None:
 						logging.debug("No simpleType found with name: %s" % \
 								simpleTypeName)
-						# Handle cases where the simple type is prefixes by
+						# Handle cases where the simple type is prefixed by
 						# a namespace definition. (ex. OME:LSID).
 						namespaceless = simpleTypeName.split(':')[-1]
 						if namespaceless != simpleTypeName:
