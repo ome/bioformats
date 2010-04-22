@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -156,6 +156,7 @@ public class Filter extends ManufacturerSpec
 
 	// -- Filter API methods --
 
+
 	// Property
 	public String getFilterWheel()
 	{
@@ -200,66 +201,66 @@ public class Filter extends ManufacturerSpec
 		this.transmittanceRange = transmittanceRange;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfFilterSetList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedFilterSetList()
 	{
 		return filterSet_BackReferenceList.size();
 	}
 
-	public List<FilterSet> copyFilterSetList()
+	public List<FilterSet> copyLinkedFilterSetList()
 	{
 		return new ArrayList<FilterSet>(filterSet_BackReferenceList);
 	}
 
-	public FilterSet getFilterSet(int index)
+	public FilterSet getLinkedFilterSet(int index)
 	{
 		return filterSet_BackReferenceList.get(index);
 	}
 
-	public FilterSet setFilterSet(int index, FilterSet filterSet_BackReference)
+	public FilterSet setLinkedFilterSet(int index, FilterSet o)
 	{
-		return filterSet_BackReferenceList.set(index, filterSet_BackReference);
+		return filterSet_BackReferenceList.set(index, o);
 	}
 
-	public void addFilterSet(FilterSet filterSet_BackReference)
+	public boolean linkFilterSet(FilterSet o)
 	{
-		filterSet_BackReferenceList.add(filterSet_BackReference);
+		return filterSet_BackReferenceList.add(o);
 	}
 
-	public void removeFilterSet(FilterSet filterSet_BackReference)
+	public boolean unlinkFilterSet(FilterSet o)
 	{
-		filterSet_BackReferenceList.remove(filterSet_BackReference);
+		return filterSet_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfLightPathList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedLightPathList()
 	{
 		return lightPath_BackReferenceList.size();
 	}
 
-	public List<LightPath> copyLightPathList()
+	public List<LightPath> copyLinkedLightPathList()
 	{
 		return new ArrayList<LightPath>(lightPath_BackReferenceList);
 	}
 
-	public LightPath getLightPath(int index)
+	public LightPath getLinkedLightPath(int index)
 	{
 		return lightPath_BackReferenceList.get(index);
 	}
 
-	public LightPath setLightPath(int index, LightPath lightPath_BackReference)
+	public LightPath setLinkedLightPath(int index, LightPath o)
 	{
-		return lightPath_BackReferenceList.set(index, lightPath_BackReference);
+		return lightPath_BackReferenceList.set(index, o);
 	}
 
-	public void addLightPath(LightPath lightPath_BackReference)
+	public boolean linkLightPath(LightPath o)
 	{
-		lightPath_BackReferenceList.add(lightPath_BackReference);
+		return lightPath_BackReferenceList.add(o);
 	}
 
-	public void removeLightPath(LightPath lightPath_BackReference)
+	public boolean unlinkLightPath(LightPath o)
 	{
-		lightPath_BackReferenceList.remove(lightPath_BackReference);
+		return lightPath_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)

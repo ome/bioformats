@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,10 +81,10 @@ public class Well extends AbstractOMEModelObject
 	// Property which occurs more than once
 	private List<WellSample> wellSampleList = new ArrayList<WellSample>();
 
-	// Back reference ReagentRef
-	private List<Reagent> reagent = new ArrayList<Reagent>();
+	// Property
+	private Reagent reagent;
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
@@ -185,6 +185,7 @@ public class Well extends AbstractOMEModelObject
 	}
 
 	// -- Well API methods --
+
 
 	// Property
 	public String getStatus()
@@ -294,38 +295,26 @@ public class Well extends AbstractOMEModelObject
 		wellSampleList.remove(wellSample);
 	}
 
-	// Reference ReagentRef
-	public int sizeOfLinkedReagentList()
+	// Reference
+	public Reagent getLinkedReagent()
 	{
-		return reagent.size();
-	}
-
-	public List<Reagent> copyLinkedReagentList()
-	{
-		return new ArrayList<Reagent>(reagent);
-	}
-
-	public Reagent getLinkedReagent(int index)
-	{
-		return reagent.get(index);
-	}
-
-	public Reagent setLinkedReagent(int index, Reagent o)
-	{
-		return reagent.set(index, o);
+		return reagent;
 	}
 
 	public void linkReagent(Reagent o)
 	{
-		this.reagent.add(o);
+		reagent = o;
 	}
 
 	public void unlinkReagent(Reagent o)
 	{
-		this.reagent.add(o);
+		if (reagent == o)
+		{
+			reagent = null;
+		}
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -346,14 +335,18 @@ public class Well extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkWell(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkWell(this);
+		return annotationList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -416,11 +409,20 @@ public class Well extends AbstractOMEModelObject
 		}
 		if (reagent != null)
 		{
-			// *** IGNORING *** Skipped back reference ReagentRef
+			// Element property ReagentRef which is complex (has
+			// sub-elements)
+			Well_element.appendChild(reagent.asXMLElement(document));
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				Well_element.appendChild(annotationList_element);
+			}
 		}
 		return super.asXMLElement(document, Well_element);
 	}

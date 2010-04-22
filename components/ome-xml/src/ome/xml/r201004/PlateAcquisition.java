@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -75,10 +75,10 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	// Property
 	private String description;
 
-	// Back reference WellSampleRef
+	// Reference WellSampleRef
 	private List<WellSample> wellSampleList = new ArrayList<WellSample>();
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
@@ -173,6 +173,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 	// -- PlateAcquisition API methods --
 
+
 	// Property
 	public Integer getMaximumFieldCount()
 	{
@@ -239,7 +240,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Reference WellSampleRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedWellSampleList()
 	{
 		return wellSampleList.size();
@@ -260,17 +261,21 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		return wellSampleList.set(index, o);
 	}
 
-	public void linkWellSample(WellSample o)
+	public boolean linkWellSample(WellSample o)
 	{
-		this.wellSampleList.add(o);
+
+		o.linkPlateAcquisition(this);
+		return wellSampleList.add(o);
 	}
 
-	public void unlinkWellSample(WellSample o)
+	public boolean unlinkWellSample(WellSample o)
 	{
-		this.wellSampleList.add(o);
+
+		o.unlinkPlateAcquisition(this);
+		return wellSampleList.remove(o);
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -291,14 +296,18 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkPlateAcquisition(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkPlateAcquisition(this);
+		return annotationList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -351,11 +360,25 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		}
 		if (wellSampleList != null)
 		{
-			// *** IGNORING *** Skipped back reference WellSampleRef
+			// Reference property WellSampleRef
+			for (WellSample o : wellSampleList)
+			{
+				Element wellSampleList_element = 
+						document.createElementNS(NAMESPACE, "WellSampleRefRef");
+				wellSampleList_element.setAttribute("ID", o.getID());
+				PlateAcquisition_element.appendChild(wellSampleList_element);
+			}
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				PlateAcquisition_element.appendChild(annotationList_element);
+			}
 		}
 		return super.asXMLElement(document, PlateAcquisition_element);
 	}

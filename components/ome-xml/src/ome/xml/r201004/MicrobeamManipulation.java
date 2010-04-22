@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -63,11 +63,11 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	// Property
 	private String id;
 
-	// Back reference ROIRef
+	// Reference ROIRef
 	private List<ROI> roiList = new ArrayList<ROI>();
 
-	// Back reference ExperimenterRef
-	private List<Experimenter> experimenter = new ArrayList<Experimenter>();
+	// Property
+	private Experimenter experimenter;
 
 	// Property which occurs more than once
 	private List<LightSourceSettings> lightSourceSettingsList = new ArrayList<LightSourceSettings>();
@@ -145,6 +145,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// -- MicrobeamManipulation API methods --
 
+
 	// Property
 	public MicrobeamManipulationType getType()
 	{
@@ -167,7 +168,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		this.id = id;
 	}
 
-	// Reference ROIRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedROIList()
 	{
 		return roiList.size();
@@ -188,45 +189,37 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		return roiList.set(index, o);
 	}
 
-	public void linkROI(ROI o)
+	public boolean linkROI(ROI o)
 	{
-		this.roiList.add(o);
+
+		o.linkMicrobeamManipulation(this);
+		return roiList.add(o);
 	}
 
-	public void unlinkROI(ROI o)
+	public boolean unlinkROI(ROI o)
 	{
-		this.roiList.add(o);
+
+		o.unlinkMicrobeamManipulation(this);
+		return roiList.remove(o);
 	}
 
-	// Reference ExperimenterRef
-	public int sizeOfLinkedExperimenterList()
+	// Reference
+	public Experimenter getLinkedExperimenter()
 	{
-		return experimenter.size();
-	}
-
-	public List<Experimenter> copyLinkedExperimenterList()
-	{
-		return new ArrayList<Experimenter>(experimenter);
-	}
-
-	public Experimenter getLinkedExperimenter(int index)
-	{
-		return experimenter.get(index);
-	}
-
-	public Experimenter setLinkedExperimenter(int index, Experimenter o)
-	{
-		return experimenter.set(index, o);
+		return experimenter;
 	}
 
 	public void linkExperimenter(Experimenter o)
 	{
-		this.experimenter.add(o);
+		experimenter = o;
 	}
 
 	public void unlinkExperimenter(Experimenter o)
 	{
-		this.experimenter.add(o);
+		if (experimenter == o)
+		{
+			experimenter = null;
+		}
 	}
 
 	// Property which occurs more than once
@@ -260,35 +253,39 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		lightSourceSettingsList.remove(lightSourceSettings);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfImageList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyImageList()
+	public List<Image> copyLinkedImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getImage(int index)
+	public Image getLinkedImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setImage(int index, Image image_BackReference)
+	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, image_BackReference);
+		return image_BackReferenceList.set(index, o);
 	}
 
-	public void addImage(Image image_BackReference)
+	public boolean linkImage(Image o)
 	{
-		image_BackReferenceList.add(image_BackReference);
+
+		o.linkMicrobeamManipulation(this);
+		return image_BackReferenceList.add(o);
 	}
 
-	public void removeImage(Image image_BackReference)
+	public boolean unlinkImage(Image o)
 	{
-		image_BackReferenceList.remove(image_BackReference);
+
+		o.unlinkMicrobeamManipulation(this);
+		return image_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -317,11 +314,20 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		}
 		if (roiList != null)
 		{
-			// *** IGNORING *** Skipped back reference ROIRef
+			// Reference property ROIRef
+			for (ROI o : roiList)
+			{
+				Element roiList_element = 
+						document.createElementNS(NAMESPACE, "ROIRefRef");
+				roiList_element.setAttribute("ID", o.getID());
+				MicrobeamManipulation_element.appendChild(roiList_element);
+			}
 		}
 		if (experimenter != null)
 		{
-			// *** IGNORING *** Skipped back reference ExperimenterRef
+			// Element property ExperimenterRef which is complex (has
+			// sub-elements)
+			MicrobeamManipulation_element.appendChild(experimenter.asXMLElement(document));
 		}
 		if (lightSourceSettingsList != null)
 		{

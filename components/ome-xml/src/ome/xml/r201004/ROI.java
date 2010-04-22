@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,7 +69,7 @@ public class ROI extends AbstractOMEModelObject
 	// Property
 	private Union union;
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Property
@@ -177,6 +177,7 @@ public class ROI extends AbstractOMEModelObject
 
 	// -- ROI API methods --
 
+
 	// Property
 	public String getNamespace()
 	{
@@ -221,7 +222,7 @@ public class ROI extends AbstractOMEModelObject
 		this.union = union;
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -242,14 +243,18 @@ public class ROI extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkROI(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkROI(this);
+		return annotationList.remove(o);
 	}
 
 	// Property
@@ -263,66 +268,74 @@ public class ROI extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfImageList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyImageList()
+	public List<Image> copyLinkedImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getImage(int index)
+	public Image getLinkedImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setImage(int index, Image image_BackReference)
+	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, image_BackReference);
+		return image_BackReferenceList.set(index, o);
 	}
 
-	public void addImage(Image image_BackReference)
+	public boolean linkImage(Image o)
 	{
-		image_BackReferenceList.add(image_BackReference);
+
+		o.linkROI(this);
+		return image_BackReferenceList.add(o);
 	}
 
-	public void removeImage(Image image_BackReference)
+	public boolean unlinkImage(Image o)
 	{
-		image_BackReferenceList.remove(image_BackReference);
+
+		o.unlinkROI(this);
+		return image_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfMicrobeamManipulationList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedMicrobeamManipulationList()
 	{
 		return microbeamManipulation_BackReferenceList.size();
 	}
 
-	public List<MicrobeamManipulation> copyMicrobeamManipulationList()
+	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
 	{
 		return new ArrayList<MicrobeamManipulation>(microbeamManipulation_BackReferenceList);
 	}
 
-	public MicrobeamManipulation getMicrobeamManipulation(int index)
+	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
 	{
 		return microbeamManipulation_BackReferenceList.get(index);
 	}
 
-	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation_BackReference)
+	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.set(index, microbeamManipulation_BackReference);
+		return microbeamManipulation_BackReferenceList.set(index, o);
 	}
 
-	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
+
+		o.linkROI(this);
+		return microbeamManipulation_BackReferenceList.add(o);
 	}
 
-	public void removeMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		microbeamManipulation_BackReferenceList.remove(microbeamManipulation_BackReference);
+
+		o.unlinkROI(this);
+		return microbeamManipulation_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -362,7 +375,14 @@ public class ROI extends AbstractOMEModelObject
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				ROI_element.appendChild(annotationList_element);
+			}
 		}
 		if (description != null)
 		{

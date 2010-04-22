@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,10 +81,10 @@ public class Experimenter extends AbstractOMEModelObject
 	// Property
 	private String id;
 
-	// Back reference GroupRef
+	// Reference GroupRef
 	private List<Group> groupList = new ArrayList<Group>();
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference Image_BackReference
@@ -203,6 +203,7 @@ public class Experimenter extends AbstractOMEModelObject
 
 	// -- Experimenter API methods --
 
+
 	// Property
 	public String getUserName()
 	{
@@ -291,7 +292,7 @@ public class Experimenter extends AbstractOMEModelObject
 		this.id = id;
 	}
 
-	// Reference GroupRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedGroupList()
 	{
 		return groupList.size();
@@ -312,17 +313,21 @@ public class Experimenter extends AbstractOMEModelObject
 		return groupList.set(index, o);
 	}
 
-	public void linkGroup(Group o)
+	public boolean linkGroup(Group o)
 	{
-		this.groupList.add(o);
+
+		o.linkExperimenter(this);
+		return groupList.add(o);
 	}
 
-	public void unlinkGroup(Group o)
+	public boolean unlinkGroup(Group o)
 	{
-		this.groupList.add(o);
+
+		o.unlinkExperimenter(this);
+		return groupList.remove(o);
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -343,169 +348,193 @@ public class Experimenter extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkExperimenter(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkExperimenter(this);
+		return annotationList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfImageList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyImageList()
+	public List<Image> copyLinkedImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getImage(int index)
+	public Image getLinkedImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setImage(int index, Image image_BackReference)
+	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, image_BackReference);
+		return image_BackReferenceList.set(index, o);
 	}
 
-	public void addImage(Image image_BackReference)
+	public boolean linkImage(Image o)
 	{
-		image_BackReferenceList.add(image_BackReference);
+
+		o.linkExperimenter(this);
+		return image_BackReferenceList.add(o);
 	}
 
-	public void removeImage(Image image_BackReference)
+	public boolean unlinkImage(Image o)
 	{
-		image_BackReferenceList.remove(image_BackReference);
+
+		o.unlinkExperimenter(this);
+		return image_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfMicrobeamManipulationList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedMicrobeamManipulationList()
 	{
 		return microbeamManipulation_BackReferenceList.size();
 	}
 
-	public List<MicrobeamManipulation> copyMicrobeamManipulationList()
+	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
 	{
 		return new ArrayList<MicrobeamManipulation>(microbeamManipulation_BackReferenceList);
 	}
 
-	public MicrobeamManipulation getMicrobeamManipulation(int index)
+	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
 	{
 		return microbeamManipulation_BackReferenceList.get(index);
 	}
 
-	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation_BackReference)
+	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.set(index, microbeamManipulation_BackReference);
+		return microbeamManipulation_BackReferenceList.set(index, o);
 	}
 
-	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		microbeamManipulation_BackReferenceList.add(microbeamManipulation_BackReference);
+
+		o.linkExperimenter(this);
+		return microbeamManipulation_BackReferenceList.add(o);
 	}
 
-	public void removeMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		microbeamManipulation_BackReferenceList.remove(microbeamManipulation_BackReference);
+
+		o.unlinkExperimenter(this);
+		return microbeamManipulation_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfProjectList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedProjectList()
 	{
 		return project_BackReferenceList.size();
 	}
 
-	public List<Project> copyProjectList()
+	public List<Project> copyLinkedProjectList()
 	{
 		return new ArrayList<Project>(project_BackReferenceList);
 	}
 
-	public Project getProject(int index)
+	public Project getLinkedProject(int index)
 	{
 		return project_BackReferenceList.get(index);
 	}
 
-	public Project setProject(int index, Project project_BackReference)
+	public Project setLinkedProject(int index, Project o)
 	{
-		return project_BackReferenceList.set(index, project_BackReference);
+		return project_BackReferenceList.set(index, o);
 	}
 
-	public void addProject(Project project_BackReference)
+	public boolean linkProject(Project o)
 	{
-		project_BackReferenceList.add(project_BackReference);
+
+		o.linkExperimenter(this);
+		return project_BackReferenceList.add(o);
 	}
 
-	public void removeProject(Project project_BackReference)
+	public boolean unlinkProject(Project o)
 	{
-		project_BackReferenceList.remove(project_BackReference);
+
+		o.unlinkExperimenter(this);
+		return project_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfDatasetList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedDatasetList()
 	{
 		return dataset_BackReferenceList.size();
 	}
 
-	public List<Dataset> copyDatasetList()
+	public List<Dataset> copyLinkedDatasetList()
 	{
 		return new ArrayList<Dataset>(dataset_BackReferenceList);
 	}
 
-	public Dataset getDataset(int index)
+	public Dataset getLinkedDataset(int index)
 	{
 		return dataset_BackReferenceList.get(index);
 	}
 
-	public Dataset setDataset(int index, Dataset dataset_BackReference)
+	public Dataset setLinkedDataset(int index, Dataset o)
 	{
-		return dataset_BackReferenceList.set(index, dataset_BackReference);
+		return dataset_BackReferenceList.set(index, o);
 	}
 
-	public void addDataset(Dataset dataset_BackReference)
+	public boolean linkDataset(Dataset o)
 	{
-		dataset_BackReferenceList.add(dataset_BackReference);
+
+		o.linkExperimenter(this);
+		return dataset_BackReferenceList.add(o);
 	}
 
-	public void removeDataset(Dataset dataset_BackReference)
+	public boolean unlinkDataset(Dataset o)
 	{
-		dataset_BackReferenceList.remove(dataset_BackReference);
+
+		o.unlinkExperimenter(this);
+		return dataset_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfExperimentList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedExperimentList()
 	{
 		return experiment_BackReferenceList.size();
 	}
 
-	public List<Experiment> copyExperimentList()
+	public List<Experiment> copyLinkedExperimentList()
 	{
 		return new ArrayList<Experiment>(experiment_BackReferenceList);
 	}
 
-	public Experiment getExperiment(int index)
+	public Experiment getLinkedExperiment(int index)
 	{
 		return experiment_BackReferenceList.get(index);
 	}
 
-	public Experiment setExperiment(int index, Experiment experiment_BackReference)
+	public Experiment setLinkedExperiment(int index, Experiment o)
 	{
-		return experiment_BackReferenceList.set(index, experiment_BackReference);
+		return experiment_BackReferenceList.set(index, o);
 	}
 
-	public void addExperiment(Experiment experiment_BackReference)
+	public boolean linkExperiment(Experiment o)
 	{
-		experiment_BackReferenceList.add(experiment_BackReference);
+
+		o.linkExperimenter(this);
+		return experiment_BackReferenceList.add(o);
 	}
 
-	public void removeExperiment(Experiment experiment_BackReference)
+	public boolean unlinkExperiment(Experiment o)
 	{
-		experiment_BackReferenceList.remove(experiment_BackReference);
+
+		o.unlinkExperimenter(this);
+		return experiment_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -564,11 +593,25 @@ public class Experimenter extends AbstractOMEModelObject
 		}
 		if (groupList != null)
 		{
-			// *** IGNORING *** Skipped back reference GroupRef
+			// Reference property GroupRef
+			for (Group o : groupList)
+			{
+				Element groupList_element = 
+						document.createElementNS(NAMESPACE, "GroupRefRef");
+				groupList_element.setAttribute("ID", o.getID());
+				Experimenter_element.appendChild(groupList_element);
+			}
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				Experimenter_element.appendChild(annotationList_element);
+			}
 		}
 		if (image_BackReferenceList != null)
 		{

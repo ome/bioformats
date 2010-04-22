@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -174,24 +174,11 @@ public class Laser extends LightSource
 			setRepetitionRate(Double.valueOf(
 					element.getAttribute("RepetitionRate")));
 		}
-		NodeList Pump_nodeList = element.getElementsByTagName("Pump");
-		if (Pump_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Pump node list size %d != 1",
-					Pump_nodeList.getLength()));
-		}
-		else if (Pump_nodeList.getLength() != 0)
-		{
-			// Element property Pump which is complex (has
-			// sub-elements)
-			setPump(new Pump(
-					(Element) Pump_nodeList.item(0)));
-		}
+		// *** IGNORING *** Skipped back reference Pump
 	}
 
 	// -- Laser API methods --
+
 
 	// Property
 	public Boolean getPockelCell()
@@ -281,15 +268,23 @@ public class Laser extends LightSource
 		this.repetitionRate = repetitionRate;
 	}
 
-	// Property
-	public Pump getPump()
+	// Reference
+	public Pump getLinkedPump()
 	{
 		return pump;
 	}
 
-	public void setPump(Pump pump)
+	public void linkPump(Pump o)
 	{
-		this.pump = pump;
+		pump = o;
+	}
+
+	public void unlinkPump(Pump o)
+	{
+		if (pump == o)
+		{
+			pump = null;
+		}
 	}
 
 	public Element asXMLElement(Document document)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -57,13 +57,13 @@ public class LightPath extends AbstractOMEModelObject
 
 	// -- Instance variables --
 
-	// Back reference ExcitationFilterRef
+	// Reference ExcitationFilterRef
 	private List<Filter> excitationFilterList = new ArrayList<Filter>();
 
-	// Back reference DichroicRef
-	private List<Dichroic> dichroic = new ArrayList<Dichroic>();
+	// Property
+	private Dichroic dichroic;
 
-	// Back reference EmissionFilterRef
+	// Reference EmissionFilterRef
 	private List<Filter> emissionFilterList = new ArrayList<Filter>();
 
 	// -- Constructors --
@@ -115,7 +115,8 @@ public class LightPath extends AbstractOMEModelObject
 
 	// -- LightPath API methods --
 
-	// Reference ExcitationFilterRef
+
+	// Reference which occurs more than once
 	public int sizeOfLinkedExcitationFilterList()
 	{
 		return excitationFilterList.size();
@@ -136,48 +137,40 @@ public class LightPath extends AbstractOMEModelObject
 		return excitationFilterList.set(index, o);
 	}
 
-	public void linkExcitationFilter(Filter o)
+	public boolean linkExcitationFilter(Filter o)
 	{
-		this.excitationFilterList.add(o);
+
+		o.linkLightPath(this);
+		return excitationFilterList.add(o);
 	}
 
-	public void unlinkExcitationFilter(Filter o)
+	public boolean unlinkExcitationFilter(Filter o)
 	{
-		this.excitationFilterList.add(o);
+
+		o.unlinkLightPath(this);
+		return excitationFilterList.remove(o);
 	}
 
-	// Reference DichroicRef
-	public int sizeOfLinkedDichroicList()
+	// Reference
+	public Dichroic getLinkedDichroic()
 	{
-		return dichroic.size();
-	}
-
-	public List<Dichroic> copyLinkedDichroicList()
-	{
-		return new ArrayList<Dichroic>(dichroic);
-	}
-
-	public Dichroic getLinkedDichroic(int index)
-	{
-		return dichroic.get(index);
-	}
-
-	public Dichroic setLinkedDichroic(int index, Dichroic o)
-	{
-		return dichroic.set(index, o);
+		return dichroic;
 	}
 
 	public void linkDichroic(Dichroic o)
 	{
-		this.dichroic.add(o);
+		dichroic = o;
 	}
 
 	public void unlinkDichroic(Dichroic o)
 	{
-		this.dichroic.add(o);
+		if (dichroic == o)
+		{
+			dichroic = null;
+		}
 	}
 
-	// Reference EmissionFilterRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedEmissionFilterList()
 	{
 		return emissionFilterList.size();
@@ -198,14 +191,18 @@ public class LightPath extends AbstractOMEModelObject
 		return emissionFilterList.set(index, o);
 	}
 
-	public void linkEmissionFilter(Filter o)
+	public boolean linkEmissionFilter(Filter o)
 	{
-		this.emissionFilterList.add(o);
+
+		o.linkLightPath(this);
+		return emissionFilterList.add(o);
 	}
 
-	public void unlinkEmissionFilter(Filter o)
+	public boolean unlinkEmissionFilter(Filter o)
 	{
-		this.emissionFilterList.add(o);
+
+		o.unlinkLightPath(this);
+		return emissionFilterList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -224,15 +221,31 @@ public class LightPath extends AbstractOMEModelObject
 
 		if (excitationFilterList != null)
 		{
-			// *** IGNORING *** Skipped back reference ExcitationFilterRef
+			// Reference property ExcitationFilterRef
+			for (Filter o : excitationFilterList)
+			{
+				Element excitationFilterList_element = 
+						document.createElementNS(NAMESPACE, "ExcitationFilterRefRef");
+				excitationFilterList_element.setAttribute("ID", o.getID());
+				LightPath_element.appendChild(excitationFilterList_element);
+			}
 		}
 		if (dichroic != null)
 		{
-			// *** IGNORING *** Skipped back reference DichroicRef
+			// Element property DichroicRef which is complex (has
+			// sub-elements)
+			LightPath_element.appendChild(dichroic.asXMLElement(document));
 		}
 		if (emissionFilterList != null)
 		{
-			// *** IGNORING *** Skipped back reference EmissionFilterRef
+			// Reference property EmissionFilterRef
+			for (Filter o : emissionFilterList)
+			{
+				Element emissionFilterList_element = 
+						document.createElementNS(NAMESPACE, "EmissionFilterRefRef");
+				emissionFilterList_element.setAttribute("ID", o.getID());
+				LightPath_element.appendChild(emissionFilterList_element);
+			}
 		}
 		return super.asXMLElement(document, LightPath_element);
 	}

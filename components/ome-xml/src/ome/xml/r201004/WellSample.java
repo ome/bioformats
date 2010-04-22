@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -72,10 +72,10 @@ public class WellSample extends AbstractOMEModelObject
 	// Property
 	private Integer timepoint;
 
-	// Back reference ImageRef
-	private List<Image> image = new ArrayList<Image>();
+	// Property
+	private Image image;
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference PlateAcquisition_BackReference
@@ -160,6 +160,7 @@ public class WellSample extends AbstractOMEModelObject
 
 	// -- WellSample API methods --
 
+
 	// Property
 	public Integer getIndex()
 	{
@@ -215,38 +216,26 @@ public class WellSample extends AbstractOMEModelObject
 		this.timepoint = timepoint;
 	}
 
-	// Reference ImageRef
-	public int sizeOfLinkedImageList()
+	// Reference
+	public Image getLinkedImage()
 	{
-		return image.size();
-	}
-
-	public List<Image> copyLinkedImageList()
-	{
-		return new ArrayList<Image>(image);
-	}
-
-	public Image getLinkedImage(int index)
-	{
-		return image.get(index);
-	}
-
-	public Image setLinkedImage(int index, Image o)
-	{
-		return image.set(index, o);
+		return image;
 	}
 
 	public void linkImage(Image o)
 	{
-		this.image.add(o);
+		image = o;
 	}
 
 	public void unlinkImage(Image o)
 	{
-		this.image.add(o);
+		if (image == o)
+		{
+			image = null;
+		}
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -267,45 +256,53 @@ public class WellSample extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkWellSample(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkWellSample(this);
+		return annotationList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfPlateAcquisitionList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedPlateAcquisitionList()
 	{
 		return plateAcquisition_BackReferenceList.size();
 	}
 
-	public List<PlateAcquisition> copyPlateAcquisitionList()
+	public List<PlateAcquisition> copyLinkedPlateAcquisitionList()
 	{
 		return new ArrayList<PlateAcquisition>(plateAcquisition_BackReferenceList);
 	}
 
-	public PlateAcquisition getPlateAcquisition(int index)
+	public PlateAcquisition getLinkedPlateAcquisition(int index)
 	{
 		return plateAcquisition_BackReferenceList.get(index);
 	}
 
-	public PlateAcquisition setPlateAcquisition(int index, PlateAcquisition plateAcquisition_BackReference)
+	public PlateAcquisition setLinkedPlateAcquisition(int index, PlateAcquisition o)
 	{
-		return plateAcquisition_BackReferenceList.set(index, plateAcquisition_BackReference);
+		return plateAcquisition_BackReferenceList.set(index, o);
 	}
 
-	public void addPlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
+	public boolean linkPlateAcquisition(PlateAcquisition o)
 	{
-		plateAcquisition_BackReferenceList.add(plateAcquisition_BackReference);
+
+		o.linkWellSample(this);
+		return plateAcquisition_BackReferenceList.add(o);
 	}
 
-	public void removePlateAcquisition(PlateAcquisition plateAcquisition_BackReference)
+	public boolean unlinkPlateAcquisition(PlateAcquisition o)
 	{
-		plateAcquisition_BackReferenceList.remove(plateAcquisition_BackReference);
+
+		o.unlinkWellSample(this);
+		return plateAcquisition_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -349,11 +346,20 @@ public class WellSample extends AbstractOMEModelObject
 		}
 		if (image != null)
 		{
-			// *** IGNORING *** Skipped back reference ImageRef
+			// Element property ImageRef which is complex (has
+			// sub-elements)
+			WellSample_element.appendChild(image.asXMLElement(document));
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				WellSample_element.appendChild(annotationList_element);
+			}
 		}
 		if (plateAcquisition_BackReferenceList != null)
 		{

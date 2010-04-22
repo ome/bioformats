@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,14 +69,14 @@ public class ChannelProfile extends AbstractOMEModelObject
 	// Property
 	private LightSourceSettings lightSourceSettings;
 
-	// Back reference OTFRef
-	private List<OTF> otf = new ArrayList<OTF>();
+	// Property
+	private OTF otf;
 
 	// Property
 	private DetectorSettings detectorSettings;
 
-	// Back reference FilterSetRef
-	private List<FilterSet> filterSet = new ArrayList<FilterSet>();
+	// Property
+	private FilterSet filterSet;
 
 	// -- Constructors --
 
@@ -190,6 +190,7 @@ public class ChannelProfile extends AbstractOMEModelObject
 
 	// -- ChannelProfile API methods --
 
+
 	// Property
 	public ProfileSource getorigin()
 	{
@@ -234,35 +235,23 @@ public class ChannelProfile extends AbstractOMEModelObject
 		this.lightSourceSettings = lightSourceSettings;
 	}
 
-	// Reference OTFRef
-	public int sizeOfLinkedOTFList()
+	// Reference
+	public OTF getLinkedOTF()
 	{
-		return otf.size();
-	}
-
-	public List<OTF> copyLinkedOTFList()
-	{
-		return new ArrayList<OTF>(otf);
-	}
-
-	public OTF getLinkedOTF(int index)
-	{
-		return otf.get(index);
-	}
-
-	public OTF setLinkedOTF(int index, OTF o)
-	{
-		return otf.set(index, o);
+		return otf;
 	}
 
 	public void linkOTF(OTF o)
 	{
-		this.otf.add(o);
+		otf = o;
 	}
 
 	public void unlinkOTF(OTF o)
 	{
-		this.otf.add(o);
+		if (otf == o)
+		{
+			otf = null;
+		}
 	}
 
 	// Property
@@ -276,35 +265,23 @@ public class ChannelProfile extends AbstractOMEModelObject
 		this.detectorSettings = detectorSettings;
 	}
 
-	// Reference FilterSetRef
-	public int sizeOfLinkedFilterSetList()
+	// Reference
+	public FilterSet getLinkedFilterSet()
 	{
-		return filterSet.size();
-	}
-
-	public List<FilterSet> copyLinkedFilterSetList()
-	{
-		return new ArrayList<FilterSet>(filterSet);
-	}
-
-	public FilterSet getLinkedFilterSet(int index)
-	{
-		return filterSet.get(index);
-	}
-
-	public FilterSet setLinkedFilterSet(int index, FilterSet o)
-	{
-		return filterSet.set(index, o);
+		return filterSet;
 	}
 
 	public void linkFilterSet(FilterSet o)
 	{
-		this.filterSet.add(o);
+		filterSet = o;
 	}
 
 	public void unlinkFilterSet(FilterSet o)
 	{
-		this.filterSet.add(o);
+		if (filterSet == o)
+		{
+			filterSet = null;
+		}
 	}
 
 	public Element asXMLElement(Document document)
@@ -352,7 +329,9 @@ public class ChannelProfile extends AbstractOMEModelObject
 		}
 		if (otf != null)
 		{
-			// *** IGNORING *** Skipped back reference OTFRef
+			// Element property OTFRef which is complex (has
+			// sub-elements)
+			ChannelProfile_element.appendChild(otf.asXMLElement(document));
 		}
 		if (detectorSettings != null)
 		{
@@ -362,7 +341,9 @@ public class ChannelProfile extends AbstractOMEModelObject
 		}
 		if (filterSet != null)
 		{
-			// *** IGNORING *** Skipped back reference FilterSetRef
+			// Element property FilterSetRef which is complex (has
+			// sub-elements)
+			ChannelProfile_element.appendChild(filterSet.asXMLElement(document));
 		}
 		return super.asXMLElement(document, ChannelProfile_element);
 	}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -99,16 +99,16 @@ public class Channel extends AbstractOMEModelObject
 	// Property
 	private LightSourceSettings lightSourceSettings;
 
-	// Back reference OTFRef
-	private List<OTF> otf = new ArrayList<OTF>();
+	// Property
+	private OTF otf;
 
 	// Property
 	private DetectorSettings detectorSettings;
 
-	// Back reference FilterSetRef
-	private List<FilterSet> filterSet = new ArrayList<FilterSet>();
+	// Property
+	private FilterSet filterSet;
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Property
@@ -286,6 +286,7 @@ public class Channel extends AbstractOMEModelObject
 
 	// -- Channel API methods --
 
+
 	// Property
 	public Double getPinholeSize()
 	{
@@ -440,35 +441,23 @@ public class Channel extends AbstractOMEModelObject
 		this.lightSourceSettings = lightSourceSettings;
 	}
 
-	// Reference OTFRef
-	public int sizeOfLinkedOTFList()
+	// Reference
+	public OTF getLinkedOTF()
 	{
-		return otf.size();
-	}
-
-	public List<OTF> copyLinkedOTFList()
-	{
-		return new ArrayList<OTF>(otf);
-	}
-
-	public OTF getLinkedOTF(int index)
-	{
-		return otf.get(index);
-	}
-
-	public OTF setLinkedOTF(int index, OTF o)
-	{
-		return otf.set(index, o);
+		return otf;
 	}
 
 	public void linkOTF(OTF o)
 	{
-		this.otf.add(o);
+		otf = o;
 	}
 
 	public void unlinkOTF(OTF o)
 	{
-		this.otf.add(o);
+		if (otf == o)
+		{
+			otf = null;
+		}
 	}
 
 	// Property
@@ -482,38 +471,26 @@ public class Channel extends AbstractOMEModelObject
 		this.detectorSettings = detectorSettings;
 	}
 
-	// Reference FilterSetRef
-	public int sizeOfLinkedFilterSetList()
+	// Reference
+	public FilterSet getLinkedFilterSet()
 	{
-		return filterSet.size();
-	}
-
-	public List<FilterSet> copyLinkedFilterSetList()
-	{
-		return new ArrayList<FilterSet>(filterSet);
-	}
-
-	public FilterSet getLinkedFilterSet(int index)
-	{
-		return filterSet.get(index);
-	}
-
-	public FilterSet setLinkedFilterSet(int index, FilterSet o)
-	{
-		return filterSet.set(index, o);
+		return filterSet;
 	}
 
 	public void linkFilterSet(FilterSet o)
 	{
-		this.filterSet.add(o);
+		filterSet = o;
 	}
 
 	public void unlinkFilterSet(FilterSet o)
 	{
-		this.filterSet.add(o);
+		if (filterSet == o)
+		{
+			filterSet = null;
+		}
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -534,14 +511,18 @@ public class Channel extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkChannel(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkChannel(this);
+		return annotationList.remove(o);
 	}
 
 	// Property
@@ -642,7 +623,9 @@ public class Channel extends AbstractOMEModelObject
 		}
 		if (otf != null)
 		{
-			// *** IGNORING *** Skipped back reference OTFRef
+			// Element property OTFRef which is complex (has
+			// sub-elements)
+			Channel_element.appendChild(otf.asXMLElement(document));
 		}
 		if (detectorSettings != null)
 		{
@@ -652,11 +635,20 @@ public class Channel extends AbstractOMEModelObject
 		}
 		if (filterSet != null)
 		{
-			// *** IGNORING *** Skipped back reference FilterSetRef
+			// Element property FilterSetRef which is complex (has
+			// sub-elements)
+			Channel_element.appendChild(filterSet.asXMLElement(document));
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				Channel_element.appendChild(annotationList_element);
+			}
 		}
 		if (lightPath != null)
 		{

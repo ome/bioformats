@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -127,7 +127,7 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// *** WARNING *** Unhandled or skipped property Text
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// *** WARNING *** Unhandled or skipped property Description
@@ -365,6 +365,7 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// -- Shape API methods --
 
+
 	// Property
 	public String getStrokeDashArray()
 	{
@@ -579,7 +580,7 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// *** WARNING *** Unhandled or skipped property Text
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -600,14 +601,18 @@ public abstract class Shape extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkShape(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkShape(this);
+		return annotationList.remove(o);
 	}
 
 	// *** WARNING *** Unhandled or skipped property Description

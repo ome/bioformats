@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,8 +66,8 @@ public class ImageProfile extends AbstractOMEModelObject
 	// Property
 	private String description;
 
-	// Back reference InstrumentRef
-	private List<Instrument> instrument = new ArrayList<Instrument>();
+	// Property
+	private Instrument instrument;
 
 	// Property
 	private ObjectiveSettings objectiveSettings;
@@ -168,6 +168,7 @@ public class ImageProfile extends AbstractOMEModelObject
 
 	// -- ImageProfile API methods --
 
+
 	// Property
 	public ProfileSource getorigin()
 	{
@@ -201,35 +202,23 @@ public class ImageProfile extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Reference InstrumentRef
-	public int sizeOfLinkedInstrumentList()
+	// Reference
+	public Instrument getLinkedInstrument()
 	{
-		return instrument.size();
-	}
-
-	public List<Instrument> copyLinkedInstrumentList()
-	{
-		return new ArrayList<Instrument>(instrument);
-	}
-
-	public Instrument getLinkedInstrument(int index)
-	{
-		return instrument.get(index);
-	}
-
-	public Instrument setLinkedInstrument(int index, Instrument o)
-	{
-		return instrument.set(index, o);
+		return instrument;
 	}
 
 	public void linkInstrument(Instrument o)
 	{
-		this.instrument.add(o);
+		instrument = o;
 	}
 
 	public void unlinkInstrument(Instrument o)
 	{
-		this.instrument.add(o);
+		if (instrument == o)
+		{
+			instrument = null;
+		}
 	}
 
 	// Property
@@ -282,7 +271,9 @@ public class ImageProfile extends AbstractOMEModelObject
 		}
 		if (instrument != null)
 		{
-			// *** IGNORING *** Skipped back reference InstrumentRef
+			// Element property InstrumentRef which is complex (has
+			// sub-elements)
+			ImageProfile_element.appendChild(instrument.asXMLElement(document));
 		}
 		if (objectiveSettings != null)
 		{

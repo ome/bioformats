@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,23 +66,23 @@ public class Image extends AbstractOMEModelObject
 	// Property
 	private String acquiredDate;
 
-	// Back reference ExperimenterRef
-	private List<Experimenter> experimenter = new ArrayList<Experimenter>();
+	// Property
+	private Experimenter experimenter;
 
 	// Property
 	private String description;
 
-	// Back reference ExperimentRef
-	private List<Experiment> experiment = new ArrayList<Experiment>();
+	// Property
+	private Experiment experiment;
 
-	// Back reference GroupRef
-	private List<Group> group = new ArrayList<Group>();
+	// Property
+	private Group group;
 
-	// Back reference DatasetRef
+	// Reference DatasetRef
 	private List<Dataset> datasetList = new ArrayList<Dataset>();
 
-	// Back reference InstrumentRef
-	private List<Instrument> instrument = new ArrayList<Instrument>();
+	// Property
+	private Instrument instrument;
 
 	// Property
 	private ObjectiveSettings objectiveSettings;
@@ -96,13 +96,13 @@ public class Image extends AbstractOMEModelObject
 	// Property
 	private Pixels pixels;
 
-	// Back reference ROIRef
+	// Reference ROIRef
 	private List<ROI> roiList = new ArrayList<ROI>();
 
-	// Back reference MicrobeamManipulationRef
+	// Reference MicrobeamManipulationRef
 	private List<MicrobeamManipulation> microbeamManipulationList = new ArrayList<MicrobeamManipulation>();
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Back reference WellSample_BackReference
@@ -263,6 +263,7 @@ public class Image extends AbstractOMEModelObject
 
 	// -- Image API methods --
 
+
 	// Property
 	public String getID()
 	{
@@ -296,35 +297,23 @@ public class Image extends AbstractOMEModelObject
 		this.acquiredDate = acquiredDate;
 	}
 
-	// Reference ExperimenterRef
-	public int sizeOfLinkedExperimenterList()
+	// Reference
+	public Experimenter getLinkedExperimenter()
 	{
-		return experimenter.size();
-	}
-
-	public List<Experimenter> copyLinkedExperimenterList()
-	{
-		return new ArrayList<Experimenter>(experimenter);
-	}
-
-	public Experimenter getLinkedExperimenter(int index)
-	{
-		return experimenter.get(index);
-	}
-
-	public Experimenter setLinkedExperimenter(int index, Experimenter o)
-	{
-		return experimenter.set(index, o);
+		return experimenter;
 	}
 
 	public void linkExperimenter(Experimenter o)
 	{
-		this.experimenter.add(o);
+		experimenter = o;
 	}
 
 	public void unlinkExperimenter(Experimenter o)
 	{
-		this.experimenter.add(o);
+		if (experimenter == o)
+		{
+			experimenter = null;
+		}
 	}
 
 	// Property
@@ -338,69 +327,45 @@ public class Image extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Reference ExperimentRef
-	public int sizeOfLinkedExperimentList()
+	// Reference
+	public Experiment getLinkedExperiment()
 	{
-		return experiment.size();
-	}
-
-	public List<Experiment> copyLinkedExperimentList()
-	{
-		return new ArrayList<Experiment>(experiment);
-	}
-
-	public Experiment getLinkedExperiment(int index)
-	{
-		return experiment.get(index);
-	}
-
-	public Experiment setLinkedExperiment(int index, Experiment o)
-	{
-		return experiment.set(index, o);
+		return experiment;
 	}
 
 	public void linkExperiment(Experiment o)
 	{
-		this.experiment.add(o);
+		experiment = o;
 	}
 
 	public void unlinkExperiment(Experiment o)
 	{
-		this.experiment.add(o);
+		if (experiment == o)
+		{
+			experiment = null;
+		}
 	}
 
-	// Reference GroupRef
-	public int sizeOfLinkedGroupList()
+	// Reference
+	public Group getLinkedGroup()
 	{
-		return group.size();
-	}
-
-	public List<Group> copyLinkedGroupList()
-	{
-		return new ArrayList<Group>(group);
-	}
-
-	public Group getLinkedGroup(int index)
-	{
-		return group.get(index);
-	}
-
-	public Group setLinkedGroup(int index, Group o)
-	{
-		return group.set(index, o);
+		return group;
 	}
 
 	public void linkGroup(Group o)
 	{
-		this.group.add(o);
+		group = o;
 	}
 
 	public void unlinkGroup(Group o)
 	{
-		this.group.add(o);
+		if (group == o)
+		{
+			group = null;
+		}
 	}
 
-	// Reference DatasetRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedDatasetList()
 	{
 		return datasetList.size();
@@ -421,45 +386,37 @@ public class Image extends AbstractOMEModelObject
 		return datasetList.set(index, o);
 	}
 
-	public void linkDataset(Dataset o)
+	public boolean linkDataset(Dataset o)
 	{
-		this.datasetList.add(o);
+
+		o.linkImage(this);
+		return datasetList.add(o);
 	}
 
-	public void unlinkDataset(Dataset o)
+	public boolean unlinkDataset(Dataset o)
 	{
-		this.datasetList.add(o);
+
+		o.unlinkImage(this);
+		return datasetList.remove(o);
 	}
 
-	// Reference InstrumentRef
-	public int sizeOfLinkedInstrumentList()
+	// Reference
+	public Instrument getLinkedInstrument()
 	{
-		return instrument.size();
-	}
-
-	public List<Instrument> copyLinkedInstrumentList()
-	{
-		return new ArrayList<Instrument>(instrument);
-	}
-
-	public Instrument getLinkedInstrument(int index)
-	{
-		return instrument.get(index);
-	}
-
-	public Instrument setLinkedInstrument(int index, Instrument o)
-	{
-		return instrument.set(index, o);
+		return instrument;
 	}
 
 	public void linkInstrument(Instrument o)
 	{
-		this.instrument.add(o);
+		instrument = o;
 	}
 
 	public void unlinkInstrument(Instrument o)
 	{
-		this.instrument.add(o);
+		if (instrument == o)
+		{
+			instrument = null;
+		}
 	}
 
 	// Property
@@ -506,7 +463,7 @@ public class Image extends AbstractOMEModelObject
 		this.pixels = pixels;
 	}
 
-	// Reference ROIRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedROIList()
 	{
 		return roiList.size();
@@ -527,17 +484,21 @@ public class Image extends AbstractOMEModelObject
 		return roiList.set(index, o);
 	}
 
-	public void linkROI(ROI o)
+	public boolean linkROI(ROI o)
 	{
-		this.roiList.add(o);
+
+		o.linkImage(this);
+		return roiList.add(o);
 	}
 
-	public void unlinkROI(ROI o)
+	public boolean unlinkROI(ROI o)
 	{
-		this.roiList.add(o);
+
+		o.unlinkImage(this);
+		return roiList.remove(o);
 	}
 
-	// Reference MicrobeamManipulationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedMicrobeamManipulationList()
 	{
 		return microbeamManipulationList.size();
@@ -558,17 +519,21 @@ public class Image extends AbstractOMEModelObject
 		return microbeamManipulationList.set(index, o);
 	}
 
-	public void linkMicrobeamManipulation(MicrobeamManipulation o)
+	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		this.microbeamManipulationList.add(o);
+
+		o.linkImage(this);
+		return microbeamManipulationList.add(o);
 	}
 
-	public void unlinkMicrobeamManipulation(MicrobeamManipulation o)
+	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		this.microbeamManipulationList.add(o);
+
+		o.unlinkImage(this);
+		return microbeamManipulationList.remove(o);
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -589,45 +554,53 @@ public class Image extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkImage(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkImage(this);
+		return annotationList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfWellSampleList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedWellSampleList()
 	{
 		return wellSample_BackReferenceList.size();
 	}
 
-	public List<WellSample> copyWellSampleList()
+	public List<WellSample> copyLinkedWellSampleList()
 	{
 		return new ArrayList<WellSample>(wellSample_BackReferenceList);
 	}
 
-	public WellSample getWellSample(int index)
+	public WellSample getLinkedWellSample(int index)
 	{
 		return wellSample_BackReferenceList.get(index);
 	}
 
-	public WellSample setWellSample(int index, WellSample wellSample_BackReference)
+	public WellSample setLinkedWellSample(int index, WellSample o)
 	{
-		return wellSample_BackReferenceList.set(index, wellSample_BackReference);
+		return wellSample_BackReferenceList.set(index, o);
 	}
 
-	public void addWellSample(WellSample wellSample_BackReference)
+	public boolean linkWellSample(WellSample o)
 	{
-		wellSample_BackReferenceList.add(wellSample_BackReference);
+
+		o.linkImage(this);
+		return wellSample_BackReferenceList.add(o);
 	}
 
-	public void removeWellSample(WellSample wellSample_BackReference)
+	public boolean unlinkWellSample(WellSample o)
 	{
-		wellSample_BackReferenceList.remove(wellSample_BackReference);
+
+		o.unlinkImage(this);
+		return wellSample_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -665,7 +638,9 @@ public class Image extends AbstractOMEModelObject
 		}
 		if (experimenter != null)
 		{
-			// *** IGNORING *** Skipped back reference ExperimenterRef
+			// Element property ExperimenterRef which is complex (has
+			// sub-elements)
+			Image_element.appendChild(experimenter.asXMLElement(document));
 		}
 		if (description != null)
 		{
@@ -678,19 +653,32 @@ public class Image extends AbstractOMEModelObject
 		}
 		if (experiment != null)
 		{
-			// *** IGNORING *** Skipped back reference ExperimentRef
+			// Element property ExperimentRef which is complex (has
+			// sub-elements)
+			Image_element.appendChild(experiment.asXMLElement(document));
 		}
 		if (group != null)
 		{
-			// *** IGNORING *** Skipped back reference GroupRef
+			// Element property GroupRef which is complex (has
+			// sub-elements)
+			Image_element.appendChild(group.asXMLElement(document));
 		}
 		if (datasetList != null)
 		{
-			// *** IGNORING *** Skipped back reference DatasetRef
+			// Reference property DatasetRef
+			for (Dataset o : datasetList)
+			{
+				Element datasetList_element = 
+						document.createElementNS(NAMESPACE, "DatasetRefRef");
+				datasetList_element.setAttribute("ID", o.getID());
+				Image_element.appendChild(datasetList_element);
+			}
 		}
 		if (instrument != null)
 		{
-			// *** IGNORING *** Skipped back reference InstrumentRef
+			// Element property InstrumentRef which is complex (has
+			// sub-elements)
+			Image_element.appendChild(instrument.asXMLElement(document));
 		}
 		if (objectiveSettings != null)
 		{
@@ -718,15 +706,36 @@ public class Image extends AbstractOMEModelObject
 		}
 		if (roiList != null)
 		{
-			// *** IGNORING *** Skipped back reference ROIRef
+			// Reference property ROIRef
+			for (ROI o : roiList)
+			{
+				Element roiList_element = 
+						document.createElementNS(NAMESPACE, "ROIRefRef");
+				roiList_element.setAttribute("ID", o.getID());
+				Image_element.appendChild(roiList_element);
+			}
 		}
 		if (microbeamManipulationList != null)
 		{
-			// *** IGNORING *** Skipped back reference MicrobeamManipulationRef
+			// Reference property MicrobeamManipulationRef
+			for (MicrobeamManipulation o : microbeamManipulationList)
+			{
+				Element microbeamManipulationList_element = 
+						document.createElementNS(NAMESPACE, "MicrobeamManipulationRefRef");
+				microbeamManipulationList_element.setAttribute("ID", o.getID());
+				Image_element.appendChild(microbeamManipulationList_element);
+			}
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				Image_element.appendChild(annotationList_element);
+			}
 		}
 		if (wellSample_BackReferenceList != null)
 		{

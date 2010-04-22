@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -152,36 +152,8 @@ public class Group extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
-		if (Leader_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Leader node list size %d != 1",
-					Leader_nodeList.getLength()));
-		}
-		else if (Leader_nodeList.getLength() != 0)
-		{
-			// Element property Leader which is complex (has
-			// sub-elements)
-			setLeader(new Leader(
-					(Element) Leader_nodeList.item(0)));
-		}
-		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
-		if (Contact_nodeList.getLength() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Contact node list size %d != 1",
-					Contact_nodeList.getLength()));
-		}
-		else if (Contact_nodeList.getLength() != 0)
-		{
-			// Element property Contact which is complex (has
-			// sub-elements)
-			setContact(new Contact(
-					(Element) Contact_nodeList.item(0)));
-		}
+		// *** IGNORING *** Skipped back reference Leader
+		// *** IGNORING *** Skipped back reference Contact
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference Project_BackReference
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
@@ -189,6 +161,7 @@ public class Group extends AbstractOMEModelObject
 	}
 
 	// -- Group API methods --
+
 
 	// Property
 	public String getName()
@@ -223,150 +196,182 @@ public class Group extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Property
-	public Leader getLeader()
+	// Reference
+	public Leader getLinkedLeader()
 	{
 		return leader;
 	}
 
-	public void setLeader(Leader leader)
+	public void linkLeader(Leader o)
 	{
-		this.leader = leader;
+		leader = o;
 	}
 
-	// Property
-	public Contact getContact()
+	public void unlinkLeader(Leader o)
+	{
+		if (leader == o)
+		{
+			leader = null;
+		}
+	}
+
+	// Reference
+	public Contact getLinkedContact()
 	{
 		return contact;
 	}
 
-	public void setContact(Contact contact)
+	public void linkContact(Contact o)
 	{
-		this.contact = contact;
+		contact = o;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfImageList()
+	public void unlinkContact(Contact o)
+	{
+		if (contact == o)
+		{
+			contact = null;
+		}
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedImageList()
 	{
 		return image_BackReferenceList.size();
 	}
 
-	public List<Image> copyImageList()
+	public List<Image> copyLinkedImageList()
 	{
 		return new ArrayList<Image>(image_BackReferenceList);
 	}
 
-	public Image getImage(int index)
+	public Image getLinkedImage(int index)
 	{
 		return image_BackReferenceList.get(index);
 	}
 
-	public Image setImage(int index, Image image_BackReference)
+	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, image_BackReference);
+		return image_BackReferenceList.set(index, o);
 	}
 
-	public void addImage(Image image_BackReference)
+	public boolean linkImage(Image o)
 	{
-		image_BackReferenceList.add(image_BackReference);
+
+		o.linkGroup(this);
+		return image_BackReferenceList.add(o);
 	}
 
-	public void removeImage(Image image_BackReference)
+	public boolean unlinkImage(Image o)
 	{
-		image_BackReferenceList.remove(image_BackReference);
+
+		o.unlinkGroup(this);
+		return image_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfProjectList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedProjectList()
 	{
 		return project_BackReferenceList.size();
 	}
 
-	public List<Project> copyProjectList()
+	public List<Project> copyLinkedProjectList()
 	{
 		return new ArrayList<Project>(project_BackReferenceList);
 	}
 
-	public Project getProject(int index)
+	public Project getLinkedProject(int index)
 	{
 		return project_BackReferenceList.get(index);
 	}
 
-	public Project setProject(int index, Project project_BackReference)
+	public Project setLinkedProject(int index, Project o)
 	{
-		return project_BackReferenceList.set(index, project_BackReference);
+		return project_BackReferenceList.set(index, o);
 	}
 
-	public void addProject(Project project_BackReference)
+	public boolean linkProject(Project o)
 	{
-		project_BackReferenceList.add(project_BackReference);
+
+		o.linkGroup(this);
+		return project_BackReferenceList.add(o);
 	}
 
-	public void removeProject(Project project_BackReference)
+	public boolean unlinkProject(Project o)
 	{
-		project_BackReferenceList.remove(project_BackReference);
+
+		o.unlinkGroup(this);
+		return project_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfDatasetList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedDatasetList()
 	{
 		return dataset_BackReferenceList.size();
 	}
 
-	public List<Dataset> copyDatasetList()
+	public List<Dataset> copyLinkedDatasetList()
 	{
 		return new ArrayList<Dataset>(dataset_BackReferenceList);
 	}
 
-	public Dataset getDataset(int index)
+	public Dataset getLinkedDataset(int index)
 	{
 		return dataset_BackReferenceList.get(index);
 	}
 
-	public Dataset setDataset(int index, Dataset dataset_BackReference)
+	public Dataset setLinkedDataset(int index, Dataset o)
 	{
-		return dataset_BackReferenceList.set(index, dataset_BackReference);
+		return dataset_BackReferenceList.set(index, o);
 	}
 
-	public void addDataset(Dataset dataset_BackReference)
+	public boolean linkDataset(Dataset o)
 	{
-		dataset_BackReferenceList.add(dataset_BackReference);
+
+		o.linkGroup(this);
+		return dataset_BackReferenceList.add(o);
 	}
 
-	public void removeDataset(Dataset dataset_BackReference)
+	public boolean unlinkDataset(Dataset o)
 	{
-		dataset_BackReferenceList.remove(dataset_BackReference);
+
+		o.unlinkGroup(this);
+		return dataset_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfExperimenterList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedExperimenterList()
 	{
 		return experimenter_BackReferenceList.size();
 	}
 
-	public List<Experimenter> copyExperimenterList()
+	public List<Experimenter> copyLinkedExperimenterList()
 	{
 		return new ArrayList<Experimenter>(experimenter_BackReferenceList);
 	}
 
-	public Experimenter getExperimenter(int index)
+	public Experimenter getLinkedExperimenter(int index)
 	{
 		return experimenter_BackReferenceList.get(index);
 	}
 
-	public Experimenter setExperimenter(int index, Experimenter experimenter_BackReference)
+	public Experimenter setLinkedExperimenter(int index, Experimenter o)
 	{
-		return experimenter_BackReferenceList.set(index, experimenter_BackReference);
+		return experimenter_BackReferenceList.set(index, o);
 	}
 
-	public void addExperimenter(Experimenter experimenter_BackReference)
+	public boolean linkExperimenter(Experimenter o)
 	{
-		experimenter_BackReferenceList.add(experimenter_BackReference);
+
+		o.linkGroup(this);
+		return experimenter_BackReferenceList.add(o);
 	}
 
-	public void removeExperimenter(Experimenter experimenter_BackReference)
+	public boolean unlinkExperimenter(Experimenter o)
 	{
-		experimenter_BackReferenceList.remove(experimenter_BackReference);
+
+		o.unlinkGroup(this);
+		return experimenter_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)

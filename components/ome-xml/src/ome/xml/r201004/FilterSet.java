@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,13 +60,13 @@ public class FilterSet extends ManufacturerSpec
 	// Property
 	private String id;
 
-	// Back reference ExcitationFilterRef
+	// Reference ExcitationFilterRef
 	private List<Filter> excitationFilterList = new ArrayList<Filter>();
 
-	// Back reference DichroicRef
-	private List<Dichroic> dichroic = new ArrayList<Dichroic>();
+	// Property
+	private Dichroic dichroic;
 
-	// Back reference EmissionFilterRef
+	// Reference EmissionFilterRef
 	private List<Filter> emissionFilterList = new ArrayList<Filter>();
 
 	// Back reference Channel_BackReference
@@ -136,6 +136,7 @@ public class FilterSet extends ManufacturerSpec
 
 	// -- FilterSet API methods --
 
+
 	// Property
 	public String getID()
 	{
@@ -147,7 +148,7 @@ public class FilterSet extends ManufacturerSpec
 		this.id = id;
 	}
 
-	// Reference ExcitationFilterRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedExcitationFilterList()
 	{
 		return excitationFilterList.size();
@@ -168,48 +169,40 @@ public class FilterSet extends ManufacturerSpec
 		return excitationFilterList.set(index, o);
 	}
 
-	public void linkExcitationFilter(Filter o)
+	public boolean linkExcitationFilter(Filter o)
 	{
-		this.excitationFilterList.add(o);
+
+		o.linkFilterSet(this);
+		return excitationFilterList.add(o);
 	}
 
-	public void unlinkExcitationFilter(Filter o)
+	public boolean unlinkExcitationFilter(Filter o)
 	{
-		this.excitationFilterList.add(o);
+
+		o.unlinkFilterSet(this);
+		return excitationFilterList.remove(o);
 	}
 
-	// Reference DichroicRef
-	public int sizeOfLinkedDichroicList()
+	// Reference
+	public Dichroic getLinkedDichroic()
 	{
-		return dichroic.size();
-	}
-
-	public List<Dichroic> copyLinkedDichroicList()
-	{
-		return new ArrayList<Dichroic>(dichroic);
-	}
-
-	public Dichroic getLinkedDichroic(int index)
-	{
-		return dichroic.get(index);
-	}
-
-	public Dichroic setLinkedDichroic(int index, Dichroic o)
-	{
-		return dichroic.set(index, o);
+		return dichroic;
 	}
 
 	public void linkDichroic(Dichroic o)
 	{
-		this.dichroic.add(o);
+		dichroic = o;
 	}
 
 	public void unlinkDichroic(Dichroic o)
 	{
-		this.dichroic.add(o);
+		if (dichroic == o)
+		{
+			dichroic = null;
+		}
 	}
 
-	// Reference EmissionFilterRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedEmissionFilterList()
 	{
 		return emissionFilterList.size();
@@ -230,107 +223,123 @@ public class FilterSet extends ManufacturerSpec
 		return emissionFilterList.set(index, o);
 	}
 
-	public void linkEmissionFilter(Filter o)
+	public boolean linkEmissionFilter(Filter o)
 	{
-		this.emissionFilterList.add(o);
+
+		o.linkFilterSet(this);
+		return emissionFilterList.add(o);
 	}
 
-	public void unlinkEmissionFilter(Filter o)
+	public boolean unlinkEmissionFilter(Filter o)
 	{
-		this.emissionFilterList.add(o);
+
+		o.unlinkFilterSet(this);
+		return emissionFilterList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfChannelList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedChannelList()
 	{
 		return channel_BackReferenceList.size();
 	}
 
-	public List<Channel> copyChannelList()
+	public List<Channel> copyLinkedChannelList()
 	{
 		return new ArrayList<Channel>(channel_BackReferenceList);
 	}
 
-	public Channel getChannel(int index)
+	public Channel getLinkedChannel(int index)
 	{
 		return channel_BackReferenceList.get(index);
 	}
 
-	public Channel setChannel(int index, Channel channel_BackReference)
+	public Channel setLinkedChannel(int index, Channel o)
 	{
-		return channel_BackReferenceList.set(index, channel_BackReference);
+		return channel_BackReferenceList.set(index, o);
 	}
 
-	public void addChannel(Channel channel_BackReference)
+	public boolean linkChannel(Channel o)
 	{
-		channel_BackReferenceList.add(channel_BackReference);
+
+		o.linkFilterSet(this);
+		return channel_BackReferenceList.add(o);
 	}
 
-	public void removeChannel(Channel channel_BackReference)
+	public boolean unlinkChannel(Channel o)
 	{
-		channel_BackReferenceList.remove(channel_BackReference);
+
+		o.unlinkFilterSet(this);
+		return channel_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfOTFList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedOTFList()
 	{
 		return otf_backReferenceList.size();
 	}
 
-	public List<OTF> copyOTFList()
+	public List<OTF> copyLinkedOTFList()
 	{
 		return new ArrayList<OTF>(otf_backReferenceList);
 	}
 
-	public OTF getOTF(int index)
+	public OTF getLinkedOTF(int index)
 	{
 		return otf_backReferenceList.get(index);
 	}
 
-	public OTF setOTF(int index, OTF otf_backReference)
+	public OTF setLinkedOTF(int index, OTF o)
 	{
-		return otf_backReferenceList.set(index, otf_backReference);
+		return otf_backReferenceList.set(index, o);
 	}
 
-	public void addOTF(OTF otf_backReference)
+	public boolean linkOTF(OTF o)
 	{
-		otf_backReferenceList.add(otf_backReference);
+
+		o.linkFilterSet(this);
+		return otf_backReferenceList.add(o);
 	}
 
-	public void removeOTF(OTF otf_backReference)
+	public boolean unlinkOTF(OTF o)
 	{
-		otf_backReferenceList.remove(otf_backReference);
+
+		o.unlinkFilterSet(this);
+		return otf_backReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfChannelProfileList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedChannelProfileList()
 	{
 		return channelProfile_BackReferenceList.size();
 	}
 
-	public List<ChannelProfile> copyChannelProfileList()
+	public List<ChannelProfile> copyLinkedChannelProfileList()
 	{
 		return new ArrayList<ChannelProfile>(channelProfile_BackReferenceList);
 	}
 
-	public ChannelProfile getChannelProfile(int index)
+	public ChannelProfile getLinkedChannelProfile(int index)
 	{
 		return channelProfile_BackReferenceList.get(index);
 	}
 
-	public ChannelProfile setChannelProfile(int index, ChannelProfile channelProfile_BackReference)
+	public ChannelProfile setLinkedChannelProfile(int index, ChannelProfile o)
 	{
-		return channelProfile_BackReferenceList.set(index, channelProfile_BackReference);
+		return channelProfile_BackReferenceList.set(index, o);
 	}
 
-	public void addChannelProfile(ChannelProfile channelProfile_BackReference)
+	public boolean linkChannelProfile(ChannelProfile o)
 	{
-		channelProfile_BackReferenceList.add(channelProfile_BackReference);
+
+		o.linkFilterSet(this);
+		return channelProfile_BackReferenceList.add(o);
 	}
 
-	public void removeChannelProfile(ChannelProfile channelProfile_BackReference)
+	public boolean unlinkChannelProfile(ChannelProfile o)
 	{
-		channelProfile_BackReferenceList.remove(channelProfile_BackReference);
+
+		o.unlinkFilterSet(this);
+		return channelProfile_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -354,15 +363,31 @@ public class FilterSet extends ManufacturerSpec
 		}
 		if (excitationFilterList != null)
 		{
-			// *** IGNORING *** Skipped back reference ExcitationFilterRef
+			// Reference property ExcitationFilterRef
+			for (Filter o : excitationFilterList)
+			{
+				Element excitationFilterList_element = 
+						document.createElementNS(NAMESPACE, "ExcitationFilterRefRef");
+				excitationFilterList_element.setAttribute("ID", o.getID());
+				FilterSet_element.appendChild(excitationFilterList_element);
+			}
 		}
 		if (dichroic != null)
 		{
-			// *** IGNORING *** Skipped back reference DichroicRef
+			// Element property DichroicRef which is complex (has
+			// sub-elements)
+			FilterSet_element.appendChild(dichroic.asXMLElement(document));
 		}
 		if (emissionFilterList != null)
 		{
-			// *** IGNORING *** Skipped back reference EmissionFilterRef
+			// Reference property EmissionFilterRef
+			for (Filter o : emissionFilterList)
+			{
+				Element emissionFilterList_element = 
+						document.createElementNS(NAMESPACE, "EmissionFilterRefRef");
+				emissionFilterList_element.setAttribute("ID", o.getID());
+				FilterSet_element.appendChild(emissionFilterList_element);
+			}
 		}
 		if (channel_BackReferenceList != null)
 		{

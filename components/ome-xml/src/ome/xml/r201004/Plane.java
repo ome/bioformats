@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,7 +84,7 @@ public class Plane extends AbstractOMEModelObject
 	// Property
 	private String hashSHA1;
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
@@ -196,6 +196,7 @@ public class Plane extends AbstractOMEModelObject
 
 	// -- Plane API methods --
 
+
 	// Property
 	public Double getExposureTime()
 	{
@@ -295,7 +296,7 @@ public class Plane extends AbstractOMEModelObject
 		this.hashSHA1 = hashSHA1;
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -316,14 +317,18 @@ public class Plane extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkPlane(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkPlane(this);
+		return annotationList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -391,7 +396,14 @@ public class Plane extends AbstractOMEModelObject
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				Plane_element.appendChild(annotationList_element);
+			}
 		}
 		return super.asXMLElement(document, Plane_element);
 	}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -108,7 +108,7 @@ public class Pixels extends AbstractOMEModelObject
 	// Property which occurs more than once
 	private List<Plane> planeList = new ArrayList<Plane>();
 
-	// Back reference AnnotationRef
+	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
@@ -279,6 +279,7 @@ public class Pixels extends AbstractOMEModelObject
 	}
 
 	// -- Pixels API methods --
+
 
 	// Property
 	public Integer getSizeT()
@@ -547,7 +548,7 @@ public class Pixels extends AbstractOMEModelObject
 		planeList.remove(plane);
 	}
 
-	// Reference AnnotationRef
+	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
 		return annotationList.size();
@@ -568,14 +569,18 @@ public class Pixels extends AbstractOMEModelObject
 		return annotationList.set(index, o);
 	}
 
-	public void linkAnnotation(Annotation o)
+	public boolean linkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.linkPixels(this);
+		return annotationList.add(o);
 	}
 
-	public void unlinkAnnotation(Annotation o)
+	public boolean unlinkAnnotation(Annotation o)
 	{
-		this.annotationList.add(o);
+
+		o.unlinkPixels(this);
+		return annotationList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -699,7 +704,14 @@ public class Pixels extends AbstractOMEModelObject
 		}
 		if (annotationList != null)
 		{
-			// *** IGNORING *** Skipped back reference AnnotationRef
+			// Reference property AnnotationRef
+			for (Annotation o : annotationList)
+			{
+				Element annotationList_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRefRef");
+				annotationList_element.setAttribute("ID", o.getID());
+				Pixels_element.appendChild(annotationList_element);
+			}
 		}
 		return super.asXMLElement(document, Pixels_element);
 	}

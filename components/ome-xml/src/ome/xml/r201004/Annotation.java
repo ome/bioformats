@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -174,6 +174,7 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	// -- Annotation API methods --
 
+
 	// Property
 	public String getNamespace()
 	{
@@ -196,37 +197,565 @@ public abstract class Annotation extends AbstractOMEModelObject
 		this.id = id;
 	}
 
-	// *** WARNING *** Unhandled or skipped property Image_BackReference
+	// Reference which occurs more than once
+	public int sizeOfLinkedImageList()
+	{
+		return image_BackReferenceList.size();
+	}
 
-	// *** WARNING *** Unhandled or skipped property Pixels_BackReference
+	public List<Image> copyLinkedImageList()
+	{
+		return new ArrayList<Image>(image_BackReferenceList);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Plane_BackReference
+	public Image getLinkedImage(int index)
+	{
+		return image_BackReferenceList.get(index);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Channel_BackReference
+	public Image setLinkedImage(int index, Image o)
+	{
+		return image_BackReferenceList.set(index, o);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Project_BackReference
+	public boolean linkImage(Image o)
+	{
 
-	// *** WARNING *** Unhandled or skipped property Dataset_BackReference
+		o.linkAnnotation(this);
+		return image_BackReferenceList.add(o);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Experimenter_BackReference
+	public boolean unlinkImage(Image o)
+	{
 
-	// *** WARNING *** Unhandled or skipped property Plate_BackReference
+		o.unlinkAnnotation(this);
+		return image_BackReferenceList.remove(o);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Reagent_BackReference
+	// Reference which occurs more than once
+	public int sizeOfLinkedPixelsList()
+	{
+		return pixels_BackReferenceList.size();
+	}
 
-	// *** WARNING *** Unhandled or skipped property Screen_BackReference
+	public List<Pixels> copyLinkedPixelsList()
+	{
+		return new ArrayList<Pixels>(pixels_BackReferenceList);
+	}
 
-	// *** WARNING *** Unhandled or skipped property PlateAcquisition_BackReference
+	public Pixels getLinkedPixels(int index)
+	{
+		return pixels_BackReferenceList.get(index);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Well_BackReference
+	public Pixels setLinkedPixels(int index, Pixels o)
+	{
+		return pixels_BackReferenceList.set(index, o);
+	}
 
-	// *** WARNING *** Unhandled or skipped property WellSample_BackReference
+	public boolean linkPixels(Pixels o)
+	{
 
-	// *** WARNING *** Unhandled or skipped property ROI_BackReference
+		o.linkAnnotation(this);
+		return pixels_BackReferenceList.add(o);
+	}
 
-	// *** WARNING *** Unhandled or skipped property Shape_BackReference
+	public boolean unlinkPixels(Pixels o)
+	{
 
-	// *** WARNING *** Unhandled or skipped property ListAnnotation_BackReference
+		o.unlinkAnnotation(this);
+		return pixels_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedPlaneList()
+	{
+		return plane_BackReferenceList.size();
+	}
+
+	public List<Plane> copyLinkedPlaneList()
+	{
+		return new ArrayList<Plane>(plane_BackReferenceList);
+	}
+
+	public Plane getLinkedPlane(int index)
+	{
+		return plane_BackReferenceList.get(index);
+	}
+
+	public Plane setLinkedPlane(int index, Plane o)
+	{
+		return plane_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkPlane(Plane o)
+	{
+
+		o.linkAnnotation(this);
+		return plane_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkPlane(Plane o)
+	{
+
+		o.unlinkAnnotation(this);
+		return plane_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedChannelList()
+	{
+		return channel_BackReferenceList.size();
+	}
+
+	public List<Channel> copyLinkedChannelList()
+	{
+		return new ArrayList<Channel>(channel_BackReferenceList);
+	}
+
+	public Channel getLinkedChannel(int index)
+	{
+		return channel_BackReferenceList.get(index);
+	}
+
+	public Channel setLinkedChannel(int index, Channel o)
+	{
+		return channel_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkChannel(Channel o)
+	{
+
+		o.linkAnnotation(this);
+		return channel_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkChannel(Channel o)
+	{
+
+		o.unlinkAnnotation(this);
+		return channel_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedProjectList()
+	{
+		return project_BackReferenceList.size();
+	}
+
+	public List<Project> copyLinkedProjectList()
+	{
+		return new ArrayList<Project>(project_BackReferenceList);
+	}
+
+	public Project getLinkedProject(int index)
+	{
+		return project_BackReferenceList.get(index);
+	}
+
+	public Project setLinkedProject(int index, Project o)
+	{
+		return project_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkProject(Project o)
+	{
+
+		o.linkAnnotation(this);
+		return project_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkProject(Project o)
+	{
+
+		o.unlinkAnnotation(this);
+		return project_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedDatasetList()
+	{
+		return dataset_BackReferenceList.size();
+	}
+
+	public List<Dataset> copyLinkedDatasetList()
+	{
+		return new ArrayList<Dataset>(dataset_BackReferenceList);
+	}
+
+	public Dataset getLinkedDataset(int index)
+	{
+		return dataset_BackReferenceList.get(index);
+	}
+
+	public Dataset setLinkedDataset(int index, Dataset o)
+	{
+		return dataset_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkDataset(Dataset o)
+	{
+
+		o.linkAnnotation(this);
+		return dataset_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkDataset(Dataset o)
+	{
+
+		o.unlinkAnnotation(this);
+		return dataset_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedExperimenterList()
+	{
+		return experimenter_BackReferenceList.size();
+	}
+
+	public List<Experimenter> copyLinkedExperimenterList()
+	{
+		return new ArrayList<Experimenter>(experimenter_BackReferenceList);
+	}
+
+	public Experimenter getLinkedExperimenter(int index)
+	{
+		return experimenter_BackReferenceList.get(index);
+	}
+
+	public Experimenter setLinkedExperimenter(int index, Experimenter o)
+	{
+		return experimenter_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkExperimenter(Experimenter o)
+	{
+
+		o.linkAnnotation(this);
+		return experimenter_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkExperimenter(Experimenter o)
+	{
+
+		o.unlinkAnnotation(this);
+		return experimenter_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedPlateList()
+	{
+		return plate_BackReferenceList.size();
+	}
+
+	public List<Plate> copyLinkedPlateList()
+	{
+		return new ArrayList<Plate>(plate_BackReferenceList);
+	}
+
+	public Plate getLinkedPlate(int index)
+	{
+		return plate_BackReferenceList.get(index);
+	}
+
+	public Plate setLinkedPlate(int index, Plate o)
+	{
+		return plate_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkPlate(Plate o)
+	{
+
+		o.linkAnnotation(this);
+		return plate_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkPlate(Plate o)
+	{
+
+		o.unlinkAnnotation(this);
+		return plate_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedReagentList()
+	{
+		return reagent_BackReferenceList.size();
+	}
+
+	public List<Reagent> copyLinkedReagentList()
+	{
+		return new ArrayList<Reagent>(reagent_BackReferenceList);
+	}
+
+	public Reagent getLinkedReagent(int index)
+	{
+		return reagent_BackReferenceList.get(index);
+	}
+
+	public Reagent setLinkedReagent(int index, Reagent o)
+	{
+		return reagent_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkReagent(Reagent o)
+	{
+
+		o.linkAnnotation(this);
+		return reagent_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkReagent(Reagent o)
+	{
+
+		o.unlinkAnnotation(this);
+		return reagent_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedScreenList()
+	{
+		return screen_BackReferenceList.size();
+	}
+
+	public List<Screen> copyLinkedScreenList()
+	{
+		return new ArrayList<Screen>(screen_BackReferenceList);
+	}
+
+	public Screen getLinkedScreen(int index)
+	{
+		return screen_BackReferenceList.get(index);
+	}
+
+	public Screen setLinkedScreen(int index, Screen o)
+	{
+		return screen_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkScreen(Screen o)
+	{
+
+		o.linkAnnotation(this);
+		return screen_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkScreen(Screen o)
+	{
+
+		o.unlinkAnnotation(this);
+		return screen_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedPlateAcquisitionList()
+	{
+		return plateAcquisition_BackReferenceList.size();
+	}
+
+	public List<PlateAcquisition> copyLinkedPlateAcquisitionList()
+	{
+		return new ArrayList<PlateAcquisition>(plateAcquisition_BackReferenceList);
+	}
+
+	public PlateAcquisition getLinkedPlateAcquisition(int index)
+	{
+		return plateAcquisition_BackReferenceList.get(index);
+	}
+
+	public PlateAcquisition setLinkedPlateAcquisition(int index, PlateAcquisition o)
+	{
+		return plateAcquisition_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkPlateAcquisition(PlateAcquisition o)
+	{
+
+		o.linkAnnotation(this);
+		return plateAcquisition_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkPlateAcquisition(PlateAcquisition o)
+	{
+
+		o.unlinkAnnotation(this);
+		return plateAcquisition_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedWellList()
+	{
+		return well_BackReferenceList.size();
+	}
+
+	public List<Well> copyLinkedWellList()
+	{
+		return new ArrayList<Well>(well_BackReferenceList);
+	}
+
+	public Well getLinkedWell(int index)
+	{
+		return well_BackReferenceList.get(index);
+	}
+
+	public Well setLinkedWell(int index, Well o)
+	{
+		return well_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkWell(Well o)
+	{
+
+		o.linkAnnotation(this);
+		return well_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkWell(Well o)
+	{
+
+		o.unlinkAnnotation(this);
+		return well_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedWellSampleList()
+	{
+		return wellSample_BackReferenceList.size();
+	}
+
+	public List<WellSample> copyLinkedWellSampleList()
+	{
+		return new ArrayList<WellSample>(wellSample_BackReferenceList);
+	}
+
+	public WellSample getLinkedWellSample(int index)
+	{
+		return wellSample_BackReferenceList.get(index);
+	}
+
+	public WellSample setLinkedWellSample(int index, WellSample o)
+	{
+		return wellSample_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkWellSample(WellSample o)
+	{
+
+		o.linkAnnotation(this);
+		return wellSample_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkWellSample(WellSample o)
+	{
+
+		o.unlinkAnnotation(this);
+		return wellSample_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedROIList()
+	{
+		return roi_backReferenceList.size();
+	}
+
+	public List<ROI> copyLinkedROIList()
+	{
+		return new ArrayList<ROI>(roi_backReferenceList);
+	}
+
+	public ROI getLinkedROI(int index)
+	{
+		return roi_backReferenceList.get(index);
+	}
+
+	public ROI setLinkedROI(int index, ROI o)
+	{
+		return roi_backReferenceList.set(index, o);
+	}
+
+	public boolean linkROI(ROI o)
+	{
+
+		o.linkAnnotation(this);
+		return roi_backReferenceList.add(o);
+	}
+
+	public boolean unlinkROI(ROI o)
+	{
+
+		o.unlinkAnnotation(this);
+		return roi_backReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedShapeList()
+	{
+		return shape_BackReferenceList.size();
+	}
+
+	public List<Shape> copyLinkedShapeList()
+	{
+		return new ArrayList<Shape>(shape_BackReferenceList);
+	}
+
+	public Shape getLinkedShape(int index)
+	{
+		return shape_BackReferenceList.get(index);
+	}
+
+	public Shape setLinkedShape(int index, Shape o)
+	{
+		return shape_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkShape(Shape o)
+	{
+
+		o.linkAnnotation(this);
+		return shape_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkShape(Shape o)
+	{
+
+		o.unlinkAnnotation(this);
+		return shape_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedListAnnotationList()
+	{
+		return listAnnotation_BackReferenceList.size();
+	}
+
+	public List<ListAnnotation> copyLinkedListAnnotationList()
+	{
+		return new ArrayList<ListAnnotation>(listAnnotation_BackReferenceList);
+	}
+
+	public ListAnnotation getLinkedListAnnotation(int index)
+	{
+		return listAnnotation_BackReferenceList.get(index);
+	}
+
+	public ListAnnotation setLinkedListAnnotation(int index, ListAnnotation o)
+	{
+		return listAnnotation_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkListAnnotation(ListAnnotation o)
+	{
+
+		o.linkAnnotation(this);
+		return listAnnotation_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkListAnnotation(ListAnnotation o)
+	{
+
+		o.unlinkAnnotation(this);
+		return listAnnotation_BackReferenceList.remove(o);
+	}
 
 	protected Element asXMLElement(Document document, Element Annotation_element)
 	{

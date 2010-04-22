@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -75,8 +75,8 @@ public class OTF extends AbstractOMEModelObject
 	// Property
 	private ObjectiveSettings objectiveSettings;
 
-	// Back reference FilterSetRef
-	private List<FilterSet> filterSet = new ArrayList<FilterSet>();
+	// Property
+	private FilterSet filterSet;
 
 	// Property
 	private String binaryFile;
@@ -195,6 +195,7 @@ public class OTF extends AbstractOMEModelObject
 
 	// -- OTF API methods --
 
+
 	// Property
 	public Integer getSizeX()
 	{
@@ -261,35 +262,23 @@ public class OTF extends AbstractOMEModelObject
 		this.objectiveSettings = objectiveSettings;
 	}
 
-	// Reference FilterSetRef
-	public int sizeOfLinkedFilterSetList()
+	// Reference
+	public FilterSet getLinkedFilterSet()
 	{
-		return filterSet.size();
-	}
-
-	public List<FilterSet> copyLinkedFilterSetList()
-	{
-		return new ArrayList<FilterSet>(filterSet);
-	}
-
-	public FilterSet getLinkedFilterSet(int index)
-	{
-		return filterSet.get(index);
-	}
-
-	public FilterSet setLinkedFilterSet(int index, FilterSet o)
-	{
-		return filterSet.set(index, o);
+		return filterSet;
 	}
 
 	public void linkFilterSet(FilterSet o)
 	{
-		this.filterSet.add(o);
+		filterSet = o;
 	}
 
 	public void unlinkFilterSet(FilterSet o)
 	{
-		this.filterSet.add(o);
+		if (filterSet == o)
+		{
+			filterSet = null;
+		}
 	}
 
 	// Property
@@ -303,66 +292,74 @@ public class OTF extends AbstractOMEModelObject
 		this.binaryFile = binaryFile;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfChannelList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedChannelList()
 	{
 		return channel_BackReferenceList.size();
 	}
 
-	public List<Channel> copyChannelList()
+	public List<Channel> copyLinkedChannelList()
 	{
 		return new ArrayList<Channel>(channel_BackReferenceList);
 	}
 
-	public Channel getChannel(int index)
+	public Channel getLinkedChannel(int index)
 	{
 		return channel_BackReferenceList.get(index);
 	}
 
-	public Channel setChannel(int index, Channel channel_BackReference)
+	public Channel setLinkedChannel(int index, Channel o)
 	{
-		return channel_BackReferenceList.set(index, channel_BackReference);
+		return channel_BackReferenceList.set(index, o);
 	}
 
-	public void addChannel(Channel channel_BackReference)
+	public boolean linkChannel(Channel o)
 	{
-		channel_BackReferenceList.add(channel_BackReference);
+
+		o.linkOTF(this);
+		return channel_BackReferenceList.add(o);
 	}
 
-	public void removeChannel(Channel channel_BackReference)
+	public boolean unlinkChannel(Channel o)
 	{
-		channel_BackReferenceList.remove(channel_BackReference);
+
+		o.unlinkOTF(this);
+		return channel_BackReferenceList.remove(o);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfChannelProfileList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedChannelProfileList()
 	{
 		return channelProfile_BackReferenceList.size();
 	}
 
-	public List<ChannelProfile> copyChannelProfileList()
+	public List<ChannelProfile> copyLinkedChannelProfileList()
 	{
 		return new ArrayList<ChannelProfile>(channelProfile_BackReferenceList);
 	}
 
-	public ChannelProfile getChannelProfile(int index)
+	public ChannelProfile getLinkedChannelProfile(int index)
 	{
 		return channelProfile_BackReferenceList.get(index);
 	}
 
-	public ChannelProfile setChannelProfile(int index, ChannelProfile channelProfile_BackReference)
+	public ChannelProfile setLinkedChannelProfile(int index, ChannelProfile o)
 	{
-		return channelProfile_BackReferenceList.set(index, channelProfile_BackReference);
+		return channelProfile_BackReferenceList.set(index, o);
 	}
 
-	public void addChannelProfile(ChannelProfile channelProfile_BackReference)
+	public boolean linkChannelProfile(ChannelProfile o)
 	{
-		channelProfile_BackReferenceList.add(channelProfile_BackReference);
+
+		o.linkOTF(this);
+		return channelProfile_BackReferenceList.add(o);
 	}
 
-	public void removeChannelProfile(ChannelProfile channelProfile_BackReference)
+	public boolean unlinkChannelProfile(ChannelProfile o)
 	{
-		channelProfile_BackReferenceList.remove(channelProfile_BackReference);
+
+		o.unlinkOTF(this);
+		return channelProfile_BackReferenceList.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -412,7 +409,9 @@ public class OTF extends AbstractOMEModelObject
 		}
 		if (filterSet != null)
 		{
-			// *** IGNORING *** Skipped back reference FilterSetRef
+			// Element property FilterSetRef which is complex (has
+			// sub-elements)
+			OTF_element.appendChild(filterSet.asXMLElement(document));
 		}
 		if (binaryFile != null)
 		{

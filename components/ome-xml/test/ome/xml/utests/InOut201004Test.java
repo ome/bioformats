@@ -341,12 +341,12 @@ public class InOut201004Test {
   @Test(dependsOnMethods={"testValidDichroicNode"})
   public void testValidFilterSetNode() {
     Dichroic dichroic = ome.getInstrument(0).getDichroic(0);
-    assertEquals(1, dichroic.sizeOfFilterSetList());
-    FilterSet filterSet = dichroic.getFilterSet(0);
+    assertEquals(1, dichroic.sizeOfLinkedFilterSetList());
+    FilterSet filterSet = dichroic.getLinkedFilterSet(0);
     assertNotNull(filterSet);
     assertEquals(FILTERSET_ID, filterSet.getID());
     assertEquals(FILTERSET_LOT, filterSet.getLotNumber());
-    assertEquals(filterSet.getLinkedDichroic(0).getID(), dichroic.getID());
+    assertEquals(filterSet.getLinkedDichroic().getID(), dichroic.getID());
   }
 
   @Test(dependsOnMethods={"testValidFilterSetNode"})
@@ -355,7 +355,7 @@ public class InOut201004Test {
     assertNotNull(emFilter);
     assertEquals(EM_FILTER_ID, emFilter.getID());
     assertEquals(EM_FILTER_TYPE, emFilter.getType());
-    FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getFilterSet(0);
+    FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getLinkedFilterSet(0);
     assertEquals(EM_FILTER_ID, filterSet.getLinkedEmissionFilter(0).getID());
   }
 
@@ -365,7 +365,7 @@ public class InOut201004Test {
     assertNotNull(exFilter);
     assertEquals(EX_FILTER_ID, exFilter.getID());
     assertEquals(EX_FILTER_TYPE, exFilter.getType());
-    FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getFilterSet(0);
+    FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getLinkedFilterSet(0);
     assertEquals(EX_FILTER_ID, filterSet.getLinkedExcitationFilter(0).getID());
   }
 
@@ -378,7 +378,7 @@ public class InOut201004Test {
     assertEquals(OTF_SIZE_X, otf.getSizeX());
     assertEquals(OTF_SIZE_Y, otf.getSizeY());
     assertEquals(OTF_OPTICAL_AXIS_AVERAGED, otf.getOpticalAxisAveraged());
-    assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getOTF(0));
+    assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getLinkedOTF(0));
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
@@ -386,13 +386,12 @@ public class InOut201004Test {
     Instrument instrument = ome.getInstrument(0);
     Image image = ome.getImage(0);
 
-    assertEquals(1, image.sizeOfLinkedInstrumentList());
-    Instrument linkedInstrument = image.getLinkedInstrument(0);
+    Instrument linkedInstrument = image.getLinkedInstrument();
     assertNotNull(linkedInstrument);
     assertEquals(instrument.getID(), linkedInstrument.getID());
 
-    assertEquals(1, instrument.sizeOfImageList());
-    Image linkedImage = instrument.getImage(0);
+    assertEquals(1, instrument.sizeOfLinkedImageList());
+    Image linkedImage = instrument.getLinkedImage(0);
     assertNotNull(linkedImage);
     assertEquals(image.getID(), linkedImage.getID());
   }
@@ -431,8 +430,7 @@ public class InOut201004Test {
         assertEquals(String.format("WellSample:%d_%d", row, col),
                      sample.getID());
         assertEquals(wellSampleIndex, sample.getIndex());
-        assertEquals(1, sample.sizeOfLinkedImageList());
-        Image image = sample.getLinkedImage(0);
+        Image image = sample.getLinkedImage();
         assertNotNull(image);
         assertEquals(IMAGE_ID, image.getID());
         wellSampleIndex++;
@@ -549,14 +547,13 @@ public class InOut201004Test {
 
     filterSet.linkEmissionFilter(emFilter);
     filterSet.linkExcitationFilter(exFilter);
-    filterSet.addOTF(otf);
+    filterSet.linkOTF(otf);
+    filterSet.linkDichroic(dichroic);
     instrument.addFilterSet(filterSet);
-    dichroic.addFilterSet(filterSet);
     instrument.addDichroic(dichroic);
 
     // link Instrument to the first Image
     Image image = ome.getImage(0);
-    instrument.addImage(image);
     image.linkInstrument(instrument);
 
     return instrument;
