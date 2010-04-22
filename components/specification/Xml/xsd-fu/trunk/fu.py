@@ -65,6 +65,10 @@ JAVA_BASE_TYPE_MAP = None
 # will also be confirmed to be top-level types.
 EXPLICIT_DEFINE_OVERRIDE = ('Dichroic', 'Experimenter', 'FilterSet')
 
+# Reference properties of a given type for which back reference link methods
+# should not be code generated for.
+BACK_REFERENCE_LINK_OVERRIDE = {'Filter': ['FilterSet', 'LightPath']}
+
 def updateTypeMaps(namespace):
 	"""
 	Updates the type maps with a new namespace. **Must** be executed at least 
@@ -209,7 +213,7 @@ class OMEModelProperty(object):
 		self.delegate = delegate
 		self.parent = parent
 		self.isAttribute = False
-		self.isReference = False
+		self.isBackReference = False
 
 	def _get_type(self):
 		if self.isAttribute:
@@ -268,7 +272,7 @@ class OMEModelProperty(object):
 		except KeyError:
 			# Hand back the type of references or complex types with the
 			# useless OME XML 'Ref' suffix removed.
-			if self.isReference or \
+			if self.isBackReference or \
 			   (not self.isAttribute and self.delegate.isComplex()):
 				return self.REF_REGEX.sub('', self.type)
 			# Hand back the type of complex types
@@ -351,7 +355,15 @@ class OMEModelProperty(object):
 		return False
 	isEnumeration = property(_get_isEnumeration,
 		doc="""Whether or not the property is an enumeration.""")
-		
+
+	def _get_isReference(self):
+		o = self.model.getObjectByName(self.type)
+		if o is not None and o.base == "Reference":
+			return True
+		return False
+	isReference = property(_get_isReference,
+		doc="""Whether or not the property is a reference.""")
+
 	def _get_possibleValues(self):
 		return self.delegate.getValues()
 	possibleValues = property(_get_possibleValues,
@@ -392,7 +404,7 @@ class OMEModelProperty(object):
 		Instantiates a property from a "virtual" OME XML schema reference.
 		"""
 		instance = klass(reference, parent, model)
-		instance.isReference = True
+		instance.isBackReference = True
 		return instance
 	fromReference = classmethod(fromReference)
 
@@ -619,6 +631,7 @@ class TemplateInfo(object):
 		self.date = now()
 		self.user = getpwuid(getuid())[0]
 		self.DO_NOT_PROCESS = DO_NOT_PROCESS
+		self.BACK_REFERENCE_LINK_OVERRIDE = BACK_REFERENCE_LINK_OVERRIDE
 
 def parseXmlSchema(filenames, namespace=DEFAULT_NAMESPACE):
 	"""

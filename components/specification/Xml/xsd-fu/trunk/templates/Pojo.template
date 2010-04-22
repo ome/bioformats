@@ -79,7 +79,11 @@ public class ${klass.name} extends ${klass.javaBase}
 	// -- Instance variables --
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.isReference or prop.name.endswith('Ref') %}
+{% when prop.isReference and prop.maxOccurs > 1%}
+	// Reference ${prop.name}
+	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
+{% end %}\
+{% when prop.isBackReference %}
 	// Back reference ${prop.name}
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
@@ -143,7 +147,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.isReference or prop.name.endswith('Ref') %}\
+{% when prop.isBackReference or prop.isReference %}\
 		// *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.isAttribute %}\
@@ -196,7 +200,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		{
 			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
-{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.name.endswith('Ref') %}\
+{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference %}\
 			NodeList ${inner_prop.name}_nodeList = 
 					${prop.name}_element.getElementsByTagName("${inner_prop.name}");
 			for (int j = 0; j < ${inner_prop.name}_nodeList.getLength(); j++)
@@ -240,10 +244,11 @@ public class ${klass.name} extends ${klass.javaBase}
 	}
 
 	// -- ${klass.name} API methods --
+
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.name.endswith('Ref') %}
-	// Reference ${prop.name}
+{% when (prop.isReference and prop.maxOccurs > 1) or prop.isBackReference %}
+	// Reference which occurs more than once
 	public int sizeOfLinked${prop.javaMethodName}List()
 	{
 		return ${prop.javaInstanceVariableName}.size();
@@ -264,14 +269,42 @@ public class ${klass.name} extends ${klass.javaBase}
 		return ${prop.javaInstanceVariableName}.set(index, o);
 	}
 
+	public boolean link${prop.javaMethodName}(${prop.javaType} o)
+	{
+{% if not fu.BACK_REFERENCE_LINK_OVERRIDE.has_key(klass.name) \
+      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE %}
+		o.link${klass.type}(this);
+{% end %}\
+		return ${prop.javaInstanceVariableName}.add(o);
+	}
+
+	public boolean unlink${prop.javaMethodName}(${prop.javaType} o)
+	{
+{% if not fu.BACK_REFERENCE_LINK_OVERRIDE.has_key(klass.name) \
+      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE %}
+		o.unlink${klass.type}(this);
+{% end %}\
+		return ${prop.javaInstanceVariableName}.remove(o);
+	}
+{% end %}\
+{% when prop.isReference %}
+	// Reference
+	public ${prop.javaType} getLinked${prop.javaMethodName}()
+	{
+		return ${prop.javaInstanceVariableName};
+	}
+
 	public void link${prop.javaMethodName}(${prop.javaType} o)
 	{
-		this.${prop.javaInstanceVariableName}.add(o);
+		${prop.javaInstanceVariableName} = o;
 	}
 
 	public void unlink${prop.javaMethodName}(${prop.javaType} o)
 	{
-		this.${prop.javaInstanceVariableName}.add(o);
+		if (${prop.javaInstanceVariableName} == o)
+		{
+			${prop.javaInstanceVariableName} = null;
+		}
 	}
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute) %}
@@ -355,7 +388,17 @@ public class ${klass.name} extends ${klass.javaBase}
 		if (${prop.javaInstanceVariableName} != null)
 		{
 {% choose %}\
-{% when prop.isReference or prop.name.endswith('Ref') %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+			// Reference property ${prop.name}
+			for (${prop.javaType} o : ${prop.javaInstanceVariableName})
+			{
+				Element ${prop.javaInstanceVariableName}_element = 
+						document.createElementNS(NAMESPACE, "${prop.name}Ref");
+				${prop.javaInstanceVariableName}_element.setAttribute("ID", o.getID());
+				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
+			}
+{% end %}\
+{% when prop.isBackReference %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
