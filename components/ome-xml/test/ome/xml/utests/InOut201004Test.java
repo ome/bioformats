@@ -55,6 +55,16 @@ import javax.xml.transform.stream.StreamResult;
 
 import static org.testng.AssertJUnit.*;
 
+import ome.xml.r201004.Annotation;
+import ome.xml.r201004.BooleanAnnotation;
+import ome.xml.r201004.DoubleAnnotation;
+import ome.xml.r201004.FileAnnotation;
+import ome.xml.r201004.ListAnnotation;
+import ome.xml.r201004.LongAnnotation;
+import ome.xml.r201004.StringAnnotation;
+import ome.xml.r201004.StructuredAnnotations;
+import ome.xml.r201004.TimestampAnnotation;
+import ome.xml.r201004.XMLAnnotation;
 import ome.xml.r201004.Channel;
 import ome.xml.r201004.Dichroic;
 import ome.xml.r201004.Detector;
@@ -99,7 +109,13 @@ import org.xml.sax.SAXException;
 public class InOut201004Test {
   private static String IMAGE_ID = "Image:0";
 
+  private static String IMAGE_ANNOTATION_ID = "BooleanAnnotation:0";
+
   private static String PIXELS_ID = "Pixels:0";
+
+  private static String PIXELS_ANNOTATION_ID = "DoubleAnnotation:0";
+
+  private static String CHANNEL_ANNOTATION_ID = "XMLAnnotation:0";
 
   private static String INSTRUMENT_ID = "Instrument:0";
 
@@ -136,6 +152,9 @@ public class InOut201004Test {
   private static final Integer SIZE_C = 3;
 
   private static final Integer SIZE_T = 50;
+
+  private static final String CHANNEL_ANNOTATION_XML =
+    "<TestData><key>foo</key><value>bar</value></TestData>";
 
   private static final String DETECTOR_MODEL = "ReallySensitive!";
 
@@ -234,6 +253,16 @@ public class InOut201004Test {
   }
 
   @Test(dependsOnMethods={"testValidImageNode"})
+  public void testValidImageAnnotation() {
+    Annotation n = ome.getImage(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertTrue(n instanceof BooleanAnnotation);
+    BooleanAnnotation b = (BooleanAnnotation) n;
+    assertEquals(b.getValue(), "false");
+    assertEquals(b.getID(), IMAGE_ANNOTATION_ID);
+  }
+
+  @Test(dependsOnMethods={"testValidImageNode"})
   public void testValidPixelsNode() {
     Pixels pixels = ome.getImage(0).getPixels();
     assertEquals(SIZE_X, pixels.getSizeX());
@@ -253,6 +282,27 @@ public class InOut201004Test {
     for (Channel channel : pixels.copyChannelList()) {
       assertNotNull(channel.getID());
     }
+  }
+
+  @Test(dependsOnMethods={"testValidChannelNode"})
+  public void testValidChannelAnnotation() {
+    Channel c = ome.getImage(0).getPixels().getChannel(0);
+    Annotation n = c.getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertTrue(n instanceof XMLAnnotation);
+    assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
+    XMLAnnotation xml = (XMLAnnotation) n;
+    assertEquals(xml.getValue(), CHANNEL_ANNOTATION_XML);
+  }
+
+  @Test(dependsOnMethods={"testValidPixelsNode"})
+  public void testValidPixelsAnnotation() {
+    Annotation n = ome.getImage(0).getPixels().getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertTrue(n instanceof DoubleAnnotation);
+    DoubleAnnotation b = (DoubleAnnotation) n;
+    assertEquals(b.getValue(), "3.14");
+    assertEquals(b.getID(), PIXELS_ANNOTATION_ID);
   }
 
   @Test(dependsOnMethods={"testValidOMENode"})
@@ -415,6 +465,10 @@ public class InOut201004Test {
     // Create <Image/>
     Image image = new Image();
     image.setID(IMAGE_ID);
+    BooleanAnnotation annotation = new BooleanAnnotation();
+    annotation.setID(IMAGE_ANNOTATION_ID);
+    annotation.setValue("false");
+    image.linkAnnotation(annotation);
     // Create <Pixels/>
     Pixels pixels = new Pixels();
     pixels.setID(PIXELS_ID);
@@ -430,8 +484,19 @@ public class InOut201004Test {
     for (int i = 0; i < SIZE_C; i++) {
       Channel channel = new Channel();
       channel.setID("Channel:" + i);
+      if (i == 0) {
+        XMLAnnotation channelAnnotation = new XMLAnnotation();
+        channelAnnotation.setID(CHANNEL_ANNOTATION_ID);
+        channelAnnotation.setValue(CHANNEL_ANNOTATION_XML);
+        channel.linkAnnotation(channelAnnotation);
+      }
       pixels.addChannel(channel);
     }
+    // create Annotation for Pixels
+    DoubleAnnotation pixelsAnnotation = new DoubleAnnotation();
+    pixelsAnnotation.setID(PIXELS_ANNOTATION_ID);
+    pixelsAnnotation.setValue("3.14");
+    pixels.linkAnnotation(pixelsAnnotation);
     // Put <Pixels/> under <Image/>
     image.setPixels(pixels);
     return image;
