@@ -272,7 +272,8 @@ public class ${klass.name} extends ${klass.javaBase}
 	public boolean link${prop.javaMethodName}(${prop.javaType} o)
 	{
 {% if not fu.BACK_REFERENCE_LINK_OVERRIDE.has_key(klass.name) \
-      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE %}
+      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE \
+      and not prop.isBackReference %}\
 		o.link${klass.type}(this);
 {% end %}\
 		return ${prop.javaInstanceVariableName}.add(o);
@@ -281,7 +282,8 @@ public class ${klass.name} extends ${klass.javaBase}
 	public boolean unlink${prop.javaMethodName}(${prop.javaType} o)
 	{
 {% if not fu.BACK_REFERENCE_LINK_OVERRIDE.has_key(klass.name) \
-      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE %}
+      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE \
+      and not prop.isBackReference %}\
 		o.unlink${klass.type}(this);
 {% end %}\
 		return ${prop.javaInstanceVariableName}.remove(o);
