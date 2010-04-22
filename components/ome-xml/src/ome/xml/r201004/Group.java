@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -393,15 +393,21 @@ public class Group extends AbstractOMEModelObject
 		}
 		if (leader != null)
 		{
-			// Element property Leader which is complex (has
-			// sub-elements)
-			Group_element.appendChild(leader.asXMLElement(document));
+			// Reference property Leader
+			Element leader_element = 
+					document.createElementNS(NAMESPACE, "Leader");
+			leader_element.setAttribute(
+					"ID", leader.getID());
+			Group_element.appendChild(leader_element);
 		}
 		if (contact != null)
 		{
-			// Element property Contact which is complex (has
-			// sub-elements)
-			Group_element.appendChild(contact.asXMLElement(document));
+			// Reference property Contact
+			Element contact_element = 
+					document.createElementNS(NAMESPACE, "Contact");
+			contact_element.setAttribute(
+					"ID", contact.getID());
+			Group_element.appendChild(contact_element);
 		}
 		if (image_BackReferenceList != null)
 		{

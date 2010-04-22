@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -402,9 +402,12 @@ public class OTF extends AbstractOMEModelObject
 		}
 		if (filterSet != null)
 		{
-			// Element property FilterSetRef which is complex (has
-			// sub-elements)
-			OTF_element.appendChild(filterSet.asXMLElement(document));
+			// Reference property FilterSetRef
+			Element filterSet_element = 
+					document.createElementNS(NAMESPACE, "FilterSetRef");
+			filterSet_element.setAttribute(
+					"ID", filterSet.getID());
+			OTF_element.appendChild(filterSet_element);
 		}
 		if (binaryFile != null)
 		{

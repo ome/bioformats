@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -271,9 +271,12 @@ public class ImageProfile extends AbstractOMEModelObject
 		}
 		if (instrument != null)
 		{
-			// Element property InstrumentRef which is complex (has
-			// sub-elements)
-			ImageProfile_element.appendChild(instrument.asXMLElement(document));
+			// Reference property InstrumentRef
+			Element instrument_element = 
+					document.createElementNS(NAMESPACE, "InstrumentRef");
+			instrument_element.setAttribute(
+					"ID", instrument.getID());
+			ImageProfile_element.appendChild(instrument_element);
 		}
 		if (objectiveSettings != null)
 		{

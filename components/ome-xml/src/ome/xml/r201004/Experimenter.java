@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -569,24 +569,26 @@ public class Experimenter extends AbstractOMEModelObject
 		}
 		if (groupList != null)
 		{
-			// Reference property GroupRef
-			for (Group o : groupList)
+			// Reference property GroupRef which occurs more than once
+			for (Group groupList_value : groupList)
 			{
-				Element groupList_element = 
-						document.createElementNS(NAMESPACE, "GroupRefRef");
-				groupList_element.setAttribute("ID", o.getID());
-				Experimenter_element.appendChild(groupList_element);
+				Element groupList_value_element = 
+						document.createElementNS(NAMESPACE, "GroupRef");
+				groupList_value_element.setAttribute(
+						"ID", groupList_value.getID());
+				Experimenter_element.appendChild(groupList_value_element);
 			}
 		}
 		if (annotationList != null)
 		{
-			// Reference property AnnotationRef
-			for (Annotation o : annotationList)
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRefRef");
-				annotationList_element.setAttribute("ID", o.getID());
-				Experimenter_element.appendChild(annotationList_element);
+				Element annotationList_value_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRef");
+				annotationList_value_element.setAttribute(
+						"ID", annotationList_value.getID());
+				Experimenter_element.appendChild(annotationList_value_element);
 			}
 		}
 		if (image_BackReferenceList != null)

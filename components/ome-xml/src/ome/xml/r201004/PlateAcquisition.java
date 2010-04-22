@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -356,24 +356,26 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		}
 		if (wellSampleList != null)
 		{
-			// Reference property WellSampleRef
-			for (WellSample o : wellSampleList)
+			// Reference property WellSampleRef which occurs more than once
+			for (WellSample wellSampleList_value : wellSampleList)
 			{
-				Element wellSampleList_element = 
-						document.createElementNS(NAMESPACE, "WellSampleRefRef");
-				wellSampleList_element.setAttribute("ID", o.getID());
-				PlateAcquisition_element.appendChild(wellSampleList_element);
+				Element wellSampleList_value_element = 
+						document.createElementNS(NAMESPACE, "WellSampleRef");
+				wellSampleList_value_element.setAttribute(
+						"ID", wellSampleList_value.getID());
+				PlateAcquisition_element.appendChild(wellSampleList_value_element);
 			}
 		}
 		if (annotationList != null)
 		{
-			// Reference property AnnotationRef
-			for (Annotation o : annotationList)
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRefRef");
-				annotationList_element.setAttribute("ID", o.getID());
-				PlateAcquisition_element.appendChild(annotationList_element);
+				Element annotationList_value_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRef");
+				annotationList_value_element.setAttribute(
+						"ID", annotationList_value.getID());
+				PlateAcquisition_element.appendChild(annotationList_value_element);
 			}
 		}
 		return super.asXMLElement(document, PlateAcquisition_element);

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -325,25 +325,32 @@ public class Project extends AbstractOMEModelObject
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			Project_element.appendChild(experimenter.asXMLElement(document));
+			// Reference property ExperimenterRef
+			Element experimenter_element = 
+					document.createElementNS(NAMESPACE, "ExperimenterRef");
+			experimenter_element.setAttribute(
+					"ID", experimenter.getID());
+			Project_element.appendChild(experimenter_element);
 		}
 		if (group != null)
 		{
-			// Element property GroupRef which is complex (has
-			// sub-elements)
-			Project_element.appendChild(group.asXMLElement(document));
+			// Reference property GroupRef
+			Element group_element = 
+					document.createElementNS(NAMESPACE, "GroupRef");
+			group_element.setAttribute(
+					"ID", group.getID());
+			Project_element.appendChild(group_element);
 		}
 		if (annotationList != null)
 		{
-			// Reference property AnnotationRef
-			for (Annotation o : annotationList)
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRefRef");
-				annotationList_element.setAttribute("ID", o.getID());
-				Project_element.appendChild(annotationList_element);
+				Element annotationList_value_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRef");
+				annotationList_value_element.setAttribute(
+						"ID", annotationList_value.getID());
+				Project_element.appendChild(annotationList_value_element);
 			}
 		}
 		if (dataset_BackReferenceList != null)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -308,9 +308,12 @@ public class Experiment extends AbstractOMEModelObject
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			Experiment_element.appendChild(experimenter.asXMLElement(document));
+			// Reference property ExperimenterRef
+			Element experimenter_element = 
+					document.createElementNS(NAMESPACE, "ExperimenterRef");
+			experimenter_element.setAttribute(
+					"ID", experimenter.getID());
+			Experiment_element.appendChild(experimenter_element);
 		}
 		if (microbeamManipulationList != null)
 		{

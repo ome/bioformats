@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -308,20 +308,24 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		}
 		if (roiList != null)
 		{
-			// Reference property ROIRef
-			for (ROI o : roiList)
+			// Reference property ROIRef which occurs more than once
+			for (ROI roiList_value : roiList)
 			{
-				Element roiList_element = 
-						document.createElementNS(NAMESPACE, "ROIRefRef");
-				roiList_element.setAttribute("ID", o.getID());
-				MicrobeamManipulation_element.appendChild(roiList_element);
+				Element roiList_value_element = 
+						document.createElementNS(NAMESPACE, "ROIRef");
+				roiList_value_element.setAttribute(
+						"ID", roiList_value.getID());
+				MicrobeamManipulation_element.appendChild(roiList_value_element);
 			}
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			MicrobeamManipulation_element.appendChild(experimenter.asXMLElement(document));
+			// Reference property ExperimenterRef
+			Element experimenter_element = 
+					document.createElementNS(NAMESPACE, "ExperimenterRef");
+			experimenter_element.setAttribute(
+					"ID", experimenter.getID());
+			MicrobeamManipulation_element.appendChild(experimenter_element);
 		}
 		if (lightSourceSettingsList != null)
 		{

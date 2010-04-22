@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -621,9 +621,12 @@ public class Channel extends AbstractOMEModelObject
 		}
 		if (otf != null)
 		{
-			// Element property OTFRef which is complex (has
-			// sub-elements)
-			Channel_element.appendChild(otf.asXMLElement(document));
+			// Reference property OTFRef
+			Element otf_element = 
+					document.createElementNS(NAMESPACE, "OTFRef");
+			otf_element.setAttribute(
+					"ID", otf.getID());
+			Channel_element.appendChild(otf_element);
 		}
 		if (detectorSettings != null)
 		{
@@ -633,19 +636,23 @@ public class Channel extends AbstractOMEModelObject
 		}
 		if (filterSet != null)
 		{
-			// Element property FilterSetRef which is complex (has
-			// sub-elements)
-			Channel_element.appendChild(filterSet.asXMLElement(document));
+			// Reference property FilterSetRef
+			Element filterSet_element = 
+					document.createElementNS(NAMESPACE, "FilterSetRef");
+			filterSet_element.setAttribute(
+					"ID", filterSet.getID());
+			Channel_element.appendChild(filterSet_element);
 		}
 		if (annotationList != null)
 		{
-			// Reference property AnnotationRef
-			for (Annotation o : annotationList)
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRefRef");
-				annotationList_element.setAttribute("ID", o.getID());
-				Channel_element.appendChild(annotationList_element);
+				Element annotationList_value_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRef");
+				annotationList_value_element.setAttribute(
+						"ID", annotationList_value.getID());
+				Channel_element.appendChild(annotationList_value_element);
 			}
 		}
 		if (lightPath != null)

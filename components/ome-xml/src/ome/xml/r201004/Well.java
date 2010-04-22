@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -407,19 +407,23 @@ public class Well extends AbstractOMEModelObject
 		}
 		if (reagent != null)
 		{
-			// Element property ReagentRef which is complex (has
-			// sub-elements)
-			Well_element.appendChild(reagent.asXMLElement(document));
+			// Reference property ReagentRef
+			Element reagent_element = 
+					document.createElementNS(NAMESPACE, "ReagentRef");
+			reagent_element.setAttribute(
+					"ID", reagent.getID());
+			Well_element.appendChild(reagent_element);
 		}
 		if (annotationList != null)
 		{
-			// Reference property AnnotationRef
-			for (Annotation o : annotationList)
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRefRef");
-				annotationList_element.setAttribute("ID", o.getID());
-				Well_element.appendChild(annotationList_element);
+				Element annotationList_value_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRef");
+				annotationList_value_element.setAttribute(
+						"ID", annotationList_value.getID());
+				Well_element.appendChild(annotationList_value_element);
 			}
 		}
 		return super.asXMLElement(document, Well_element);

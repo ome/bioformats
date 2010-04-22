@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -362,36 +362,44 @@ public class Dataset extends AbstractOMEModelObject
 		}
 		if (experimenter != null)
 		{
-			// Element property ExperimenterRef which is complex (has
-			// sub-elements)
-			Dataset_element.appendChild(experimenter.asXMLElement(document));
+			// Reference property ExperimenterRef
+			Element experimenter_element = 
+					document.createElementNS(NAMESPACE, "ExperimenterRef");
+			experimenter_element.setAttribute(
+					"ID", experimenter.getID());
+			Dataset_element.appendChild(experimenter_element);
 		}
 		if (group != null)
 		{
-			// Element property GroupRef which is complex (has
-			// sub-elements)
-			Dataset_element.appendChild(group.asXMLElement(document));
+			// Reference property GroupRef
+			Element group_element = 
+					document.createElementNS(NAMESPACE, "GroupRef");
+			group_element.setAttribute(
+					"ID", group.getID());
+			Dataset_element.appendChild(group_element);
 		}
 		if (projectList != null)
 		{
-			// Reference property ProjectRef
-			for (Project o : projectList)
+			// Reference property ProjectRef which occurs more than once
+			for (Project projectList_value : projectList)
 			{
-				Element projectList_element = 
-						document.createElementNS(NAMESPACE, "ProjectRefRef");
-				projectList_element.setAttribute("ID", o.getID());
-				Dataset_element.appendChild(projectList_element);
+				Element projectList_value_element = 
+						document.createElementNS(NAMESPACE, "ProjectRef");
+				projectList_value_element.setAttribute(
+						"ID", projectList_value.getID());
+				Dataset_element.appendChild(projectList_value_element);
 			}
 		}
 		if (annotationList != null)
 		{
-			// Reference property AnnotationRef
-			for (Annotation o : annotationList)
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationList_value : annotationList)
 			{
-				Element annotationList_element = 
-						document.createElementNS(NAMESPACE, "AnnotationRefRef");
-				annotationList_element.setAttribute("ID", o.getID());
-				Dataset_element.appendChild(annotationList_element);
+				Element annotationList_value_element = 
+						document.createElementNS(NAMESPACE, "AnnotationRef");
+				annotationList_value_element.setAttribute(
+						"ID", annotationList_value.getID());
+				Dataset_element.appendChild(annotationList_value_element);
 			}
 		}
 		if (image_BackReferenceList != null)

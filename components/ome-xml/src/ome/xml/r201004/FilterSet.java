@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:05:10+0100
+ * Created by callan via xsd-fu on 2010-04-22 17:27:24+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -347,30 +347,35 @@ public class FilterSet extends ManufacturerSpec
 		}
 		if (excitationFilterList != null)
 		{
-			// Reference property ExcitationFilterRef
-			for (Filter o : excitationFilterList)
+			// Reference property ExcitationFilterRef which occurs more than once
+			for (Filter excitationFilterList_value : excitationFilterList)
 			{
-				Element excitationFilterList_element = 
-						document.createElementNS(NAMESPACE, "ExcitationFilterRefRef");
-				excitationFilterList_element.setAttribute("ID", o.getID());
-				FilterSet_element.appendChild(excitationFilterList_element);
+				Element excitationFilterList_value_element = 
+						document.createElementNS(NAMESPACE, "ExcitationFilterRef");
+				excitationFilterList_value_element.setAttribute(
+						"ID", excitationFilterList_value.getID());
+				FilterSet_element.appendChild(excitationFilterList_value_element);
 			}
 		}
 		if (dichroic != null)
 		{
-			// Element property DichroicRef which is complex (has
-			// sub-elements)
-			FilterSet_element.appendChild(dichroic.asXMLElement(document));
+			// Reference property DichroicRef
+			Element dichroic_element = 
+					document.createElementNS(NAMESPACE, "DichroicRef");
+			dichroic_element.setAttribute(
+					"ID", dichroic.getID());
+			FilterSet_element.appendChild(dichroic_element);
 		}
 		if (emissionFilterList != null)
 		{
-			// Reference property EmissionFilterRef
-			for (Filter o : emissionFilterList)
+			// Reference property EmissionFilterRef which occurs more than once
+			for (Filter emissionFilterList_value : emissionFilterList)
 			{
-				Element emissionFilterList_element = 
-						document.createElementNS(NAMESPACE, "EmissionFilterRefRef");
-				emissionFilterList_element.setAttribute("ID", o.getID());
-				FilterSet_element.appendChild(emissionFilterList_element);
+				Element emissionFilterList_value_element = 
+						document.createElementNS(NAMESPACE, "EmissionFilterRef");
+				emissionFilterList_value_element.setAttribute(
+						"ID", emissionFilterList_value.getID());
+				FilterSet_element.appendChild(emissionFilterList_value_element);
 			}
 		}
 		if (channel_BackReferenceList != null)
