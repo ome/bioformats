@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -315,15 +315,11 @@ public class OTF extends AbstractOMEModelObject
 
 	public boolean linkChannel(Channel o)
 	{
-
-		o.linkOTF(this);
 		return channel_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkChannel(Channel o)
 	{
-
-		o.unlinkOTF(this);
 		return channel_BackReferenceList.remove(o);
 	}
 
@@ -350,15 +346,11 @@ public class OTF extends AbstractOMEModelObject
 
 	public boolean linkChannelProfile(ChannelProfile o)
 	{
-
-		o.linkOTF(this);
 		return channelProfile_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkChannelProfile(ChannelProfile o)
 	{
-
-		o.unlinkOTF(this);
 		return channelProfile_BackReferenceList.remove(o);
 	}
 

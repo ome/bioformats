@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -155,15 +155,11 @@ public class Dichroic extends ManufacturerSpec
 
 	public boolean linkFilterSet(FilterSet o)
 	{
-
-		o.linkDichroic(this);
 		return filterSet_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkFilterSet(FilterSet o)
 	{
-
-		o.unlinkDichroic(this);
 		return filterSet_BackReferenceList.remove(o);
 	}
 
@@ -190,15 +186,11 @@ public class Dichroic extends ManufacturerSpec
 
 	public boolean linkLightPath(LightPath o)
 	{
-
-		o.linkDichroic(this);
 		return lightPath_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkLightPath(LightPath o)
 	{
-
-		o.unlinkDichroic(this);
 		return lightPath_BackReferenceList.remove(o);
 	}
 

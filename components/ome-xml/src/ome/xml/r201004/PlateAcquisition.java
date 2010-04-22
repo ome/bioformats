@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -263,14 +263,12 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 	public boolean linkWellSample(WellSample o)
 	{
-
 		o.linkPlateAcquisition(this);
 		return wellSampleList.add(o);
 	}
 
 	public boolean unlinkWellSample(WellSample o)
 	{
-
 		o.unlinkPlateAcquisition(this);
 		return wellSampleList.remove(o);
 	}
@@ -298,14 +296,12 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 	public boolean linkAnnotation(Annotation o)
 	{
-
 		o.linkPlateAcquisition(this);
 		return annotationList.add(o);
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-
 		o.unlinkPlateAcquisition(this);
 		return annotationList.remove(o);
 	}

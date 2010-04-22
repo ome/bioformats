@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -461,14 +461,12 @@ public class Plate extends AbstractOMEModelObject
 
 	public boolean linkAnnotation(Annotation o)
 	{
-
 		o.linkPlate(this);
 		return annotationList.add(o);
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-
 		o.unlinkPlate(this);
 		return annotationList.remove(o);
 	}
@@ -527,15 +525,11 @@ public class Plate extends AbstractOMEModelObject
 
 	public boolean linkScreen(Screen o)
 	{
-
-		o.linkPlate(this);
 		return screen_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkScreen(Screen o)
 	{
-
-		o.unlinkPlate(this);
 		return screen_BackReferenceList.remove(o);
 	}
 

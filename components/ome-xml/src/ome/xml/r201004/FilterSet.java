@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -171,14 +171,12 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkExcitationFilter(Filter o)
 	{
-
 		o.linkFilterSet(this);
 		return excitationFilterList.add(o);
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
 	{
-
 		o.unlinkFilterSet(this);
 		return excitationFilterList.remove(o);
 	}
@@ -225,14 +223,12 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkEmissionFilter(Filter o)
 	{
-
 		o.linkFilterSet(this);
 		return emissionFilterList.add(o);
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)
 	{
-
 		o.unlinkFilterSet(this);
 		return emissionFilterList.remove(o);
 	}
@@ -260,15 +256,11 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkChannel(Channel o)
 	{
-
-		o.linkFilterSet(this);
 		return channel_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkChannel(Channel o)
 	{
-
-		o.unlinkFilterSet(this);
 		return channel_BackReferenceList.remove(o);
 	}
 
@@ -295,15 +287,11 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkOTF(OTF o)
 	{
-
-		o.linkFilterSet(this);
 		return otf_backReferenceList.add(o);
 	}
 
 	public boolean unlinkOTF(OTF o)
 	{
-
-		o.unlinkFilterSet(this);
 		return otf_backReferenceList.remove(o);
 	}
 
@@ -330,15 +318,11 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkChannelProfile(ChannelProfile o)
 	{
-
-		o.linkFilterSet(this);
 		return channelProfile_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkChannelProfile(ChannelProfile o)
 	{
-
-		o.unlinkFilterSet(this);
 		return channelProfile_BackReferenceList.remove(o);
 	}
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -265,15 +265,11 @@ public class Experiment extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-
-		o.linkExperiment(this);
 		return image_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-
-		o.unlinkExperiment(this);
 		return image_BackReferenceList.remove(o);
 	}
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -220,15 +220,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-
-		o.linkAnnotation(this);
 		return image_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-
-		o.unlinkAnnotation(this);
 		return image_BackReferenceList.remove(o);
 	}
 
@@ -255,15 +251,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkPixels(Pixels o)
 	{
-
-		o.linkAnnotation(this);
 		return pixels_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkPixels(Pixels o)
 	{
-
-		o.unlinkAnnotation(this);
 		return pixels_BackReferenceList.remove(o);
 	}
 
@@ -290,15 +282,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkPlane(Plane o)
 	{
-
-		o.linkAnnotation(this);
 		return plane_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkPlane(Plane o)
 	{
-
-		o.unlinkAnnotation(this);
 		return plane_BackReferenceList.remove(o);
 	}
 
@@ -325,15 +313,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkChannel(Channel o)
 	{
-
-		o.linkAnnotation(this);
 		return channel_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkChannel(Channel o)
 	{
-
-		o.unlinkAnnotation(this);
 		return channel_BackReferenceList.remove(o);
 	}
 
@@ -360,15 +344,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkProject(Project o)
 	{
-
-		o.linkAnnotation(this);
 		return project_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkProject(Project o)
 	{
-
-		o.unlinkAnnotation(this);
 		return project_BackReferenceList.remove(o);
 	}
 
@@ -395,15 +375,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkDataset(Dataset o)
 	{
-
-		o.linkAnnotation(this);
 		return dataset_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkDataset(Dataset o)
 	{
-
-		o.unlinkAnnotation(this);
 		return dataset_BackReferenceList.remove(o);
 	}
 
@@ -430,15 +406,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkExperimenter(Experimenter o)
 	{
-
-		o.linkAnnotation(this);
 		return experimenter_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkExperimenter(Experimenter o)
 	{
-
-		o.unlinkAnnotation(this);
 		return experimenter_BackReferenceList.remove(o);
 	}
 
@@ -465,15 +437,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkPlate(Plate o)
 	{
-
-		o.linkAnnotation(this);
 		return plate_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkPlate(Plate o)
 	{
-
-		o.unlinkAnnotation(this);
 		return plate_BackReferenceList.remove(o);
 	}
 
@@ -500,15 +468,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkReagent(Reagent o)
 	{
-
-		o.linkAnnotation(this);
 		return reagent_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkReagent(Reagent o)
 	{
-
-		o.unlinkAnnotation(this);
 		return reagent_BackReferenceList.remove(o);
 	}
 
@@ -535,15 +499,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkScreen(Screen o)
 	{
-
-		o.linkAnnotation(this);
 		return screen_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkScreen(Screen o)
 	{
-
-		o.unlinkAnnotation(this);
 		return screen_BackReferenceList.remove(o);
 	}
 
@@ -570,15 +530,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkPlateAcquisition(PlateAcquisition o)
 	{
-
-		o.linkAnnotation(this);
 		return plateAcquisition_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkPlateAcquisition(PlateAcquisition o)
 	{
-
-		o.unlinkAnnotation(this);
 		return plateAcquisition_BackReferenceList.remove(o);
 	}
 
@@ -605,15 +561,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkWell(Well o)
 	{
-
-		o.linkAnnotation(this);
 		return well_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkWell(Well o)
 	{
-
-		o.unlinkAnnotation(this);
 		return well_BackReferenceList.remove(o);
 	}
 
@@ -640,15 +592,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkWellSample(WellSample o)
 	{
-
-		o.linkAnnotation(this);
 		return wellSample_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkWellSample(WellSample o)
 	{
-
-		o.unlinkAnnotation(this);
 		return wellSample_BackReferenceList.remove(o);
 	}
 
@@ -675,15 +623,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkROI(ROI o)
 	{
-
-		o.linkAnnotation(this);
 		return roi_backReferenceList.add(o);
 	}
 
 	public boolean unlinkROI(ROI o)
 	{
-
-		o.unlinkAnnotation(this);
 		return roi_backReferenceList.remove(o);
 	}
 
@@ -710,15 +654,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkShape(Shape o)
 	{
-
-		o.linkAnnotation(this);
 		return shape_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkShape(Shape o)
 	{
-
-		o.unlinkAnnotation(this);
 		return shape_BackReferenceList.remove(o);
 	}
 
@@ -745,15 +685,11 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	public boolean linkListAnnotation(ListAnnotation o)
 	{
-
-		o.linkAnnotation(this);
 		return listAnnotation_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkListAnnotation(ListAnnotation o)
 	{
-
-		o.unlinkAnnotation(this);
 		return listAnnotation_BackReferenceList.remove(o);
 	}
 

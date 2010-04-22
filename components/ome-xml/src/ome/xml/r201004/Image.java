@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -388,14 +388,12 @@ public class Image extends AbstractOMEModelObject
 
 	public boolean linkDataset(Dataset o)
 	{
-
 		o.linkImage(this);
 		return datasetList.add(o);
 	}
 
 	public boolean unlinkDataset(Dataset o)
 	{
-
 		o.unlinkImage(this);
 		return datasetList.remove(o);
 	}
@@ -486,14 +484,12 @@ public class Image extends AbstractOMEModelObject
 
 	public boolean linkROI(ROI o)
 	{
-
 		o.linkImage(this);
 		return roiList.add(o);
 	}
 
 	public boolean unlinkROI(ROI o)
 	{
-
 		o.unlinkImage(this);
 		return roiList.remove(o);
 	}
@@ -521,14 +517,12 @@ public class Image extends AbstractOMEModelObject
 
 	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-
 		o.linkImage(this);
 		return microbeamManipulationList.add(o);
 	}
 
 	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-
 		o.unlinkImage(this);
 		return microbeamManipulationList.remove(o);
 	}
@@ -556,14 +550,12 @@ public class Image extends AbstractOMEModelObject
 
 	public boolean linkAnnotation(Annotation o)
 	{
-
 		o.linkImage(this);
 		return annotationList.add(o);
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-
 		o.unlinkImage(this);
 		return annotationList.remove(o);
 	}
@@ -591,15 +583,11 @@ public class Image extends AbstractOMEModelObject
 
 	public boolean linkWellSample(WellSample o)
 	{
-
-		o.linkImage(this);
 		return wellSample_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkWellSample(WellSample o)
 	{
-
-		o.unlinkImage(this);
 		return wellSample_BackReferenceList.remove(o);
 	}
 

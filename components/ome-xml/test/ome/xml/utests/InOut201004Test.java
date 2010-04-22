@@ -61,6 +61,8 @@ import ome.xml.r201004.DoubleAnnotation;
 import ome.xml.r201004.FileAnnotation;
 import ome.xml.r201004.ListAnnotation;
 import ome.xml.r201004.LongAnnotation;
+import ome.xml.r201004.Objective;
+import ome.xml.r201004.ObjectiveSettings;
 import ome.xml.r201004.StringAnnotation;
 import ome.xml.r201004.StructuredAnnotations;
 import ome.xml.r201004.TimestampAnnotation;
@@ -131,6 +133,8 @@ public class InOut201004Test {
 
   private static String EX_FILTER_ID = "Filter:1";
 
+  private static String OBJECTIVE_ID = "Objective:0";
+
   private static String OTF_ID = "OTF:0";
 
   private static String PLATE_ID = "Plate:0";
@@ -159,6 +163,8 @@ public class InOut201004Test {
   private static final String DETECTOR_MODEL = "ReallySensitive!";
 
   private static final String LIGHTSOURCE_MODEL = "ReallyBright!";
+
+  private static final String OBJECTIVE_MODEL = "ReallyClear!";
 
   private static final String DICHROIC_SN = "0123456789";
 
@@ -338,6 +344,15 @@ public class InOut201004Test {
     assertEquals(DICHROIC_SN, dichroic.getSerialNumber());
   }
 
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidObjectiveNode()
+  {
+    Objective objective = ome.getInstrument(0).getObjective(0);
+    assertNotNull(objective);
+    assertEquals(OBJECTIVE_ID, objective.getID());
+    assertEquals(OBJECTIVE_MODEL, objective.getModel());
+  }
+
   @Test(dependsOnMethods={"testValidDichroicNode"})
   public void testValidFilterSetNode() {
     Dichroic dichroic = ome.getInstrument(0).getDichroic(0);
@@ -378,6 +393,9 @@ public class InOut201004Test {
     assertEquals(OTF_SIZE_X, otf.getSizeX());
     assertEquals(OTF_SIZE_Y, otf.getSizeY());
     assertEquals(OTF_OPTICAL_AXIS_AVERAGED, otf.getOpticalAxisAveraged());
+    ObjectiveSettings otfObjectiveSettings = otf.getObjectiveSettings();
+    assertNotNull(otfObjectiveSettings);
+    assertEquals(OBJECTIVE_ID, otfObjectiveSettings.getID());
     assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getLinkedOTF(0));
   }
 
@@ -530,6 +548,10 @@ public class InOut201004Test {
     Filter emFilter = new Filter();
     Filter exFilter = new Filter();
     OTF otf = new OTF();
+    // Create <Objective/> under <Instrument/>
+    Objective objective = new Objective();
+    objective.setID(OBJECTIVE_ID);
+    objective.setModel(OBJECTIVE_MODEL);
 
     emFilter.setID(EM_FILTER_ID);
     emFilter.setType(EM_FILTER_TYPE);
@@ -540,10 +562,14 @@ public class InOut201004Test {
     otf.setSizeX(OTF_SIZE_X);
     otf.setSizeY(OTF_SIZE_Y);
     otf.setOpticalAxisAveraged(OTF_OPTICAL_AXIS_AVERAGED);
+    ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
+    otfObjectiveSettings.setID(objective.getID());
+    otf.setObjectiveSettings(otfObjectiveSettings);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);
     instrument.addOTF(otf);
+    instrument.addObjective(objective);
 
     filterSet.linkEmissionFilter(emFilter);
     filterSet.linkExcitationFilter(exFilter);

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -315,14 +315,12 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkGroup(Group o)
 	{
-
 		o.linkExperimenter(this);
 		return groupList.add(o);
 	}
 
 	public boolean unlinkGroup(Group o)
 	{
-
 		o.unlinkExperimenter(this);
 		return groupList.remove(o);
 	}
@@ -350,14 +348,12 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkAnnotation(Annotation o)
 	{
-
 		o.linkExperimenter(this);
 		return annotationList.add(o);
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-
 		o.unlinkExperimenter(this);
 		return annotationList.remove(o);
 	}
@@ -385,15 +381,11 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-
-		o.linkExperimenter(this);
 		return image_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-
-		o.unlinkExperimenter(this);
 		return image_BackReferenceList.remove(o);
 	}
 
@@ -420,15 +412,11 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-
-		o.linkExperimenter(this);
 		return microbeamManipulation_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-
-		o.unlinkExperimenter(this);
 		return microbeamManipulation_BackReferenceList.remove(o);
 	}
 
@@ -455,15 +443,11 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkProject(Project o)
 	{
-
-		o.linkExperimenter(this);
 		return project_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkProject(Project o)
 	{
-
-		o.unlinkExperimenter(this);
 		return project_BackReferenceList.remove(o);
 	}
 
@@ -490,15 +474,11 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkDataset(Dataset o)
 	{
-
-		o.linkExperimenter(this);
 		return dataset_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkDataset(Dataset o)
 	{
-
-		o.unlinkExperimenter(this);
 		return dataset_BackReferenceList.remove(o);
 	}
 
@@ -525,15 +505,11 @@ public class Experimenter extends AbstractOMEModelObject
 
 	public boolean linkExperiment(Experiment o)
 	{
-
-		o.linkExperimenter(this);
 		return experiment_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkExperiment(Experiment o)
 	{
-
-		o.unlinkExperimenter(this);
 		return experiment_BackReferenceList.remove(o);
 	}
 

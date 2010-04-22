@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -139,14 +139,12 @@ public class LightPath extends AbstractOMEModelObject
 
 	public boolean linkExcitationFilter(Filter o)
 	{
-
 		o.linkLightPath(this);
 		return excitationFilterList.add(o);
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
 	{
-
 		o.unlinkLightPath(this);
 		return excitationFilterList.remove(o);
 	}
@@ -193,14 +191,12 @@ public class LightPath extends AbstractOMEModelObject
 
 	public boolean linkEmissionFilter(Filter o)
 	{
-
 		o.linkLightPath(this);
 		return emissionFilterList.add(o);
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)
 	{
-
 		o.unlinkLightPath(this);
 		return emissionFilterList.remove(o);
 	}

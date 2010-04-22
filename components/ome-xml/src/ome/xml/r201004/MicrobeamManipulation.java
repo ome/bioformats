@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 16:29:38+0100
+ * Created by callan via xsd-fu on 2010-04-22 16:50:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -191,14 +191,12 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	public boolean linkROI(ROI o)
 	{
-
 		o.linkMicrobeamManipulation(this);
 		return roiList.add(o);
 	}
 
 	public boolean unlinkROI(ROI o)
 	{
-
 		o.unlinkMicrobeamManipulation(this);
 		return roiList.remove(o);
 	}
@@ -276,15 +274,11 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-
-		o.linkMicrobeamManipulation(this);
 		return image_BackReferenceList.add(o);
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-
-		o.unlinkMicrobeamManipulation(this);
 		return image_BackReferenceList.remove(o);
 	}
 
