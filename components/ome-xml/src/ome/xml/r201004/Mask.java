@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Mask extends Shape
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -191,7 +195,8 @@ public class Mask extends Shape
 		// Creating XML block for Mask
 		if (Mask_element == null)
 		{
-			Mask_element = document.createElement("Mask");
+			Mask_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Mask");
 		}
 
 		if (y != null)
@@ -210,7 +215,8 @@ public class Mask extends Shape
 			// sub-elements) which occurs more than once
 			for (String binDataList_value : binDataList)
 			{
-				Element binDataList_element = document.createElement("BinData");
+				Element binDataList_element =
+						document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "BinData");
 				binDataList_element.setTextContent(binDataList_value);
 				Mask_element.appendChild(binDataList_element);
 			}

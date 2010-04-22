@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Line extends Shape
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -189,7 +193,8 @@ public class Line extends Shape
 		// Creating XML block for Line
 		if (Line_element == null)
 		{
-			Line_element = document.createElement("Line");
+			Line_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Line");
 		}
 
 		if (y1 != null)

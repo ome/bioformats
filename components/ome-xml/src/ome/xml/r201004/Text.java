@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Text extends Shape
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -177,7 +181,8 @@ public class Text extends Shape
 		// Creating XML block for Text
 		if (Text_element == null)
 		{
-			Text_element = document.createElement("Text");
+			Text_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Text");
 		}
 
 		if (y != null)
@@ -194,7 +199,8 @@ public class Text extends Shape
 		{
 			// Element property Value which is not complex (has no
 			// sub-elements)
-			Element value_element = document.createElement("Value");
+			Element value_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Value");
 			value_element.setTextContent(value);
 			Text_element.appendChild(value_element);
 		}

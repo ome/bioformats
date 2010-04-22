@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Instrument extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -565,7 +569,8 @@ public class Instrument extends AbstractOMEModelObject
 		// Creating XML block for Instrument
 		if (Instrument_element == null)
 		{
-			Instrument_element = document.createElement("Instrument");
+			Instrument_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Instrument");
 		}
 
 		if (id != null)

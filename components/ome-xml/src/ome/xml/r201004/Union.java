@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Union extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property which occurs more than once
@@ -224,7 +228,8 @@ public class Union extends AbstractOMEModelObject
 		// Creating XML block for Union
 		if (Union_element == null)
 		{
-			Union_element = document.createElement("Union");
+			Union_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Union");
 		}
 
 		if (shapeList != null)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Settings extends Reference
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// -- Constructors --
@@ -109,7 +113,8 @@ public class Settings extends Reference
 		// Creating XML block for Settings
 		if (Settings_element == null)
 		{
-			Settings_element = document.createElement("Settings");
+			Settings_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Settings");
 		}
 
 		return super.asXMLElement(document, Settings_element);

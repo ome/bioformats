@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class TiffData extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -238,7 +242,8 @@ public class TiffData extends AbstractOMEModelObject
 		// Creating XML block for TiffData
 		if (TiffData_element == null)
 		{
-			TiffData_element = document.createElement("TiffData");
+			TiffData_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "TiffData");
 		}
 
 		if (ifd != null)

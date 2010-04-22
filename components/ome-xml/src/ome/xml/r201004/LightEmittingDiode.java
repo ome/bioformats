@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class LightEmittingDiode extends LightSource
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// -- Constructors --
@@ -109,7 +113,8 @@ public class LightEmittingDiode extends LightSource
 		// Creating XML block for LightEmittingDiode
 		if (LightEmittingDiode_element == null)
 		{
-			LightEmittingDiode_element = document.createElement("LightEmittingDiode");
+			LightEmittingDiode_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "LightEmittingDiode");
 		}
 
 		return super.asXMLElement(document, LightEmittingDiode_element);

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Pixels extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -584,7 +588,8 @@ public class Pixels extends AbstractOMEModelObject
 		// Creating XML block for Pixels
 		if (Pixels_element == null)
 		{
-			Pixels_element = document.createElement("Pixels");
+			Pixels_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Pixels");
 		}
 
 		if (sizeT != null)
@@ -662,7 +667,8 @@ public class Pixels extends AbstractOMEModelObject
 			// sub-elements) which occurs more than once
 			for (String binDataList_value : binDataList)
 			{
-				Element binDataList_element = document.createElement("BinData");
+				Element binDataList_element =
+						document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "BinData");
 				binDataList_element.setTextContent(binDataList_value);
 				Pixels_element.appendChild(binDataList_element);
 			}

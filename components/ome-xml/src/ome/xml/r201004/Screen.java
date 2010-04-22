@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Screen extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -425,7 +429,8 @@ public class Screen extends AbstractOMEModelObject
 		// Creating XML block for Screen
 		if (Screen_element == null)
 		{
-			Screen_element = document.createElement("Screen");
+			Screen_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/SPW/2010-04", "Screen");
 		}
 
 		if (name != null)
@@ -467,7 +472,8 @@ public class Screen extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			Element description_element = document.createElement("Description");
+			Element description_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/SPW/2010-04", "Description");
 			description_element.setTextContent(description);
 			Screen_element.appendChild(description_element);
 		}

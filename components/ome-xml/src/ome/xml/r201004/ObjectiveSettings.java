@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class ObjectiveSettings extends Settings
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -189,7 +193,8 @@ public class ObjectiveSettings extends Settings
 		// Creating XML block for ObjectiveSettings
 		if (ObjectiveSettings_element == null)
 		{
-			ObjectiveSettings_element = document.createElement("ObjectiveSettings");
+			ObjectiveSettings_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "ObjectiveSettings");
 		}
 
 		if (refractiveIndex != null)

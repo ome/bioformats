@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class FileAnnotation extends Annotation
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -137,14 +141,16 @@ public class FileAnnotation extends Annotation
 		// Creating XML block for FileAnnotation
 		if (FileAnnotation_element == null)
 		{
-			FileAnnotation_element = document.createElement("FileAnnotation");
+			FileAnnotation_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "FileAnnotation");
 		}
 
 		if (binaryFile != null)
 		{
 			// Element property BinaryFile which is not complex (has no
 			// sub-elements)
-			Element binaryFile_element = document.createElement("BinaryFile");
+			Element binaryFile_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "BinaryFile");
 			binaryFile_element.setTextContent(binaryFile);
 			FileAnnotation_element.appendChild(binaryFile_element);
 		}

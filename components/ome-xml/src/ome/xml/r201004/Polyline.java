@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Polyline extends Shape
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -149,7 +153,8 @@ public class Polyline extends Shape
 		// Creating XML block for Polyline
 		if (Polyline_element == null)
 		{
-			Polyline_element = document.createElement("Polyline");
+			Polyline_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Polyline");
 		}
 
 		if (points != null)

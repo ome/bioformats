@@ -121,6 +121,8 @@ public class InOut201004Test {
 
   private static String ROI_ID = "ROI:5";
 
+  private static String SHAPE_ID = "Shape:0";
+
   private static DimensionOrder DIMENSION_ORDER = DimensionOrder.XYZCT;
 
   private static PixelType PIXEL_TYPE = PixelType.UINT16;
@@ -359,6 +361,7 @@ public class InOut201004Test {
       for (Integer col=0; col<WELL_COLS; col++) {
         Well well = plate.getWell(row * WELL_COLS + col);
         assertNotNull(well);
+        assertEquals(String.format("Well:%d_%d", row, col), well.getID());
         assertEquals(well.getRow(), row);
         assertEquals(well.getColumn(), col);
       }
@@ -368,16 +371,21 @@ public class InOut201004Test {
   @Test(dependsOnMethods={"testValidPlateNode"})
   public void testValidWellSamples() {
     Plate plate = ome.getPlate(0);
+    Integer wellSampleIndex = 0;
     for (int row=0; row<plate.getRows(); row++) {
       for (int col=0; col<plate.getColumns(); col++) {
         Well well = plate.getWell(row * plate.getColumns() + col);
         assertEquals(1, well.sizeOfWellSampleList());
         WellSample sample = well.getWellSample(0);
         assertNotNull(sample);
+        assertEquals(String.format("WellSample:%d_%d", row, col),
+                     sample.getID());
+        assertEquals(wellSampleIndex, sample.getIndex());
         assertEquals(1, sample.sizeOfLinkedImageList());
         Image image = sample.getLinkedImage(0);
         assertNotNull(image);
         assertEquals(IMAGE_ID, image.getID());
+        wellSampleIndex++;
       }
     }
   }
@@ -393,6 +401,7 @@ public class InOut201004Test {
     assertEquals(1, shapeUnion.sizeOfShapeList());
     Shape s = shapeUnion.getShape(0);
     assertNotNull(s);
+    assertEquals(SHAPE_ID, s.getID());
     assertTrue(s instanceof Rectangle);
 
     Rectangle rect = (Rectangle) s;
@@ -496,17 +505,21 @@ public class InOut201004Test {
     plate.setRowNamingConvention(WELL_ROW);
     plate.setColumnNamingConvention(WELL_COL);
 
+    int wellSampleIndex = 0;
     for (int row=0; row<WELL_ROWS; row++) {
       for (int col=0; col<WELL_COLS; col++) {
         Well well = new Well();
+        well.setID(String.format("Well:%d_%d", row, col));
         well.setRow(row);
         well.setColumn(col);
 
         WellSample sample = new WellSample();
-        sample.setIndex(0);
+        sample.setID(String.format("WellSample:%d_%d", row, col));
+        sample.setIndex(wellSampleIndex);
         sample.linkImage(ome.getImage(0));
         well.addWellSample(sample);
         plate.addWell(well);
+        wellSampleIndex++;
       }
     }
 
@@ -518,6 +531,7 @@ public class InOut201004Test {
     roi.setID(ROI_ID);
     Union shapeUnion = new Union();
     Rectangle rect = new Rectangle();
+    rect.setID(SHAPE_ID);
     rect.setX(RECTANGLE_X);
     rect.setY(RECTANGLE_Y);
     rect.setWidth(RECTANGLE_WIDTH);

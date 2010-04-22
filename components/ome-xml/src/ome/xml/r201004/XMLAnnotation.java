@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class XMLAnnotation extends Annotation
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -137,14 +141,16 @@ public class XMLAnnotation extends Annotation
 		// Creating XML block for XMLAnnotation
 		if (XMLAnnotation_element == null)
 		{
-			XMLAnnotation_element = document.createElement("XMLAnnotation");
+			XMLAnnotation_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "XMLAnnotation");
 		}
 
 		if (value != null)
 		{
 			// Element property Value which is not complex (has no
 			// sub-elements)
-			Element value_element = document.createElement("Value");
+			Element value_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "Value");
 			value_element.setTextContent(value);
 			XMLAnnotation_element.appendChild(value_element);
 		}

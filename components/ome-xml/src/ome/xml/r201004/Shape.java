@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public abstract class Shape extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -614,13 +618,15 @@ public abstract class Shape extends AbstractOMEModelObject
 		// Class is abstract so we may need to create its "container" element
 		if (!"Shape".equals(Shape_element.getTagName()))
 		{
-			Element abstractElement = document.createElement("Shape");
+			Element abstractElement =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Shape");
 			abstractElement.appendChild(Shape_element);
 			Shape_element = abstractElement;
 		}
 		if (Shape_element == null)
 		{
-			Shape_element = document.createElement("Shape");
+			Shape_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Shape");
 		}
 
 		if (strokeDashArray != null)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class MetadataOnly extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// -- Constructors --
@@ -109,7 +113,8 @@ public class MetadataOnly extends AbstractOMEModelObject
 		// Creating XML block for MetadataOnly
 		if (MetadataOnly_element == null)
 		{
-			MetadataOnly_element = document.createElement("MetadataOnly");
+			MetadataOnly_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "MetadataOnly");
 		}
 
 		return super.asXMLElement(document, MetadataOnly_element);

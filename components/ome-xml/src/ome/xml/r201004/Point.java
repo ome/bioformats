@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Point extends Shape
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -149,7 +153,8 @@ public class Point extends Shape
 		// Creating XML block for Point
 		if (Point_element == null)
 		{
-			Point_element = document.createElement("Point");
+			Point_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Point");
 		}
 
 		if (y != null)

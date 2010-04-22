@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Dataset extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -352,7 +356,8 @@ public class Dataset extends AbstractOMEModelObject
 		// Creating XML block for Dataset
 		if (Dataset_element == null)
 		{
-			Dataset_element = document.createElement("Dataset");
+			Dataset_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Dataset");
 		}
 
 		if (name != null)
@@ -369,7 +374,8 @@ public class Dataset extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			Element description_element = document.createElement("Description");
+			Element description_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Description");
 			description_element.setTextContent(description);
 			Dataset_element.appendChild(description_element);
 		}

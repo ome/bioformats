@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class Laser extends LightSource
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -298,7 +302,8 @@ public class Laser extends LightSource
 		// Creating XML block for Laser
 		if (Laser_element == null)
 		{
-			Laser_element = document.createElement("Laser");
+			Laser_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Laser");
 		}
 
 		if (pockelCell != null)

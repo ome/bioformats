@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-21 15:20:31+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -51,6 +51,10 @@ import ome.xml.r201004.enums.*;
 
 public class ChannelProfile extends AbstractOMEModelObject
 {
+	// -- Constants --
+
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OMERO/2010-04";
+
 	// -- Instance variables --
 
 	// Property
@@ -313,7 +317,8 @@ public class ChannelProfile extends AbstractOMEModelObject
 		// Creating XML block for ChannelProfile
 		if (ChannelProfile_element == null)
 		{
-			ChannelProfile_element = document.createElement("ChannelProfile");
+			ChannelProfile_element =
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OMERO/2010-04", "ChannelProfile");
 		}
 
 		if (origin != null)
@@ -325,7 +330,8 @@ public class ChannelProfile extends AbstractOMEModelObject
 		{
 			// Element property Name which is not complex (has no
 			// sub-elements)
-			Element name_element = document.createElement("Name");
+			Element name_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OMERO/2010-04", "Name");
 			name_element.setTextContent(name);
 			ChannelProfile_element.appendChild(name_element);
 		}
@@ -333,7 +339,8 @@ public class ChannelProfile extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			Element description_element = document.createElement("Description");
+			Element description_element = 
+					document.createElementNS("http://www.openmicroscopy.org/Schemas/OMERO/2010-04", "Description");
 			description_element.setTextContent(description);
 			ChannelProfile_element.appendChild(description_element);
 		}
