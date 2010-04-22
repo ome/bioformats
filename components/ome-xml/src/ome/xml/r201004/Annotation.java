@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -235,14 +235,14 @@ public abstract class Annotation extends AbstractOMEModelObject
 		if (!"Annotation".equals(Annotation_element.getTagName()))
 		{
 			Element abstractElement =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "Annotation");
+					document.createElementNS(NAMESPACE, "Annotation");
 			abstractElement.appendChild(Annotation_element);
 			Annotation_element = abstractElement;
 		}
 		if (Annotation_element == null)
 		{
 			Annotation_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "Annotation");
+					document.createElementNS(NAMESPACE, "Annotation");
 		}
 
 		if (namespace != null)

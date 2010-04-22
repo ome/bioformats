@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -272,7 +272,7 @@ public class Reagent extends AbstractOMEModelObject
 		if (Reagent_element == null)
 		{
 			Reagent_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SPW/2010-04", "Reagent");
+					document.createElementNS(NAMESPACE, "Reagent");
 		}
 
 		if (reagentIdentifier != null)
@@ -295,7 +295,7 @@ public class Reagent extends AbstractOMEModelObject
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			Element description_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SPW/2010-04", "Description");
+					document.createElementNS(NAMESPACE, "Description");
 			description_element.setTextContent(description);
 			Reagent_element.appendChild(description_element);
 		}

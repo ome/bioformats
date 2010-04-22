@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -229,7 +229,7 @@ public class Union extends AbstractOMEModelObject
 		if (Union_element == null)
 		{
 			Union_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Union");
+					document.createElementNS(NAMESPACE, "Union");
 		}
 
 		if (shapeList != null)

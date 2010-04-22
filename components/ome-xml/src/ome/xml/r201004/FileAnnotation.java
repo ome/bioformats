@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -142,7 +142,7 @@ public class FileAnnotation extends Annotation
 		if (FileAnnotation_element == null)
 		{
 			FileAnnotation_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "FileAnnotation");
+					document.createElementNS(NAMESPACE, "FileAnnotation");
 		}
 
 		if (binaryFile != null)
@@ -150,7 +150,7 @@ public class FileAnnotation extends Annotation
 			// Element property BinaryFile which is not complex (has no
 			// sub-elements)
 			Element binaryFile_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "BinaryFile");
+					document.createElementNS(NAMESPACE, "BinaryFile");
 			binaryFile_element.setTextContent(binaryFile);
 			FileAnnotation_element.appendChild(binaryFile_element);
 		}

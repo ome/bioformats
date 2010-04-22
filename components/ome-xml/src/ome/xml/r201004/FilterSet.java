@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -344,7 +344,7 @@ public class FilterSet extends ManufacturerSpec
 		if (FilterSet_element == null)
 		{
 			FilterSet_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "FilterSet");
+					document.createElementNS(NAMESPACE, "FilterSet");
 		}
 
 		if (id != null)

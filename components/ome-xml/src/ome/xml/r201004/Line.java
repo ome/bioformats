@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -194,7 +194,7 @@ public class Line extends Shape
 		if (Line_element == null)
 		{
 			Line_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Line");
+					document.createElementNS(NAMESPACE, "Line");
 		}
 
 		if (y1 != null)

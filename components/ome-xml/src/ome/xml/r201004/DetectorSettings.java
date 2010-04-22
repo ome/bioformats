@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -234,7 +234,7 @@ public class DetectorSettings extends Settings
 		if (DetectorSettings_element == null)
 		{
 			DetectorSettings_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "DetectorSettings");
+					document.createElementNS(NAMESPACE, "DetectorSettings");
 		}
 
 		if (binning != null)

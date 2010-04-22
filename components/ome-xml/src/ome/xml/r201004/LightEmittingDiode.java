@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -114,7 +114,7 @@ public class LightEmittingDiode extends LightSource
 		if (LightEmittingDiode_element == null)
 		{
 			LightEmittingDiode_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "LightEmittingDiode");
+					document.createElementNS(NAMESPACE, "LightEmittingDiode");
 		}
 
 		return super.asXMLElement(document, LightEmittingDiode_element);

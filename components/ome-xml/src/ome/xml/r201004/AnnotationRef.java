@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -134,7 +134,7 @@ public class AnnotationRef extends Reference
 		if (AnnotationRef_element == null)
 		{
 			AnnotationRef_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "AnnotationRef");
+					document.createElementNS(NAMESPACE, "AnnotationRef");
 		}
 
 		if (id != null)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -619,14 +619,14 @@ public abstract class Shape extends AbstractOMEModelObject
 		if (!"Shape".equals(Shape_element.getTagName()))
 		{
 			Element abstractElement =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Shape");
+					document.createElementNS(NAMESPACE, "Shape");
 			abstractElement.appendChild(Shape_element);
 			Shape_element = abstractElement;
 		}
 		if (Shape_element == null)
 		{
 			Shape_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Shape");
+					document.createElementNS(NAMESPACE, "Shape");
 		}
 
 		if (strokeDashArray != null)

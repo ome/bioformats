@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -142,7 +142,7 @@ public class XMLAnnotation extends Annotation
 		if (XMLAnnotation_element == null)
 		{
 			XMLAnnotation_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "XMLAnnotation");
+					document.createElementNS(NAMESPACE, "XMLAnnotation");
 		}
 
 		if (value != null)
@@ -150,7 +150,7 @@ public class XMLAnnotation extends Annotation
 			// Element property Value which is not complex (has no
 			// sub-elements)
 			Element value_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SA/2010-04", "Value");
+					document.createElementNS(NAMESPACE, "Value");
 			value_element.setTextContent(value);
 			XMLAnnotation_element.appendChild(value_element);
 		}

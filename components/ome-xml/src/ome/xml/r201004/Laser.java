@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -303,7 +303,7 @@ public class Laser extends LightSource
 		if (Laser_element == null)
 		{
 			Laser_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Laser");
+					document.createElementNS(NAMESPACE, "Laser");
 		}
 
 		if (pockelCell != null)

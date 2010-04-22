@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -182,7 +182,7 @@ public class Text extends Shape
 		if (Text_element == null)
 		{
 			Text_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Text");
+					document.createElementNS(NAMESPACE, "Text");
 		}
 
 		if (y != null)
@@ -200,7 +200,7 @@ public class Text extends Shape
 			// Element property Value which is not complex (has no
 			// sub-elements)
 			Element value_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Value");
+					document.createElementNS(NAMESPACE, "Value");
 			value_element.setTextContent(value);
 			Text_element.appendChild(value_element);
 		}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -376,7 +376,7 @@ public class OTF extends AbstractOMEModelObject
 		if (OTF_element == null)
 		{
 			OTF_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "OTF");
+					document.createElementNS(NAMESPACE, "OTF");
 		}
 
 		if (sizeX != null)
@@ -419,7 +419,7 @@ public class OTF extends AbstractOMEModelObject
 			// Element property BinaryFile which is not complex (has no
 			// sub-elements)
 			Element binaryFile_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "BinaryFile");
+					document.createElementNS(NAMESPACE, "BinaryFile");
 			binaryFile_element.setTextContent(binaryFile);
 			OTF_element.appendChild(binaryFile_element);
 		}

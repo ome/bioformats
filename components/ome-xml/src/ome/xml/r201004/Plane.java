@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -337,7 +337,7 @@ public class Plane extends AbstractOMEModelObject
 		if (Plane_element == null)
 		{
 			Plane_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Plane");
+					document.createElementNS(NAMESPACE, "Plane");
 		}
 
 		if (exposureTime != null)
@@ -385,7 +385,7 @@ public class Plane extends AbstractOMEModelObject
 			// Element property HashSHA1 which is not complex (has no
 			// sub-elements)
 			Element hashSHA1_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "HashSHA1");
+					document.createElementNS(NAMESPACE, "HashSHA1");
 			hashSHA1_element.setTextContent(hashSHA1);
 			Plane_element.appendChild(hashSHA1_element);
 		}

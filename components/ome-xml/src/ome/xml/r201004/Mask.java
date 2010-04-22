@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -196,7 +196,7 @@ public class Mask extends Shape
 		if (Mask_element == null)
 		{
 			Mask_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "Mask");
+					document.createElementNS(NAMESPACE, "Mask");
 		}
 
 		if (y != null)
@@ -216,7 +216,7 @@ public class Mask extends Shape
 			for (String binDataList_value : binDataList)
 			{
 				Element binDataList_element =
-						document.createElementNS("http://www.openmicroscopy.org/Schemas/ROI/2010-04", "BinData");
+						document.createElementNS(NAMESPACE, "BinData");
 				binDataList_element.setTextContent(binDataList_value);
 				Mask_element.appendChild(binDataList_element);
 			}

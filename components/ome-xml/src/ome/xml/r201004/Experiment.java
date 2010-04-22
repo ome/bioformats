@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -295,7 +295,7 @@ public class Experiment extends AbstractOMEModelObject
 		if (Experiment_element == null)
 		{
 			Experiment_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Experiment");
+					document.createElementNS(NAMESPACE, "Experiment");
 		}
 
 		if (type != null)
@@ -313,7 +313,7 @@ public class Experiment extends AbstractOMEModelObject
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			Element description_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Description");
+					document.createElementNS(NAMESPACE, "Description");
 			description_element.setTextContent(description);
 			Experiment_element.appendChild(description_element);
 		}

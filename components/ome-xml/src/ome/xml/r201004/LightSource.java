@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -199,14 +199,14 @@ public abstract class LightSource extends ManufacturerSpec
 		if (!"LightSource".equals(LightSource_element.getTagName()))
 		{
 			Element abstractElement =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "LightSource");
+					document.createElementNS(NAMESPACE, "LightSource");
 			abstractElement.appendChild(LightSource_element);
 			LightSource_element = abstractElement;
 		}
 		if (LightSource_element == null)
 		{
 			LightSource_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "LightSource");
+					document.createElementNS(NAMESPACE, "LightSource");
 		}
 
 		if (id != null)

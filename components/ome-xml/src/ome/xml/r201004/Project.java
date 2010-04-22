@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -322,7 +322,7 @@ public class Project extends AbstractOMEModelObject
 		if (Project_element == null)
 		{
 			Project_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Project");
+					document.createElementNS(NAMESPACE, "Project");
 		}
 
 		if (name != null)
@@ -340,7 +340,7 @@ public class Project extends AbstractOMEModelObject
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			Element description_element = 
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/OME/2010-04", "Description");
+					document.createElementNS(NAMESPACE, "Description");
 			description_element.setTextContent(description);
 			Project_element.appendChild(description_element);
 		}

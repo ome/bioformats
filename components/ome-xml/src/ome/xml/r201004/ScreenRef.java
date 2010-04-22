@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 12:03:51+0100
+ * Created by callan via xsd-fu on 2010-04-22 12:27:38+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -114,7 +114,7 @@ public class ScreenRef extends ReferenceWithID
 		if (ScreenRef_element == null)
 		{
 			ScreenRef_element =
-					document.createElementNS("http://www.openmicroscopy.org/Schemas/SPW/2010-04", "ScreenRef");
+					document.createElementNS(NAMESPACE, "ScreenRef");
 		}
 
 		return super.asXMLElement(document, ScreenRef_element);
