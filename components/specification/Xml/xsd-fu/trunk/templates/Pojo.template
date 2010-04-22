@@ -394,20 +394,16 @@ public class ${klass.name} extends ${klass.javaBase}
 			// Reference property ${prop.name} which occurs more than once
 			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
-				Element ${prop.javaInstanceVariableName}_value_element = 
-						document.createElementNS(NAMESPACE, "${prop.name}");
-				${prop.javaInstanceVariableName}_value_element.setAttribute(
-						"ID", ${prop.javaInstanceVariableName}_value.getID());
-				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_value_element);
+				${prop.type} o = new ${prop.type}();
+				o.setID(${prop.javaInstanceVariableName}_value.getID());
+				${klass.name}_element.appendChild(o.asXMLElement(document));
 			}
 {% end %}\
 {% when prop.isReference %}\
 			// Reference property ${prop.name}
-			Element ${prop.javaInstanceVariableName}_element = 
-					document.createElementNS(NAMESPACE, "${prop.name}");
-			${prop.javaInstanceVariableName}_element.setAttribute(
-					"ID", ${prop.javaInstanceVariableName}.getID());
-			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
+			${prop.type} o = new ${prop.type}();
+			o.setID(${prop.javaInstanceVariableName}.getID());
+			${klass.name}_element.appendChild(o.asXMLElement(document));
 {% end %}\
 {% when prop.isBackReference %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
