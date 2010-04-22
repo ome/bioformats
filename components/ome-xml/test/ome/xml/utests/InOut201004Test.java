@@ -141,7 +141,13 @@ public class InOut201004Test {
 
   private static String PLATE_ID = "Plate:0";
 
+  private static String PLATE_ANNOTATION_ID = "TimestampAnnotation:0";
+
+  private static String WELL_ANNOTATION_ID = "LongAnnotation:0";
+
   private static String ROI_ID = "ROI:5";
+
+  private static String ROI_ANNOTATION_ID = "StringAnnotation:0";
 
   private static String SHAPE_ID = "Shape:0";
 
@@ -188,6 +194,10 @@ public class InOut201004Test {
 
   private static final Boolean OTF_OPTICAL_AXIS_AVERAGED = Boolean.FALSE;
 
+  private static final String PLATE_ANNOTATION_VALUE = "1970-01-01T00:00:00";
+
+  private static final String WELL_ANNOTATION_VALUE = "262144";
+
   private static final Integer WELL_ROWS = 3;
 
   private static final Integer WELL_COLS = 2;
@@ -195,6 +205,8 @@ public class InOut201004Test {
   private static final NamingConvention WELL_ROW = NamingConvention.LETTER;
 
   private static final NamingConvention WELL_COL = NamingConvention.NUMBER;
+
+  private static final String ROI_ANNOTATION_VALUE = "Some extra ROI data";
 
   private static final Double RECTANGLE_X = 10.0;
 
@@ -455,6 +467,16 @@ public class InOut201004Test {
   }
 
   @Test(dependsOnMethods={"testValidPlateNode"})
+  public void testValidPlateAnnotation() {
+    Annotation n = ome.getPlate(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(PLATE_ANNOTATION_ID, n.getID());
+    assertTrue(n instanceof TimestampAnnotation);
+    TimestampAnnotation timestamp = (TimestampAnnotation) n;
+    assertEquals(timestamp.getValue(), PLATE_ANNOTATION_VALUE);
+  }
+
+  @Test(dependsOnMethods={"testValidPlateNode"})
   public void testValidWellSamples() {
     Plate plate = ome.getPlate(0);
     Integer wellSampleIndex = 0;
@@ -465,7 +487,7 @@ public class InOut201004Test {
         WellSample sample = well.getWellSample(0);
         assertNotNull(sample);
         assertEquals(String.format("WellSample:%d_%d", row, col),
-                     sample.getID());
+          sample.getID());
         assertEquals(wellSampleIndex, sample.getIndex());
         Image image = sample.getLinkedImage();
         assertNotNull(image);
@@ -473,6 +495,16 @@ public class InOut201004Test {
         wellSampleIndex++;
       }
     }
+  }
+
+  @Test(dependsOnMethods={"testValidWellSamples"})
+  public void testValidWellAnnotation() {
+    Annotation n = ome.getPlate(0).getWell().getLinkedANnotation(0);
+    assertNotNull(n);
+    assertEquals(WELL_ANNOTATION_ID, n.getID());
+    assertTrue(n instanceof LongAnnotation);
+    LongAnnotation longAnnotation = (LongAnnotation) n;
+    assertEquals(longAnnotation.getValue(), WELL_ANNOTATION_VALUE);
   }
 
   @Test(dependsOnMethods={"testValidOMENode"})
@@ -494,6 +526,16 @@ public class InOut201004Test {
     assertEquals(RECTANGLE_Y, rect.getY());
     assertEquals(RECTANGLE_WIDTH, rect.getWidth());
     assertEquals(RECTANGLE_HEIGHT, rect.getHeight());
+  }
+
+  @Test(dependsOnMethods={"testValidROINode"})
+  public void testValidROIAnnotation() {
+    Annotation n = ome.getROI(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(ROI_ANNOTATION_ID, n.getID());
+    assertTrue(n instanceof StringAnnotation);
+    StringAnnotation string = (StringAnnotation) n;
+    assertEquals(ROI_ANNOTATION_VALUE, string.getValue());
   }
 
   private Image makeImage() {
@@ -622,6 +664,11 @@ public class InOut201004Test {
     plate.setRowNamingConvention(WELL_ROW);
     plate.setColumnNamingConvention(WELL_COL);
 
+    TimestampAnnotation plateAnnotation = new TimestampAnnotation();
+    plateAnnotation.setID(PLATE_ANNOTATION_ID);
+    plateAnnotation.setValue(PLATE_ANNOTATION_VALUE);
+    plate.linkAnnotation(plateAnnotation);
+
     int wellSampleIndex = 0;
     for (int row=0; row<WELL_ROWS; row++) {
       for (int col=0; col<WELL_COLS; col++) {
@@ -629,6 +676,13 @@ public class InOut201004Test {
         well.setID(String.format("Well:%d_%d", row, col));
         well.setRow(row);
         well.setColumn(col);
+
+        if (row == 0 && col == 0) {
+          LongAnnotation annotation = new LongAnnotation();
+          annotation.setID(WELL_ANNOTATION_ID);
+          annotation.setValue(WELL_ANNOTATION_VALUE);
+          well.linkAnnotation(annotation);
+        }
 
         WellSample sample = new WellSample();
         sample.setID(String.format("WellSample:%d_%d", row, col));
@@ -646,6 +700,12 @@ public class InOut201004Test {
   private ROI makeROI() {
     ROI roi = new ROI();
     roi.setID(ROI_ID);
+
+    StringAnnotation roiAnnotation = new StringAnnotation();
+    roiAnnotation.setID(ROI_ANNOTATION_ID);
+    roiAnnotation.setValue(ROI_ANNOTATION_VALUE);
+    roi.linkAnnotation(roiAnnotation);
+
     Union shapeUnion = new Union();
     Rectangle rect = new Rectangle();
     rect.setID(SHAPE_ID);
