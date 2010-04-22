@@ -387,12 +387,17 @@ def debugMain(args):
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
 
-	model = parseXmlSchema(["../../Working/ome.xsd"], namespace)
+	try:
+		options, args = getopt(args, "o:p:n:")
+	except GetoptError, (msg, opt):
+		mainUsage(msg)
+
+	model = parseXmlSchema(args, namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	for obj in model.objects.values():
 		parents = resolve_parents(model, obj.name)
-		if obj.name in ["LightSource"]:
+		if obj.name in ["Plate"]:
 			print "Dump: %s" % obj.__dict__
 			print "Element Dump: %s" % obj.element.__dict__
 			print " +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type)
