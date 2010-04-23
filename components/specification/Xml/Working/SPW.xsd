@@ -77,7 +77,7 @@
 					<xsd:complexType>
 						<xsd:complexContent>
 							<xsd:extension base="OME:Reference">
-								<xsd:attribute name="ID" use="required" type="PlateID"/>
+								<xsd:attribute name="ID" use="required" type="ScreenID"/>
 							</xsd:extension>
 						</xsd:complexContent>
 					</xsd:complexType>
