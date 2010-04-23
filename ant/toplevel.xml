@@ -1093,6 +1093,24 @@ Type "ant -p" for a list of targets.
     <delete dir="${ome-tools.dir}"/>
   </target>
 
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-bftools" if="isUnix">
+    <echo>----------=========== bftools ===========----------</echo>
+    <!--
+    <zip destfile="${artifact.dir}/bftools.zip"
+      basedir="${bftools.dir}">
+      <patternset>
+        <exclude name="*.jar"/>
+      </patternset>
+    </zip>
+    -->
+    <exec executable="zip" dir="${bftools.dir}">
+      <arg value="-r9"/>
+      <arg value="${artifact.dir}/bftools.zip"/>
+      <arg line="${bftools.files}"/>
+    </exec>
+  </target>
+
   <!-- Internal targets -->
 
   <target name="init"/>
