@@ -451,14 +451,14 @@ ${customContent}\
 			// Reference property ${prop.name} which occurs more than once
 			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
-				${prop.type} o = new ${prop.type}();
+				${prop.name} o = new ${prop.name}();
 				o.setID(${prop.javaInstanceVariableName}_value.getID());
 				${klass.name}_element.appendChild(o.asXMLElement(document));
 			}
 {% end %}\
 {% when prop.isReference %}\
 			// Reference property ${prop.name}
-			${prop.type} o = new ${prop.type}();
+			${prop.name} o = new ${prop.name}();
 			o.setID(${prop.javaInstanceVariableName}.getID());
 			${klass.name}_element.appendChild(o.asXMLElement(document));
 {% end %}\
