@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
+ * Created by callan via xsd-fu on 2010-04-23 16:13:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,7 +84,7 @@ public class Screen extends AbstractOMEModelObject
 	// Property which occurs more than once
 	private List<Reagent> reagentList = new ArrayList<Reagent>();
 
-	// Property which occurs more than once
+	// Reference PlateRef
 	private List<Plate> plateList = new ArrayList<Plate>();
 
 	// Reference AnnotationRef
@@ -211,14 +211,14 @@ public class Screen extends AbstractOMEModelObject
 			addReagent(
 					new Reagent(Reagent_element, model));
 		}
-		// Element property PlateRef which is complex (has
-		// sub-elements) and occurs more than once
+		// Element reference PlateRef
 		NodeList PlateRef_nodeList = element.getElementsByTagName("PlateRef");
 		for (int i = 0; i < PlateRef_nodeList.getLength(); i++)
 		{
 			Element PlateRef_element = (Element) PlateRef_nodeList.item(i);
-			addPlate(
-					new Plate(PlateRef_element, model));
+			PlateRef plateList_reference = new PlateRef();
+			plateList_reference.setID(PlateRef_element.getAttribute("ID"));
+			model.addReference(this, plateList_reference);
 		}
 		// Element reference AnnotationRef
 		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
@@ -236,6 +236,12 @@ public class Screen extends AbstractOMEModelObject
 
 	public void link(Reference reference, OMEModelObject o)
 	{
+		if (reference instanceof PlateRef)
+		{
+			Plate o_casted = (Plate) o;
+			o_casted.linkScreen(this);
+			plateList.add(o_casted);
+		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
@@ -367,35 +373,37 @@ public class Screen extends AbstractOMEModelObject
 		reagentList.remove(reagent);
 	}
 
-	// Property which occurs more than once
-	public int sizeOfPlateList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedPlateList()
 	{
 		return plateList.size();
 	}
 
-	public List<Plate> copyPlateList()
+	public List<Plate> copyLinkedPlateList()
 	{
 		return new ArrayList<Plate>(plateList);
 	}
 
-	public Plate getPlate(int index)
+	public Plate getLinkedPlate(int index)
 	{
 		return plateList.get(index);
 	}
 
-	public Plate setPlate(int index, Plate plate)
+	public Plate setLinkedPlate(int index, Plate o)
 	{
-		return plateList.set(index, plate);
+		return plateList.set(index, o);
 	}
 
-	public void addPlate(Plate plate)
+	public boolean linkPlate(Plate o)
 	{
-		plateList.add(plate);
+		o.linkScreen(this);
+		return plateList.add(o);
 	}
 
-	public void removePlate(Plate plate)
+	public boolean unlinkPlate(Plate o)
 	{
-		plateList.remove(plate);
+		o.unlinkScreen(this);
+		return plateList.remove(o);
 	}
 
 	// Reference which occurs more than once
@@ -531,11 +539,12 @@ public class Screen extends AbstractOMEModelObject
 		}
 		if (plateList != null)
 		{
-			// Element property PlateRef which is complex (has
-			// sub-elements) and occurs more than once
+			// Reference property PlateRef which occurs more than once
 			for (Plate plateList_value : plateList)
 			{
-				Screen_element.appendChild(plateList_value.asXMLElement(document));
+				PlateRef o = new PlateRef();
+				o.setID(plateList_value.getID());
+				Screen_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (annotationList != null)

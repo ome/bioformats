@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
+ * Created by callan via xsd-fu on 2010-04-23 16:13:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,13 +49,16 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class PlateRef extends ReferenceWithID
+public class PlateRef extends Reference
 {
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-04";
 
 	// -- Instance variables --
+
+	// Property
+	private String id;
 
 	// -- Constructors --
 
@@ -105,6 +108,17 @@ public class PlateRef extends ReferenceWithID
 			//		"Expecting node name of PlateRef got %s",
 			//		tagName));
 		}
+		if (!element.hasAttribute("ID"))
+		{
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"PlateRef missing required ID property."));
+		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 	}
 
 	// -- PlateRef API methods --
@@ -116,6 +130,17 @@ public class PlateRef extends ReferenceWithID
 				"Unable to handle reference of type: " + reference.getClass());
 	}
 
+
+	// Property
+	public String getID()
+	{
+		return id;
+	}
+
+	public void setID(String id)
+	{
+		this.id = id;
+	}
 
 	public Element asXMLElement(Document document)
 	{
@@ -131,6 +156,11 @@ public class PlateRef extends ReferenceWithID
 					document.createElementNS(NAMESPACE, "PlateRef");
 		}
 
+		if (id != null)
+		{
+			// Attribute property ID
+			PlateRef_element.setAttribute("ID", id.toString());
+		}
 		return super.asXMLElement(document, PlateRef_element);
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
+ * Created by callan via xsd-fu on 2010-04-23 16:13:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,7 +90,7 @@ public class Plate extends AbstractOMEModelObject
 	// Property
 	private String description;
 
-	// Property which occurs more than once
+	// Reference ScreenRef
 	private List<Screen> screenList = new ArrayList<Screen>();
 
 	// Property which occurs more than once
@@ -232,14 +232,14 @@ public class Plate extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// Element property ScreenRef which is complex (has
-		// sub-elements) and occurs more than once
+		// Element reference ScreenRef
 		NodeList ScreenRef_nodeList = element.getElementsByTagName("ScreenRef");
 		for (int i = 0; i < ScreenRef_nodeList.getLength(); i++)
 		{
 			Element ScreenRef_element = (Element) ScreenRef_nodeList.item(i);
-			addScreen(
-					new Screen(ScreenRef_element, model));
+			ScreenRef screenList_reference = new ScreenRef();
+			screenList_reference.setID(ScreenRef_element.getAttribute("ID"));
+			model.addReference(this, screenList_reference);
 		}
 		// Element property Well which is complex (has
 		// sub-elements) and occurs more than once
@@ -275,6 +275,12 @@ public class Plate extends AbstractOMEModelObject
 
 	public void link(Reference reference, OMEModelObject o)
 	{
+		if (reference instanceof ScreenRef)
+		{
+			Screen o_casted = (Screen) o;
+			o_casted.linkPlate(this);
+			screenList.add(o_casted);
+		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
@@ -408,35 +414,37 @@ public class Plate extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Property which occurs more than once
-	public int sizeOfScreenList()
+	// Reference which occurs more than once
+	public int sizeOfLinkedScreenList()
 	{
 		return screenList.size();
 	}
 
-	public List<Screen> copyScreenList()
+	public List<Screen> copyLinkedScreenList()
 	{
 		return new ArrayList<Screen>(screenList);
 	}
 
-	public Screen getScreen(int index)
+	public Screen getLinkedScreen(int index)
 	{
 		return screenList.get(index);
 	}
 
-	public Screen setScreen(int index, Screen screen)
+	public Screen setLinkedScreen(int index, Screen o)
 	{
-		return screenList.set(index, screen);
+		return screenList.set(index, o);
 	}
 
-	public void addScreen(Screen screen)
+	public boolean linkScreen(Screen o)
 	{
-		screenList.add(screen);
+		o.linkPlate(this);
+		return screenList.add(o);
 	}
 
-	public void removeScreen(Screen screen)
+	public boolean unlinkScreen(Screen o)
 	{
-		screenList.remove(screen);
+		o.unlinkPlate(this);
+		return screenList.remove(o);
 	}
 
 	// Property which occurs more than once
@@ -640,11 +648,12 @@ public class Plate extends AbstractOMEModelObject
 		}
 		if (screenList != null)
 		{
-			// Element property ScreenRef which is complex (has
-			// sub-elements) and occurs more than once
+			// Reference property ScreenRef which occurs more than once
 			for (Screen screenList_value : screenList)
 			{
-				Plate_element.appendChild(screenList_value.asXMLElement(document));
+				ScreenRef o = new ScreenRef();
+				o.setID(screenList_value.getID());
+				Plate_element.appendChild(o.asXMLElement(document));
 			}
 		}
 		if (wellList != null)
