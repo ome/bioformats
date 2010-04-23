@@ -108,22 +108,24 @@ public class MINCReader extends FormatReader {
       throw new MissingLibraryException(e);
     }
 
-    Vector<String> variableList = netcdf.getVariableList();
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      Vector<String> variableList = netcdf.getVariableList();
 
-    for (int i=0; i<variableList.size(); i++) {
-      String variable = (String) variableList.get(i);
-      Hashtable<String, Object> attributes = netcdf.getVariableAttributes(variable);
-      String[] keys = attributes.keySet().toArray(new String[0]);
-      Arrays.sort(keys);
+      for (String variable : variableList) {
+        Hashtable<String, Object> attributes =
+          netcdf.getVariableAttributes(variable);
+        String[] keys = attributes.keySet().toArray(new String[0]);
+        Arrays.sort(keys);
 
-      for (int j=0; j<keys.length; j++) {
-        if (attributes.get(keys[j]) instanceof Object[]) {
-          StringBuffer sb = new StringBuffer();
-          Object[] o = (Object[]) attributes.get(keys[j]);
-          for (int q=0; q<o.length; q++) {
-            sb.append(o[q].toString());
+        for (String key : keys) {
+          if (attributes.get(key) instanceof Object[]) {
+            StringBuffer sb = new StringBuffer();
+            Object[] o = (Object[]) attributes.get(key);
+            for (Object q : o) {
+              sb.append(q.toString());
+            }
+            addGlobalMeta(variable + " " + key, sb.toString());
           }
-          addGlobalMeta(variable + " " + keys[j], sb.toString());
         }
       }
     }
@@ -153,7 +155,10 @@ public class MINCReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
-    store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
+    }
   }
 
 }

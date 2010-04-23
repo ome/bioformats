@@ -70,6 +70,8 @@ public class NiftiReader extends FormatReader {
 
   private String pixelsFilename;
   private short nDimensions;
+  private String description;
+  private double voxelWidth, voxelHeight, sliceThickness, deltaT;
 
   // -- Constructor --
 
@@ -90,11 +92,10 @@ public class NiftiReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    int dot = name.lastIndexOf(".") + 1;
-    if (dot == 0) dot = name.length();
-    String extension = name.substring(dot, name.length()).toLowerCase();
-    if (extension.equals("nii")) return true;
-    String headerFile = name.substring(0, dot - 1) + ".hdr";
+    if (checkSuffix(name, "nii")) return true;
+    int dot = name.lastIndexOf(".");
+    if (dot == 0) dot = name.length() - 1;
+    String headerFile = name.substring(0, dot) + ".hdr";
     try {
       RandomAccessInputStream header = new RandomAccessInputStream(headerFile);
       boolean isValid = isThisType(header);
@@ -163,6 +164,8 @@ public class NiftiReader extends FormatReader {
       pixelFile = null;
       pixelsFilename = null;
       nDimensions = 0;
+      description = null;
+      voxelWidth = voxelHeight = sliceThickness = deltaT = 0d;
     }
   }
 
@@ -187,7 +190,7 @@ public class NiftiReader extends FormatReader {
     in.seek(40);
     short check = in.readShort();
     boolean little = check < 1 || check > 7;
-    in.seek(0);
+    in.seek(40);
 
     if (id.endsWith(".hdr")) {
       pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
@@ -203,17 +206,94 @@ public class NiftiReader extends FormatReader {
 
     LOGGER.info("Reading header");
 
-    int fileSize = in.readInt();
-
-    in.skipBytes(35);
-
-    char sliceOrdering = in.readChar();
-
     nDimensions = in.readShort();
-    short x = in.readShort();
-    short y = in.readShort();
-    short z = in.readShort();
-    short t = in.readShort();
+    core[0].sizeX = in.readShort();
+    core[0].sizeY = in.readShort();
+    core[0].sizeZ = in.readShort();
+    core[0].sizeT = in.readShort();
+
+    in.skipBytes(20);
+    short dataType = in.readShort();
+    in.skipBytes(36);
+    pixelOffset = (int) in.readFloat();
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      populateExtendedMetadata();
+    }
+
+    LOGGER.info("Populating core metadata");
+
+    core[0].sizeC = 1;
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
+
+    core[0].imageCount = getSizeZ() * getSizeT();
+    core[0].indexed = false;
+    core[0].dimensionOrder = "XYCZT";
+
+    populatePixelType(dataType);
+    core[0].rgb = getSizeC() > 1;
+    core[0].interleaved = isRGB();
+
+    LOGGER.info("Populating MetadataStore");
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(description, 0);
+      store.setDimensionsPhysicalSizeX(new Double(voxelWidth), 0, 0);
+      store.setDimensionsPhysicalSizeY(new Double(voxelHeight), 0, 0);
+      store.setDimensionsPhysicalSizeZ(new Double(sliceThickness), 0, 0);
+      store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
+    }
+  }
+
+  // -- Helper methods --
+
+  private void populatePixelType(int dataType) throws FormatException {
+    switch (dataType) {
+      case 1:
+      case 2:
+        core[0].pixelType = FormatTools.UINT8;
+        break;
+      case 4:
+        core[0].pixelType = FormatTools.INT16;
+        break;
+      case 8:
+        core[0].pixelType = FormatTools.INT32;
+        break;
+      case 16:
+        core[0].pixelType = FormatTools.FLOAT;
+        break;
+      case 64:
+        core[0].pixelType = FormatTools.DOUBLE;
+        break;
+      case 128:
+        core[0].pixelType = FormatTools.UINT8;
+        core[0].sizeC = 3;
+      case 256:
+        core[0].pixelType = FormatTools.INT8;
+        break;
+      case 512:
+        core[0].pixelType = FormatTools.UINT16;
+        break;
+      case 768:
+        core[0].pixelType = FormatTools.UINT32;
+        break;
+      case 2304:
+        core[0].pixelType = FormatTools.UINT8;
+        core[0].sizeC = 4;
+      default:
+        throw new FormatException("Unsupported data type: " + dataType);
+    }
+  }
+
+  private void populateExtendedMetadata() throws IOException {
+    in.seek(40);
+    char sliceOrdering = in.readChar();
+    in.skipBytes(8);
     short dim5 = in.readShort();
     short dim6 = in.readShort();
     short dim7 = in.readShort();
@@ -224,18 +304,18 @@ public class NiftiReader extends FormatReader {
 
     short intentCode = in.readShort();
     short dataType = in.readShort();
+
     short bitpix = in.readShort();
     short sliceStart = in.readShort();
 
     in.skipBytes(4);
 
-    float voxelWidth = in.readFloat();
-    float voxelHeight = in.readFloat();
-    float sliceThickness = in.readFloat();
-    float deltaT = in.readFloat();
-    in.skipBytes(12);
+    voxelWidth = in.readFloat();
+    voxelHeight = in.readFloat();
+    sliceThickness = in.readFloat();
+    deltaT = in.readFloat();
+    in.skipBytes(16);
 
-    pixelOffset = (int) in.readFloat();
     float scaleSlope = in.readFloat();
     float scaleIntercept = in.readFloat();
     short sliceEnd = in.readShort();
@@ -282,7 +362,7 @@ public class NiftiReader extends FormatReader {
 
     in.skipBytes(8);
 
-    String description = in.readString(80);
+    description = in.readString(80);
     in.skipBytes(24);
 
     short qformCode = in.readShort();
@@ -304,9 +384,8 @@ public class NiftiReader extends FormatReader {
 
     String intentName = in.readString(16);
 
-    in.skipBytes(4);
-
-    if (in.getFilePointer() < in.length()) {
+    if (in.getFilePointer() + 4 < in.length()) {
+      in.skipBytes(4);
       byte extension = in.readByte();
       in.skipBytes(3);
 
@@ -341,10 +420,10 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Intent name", intentName);
     addGlobalMeta("Slice Ordering", sliceOrdering);
     addGlobalMeta("Number of dimensions", nDimensions);
-    addGlobalMeta("Width", x);
-    addGlobalMeta("Height", y);
-    addGlobalMeta("Number of Z slices", z);
-    addGlobalMeta("Number of time points", t);
+    addGlobalMeta("Width", getSizeX());
+    addGlobalMeta("Height", getSizeY());
+    addGlobalMeta("Number of Z slices", getSizeZ());
+    addGlobalMeta("Number of time points", getSizeT());
     addGlobalMeta("Dimension 5", dim5);
     addGlobalMeta("Dimension 6", dim6);
     addGlobalMeta("Dimension 7", dim7);
@@ -375,77 +454,6 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Quaternion x parameter", quaternionX);
     addGlobalMeta("Quaternion y parameter", quaternionY);
     addGlobalMeta("Quaternion z parameter", quaternionZ);
-
-    LOGGER.info("Populating core metadata");
-
-    core[0].sizeX = x;
-    core[0].sizeY = y;
-    core[0].sizeZ = z;
-    core[0].sizeT = t;
-    core[0].sizeC = 1;
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
-
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYZTC";
-
-    switch (dataType) {
-      case 1:
-      case 2:
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 4:
-        core[0].pixelType = FormatTools.INT16;
-        break;
-      case 8:
-        core[0].pixelType = FormatTools.INT32;
-        break;
-      case 16:
-        core[0].pixelType = FormatTools.FLOAT;
-        break;
-      case 64:
-        core[0].pixelType = FormatTools.DOUBLE;
-        break;
-      case 128:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 3;
-        core[0].rgb = true;
-        core[0].interleaved = true;
-        core[0].dimensionOrder = "XYCZT";
-      case 256:
-        core[0].pixelType = FormatTools.INT8;
-        break;
-      case 512:
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      case 768:
-        core[0].pixelType = FormatTools.UINT32;
-        break;
-      case 2304:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 4;
-        core[0].rgb = true;
-        core[0].interleaved = true;
-        core[0].dimensionOrder = "XYCZT";
-      default:
-        throw new FormatException("Unsupported data type: " + dataType);
-    }
-
-    LOGGER.info("Populating MetadataStore");
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-
-    store.setImageDescription(description, 0);
-
-    store.setDimensionsPhysicalSizeX(new Double(voxelWidth), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(voxelHeight), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(sliceThickness), 0, 0);
-    store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
   }
 
 }

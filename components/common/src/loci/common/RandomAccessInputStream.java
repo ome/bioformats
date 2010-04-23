@@ -219,14 +219,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     }
 
     // ensure that we don't try to read more bytes than are in the file
-    if (blockSize > maxLen / 2) {
-      blockSize = (int) (maxLen / 2);
+    if (blockSize > maxLen) {
+      blockSize = (int) maxLen;
     }
 
     InputStreamReader in = new InputStreamReader(this);
     char[] buf = new char[blockSize];
     long loc = 0;
-    while (loc < maxLen && getFilePointer() < length()) {
+    while (loc < maxLen && getFilePointer() < length() - 1) {
       // if we're not saving the string, drop any old, unnecessary output
       if (!saveString) {
         int outLen = out.length();
@@ -248,10 +248,10 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
       // check output, returning smallest possible string
       int min = Integer.MAX_VALUE, tagLen = 0;
-      for (int t=0; t<terminators.length; t++) {
-        int len = terminators[t].length();
+      for (String t : terminators) {
+        int len = t.length();
         int start = (int) (loc - bytesDropped - len);
-        int value = out.indexOf(terminators[t], start < 0 ? 0 : start);
+        int value = out.indexOf(t, start < 0 ? 0 : start);
         if (value >= 0 && value < min) {
           match = true;
           min = value;
@@ -276,7 +276,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
     // no match
     if (tooLong) throw new IOException("Maximum search length reached.");
-    return null;
+    return saveString ? out.toString() : null;
   }
 
   // -- DataInput API methods --

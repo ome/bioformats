@@ -34,6 +34,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -48,6 +49,10 @@ import loci.formats.tiff.TiffParser;
  * @author Thomas Caswell tcaswell at uchicago.edu
  */
 public class MetamorphTiffReader extends BaseTiffReader {
+
+  // -- Constants --
+
+  private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
 
   // -- Constructor --
 
@@ -75,14 +80,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    String[] comments = new String[ifds.size()];
-
     // parse XML comment
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
-    for (int i=0; i<comments.length; i++) {
-      comments[i] = ifds.get(i).getComment();
-      XMLTools.parseXML(comments[i], handler);
+    for (IFD ifd : ifds) {
+      XMLTools.parseXML(ifd.getComment(), handler);
     }
 
     core[0].sizeC = 0;
@@ -95,8 +97,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // calculate axis sizes
 
     Vector<Integer> uniqueC = new Vector<Integer>();
-    for (int i=0; i<wavelengths.size(); i++) {
-      Integer c = wavelengths.get(i);
+    for (Integer c : wavelengths) {
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
       }
@@ -106,8 +107,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     core[0].sizeC = effectiveC * ifds.get(0).getSamplesPerPixel();
 
     Vector<Double> uniqueZ = new Vector<Double>();
-    for (int i=0; i<zPositions.size(); i++) {
-      Double z = zPositions.get(i);
+    for (Double z : zPositions) {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
     core[0].sizeZ = uniqueZ.size();
@@ -117,43 +117,43 @@ public class MetamorphTiffReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
     store.setImageName(handler.getImageName(), 0);
-    store.setImageDescription("", 0);
-
-    String parse = "yyyyMMdd HH:mm:ss.SSS";
-
-    for (int i=0; i<timestamps.size(); i++) {
-      long timestamp = DateTools.getTime(timestamps.get(i), parse);
-      addGlobalMeta("timestamp " + i, timestamp);
-    }
-    for (int i=0; i<exposures.size(); i++) {
-      addGlobalMeta("exposure time " + i + " (ms)",
-        exposures.get(i).floatValue() * 1000);
-    }
-
-    long startDate = 0;
-    if (timestamps.size() > 0) {
-      startDate = DateTools.getTime(timestamps.get(0), parse);
-    }
-
-    for (int i=0; i<getImageCount(); i++) {
-      int[] coords = getZCTCoords(i);
-      if (coords[2] < timestamps.size()) {
-        String stamp = timestamps.get(coords[2]);
-        long ms = DateTools.getTime(stamp, parse);
-        store.setPlaneTimingDeltaT((ms - startDate) / 1000.0, 0, 0, i);
-      }
-      if (i < exposures.size()) {
-        store.setPlaneTimingExposureTime(exposures.get(i), 0, 0, i);
-      }
-    }
 
     String date =
       DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
     store.setImageCreationDate(date, 0);
 
-    store.setImagingEnvironmentTemperature(
-      handler.getTemperature(), 0);
-    store.setDimensionsPhysicalSizeX(handler.getPixelSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY(handler.getPixelSizeY(), 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=0; i<timestamps.size(); i++) {
+        long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT);
+        addGlobalMeta("timestamp " + i, timestamp);
+      }
+      for (int i=0; i<exposures.size(); i++) {
+        addGlobalMeta("exposure time " + i + " (ms)",
+          exposures.get(i).floatValue() * 1000);
+      }
+
+      long startDate = 0;
+      if (timestamps.size() > 0) {
+        startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT);
+      }
+
+      store.setImageDescription("", 0);
+
+      for (int i=0; i<getImageCount(); i++) {
+        int[] coords = getZCTCoords(i);
+        if (coords[2] < timestamps.size()) {
+          String stamp = timestamps.get(coords[2]);
+          long ms = DateTools.getTime(stamp, DATE_FORMAT);
+          store.setPlaneTimingDeltaT((ms - startDate) / 1000.0, 0, 0, i);
+        }
+        if (i < exposures.size()) {
+          store.setPlaneTimingExposureTime(exposures.get(i), 0, 0, i);
+        }
+      }
+
+      store.setImagingEnvironmentTemperature(handler.getTemperature(), 0);
+      store.setDimensionsPhysicalSizeX(handler.getPixelSizeX(), 0, 0);
+      store.setDimensionsPhysicalSizeY(handler.getPixelSizeY(), 0, 0);
+    }
   }
 }

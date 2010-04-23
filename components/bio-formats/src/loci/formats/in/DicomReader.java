@@ -423,13 +423,16 @@ public class DicomReader extends FormatReader {
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
     LOGGER.info("Verifying DICOM format");
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     in.seek(128);
     if (in.readString(4).equals("DICM")) {
-      // header exists, so we'll read it
-      in.seek(0);
-      addSeriesMeta("Header information", in.readString(128));
-      in.skipBytes(4);
+      if (level == MetadataLevel.ALL) {
+        // header exists, so we'll read it
+        in.seek(0);
+        addSeriesMeta("Header information", in.readString(128));
+        in.skipBytes(4);
+      }
       location = 128;
     }
     else in.seek(0);
@@ -466,8 +469,8 @@ public class DicomReader extends FormatReader {
           else if (s.startsWith("1.2.840.10008.1.2.5")) isRLE = true;
           else if (s.equals("1.2.8.10008.1.2.1.99")) isDeflate = true;
           else if (s.indexOf("1.2.4") > -1 || s.indexOf("1.2.5") > -1) {
-            throw new FormatException("Sorry, compressed DICOM images not " +
-              "supported");
+            throw new FormatException("Sorry, compression type " + s +
+              " not supported");
           }
           if (s.indexOf("1.2.840.10008.1.2.2") >= 0) {
             bigEndianTransferSyntax = true;
@@ -481,9 +484,6 @@ public class DicomReader extends FormatReader {
           break;
         case SAMPLES_PER_PIXEL:
           addInfo(tag, in.readShort());
-          break;
-        case PHOTOMETRIC_INTERPRETATION:
-          addInfo(tag, in.readString(elementLength));
           break;
         case PLANAR_CONFIGURATION:
           int config = in.readShort();
@@ -500,10 +500,12 @@ public class DicomReader extends FormatReader {
           else in.skipBytes(2);
           addInfo(tag, getSizeX());
           break;
+        case PHOTOMETRIC_INTERPRETATION:
         case PIXEL_SPACING:
-          addInfo(tag, in.readString(elementLength));
-          break;
         case SLICE_SPACING:
+        case RESCALE_INTERCEPT:
+        case WINDOW_CENTER:
+        case RESCALE_SLOPE:
           addInfo(tag, in.readString(elementLength));
           break;
         case BITS_ALLOCATED:
@@ -515,9 +517,6 @@ public class DicomReader extends FormatReader {
           short ss = in.readShort();
           signed = ss == 1;
           addInfo(tag, ss);
-          break;
-        case RESCALE_INTERCEPT:
-          addInfo(tag, in.readString(elementLength));
           break;
         case 537262910:
         case WINDOW_WIDTH:
@@ -532,10 +531,6 @@ public class DicomReader extends FormatReader {
             }
           }
           addInfo(tag, t);
-          break;
-        case WINDOW_CENTER:
-        case RESCALE_SLOPE:
-          addInfo(tag, in.readString(elementLength));
           break;
         case PIXEL_DATA:
         case ITEM:
@@ -646,59 +641,7 @@ public class DicomReader extends FormatReader {
       else offsets[i] = baseOffset + plane*i;
     }
 
-    LOGGER.info("Building file list");
-
-    if (fileList == null && originalInstance != null && originalDate != null &&
-      originalTime != null && isGroupFiles())
-    {
-      currentId = new Location(currentId).getAbsolutePath();
-      fileList = new Hashtable<Integer, Vector<String>>();
-      Integer s = new Integer(originalSeries);
-      fileList.put(s, new Vector<String>());
-
-      int instanceNumber = Integer.parseInt(originalInstance) - 1;
-      if (instanceNumber == 0) fileList.get(s).add(currentId);
-      else {
-        while (instanceNumber > fileList.get(s).size()) {
-          fileList.get(s).add(null);
-        }
-        fileList.get(s).add(currentId);
-      }
-
-      // look for matching files in the current directory
-      Location currentFile = new Location(currentId).getAbsoluteFile();
-      Location directory = currentFile.getParentFile();
-      scanDirectory(directory, false);
-
-      // move up a directory and look for other directories that
-      // could contain matching files
-
-      directory = directory.getParentFile();
-      String[] subdirs = directory.list(true);
-      if (subdirs != null) {
-        for (String subdir : subdirs) {
-          Location f = new Location(directory, subdir).getAbsoluteFile();
-          if (!f.isDirectory()) continue;
-          scanDirectory(f, true);
-        }
-      }
-
-      Integer[] keys = fileList.keySet().toArray(new Integer[0]);
-      Arrays.sort(keys);
-      for (Integer key : keys) {
-        for (int j=0; j<fileList.get(key).size(); j++) {
-          if (fileList.get(key).get(j) == null) {
-            fileList.get(key).remove(j);
-            j--;
-          }
-        }
-      }
-    }
-    else if (fileList == null) {
-      fileList = new Hashtable<Integer, Vector<String>>();
-      fileList.put(new Integer(0), new Vector<String>());
-      fileList.get(0).add(currentId);
-    }
+    makeFileList();
 
     LOGGER.info("Populating metadata");
 
@@ -745,21 +688,21 @@ public class DicomReader extends FormatReader {
     for (int i=0; i<core.length; i++) {
       if (stamp != null) store.setImageCreationDate(stamp, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
-      store.setImageDescription(imageType, i);
       store.setImageName("Series " + i, i);
-
-      if (pixelSizeX != null) {
-        store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
-      }
-      if (pixelSizeY != null) {
-        store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
-      }
     }
 
-    // CTR CHECK
-    //store.setInstrumentManufacturer((String) getMeta("Manufacturer"), 0);
-    //store.setInstrumentModel((String)
-    //  getMeta("Manufacturer's Model Name"), 0);
+    if (level == MetadataLevel.ALL) {
+      for (int i=0; i<core.length; i++) {
+        store.setImageDescription(imageType, i);
+
+        if (pixelSizeX != null) {
+          store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
+        }
+        if (pixelSizeY != null) {
+          store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
+        }
+      }
+    }
   }
 
   // -- Helper methods --
@@ -772,10 +715,9 @@ public class DicomReader extends FormatReader {
       info = info.trim();
       if (info.equals("")) info = oldValue == null ? "" : oldValue.trim();
 
-      String key = TYPES.get(new Integer(tag));
+      String key = TYPES.get(tag);
       if (key == null) {
-        key = Integer.toHexString((tag >> 16) & 0xffff) + "," +
-          Integer.toHexString(tag & 0xffff);
+        key = formatTag(tag);
       }
       if (key.equals("Samples per pixel")) {
         core[0].sizeC = Integer.parseInt(info);
@@ -1060,6 +1002,62 @@ public class DicomReader extends FormatReader {
     return tag;
   }
 
+  private void makeFileList() throws FormatException, IOException {
+    LOGGER.info("Building file list");
+
+    if (fileList == null && originalInstance != null && originalDate != null &&
+      originalTime != null && isGroupFiles())
+    {
+      currentId = new Location(currentId).getAbsolutePath();
+      fileList = new Hashtable<Integer, Vector<String>>();
+      Integer s = new Integer(originalSeries);
+      fileList.put(s, new Vector<String>());
+
+      int instanceNumber = Integer.parseInt(originalInstance) - 1;
+      if (instanceNumber == 0) fileList.get(s).add(currentId);
+      else {
+        while (instanceNumber > fileList.get(s).size()) {
+          fileList.get(s).add(null);
+        }
+        fileList.get(s).add(currentId);
+      }
+
+      // look for matching files in the current directory
+      Location currentFile = new Location(currentId).getAbsoluteFile();
+      Location directory = currentFile.getParentFile();
+      scanDirectory(directory, false);
+
+      // move up a directory and look for other directories that
+      // could contain matching files
+
+      directory = directory.getParentFile();
+      String[] subdirs = directory.list(true);
+      if (subdirs != null) {
+        for (String subdir : subdirs) {
+          Location f = new Location(directory, subdir).getAbsoluteFile();
+          if (!f.isDirectory()) continue;
+          scanDirectory(f, true);
+        }
+      }
+
+      Integer[] keys = fileList.keySet().toArray(new Integer[0]);
+      Arrays.sort(keys);
+      for (Integer key : keys) {
+        for (int j=0; j<fileList.get(key).size(); j++) {
+          if (fileList.get(key).get(j) == null) {
+            fileList.get(key).remove(j);
+            j--;
+          }
+        }
+      }
+    }
+    else if (fileList == null) {
+      fileList = new Hashtable<Integer, Vector<String>>();
+      fileList.put(new Integer(0), new Vector<String>());
+      fileList.get(0).add(currentId);
+    }
+  }
+
   // -- Utility methods --
 
   /**
@@ -1077,10 +1075,10 @@ public class DicomReader extends FormatReader {
     String[] files = dir.list(true);
     if (files == null) return;
     Arrays.sort(files);
-    for (int i=0; i<files.length; i++) {
-      String file = new Location(dir, files[i]).getAbsolutePath();
+    for (String f : files) {
+      String file = new Location(dir, f).getAbsolutePath();
       LOGGER.debug("Checking file {}", file);
-      if (!files[i].equals(currentId) && !file.equals(currentId) &&
+      if (!f.equals(currentId) && !file.equals(currentId) &&
         isThisType(file) && Arrays.binarySearch(patternFiles, file) >= 0)
       {
         addFileToList(file, checkSeries);
@@ -1095,7 +1093,10 @@ public class DicomReader extends FormatReader {
     throws FormatException, IOException
   {
     RandomAccessInputStream stream = new RandomAccessInputStream(file);
-    if (!isThisType(stream)) return;
+    if (!isThisType(stream)) {
+      stream.close();
+      return;
+    }
     stream.order(true);
 
     stream.seek(128);
@@ -1146,8 +1147,7 @@ public class DicomReader extends FormatReader {
     }
     catch (NumberFormatException e) { }
 
-    if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150))
-    {
+    if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150)) {
       int position = Integer.parseInt(instance) - 1;
       if (position < 0) position = 0;
       if (fileList.get(fileSeries) == null) {

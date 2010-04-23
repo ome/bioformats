@@ -161,8 +161,7 @@ public class NRRDReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     helper = new ImageReader();
 
-    boolean finished = false;
-    String line, key, v;
+    String key, v;
 
     int numDimensions = 0;
 
@@ -173,11 +172,9 @@ public class NRRDReader extends FormatReader {
     core[0].sizeT = 1;
     core[0].dimensionOrder = "XYCZT";
 
-    while (!finished) {
-      line = in.readLine().trim();
-      if (!line.startsWith("#") && line.length() > 0 &&
-        !line.startsWith("NRRD"))
-      {
+    String line = in.readLine();
+    while (line != null && line.length() > 0) {
+      if (!line.startsWith("#") && !line.startsWith("NRRD")) {
         // parse key/value pair
         key = line.substring(0, line.indexOf(":")).trim();
         v = line.substring(line.indexOf(":") + 1).trim();
@@ -239,12 +236,8 @@ public class NRRDReader extends FormatReader {
         }
       }
 
-      if ((line.length() == 0 && dataFile == null) || line == null) {
-        finished = true;
-      }
-      if (dataFile != null && (in.length() - in.getFilePointer() < 2)) {
-        finished = true;
-      }
+      line = in.readLine();
+      if (line != null) line = line.trim();
     }
 
     // nrrd files store pixel data in addition to metadata
@@ -253,11 +246,14 @@ public class NRRDReader extends FormatReader {
 
     if (dataFile == null) offset = in.getFilePointer();
     else {
-      File f = new File(currentId);
-      if (f.exists() && f.getParentFile() != null) {
-        dataFile =
-          f.getParentFile().getAbsolutePath() + File.separator + dataFile;
+      offset = 0;
+      Location f = new Location(currentId).getAbsoluteFile();
+      Location parent = f.getParentFile();
+      if (f.exists() && parent != null) {
+        dataFile = new Location(parent, dataFile).getAbsolutePath();
       }
+      // calling setId on dataFile will cause this reader to pick up
+      // the data file
       String name = dataFile.substring(dataFile.lastIndexOf(File.separator));
       Location.mapId(name, dataFile);
       helper.setId(name);
@@ -275,11 +271,13 @@ public class NRRDReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    for (int i=0; i<pixelSizes.length; i++) {
-      Double d = new Double(pixelSizes[i].trim());
-      if (i == 0) store.setDimensionsPhysicalSizeX(d, 0, 0);
-      else if (i == 1) store.setDimensionsPhysicalSizeY(d, 0, 0);
-      else if (i == 2) store.setDimensionsPhysicalSizeZ(d, 0, 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=0; i<pixelSizes.length; i++) {
+        Double d = new Double(pixelSizes[i].trim());
+        if (i == 0) store.setDimensionsPhysicalSizeX(d, 0, 0);
+        else if (i == 1) store.setDimensionsPhysicalSizeY(d, 0, 0);
+        else if (i == 2) store.setDimensionsPhysicalSizeZ(d, 0, 0);
+      }
     }
   }
 
