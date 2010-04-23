@@ -47,9 +47,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.PatternLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,11 +74,6 @@ public final class ImageConverter {
   public static boolean testConvert(IFormatWriter writer, String[] args)
     throws FormatException, IOException
   {
-    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%m%n"));
-    root.addAppender(appender);
-
     String in = null, out = null;
     String map = null;
     String compression = null;
@@ -92,7 +84,9 @@ public final class ImageConverter {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-debug")) {
-            root.setLevel(Level.DEBUG);
+            LOGGER.warn("To enable debugging, edit the log4j.properties file,");
+            LOGGER.warn("changing log4j.rootCategory from INFO to DEBUG");
+            LOGGER.warn("(or TRACE for extreme verbosity).");
           }
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
@@ -209,7 +203,7 @@ public final class ImageConverter {
     }
 
     String format = writer.getFormat();
-    LOGGER.info("[{}] -> {} [{}] ",
+    LOGGER.info("[{}] -> {} [{}]",
       new Object[] {reader.getFormat(), out, format});
     long mid = System.currentTimeMillis();
 
@@ -227,13 +221,12 @@ public final class ImageConverter {
       return false;
     }
 
-    appender.setLayout(new PatternLayout("%m"));
-
     int total = 0;
     int num = writer.canDoStacks() ? reader.getSeriesCount() : 1;
     long read = 0, write = 0;
     int first = series == -1 ? 0 : series;
     int last = series == -1 ? num : series + 1;
+    long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
       writer.setInterleaved(reader.isInterleaved());
@@ -255,15 +248,31 @@ public final class ImageConverter {
         boolean lastInSeries = i == numImages - 1;
         writer.saveBytes(buf, q, lastInSeries, q == last - 1 && lastInSeries);
         long e = System.currentTimeMillis();
-        LOGGER.info(".");
         read += m - s;
         write += e - m;
+
+        // log number of planes processed every second or so
+        if (i == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
+          int current = i + 1;
+          int percent = 100 * current / numImages;
+          StringBuilder sb = new StringBuilder();
+          sb.append("\t");
+          int numSeries = last - first;
+          if (numSeries > 1) {
+            sb.append("Series ");
+            sb.append(q);
+            sb.append(": converted ");
+          }
+          else sb.append("Converted ");
+          LOGGER.info(sb.toString() + "{}/{} planes ({}%)",
+            new Object[] {current, numImages, percent});
+          timeLastLogged = e;
+        }
       }
     }
     writer.close();
     long end = System.currentTimeMillis();
-    appender.setLayout(new PatternLayout("%m%n"));
-    LOGGER.info(" [done]");
+    LOGGER.info("[done]");
 
     // output timing results
     float sec = (end - start) / 1000f;

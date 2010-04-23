@@ -32,9 +32,6 @@ import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.PatternLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,10 +158,6 @@ public class PrintFormatTable {
   }
 
   public static void printSupportedFormats(String[] args) {
-    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
-
     PrintStyles printStyle = PrintStyles.TXT;
 
     boolean usage = false;

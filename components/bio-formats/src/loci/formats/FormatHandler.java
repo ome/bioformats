@@ -26,6 +26,9 @@ package loci.formats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// HACK: for scan-deps.pl: The following packages are not actually "optional":
+// optional org.apache.log4j, optional org.slf4j.impl
+
 /**
  * Abstract superclass of all biological file format readers and writers.
  *

@@ -61,9 +61,6 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.PatternLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +77,7 @@ public class ImageInfo {
   // -- Constants --
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
+  private static final String NEWLINE = System.getProperty("line.separator");
 
   // -- Fields --
 
@@ -121,19 +119,9 @@ public class ImageInfo {
   private Double[] prePlaneMin = null, prePlaneMax = null;
   private boolean preIsMinMaxPop = false;
 
-  private ConsoleAppender appender;
-  private PatternLayout originalLayout;
-  private PatternLayout altLayout = new PatternLayout("%m");
-
   // -- ImageInfo methods --
 
   public void parseArgs(String[] args) {
-    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    originalLayout = new PatternLayout("%m%n");
-    appender = new ConsoleAppender(originalLayout);
-    root.addAppender(appender);
-
     id = null;
     printVersion = false;
     pixels = true;
@@ -181,7 +169,9 @@ public class ImageInfo {
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-debug")) {
-          root.setLevel(Level.DEBUG);
+          LOGGER.warn("To enable debugging, edit the log4j.properties file,");
+          LOGGER.warn("changing log4j.rootCategory from INFO to DEBUG");
+          LOGGER.warn("(or TRACE for extreme verbosity).");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
@@ -191,9 +181,6 @@ public class ImageInfo {
           yCoordinate = Integer.parseInt(st.nextToken());
           width = Integer.parseInt(st.nextToken());
           height = Integer.parseInt(st.nextToken());
-        }
-        else if (args[i].equals("-level")) {
-          root.setLevel(Level.TRACE);
         }
         else if (args[i].equals("-range")) {
           try {
@@ -397,7 +384,8 @@ public class ImageInfo {
     if (!doCore) return; // skip core metadata printout
 
     // read basic metadata
-    LOGGER.info("\nReading core metadata");
+    LOGGER.info("");
+    LOGGER.info("Reading core metadata");
     LOGGER.info("{} = {}", stitch ? "File pattern" : "Filename",
       stitch ? id : reader.getCurrentFile());
     if (map != null) LOGGER.info("Mapped filename = {}", map);
@@ -430,8 +418,8 @@ public class ImageInfo {
     int seriesCount = reader.getSeriesCount();
     LOGGER.info("Series count = {}", seriesCount);
     MetadataStore ms = reader.getMetadataStore();
-    MetadataRetrieve mr = ms instanceof MetadataRetrieve? (MetadataRetrieve) ms
-        : null;
+    MetadataRetrieve mr = ms instanceof MetadataRetrieve ?
+      (MetadataRetrieve) ms : null;
     for (int j=0; j<seriesCount; j++) {
       reader.setSeries(j);
 
@@ -475,20 +463,27 @@ public class ImageInfo {
       }
       LOGGER.info("\tInterleaved = {}", interleaved);
 
-      appender.setLayout(altLayout);
-
-      LOGGER.info("\tIndexed = {} ({} color", indexed, !falseColor);
+      StringBuilder sb = new StringBuilder();
+      sb.append("\tIndexed = ");
+      sb.append(indexed);
+      sb.append("(");
+      sb.append(!falseColor);
+      sb.append("color");
       if (table8 != null) {
-        LOGGER.info(", 8-bit LUT: {} x ", table8.length);
-        LOGGER.info(table8[0] == null ? "null" : "" + table8[0].length);
+        sb.append(", 8-bit LUT: ");
+        sb.append(table8.length);
+        sb.append("x ");
+        sb.append(table8[0] == null ? "null" : "" + table8[0].length);
       }
       if (table16 != null) {
-        LOGGER.info(", 16-bit LUT: {} x ", table16.length);
-        LOGGER.info(table16[0] == null ? "null" : "" + table16[0].length);
+        sb.append(", 16-bit LUT: ");
+        sb.append(table16.length);
+        sb.append("x ");
+        sb.append(table16[0] == null ? "null" : "" + table16[0].length);
       }
+      sb.append(")");
+      LOGGER.info(sb.toString());
 
-      appender.setLayout(originalLayout);
-      LOGGER.info(")");
       if (table8 != null && table16 != null) {
         LOGGER.warn("\t************ multiple LUTs ************");
       }
@@ -497,26 +492,31 @@ public class ImageInfo {
       LOGGER.info("\tSizeZ = {}", sizeZ);
       LOGGER.info("\tSizeT = {}", sizeT);
 
-      appender.setLayout(altLayout);
-      LOGGER.info("\tSizeC = {}", sizeC);
+      sb.setLength(0);
+      sb.append("\tSizeC = ");
+      sb.append(sizeC);
       if (sizeC != effSizeC) {
-        LOGGER.info(" (effectively {})", effSizeC);
+        sb.append(" (effectively ");
+        sb.append(effSizeC);
+        sb.append(")");
       }
       int cProduct = 1;
       if (cLengths.length == 1 && FormatTools.CHANNEL.equals(cTypes[0])) {
         cProduct = cLengths[0];
       }
       else {
-        LOGGER.info(" (");
+        sb.append(" (");
         for (int i=0; i<cLengths.length; i++) {
-          if (i > 0) LOGGER.info(" x ");
-          LOGGER.info("{} {}", cLengths[i], cTypes[i]);
+          if (i > 0) sb.append(" x ");
+          sb.append(cLengths[i]);
+          sb.append(" ");
+          sb.append(cTypes[i]);
           cProduct *= cLengths[i];
         }
-        LOGGER.info(")");
+        sb.append(")");
       }
-      appender.setLayout(originalLayout);
-      LOGGER.info("");
+      LOGGER.info(sb.toString());
+
       if (cLengths.length == 0 || cProduct != sizeC) {
         LOGGER.warn("\t************ C dimension mismatch ************");
       }
@@ -549,18 +549,28 @@ public class ImageInfo {
         else indices = new int[] {0};
         int[][] zct = new int[indices.length][];
         int[] indices2 = new int[indices.length];
-        appender.setLayout(altLayout);
+
+        sb.setLength(0);
         for (int i=0; i<indices.length; i++) {
           zct[i] = reader.getZCTCoords(indices[i]);
           indices2[i] = reader.getIndex(zct[i][0], zct[i][1], zct[i][2]);
-          LOGGER.info("\tPlane #{} <=> Z {}, C {}, T {}",
-            new Object[] {indices[i], zct[i][0], zct[i][1], zct[i][2]});
+          sb.append("\tPlane #");
+          sb.append(indices[i]);
+          sb.append(" <=> Z ");
+          sb.append(zct[i][0]);
+          sb.append(", C ");
+          sb.append(zct[i][1]);
+          sb.append(", T ");
+          sb.append(zct[i][2]);
           if (indices[i] != indices2[i]) {
-            LOGGER.info(" [mismatch: {}]\r\n", indices2[i]);
+            sb.append(" [mismatch: ");
+            sb.append(indices2[i]);
+            sb.append("]");
+            sb.append(NEWLINE);
           }
-          else LOGGER.info("\r\n");
+          else sb.append(NEWLINE);
         }
-        appender.setLayout(originalLayout);
+        LOGGER.info(sb.toString());
       }
     }
   }
@@ -607,7 +617,8 @@ public class ImageInfo {
     boolean isMinMaxPop = minMaxCalc.isMinMaxPopulated();
 
     // output min/max results
-    LOGGER.info("\nMin/max values:");
+    LOGGER.info("");
+    LOGGER.info("Min/max values:");
     for (int c=0; c<sizeC; c++) {
       LOGGER.info("\tChannel {}:", c);
       LOGGER.info("\t\tGlobal minimum = {} (initially {})",
@@ -619,40 +630,46 @@ public class ImageInfo {
       LOGGER.info("\t\tKnown maximum = {} (initially {})",
         knownMax[c], preKnownMax[c]);
     }
-    appender.setLayout(altLayout);
-    LOGGER.info("\tFirst plane minimum(s) =");
-    if (planeMin == null) LOGGER.info(" none");
+    StringBuilder sb = new StringBuilder();
+    sb.append("\tFirst plane minimum(s) =");
+    if (planeMin == null) sb.append(" none");
     else {
       for (int subC=0; subC<planeMin.length; subC++) {
-        LOGGER.info(" {}", planeMin[subC]);
+        sb.append(" ");
+        sb.append(planeMin[subC]);
       }
     }
-    LOGGER.info(" (initially");
-    if (prePlaneMin == null) LOGGER.info(" none");
+    sb.append(" (initially");
+    if (prePlaneMin == null) sb.append(" none");
     else {
       for (int subC=0; subC<prePlaneMin.length; subC++) {
-        LOGGER.info(" {}", prePlaneMin[subC]);
+        sb.append(" ");
+        sb.append(prePlaneMin[subC]);
       }
     }
-    appender.setLayout(originalLayout);
-    LOGGER.info(")");
-    appender.setLayout(altLayout);
-    LOGGER.info("\tFirst plane maximum(s) =");
-    if (planeMax == null) LOGGER.info(" none");
+    sb.append(")");
+    LOGGER.info(sb.toString());
+
+    sb.setLength(0);
+    sb.append("\tFirst plane maximum(s) =");
+    if (planeMax == null) sb.append(" none");
     else {
       for (int subC=0; subC<planeMax.length; subC++) {
-        LOGGER.info(" {}", planeMax[subC]);
+        sb.append(" ");
+        sb.append(planeMax[subC]);
       }
     }
-    LOGGER.info(" (initially");
-    if (prePlaneMax == null) LOGGER.info(" none");
+    sb.append(" (initially");
+    if (prePlaneMax == null) sb.append(" none");
     else {
       for (int subC=0; subC<prePlaneMax.length; subC++) {
-        LOGGER.info(" {}", prePlaneMax[subC]);
+        sb.append(" ");
+        sb.append(prePlaneMax[subC]);
       }
     }
-    appender.setLayout(originalLayout);
-    LOGGER.info(")");
+    sb.append(")");
+    LOGGER.info(sb.toString());
+
     LOGGER.info("\tMin/max populated = {} (initially {})",
       isMinMaxPop, preIsMinMaxPop);
   }
@@ -661,14 +678,16 @@ public class ImageInfo {
     String seriesLabel = reader.getSeriesCount() > 1 ?
       (" series #" + series) : "";
     LOGGER.info("");
-    appender.setLayout(altLayout);
-    LOGGER.info("Reading {} pixel data ", seriesLabel);
+
     int num = reader.getImageCount();
     if (start < 0) start = 0;
     if (start >= num) start = num - 1;
     if (end < 0) end = 0;
     if (end >= num) end = num - 1;
     if (end < start) end = start;
+
+    LOGGER.info("Reading{} pixel data ({}-{})",
+      new Object[] {seriesLabel, start, end});
 
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
@@ -677,10 +696,9 @@ public class ImageInfo {
 
     int pixelType = reader.getPixelType();
 
-    LOGGER.info("({}-{}) ", start, end);
     BufferedImage[] images = new BufferedImage[end - start + 1];
-    long s2 = System.currentTimeMillis();
-    boolean mismatch = false;
+    long s = System.currentTimeMillis();
+    long timeLastLogged = s;
     for (int i=start; i<=end; i++) {
       if (!fastBlit) {
         images[i - start] = thumbs ? biReader.openThumbImage(i) :
@@ -732,35 +750,39 @@ public class ImageInfo {
       if (reader.isIndexed() && reader.get8BitLookupTable() == null &&
         reader.get16BitLookupTable() == null)
       {
-        LOGGER.info("\r\n");
-        LOGGER.warn("************ no LUT for plane #{} ************", i);
+        LOGGER.info(NEWLINE);
+        LOGGER.warn("\t************ no LUT for plane #{} ************", i);
       }
 
       // check for pixel type mismatch
       int pixType = AWTImageTools.getPixelType(images[i - start]);
       if (pixType != pixelType && pixType != pixelType + 1 && !fastBlit) {
-        if (!mismatch) {
-          LOGGER.info("\r\n");
-          mismatch = true;
-        }
         LOGGER.info("\tPlane #{}: pixel type mismatch: {}/{}",
           new Object[] {i, FormatTools.getPixelTypeString(pixType),
           FormatTools.getPixelTypeString(pixelType)});
       }
       else {
-        mismatch = false;
-        LOGGER.info(".");
+        // log number of planes read every second or so
+        long t = System.currentTimeMillis();
+        if (i == end || (t - timeLastLogged) / 1000 > 0) {
+          int current = i - start + 1;
+          int total = end - start + 1;
+          int percent = 100 * current / total;
+          LOGGER.info("\tRead {}/{} planes ({}%)", new Object[] {
+            current, total, percent
+          });
+          timeLastLogged = t;
+        }
       }
     }
-    long e2 = System.currentTimeMillis();
-    if (!mismatch) LOGGER.info(" ");
-    appender.setLayout(originalLayout);
+    long e = System.currentTimeMillis();
+
     LOGGER.info("[done]");
 
     // output timing results
-    float sec2 = (e2 - s2) / 1000f;
-    float avg = (float) (e2 - s2) / images.length;
-    LOGGER.info("{}s elapsed ({}ms per plane)", sec2, avg);
+    float sec = (e - s) / 1000f;
+    float avg = (float) (e - s) / images.length;
+    LOGGER.info("{}s elapsed ({}ms per plane)", sec, avg);
 
     if (minmax) printMinMaxValues();
 
@@ -852,11 +874,11 @@ public class ImageInfo {
     configureReaderPreInit();
 
     // initialize reader
-    long s1 = System.currentTimeMillis();
+    long s = System.currentTimeMillis();
     reader.setId(id);
-    long e1 = System.currentTimeMillis();
-    float sec1 = (e1 - s1) / 1000f;
-    LOGGER.info("Initialization took {}s", sec1);
+    long e = System.currentTimeMillis();
+    float sec = (e - s) / 1000f;
+    LOGGER.info("Initialization took {}s", sec);
 
     configureReaderPostInit();
     checkWarnings();

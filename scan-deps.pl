@@ -603,7 +603,7 @@ ZZ
 
 my %slf4j_impl = (
   NAME    => "slf4j-log4j",
-  TITLE   => "Simple Logging Facade for Java Binding",
+  TITLE   => "Simple Logging Facade for Java log4j Binding",
   JAR     => "slf4j-log4j12-1.5.10.jar",
   PACKAGE => "org.slf4j.impl",
   LICENSE => "BSD",

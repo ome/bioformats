@@ -27,7 +27,7 @@ if "%LOCI_DEVEL%" == "" (
 
 :found
 rem Library found; try to launch
-java -cp "%DIR%bio-formats.jar";"%DIR%loci_tools.jar" %PROG% %*
+java -cp "%DIR%";"%DIR%bio-formats.jar";"%DIR%loci_tools.jar" %PROG% %*
 goto end
 
 :missing
