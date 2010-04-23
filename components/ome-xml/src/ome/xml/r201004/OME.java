@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -105,12 +105,15 @@ public class OME extends AbstractOMEModelObject
 	 * Constructs OME recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public OME(Element element) throws EnumerationException
+	public OME(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -118,10 +121,13 @@ public class OME extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -148,7 +154,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Project_element = (Element) Project_nodeList.item(i);
 			addProject(
-					new Project(Project_element));
+					new Project(Project_element, model));
 		}
 		// Element property Dataset which is complex (has
 		// sub-elements) and occurs more than once
@@ -157,7 +163,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Dataset_element = (Element) Dataset_nodeList.item(i);
 			addDataset(
-					new Dataset(Dataset_element));
+					new Dataset(Dataset_element, model));
 		}
 		// Element property Experiment which is complex (has
 		// sub-elements) and occurs more than once
@@ -166,7 +172,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Experiment_element = (Element) Experiment_nodeList.item(i);
 			addExperiment(
-					new Experiment(Experiment_element));
+					new Experiment(Experiment_element, model));
 		}
 		// Element property Plate which is complex (has
 		// sub-elements) and occurs more than once
@@ -175,7 +181,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Plate_element = (Element) Plate_nodeList.item(i);
 			addPlate(
-					new Plate(Plate_element));
+					new Plate(Plate_element, model));
 		}
 		// Element property Screen which is complex (has
 		// sub-elements) and occurs more than once
@@ -184,7 +190,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Screen_element = (Element) Screen_nodeList.item(i);
 			addScreen(
-					new Screen(Screen_element));
+					new Screen(Screen_element, model));
 		}
 		// Element property Experimenter which is complex (has
 		// sub-elements) and occurs more than once
@@ -193,7 +199,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Experimenter_element = (Element) Experimenter_nodeList.item(i);
 			addExperimenter(
-					new Experimenter(Experimenter_element));
+					new Experimenter(Experimenter_element, model));
 		}
 		// Element property Group which is complex (has
 		// sub-elements) and occurs more than once
@@ -202,7 +208,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Group_element = (Element) Group_nodeList.item(i);
 			addGroup(
-					new Group(Group_element));
+					new Group(Group_element, model));
 		}
 		// Element property Instrument which is complex (has
 		// sub-elements) and occurs more than once
@@ -211,7 +217,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Instrument_element = (Element) Instrument_nodeList.item(i);
 			addInstrument(
-					new Instrument(Instrument_element));
+					new Instrument(Instrument_element, model));
 		}
 		// Element property Image which is complex (has
 		// sub-elements) and occurs more than once
@@ -220,7 +226,7 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element Image_element = (Element) Image_nodeList.item(i);
 			addImage(
-					new Image(Image_element));
+					new Image(Image_element, model));
 		}
 		NodeList StructuredAnnotations_nodeList = element.getElementsByTagName("StructuredAnnotations");
 		if (StructuredAnnotations_nodeList.getLength() > 1)
@@ -235,7 +241,7 @@ public class OME extends AbstractOMEModelObject
 			// Element property StructuredAnnotations which is complex (has
 			// sub-elements)
 			setStructuredAnnotations(new StructuredAnnotations(
-					(Element) StructuredAnnotations_nodeList.item(0)));
+					(Element) StructuredAnnotations_nodeList.item(0), model));
 		}
 		// Element property ROI which is complex (has
 		// sub-elements) and occurs more than once
@@ -244,11 +250,18 @@ public class OME extends AbstractOMEModelObject
 		{
 			Element ROI_element = (Element) ROI_nodeList.item(i);
 			addROI(
-					new ROI(ROI_element));
+					new ROI(ROI_element, model));
 		}
 	}
 
 	// -- OME API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

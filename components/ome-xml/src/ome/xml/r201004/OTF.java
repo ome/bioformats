@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -99,12 +99,15 @@ public class OTF extends AbstractOMEModelObject
 	 * Constructs OTF recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public OTF(Element element) throws EnumerationException
+	public OTF(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -112,10 +115,13 @@ public class OTF extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -147,12 +153,17 @@ public class OTF extends AbstractOMEModelObject
 			setType(PixelType.fromString(
 					element.getAttribute("Type")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"OTF missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		if (element.hasAttribute("OpticalAxisAveraged"))
 		{
 			// Attribute property OpticalAxisAveraged
@@ -172,9 +183,17 @@ public class OTF extends AbstractOMEModelObject
 			// Element property ObjectiveSettings which is complex (has
 			// sub-elements)
 			setObjectiveSettings(new ObjectiveSettings(
-					(Element) ObjectiveSettings_nodeList.item(0)));
+					(Element) ObjectiveSettings_nodeList.item(0), model));
 		}
-		// *** IGNORING *** Skipped back reference FilterSetRef
+		// Element reference FilterSetRef
+		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
+		for (int i = 0; i < FilterSetRef_nodeList.getLength(); i++)
+		{
+			Element FilterSetRef_element = (Element) FilterSetRef_nodeList.item(i);
+			FilterSetRef filterSet_reference = new FilterSetRef();
+			filterSet_reference.setID(FilterSetRef_element.getAttribute("ID"));
+			model.addReference(this, filterSet_reference);
+		}
 		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
 		if (BinaryFile_nodeList.getLength() > 1)
 		{
@@ -188,13 +207,26 @@ public class OTF extends AbstractOMEModelObject
 			// Element property BinaryFile which is complex (has
 			// sub-elements)
 			setBinaryFile(new BinaryFile(
-					(Element) BinaryFile_nodeList.item(0)));
+					(Element) BinaryFile_nodeList.item(0), model));
 		}
 		// *** IGNORING *** Skipped back reference Channel_BackReference
 		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 	}
 
 	// -- OTF API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof FilterSetRef)
+		{
+			FilterSet o_casted = (FilterSet) o;
+			o_casted.linkOTF(this);
+			filterSet = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

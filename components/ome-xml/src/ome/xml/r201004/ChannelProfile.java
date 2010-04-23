@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,12 +90,15 @@ public class ChannelProfile extends AbstractOMEModelObject
 	 * Constructs ChannelProfile recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public ChannelProfile(Element element) throws EnumerationException
+	public ChannelProfile(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -103,10 +106,13 @@ public class ChannelProfile extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -167,9 +173,17 @@ public class ChannelProfile extends AbstractOMEModelObject
 			// Element property LightSourceSettings which is complex (has
 			// sub-elements)
 			setLightSourceSettings(new LightSourceSettings(
-					(Element) LightSourceSettings_nodeList.item(0)));
+					(Element) LightSourceSettings_nodeList.item(0), model));
 		}
-		// *** IGNORING *** Skipped back reference OTFRef
+		// Element reference OTFRef
+		NodeList OTFRef_nodeList = element.getElementsByTagName("OTFRef");
+		for (int i = 0; i < OTFRef_nodeList.getLength(); i++)
+		{
+			Element OTFRef_element = (Element) OTFRef_nodeList.item(i);
+			OTFRef otf_reference = new OTFRef();
+			otf_reference.setID(OTFRef_element.getAttribute("ID"));
+			model.addReference(this, otf_reference);
+		}
 		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
 		if (DetectorSettings_nodeList.getLength() > 1)
 		{
@@ -183,12 +197,39 @@ public class ChannelProfile extends AbstractOMEModelObject
 			// Element property DetectorSettings which is complex (has
 			// sub-elements)
 			setDetectorSettings(new DetectorSettings(
-					(Element) DetectorSettings_nodeList.item(0)));
+					(Element) DetectorSettings_nodeList.item(0), model));
 		}
-		// *** IGNORING *** Skipped back reference FilterSetRef
+		// Element reference FilterSetRef
+		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
+		for (int i = 0; i < FilterSetRef_nodeList.getLength(); i++)
+		{
+			Element FilterSetRef_element = (Element) FilterSetRef_nodeList.item(i);
+			FilterSetRef filterSet_reference = new FilterSetRef();
+			filterSet_reference.setID(FilterSetRef_element.getAttribute("ID"));
+			model.addReference(this, filterSet_reference);
+		}
 	}
 
 	// -- ChannelProfile API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof OTFRef)
+		{
+			OTF o_casted = (OTF) o;
+			o_casted.linkChannelProfile(this);
+			otf = o_casted;
+		}
+		if (reference instanceof FilterSetRef)
+		{
+			FilterSet o_casted = (FilterSet) o;
+			o_casted.linkChannelProfile(this);
+			filterSet = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

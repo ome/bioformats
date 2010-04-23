@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -75,12 +75,15 @@ public class ProfileSet extends AbstractOMEModelObject
 	 * Constructs ProfileSet recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public ProfileSet(Element element) throws EnumerationException
+	public ProfileSet(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -88,10 +91,13 @@ public class ProfileSet extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -112,7 +118,7 @@ public class ProfileSet extends AbstractOMEModelObject
 		{
 			Element ImageProfile_element = (Element) ImageProfile_nodeList.item(i);
 			addImageProfile(
-					new ImageProfile(ImageProfile_element));
+					new ImageProfile(ImageProfile_element, model));
 		}
 		// Element property ChannelProfile which is complex (has
 		// sub-elements) and occurs more than once
@@ -121,11 +127,18 @@ public class ProfileSet extends AbstractOMEModelObject
 		{
 			Element ChannelProfile_element = (Element) ChannelProfile_nodeList.item(i);
 			addChannelProfile(
-					new ChannelProfile(ChannelProfile_element));
+					new ChannelProfile(ChannelProfile_element, model));
 		}
 	}
 
 	// -- ProfileSet API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property which occurs more than once

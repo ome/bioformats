@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,12 +87,15 @@ public class Experiment extends AbstractOMEModelObject
 	 * Constructs Experiment recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Experiment(Element element) throws EnumerationException
+	public Experiment(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -100,10 +103,13 @@ public class Experiment extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -123,12 +129,17 @@ public class Experiment extends AbstractOMEModelObject
 			setType(ExperimentType.fromString(
 					element.getAttribute("Type")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Experiment missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -143,7 +154,15 @@ public class Experiment extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference ExperimenterRef
+		// Element reference ExperimenterRef
+		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
+		for (int i = 0; i < ExperimenterRef_nodeList.getLength(); i++)
+		{
+			Element ExperimenterRef_element = (Element) ExperimenterRef_nodeList.item(i);
+			ExperimenterRef experimenter_reference = new ExperimenterRef();
+			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
+			model.addReference(this, experimenter_reference);
+		}
 		// Element property MicrobeamManipulation which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList MicrobeamManipulation_nodeList = element.getElementsByTagName("MicrobeamManipulation");
@@ -151,12 +170,25 @@ public class Experiment extends AbstractOMEModelObject
 		{
 			Element MicrobeamManipulation_element = (Element) MicrobeamManipulation_nodeList.item(i);
 			addMicrobeamManipulation(
-					new MicrobeamManipulation(MicrobeamManipulation_element));
+					new MicrobeamManipulation(MicrobeamManipulation_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
 	// -- Experiment API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof ExperimenterRef)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkExperiment(this);
+			experimenter = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

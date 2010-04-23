@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,12 +84,15 @@ public class BinaryFile extends AbstractOMEModelObject
 	 * Constructs BinaryFile recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public BinaryFile(Element element) throws EnumerationException
+	public BinaryFile(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -97,10 +100,13 @@ public class BinaryFile extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -145,7 +151,7 @@ public class BinaryFile extends AbstractOMEModelObject
 			// Element property External which is complex (has
 			// sub-elements)
 			setExternal(new External(
-					(Element) External_nodeList.item(0)));
+					(Element) External_nodeList.item(0), model));
 		}
 		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
 		if (BinData_nodeList.getLength() > 1)
@@ -160,11 +166,18 @@ public class BinaryFile extends AbstractOMEModelObject
 			// Element property BinData which is complex (has
 			// sub-elements)
 			setBinData(new BinData(
-					(Element) BinData_nodeList.item(0)));
+					(Element) BinData_nodeList.item(0), model));
 		}
 	}
 
 	// -- BinaryFile API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

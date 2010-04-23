@@ -40,6 +40,9 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,8 +66,12 @@ import ome.xml.r201004.External;
 import ome.xml.r201004.FileAnnotation;
 import ome.xml.r201004.ListAnnotation;
 import ome.xml.r201004.LongAnnotation;
+import ome.xml.r201004.OMEModel;
+import ome.xml.r201004.OMEModelImpl;
+import ome.xml.r201004.OMEModelObject;
 import ome.xml.r201004.Objective;
 import ome.xml.r201004.ObjectiveSettings;
+import ome.xml.r201004.Reference;
 import ome.xml.r201004.StringAnnotation;
 import ome.xml.r201004.StructuredAnnotations;
 import ome.xml.r201004.TimestampAnnotation;
@@ -141,13 +148,13 @@ public class InOut201004Test {
 
   private static String PLATE_ID = "Plate:0";
 
-  private static String PLATE_ANNOTATION_ID = "TimestampAnnotation:0";
+  private static String PLATE_ANNOTATION_ID = "Annotation:Timestamp0";
 
-  private static String WELL_ANNOTATION_ID = "LongAnnotation:0";
+  private static String WELL_ANNOTATION_ID = "Annotation:Long0";
 
   private static String ROI_ID = "ROI:5";
 
-  private static String ROI_ANNOTATION_ID = "StringAnnotation:0";
+  private static String ROI_ANNOTATION_ID = "Annotation:String0";
 
   private static String SHAPE_ID = "Shape:0";
 
@@ -243,6 +250,8 @@ public class InOut201004Test {
 
   public OME ome;
 
+  public OMEModel model;
+
   @BeforeClass
   public void setUp()
   throws ParserConfigurationException, TransformerException,
@@ -268,8 +277,9 @@ public class InOut201004Test {
 
   @Test
   public void testValidOMENode() throws EnumerationException {
+    model = new OMEModelImpl();
     // Read string XML in as a DOM tree and parse into the object hierarchy
-    ome = new OME(document.getDocumentElement());
+    ome = new OME(document.getDocumentElement(), model);
     assertNotNull(ome);
     assertEquals(1, ome.sizeOfImageList());
   }
@@ -746,6 +756,22 @@ public class InOut201004Test {
   public static void main(String[] args) throws Exception {
     InOut201004Test t = new InOut201004Test();
     t.setUp();
+    t.testValidOMENode();
+    System.out.println("###\n### XML\n###");
     System.out.println(t.asString);
+    System.out.println("###\n### Model Objects\n###");
+    Map<String, OMEModelObject> objects = t.model.getModelObjects();
+    for (Entry<String, OMEModelObject> entry : objects.entrySet())
+    {
+      System.out.println(String.format(
+          "%s -- %s", entry.getKey(), entry.getValue().toString()));
+    }
+    System.out.println("###\n### References\n###");
+    Map<OMEModelObject, List<Reference>> references = t.model.getReferences();
+    for (Entry<OMEModelObject, List<Reference>> entry : references.entrySet())
+    {
+      System.out.println(String.format(
+          "%s -- %s", entry.getKey(), entry.getValue().toString()));
+    }
   }
 }

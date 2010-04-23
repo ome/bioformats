@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -99,12 +99,15 @@ public class Well extends AbstractOMEModelObject
 	 * Constructs Well recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Well(Element element) throws EnumerationException
+	public Well(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -112,10 +115,13 @@ public class Well extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -159,12 +165,17 @@ public class Well extends AbstractOMEModelObject
 			setColor(Integer.valueOf(
 					element.getAttribute("Color")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Well missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		if (element.hasAttribute("Row"))
 		{
 			// Attribute property Row
@@ -178,13 +189,48 @@ public class Well extends AbstractOMEModelObject
 		{
 			Element WellSample_element = (Element) WellSample_nodeList.item(i);
 			addWellSample(
-					new WellSample(WellSample_element));
+					new WellSample(WellSample_element, model));
 		}
-		// *** IGNORING *** Skipped back reference ReagentRef
-		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Element reference ReagentRef
+		NodeList ReagentRef_nodeList = element.getElementsByTagName("ReagentRef");
+		for (int i = 0; i < ReagentRef_nodeList.getLength(); i++)
+		{
+			Element ReagentRef_element = (Element) ReagentRef_nodeList.item(i);
+			ReagentRef reagent_reference = new ReagentRef();
+			reagent_reference.setID(ReagentRef_element.getAttribute("ID"));
+			model.addReference(this, reagent_reference);
+		}
+		// Element reference AnnotationRef
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
+			AnnotationRef annotationList_reference = new AnnotationRef();
+			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationList_reference);
+		}
 	}
 
 	// -- Well API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof ReagentRef)
+		{
+			Reagent o_casted = (Reagent) o;
+			o_casted.linkWell(this);
+			reagent = o_casted;
+		}
+		if (reference instanceof AnnotationRef)
+		{
+			Annotation o_casted = (Annotation) o;
+			o_casted.linkWell(this);
+			annotationList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

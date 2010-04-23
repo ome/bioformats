@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -102,12 +102,15 @@ public class Instrument extends AbstractOMEModelObject
 	 * Constructs Instrument recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Instrument(Element element) throws EnumerationException
+	public Instrument(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -115,10 +118,13 @@ public class Instrument extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -132,12 +138,17 @@ public class Instrument extends AbstractOMEModelObject
 			//		"Expecting node name of Instrument got %s",
 			//		tagName));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Instrument missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		NodeList Microscope_nodeList = element.getElementsByTagName("Microscope");
 		if (Microscope_nodeList.getLength() > 1)
 		{
@@ -151,7 +162,7 @@ public class Instrument extends AbstractOMEModelObject
 			// Element property Microscope which is complex (has
 			// sub-elements)
 			setMicroscope(new Microscope(
-					(Element) Microscope_nodeList.item(0)));
+					(Element) Microscope_nodeList.item(0), model));
 		}
 		// Element property LightSource which is complex (has
 		// sub-elements) and occurs more than once. The element's model
@@ -166,7 +177,7 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < Laser_nodeList.getLength(); j++)
 			{
 				Element Laser_element = (Element) Laser_nodeList.item(j);
-				Laser o = new Laser(Laser_element);
+				Laser o = new Laser(Laser_element, model);
 				o.update(LightSource_element);
 				addLightSource(o);
 			}
@@ -175,7 +186,7 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < Filament_nodeList.getLength(); j++)
 			{
 				Element Filament_element = (Element) Filament_nodeList.item(j);
-				Filament o = new Filament(Filament_element);
+				Filament o = new Filament(Filament_element, model);
 				o.update(LightSource_element);
 				addLightSource(o);
 			}
@@ -184,7 +195,7 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < Arc_nodeList.getLength(); j++)
 			{
 				Element Arc_element = (Element) Arc_nodeList.item(j);
-				Arc o = new Arc(Arc_element);
+				Arc o = new Arc(Arc_element, model);
 				o.update(LightSource_element);
 				addLightSource(o);
 			}
@@ -193,7 +204,7 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < LightEmittingDiode_nodeList.getLength(); j++)
 			{
 				Element LightEmittingDiode_element = (Element) LightEmittingDiode_nodeList.item(j);
-				LightEmittingDiode o = new LightEmittingDiode(LightEmittingDiode_element);
+				LightEmittingDiode o = new LightEmittingDiode(LightEmittingDiode_element, model);
 				o.update(LightSource_element);
 				addLightSource(o);
 			}
@@ -205,7 +216,7 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Element Detector_element = (Element) Detector_nodeList.item(i);
 			addDetector(
-					new Detector(Detector_element));
+					new Detector(Detector_element, model));
 		}
 		// Element property Objective which is complex (has
 		// sub-elements) and occurs more than once
@@ -214,7 +225,7 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Element Objective_element = (Element) Objective_nodeList.item(i);
 			addObjective(
-					new Objective(Objective_element));
+					new Objective(Objective_element, model));
 		}
 		// Element property FilterSet which is complex (has
 		// sub-elements) and occurs more than once
@@ -223,7 +234,7 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Element FilterSet_element = (Element) FilterSet_nodeList.item(i);
 			addFilterSet(
-					new FilterSet(FilterSet_element));
+					new FilterSet(FilterSet_element, model));
 		}
 		// Element property Filter which is complex (has
 		// sub-elements) and occurs more than once
@@ -232,7 +243,7 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Element Filter_element = (Element) Filter_nodeList.item(i);
 			addFilter(
-					new Filter(Filter_element));
+					new Filter(Filter_element, model));
 		}
 		// Element property Dichroic which is complex (has
 		// sub-elements) and occurs more than once
@@ -241,7 +252,7 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Element Dichroic_element = (Element) Dichroic_nodeList.item(i);
 			addDichroic(
-					new Dichroic(Dichroic_element));
+					new Dichroic(Dichroic_element, model));
 		}
 		// Element property OTF which is complex (has
 		// sub-elements) and occurs more than once
@@ -250,13 +261,20 @@ public class Instrument extends AbstractOMEModelObject
 		{
 			Element OTF_element = (Element) OTF_nodeList.item(i);
 			addOTF(
-					new OTF(OTF_element));
+					new OTF(OTF_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 	}
 
 	// -- Instrument API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

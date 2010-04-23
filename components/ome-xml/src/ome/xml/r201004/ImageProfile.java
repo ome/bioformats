@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,12 +84,15 @@ public class ImageProfile extends AbstractOMEModelObject
 	 * Constructs ImageProfile recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public ImageProfile(Element element) throws EnumerationException
+	public ImageProfile(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -97,10 +100,13 @@ public class ImageProfile extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -148,7 +154,15 @@ public class ImageProfile extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference InstrumentRef
+		// Element reference InstrumentRef
+		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
+		for (int i = 0; i < InstrumentRef_nodeList.getLength(); i++)
+		{
+			Element InstrumentRef_element = (Element) InstrumentRef_nodeList.item(i);
+			InstrumentRef instrument_reference = new InstrumentRef();
+			instrument_reference.setID(InstrumentRef_element.getAttribute("ID"));
+			model.addReference(this, instrument_reference);
+		}
 		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
 		if (ObjectiveSettings_nodeList.getLength() > 1)
 		{
@@ -162,11 +176,24 @@ public class ImageProfile extends AbstractOMEModelObject
 			// Element property ObjectiveSettings which is complex (has
 			// sub-elements)
 			setObjectiveSettings(new ObjectiveSettings(
-					(Element) ObjectiveSettings_nodeList.item(0)));
+					(Element) ObjectiveSettings_nodeList.item(0), model));
 		}
 	}
 
 	// -- ImageProfile API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof InstrumentRef)
+		{
+			Instrument o_casted = (Instrument) o;
+			o_casted.linkImageProfile(this);
+			instrument = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

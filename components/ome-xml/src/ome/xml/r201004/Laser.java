@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -82,7 +82,7 @@ public class Laser extends LightSource
 	private Double repetitionRate;
 
 	// Property
-	private Pump pump;
+	private Laser pump;
 
 	// -- Constructors --
 
@@ -96,12 +96,15 @@ public class Laser extends LightSource
 	 * Constructs Laser recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Laser(Element element) throws EnumerationException
+	public Laser(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -109,10 +112,13 @@ public class Laser extends LightSource
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -174,10 +180,30 @@ public class Laser extends LightSource
 			setRepetitionRate(Double.valueOf(
 					element.getAttribute("RepetitionRate")));
 		}
-		// *** IGNORING *** Skipped back reference Pump
+		// Element reference Pump
+		NodeList Pump_nodeList = element.getElementsByTagName("Pump");
+		for (int i = 0; i < Pump_nodeList.getLength(); i++)
+		{
+			Element Pump_element = (Element) Pump_nodeList.item(i);
+			Pump pump_reference = new Pump();
+			pump_reference.setID(Pump_element.getAttribute("ID"));
+			model.addReference(this, pump_reference);
+		}
 	}
 
 	// -- Laser API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof Pump)
+		{
+			Laser o_casted = (Laser) o;
+			pump = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property
@@ -269,17 +295,17 @@ public class Laser extends LightSource
 	}
 
 	// Reference
-	public Pump getLinkedPump()
+	public Laser getLinkedPump()
 	{
 		return pump;
 	}
 
-	public void linkPump(Pump o)
+	public void linkPump(Laser o)
 	{
 		pump = o;
 	}
 
-	public void unlinkPump(Pump o)
+	public void unlinkPump(Laser o)
 	{
 		if (pump == o)
 		{

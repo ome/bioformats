@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -126,12 +126,15 @@ public class Channel extends AbstractOMEModelObject
 	 * Constructs Channel recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Channel(Element element) throws EnumerationException
+	public Channel(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -139,10 +142,13 @@ public class Channel extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -222,12 +228,17 @@ public class Channel extends AbstractOMEModelObject
 			setNDFilter(Double.valueOf(
 					element.getAttribute("NDFilter")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Channel missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		if (element.hasAttribute("SamplesPerPixel"))
 		{
 			// Attribute property SamplesPerPixel
@@ -247,9 +258,17 @@ public class Channel extends AbstractOMEModelObject
 			// Element property LightSourceSettings which is complex (has
 			// sub-elements)
 			setLightSourceSettings(new LightSourceSettings(
-					(Element) LightSourceSettings_nodeList.item(0)));
+					(Element) LightSourceSettings_nodeList.item(0), model));
 		}
-		// *** IGNORING *** Skipped back reference OTFRef
+		// Element reference OTFRef
+		NodeList OTFRef_nodeList = element.getElementsByTagName("OTFRef");
+		for (int i = 0; i < OTFRef_nodeList.getLength(); i++)
+		{
+			Element OTFRef_element = (Element) OTFRef_nodeList.item(i);
+			OTFRef otf_reference = new OTFRef();
+			otf_reference.setID(OTFRef_element.getAttribute("ID"));
+			model.addReference(this, otf_reference);
+		}
 		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
 		if (DetectorSettings_nodeList.getLength() > 1)
 		{
@@ -263,10 +282,26 @@ public class Channel extends AbstractOMEModelObject
 			// Element property DetectorSettings which is complex (has
 			// sub-elements)
 			setDetectorSettings(new DetectorSettings(
-					(Element) DetectorSettings_nodeList.item(0)));
+					(Element) DetectorSettings_nodeList.item(0), model));
 		}
-		// *** IGNORING *** Skipped back reference FilterSetRef
-		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Element reference FilterSetRef
+		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
+		for (int i = 0; i < FilterSetRef_nodeList.getLength(); i++)
+		{
+			Element FilterSetRef_element = (Element) FilterSetRef_nodeList.item(i);
+			FilterSetRef filterSet_reference = new FilterSetRef();
+			filterSet_reference.setID(FilterSetRef_element.getAttribute("ID"));
+			model.addReference(this, filterSet_reference);
+		}
+		// Element reference AnnotationRef
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
+			AnnotationRef annotationList_reference = new AnnotationRef();
+			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationList_reference);
+		}
 		NodeList LightPath_nodeList = element.getElementsByTagName("LightPath");
 		if (LightPath_nodeList.getLength() > 1)
 		{
@@ -280,11 +315,36 @@ public class Channel extends AbstractOMEModelObject
 			// Element property LightPath which is complex (has
 			// sub-elements)
 			setLightPath(new LightPath(
-					(Element) LightPath_nodeList.item(0)));
+					(Element) LightPath_nodeList.item(0), model));
 		}
 	}
 
 	// -- Channel API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof OTFRef)
+		{
+			OTF o_casted = (OTF) o;
+			o_casted.linkChannel(this);
+			otf = o_casted;
+		}
+		if (reference instanceof FilterSetRef)
+		{
+			FilterSet o_casted = (FilterSet) o;
+			o_casted.linkChannel(this);
+			filterSet = o_casted;
+		}
+		if (reference instanceof AnnotationRef)
+		{
+			Annotation o_casted = (Annotation) o;
+			o_casted.linkChannel(this);
+			annotationList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -93,12 +93,15 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	 * Constructs StructuredAnnotations recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public StructuredAnnotations(Element element) throws EnumerationException
+	public StructuredAnnotations(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -106,10 +109,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -136,7 +142,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property XMLAnnotation which is complex (has
 			// sub-elements)
 			setXMLAnnotation(new XMLAnnotation(
-					(Element) XMLAnnotation_nodeList.item(0)));
+					(Element) XMLAnnotation_nodeList.item(0), model));
 		}
 		NodeList FileAnnotation_nodeList = element.getElementsByTagName("FileAnnotation");
 		if (FileAnnotation_nodeList.getLength() > 1)
@@ -151,7 +157,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property FileAnnotation which is complex (has
 			// sub-elements)
 			setFileAnnotation(new FileAnnotation(
-					(Element) FileAnnotation_nodeList.item(0)));
+					(Element) FileAnnotation_nodeList.item(0), model));
 		}
 		NodeList ListAnnotation_nodeList = element.getElementsByTagName("ListAnnotation");
 		if (ListAnnotation_nodeList.getLength() > 1)
@@ -166,7 +172,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property ListAnnotation which is complex (has
 			// sub-elements)
 			setListAnnotation(new ListAnnotation(
-					(Element) ListAnnotation_nodeList.item(0)));
+					(Element) ListAnnotation_nodeList.item(0), model));
 		}
 		NodeList LongAnnotation_nodeList = element.getElementsByTagName("LongAnnotation");
 		if (LongAnnotation_nodeList.getLength() > 1)
@@ -181,7 +187,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property LongAnnotation which is complex (has
 			// sub-elements)
 			setLongAnnotation(new LongAnnotation(
-					(Element) LongAnnotation_nodeList.item(0)));
+					(Element) LongAnnotation_nodeList.item(0), model));
 		}
 		NodeList DoubleAnnotation_nodeList = element.getElementsByTagName("DoubleAnnotation");
 		if (DoubleAnnotation_nodeList.getLength() > 1)
@@ -196,7 +202,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property DoubleAnnotation which is complex (has
 			// sub-elements)
 			setDoubleAnnotation(new DoubleAnnotation(
-					(Element) DoubleAnnotation_nodeList.item(0)));
+					(Element) DoubleAnnotation_nodeList.item(0), model));
 		}
 		NodeList StringAnnotation_nodeList = element.getElementsByTagName("StringAnnotation");
 		if (StringAnnotation_nodeList.getLength() > 1)
@@ -211,7 +217,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property StringAnnotation which is complex (has
 			// sub-elements)
 			setStringAnnotation(new StringAnnotation(
-					(Element) StringAnnotation_nodeList.item(0)));
+					(Element) StringAnnotation_nodeList.item(0), model));
 		}
 		NodeList BooleanAnnotation_nodeList = element.getElementsByTagName("BooleanAnnotation");
 		if (BooleanAnnotation_nodeList.getLength() > 1)
@@ -226,7 +232,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property BooleanAnnotation which is complex (has
 			// sub-elements)
 			setBooleanAnnotation(new BooleanAnnotation(
-					(Element) BooleanAnnotation_nodeList.item(0)));
+					(Element) BooleanAnnotation_nodeList.item(0), model));
 		}
 		NodeList TimestampAnnotation_nodeList = element.getElementsByTagName("TimestampAnnotation");
 		if (TimestampAnnotation_nodeList.getLength() > 1)
@@ -241,11 +247,18 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			// Element property TimestampAnnotation which is complex (has
 			// sub-elements)
 			setTimestampAnnotation(new TimestampAnnotation(
-					(Element) TimestampAnnotation_nodeList.item(0)));
+					(Element) TimestampAnnotation_nodeList.item(0), model));
 		}
 	}
 
 	// -- StructuredAnnotations API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

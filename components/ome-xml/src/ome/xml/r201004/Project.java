@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,12 +90,15 @@ public class Project extends AbstractOMEModelObject
 	 * Constructs Project recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Project(Element element) throws EnumerationException
+	public Project(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -103,10 +106,13 @@ public class Project extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -126,12 +132,17 @@ public class Project extends AbstractOMEModelObject
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Project missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -146,13 +157,62 @@ public class Project extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference ExperimenterRef
-		// *** IGNORING *** Skipped back reference GroupRef
-		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Element reference ExperimenterRef
+		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
+		for (int i = 0; i < ExperimenterRef_nodeList.getLength(); i++)
+		{
+			Element ExperimenterRef_element = (Element) ExperimenterRef_nodeList.item(i);
+			ExperimenterRef experimenter_reference = new ExperimenterRef();
+			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
+			model.addReference(this, experimenter_reference);
+		}
+		// Element reference GroupRef
+		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
+		for (int i = 0; i < GroupRef_nodeList.getLength(); i++)
+		{
+			Element GroupRef_element = (Element) GroupRef_nodeList.item(i);
+			GroupRef group_reference = new GroupRef();
+			group_reference.setID(GroupRef_element.getAttribute("ID"));
+			model.addReference(this, group_reference);
+		}
+		// Element reference AnnotationRef
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
+			AnnotationRef annotationList_reference = new AnnotationRef();
+			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationList_reference);
+		}
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
 	}
 
 	// -- Project API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof ExperimenterRef)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkProject(this);
+			experimenter = o_casted;
+		}
+		if (reference instanceof GroupRef)
+		{
+			Group o_casted = (Group) o;
+			o_casted.linkProject(this);
+			group = o_casted;
+		}
+		if (reference instanceof AnnotationRef)
+		{
+			Annotation o_casted = (Annotation) o;
+			o_casted.linkProject(this);
+			annotationList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -117,12 +117,15 @@ public class Plate extends AbstractOMEModelObject
 	 * Constructs Plate recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Plate(Element element) throws EnumerationException
+	public Plate(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -130,10 +133,13 @@ public class Plate extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -189,12 +195,17 @@ public class Plate extends AbstractOMEModelObject
 			setWellOriginX(Double.valueOf(
 					element.getAttribute("WellOriginX")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Plate missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		if (element.hasAttribute("Columns"))
 		{
 			// Attribute property Columns
@@ -228,7 +239,7 @@ public class Plate extends AbstractOMEModelObject
 		{
 			Element ScreenRef_element = (Element) ScreenRef_nodeList.item(i);
 			addScreen(
-					new Screen(ScreenRef_element));
+					new Screen(ScreenRef_element, model));
 		}
 		// Element property Well which is complex (has
 		// sub-elements) and occurs more than once
@@ -237,9 +248,17 @@ public class Plate extends AbstractOMEModelObject
 		{
 			Element Well_element = (Element) Well_nodeList.item(i);
 			addWell(
-					new Well(Well_element));
+					new Well(Well_element, model));
 		}
-		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Element reference AnnotationRef
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
+			AnnotationRef annotationList_reference = new AnnotationRef();
+			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationList_reference);
+		}
 		// Element property PlateAcquisition which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList PlateAcquisition_nodeList = element.getElementsByTagName("PlateAcquisition");
@@ -247,12 +266,25 @@ public class Plate extends AbstractOMEModelObject
 		{
 			Element PlateAcquisition_element = (Element) PlateAcquisition_nodeList.item(i);
 			addPlateAcquisition(
-					new PlateAcquisition(PlateAcquisition_element));
+					new PlateAcquisition(PlateAcquisition_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Screen_BackReference
 	}
 
 	// -- Plate API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof AnnotationRef)
+		{
+			Annotation o_casted = (Annotation) o;
+			o_casted.linkPlate(this);
+			annotationList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

@@ -1,5 +1,5 @@
 /*
- * ome.xml.r201004.ObjectiveSettings
+ * ome.xml.r201004.ExcitationFilterRef
  *
  *-----------------------------------------------------------------------------
  *
@@ -49,7 +49,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class ObjectiveSettings extends Settings
+public class ExcitationFilterRef extends FilterRef
 {
 	// -- Constants --
 
@@ -57,28 +57,16 @@ public class ObjectiveSettings extends Settings
 
 	// -- Instance variables --
 
-	// Property
-	private Double refractiveIndex;
-
-	// Property
-	private Double correctionCollar;
-
-	// Property
-	private String id;
-
-	// Property
-	private Medium medium;
-
 	// -- Constructors --
 
 	/** Default constructor. */
-	public ObjectiveSettings()
+	public ExcitationFilterRef()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs ObjectiveSettings recursively from an XML DOM tree.
+	 * Constructs ExcitationFilterRef recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -86,14 +74,14 @@ public class ObjectiveSettings extends Settings
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public ObjectiveSettings(Element element, OMEModel model)
+	public ExcitationFilterRef(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
 	/** 
-	 * Updates ObjectiveSettings recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates ExcitationFilterRef recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -107,48 +95,19 @@ public class ObjectiveSettings extends Settings
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
-		if (!"ObjectiveSettings".equals(tagName))
+		if (!"ExcitationFilterRef".equals(tagName))
 		{
 			System.err.println(String.format(
-					"WARNING: Expecting node name of ObjectiveSettings got %s",
+					"WARNING: Expecting node name of ExcitationFilterRef got %s",
 					tagName));
 			// TODO: Should be its own Exception
 			//throw new RuntimeException(String.format(
-			//		"Expecting node name of ObjectiveSettings got %s",
+			//		"Expecting node name of ExcitationFilterRef got %s",
 			//		tagName));
-		}
-		if (element.hasAttribute("RefractiveIndex"))
-		{
-			// Attribute property RefractiveIndex
-			setRefractiveIndex(Double.valueOf(
-					element.getAttribute("RefractiveIndex")));
-		}
-		if (element.hasAttribute("CorrectionCollar"))
-		{
-			// Attribute property CorrectionCollar
-			setCorrectionCollar(Double.valueOf(
-					element.getAttribute("CorrectionCollar")));
-		}
-		if (!element.hasAttribute("ID"))
-		{
-			// TODO: Should be its own exception
-			throw new RuntimeException(String.format(
-					"ObjectiveSettings missing required ID property."));
-		}
-		// ID property
-		setID(String.valueOf(
-					element.getAttribute("ID")));
-		// Adding this model object to the model handler
-	    	model.addModelObject(getID(), this);
-		if (element.hasAttribute("Medium"))
-		{
-			// Attribute property which is an enumeration Medium
-			setMedium(Medium.fromString(
-					element.getAttribute("Medium")));
 		}
 	}
 
-	// -- ObjectiveSettings API methods --
+	// -- ExcitationFilterRef API methods --
 
 	public void link(Reference reference, OMEModelObject o)
 	{
@@ -158,84 +117,20 @@ public class ObjectiveSettings extends Settings
 	}
 
 
-	// Property
-	public Double getRefractiveIndex()
-	{
-		return refractiveIndex;
-	}
-
-	public void setRefractiveIndex(Double refractiveIndex)
-	{
-		this.refractiveIndex = refractiveIndex;
-	}
-
-	// Property
-	public Double getCorrectionCollar()
-	{
-		return correctionCollar;
-	}
-
-	public void setCorrectionCollar(Double correctionCollar)
-	{
-		this.correctionCollar = correctionCollar;
-	}
-
-	// Property
-	public String getID()
-	{
-		return id;
-	}
-
-	public void setID(String id)
-	{
-		this.id = id;
-	}
-
-	// Property
-	public Medium getMedium()
-	{
-		return medium;
-	}
-
-	public void setMedium(Medium medium)
-	{
-		this.medium = medium;
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element ObjectiveSettings_element)
+	protected Element asXMLElement(Document document, Element ExcitationFilterRef_element)
 	{
-		// Creating XML block for ObjectiveSettings
-		if (ObjectiveSettings_element == null)
+		// Creating XML block for ExcitationFilterRef
+		if (ExcitationFilterRef_element == null)
 		{
-			ObjectiveSettings_element =
-					document.createElementNS(NAMESPACE, "ObjectiveSettings");
+			ExcitationFilterRef_element =
+					document.createElementNS(NAMESPACE, "ExcitationFilterRef");
 		}
 
-		if (refractiveIndex != null)
-		{
-			// Attribute property RefractiveIndex
-			ObjectiveSettings_element.setAttribute("RefractiveIndex", refractiveIndex.toString());
-		}
-		if (correctionCollar != null)
-		{
-			// Attribute property CorrectionCollar
-			ObjectiveSettings_element.setAttribute("CorrectionCollar", correctionCollar.toString());
-		}
-		if (id != null)
-		{
-			// Attribute property ID
-			ObjectiveSettings_element.setAttribute("ID", id.toString());
-		}
-		if (medium != null)
-		{
-			// Attribute property Medium
-			ObjectiveSettings_element.setAttribute("Medium", medium.toString());
-		}
-		return super.asXMLElement(document, ObjectiveSettings_element);
+		return super.asXMLElement(document, ExcitationFilterRef_element);
 	}
 }

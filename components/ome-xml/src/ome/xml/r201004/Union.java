@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -72,12 +72,15 @@ public class Union extends AbstractOMEModelObject
 	 * Constructs Union recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Union(Element element) throws EnumerationException
+	public Union(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -85,10 +88,13 @@ public class Union extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -115,7 +121,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Line_nodeList.getLength(); j++)
 			{
 				Element Line_element = (Element) Line_nodeList.item(j);
-				Line o = new Line(Line_element);
+				Line o = new Line(Line_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -124,7 +130,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Rectangle_nodeList.getLength(); j++)
 			{
 				Element Rectangle_element = (Element) Rectangle_nodeList.item(j);
-				Rectangle o = new Rectangle(Rectangle_element);
+				Rectangle o = new Rectangle(Rectangle_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -133,7 +139,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Mask_nodeList.getLength(); j++)
 			{
 				Element Mask_element = (Element) Mask_nodeList.item(j);
-				Mask o = new Mask(Mask_element);
+				Mask o = new Mask(Mask_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -142,7 +148,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Ellipse_nodeList.getLength(); j++)
 			{
 				Element Ellipse_element = (Element) Ellipse_nodeList.item(j);
-				Ellipse o = new Ellipse(Ellipse_element);
+				Ellipse o = new Ellipse(Ellipse_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -151,7 +157,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Point_nodeList.getLength(); j++)
 			{
 				Element Point_element = (Element) Point_nodeList.item(j);
-				Point o = new Point(Point_element);
+				Point o = new Point(Point_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -160,7 +166,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Polyline_nodeList.getLength(); j++)
 			{
 				Element Polyline_element = (Element) Polyline_nodeList.item(j);
-				Polyline o = new Polyline(Polyline_element);
+				Polyline o = new Polyline(Polyline_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -169,7 +175,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Path_nodeList.getLength(); j++)
 			{
 				Element Path_element = (Element) Path_nodeList.item(j);
-				Path o = new Path(Path_element);
+				Path o = new Path(Path_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -178,7 +184,7 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Text_nodeList.getLength(); j++)
 			{
 				Element Text_element = (Element) Text_nodeList.item(j);
-				Text o = new Text(Text_element);
+				Text o = new Text(Text_element, model);
 				o.update(Shape_element);
 				addShape(o);
 			}
@@ -186,6 +192,13 @@ public class Union extends AbstractOMEModelObject
 	}
 
 	// -- Union API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property which occurs more than once

@@ -70,4 +70,8 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
     return element;
   }
 
+  /* (non-Javadoc)
+   * @see ome.xml.r201004.OMEModelObject#link(ome.xml.r201004.Reference, ome.xml.r201004.OMEModelObject)
+   */
+  public abstract void link(Reference reference, OMEModelObject o);
 }

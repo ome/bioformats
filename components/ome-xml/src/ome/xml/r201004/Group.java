@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,10 +67,10 @@ public class Group extends AbstractOMEModelObject
 	private String description;
 
 	// Property
-	private Leader leader;
+	private Experimenter leader;
 
 	// Property
-	private Contact contact;
+	private Experimenter contact;
 
 	// Back reference Image_BackReference
 	private List<Image> image_BackReferenceList = new ArrayList<Image>();
@@ -96,12 +96,15 @@ public class Group extends AbstractOMEModelObject
 	 * Constructs Group recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Group(Element element) throws EnumerationException
+	public Group(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -109,10 +112,13 @@ public class Group extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -132,12 +138,17 @@ public class Group extends AbstractOMEModelObject
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Group missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -152,8 +163,24 @@ public class Group extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference Leader
-		// *** IGNORING *** Skipped back reference Contact
+		// Element reference Leader
+		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
+		for (int i = 0; i < Leader_nodeList.getLength(); i++)
+		{
+			Element Leader_element = (Element) Leader_nodeList.item(i);
+			Leader leader_reference = new Leader();
+			leader_reference.setID(Leader_element.getAttribute("ID"));
+			model.addReference(this, leader_reference);
+		}
+		// Element reference Contact
+		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
+		for (int i = 0; i < Contact_nodeList.getLength(); i++)
+		{
+			Element Contact_element = (Element) Contact_nodeList.item(i);
+			Contact contact_reference = new Contact();
+			contact_reference.setID(Contact_element.getAttribute("ID"));
+			model.addReference(this, contact_reference);
+		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference Project_BackReference
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
@@ -161,6 +188,25 @@ public class Group extends AbstractOMEModelObject
 	}
 
 	// -- Group API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof Leader)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkGroup(this);
+			leader = o_casted;
+		}
+		if (reference instanceof Contact)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkGroup(this);
+			contact = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property
@@ -197,17 +243,17 @@ public class Group extends AbstractOMEModelObject
 	}
 
 	// Reference
-	public Leader getLinkedLeader()
+	public Experimenter getLinkedLeader()
 	{
 		return leader;
 	}
 
-	public void linkLeader(Leader o)
+	public void linkLeader(Experimenter o)
 	{
 		leader = o;
 	}
 
-	public void unlinkLeader(Leader o)
+	public void unlinkLeader(Experimenter o)
 	{
 		if (leader == o)
 		{
@@ -216,17 +262,17 @@ public class Group extends AbstractOMEModelObject
 	}
 
 	// Reference
-	public Contact getLinkedContact()
+	public Experimenter getLinkedContact()
 	{
 		return contact;
 	}
 
-	public void linkContact(Contact o)
+	public void linkContact(Experimenter o)
 	{
 		contact = o;
 	}
 
-	public void unlinkContact(Contact o)
+	public void unlinkContact(Experimenter o)
 	{
 		if (contact == o)
 		{

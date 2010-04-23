@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -120,12 +120,15 @@ public class Image extends AbstractOMEModelObject
 	 * Constructs Image recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Image(Element element) throws EnumerationException
+	public Image(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -133,10 +136,13 @@ public class Image extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -150,12 +156,17 @@ public class Image extends AbstractOMEModelObject
 			//		"Expecting node name of Image got %s",
 			//		tagName));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Image missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		if (element.hasAttribute("Name"))
 		{
 			// Attribute property Name
@@ -176,7 +187,15 @@ public class Image extends AbstractOMEModelObject
 			// sub-elements)
 			setAcquiredDate(AcquiredDate_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference ExperimenterRef
+		// Element reference ExperimenterRef
+		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
+		for (int i = 0; i < ExperimenterRef_nodeList.getLength(); i++)
+		{
+			Element ExperimenterRef_element = (Element) ExperimenterRef_nodeList.item(i);
+			ExperimenterRef experimenter_reference = new ExperimenterRef();
+			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
+			model.addReference(this, experimenter_reference);
+		}
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{
@@ -191,10 +210,42 @@ public class Image extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference ExperimentRef
-		// *** IGNORING *** Skipped back reference GroupRef
-		// *** IGNORING *** Skipped back reference DatasetRef
-		// *** IGNORING *** Skipped back reference InstrumentRef
+		// Element reference ExperimentRef
+		NodeList ExperimentRef_nodeList = element.getElementsByTagName("ExperimentRef");
+		for (int i = 0; i < ExperimentRef_nodeList.getLength(); i++)
+		{
+			Element ExperimentRef_element = (Element) ExperimentRef_nodeList.item(i);
+			ExperimentRef experiment_reference = new ExperimentRef();
+			experiment_reference.setID(ExperimentRef_element.getAttribute("ID"));
+			model.addReference(this, experiment_reference);
+		}
+		// Element reference GroupRef
+		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
+		for (int i = 0; i < GroupRef_nodeList.getLength(); i++)
+		{
+			Element GroupRef_element = (Element) GroupRef_nodeList.item(i);
+			GroupRef group_reference = new GroupRef();
+			group_reference.setID(GroupRef_element.getAttribute("ID"));
+			model.addReference(this, group_reference);
+		}
+		// Element reference DatasetRef
+		NodeList DatasetRef_nodeList = element.getElementsByTagName("DatasetRef");
+		for (int i = 0; i < DatasetRef_nodeList.getLength(); i++)
+		{
+			Element DatasetRef_element = (Element) DatasetRef_nodeList.item(i);
+			DatasetRef datasetList_reference = new DatasetRef();
+			datasetList_reference.setID(DatasetRef_element.getAttribute("ID"));
+			model.addReference(this, datasetList_reference);
+		}
+		// Element reference InstrumentRef
+		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
+		for (int i = 0; i < InstrumentRef_nodeList.getLength(); i++)
+		{
+			Element InstrumentRef_element = (Element) InstrumentRef_nodeList.item(i);
+			InstrumentRef instrument_reference = new InstrumentRef();
+			instrument_reference.setID(InstrumentRef_element.getAttribute("ID"));
+			model.addReference(this, instrument_reference);
+		}
 		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
 		if (ObjectiveSettings_nodeList.getLength() > 1)
 		{
@@ -208,7 +259,7 @@ public class Image extends AbstractOMEModelObject
 			// Element property ObjectiveSettings which is complex (has
 			// sub-elements)
 			setObjectiveSettings(new ObjectiveSettings(
-					(Element) ObjectiveSettings_nodeList.item(0)));
+					(Element) ObjectiveSettings_nodeList.item(0), model));
 		}
 		NodeList ImagingEnvironment_nodeList = element.getElementsByTagName("ImagingEnvironment");
 		if (ImagingEnvironment_nodeList.getLength() > 1)
@@ -223,7 +274,7 @@ public class Image extends AbstractOMEModelObject
 			// Element property ImagingEnvironment which is complex (has
 			// sub-elements)
 			setImagingEnvironment(new ImagingEnvironment(
-					(Element) ImagingEnvironment_nodeList.item(0)));
+					(Element) ImagingEnvironment_nodeList.item(0), model));
 		}
 		NodeList StageLabel_nodeList = element.getElementsByTagName("StageLabel");
 		if (StageLabel_nodeList.getLength() > 1)
@@ -238,7 +289,7 @@ public class Image extends AbstractOMEModelObject
 			// Element property StageLabel which is complex (has
 			// sub-elements)
 			setStageLabel(new StageLabel(
-					(Element) StageLabel_nodeList.item(0)));
+					(Element) StageLabel_nodeList.item(0), model));
 		}
 		NodeList Pixels_nodeList = element.getElementsByTagName("Pixels");
 		if (Pixels_nodeList.getLength() > 1)
@@ -253,15 +304,94 @@ public class Image extends AbstractOMEModelObject
 			// Element property Pixels which is complex (has
 			// sub-elements)
 			setPixels(new Pixels(
-					(Element) Pixels_nodeList.item(0)));
+					(Element) Pixels_nodeList.item(0), model));
 		}
-		// *** IGNORING *** Skipped back reference ROIRef
-		// *** IGNORING *** Skipped back reference MicrobeamManipulationRef
-		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Element reference ROIRef
+		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
+		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
+		{
+			Element ROIRef_element = (Element) ROIRef_nodeList.item(i);
+			ROIRef roiList_reference = new ROIRef();
+			roiList_reference.setID(ROIRef_element.getAttribute("ID"));
+			model.addReference(this, roiList_reference);
+		}
+		// Element reference MicrobeamManipulationRef
+		NodeList MicrobeamManipulationRef_nodeList = element.getElementsByTagName("MicrobeamManipulationRef");
+		for (int i = 0; i < MicrobeamManipulationRef_nodeList.getLength(); i++)
+		{
+			Element MicrobeamManipulationRef_element = (Element) MicrobeamManipulationRef_nodeList.item(i);
+			MicrobeamManipulationRef microbeamManipulationList_reference = new MicrobeamManipulationRef();
+			microbeamManipulationList_reference.setID(MicrobeamManipulationRef_element.getAttribute("ID"));
+			model.addReference(this, microbeamManipulationList_reference);
+		}
+		// Element reference AnnotationRef
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
+			AnnotationRef annotationList_reference = new AnnotationRef();
+			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationList_reference);
+		}
 		// *** IGNORING *** Skipped back reference WellSample_BackReference
 	}
 
 	// -- Image API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof ExperimenterRef)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkImage(this);
+			experimenter = o_casted;
+		}
+		if (reference instanceof ExperimentRef)
+		{
+			Experiment o_casted = (Experiment) o;
+			o_casted.linkImage(this);
+			experiment = o_casted;
+		}
+		if (reference instanceof GroupRef)
+		{
+			Group o_casted = (Group) o;
+			o_casted.linkImage(this);
+			group = o_casted;
+		}
+		if (reference instanceof DatasetRef)
+		{
+			Dataset o_casted = (Dataset) o;
+			o_casted.linkImage(this);
+			datasetList.add(o_casted);
+		}
+		if (reference instanceof InstrumentRef)
+		{
+			Instrument o_casted = (Instrument) o;
+			o_casted.linkImage(this);
+			instrument = o_casted;
+		}
+		if (reference instanceof ROIRef)
+		{
+			ROI o_casted = (ROI) o;
+			o_casted.linkImage(this);
+			roiList.add(o_casted);
+		}
+		if (reference instanceof MicrobeamManipulationRef)
+		{
+			MicrobeamManipulation o_casted = (MicrobeamManipulation) o;
+			o_casted.linkImage(this);
+			microbeamManipulationList.add(o_casted);
+		}
+		if (reference instanceof AnnotationRef)
+		{
+			Annotation o_casted = (Annotation) o;
+			o_casted.linkImage(this);
+			annotationList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

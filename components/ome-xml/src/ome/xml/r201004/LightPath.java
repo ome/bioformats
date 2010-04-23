@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -78,12 +78,15 @@ public class LightPath extends AbstractOMEModelObject
 	 * Constructs LightPath recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public LightPath(Element element) throws EnumerationException
+	public LightPath(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -91,10 +94,13 @@ public class LightPath extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -108,12 +114,61 @@ public class LightPath extends AbstractOMEModelObject
 			//		"Expecting node name of LightPath got %s",
 			//		tagName));
 		}
-		// *** IGNORING *** Skipped back reference ExcitationFilterRef
-		// *** IGNORING *** Skipped back reference DichroicRef
-		// *** IGNORING *** Skipped back reference EmissionFilterRef
+		// Element reference ExcitationFilterRef
+		NodeList ExcitationFilterRef_nodeList = element.getElementsByTagName("ExcitationFilterRef");
+		for (int i = 0; i < ExcitationFilterRef_nodeList.getLength(); i++)
+		{
+			Element ExcitationFilterRef_element = (Element) ExcitationFilterRef_nodeList.item(i);
+			ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
+			excitationFilterList_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
+			model.addReference(this, excitationFilterList_reference);
+		}
+		// Element reference DichroicRef
+		NodeList DichroicRef_nodeList = element.getElementsByTagName("DichroicRef");
+		for (int i = 0; i < DichroicRef_nodeList.getLength(); i++)
+		{
+			Element DichroicRef_element = (Element) DichroicRef_nodeList.item(i);
+			DichroicRef dichroic_reference = new DichroicRef();
+			dichroic_reference.setID(DichroicRef_element.getAttribute("ID"));
+			model.addReference(this, dichroic_reference);
+		}
+		// Element reference EmissionFilterRef
+		NodeList EmissionFilterRef_nodeList = element.getElementsByTagName("EmissionFilterRef");
+		for (int i = 0; i < EmissionFilterRef_nodeList.getLength(); i++)
+		{
+			Element EmissionFilterRef_element = (Element) EmissionFilterRef_nodeList.item(i);
+			EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
+			emissionFilterList_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
+			model.addReference(this, emissionFilterList_reference);
+		}
 	}
 
 	// -- LightPath API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof ExcitationFilterRef)
+		{
+			Filter o_casted = (Filter) o;
+			o_casted.linkLightPath(this);
+			excitationFilterList.add(o_casted);
+		}
+		if (reference instanceof DichroicRef)
+		{
+			Dichroic o_casted = (Dichroic) o;
+			o_casted.linkLightPath(this);
+			dichroic = o_casted;
+		}
+		if (reference instanceof EmissionFilterRef)
+		{
+			Filter o_casted = (Filter) o;
+			o_casted.linkLightPath(this);
+			emissionFilterList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Reference which occurs more than once

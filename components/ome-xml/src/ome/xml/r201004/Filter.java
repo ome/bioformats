@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,12 +87,15 @@ public class Filter extends ManufacturerSpec
 	 * Constructs Filter recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Filter(Element element) throws EnumerationException
+	public Filter(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -100,10 +103,13 @@ public class Filter extends ManufacturerSpec
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -129,12 +135,17 @@ public class Filter extends ManufacturerSpec
 			setType(FilterType.fromString(
 					element.getAttribute("Type")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"Filter missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		NodeList TransmittanceRange_nodeList = element.getElementsByTagName("TransmittanceRange");
 		if (TransmittanceRange_nodeList.getLength() > 1)
 		{
@@ -148,13 +159,20 @@ public class Filter extends ManufacturerSpec
 			// Element property TransmittanceRange which is complex (has
 			// sub-elements)
 			setTransmittanceRange(new TransmittanceRange(
-					(Element) TransmittanceRange_nodeList.item(0)));
+					(Element) TransmittanceRange_nodeList.item(0), model));
 		}
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
 
 	// -- Filter API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

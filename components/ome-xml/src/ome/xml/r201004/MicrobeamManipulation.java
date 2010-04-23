@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,12 +87,15 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	 * Constructs MicrobeamManipulation recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public MicrobeamManipulation(Element element) throws EnumerationException
+	public MicrobeamManipulation(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -100,10 +103,13 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -123,14 +129,35 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 			setType(MicrobeamManipulationType.fromString(
 					element.getAttribute("Type")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"MicrobeamManipulation missing required ID property."));
 		}
-		// *** IGNORING *** Skipped back reference ROIRef
-		// *** IGNORING *** Skipped back reference ExperimenterRef
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
+		// Element reference ROIRef
+		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
+		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
+		{
+			Element ROIRef_element = (Element) ROIRef_nodeList.item(i);
+			ROIRef roiList_reference = new ROIRef();
+			roiList_reference.setID(ROIRef_element.getAttribute("ID"));
+			model.addReference(this, roiList_reference);
+		}
+		// Element reference ExperimenterRef
+		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
+		for (int i = 0; i < ExperimenterRef_nodeList.getLength(); i++)
+		{
+			Element ExperimenterRef_element = (Element) ExperimenterRef_nodeList.item(i);
+			ExperimenterRef experimenter_reference = new ExperimenterRef();
+			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
+			model.addReference(this, experimenter_reference);
+		}
 		// Element property LightSourceSettings which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
@@ -138,12 +165,31 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		{
 			Element LightSourceSettings_element = (Element) LightSourceSettings_nodeList.item(i);
 			addLightSourceSettings(
-					new LightSourceSettings(LightSourceSettings_element));
+					new LightSourceSettings(LightSourceSettings_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
 	// -- MicrobeamManipulation API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof ROIRef)
+		{
+			ROI o_casted = (ROI) o;
+			o_casted.linkMicrobeamManipulation(this);
+			roiList.add(o_casted);
+		}
+		if (reference instanceof ExperimenterRef)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkMicrobeamManipulation(this);
+			experimenter = o_casted;
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property

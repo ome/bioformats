@@ -1,5 +1,5 @@
 //
-// OMEModelObject.java
+// OMEModel.java
 //
 
 /*
@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package ome.xml.r201004;
 
+import java.util.List;
+import java.util.Map;
+
 import ome.xml.r201004.enums.EnumerationException;
 
 import org.w3c.dom.Document;
@@ -36,34 +39,19 @@ import org.w3c.dom.Element;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OMEModelObject.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OMEModelObject.java">SVN</a></dd></dl>
  */
-public interface OMEModelObject {
+public interface OMEModel {
 
-  /**
-   * Takes the entire object hierarchy and produces an XML DOM tree.
-   * @param document Destination document for element creation, etc.
-   * @return XML DOM tree root element for this model object.
-   */
-  Element asXMLElement(Document document);
+  OMEModelObject addModelObject(String id, OMEModelObject object);
 
-  /** 
-   * Updates the object hierarchy recursively from an XML DOM tree.
-   * <b>NOTE:</b> No properties are removed, only added or updated.
-   * @param element Root of the XML DOM tree to construct a model object
-   * graph from.
-   * @param model Handler for the OME model which keeps track of instances
-   * and references seen during object population.
-   * @throws EnumerationException If there is an error instantiating an
-   * enumeration during model object creation.
-   */
-  void update(Element element, OMEModel model) throws EnumerationException;
+  OMEModelObject removeModelObject(String id);
 
-  /**
-   * Link a given OME model object to this model object.
-   * @param reference The <i>type</i> qualifier for the reference. This should
-   * be the corresponding reference type for <code>o</code>. If, for example,
-   * <code>o</code> is of type <code>Image</code>, <code>reference</code>
-   * <b>MUST</b> be of type <code>ImageRef</code>.
-   * @param o Model object to link to.
-   */
-  void link(Reference reference, OMEModelObject o);
+  OMEModelObject getModelObject(String id);
+  
+  Map<String, OMEModelObject> getModelObjects();
+
+  boolean addReference(OMEModelObject a, Reference b);
+  
+  Map<OMEModelObject, List<Reference>> getReferences();
+
+  int resolveReferences();
 }

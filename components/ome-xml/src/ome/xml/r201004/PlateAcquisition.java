@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-22 17:37:18+0100
+ * Created by callan via xsd-fu on 2010-04-23 13:18:06+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -93,12 +93,15 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	 * Constructs PlateAcquisition recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public PlateAcquisition(Element element) throws EnumerationException
+	public PlateAcquisition(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -106,10 +109,13 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 		String tagName = element.getTagName();
@@ -135,12 +141,17 @@ public class PlateAcquisition extends AbstractOMEModelObject
 			setEndTime(String.valueOf(
 					element.getAttribute("EndTime")));
 		}
-		if (element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID"))
 		{
-			// Attribute property ID
-			setID(String.valueOf(
-					element.getAttribute("ID")));
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"PlateAcquisition missing required ID property."));
 		}
+		// ID property
+		setID(String.valueOf(
+					element.getAttribute("ID")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 		if (element.hasAttribute("StartTime"))
 		{
 			// Attribute property StartTime
@@ -167,11 +178,46 @@ public class PlateAcquisition extends AbstractOMEModelObject
 			// sub-elements)
 			setDescription(Description_nodeList.item(0).getTextContent());
 		}
-		// *** IGNORING *** Skipped back reference WellSampleRef
-		// *** IGNORING *** Skipped back reference AnnotationRef
+		// Element reference WellSampleRef
+		NodeList WellSampleRef_nodeList = element.getElementsByTagName("WellSampleRef");
+		for (int i = 0; i < WellSampleRef_nodeList.getLength(); i++)
+		{
+			Element WellSampleRef_element = (Element) WellSampleRef_nodeList.item(i);
+			WellSampleRef wellSampleList_reference = new WellSampleRef();
+			wellSampleList_reference.setID(WellSampleRef_element.getAttribute("ID"));
+			model.addReference(this, wellSampleList_reference);
+		}
+		// Element reference AnnotationRef
+		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
+		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		{
+			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
+			AnnotationRef annotationList_reference = new AnnotationRef();
+			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationList_reference);
+		}
 	}
 
 	// -- PlateAcquisition API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+		if (reference instanceof WellSampleRef)
+		{
+			WellSample o_casted = (WellSample) o;
+			o_casted.linkPlateAcquisition(this);
+			wellSampleList.add(o_casted);
+		}
+		if (reference instanceof AnnotationRef)
+		{
+			Annotation o_casted = (Annotation) o;
+			o_casted.linkPlateAcquisition(this);
+			annotationList.add(o_casted);
+		}
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 
 	// Property
