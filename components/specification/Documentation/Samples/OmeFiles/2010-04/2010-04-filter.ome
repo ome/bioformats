@@ -17,7 +17,7 @@
 		<Objective Correction="Achromat" Immersion="Air" LensNA="0.3" NominalMagnification="10"
 			ID="Objective:0:0"/>
 		<FilterSet ID="FilterSet:1" Manufacturer="Ink Inc." Model="Mk 3" LotNumber="K753">
-			<ExcitationFilterRef ID="Filter:1"/>
+			<ExcitationFilterRef ID="Image:1"/>
 			<ExcitationFilterRef ID="Filter:2"/>
 			<ExcitationFilterRef ID="Filter:3"/>
 			<ExcitationFilterRef ID="Filter:4"/>

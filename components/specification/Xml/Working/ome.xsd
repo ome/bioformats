@@ -136,9 +136,9 @@
 		<xsd:keyref name="ImagePixelsChannelLightPathEmissionDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelOTFIDKeyRef" refer="OME:OTFIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:OTFRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterList/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentFilterSetEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:EmissionFilterList/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="InstrumentFilterSetEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:EmissionFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentLightSourceLaserPumpLightSourceIDKey" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Instrument/OME:LightSource/OME:Laser/OME:Pump"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentOTFFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Instrument/OME:OTF/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentOTFObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Instrument/OME:OTF/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -1125,6 +1125,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Common types -->
 	<xsd:complexType name="ManufacturerSpec">
 		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				This is the base from which many microscope components are extended. E.g Objective, Filter etc. 
 				Provides attributes for recording common properties of these components such as Manufacturer name, Model etc, 
@@ -1567,7 +1568,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Light elements -->
 	<xsd:element name="LightSource"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo>abstract</xsd:appinfo>
+			<xsd:appinfo>abstract-proprietary</xsd:appinfo>
 			<xsd:documentation>
 				The lightsource for the instrument.  An instrument may have several light sources.
 				The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
@@ -1850,6 +1851,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- References -->
 	<xsd:complexType name="Reference">
 		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				Reference is an empty complex type that is contained and extended by all the *Ref elements and also the Settings Complex Type
 				Each *Ref element defines an attribute named ID of simple type *ID and no other information
@@ -1858,19 +1860,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 	</xsd:complexType>
 	
-	<xsd:complexType name="ReferenceWithID">
-		<xsd:annotation>
-			<xsd:documentation>
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:extension base="Reference">
-				<xsd:attribute name="ID" use="required" type="LSID"/>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-	
-	<xsd:complexType name="FilterRef"> <!-- top level definition -->
+	<xsd:complexType name="FilterRef" > <!-- top level definition -->
 		<xsd:complexContent>
 			<xsd:extension base="Reference">
 				<xsd:attribute name="ID" use="required" type="FilterID"/>
@@ -1998,6 +1988,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Settings -->
 	<xsd:complexType name="Settings">
 		<xsd:annotation>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				Settings is an empty complex type that is contained and extended by all the *Settings elements
 				Each *Settings element defines an attribute named ID of simple type *ID and the other information that is needed.

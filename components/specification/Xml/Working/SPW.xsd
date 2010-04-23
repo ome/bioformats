@@ -76,7 +76,9 @@
 					</xsd:annotation>
 					<xsd:complexType>
 						<xsd:complexContent>
-							<xsd:extension base="OME:ReferenceWithID"></xsd:extension>
+							<xsd:extension base="OME:Reference">
+								<xsd:attribute name="ID" use="required" type="PlateID"/>
+							</xsd:extension>
 						</xsd:complexContent>
 					</xsd:complexType>
 				</xsd:element>
@@ -280,19 +282,15 @@
 					</xsd:annotation>
 					<xsd:complexType>
 						<xsd:complexContent>
-							<xsd:extension base="OME:ReferenceWithID"></xsd:extension>
+							<xsd:extension base="OME:Reference">
+								<xsd:attribute name="ID" use="required" type="PlateID"/>
+							</xsd:extension>
 						</xsd:complexContent>
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="ID" use="required">
-				<xsd:simpleType>
-					<xsd:restriction base="OME:LSID">
-						<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name="ID" use="required" type="ScreenID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ProtocolIdentifier" use="optional" type="xsd:string">
 					<xsd:annotation>
@@ -335,6 +333,12 @@
 			</xsd:attribute>	
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:simpleType name="ScreenID">
+		<xsd:restriction base="OME:LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	
 	<xsd:element name="PlateAcquisition"> <!-- top level definition -->
 		<xsd:annotation>
