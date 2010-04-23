@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
+ * Created by callan via xsd-fu on 2010-04-23 18:17:42+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -418,7 +418,7 @@ public class FilterSet extends ManufacturerSpec
 			// Reference property ExcitationFilterRef which occurs more than once
 			for (Filter excitationFilterList_value : excitationFilterList)
 			{
-				FilterRef o = new FilterRef();
+				ExcitationFilterRef o = new ExcitationFilterRef();
 				o.setID(excitationFilterList_value.getID());
 				FilterSet_element.appendChild(o.asXMLElement(document));
 			}
@@ -435,7 +435,7 @@ public class FilterSet extends ManufacturerSpec
 			// Reference property EmissionFilterRef which occurs more than once
 			for (Filter emissionFilterList_value : emissionFilterList)
 			{
-				FilterRef o = new FilterRef();
+				EmissionFilterRef o = new EmissionFilterRef();
 				o.setID(emissionFilterList_value.getID());
 				FilterSet_element.appendChild(o.asXMLElement(document));
 			}
