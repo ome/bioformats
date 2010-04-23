@@ -143,7 +143,7 @@ ${customContent}\
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 {% if not klass.isAbstractProprietary %}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
@@ -242,8 +242,8 @@ ${customContent}\
 			for (int j = 0; j < ${inner_prop.name}_nodeList.getLength(); j++)
 			{
 				Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(j);
-				${inner_prop.javaType} o = new ${inner_prop.javaType}(${inner_prop.name}_element, model);
-				o.update(${prop.name}_element);
+				${inner_prop.javaType} o = new ${inner_prop.javaType}(${prop.name}_element, model);
+				o.update(${inner_prop.name}_element);
 				add${prop.javaMethodName}(o);
 			}
 {% end %}\
@@ -297,6 +297,7 @@ ${customContent}\
 {% if prop.maxOccurs == 1 %}\
 			${prop.javaInstanceVariableName} = o_casted;
 {% end %}\
+			return;
 		}
 {% end %}\
 {% end %}\
