@@ -127,11 +127,21 @@ def main(args):
 	model = parseXmlSchema(args, namespace)
 	fu = TemplateInfo(outputDirectory, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+        base, filename = os.path.split(CLASS_TEMPLATE)
+        name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
+		CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
+		customContent = ''
+		if os.path.exists(CUSTOM_CLASS_TEMPLATE):
+       			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+			customContent = customTemplate.generate(
+				fu=fu, klass=obj, parents=parents, model=model)
+			customContent = customContent.render()
 		parents = resolve_parents(model, obj.name)
 		f = open(os.path.join(outputDirectory, "%s.java" % obj.name), "w")
 		classContent = template.generate(
-				fu=fu, klass=obj, parents=parents, model=model).render()
+				fu=fu, klass=obj, parents=parents, model=model, customContent=customContent)
+		classContent = classContent.render()
 		f.write(classContent)
 		f.close()
 		

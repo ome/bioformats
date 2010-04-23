@@ -123,6 +123,12 @@ public class ${klass.name} extends ${klass.javaBase}
 	{
 		update(element, model);
 	}
+	
+	// -- Custom content from ${klass.name} specific template --
+
+${customContent}\
+
+	// -- OMEModelObject API methods --
 
 	/** 
 	 * Updates ${klass.name} recursively from an XML DOM tree. <b>NOTE:</b> No
