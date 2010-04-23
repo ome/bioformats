@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author callan
@@ -95,8 +96,24 @@ public class OMEModelImpl implements OMEModel {
    * @see ome.xml.r201004.OMEModel#resolveReferences()
    */
   public int resolveReferences() {
-    // TODO Auto-generated method stub
-    return 0;
+    int unhandledReferences = 0;
+    for (Entry<OMEModelObject, List<Reference>> entry : references.entrySet())
+    {
+      OMEModelObject a = entry.getKey();
+      for (Reference reference : entry.getValue()) {
+        String referenceID = reference.getID();
+        OMEModelObject b = getModelObject(referenceID);
+        if (b == null) {
+          System.err.println(String.format(
+              "%s reference to %s missing from object hierarchy.",
+              a, referenceID));
+          unhandledReferences++;
+          continue;
+        }
+        a.link(reference, b);
+      }
+    }
+    return unhandledReferences;
   }
 
 }

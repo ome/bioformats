@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -155,7 +155,7 @@ public class Channel extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Channel".equals(tagName))
 		{
@@ -333,18 +333,21 @@ public class Channel extends AbstractOMEModelObject
 			OTF o_casted = (OTF) o;
 			o_casted.linkChannel(this);
 			otf = o_casted;
+			return;
 		}
 		if (reference instanceof FilterSetRef)
 		{
 			FilterSet o_casted = (FilterSet) o;
 			o_casted.linkChannel(this);
 			filterSet = o_casted;
+			return;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkChannel(this);
 			annotationList.add(o_casted);
+			return;
 		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(

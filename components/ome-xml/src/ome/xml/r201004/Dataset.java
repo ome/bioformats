@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -122,7 +122,7 @@ public class Dataset extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Dataset".equals(tagName))
 		{
@@ -213,24 +213,28 @@ public class Dataset extends AbstractOMEModelObject
 			Experimenter o_casted = (Experimenter) o;
 			o_casted.linkDataset(this);
 			experimenter = o_casted;
+			return;
 		}
 		if (reference instanceof GroupRef)
 		{
 			Group o_casted = (Group) o;
 			o_casted.linkDataset(this);
 			group = o_casted;
+			return;
 		}
 		if (reference instanceof ProjectRef)
 		{
 			Project o_casted = (Project) o;
 			o_casted.linkDataset(this);
 			projectList.add(o_casted);
+			return;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkDataset(this);
 			annotationList.add(o_casted);
+			return;
 		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(

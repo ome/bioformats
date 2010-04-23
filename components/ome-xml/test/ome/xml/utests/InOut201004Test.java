@@ -280,6 +280,7 @@ public class InOut201004Test {
     model = new OMEModelImpl();
     // Read string XML in as a DOM tree and parse into the object hierarchy
     ome = new OME(document.getDocumentElement(), model);
+    model.resolveReferences();
     assertNotNull(ome);
     assertEquals(1, ome.sizeOfImageList());
   }
@@ -756,9 +757,9 @@ public class InOut201004Test {
   public static void main(String[] args) throws Exception {
     InOut201004Test t = new InOut201004Test();
     t.setUp();
-    t.testValidOMENode();
     System.out.println("###\n### XML\n###");
     System.out.println(t.asString);
+    t.testValidOMENode();
     System.out.println("###\n### Model Objects\n###");
     Map<String, OMEModelObject> objects = t.model.getModelObjects();
     for (Entry<String, OMEModelObject> entry : objects.entrySet())

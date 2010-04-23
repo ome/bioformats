@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -122,7 +122,7 @@ public class ROI extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"ROI".equals(tagName))
 		{
@@ -208,6 +208,7 @@ public class ROI extends AbstractOMEModelObject
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkROI(this);
 			annotationList.add(o_casted);
+			return;
 		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -107,7 +107,7 @@ public class LightPath extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"LightPath".equals(tagName))
 		{
@@ -157,18 +157,21 @@ public class LightPath extends AbstractOMEModelObject
 			Filter o_casted = (Filter) o;
 			o_casted.linkLightPath(this);
 			excitationFilterList.add(o_casted);
+			return;
 		}
 		if (reference instanceof DichroicRef)
 		{
 			Dichroic o_casted = (Dichroic) o;
 			o_casted.linkLightPath(this);
 			dichroic = o_casted;
+			return;
 		}
 		if (reference instanceof EmissionFilterRef)
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkLightPath(this);
 			emissionFilterList.add(o_casted);
+			return;
 		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(

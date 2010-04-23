@@ -54,6 +54,14 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   }
 
   /* (non-Javadoc)
+   * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element, ome.xml.r201004.OMEModel)
+   */
+  public void update(Element element, OMEModel model)
+  throws EnumerationException {
+    // Nothing to update.
+  }
+
+  /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#asXMLElement(org.w3c.dom.Document)
    */
   public abstract Element asXMLElement(Document document);

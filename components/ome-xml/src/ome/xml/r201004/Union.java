@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -101,7 +101,7 @@ public class Union extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Union".equals(tagName))
 		{
@@ -126,8 +126,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Line_nodeList.getLength(); j++)
 			{
 				Element Line_element = (Element) Line_nodeList.item(j);
-				Line o = new Line(Line_element, model);
-				o.update(Shape_element);
+				Line o = new Line(Shape_element, model);
+				o.update(Line_element);
 				addShape(o);
 			}
 			NodeList Rectangle_nodeList = 
@@ -135,8 +135,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Rectangle_nodeList.getLength(); j++)
 			{
 				Element Rectangle_element = (Element) Rectangle_nodeList.item(j);
-				Rectangle o = new Rectangle(Rectangle_element, model);
-				o.update(Shape_element);
+				Rectangle o = new Rectangle(Shape_element, model);
+				o.update(Rectangle_element);
 				addShape(o);
 			}
 			NodeList Mask_nodeList = 
@@ -144,8 +144,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Mask_nodeList.getLength(); j++)
 			{
 				Element Mask_element = (Element) Mask_nodeList.item(j);
-				Mask o = new Mask(Mask_element, model);
-				o.update(Shape_element);
+				Mask o = new Mask(Shape_element, model);
+				o.update(Mask_element);
 				addShape(o);
 			}
 			NodeList Ellipse_nodeList = 
@@ -153,8 +153,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Ellipse_nodeList.getLength(); j++)
 			{
 				Element Ellipse_element = (Element) Ellipse_nodeList.item(j);
-				Ellipse o = new Ellipse(Ellipse_element, model);
-				o.update(Shape_element);
+				Ellipse o = new Ellipse(Shape_element, model);
+				o.update(Ellipse_element);
 				addShape(o);
 			}
 			NodeList Point_nodeList = 
@@ -162,8 +162,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Point_nodeList.getLength(); j++)
 			{
 				Element Point_element = (Element) Point_nodeList.item(j);
-				Point o = new Point(Point_element, model);
-				o.update(Shape_element);
+				Point o = new Point(Shape_element, model);
+				o.update(Point_element);
 				addShape(o);
 			}
 			NodeList Polyline_nodeList = 
@@ -171,8 +171,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Polyline_nodeList.getLength(); j++)
 			{
 				Element Polyline_element = (Element) Polyline_nodeList.item(j);
-				Polyline o = new Polyline(Polyline_element, model);
-				o.update(Shape_element);
+				Polyline o = new Polyline(Shape_element, model);
+				o.update(Polyline_element);
 				addShape(o);
 			}
 			NodeList Path_nodeList = 
@@ -180,8 +180,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Path_nodeList.getLength(); j++)
 			{
 				Element Path_element = (Element) Path_nodeList.item(j);
-				Path o = new Path(Path_element, model);
-				o.update(Shape_element);
+				Path o = new Path(Shape_element, model);
+				o.update(Path_element);
 				addShape(o);
 			}
 			NodeList Text_nodeList = 
@@ -189,8 +189,8 @@ public class Union extends AbstractOMEModelObject
 			for (int j = 0; j < Text_nodeList.getLength(); j++)
 			{
 				Element Text_element = (Element) Text_nodeList.item(j);
-				Text o = new Text(Text_element, model);
-				o.update(Shape_element);
+				Text o = new Text(Shape_element, model);
+				o.update(Text_element);
 				addShape(o);
 			}
 		}

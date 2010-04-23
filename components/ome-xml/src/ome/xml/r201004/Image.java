@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -149,7 +149,7 @@ public class Image extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Image".equals(tagName))
 		{
@@ -350,48 +350,56 @@ public class Image extends AbstractOMEModelObject
 			Experimenter o_casted = (Experimenter) o;
 			o_casted.linkImage(this);
 			experimenter = o_casted;
+			return;
 		}
 		if (reference instanceof ExperimentRef)
 		{
 			Experiment o_casted = (Experiment) o;
 			o_casted.linkImage(this);
 			experiment = o_casted;
+			return;
 		}
 		if (reference instanceof GroupRef)
 		{
 			Group o_casted = (Group) o;
 			o_casted.linkImage(this);
 			group = o_casted;
+			return;
 		}
 		if (reference instanceof DatasetRef)
 		{
 			Dataset o_casted = (Dataset) o;
 			o_casted.linkImage(this);
 			datasetList.add(o_casted);
+			return;
 		}
 		if (reference instanceof InstrumentRef)
 		{
 			Instrument o_casted = (Instrument) o;
 			o_casted.linkImage(this);
 			instrument = o_casted;
+			return;
 		}
 		if (reference instanceof ROIRef)
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkImage(this);
 			roiList.add(o_casted);
+			return;
 		}
 		if (reference instanceof MicrobeamManipulationRef)
 		{
 			MicrobeamManipulation o_casted = (MicrobeamManipulation) o;
 			o_casted.linkImage(this);
 			microbeamManipulationList.add(o_casted);
+			return;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkImage(this);
 			annotationList.add(o_casted);
+			return;
 		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:38:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -131,7 +131,7 @@ public class Instrument extends AbstractOMEModelObject
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
 	{	
-		super.update(element);
+		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Instrument".equals(tagName))
 		{
@@ -182,8 +182,8 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < Laser_nodeList.getLength(); j++)
 			{
 				Element Laser_element = (Element) Laser_nodeList.item(j);
-				Laser o = new Laser(Laser_element, model);
-				o.update(LightSource_element);
+				Laser o = new Laser(LightSource_element, model);
+				o.update(Laser_element);
 				addLightSource(o);
 			}
 			NodeList Filament_nodeList = 
@@ -191,8 +191,8 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < Filament_nodeList.getLength(); j++)
 			{
 				Element Filament_element = (Element) Filament_nodeList.item(j);
-				Filament o = new Filament(Filament_element, model);
-				o.update(LightSource_element);
+				Filament o = new Filament(LightSource_element, model);
+				o.update(Filament_element);
 				addLightSource(o);
 			}
 			NodeList Arc_nodeList = 
@@ -200,8 +200,8 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < Arc_nodeList.getLength(); j++)
 			{
 				Element Arc_element = (Element) Arc_nodeList.item(j);
-				Arc o = new Arc(Arc_element, model);
-				o.update(LightSource_element);
+				Arc o = new Arc(LightSource_element, model);
+				o.update(Arc_element);
 				addLightSource(o);
 			}
 			NodeList LightEmittingDiode_nodeList = 
@@ -209,8 +209,8 @@ public class Instrument extends AbstractOMEModelObject
 			for (int j = 0; j < LightEmittingDiode_nodeList.getLength(); j++)
 			{
 				Element LightEmittingDiode_element = (Element) LightEmittingDiode_nodeList.item(j);
-				LightEmittingDiode o = new LightEmittingDiode(LightEmittingDiode_element, model);
-				o.update(LightSource_element);
+				LightEmittingDiode o = new LightEmittingDiode(LightSource_element, model);
+				o.update(LightEmittingDiode_element);
 				addLightSource(o);
 			}
 		}
