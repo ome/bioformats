@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 16:13:32+0100
+ * Created by callan via xsd-fu on 2010-04-23 16:45:54+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -49,7 +49,7 @@ import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
 
-public class Settings extends Reference
+public abstract class Settings extends Reference
 {
 	// -- Constants --
 

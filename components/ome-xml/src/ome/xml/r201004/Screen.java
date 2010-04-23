@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 16:13:32+0100
+ * Created by callan via xsd-fu on 2010-04-23 16:45:54+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -89,9 +89,6 @@ public class Screen extends AbstractOMEModelObject
 
 	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
-
-	// Back reference Plate_BackReference
-	private List<Plate> plate_BackReferenceList = new ArrayList<Plate>();
 
 	// -- Constructors --
 
@@ -229,7 +226,6 @@ public class Screen extends AbstractOMEModelObject
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);
 		}
-		// *** IGNORING *** Skipped back reference Plate_BackReference
 	}
 
 	// -- Screen API methods --
@@ -439,37 +435,6 @@ public class Screen extends AbstractOMEModelObject
 		return annotationList.remove(o);
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedPlateList()
-	{
-		return plate_BackReferenceList.size();
-	}
-
-	public List<Plate> copyLinkedPlateList()
-	{
-		return new ArrayList<Plate>(plate_BackReferenceList);
-	}
-
-	public Plate getLinkedPlate(int index)
-	{
-		return plate_BackReferenceList.get(index);
-	}
-
-	public Plate setLinkedPlate(int index, Plate o)
-	{
-		return plate_BackReferenceList.set(index, o);
-	}
-
-	public boolean linkPlate(Plate o)
-	{
-		return plate_BackReferenceList.add(o);
-	}
-
-	public boolean unlinkPlate(Plate o)
-	{
-		return plate_BackReferenceList.remove(o);
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -556,10 +521,6 @@ public class Screen extends AbstractOMEModelObject
 				o.setID(annotationList_value.getID());
 				Screen_element.appendChild(o.asXMLElement(document));
 			}
-		}
-		if (plate_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference Plate_BackReference
 		}
 		return super.asXMLElement(document, Screen_element);
 	}
