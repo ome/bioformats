@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:17:42+0100
+ * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -134,17 +134,20 @@ public class Experiment extends AbstractOMEModelObject
 			setType(ExperimentType.fromString(
 					element.getAttribute("Type")));
 		}
-		if (!element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID") && getID() == null)
 		{
 			// TODO: Should be its own exception
 			throw new RuntimeException(String.format(
 					"Experiment missing required ID property."));
 		}
-		// ID property
-		setID(String.valueOf(
-					element.getAttribute("ID")));
-		// Adding this model object to the model handler
-	    	model.addModelObject(getID(), this);
+		if (element.hasAttribute("ID"))
+		{
+			// ID property
+			setID(String.valueOf(
+						element.getAttribute("ID")));
+			// Adding this model object to the model handler
+		    	model.addModelObject(getID(), this);
+		}
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
 		{

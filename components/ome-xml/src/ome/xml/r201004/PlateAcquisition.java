@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:17:42+0100
+ * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -146,17 +146,20 @@ public class PlateAcquisition extends AbstractOMEModelObject
 			setEndTime(String.valueOf(
 					element.getAttribute("EndTime")));
 		}
-		if (!element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID") && getID() == null)
 		{
 			// TODO: Should be its own exception
 			throw new RuntimeException(String.format(
 					"PlateAcquisition missing required ID property."));
 		}
-		// ID property
-		setID(String.valueOf(
-					element.getAttribute("ID")));
-		// Adding this model object to the model handler
-	    	model.addModelObject(getID(), this);
+		if (element.hasAttribute("ID"))
+		{
+			// ID property
+			setID(String.valueOf(
+						element.getAttribute("ID")));
+			// Adding this model object to the model handler
+		    	model.addModelObject(getID(), this);
+		}
 		if (element.hasAttribute("StartTime"))
 		{
 			// Attribute property StartTime

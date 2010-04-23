@@ -647,6 +647,7 @@ public class InOut201004Test {
     otfBinaryFileExternal.setSHA1(OTF_BINARY_FILE_EXTERNAL_SHA1);
     otfBinaryFile.setExternal(otfBinaryFileExternal);
     otf.setBinaryFile(otfBinaryFile);
+    otf.linkFilterSet(filterSet);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);
@@ -655,7 +656,6 @@ public class InOut201004Test {
 
     filterSet.linkEmissionFilter(emFilter);
     filterSet.linkExcitationFilter(exFilter);
-    filterSet.linkOTF(otf);
     filterSet.linkDichroic(dichroic);
     instrument.addFilterSet(filterSet);
     instrument.addDichroic(dichroic);

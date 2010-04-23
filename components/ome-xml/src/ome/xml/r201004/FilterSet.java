@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:17:42+0100
+ * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -131,17 +131,20 @@ public class FilterSet extends ManufacturerSpec
 			//		"Expecting node name of FilterSet got %s",
 			//		tagName));
 		}
-		if (!element.hasAttribute("ID"))
+		if (!element.hasAttribute("ID") && getID() == null)
 		{
 			// TODO: Should be its own exception
 			throw new RuntimeException(String.format(
 					"FilterSet missing required ID property."));
 		}
-		// ID property
-		setID(String.valueOf(
-					element.getAttribute("ID")));
-		// Adding this model object to the model handler
-	    	model.addModelObject(getID(), this);
+		if (element.hasAttribute("ID"))
+		{
+			// ID property
+			setID(String.valueOf(
+						element.getAttribute("ID")));
+			// Adding this model object to the model handler
+		    	model.addModelObject(getID(), this);
+		}
 		// Element reference ExcitationFilterRef
 		NodeList ExcitationFilterRef_nodeList = element.getElementsByTagName("ExcitationFilterRef");
 		for (int i = 0; i < ExcitationFilterRef_nodeList.getLength(); i++)

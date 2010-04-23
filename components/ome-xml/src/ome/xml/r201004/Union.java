@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:17:42+0100
+ * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -127,7 +127,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Line_element = (Element) Line_nodeList.item(j);
 				Line o = new Line(Shape_element, model);
-				o.update(Line_element);
+				o.update(Line_element, model);
 				addShape(o);
 			}
 			NodeList Rectangle_nodeList = 
@@ -136,7 +136,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Rectangle_element = (Element) Rectangle_nodeList.item(j);
 				Rectangle o = new Rectangle(Shape_element, model);
-				o.update(Rectangle_element);
+				o.update(Rectangle_element, model);
 				addShape(o);
 			}
 			NodeList Mask_nodeList = 
@@ -145,7 +145,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Mask_element = (Element) Mask_nodeList.item(j);
 				Mask o = new Mask(Shape_element, model);
-				o.update(Mask_element);
+				o.update(Mask_element, model);
 				addShape(o);
 			}
 			NodeList Ellipse_nodeList = 
@@ -154,7 +154,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Ellipse_element = (Element) Ellipse_nodeList.item(j);
 				Ellipse o = new Ellipse(Shape_element, model);
-				o.update(Ellipse_element);
+				o.update(Ellipse_element, model);
 				addShape(o);
 			}
 			NodeList Point_nodeList = 
@@ -163,7 +163,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Point_element = (Element) Point_nodeList.item(j);
 				Point o = new Point(Shape_element, model);
-				o.update(Point_element);
+				o.update(Point_element, model);
 				addShape(o);
 			}
 			NodeList Polyline_nodeList = 
@@ -172,7 +172,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Polyline_element = (Element) Polyline_nodeList.item(j);
 				Polyline o = new Polyline(Shape_element, model);
-				o.update(Polyline_element);
+				o.update(Polyline_element, model);
 				addShape(o);
 			}
 			NodeList Path_nodeList = 
@@ -181,7 +181,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Path_element = (Element) Path_nodeList.item(j);
 				Path o = new Path(Shape_element, model);
-				o.update(Path_element);
+				o.update(Path_element, model);
 				addShape(o);
 			}
 			NodeList Text_nodeList = 
@@ -190,7 +190,7 @@ public class Union extends AbstractOMEModelObject
 			{
 				Element Text_element = (Element) Text_nodeList.item(j);
 				Text o = new Text(Shape_element, model);
-				o.update(Text_element);
+				o.update(Text_element, model);
 				addShape(o);
 			}
 		}
