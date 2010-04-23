@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 16:45:54+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -91,6 +91,11 @@ public class ObjectiveSettings extends Settings
 	{
 		update(element, model);
 	}
+	
+	// -- Custom content from ObjectiveSettings specific template --
+
+
+	// -- OMEModelObject API methods --
 
 	/** 
 	 * Updates ObjectiveSettings recursively from an XML DOM tree. <b>NOTE:</b> No

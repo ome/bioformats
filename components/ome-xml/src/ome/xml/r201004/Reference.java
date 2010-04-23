@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 16:45:54+0100
+ * Created by callan via xsd-fu on 2010-04-23 17:06:57+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,6 +79,22 @@ public abstract class Reference extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
+	
+	// -- Custom content from Reference specific template --
+
+		/**
+		 * Retrieves the reference's target object ID.
+		 * @return See above.
+		 */	
+		public abstract String getID();
+
+		/**
+		 * Sets the reference's target object ID.
+		 * @param id The object ID to set.
+		 */	
+		public abstract void setID(String id);
+
+	// -- OMEModelObject API methods --
 
 	/** 
 	 * Updates Reference recursively from an XML DOM tree. <b>NOTE:</b> No
