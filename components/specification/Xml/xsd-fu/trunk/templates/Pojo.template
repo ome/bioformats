@@ -3,11 +3,11 @@
 		if parents is None:
 			return None
 		return model.getObjectByName(parents.keys()[0])
-	def is_abstract(name):
+	def is_abstract_proprietary(name):
 		o = model.getObjectByName(name)
 		if o is None:
 			return False
-		return o.isAbstract
+		return o.isAbstractProprietary
 %}\
 /*
  * ${fu.package}.${klass.name}
@@ -61,13 +61,13 @@ import org.w3c.dom.NodeList;
 import ${fu.package}.enums.*;
 
 {% choose %}\
-{% when parent_object() is not None and parent_object().isAbstract %}\
+{% when parent_object() is not None and parent_object().isAbstractProprietary %}\
 public class ${klass.name} extends ${parent_object().name}
 {% end %}\
-{% when klass.isAbstract %}\
+{% when klass.isAbstractProprietary %}\
 public abstract class ${klass.name} extends ${klass.javaBase}
 {% end %}\
-{% when parent_object() is None or not parent_object().isAbstract %}\
+{% when parent_object() is None or not parent_object().isAbstractProprietary %}\
 public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
@@ -87,11 +87,11 @@ public class ${klass.name} extends ${klass.javaBase}
 	// Back reference ${prop.name}
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute) %}
 	// Property
 	private ${prop.javaType} ${prop.javaInstanceVariableName};
 {% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstract %}
+{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
 	// Property which occurs more than once
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
@@ -138,7 +138,7 @@ public class ${klass.name} extends ${klass.javaBase}
 	    throws EnumerationException
 	{	
 		super.update(element);
-{% if not klass.isAbstract %}\
+{% if not klass.isAbstractProprietary %}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
 		{
@@ -195,7 +195,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 		}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isComplex()) %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isComplex()) %}\
 		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
 		if (${prop.name}_nodeList.getLength() > 1)
 		{
@@ -206,7 +206,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 		else if (${prop.name}_nodeList.getLength() != 0)
 		{
-{% if prop.isComplex() and not klass.isAbstract %}\
+{% if prop.isComplex() and not klass.isAbstractProprietary %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
 			set${prop.javaMethodName}(new ${prop.javaType}(
@@ -219,8 +219,8 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 		}
 {% end %}\
-{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
-{% if is_abstract(prop.name) %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstractProprietary %}\
+{% if is_abstract_proprietary(prop.name) %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
@@ -244,7 +244,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 		}
 {% end %}\
-{% if not is_abstract(prop.name) %}\
+{% if not is_abstract_proprietary(prop.name) %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once
 		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
@@ -359,7 +359,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 	}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute) %}
 	// Property
 	public ${prop.javaType} get${prop.javaMethodName}()
 	{
@@ -371,7 +371,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		this.${prop.javaInstanceVariableName} = ${prop.javaArgumentName};
 	}
 {% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstract %}
+{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
 	// Property which occurs more than once
 	public int sizeOf${prop.javaMethodName}List()
 	{
@@ -409,7 +409,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 
-{% if not klass.isAbstract %}\
+{% if not klass.isAbstractProprietary %}\
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -419,7 +419,7 @@ public class ${klass.name} extends ${klass.javaBase}
 	protected Element asXMLElement(Document document, Element ${klass.name}_element)
 	{
 		// Creating XML block for ${klass.name}
-{% if klass.isAbstract %}\
+{% if klass.isAbstractProprietary %}\
 		// Class is abstract so we may need to create its "container" element
 		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
 		{
@@ -436,7 +436,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		}
 
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstract or prop.isAttribute %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute %}\
 		if (${prop.javaInstanceVariableName} != null)
 		{
 {% choose %}\

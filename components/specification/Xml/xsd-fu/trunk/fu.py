@@ -418,10 +418,10 @@ class OMEModelObject(object):
 		self.name = element.getName()
 		self.type = element.getType()
 		self.properties = odict()
-		if hasattr(element, 'appinfo') and element.appinfo == 'abstract':
-			self.isAbstract = True
+		if hasattr(element, 'appinfo') and element.appinfo == 'abstract-proprietary':
+			self.isAbstractProprietary = True
 		else:
-			self.isAbstract = False
+			self.isAbstractProprietary = False
 	
 	def addAttribute(self, attribute):
 		"""
