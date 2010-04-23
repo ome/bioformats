@@ -65,6 +65,10 @@ JAVA_BASE_TYPE_MAP = None
 # will also be confirmed to be top-level types.
 EXPLICIT_DEFINE_OVERRIDE = ('EmissionFilterRef', 'ExcitationFilterRef')
 
+# Back references that we do not want in the model either because they
+# conflict with other properties or do not make sense.
+BACK_REFERENCE_OVERRIDE = {'Screen': ['Plate'], 'Plate': ['Screen']}
+
 # Reference properties of a given type for which back reference link methods
 # should not be code generated for.
 BACK_REFERENCE_LINK_OVERRIDE = {'Pump': ['Laser']}
@@ -418,7 +422,12 @@ class OMEModelObject(object):
 		self.name = element.getName()
 		self.type = element.getType()
 		self.properties = odict()
-		if hasattr(element, 'appinfo') and element.appinfo == 'abstract-proprietary':
+		if hasattr(element, 'appinfo') and element.appinfo == 'abstract':
+			self.isAbstract = True
+		else:
+			self.isAbstract = False
+		if hasattr(element, 'appinfo') \
+		   and element.appinfo == 'abstract-proprietary':
 			self.isAbstractProprietary = True
 		else:
 			self.isAbstractProprietary = False
@@ -578,11 +587,17 @@ class OMEModel(object):
 		references = dict()
 		for o in self.objects.values():
 			for prop in o.properties.values():
-				if prop.type[-3:] == "Ref":
-					shortName = prop.type[:-3]
-					if shortName not in references:
-						references[shortName] = list()
-					references[shortName].append(o.name)
+				if not prop.isReference:
+					continue
+				shortName = prop.type[:-3]
+				try:
+					if o.name in BACK_REFERENCE_OVERRIDE[shortName]:
+						continue
+				except KeyError:
+					pass
+				if shortName not in references:
+					references[shortName] = list()
+				references[shortName].append(o.name)
 		logging.debug("Model references: %s" % references)
 
 		for o in self.objects.values():

@@ -64,7 +64,7 @@ import ${fu.package}.enums.*;
 {% when parent_object() is not None and parent_object().isAbstractProprietary %}\
 public class ${klass.name} extends ${parent_object().name}
 {% end %}\
-{% when klass.isAbstractProprietary %}\
+{% when klass.isAbstractProprietary or klass.isAbstract %}\
 public abstract class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% when parent_object() is None or not parent_object().isAbstractProprietary %}\
