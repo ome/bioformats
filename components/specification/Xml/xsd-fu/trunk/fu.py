@@ -63,11 +63,11 @@ JAVA_BASE_TYPE_MAP = None
 # definitions that warrant a the creation of a first class model object) that
 # we wish to be treated otherwise. As part of the code generation process they 
 # will also be confirmed to be top-level types.
-EXPLICIT_DEFINE_OVERRIDE = ('Dichroic', 'Experimenter', 'FilterSet')
+EXPLICIT_DEFINE_OVERRIDE = ('EmissionFilterRef', 'ExcitationFilterRef')
 
 # Reference properties of a given type for which back reference link methods
 # should not be code generated for.
-BACK_REFERENCE_LINK_OVERRIDE = {'Filter': ['FilterSet', 'LightPath']}
+BACK_REFERENCE_LINK_OVERRIDE = {'Pump': ['Laser']}
 
 def updateTypeMaps(namespace):
 	"""
@@ -87,16 +87,12 @@ def updateTypeMaps(namespace):
 		namespace + 'anyURI': 'String',
 		namespace + 'hexBinary': 'String',
 		# Hacks
-		'PixelType': 'String',
 		'NamingConvention': 'String',
 		'PercentFraction': 'Double',
 		'MIMEtype': 'String',
-#		'RedChannel': 'ChannelSpecTypeNode',
-#		'GreenChannel': 'ChannelSpecTypeNode',
-#		'BlueChannel': 'ChannelSpecTypeNode',
-		'AcquiredPixelsRef': 'PixelsNode',
-		'Description': 'String',
-#		'Leader': 'ExperimenterRefNode',
+		'Leader': 'Experimenter',
+		'Contact': 'Experimenter',
+		'Pump': 'Laser',
 	}
 	
 	global JAVA_BASE_TYPE_MAP
@@ -539,8 +535,8 @@ class OMEModel(object):
 		"""
 		Process an element (a leaf).
 		"""
-		logging.debug("Processing leaf: (%s) --> (%s)" % (parent, element))
 		e = element
+		logging.debug("Processing leaf (topLevel? %s): (%s) --> (%s)" % (e.topLevel, parent, e))
 		e_name = e.getName()
 		e_type = e.getType()
 		if parent is not None:
@@ -548,7 +544,7 @@ class OMEModel(object):
 				self.parents[e_name] = list()
 			self.parents[e_name].append(parent.getName())
 		if not e.isExplicitDefine() \
-		   and (e_name not in EXPLICIT_DEFINE_OVERRIDE or not e.topLevel):
+		   and e_name not in EXPLICIT_DEFINE_OVERRIDE and not e.topLevel:
 			logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
 			return
 		if e.getMixedExtensionError():
@@ -633,6 +629,13 @@ class TemplateInfo(object):
 		self.user = getpwuid(getuid())[0]
 		self.DO_NOT_PROCESS = DO_NOT_PROCESS
 		self.BACK_REFERENCE_LINK_OVERRIDE = BACK_REFERENCE_LINK_OVERRIDE
+	
+	def link_overridden(self, property_name, class_name):
+		"""Whether or not a back reference link should be overridden."""
+		try:
+			return class_name in self.BACK_REFERENCE_LINK_OVERRIDE[property_name] 
+		except KeyError:
+			return False
 
 def parseXmlSchema(filenames, namespace=DEFAULT_NAMESPACE):
 	"""

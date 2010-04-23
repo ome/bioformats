@@ -113,12 +113,15 @@ public class ${klass.name} extends ${klass.javaBase}
 	 * Constructs ${klass.name} recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public ${klass.name}(Element element) throws EnumerationException
+	public ${klass.name}(Element element, OMEModel model)
+	    throws EnumerationException
 	{
-		update(element);
+		update(element, model);
 	}
 
 	/** 
@@ -126,10 +129,13 @@ public class ${klass.name} extends ${klass.javaBase}
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public void update(Element element) throws EnumerationException
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
 	{	
 		super.update(element);
 {% if not klass.isAbstract %}\
@@ -147,8 +153,32 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.isBackReference or prop.isReference %}\
+{% when prop.isReference %}\
+		// Element reference ${prop.name}
+		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
+		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		{
+			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
+			${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
+			${prop.javaInstanceVariableName}_reference.setID(${prop.name}_element.getAttribute("ID"));
+			model.addReference(this, ${prop.javaInstanceVariableName}_reference);
+		}
+{% end %}\
+{% when prop.isBackReference %}\
 		// *** IGNORING *** Skipped back reference ${prop.name}
+{% end %}\
+{% when prop.isAttribute and prop.name == "ID" %}\
+		if (!element.hasAttribute("${prop.name}"))
+		{
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"${klass.name} missing required ID property."));
+		}
+		// ID property
+		set${prop.javaMethodName}(${prop.javaType}.valueOf(
+					element.getAttribute("${prop.name}")));
+		// Adding this model object to the model handler
+	    	model.addModelObject(getID(), this);
 {% end %}\
 {% when prop.isAttribute %}\
 		if (element.hasAttribute("${prop.name}"))
@@ -180,7 +210,7 @@ public class ${klass.name} extends ${klass.javaBase}
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
 			set${prop.javaMethodName}(new ${prop.javaType}(
-					(Element) ${prop.name}_nodeList.item(0)));
+					(Element) ${prop.name}_nodeList.item(0), model));
 {% end %}\
 {% if not prop.isComplex() %}\
 			// Element property ${prop.name} which is not complex (has no
@@ -206,7 +236,7 @@ public class ${klass.name} extends ${klass.javaBase}
 			for (int j = 0; j < ${inner_prop.name}_nodeList.getLength(); j++)
 			{
 				Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(j);
-				${inner_prop.javaType} o = new ${inner_prop.javaType}(${inner_prop.name}_element);
+				${inner_prop.javaType} o = new ${inner_prop.javaType}(${inner_prop.name}_element, model);
 				o.update(${prop.name}_element);
 				add${prop.javaMethodName}(o);
 			}
@@ -222,7 +252,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		{
 			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
 			add${prop.javaMethodName}(
-					new ${prop.javaType}(${prop.name}_element));
+					new ${prop.javaType}(${prop.name}_element, model));
 		}
 {% end %}\
 {% end %}\
@@ -233,7 +263,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
 		{
 			add${prop.javaMethodName}(new ${prop.javaType}(
-					${prop.name}_nodeList.item(i).getTextContent()));
+					${prop.name}_nodeList.item(i).getTextContent(), model));
 		}
 {% end %}\
 {% otherwise %}\
@@ -244,6 +274,30 @@ public class ${klass.name} extends ${klass.javaBase}
 	}
 
 	// -- ${klass.name} API methods --
+
+	public void link(Reference reference, OMEModelObject o)
+	{
+{% for prop in klass.properties.values() %}\
+{% if prop.isReference %}\
+		if (reference instanceof ${prop.name})
+		{
+			${prop.javaType} o_casted = (${prop.javaType}) o;
+{% if not fu.link_overridden(prop.name, klass.name) %}\
+			o_casted.link${klass.type}(this);
+{% end %}\
+{% if prop.maxOccurs > 1 %}\
+			${prop.javaInstanceVariableName}.add(o_casted);
+{% end %}\
+{% if prop.maxOccurs == 1 %}\
+			${prop.javaInstanceVariableName} = o_casted;
+{% end %}\
+		}
+{% end %}\
+{% end %}\
+		// TODO: Should be its own Exception
+		throw new RuntimeException(
+				"Unable to handle reference of type: " + reference.getClass());
+	}
 
 {% for prop in klass.properties.values() %}\
 {% choose %}\
@@ -271,9 +325,7 @@ public class ${klass.name} extends ${klass.javaBase}
 
 	public boolean link${prop.javaMethodName}(${prop.javaType} o)
 	{
-{% if not fu.BACK_REFERENCE_LINK_OVERRIDE.has_key(klass.name) \
-      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE \
-      and not prop.isBackReference %}\
+{% if not prop.isBackReference %}\
 		o.link${klass.type}(this);
 {% end %}\
 		return ${prop.javaInstanceVariableName}.add(o);
@@ -281,9 +333,7 @@ public class ${klass.name} extends ${klass.javaBase}
 
 	public boolean unlink${prop.javaMethodName}(${prop.javaType} o)
 	{
-{% if not fu.BACK_REFERENCE_LINK_OVERRIDE.has_key(klass.name) \
-      and prop.name not in fu.BACK_REFERENCE_LINK_OVERRIDE \
-      and not prop.isBackReference %}\
+{% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 		o.unlink${klass.type}(this);
 {% end %}\
 		return ${prop.javaInstanceVariableName}.remove(o);
