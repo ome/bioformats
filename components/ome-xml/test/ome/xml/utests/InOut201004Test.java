@@ -499,7 +499,7 @@ public class InOut201004Test {
 
   @Test(dependsOnMethods={"testValidWellSamples"})
   public void testValidWellAnnotation() {
-    Annotation n = ome.getPlate(0).getWell().getLinkedANnotation(0);
+    Annotation n = ome.getPlate(0).getWell(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(WELL_ANNOTATION_ID, n.getID());
     assertTrue(n instanceof LongAnnotation);
