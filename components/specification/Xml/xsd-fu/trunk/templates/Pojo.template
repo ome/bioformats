@@ -174,17 +174,20 @@ ${customContent}\
 		// *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.isAttribute and prop.name == "ID" %}\
-		if (!element.hasAttribute("${prop.name}"))
+		if (!element.hasAttribute("ID") && getID() == null)
 		{
 			// TODO: Should be its own exception
 			throw new RuntimeException(String.format(
 					"${klass.name} missing required ID property."));
 		}
-		// ID property
-		set${prop.javaMethodName}(${prop.javaType}.valueOf(
-					element.getAttribute("${prop.name}")));
-		// Adding this model object to the model handler
-	    	model.addModelObject(getID(), this);
+		if (element.hasAttribute("ID"))
+		{
+			// ID property
+			set${prop.javaMethodName}(${prop.javaType}.valueOf(
+						element.getAttribute("${prop.name}")));
+			// Adding this model object to the model handler
+		    	model.addModelObject(getID(), this);
+		}
 {% end %}\
 {% when prop.isAttribute %}\
 		if (element.hasAttribute("${prop.name}"))
@@ -243,7 +246,7 @@ ${customContent}\
 			{
 				Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(j);
 				${inner_prop.javaType} o = new ${inner_prop.javaType}(${prop.name}_element, model);
-				o.update(${inner_prop.name}_element);
+				o.update(${inner_prop.name}_element, model);
 				add${prop.javaMethodName}(o);
 			}
 {% end %}\
