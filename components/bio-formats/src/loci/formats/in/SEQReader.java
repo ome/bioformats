@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -82,13 +81,16 @@ public class SEQReader extends BaseTiffReader {
     core[0].sizeZ = 0;
     core[0].sizeT = 0;
 
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
     for (IFD ifd : ifds) {
-      short[] tag1 = (short[]) ifd.getIFDValue(IMAGE_PRO_TAG_1);
+      if (level == MetadataLevel.ALL) {
+        short[] tag1 = (short[]) ifd.getIFDValue(IMAGE_PRO_TAG_1);
 
-      if (tag1 != null) {
-        String seqId = "";
-        for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
-        addGlobalMeta("Image-Pro SEQ ID", seqId);
+        if (tag1 != null) {
+          String seqId = "";
+          for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
+          addGlobalMeta("Image-Pro SEQ ID", seqId);
+        }
       }
 
       int tag2 = ifds.get(0).getIFDIntValue(IMAGE_PRO_TAG_2);
@@ -118,9 +120,9 @@ public class SEQReader extends BaseTiffReader {
     String descr = ifds.get(0).getComment();
     metadata.remove("Comment");
     if (descr != null) {
-      StringTokenizer tokenizer = new StringTokenizer(descr, "\n");
-      while (tokenizer.hasMoreTokens()) {
-        String token = tokenizer.nextToken().trim();
+      String[] lines = descr.split("\n");
+      for (String token : lines) {
+        token = token.trim();
         int eq = token.indexOf("=");
         if (eq == -1) eq = token.indexOf(":");
         if (eq != -1) {

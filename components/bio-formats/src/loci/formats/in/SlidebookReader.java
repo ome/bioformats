@@ -513,23 +513,6 @@ public class SlidebookReader extends FormatReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
-
-    int index = 0;
-
-    // populate Objective data
-    store.setObjectiveModel(objective, 0, 0);
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
-
-    // link Objective to Image
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
-
     // populate Image data
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -537,39 +520,58 @@ public class SlidebookReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
-    // populate Dimensions data
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Double(pixelSize), i, 0);
-      store.setDimensionsPhysicalSizeY(new Double(pixelSize), i, 0);
-      int idx = 0;
-      for (int q=0; q<i; q++) {
-        idx += core[q].sizeC;
-      }
+      int index = 0;
 
-      if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-        store.setDimensionsPhysicalSizeZ(pixelSizeZ.get(idx), i, 0);
-      }
-    }
+      // populate Objective data
+      store.setObjectiveModel(objective, 0, 0);
+      store.setObjectiveCorrection("Unknown", 0, 0);
+      store.setObjectiveImmersion("Unknown", 0, 0);
 
-    // populate LogicalChannel data
+      // link Objective to Image
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      setSeries(i);
-      for (int c=0; c<getSizeC(); c++) {
-        if (index < channelNames.size() && channelNames.get(index) != null) {
-          store.setLogicalChannelName(channelNames.get(index), i, c);
-          addSeriesMeta("channel " + c, channelNames.get(index));
+      // populate Dimensions data
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setDimensionsPhysicalSizeX(new Double(pixelSize), i, 0);
+        store.setDimensionsPhysicalSizeY(new Double(pixelSize), i, 0);
+        int idx = 0;
+        for (int q=0; q<i; q++) {
+          idx += core[q].sizeC;
         }
-        if (index < ndFilters.size() && ndFilters.get(index) != null) {
-          store.setLogicalChannelNdFilter(ndFilters.get(index), i, c);
-          addSeriesMeta("channel " + c + " Neutral density",
-            ndFilters.get(index));
+
+        if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
+          store.setDimensionsPhysicalSizeZ(pixelSizeZ.get(idx), i, 0);
         }
-        index++;
       }
+
+      // populate LogicalChannel data
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        setSeries(i);
+        for (int c=0; c<getSizeC(); c++) {
+          if (index < channelNames.size() && channelNames.get(index) != null) {
+            store.setLogicalChannelName(channelNames.get(index), i, c);
+            addSeriesMeta("channel " + c, channelNames.get(index));
+          }
+          if (index < ndFilters.size() && ndFilters.get(index) != null) {
+            store.setLogicalChannelNdFilter(ndFilters.get(index), i, c);
+            addSeriesMeta("channel " + c + " Neutral density",
+              ndFilters.get(index));
+          }
+          index++;
+        }
+      }
+      setSeries(0);
     }
-    setSeries(0);
   }
 
   // -- Helper methods --

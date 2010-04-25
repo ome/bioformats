@@ -264,8 +264,7 @@ public class AVIReader extends FormatReader {
       }
 
       if (listString.equals("JUNK")) {
-        type = in.readString(4);
-        size = in.readInt();
+        readTypeAndSize();
 
         if (type.equals("JUNK")) {
           in.skipBytes(size);
@@ -281,8 +280,7 @@ public class AVIReader extends FormatReader {
 
           if (type.equals("LIST")) {
             if (fcc.equals("hdrl")) {
-              type = in.readString(4);
-              size = in.readInt();
+              readTypeAndSize();
               if (type.equals("avih")) {
                 spos = in.getFilePointer();
 
@@ -320,8 +318,7 @@ public class AVIReader extends FormatReader {
 
           if (type.equals("LIST")) {
             if (fcc.equals("strl")) {
-              type = in.readString(4);
-              size = in.readInt();
+              readTypeAndSize();
 
               if (type.equals("strh")) {
                 spos = in.getFilePointer();
@@ -336,8 +333,7 @@ public class AVIReader extends FormatReader {
                 }
               }
 
-              type = in.readString(4);
-              size = in.readInt();
+              readTypeAndSize();
               if (type.equals("strf")) {
                 spos = in.getFilePointer();
 
@@ -408,8 +404,7 @@ public class AVIReader extends FormatReader {
             }
 
             spos = in.getFilePointer();
-            type = in.readString(4);
-            size = in.readInt();
+            readTypeAndSize();
             if (type.equals("strd")) {
               in.skipBytes(size);
             }
@@ -418,8 +413,7 @@ public class AVIReader extends FormatReader {
             }
 
             spos = in.getFilePointer();
-            type = in.readString(4);
-            size = in.readInt();
+            readTypeAndSize();
             if (type.equals("strn")) {
               in.skipBytes(size);
             }
@@ -447,25 +441,18 @@ public class AVIReader extends FormatReader {
               }
 
               spos = in.getFilePointer();
-              type = in.readString(4);
+              readTypeAndSize();
               if (type.startsWith("ix")) {
-                size = in.readInt();
                 in.skipBytes(size);
-                type = in.readString(4);
-                size = in.readInt();
-              }
-              else {
-                size = in.readInt();
+                readTypeAndSize();
               }
 
-              while (type.substring(2).equals("db") ||
-                type.substring(2).equals("dc") ||
-                type.substring(2).equals("wb"))
+              String check = type.substring(2);
+              while (check.equals("db") || check.equals("dc") ||
+                check.equals("wb"))
               {
-                if (type.substring(2).equals("db") ||
-                  type.substring(2).equals("dc"))
-                {
-                  if (size > 0) {
+                if (check.startsWith("d")) {
+                  if (size > 0 || bmpCompression != 0) {
                     offsets.add(new Long(in.getFilePointer()));
                     lengths.add(new Long(size));
                     in.skipBytes(size);
@@ -474,14 +461,13 @@ public class AVIReader extends FormatReader {
 
                 spos = in.getFilePointer();
 
-                type = in.readString(4);
-                size = in.readInt();
+                readTypeAndSize();
                 if (type.equals("JUNK")) {
                   in.skipBytes(size);
                   spos = in.getFilePointer();
-                  type = in.readString(4);
-                  size = in.readInt();
+                  readTypeAndSize();
                 }
+                check = type.substring(2);
               }
               in.seek(spos);
             }
@@ -494,9 +480,8 @@ public class AVIReader extends FormatReader {
       }
       else {
         // skipping unknown block
-        type = in.readString(4);
+        readTypeAndSize();
         if (in.getFilePointer() + size + 4 <= in.length()) {
-          size = in.readInt();
           in.skipBytes(size);
         }
       }
@@ -505,17 +490,17 @@ public class AVIReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     core[0].imageCount = offsets.size();
-
     core[0].sizeZ = 1;
     core[0].sizeT = getImageCount();
     core[0].littleEndian = true;
     core[0].interleaved = bmpBitsPerPixel != 16;
+
     if (bmpBitsPerPixel == 32) {
       core[0].sizeC = 4;
       core[0].rgb = true;
     }
     else if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
-      core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0);
+      core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0 && lut == null);
       core[0].sizeC = isRGB() ? 3 : 1;
     }
     else {
@@ -594,9 +579,13 @@ public class AVIReader extends FormatReader {
   }
 
   private void readChunkHeader() throws IOException {
+    readTypeAndSize();
+    fcc = in.readString(4);
+  }
+
+  private void readTypeAndSize() throws IOException {
     type = in.readString(4);
     size = in.readInt();
-    fcc = in.readString(4);
   }
 
 }

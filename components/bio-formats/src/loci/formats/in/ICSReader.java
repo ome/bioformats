@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -37,7 +38,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.ByteVector;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -722,16 +722,16 @@ public class ICSReader extends FormatReader {
       LOGGER.info("Decompressing pixel data");
       in.read(data);
       byte[] buf = new byte[8192];
-      ByteVector v = new ByteVector();
+      ByteArrayHandle v = new ByteArrayHandle();
       try {
         GZIPInputStream r = new GZIPInputStream(new ByteArrayInputStream(data));
         int n = r.read(buf, 0, buf.length);
         while (n > 0) {
-          v.add(buf, 0, n);
+          v.write(buf, 0, n);
           n = r.read(buf, 0, buf.length);
         }
         r.close();
-        data = v.toByteArray();
+        data = v.getBytes();
         Location.mapFile("data.gz", null);
       }
       catch (IOException dfe) {

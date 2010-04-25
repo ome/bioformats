@@ -25,12 +25,12 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.ByteVector;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.PackbitsCodec;
@@ -107,15 +107,14 @@ public class PhotoshopTiffReader extends BaseTiffReader {
         new PackbitsCodec();
       CodecOptions options = new CodecOptions();
       options.maxBytes = FormatTools.getPlaneSize(this) / getSizeC();
-      ByteVector pix = new ByteVector();
+      ByteArrayHandle pix = new ByteArrayHandle();
       for (int c=0; c<getSizeC(); c++) {
         int index = channelOrder[getSeries() - 1][c];
         tag.seek(layerOffset[(getSeries() - 1) * getSizeC() + index]);
-        byte[] p = codec.decompress(tag, options);
-        pix.add(p);
+        pix.write(codec.decompress(tag, options));
       }
-      RandomAccessInputStream plane =
-        new RandomAccessInputStream(pix.toByteArray());
+      RandomAccessInputStream plane = new RandomAccessInputStream(pix);
+      plane.seek(0);
       readPlane(plane, x, y, w, h, buf);
       plane.close();
       pix = null;

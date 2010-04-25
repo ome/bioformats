@@ -101,6 +101,8 @@ public class NikonTiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+
     filterModels = new Vector<String>();
     dichroicModels = new Vector<String>();
     laserIDs = new Vector<String>();
@@ -208,62 +210,64 @@ public class NikonTiffReader extends BaseTiffReader {
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
-    store.setImageDescription("", 0);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription("", 0);
 
-    store.setDimensionsPhysicalSizeX(physicalSizeX, 0, 0);
-    store.setDimensionsPhysicalSizeY(physicalSizeY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(physicalSizeZ, 0, 0);
+      store.setDimensionsPhysicalSizeX(physicalSizeX, 0, 0);
+      store.setDimensionsPhysicalSizeY(physicalSizeY, 0, 0);
+      store.setDimensionsPhysicalSizeZ(physicalSizeZ, 0, 0);
 
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
 
-    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-    store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
-    store.setObjectiveNominalMagnification(magnification, 0, 0);
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
 
-    if (correction == null) correction = "Unknown";
-    store.setObjectiveCorrection(correction, 0, 0);
-    store.setObjectiveLensNA(lensNA, 0, 0);
-    store.setObjectiveWorkingDistance(workingDistance, 0, 0);
-    if (immersion == null) immersion = "Unknown";
-    store.setObjectiveImmersion(immersion, 0, 0);
+      if (correction == null) correction = "Unknown";
+      store.setObjectiveCorrection(correction, 0, 0);
+      store.setObjectiveLensNA(lensNA, 0, 0);
+      store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      if (immersion == null) immersion = "Unknown";
+      store.setObjectiveImmersion(immersion, 0, 0);
 
-    for (int i=0; i<wavelength.size(); i++) {
-      String laser = MetadataTools.createLSID("LightSource", 0, i);
-      store.setLightSourceID(laser, 0, i);
-      store.setLightSourceModel(laserIDs.get(i), 0, i);
-      store.setLaserWavelength(wavelength.get(i), 0, i);
-      store.setLaserType("Unknown", 0, i);
-      store.setLaserLaserMedium("Unknown", 0, i);
-    }
-
-    for (int i=0; i<gain.size(); i++) {
-      store.setDetectorGain(gain.get(i), 0, i);
-      store.setDetectorType("Unknown", 0, i);
-    }
-
-    for (int c=0; c<getEffectiveSizeC(); c++) {
-      store.setLogicalChannelPinholeSize(pinholeSize, 0, c);
-      if (c < exWave.size()) {
-        store.setLogicalChannelExWave(exWave.get(c), 0, c);
+      for (int i=0; i<wavelength.size(); i++) {
+        String laser = MetadataTools.createLSID("LightSource", 0, i);
+        store.setLightSourceID(laser, 0, i);
+        store.setLightSourceModel(laserIDs.get(i), 0, i);
+        store.setLaserWavelength(wavelength.get(i), 0, i);
+        store.setLaserType("Unknown", 0, i);
+        store.setLaserLaserMedium("Unknown", 0, i);
       }
-      if (c < emWave.size()) {
-        store.setLogicalChannelEmWave(emWave.get(c), 0, c);
+
+      for (int i=0; i<gain.size(); i++) {
+        store.setDetectorGain(gain.get(i), 0, i);
+        store.setDetectorType("Unknown", 0, i);
       }
-    }
 
-    for (int i=0; i<filterModels.size(); i++) {
-      String filter = MetadataTools.createLSID("Filter", 0, i);
-      store.setFilterID(filter, 0, i);
-      store.setFilterModel(filterModels.get(i), 0, i);
-    }
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        store.setLogicalChannelPinholeSize(pinholeSize, 0, c);
+        if (c < exWave.size()) {
+          store.setLogicalChannelExWave(exWave.get(c), 0, c);
+        }
+        if (c < emWave.size()) {
+          store.setLogicalChannelEmWave(emWave.get(c), 0, c);
+        }
+      }
 
-    for (int i=0; i<dichroicModels.size(); i++) {
-      String dichroic = MetadataTools.createLSID("Dichroic", 0, i);
-      store.setDichroicID(dichroic, 0, i);
-      store.setDichroicModel(dichroicModels.get(i), 0, i);
+      for (int i=0; i<filterModels.size(); i++) {
+        String filter = MetadataTools.createLSID("Filter", 0, i);
+        store.setFilterID(filter, 0, i);
+        store.setFilterModel(filterModels.get(i), 0, i);
+      }
+
+      for (int i=0; i<dichroicModels.size(); i++) {
+        String dichroic = MetadataTools.createLSID("Dichroic", 0, i);
+        store.setDichroicID(dichroic, 0, i);
+        store.setDichroicModel(dichroicModels.get(i), 0, i);
+      }
     }
   }
 

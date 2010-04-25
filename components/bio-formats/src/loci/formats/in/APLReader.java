@@ -154,10 +154,12 @@ public class APLReader extends FormatReader {
 
     // add full table to metadata hashtable
 
-    for (int i=1; i<rows.size(); i++) {
-      String[] row = rows.get(i);
-      for (int q=0; q<row.length; q++) {
-        addGlobalMeta(columnNames[q] + " " + i, row[q]);
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=1; i<rows.size(); i++) {
+        String[] row = rows.get(i);
+        for (int q=0; q<row.length; q++) {
+          addGlobalMeta(columnNames[q] + " " + i, row[q]);
+        }
       }
     }
 
@@ -208,8 +210,8 @@ public class APLReader extends FormatReader {
       String file = rows.get(i)[filename].trim();
       if (file.equals("")) continue;
       file = topDirectory + File.separator + file;
-      if (new Location(file).exists() && file.toLowerCase().endsWith(".tif")) {
-        seriesIndexes.add(new Integer(i));
+      if (new Location(file).exists() && checkSuffix(file, "tif")) {
+        seriesIndexes.add(i);
       }
     }
     int seriesCount = seriesIndexes.size();
@@ -223,29 +225,14 @@ public class APLReader extends FormatReader {
     tiffReaders = new MinimalTiffReader[seriesCount];
 
     for (int i=0; i<seriesCount; i++) {
-      int secondRow = seriesIndexes.get(i).intValue();
+      int secondRow = seriesIndexes.get(i);
       int firstRow = secondRow - 1;
       String[] row2 = rows.get(firstRow);
       String[] row3 = rows.get(secondRow);
 
-      try {
-        core[i].sizeT = Integer.parseInt(row3[frames]);
-      }
-      catch (NumberFormatException e) {
-        core[i].sizeT = 1;
-      }
-      try {
-        core[i].sizeZ = Integer.parseInt(row3[zLayers]);
-      }
-      catch (NumberFormatException e) {
-        core[i].sizeZ = 1;
-      }
-      try {
-        core[i].sizeC = Integer.parseInt(row3[colorChannels]);
-      }
-      catch (NumberFormatException e) {
-        core[i].sizeC = 1;
-      }
+      core[i].sizeT = parseDimension(row3[frames]);
+      core[i].sizeZ = parseDimension(row3[zLayers]);
+      core[i].sizeC = parseDimension(row3[colorChannels]);
       core[i].dimensionOrder = "XYCZT";
 
       if (core[i].sizeZ == 0) core[i].sizeZ = 1;
@@ -281,32 +268,50 @@ public class APLReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     for (int i=0; i<seriesCount; i++) {
-      String[] row = rows.get(seriesIndexes.get(i).intValue());
+      String[] row = rows.get(seriesIndexes.get(i));
 
       // populate Image data
       MetadataTools.setDefaultCreationDate(store, mtb, i);
       store.setImageName(row[imageName], i);
 
-      // populate Dimensions data
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        // populate Dimensions data
 
-      // calculate physical X and Y sizes
+        // calculate physical X and Y sizes
 
-      float realWidth = Float.parseFloat(row[calibratedWidth]);
-      float realHeight = Float.parseFloat(row[calibratedHeight]);
+        double realWidth = Double.parseDouble(row[calibratedWidth]);
+        double realHeight = Double.parseDouble(row[calibratedHeight]);
 
-      String units = row[calibrationUnit];
+        String units = row[calibrationUnit];
 
-      float px = realWidth / core[i].sizeX;
-      float py = realHeight / core[i].sizeY;
+        double px = realWidth / core[i].sizeX;
+        double py = realHeight / core[i].sizeY;
 
-      if (units.equals("mm")) {
-        px *= 1000;
-        py *= 1000;
+        if (units.equals("mm")) {
+          px *= 1000;
+          py *= 1000;
+        }
+        // TODO : add cases for other units
+
+        store.setDimensionsPhysicalSizeX(px, i, 0);
+        store.setDimensionsPhysicalSizeY(py, i, 0);
       }
-      // TODO : add cases for other units
+    }
+  }
 
-      store.setDimensionsPhysicalSizeX(new Double(px), i, 0);
-      store.setDimensionsPhysicalSizeY(new Double(py), i, 0);
+  // -- Helper methods --
+
+  /**
+   * Parse an integer from the given dimension String.
+   *
+   * @return the parsed integer, or 1 if parsing failed.
+   */
+  private int parseDimension(String dim) {
+    try {
+      return Integer.parseInt(dim);
+    }
+    catch (NumberFormatException e) {
+      return 1;
     }
   }
 

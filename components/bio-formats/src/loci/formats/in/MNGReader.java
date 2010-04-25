@@ -27,7 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -57,11 +56,7 @@ public class MNGReader extends BIFormatReader {
 
   // -- Fields --
 
-  /** Offsets to each plane. */
-  private Vector[] offsets;
-
-  /** Length (in bytes) of each plane. */
-  private Vector[] lengths;
+  private Vector<SeriesInfo> seriesInfo;
 
   // -- Constructor --
 
@@ -86,21 +81,11 @@ public class MNGReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
-    long offset = ((Long) offsets[series].get(no)).longValue();
+    SeriesInfo info = seriesInfo.get(series);
+    long offset = info.offsets.get(no);
     in.seek(offset);
-    long end = ((Long) lengths[series].get(no)).longValue();
-    byte[] b = new byte[(int) (end - offset + 8)];
-    in.read(b, 8, b.length - 8);
-    b[0] = (byte) 0x89;
-    b[1] = 0x50;
-    b[2] = 0x4e;
-    b[3] = 0x47;
-    b[4] = 0x0d;
-    b[5] = 0x0a;
-    b[6] = 0x1a;
-    b[7] = 0x0a;
-
-    BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+    long end = info.lengths.get(no);
+    BufferedImage img = readImage(end);
     img = img.getSubimage(x, y, w, h);
 
     // reconstruct the image to use an appropriate raster
@@ -120,7 +105,7 @@ public class MNGReader extends BIFormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (!fileOnly) offsets = lengths = null;
+    if (!fileOnly) seriesInfo = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -133,11 +118,8 @@ public class MNGReader extends BIFormatReader {
 
     LOGGER.info("Verifying MNG format");
 
-    offsets = new Vector[1];
-    lengths = new Vector[1];
-
-    offsets[0] = new Vector();
-    lengths[0] = new Vector();
+    seriesInfo = new Vector<SeriesInfo>();
+    seriesInfo.add(new SeriesInfo());
 
     in.skipBytes(12);
 
@@ -164,13 +146,13 @@ public class MNGReader extends BIFormatReader {
       long fp = in.getFilePointer();
 
       if (code.equals("IHDR")) {
-        offsets[0].add(new Long(fp - 8));
+        seriesInfo.get(0).offsets.add(fp - 8);
       }
       else if (code.equals("IEND")) {
-        lengths[0].add(new Long(fp + len + 4));
+        seriesInfo.get(0).lengths.add(fp + len + 4);
       }
       else if (code.equals("LOOP")) {
-        stack.add(new Long(fp + len + 4));
+        stack.add(fp + len + 4);
         in.skipBytes(1);
         maxIterations = in.readInt();
       }
@@ -197,27 +179,17 @@ public class MNGReader extends BIFormatReader {
     Hashtable<String, Vector> seriesOffsets = new Hashtable<String, Vector>();
     Hashtable<String, Vector> seriesLengths = new Hashtable<String, Vector>();
 
-    for (int i=0; i<offsets[0].size(); i++) {
-      long offset = ((Long) offsets[0].get(i)).longValue();
+    SeriesInfo info = seriesInfo.get(0);
+    addGlobalMeta("Number of frames", info.offsets.size());
+    for (int i=0; i<info.offsets.size(); i++) {
+      long offset = info.offsets.get(i);
       in.seek(offset);
-      long end = ((Long) lengths[0].get(i)).longValue();
+      long end = info.lengths.get(i);
       if (end < offset) continue;
-      byte[] b = new byte[(int) (end - offset + 8)];
-      in.read(b, 8, b.length - 8);
-      b[0] = (byte) 0x89;
-      b[1] = 0x50;
-      b[2] = 0x4e;
-      b[3] = 0x47;
-      b[4] = 0x0d;
-      b[5] = 0x0a;
-      b[6] = 0x1a;
-      b[7] = 0x0a;
-
-      BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+      BufferedImage img = readImage(end);
       String data = img.getWidth() + "-" + img.getHeight() + "-" +
-        img.getRaster().getNumBands() + "-" +
-        AWTImageTools.getPixelType(img);
-      Vector v = new Vector();
+        img.getRaster().getNumBands() + "-" + AWTImageTools.getPixelType(img);
+      Vector<Long> v = new Vector<Long>();
       if (seriesOffsets.containsKey(data)) {
         v = seriesOffsets.get(data);
       }
@@ -240,20 +212,16 @@ public class MNGReader extends BIFormatReader {
 
     core = new CoreMetadata[keys.length];
 
-    offsets = new Vector[keys.length];
-    lengths = new Vector[keys.length];
+    seriesInfo.clear();
     for (int i=0; i<keys.length; i++) {
       core[i] = new CoreMetadata();
-      StringTokenizer st = new StringTokenizer(keys[i], "-");
-      core[i].sizeX = Integer.parseInt(st.nextToken());
-      core[i].sizeY = Integer.parseInt(st.nextToken());
-      core[i].sizeC = Integer.parseInt(st.nextToken());
-      core[i].pixelType = Integer.parseInt(st.nextToken());
+      String[] tokens = keys[i].split("-");
+      core[i].sizeX = Integer.parseInt(tokens[0]);
+      core[i].sizeY = Integer.parseInt(tokens[1]);
+      core[i].sizeC = Integer.parseInt(tokens[2]);
+      core[i].pixelType = Integer.parseInt(tokens[3]);
       core[i].rgb = core[i].sizeC > 1;
-      offsets[i] = seriesOffsets.get(keys[i]);
-      core[i].imageCount = offsets[i].size();
       core[i].sizeT = core[i].imageCount;
-      lengths[i] = seriesLengths.get(keys[i]);
       core[i].sizeZ = 1;
       core[i].dimensionOrder = "XYCZT";
       core[i].interleaved = false;
@@ -261,6 +229,13 @@ public class MNGReader extends BIFormatReader {
       core[i].indexed = false;
       core[i].littleEndian = false;
       core[i].falseColor = false;
+
+      SeriesInfo inf = new SeriesInfo();
+      inf.offsets = seriesOffsets.get(keys[i]);
+      inf.lengths = seriesLengths.get(keys[i]);
+      seriesInfo.add(inf);
+
+      core[i].imageCount = inf.offsets.size();
     }
 
     MetadataStore store =
@@ -270,6 +245,29 @@ public class MNGReader extends BIFormatReader {
       store.setImageName("Series " + (i + 1), i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
+  }
+
+  // -- Helper methods --
+
+  private BufferedImage readImage(long end) throws IOException {
+    byte[] b = new byte[(int) (end - in.getFilePointer() + 8)];
+    in.read(b, 8, b.length - 8);
+    b[0] = (byte) 0x89;
+    b[1] = 0x50;
+    b[2] = 0x4e;
+    b[3] = 0x47;
+    b[4] = 0x0d;
+    b[5] = 0x0a;
+    b[6] = 0x1a;
+    b[7] = 0x0a;
+    return ImageIO.read(new ByteArrayInputStream(b));
+  }
+
+  // -- Helper class --
+
+  private class SeriesInfo {
+    public Vector<Long> offsets = new Vector<Long>();
+    public Vector<Long> lengths = new Vector<Long>();
   }
 
 }

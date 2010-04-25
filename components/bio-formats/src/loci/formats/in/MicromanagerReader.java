@@ -184,11 +184,14 @@ public class MicromanagerReader extends FormatReader {
     // find metadata.txt
 
     Location file = new Location(currentId).getAbsoluteFile();
-    metadataFile = file.exists() ? new Location(file.getParentFile(),
-      METADATA).getAbsolutePath() : METADATA;
+    Location parentFile = file.getParentFile();
+    metadataFile = METADATA;
+    String parent = "";
+    if (file.exists()) {
+      metadataFile = new Location(parentFile, METADATA).getAbsolutePath();
+      parent = parentFile.getAbsolutePath() + File.separator;
+    }
     in = new RandomAccessInputStream(metadataFile);
-    String parent = file.exists() ?
-      file.getParentFile().getAbsolutePath() + File.separator : "";
 
     // usually a small file, so we can afford to read it into memory
 
@@ -351,6 +354,126 @@ public class MicromanagerReader extends FormatReader {
 
     // build list of TIFF files
 
+    buildTIFFList(baseTiff);
+
+    if (tiffs.size() == 0) {
+      Vector<String> uniqueZ = new Vector<String>();
+      Vector<String> uniqueC = new Vector<String>();
+      Vector<String> uniqueT = new Vector<String>();
+
+      Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
+      String[] files = dir.list(true);
+      Arrays.sort(files);
+      for (String f : files) {
+        if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
+          String[] blocks = f.split("_");
+          if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
+          if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
+          if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
+
+          tiffs.add(new Location(dir, f).getAbsolutePath());
+        }
+      }
+
+      core[0].sizeZ = uniqueZ.size();
+      core[0].sizeC = uniqueC.size();
+      core[0].sizeT = uniqueT.size();
+
+      if (tiffs.size() == 0) {
+        throw new FormatException("Could not find TIFF files.");
+      }
+    }
+
+    tiffReader.setId(tiffs.get(0));
+
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeT() == 0) core[0].sizeT = tiffs.size() / getSizeC();
+
+    core[0].sizeX = tiffReader.getSizeX();
+    core[0].sizeY = tiffReader.getSizeY();
+    core[0].dimensionOrder = "XYZCT";
+    core[0].pixelType = tiffReader.getPixelType();
+    core[0].rgb = tiffReader.isRGB();
+    core[0].interleaved = false;
+    core[0].littleEndian = tiffReader.isLittleEndian();
+    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    core[0].indexed = false;
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this, true);
+    if (time != null) {
+      long stamp = DateTools.getTime(time, DATE_FORMAT);
+      String date = DateTools.convertDate(stamp, DateTools.UNIX);
+      store.setImageCreationDate(date, 0);
+    }
+    else MetadataTools.setDefaultCreationDate(store, id, 0);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      store.setImageDescription(comment, 0);
+
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
+
+      for (int i=0; i<channels.length; i++) {
+        store.setLogicalChannelName(channels[i], 0, i);
+      }
+
+      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+      store.setDimensionsPhysicalSizeZ(sliceThickness, 0, 0);
+
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
+        if (i < timestamps.length) {
+          store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
+        }
+      }
+
+      if (detectorID == null) {
+        detectorID = MetadataTools.createLSID("Detector", 0, 0);
+      }
+      else {
+        detectorID = detectorID.substring(detectorID.lastIndexOf(":") + 1);
+        detectorID = "Detector:" + detectorID.trim();
+      }
+
+      for (int i=0; i<channels.length; i++) {
+        store.setDetectorSettingsBinning(binning, 0, i);
+        store.setDetectorSettingsGain(new Double(gain), 0, i);
+        if (i < voltage.size()) {
+          store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
+        }
+        store.setDetectorSettingsDetector(detectorID, 0, i);
+      }
+
+      store.setDetectorID(detectorID, 0, 0);
+      if (detectorModel != null) {
+        store.setDetectorModel(detectorModel, 0, 0);
+      }
+
+      if (detectorManufacturer != null) {
+        store.setDetectorManufacturer(detectorManufacturer, 0, 0);
+      }
+
+      if (cameraMode == null) cameraMode = "Unknown";
+      store.setDetectorType(cameraMode, 0, 0);
+
+      store.setImagingEnvironmentTemperature(temperature, 0);
+    }
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Populate the list of TIFF files using the given file name as a pattern.
+   */
+  private void buildTIFFList(String baseTiff) {
+    LOGGER.info("Building list of TIFFs");
     String prefix = "";
     if (baseTiff.indexOf(File.separator) != -1) {
       prefix = baseTiff.substring(0, baseTiff.lastIndexOf(File.separator) + 1);
@@ -390,113 +513,6 @@ public class MicromanagerReader extends FormatReader {
         }
       }
     }
-
-    if (tiffs.size() == 0) {
-      Vector<String> uniqueZ = new Vector<String>();
-      Vector<String> uniqueC = new Vector<String>();
-      Vector<String> uniqueT = new Vector<String>();
-
-      Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
-      String[] files = dir.list(true);
-      Arrays.sort(files);
-      for (String f : files) {
-        if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
-          blocks = f.split("_");
-          if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
-          if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
-          if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
-
-          tiffs.add(new Location(dir, f).getAbsolutePath());
-        }
-      }
-
-      core[0].sizeZ = uniqueZ.size();
-      core[0].sizeC = uniqueC.size();
-      core[0].sizeT = uniqueT.size();
-
-      if (tiffs.size() == 0) {
-        throw new FormatException("Could not find TIFF files.");
-      }
-    }
-
-    tiffReader.setId(tiffs.get(0));
-
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = tiffs.size() / getSizeC();
-
-    core[0].sizeX = tiffReader.getSizeX();
-    core[0].sizeY = tiffReader.getSizeY();
-    core[0].dimensionOrder = "XYZCT";
-    core[0].pixelType = tiffReader.getPixelType();
-    core[0].rgb = tiffReader.isRGB();
-    core[0].interleaved = false;
-    core[0].littleEndian = tiffReader.isLittleEndian();
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this, true);
-    store.setImageDescription(comment, 0);
-    if (time != null) {
-      long stamp = DateTools.getTime(time, DATE_FORMAT);
-      String date = DateTools.convertDate(stamp, DateTools.UNIX);
-      store.setImageCreationDate(date, 0);
-    }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
-
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
-
-    for (int i=0; i<channels.length; i++) {
-      store.setLogicalChannelName(channels[i], 0, i);
-    }
-
-    store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-    store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-    store.setDimensionsPhysicalSizeZ(sliceThickness, 0, 0);
-
-    for (int i=0; i<getImageCount(); i++) {
-      store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
-      if (i < timestamps.length) {
-        store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
-      }
-    }
-
-    if (detectorID == null) {
-      detectorID = MetadataTools.createLSID("Detector", 0, 0);
-    }
-    else {
-      detectorID = detectorID.substring(detectorID.lastIndexOf(":") + 1);
-      detectorID = "Detector:" + detectorID.trim();
-    }
-
-    for (int i=0; i<channels.length; i++) {
-      store.setDetectorSettingsBinning(binning, 0, i);
-      store.setDetectorSettingsGain(new Double(gain), 0, i);
-      if (i < voltage.size()) {
-        store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
-      }
-      store.setDetectorSettingsDetector(detectorID, 0, i);
-    }
-
-    store.setDetectorID(detectorID, 0, 0);
-    if (detectorModel != null) {
-      store.setDetectorModel(detectorModel, 0, 0);
-    }
-
-    if (detectorManufacturer != null) {
-      store.setDetectorManufacturer(detectorManufacturer, 0, 0);
-    }
-
-    if (cameraMode == null) cameraMode = "Unknown";
-    store.setDetectorType(cameraMode, 0, 0);
-
-    store.setImagingEnvironmentTemperature(temperature, 0);
   }
 
 }

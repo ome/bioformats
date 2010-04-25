@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
@@ -37,7 +38,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.ByteVector;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
@@ -242,7 +242,7 @@ public class NativeND2Reader extends FormatReader {
       Vector<Long> customDataOffsets = new Vector<Long>();
       Vector<int[]> customDataLengths = new Vector<int[]>();
 
-      ByteVector xml = new ByteVector();
+      ByteArrayHandle xml = new ByteArrayHandle();
       StringBuffer name = new StringBuffer();
 
       // search for blocks
@@ -302,7 +302,7 @@ public class NativeND2Reader extends FormatReader {
                 endBracketFound = true;
               }
             }
-            xml.add(b, off, b.length - off);
+            xml.write(b, off, b.length - off);
           }
           skip = 0;
         }
@@ -331,7 +331,7 @@ public class NativeND2Reader extends FormatReader {
 
       DefaultHandler handler = new ND2Handler();
 
-      String xmlString = new String(xml.toByteArray());
+      String xmlString = new String(xml.getBytes(), 0, (int) xml.length());
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
 

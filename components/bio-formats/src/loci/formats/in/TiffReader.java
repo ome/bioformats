@@ -120,27 +120,31 @@ public class TiffReader extends BaseTiffReader {
     // check for reusable proprietary tags (65000-65535),
     // which may contain additional metadata
 
-    Integer[] tags = ifds.get(0).keySet().toArray(new Integer[0]);
-    for (Integer tag : tags) {
-      if (tag.intValue() >= 65000) {
-        Object value = ifds.get(0).get(tag);
-        if (value instanceof short[]) {
-          short[] s = (short[]) value;
-          byte[] b = new byte[s.length];
-          for (int i=0; i<b.length; i++) {
-            b[i] = (byte) s[i];
-          }
-          String metadata = DataTools.stripString(new String(b));
-          if (metadata.indexOf("xml") != -1) {
-            metadata = metadata.substring(metadata.indexOf("<"));
-            metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";
-            Hashtable<String, String> xmlMetadata = XMLTools.parseXML(metadata);
-            for (String key : xmlMetadata.keySet()) {
-              addGlobalMeta(key, xmlMetadata.get(key));
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+    if (level == MetadataLevel.ALL) {
+      Integer[] tags = ifds.get(0).keySet().toArray(new Integer[0]);
+      for (Integer tag : tags) {
+        if (tag.intValue() >= 65000) {
+          Object value = ifds.get(0).get(tag);
+          if (value instanceof short[]) {
+            short[] s = (short[]) value;
+            byte[] b = new byte[s.length];
+            for (int i=0; i<b.length; i++) {
+              b[i] = (byte) s[i];
             }
-          }
-          else {
-            addGlobalMeta(tag.toString(), metadata);
+            String metadata = DataTools.stripString(new String(b));
+            if (metadata.indexOf("xml") != -1) {
+              metadata = metadata.substring(metadata.indexOf("<"));
+              metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";
+              Hashtable<String, String> xmlMetadata =
+                XMLTools.parseXML(metadata);
+              for (String key : xmlMetadata.keySet()) {
+                addGlobalMeta(key, xmlMetadata.get(key));
+              }
+            }
+            else {
+              addGlobalMeta(tag.toString(), metadata);
+            }
           }
         }
       }
@@ -152,11 +156,13 @@ public class TiffReader extends BaseTiffReader {
 
     // check for MetaMorph-style TIFF comment
     boolean metamorph = checkCommentMetamorph(comment);
-    if (metamorph) parseCommentMetamorph(comment);
+    if (metamorph && level == MetadataLevel.ALL) parseCommentMetamorph(comment);
     put("MetaMorph", metamorph ? "yes" : "no");
 
     // check for other INI-style comment
-    if (!ij && !metamorph) parseCommentGeneric(comment);
+    if (!ij && !metamorph && level == MetadataLevel.ALL) {
+      parseCommentGeneric(comment);
+    }
 
     // check for another file with the same name
 

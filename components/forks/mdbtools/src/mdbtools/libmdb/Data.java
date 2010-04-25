@@ -662,7 +662,13 @@ public class Data
     if ((memo_flags & 0x8000)!=0)
     {
       /* inline memo field */
-      text = new String(mdb.pg_buf,start+Constants.MDB_MEMO_OVERHEAD + 2,size - Constants.MDB_MEMO_OVERHEAD - 2);
+      int begin = start + Constants.MDB_MEMO_OVERHEAD + 2;
+      int end = size - Constants.MDB_MEMO_OVERHEAD - 2;
+      if (begin >= 0 && begin < mdb.pg_buf.length && end > 0 &&
+        begin + end <= mdb.pg_buf.length)
+      {
+        text = new String(mdb.pg_buf, begin, end);
+      }
 //      strncpy(text, &mdb->pg_buf[start + MDB_MEMO_OVERHEAD],size - MDB_MEMO_OVERHEAD);
 //      text[size - MDB_MEMO_OVERHEAD]='\0';
       return text;

@@ -23,15 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
-import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -68,7 +71,12 @@ public class TillVisionReader extends FormatReader {
   private RandomAccessInputStream[] pixelsStream;
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
-  private int embeddedOffset;
+  private long embeddedOffset;
+
+  private Vector<String> imageNames = new Vector<String>();
+  private Vector<String> waves = new Vector<String>();
+  private Vector<String> types = new Vector<String>();
+  private Vector<String> dates = new Vector<String>();
 
   // -- Constructor --
 
@@ -93,7 +101,7 @@ public class TillVisionReader extends FormatReader {
       in.seek(embeddedOffset + no * plane);
       readPlane(in, x, y, w, h, buf);
     }
-    else {
+    else if ((no + 1) * plane <= pixelsStream[series].length()) {
       pixelsStream[series].seek(no * plane);
       readPlane(pixelsStream[series], x, y, w, h, buf);
     }
@@ -114,6 +122,10 @@ public class TillVisionReader extends FormatReader {
       embeddedOffset = 0;
       embeddedImages = false;
       exposureTimes = null;
+      imageNames.clear();
+      waves.clear();
+      types.clear();
+      dates.clear();
     }
   }
 
@@ -137,68 +149,52 @@ public class TillVisionReader extends FormatReader {
     poi.initialize(id);
     Vector<String> documents = poi.getDocumentList();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
-    Vector<String> imageNames = new Vector<String>();
-    Vector<String> waves = new Vector<String>();
-    Vector<String> types = new Vector<String>();
-    Vector<String> dates = new Vector<String>();
     int nImages = 0;
 
     Hashtable tmpSeriesMetadata = new Hashtable();
 
-    for (int i=0; i<documents.size(); i++) {
-      String name = documents.get(i);
+    for (String name : documents) {
       LOGGER.debug("Reading {}", name);
 
       if (name.equals("Root Entry" + File.separator + "Contents")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
-
-        byte[] b = new byte[(int) s.length()];
-        s.read(b);
-        int pos = 0;
+        s.order(true);
         int nFound = 0;
 
-        embeddedImages = b[0] == 1;
+        embeddedImages = s.read() == 1;
         LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
 
         if (embeddedImages) {
-          int len = DataTools.bytesToShort(b, 13, 2, true);
-          String type = new String(b, 15, len);
+          s.skipBytes(12);
+          int len = s.readShort();
+          String type = s.readString(len);
           if (!type.equals("CImage")) {
             embeddedImages = false;
             continue;
           }
 
-          int offset = 27;
-          len = b[offset++] & 0xff;
+          s.seek(27);
+          len = s.read();
           while (len != 0) {
-            offset += len;
-            len = b[offset++] & 0xff;
+            s.skipBytes(len);
+            len = s.read();
           }
 
-          offset += 1243;
+          s.skipBytes(1243);
 
-          core[0].sizeX = DataTools.bytesToInt(b, offset, 4, true);
-          offset += 4;
-          core[0].sizeY = DataTools.bytesToInt(b, offset, 4, true);
-          offset += 4;
-          core[0].sizeZ = DataTools.bytesToInt(b, offset, 4, true);
-          offset += 4;
-          core[0].sizeC = DataTools.bytesToInt(b, offset, 4, true);
-          offset += 4;
-          core[0].sizeT = DataTools.bytesToInt(b, offset, 4, true);
-          offset += 4;
-          core[0].pixelType =
-            convertPixelType(DataTools.bytesToInt(b, offset, 4, true));
-          embeddedOffset = offset + 32;
+          core[0].sizeX = s.readInt();
+          core[0].sizeY = s.readInt();
+          core[0].sizeZ = s.readInt();
+          core[0].sizeC = s.readInt();
+          core[0].sizeT = s.readInt();
+          core[0].pixelType = convertPixelType(s.readInt());
+          embeddedOffset = s.getFilePointer() + 28;
           in = poi.getDocumentStream(name);
           nImages++;
           break;
         }
 
-        byte[] marker = getMarker(b);
+        byte[] marker = getMarker(s);
         if (marker == null) {
           throw new FormatException("Could not find known marker.");
         }
@@ -209,8 +205,9 @@ public class TillVisionReader extends FormatReader {
         while (s.getFilePointer() < s.length() - 2) {
           LOGGER.debug("  Looking for image at {}", s.getFilePointer());
           s.order(false);
-          s.seek(findNextOffset(b, marker, (int) s.getFilePointer()));
-          if (s.getFilePointer() < 0) break;
+          int nextOffset = findNextOffset(s, marker);
+          if (nextOffset < 0 || nextOffset >= s.length()) break;
+          s.seek(nextOffset);
           s.skipBytes(3);
           int len = s.readShort();
           if (len <= 0) continue;
@@ -251,9 +248,6 @@ public class TillVisionReader extends FormatReader {
               else if (key.equals("Image type")) {
                 types.add(value);
               }
-              else if (key.equals("Monochromator wavelength [nm]")) {
-
-              }
               else if (key.equals("Monochromator wavelength increment[nm]")) {
                 waves.add(value);
               }
@@ -290,24 +284,23 @@ public class TillVisionReader extends FormatReader {
 
       // look for appropriate pixels files
 
-      String[] files = directory.list();
+      String[] files = directory.list(true);
 
       int nextFile = 0;
 
-      for (int i=0; i<files.length; i++) {
-        if (files[i].endsWith(".pst")) {
-          Location pst = new Location(directory, files[i]);
+      for (String f : files) {
+        if (f.endsWith(".pst")) {
+          Location pst = new Location(directory, f);
           if (pst.isDirectory()) {
-            String[] subfiles = pst.list();
-            for (int q=0; q<subfiles.length; q++) {
-              if (subfiles[q].endsWith(".pst") && nextFile < nImages) {
-                pixelsFile[nextFile++] =
-                  files[i] + File.separator + subfiles[q];
+            String[] subfiles = pst.list(true);
+            for (String q : subfiles) {
+              if (q.endsWith(".pst") && nextFile < nImages) {
+                pixelsFile[nextFile++] = f + File.separator + q;
               }
             }
           }
           else if (nextFile < nImages) {
-            pixelsFile[nextFile++] = files[i];
+            pixelsFile[nextFile++] = f;
           }
         }
       }
@@ -321,10 +314,12 @@ public class TillVisionReader extends FormatReader {
     pixelsStream = new RandomAccessInputStream[getSeriesCount()];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
+    IniParser parser = new IniParser();
 
     for (int i=0; i<getSeriesCount(); i++) {
       if (!embeddedImages) {
         core[i] = new CoreMetadata();
+        setSeries(i);
 
         // make sure that pixels file exists
 
@@ -350,36 +345,24 @@ public class TillVisionReader extends FormatReader {
         // read key/value pairs from .inf files
 
         int dot = file.lastIndexOf(".");
-        String infFile = file.substring(0, dot) + ".inf";
+        String inf = file.substring(0, dot) + ".inf";
 
-        String data = DataTools.readFile(infFile);
-        StringTokenizer lines = new StringTokenizer(data);
+        IniList data = parser.parseINI(new BufferedReader(new FileReader(inf)));
+        IniTable infoTable = data.getTable("Info");
 
-        while (lines.hasMoreTokens()) {
-          String line = lines.nextToken().trim();
-          if (line.startsWith("[") || line.indexOf("=") == -1) {
-            continue;
-          }
+        core[i].sizeX = Integer.parseInt(infoTable.get("Width"));
+        core[i].sizeY = Integer.parseInt(infoTable.get("Height"));
+        core[i].sizeC = Integer.parseInt(infoTable.get("Bands"));
+        core[i].sizeZ = Integer.parseInt(infoTable.get("Slices"));
+        core[i].sizeT = Integer.parseInt(infoTable.get("Frames"));
+        int dataType = Integer.parseInt(infoTable.get("Datatype"));
+        core[i].pixelType = convertPixelType(dataType);
 
-          int equal = line.indexOf("=");
-          String key = line.substring(0, equal).trim();
-          String value = line.substring(equal + 1).trim();
-
-          addGlobalMeta(key, value);
-
-          if (key.equals("Width")) core[i].sizeX = Integer.parseInt(value);
-          else if (key.equals("Height")) {
-            core[i].sizeY = Integer.parseInt(value);
-          }
-          else if (key.equals("Bands")) core[i].sizeC = Integer.parseInt(value);
-          else if (key.equals("Slices")) {
-            core[i].sizeZ = Integer.parseInt(value);
-          }
-          else if (key.equals("Frames")) {
-            core[i].sizeT = Integer.parseInt(value);
-          }
-          else if (key.equals("Datatype")) {
-            core[i].pixelType = convertPixelType(Integer.parseInt(value));
+        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          for (IniTable table : data) {
+            for (String key : table.keySet()) {
+              addSeriesMeta(key, table.get(key));
+            }
           }
         }
       }
@@ -399,7 +382,14 @@ public class TillVisionReader extends FormatReader {
       }
     }
     tmpSeriesMetadata = null;
+    populateMetadataStore();
+  }
 
+  // -- Helper methods --
+
+  private void populateMetadataStore() {
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -411,33 +401,34 @@ public class TillVisionReader extends FormatReader {
       if (date != null && !date.equals("")) {
         store.setImageCreationDate(date, i);
       }
-      else MetadataTools.setDefaultCreationDate(store, id, i);
+      else MetadataTools.setDefaultCreationDate(store, currentId, i);
+    }
 
-      // populate PlaneTiming data
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=0; i<getSeriesCount(); i++) {
+        // populate PlaneTiming data
 
-      for (int q=0; q<core[i].imageCount; q++) {
-        store.setPlaneTimingExposureTime(
-          exposureTimes.get(new Integer(i)), i, 0, q);
-      }
-
-      // populate Dimensions data
-
-      if (i < waves.size()) {
-        int waveIncrement = Integer.parseInt(waves.get(i));
-        if (waveIncrement > 0) {
-          store.setDimensionsWaveIncrement(waveIncrement, i, 0);
+        for (int q=0; q<core[i].imageCount; q++) {
+          store.setPlaneTimingExposureTime(exposureTimes.get(i), i, 0, q);
         }
-      }
 
-      // populate Experiment data
+        // populate Dimensions data
 
-      if (i < types.size()) {
-        store.setExperimentType(types.get(i), i);
+        if (i < waves.size()) {
+          int waveIncrement = Integer.parseInt(waves.get(i));
+          if (waveIncrement > 0) {
+            store.setDimensionsWaveIncrement(waveIncrement, i, 0);
+          }
+        }
+
+        // populate Experiment data
+
+        if (i < types.size()) {
+          store.setExperimentType(types.get(i), i);
+        }
       }
     }
   }
-
-  // -- Helper methods --
 
   private int convertPixelType(int type) throws FormatException {
     boolean signed = type % 2 == 1;
@@ -445,25 +436,28 @@ public class TillVisionReader extends FormatReader {
     return FormatTools.pixelTypeFromBytes(bytes, signed, false);
   }
 
-  private byte[] getMarker(byte[] s) throws IOException {
-    int offset = findNextOffset(s, MARKER_0, 0);
+  private byte[] getMarker(RandomAccessInputStream s) throws IOException {
+    s.seek(0);
+    int offset = findNextOffset(s, MARKER_0);
     if (offset != -1) return MARKER_0;
-    offset = findNextOffset(s, MARKER_1, 0);
+    s.seek(0);
+    offset = findNextOffset(s, MARKER_1);
     return offset == -1 ? null : MARKER_1;
   }
 
-  private int findNextOffset(byte[] s, byte[] marker, int pos)
+  private int findNextOffset(RandomAccessInputStream s, byte[] marker)
     throws IOException
   {
-    for (int i=pos; i<s.length-marker.length; i++) {
+    for (long i=s.getFilePointer(); i<s.length()-marker.length; i++) {
+      s.seek(i);
       boolean found = true;
       for (int q=0; q<marker.length; q++) {
-        if (marker[q] != s[i + q]) {
+        if (marker[q] != s.readByte()) {
           found = false;
           break;
         }
       }
-      if (found) return i + marker.length;
+      if (found) return (int) (i + marker.length);
     }
     return -1;
   }

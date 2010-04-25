@@ -92,19 +92,21 @@ public class SVSReader extends BaseTiffReader {
       setSeries(i);
       core[i] = new CoreMetadata();
 
-      String comment = ifds.get(i).getComment();
-      String[] lines = comment.split("\n");
-      String[] tokens;
-      String key, value;
-      for (String line : lines) {
-        tokens = line.split("|");
-        for (String t : tokens) {
-          if (t.indexOf("=") == -1) addGlobalMeta("Comment", t);
-          else {
-            key = t.substring(0, t.indexOf("=")).trim();
-            value = t.substring(t.indexOf("=") + 1).trim();
-            addSeriesMeta(key, value);
-            if (key.equals("MPP")) pixelSize[i] = Float.parseFloat(value);
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        String comment = ifds.get(i).getComment();
+        String[] lines = comment.split("\n");
+        String[] tokens;
+        String key, value;
+        for (String line : lines) {
+          tokens = line.split("|");
+          for (String t : tokens) {
+            if (t.indexOf("=") == -1) addGlobalMeta("Comment", t);
+            else {
+              key = t.substring(0, t.indexOf("=")).trim();
+              value = t.substring(t.indexOf("=") + 1).trim();
+              addSeriesMeta(key, value);
+              if (key.equals("MPP")) pixelSize[i] = Float.parseFloat(value);
+            }
           }
         }
       }

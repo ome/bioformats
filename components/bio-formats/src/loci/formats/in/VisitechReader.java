@@ -25,7 +25,6 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -166,11 +165,11 @@ public class VisitechReader extends FormatReader {
     s = s.replaceAll("<[sS][cC][rR][iI][pP][tT]\\p{ASCII}*?" +
       "[sS][cC][rR][iI][pP][tT]>", "");
 
-    StringTokenizer st = new StringTokenizer(s, "\n");
-    String token = null, key = null, value = null;
+    String key = null, value = null;
     int numSeries = 0;
-    while (st.hasMoreTokens()) {
-      token = st.nextToken().trim();
+    String[] tokens = s.split("\n");
+    for (String token : tokens) {
+      token = token.trim();
 
       if ((token.startsWith("<") && !token.startsWith("</")) ||
         token.indexOf("pixels") != -1)

@@ -219,8 +219,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     }
 
     // ensure that we don't try to read more bytes than are in the file
-    if (blockSize > maxLen) {
-      blockSize = (int) maxLen;
+    if (blockSize > maxLen / 2) {
+      blockSize = (int) maxLen / 2;
     }
 
     InputStreamReader in = new InputStreamReader(this);

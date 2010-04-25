@@ -51,6 +51,9 @@ public class MRWReader extends FormatReader {
 
   public static final String MRW_MAGIC_STRING = "MRM";
 
+  private static final int[] COLOR_MAP_1 = {0, 1, 1, 2};
+  private static final int[] COLOR_MAP_2 = {1, 2, 0, 1};
+
   // -- Fields --
 
   /** Offset to image data. */
@@ -137,19 +140,7 @@ public class MRWReader extends FormatReader {
       bb.skipBits(dataSize * (sensorWidth - getSizeX()));
     }
 
-    int[] colorMap = new int[4];
-    if (bayerPattern == 1) {
-      colorMap[0] = 0;
-      colorMap[1] = 1;
-      colorMap[2] = 1;
-      colorMap[3] = 2;
-    }
-    else {
-      colorMap[0] = 1;
-      colorMap[1] = 2;
-      colorMap[2] = 0;
-      colorMap[3] = 1;
-    }
+    int[] colorMap = bayerPattern == 1 ? COLOR_MAP_1 : COLOR_MAP_2;
 
     return ImageTools.interpolate(s, buf, colorMap, getSizeX(), getSizeY(),
       isLittleEndian());
@@ -204,18 +195,16 @@ public class MRWReader extends FormatReader {
           wbg[i] = coeff / (64 << wbScale[i]);
         }
       }
-      else if (blockName.endsWith("RIF")) {
-
-      }
-      else if (blockName.endsWith("TTW")) {
+      else if (blockName.endsWith("TTW") &&
+        getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+      {
         byte[] b = new byte[len];
         in.read(b);
         RandomAccessInputStream ras = new RandomAccessInputStream(b);
         TiffParser tp = new TiffParser(ras);
         IFDList ifds = tp.getIFDs();
 
-        for (int i=0; i<ifds.size(); i++) {
-          IFD ifd = ifds.get(i);
+        for (IFD ifd : ifds) {
           Integer[] keys = (Integer[]) ifd.keySet().toArray(new Integer[0]);
           // CTR FIXME - getIFDTagName is for debugging only!
           for (int q=0; q<keys.length; q++) {
