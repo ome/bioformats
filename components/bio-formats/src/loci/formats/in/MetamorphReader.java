@@ -721,7 +721,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (stageY != null && p < stageY.length) {
           store.setStagePositionPositionY(stageY[p], i, 0, p);
         }
-        if (p < zDistances.length) {
+        if (zDistances != null && p < zDistances.length) {
           if (zDistances[p] != 0d) distance += zDistances[p];
           else distance += zDistances[0];
           store.setStagePositionPositionZ(distance, i, 0, p);
