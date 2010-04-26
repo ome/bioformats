@@ -231,10 +231,11 @@ class OMEModelProperty(object):
 	def _get_maxOccurs(self):
 		if self.isAttribute:
 			return 1
+		choiceMaxOccurs = 1
 		if hasattr(self.delegate, 'choice') \
 		   and self.delegate.choice is not None:
-			return self.delegate.choice.getMaxOccurs()
-		return self.delegate.getMaxOccurs()
+			choiceMaxOccurs = self.delegate.choice.getMaxOccurs()
+		return max(choiceMaxOccurs, self.delegate.getMaxOccurs())
 	maxOccurs = property(_get_maxOccurs,
 		doc="""The maximum number of occurances for this property.""")
 		

@@ -996,8 +996,9 @@ class XschemaHandler(handler.ContentHandler):
         # Simple types that exist in the global context and may be used to
         # qualify the type of many elements and/or attributes.
         self.topLevelSimpleTypes = list()
-        # The current choice type we're in
-        self.currentChoice = None
+        # The current choices we have available indexed by their level in the
+        # tree.
+        self.currentChoices = dict()
 ##        self.dbgcount = 1
 ##        self.dbgnames = []
 
@@ -1044,9 +1045,12 @@ class XschemaHandler(handler.ContentHandler):
                 SubstitutionGroups[headName].append(substituteName)
             if name == ComplexTypeType:
                 element.complexType = 1
-            if self.inChoice and self.currentChoice \
-               and self.stack[-1].choiceType:
-                element.choice = self.currentChoice
+            try:
+                logging.debug("Current choices: %s" % self.currentChoices)
+                choice = self.currentChoices[len(self.stack)]
+                element.choice = choice
+            except KeyError:
+                pass
             self.stack.append(element)
         elif name == ComplexTypeType:
             # If it have any attributes and there is something on the stack,
@@ -1059,9 +1063,9 @@ class XschemaHandler(handler.ContentHandler):
         elif name == SequenceType:
             self.inSequence = 1
         elif name == ChoiceType:
-            self.currentChoice = XschemaElement(attrs)
-            self.currentChoice.choiceType = 1
-            self.inChoice = 1
+            choice = XschemaElement(attrs)
+            choice.choiceType = 1
+            self.currentChoices[len(self.stack)] = choice
         elif name == AttributeType:
             self.inAttribute = 1
             if 'name' in attrs.keys():
@@ -1245,8 +1249,7 @@ class XschemaHandler(handler.ContentHandler):
         elif name == SequenceType:
             self.inSequence = 0
         elif name == ChoiceType:
-            self.currentChoice = None
-            self.inChoice = 0
+            del self.currentChoices[len(self.stack)]
         elif name == AttributeType:
             self.inAttribute = 0
         elif name == AttributeGroupType:
@@ -1305,9 +1308,6 @@ class XschemaHandler(handler.ContentHandler):
             pass
         elif self.inSequence:
             pass
-        elif self.inChoice:
-            pass
-
 
 #
 # Code generation

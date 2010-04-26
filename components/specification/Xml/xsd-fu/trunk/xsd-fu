@@ -409,7 +409,7 @@ def debugMain(args):
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
 		parents = resolve_parents(model, obj.name)
-		if obj.name in ["DoubleAnnotation"]:
+		if obj.name in ["StructuredAnnotations"]:
 			CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
 			customContent = ''
 			if os.path.exists(CUSTOM_CLASS_TEMPLATE):
@@ -421,6 +421,8 @@ def debugMain(args):
 			print "Element Dump: %s" % obj.element.__dict__
 			print " +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type)
 			for prop in obj.properties.values():
+				print "Dump: %s" % prop.__dict__
+				print "Delegate Dump: %s" % prop.delegate.__dict__
 				print " +---- %s(%s) [%d:%d]" % \
 				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
 			print "\n"
