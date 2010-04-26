@@ -14,6 +14,12 @@ rem LOCI_DEVEL environment variable to use them instead.
 
 set PROG=loci.ome.editor.MetadataEditor
 set DIR=%~dp0
+if "%DIR:~1%" == ":\" (
+  set DIR1=%DIR%
+) else (
+  rem Remove trailing backslash
+  set DIR1=%DIR:~0,-1%
+)
 
 if "%LOCI_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
@@ -31,7 +37,7 @@ if "%LOCI_DEVEL%" == "" (
 
 :found
 rem Library found; try to launch
-java -mx512m -cp "%DIR%";"%DIR%bio-formats.jar";"%DIR%loci_tools.jar";"%DIR%ome-editor.jar";"%DIR%ome-java.jar";"%DIR%ome-java-deprecated.jar" %PROG% %*
+java -mx512m -cp "%DIR1%";"%DIR%bio-formats.jar";"%DIR%loci_tools.jar";"%DIR%ome-editor.jar";"%DIR%ome-java.jar";"%DIR%ome-java-deprecated.jar" %PROG% %*
 goto end
 
 :missing
