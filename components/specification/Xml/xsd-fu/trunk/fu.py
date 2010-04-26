@@ -88,9 +88,11 @@ def updateTypeMaps(namespace):
 		namespace + 'dateTime': 'String',
 		namespace + 'string': 'String',
 		namespace + 'integer': 'Integer',
+		namespace + 'long': 'Long',
 		namespace + 'positiveInteger': 'Integer',
 		namespace + 'nonNegativeInteger': 'Integer',
 		namespace + 'float': 'Double',
+		namespace + 'double': 'Double',
 		namespace + 'anyURI': 'String',
 		namespace + 'hexBinary': 'String',
 	}
@@ -677,6 +679,7 @@ def parseXmlSchema(filenames, namespace=DEFAULT_NAMESPACE):
 	logging.debug("Namespace: %s" % namespace)
 	set_type_constants(namespace)
 	updateTypeMaps(namespace)
+	generateDS.generateDS.XsdNameSpace = namespace
 	logging.debug("Java type map: %s" % JAVA_TYPE_MAP)
 
 	parser = sax.make_parser()
