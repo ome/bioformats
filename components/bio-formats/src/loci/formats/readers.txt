@@ -78,6 +78,8 @@ loci.formats.in.TopometrixReader      # tfr, ffr, zfr, zfp, 2fl
 loci.formats.in.UBMReader             # pr3
 loci.formats.in.QuesantReader         # afm
 loci.formats.in.BioRadGelReader       # 1sc
+loci.formats.in.SPALEEDReader         # d1d, d2d
+loci.formats.in.RHKReader             # sm2, sm3
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
