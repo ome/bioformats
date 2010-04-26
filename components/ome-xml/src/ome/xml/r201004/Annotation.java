@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,6 +84,15 @@ public abstract class Annotation extends AbstractOMEModelObject
 	// Back reference Experimenter_BackReference
 	private List<Experimenter> experimenter_BackReferenceList = new ArrayList<Experimenter>();
 
+	// Back reference ROI_BackReference
+	private List<ROI> roi_backReferenceList = new ArrayList<ROI>();
+
+	// Back reference Shape_BackReference
+	private List<Shape> shape_BackReferenceList = new ArrayList<Shape>();
+
+	// Back reference ListAnnotation_BackReference
+	private List<ListAnnotation> listAnnotation_BackReferenceList = new ArrayList<ListAnnotation>();
+
 	// Back reference Plate_BackReference
 	private List<Plate> plate_BackReferenceList = new ArrayList<Plate>();
 
@@ -101,15 +110,6 @@ public abstract class Annotation extends AbstractOMEModelObject
 
 	// Back reference WellSample_BackReference
 	private List<WellSample> wellSample_BackReferenceList = new ArrayList<WellSample>();
-
-	// Back reference ROI_BackReference
-	private List<ROI> roi_backReferenceList = new ArrayList<ROI>();
-
-	// Back reference Shape_BackReference
-	private List<Shape> shape_BackReferenceList = new ArrayList<Shape>();
-
-	// Back reference ListAnnotation_BackReference
-	private List<ListAnnotation> listAnnotation_BackReferenceList = new ArrayList<ListAnnotation>();
 
 	// -- Constructors --
 
@@ -133,7 +133,7 @@ public abstract class Annotation extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from Annotation specific template --
 
 
@@ -153,6 +153,17 @@ public abstract class Annotation extends AbstractOMEModelObject
 	    throws EnumerationException
 	{	
 		super.update(element, model);
+		String tagName = element.getTagName();
+		if (!"Annotation".equals(tagName))
+		{
+			System.err.println(String.format(
+					"WARNING: Expecting node name of Annotation got %s",
+					tagName));
+			// TODO: Should be its own Exception
+			//throw new RuntimeException(String.format(
+			//		"Expecting node name of Annotation got %s",
+			//		tagName));
+		}
 		if (element.hasAttribute("Namespace"))
 		{
 			// Attribute property Namespace
@@ -180,15 +191,15 @@ public abstract class Annotation extends AbstractOMEModelObject
 		// *** IGNORING *** Skipped back reference Project_BackReference
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
 		// *** IGNORING *** Skipped back reference Experimenter_BackReference
+		// *** IGNORING *** Skipped back reference ROI_BackReference
+		// *** IGNORING *** Skipped back reference Shape_BackReference
+		// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
 		// *** IGNORING *** Skipped back reference Plate_BackReference
 		// *** IGNORING *** Skipped back reference Reagent_BackReference
 		// *** IGNORING *** Skipped back reference Screen_BackReference
 		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 		// *** IGNORING *** Skipped back reference Well_BackReference
 		// *** IGNORING *** Skipped back reference WellSample_BackReference
-		// *** IGNORING *** Skipped back reference ROI_BackReference
-		// *** IGNORING *** Skipped back reference Shape_BackReference
-		// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
 	}
 
 	// -- Annotation API methods --
@@ -441,6 +452,99 @@ public abstract class Annotation extends AbstractOMEModelObject
 	}
 
 	// Reference which occurs more than once
+	public int sizeOfLinkedROIList()
+	{
+		return roi_backReferenceList.size();
+	}
+
+	public List<ROI> copyLinkedROIList()
+	{
+		return new ArrayList<ROI>(roi_backReferenceList);
+	}
+
+	public ROI getLinkedROI(int index)
+	{
+		return roi_backReferenceList.get(index);
+	}
+
+	public ROI setLinkedROI(int index, ROI o)
+	{
+		return roi_backReferenceList.set(index, o);
+	}
+
+	public boolean linkROI(ROI o)
+	{
+		return roi_backReferenceList.add(o);
+	}
+
+	public boolean unlinkROI(ROI o)
+	{
+		return roi_backReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedShapeList()
+	{
+		return shape_BackReferenceList.size();
+	}
+
+	public List<Shape> copyLinkedShapeList()
+	{
+		return new ArrayList<Shape>(shape_BackReferenceList);
+	}
+
+	public Shape getLinkedShape(int index)
+	{
+		return shape_BackReferenceList.get(index);
+	}
+
+	public Shape setLinkedShape(int index, Shape o)
+	{
+		return shape_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkShape(Shape o)
+	{
+		return shape_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkShape(Shape o)
+	{
+		return shape_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedListAnnotationList()
+	{
+		return listAnnotation_BackReferenceList.size();
+	}
+
+	public List<ListAnnotation> copyLinkedListAnnotationList()
+	{
+		return new ArrayList<ListAnnotation>(listAnnotation_BackReferenceList);
+	}
+
+	public ListAnnotation getLinkedListAnnotation(int index)
+	{
+		return listAnnotation_BackReferenceList.get(index);
+	}
+
+	public ListAnnotation setLinkedListAnnotation(int index, ListAnnotation o)
+	{
+		return listAnnotation_BackReferenceList.set(index, o);
+	}
+
+	public boolean linkListAnnotation(ListAnnotation o)
+	{
+		return listAnnotation_BackReferenceList.add(o);
+	}
+
+	public boolean unlinkListAnnotation(ListAnnotation o)
+	{
+		return listAnnotation_BackReferenceList.remove(o);
+	}
+
+	// Reference which occurs more than once
 	public int sizeOfLinkedPlateList()
 	{
 		return plate_BackReferenceList.size();
@@ -626,110 +730,14 @@ public abstract class Annotation extends AbstractOMEModelObject
 		return wellSample_BackReferenceList.remove(o);
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedROIList()
+	public Element asXMLElement(Document document)
 	{
-		return roi_backReferenceList.size();
-	}
-
-	public List<ROI> copyLinkedROIList()
-	{
-		return new ArrayList<ROI>(roi_backReferenceList);
-	}
-
-	public ROI getLinkedROI(int index)
-	{
-		return roi_backReferenceList.get(index);
-	}
-
-	public ROI setLinkedROI(int index, ROI o)
-	{
-		return roi_backReferenceList.set(index, o);
-	}
-
-	public boolean linkROI(ROI o)
-	{
-		return roi_backReferenceList.add(o);
-	}
-
-	public boolean unlinkROI(ROI o)
-	{
-		return roi_backReferenceList.remove(o);
-	}
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedShapeList()
-	{
-		return shape_BackReferenceList.size();
-	}
-
-	public List<Shape> copyLinkedShapeList()
-	{
-		return new ArrayList<Shape>(shape_BackReferenceList);
-	}
-
-	public Shape getLinkedShape(int index)
-	{
-		return shape_BackReferenceList.get(index);
-	}
-
-	public Shape setLinkedShape(int index, Shape o)
-	{
-		return shape_BackReferenceList.set(index, o);
-	}
-
-	public boolean linkShape(Shape o)
-	{
-		return shape_BackReferenceList.add(o);
-	}
-
-	public boolean unlinkShape(Shape o)
-	{
-		return shape_BackReferenceList.remove(o);
-	}
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedListAnnotationList()
-	{
-		return listAnnotation_BackReferenceList.size();
-	}
-
-	public List<ListAnnotation> copyLinkedListAnnotationList()
-	{
-		return new ArrayList<ListAnnotation>(listAnnotation_BackReferenceList);
-	}
-
-	public ListAnnotation getLinkedListAnnotation(int index)
-	{
-		return listAnnotation_BackReferenceList.get(index);
-	}
-
-	public ListAnnotation setLinkedListAnnotation(int index, ListAnnotation o)
-	{
-		return listAnnotation_BackReferenceList.set(index, o);
-	}
-
-	public boolean linkListAnnotation(ListAnnotation o)
-	{
-		return listAnnotation_BackReferenceList.add(o);
-	}
-
-	public boolean unlinkListAnnotation(ListAnnotation o)
-	{
-		return listAnnotation_BackReferenceList.remove(o);
+		return asXMLElement(document, null);
 	}
 
 	protected Element asXMLElement(Document document, Element Annotation_element)
 	{
 		// Creating XML block for Annotation
-		// Class is abstract so we may need to create its "container" element
-		if (!"Annotation".equals(Annotation_element.getTagName()))
-		{
-			Element abstractElement =
-					document.createElementNS(NAMESPACE, "Annotation");
-			abstractElement.appendChild(Annotation_element);
-			Annotation_element = abstractElement;
-		}
 		if (Annotation_element == null)
 		{
 			Annotation_element =
@@ -745,6 +753,70 @@ public abstract class Annotation extends AbstractOMEModelObject
 		{
 			// Attribute property ID
 			Annotation_element.setAttribute("ID", id.toString());
+		}
+		if (image_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Image_BackReference
+		}
+		if (pixels_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Pixels_BackReference
+		}
+		if (plane_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Plane_BackReference
+		}
+		if (channel_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Channel_BackReference
+		}
+		if (project_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Project_BackReference
+		}
+		if (dataset_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Dataset_BackReference
+		}
+		if (experimenter_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Experimenter_BackReference
+		}
+		if (roi_backReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference ROI_BackReference
+		}
+		if (shape_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Shape_BackReference
+		}
+		if (listAnnotation_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference ListAnnotation_BackReference
+		}
+		if (plate_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Plate_BackReference
+		}
+		if (reagent_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Reagent_BackReference
+		}
+		if (screen_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Screen_BackReference
+		}
+		if (plateAcquisition_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
+		}
+		if (well_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference Well_BackReference
+		}
+		if (wellSample_BackReferenceList != null)
+		{
+			// *** IGNORING *** Skipped back reference WellSample_BackReference
 		}
 		return super.asXMLElement(document, Annotation_element);
 	}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -57,29 +57,29 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	// -- Instance variables --
 
-	// Property
-	private XMLAnnotation xmlannotation;
+	// Property which occurs more than once
+	private List<XMLAnnotation> xmlannotationList = new ArrayList<XMLAnnotation>();
 
-	// Property
-	private FileAnnotation fileAnnotation;
+	// Property which occurs more than once
+	private List<FileAnnotation> fileAnnotationList = new ArrayList<FileAnnotation>();
 
-	// Property
-	private ListAnnotation listAnnotation;
+	// Property which occurs more than once
+	private List<ListAnnotation> listAnnotationList = new ArrayList<ListAnnotation>();
 
-	// Property
-	private LongAnnotation longAnnotation;
+	// Property which occurs more than once
+	private List<LongAnnotation> longAnnotationList = new ArrayList<LongAnnotation>();
 
-	// Property
-	private DoubleAnnotation doubleAnnotation;
+	// Property which occurs more than once
+	private List<DoubleAnnotation> doubleAnnotationList = new ArrayList<DoubleAnnotation>();
 
-	// Property
-	private StringAnnotation stringAnnotation;
+	// Property which occurs more than once
+	private List<StringAnnotation> stringAnnotationList = new ArrayList<StringAnnotation>();
 
-	// Property
-	private BooleanAnnotation booleanAnnotation;
+	// Property which occurs more than once
+	private List<BooleanAnnotation> booleanAnnotationList = new ArrayList<BooleanAnnotation>();
 
-	// Property
-	private TimestampAnnotation timestampAnnotation;
+	// Property which occurs more than once
+	private List<TimestampAnnotation> timestampAnnotationList = new ArrayList<TimestampAnnotation>();
 
 	// -- Constructors --
 
@@ -103,7 +103,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from StructuredAnnotations specific template --
 
 
@@ -134,125 +134,77 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			//		"Expecting node name of StructuredAnnotations got %s",
 			//		tagName));
 		}
+		// Element property XMLAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList XMLAnnotation_nodeList = element.getElementsByTagName("XMLAnnotation");
-		if (XMLAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < XMLAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"XMLAnnotation node list size %d != 1",
-					XMLAnnotation_nodeList.getLength()));
+			Element XMLAnnotation_element = (Element) XMLAnnotation_nodeList.item(i);
+			addXMLAnnotation(
+					new XMLAnnotation(XMLAnnotation_element, model));
 		}
-		else if (XMLAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property XMLAnnotation which is complex (has
-			// sub-elements)
-			setXMLAnnotation(new XMLAnnotation(
-					(Element) XMLAnnotation_nodeList.item(0), model));
-		}
+		// Element property FileAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList FileAnnotation_nodeList = element.getElementsByTagName("FileAnnotation");
-		if (FileAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < FileAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"FileAnnotation node list size %d != 1",
-					FileAnnotation_nodeList.getLength()));
+			Element FileAnnotation_element = (Element) FileAnnotation_nodeList.item(i);
+			addFileAnnotation(
+					new FileAnnotation(FileAnnotation_element, model));
 		}
-		else if (FileAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property FileAnnotation which is complex (has
-			// sub-elements)
-			setFileAnnotation(new FileAnnotation(
-					(Element) FileAnnotation_nodeList.item(0), model));
-		}
+		// Element property ListAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList ListAnnotation_nodeList = element.getElementsByTagName("ListAnnotation");
-		if (ListAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < ListAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"ListAnnotation node list size %d != 1",
-					ListAnnotation_nodeList.getLength()));
+			Element ListAnnotation_element = (Element) ListAnnotation_nodeList.item(i);
+			addListAnnotation(
+					new ListAnnotation(ListAnnotation_element, model));
 		}
-		else if (ListAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property ListAnnotation which is complex (has
-			// sub-elements)
-			setListAnnotation(new ListAnnotation(
-					(Element) ListAnnotation_nodeList.item(0), model));
-		}
+		// Element property LongAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList LongAnnotation_nodeList = element.getElementsByTagName("LongAnnotation");
-		if (LongAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < LongAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"LongAnnotation node list size %d != 1",
-					LongAnnotation_nodeList.getLength()));
+			Element LongAnnotation_element = (Element) LongAnnotation_nodeList.item(i);
+			addLongAnnotation(
+					new LongAnnotation(LongAnnotation_element, model));
 		}
-		else if (LongAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property LongAnnotation which is complex (has
-			// sub-elements)
-			setLongAnnotation(new LongAnnotation(
-					(Element) LongAnnotation_nodeList.item(0), model));
-		}
+		// Element property DoubleAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList DoubleAnnotation_nodeList = element.getElementsByTagName("DoubleAnnotation");
-		if (DoubleAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < DoubleAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"DoubleAnnotation node list size %d != 1",
-					DoubleAnnotation_nodeList.getLength()));
+			Element DoubleAnnotation_element = (Element) DoubleAnnotation_nodeList.item(i);
+			addDoubleAnnotation(
+					new DoubleAnnotation(DoubleAnnotation_element, model));
 		}
-		else if (DoubleAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property DoubleAnnotation which is complex (has
-			// sub-elements)
-			setDoubleAnnotation(new DoubleAnnotation(
-					(Element) DoubleAnnotation_nodeList.item(0), model));
-		}
+		// Element property StringAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList StringAnnotation_nodeList = element.getElementsByTagName("StringAnnotation");
-		if (StringAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < StringAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"StringAnnotation node list size %d != 1",
-					StringAnnotation_nodeList.getLength()));
+			Element StringAnnotation_element = (Element) StringAnnotation_nodeList.item(i);
+			addStringAnnotation(
+					new StringAnnotation(StringAnnotation_element, model));
 		}
-		else if (StringAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property StringAnnotation which is complex (has
-			// sub-elements)
-			setStringAnnotation(new StringAnnotation(
-					(Element) StringAnnotation_nodeList.item(0), model));
-		}
+		// Element property BooleanAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList BooleanAnnotation_nodeList = element.getElementsByTagName("BooleanAnnotation");
-		if (BooleanAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < BooleanAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"BooleanAnnotation node list size %d != 1",
-					BooleanAnnotation_nodeList.getLength()));
+			Element BooleanAnnotation_element = (Element) BooleanAnnotation_nodeList.item(i);
+			addBooleanAnnotation(
+					new BooleanAnnotation(BooleanAnnotation_element, model));
 		}
-		else if (BooleanAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property BooleanAnnotation which is complex (has
-			// sub-elements)
-			setBooleanAnnotation(new BooleanAnnotation(
-					(Element) BooleanAnnotation_nodeList.item(0), model));
-		}
+		// Element property TimestampAnnotation which is complex (has
+		// sub-elements) and occurs more than once
 		NodeList TimestampAnnotation_nodeList = element.getElementsByTagName("TimestampAnnotation");
-		if (TimestampAnnotation_nodeList.getLength() > 1)
+		for (int i = 0; i < TimestampAnnotation_nodeList.getLength(); i++)
 		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"TimestampAnnotation node list size %d != 1",
-					TimestampAnnotation_nodeList.getLength()));
-		}
-		else if (TimestampAnnotation_nodeList.getLength() != 0)
-		{
-			// Element property TimestampAnnotation which is complex (has
-			// sub-elements)
-			setTimestampAnnotation(new TimestampAnnotation(
-					(Element) TimestampAnnotation_nodeList.item(0), model));
+			Element TimestampAnnotation_element = (Element) TimestampAnnotation_nodeList.item(i);
+			addTimestampAnnotation(
+					new TimestampAnnotation(TimestampAnnotation_element, model));
 		}
 	}
 
@@ -266,92 +218,252 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	}
 
 
-	// Property
-	public XMLAnnotation getXMLAnnotation()
+	// Property which occurs more than once
+	public int sizeOfXMLAnnotationList()
 	{
-		return xmlannotation;
+		return xmlannotationList.size();
 	}
 
-	public void setXMLAnnotation(XMLAnnotation xmlannotation)
+	public List<XMLAnnotation> copyXMLAnnotationList()
 	{
-		this.xmlannotation = xmlannotation;
+		return new ArrayList<XMLAnnotation>(xmlannotationList);
 	}
 
-	// Property
-	public FileAnnotation getFileAnnotation()
+	public XMLAnnotation getXMLAnnotation(int index)
 	{
-		return fileAnnotation;
+		return xmlannotationList.get(index);
 	}
 
-	public void setFileAnnotation(FileAnnotation fileAnnotation)
+	public XMLAnnotation setXMLAnnotation(int index, XMLAnnotation xmlannotation)
 	{
-		this.fileAnnotation = fileAnnotation;
+		return xmlannotationList.set(index, xmlannotation);
 	}
 
-	// Property
-	public ListAnnotation getListAnnotation()
+	public void addXMLAnnotation(XMLAnnotation xmlannotation)
 	{
-		return listAnnotation;
+		xmlannotationList.add(xmlannotation);
 	}
 
-	public void setListAnnotation(ListAnnotation listAnnotation)
+	public void removeXMLAnnotation(XMLAnnotation xmlannotation)
 	{
-		this.listAnnotation = listAnnotation;
+		xmlannotationList.remove(xmlannotation);
 	}
 
-	// Property
-	public LongAnnotation getLongAnnotation()
+	// Property which occurs more than once
+	public int sizeOfFileAnnotationList()
 	{
-		return longAnnotation;
+		return fileAnnotationList.size();
 	}
 
-	public void setLongAnnotation(LongAnnotation longAnnotation)
+	public List<FileAnnotation> copyFileAnnotationList()
 	{
-		this.longAnnotation = longAnnotation;
+		return new ArrayList<FileAnnotation>(fileAnnotationList);
 	}
 
-	// Property
-	public DoubleAnnotation getDoubleAnnotation()
+	public FileAnnotation getFileAnnotation(int index)
 	{
-		return doubleAnnotation;
+		return fileAnnotationList.get(index);
 	}
 
-	public void setDoubleAnnotation(DoubleAnnotation doubleAnnotation)
+	public FileAnnotation setFileAnnotation(int index, FileAnnotation fileAnnotation)
 	{
-		this.doubleAnnotation = doubleAnnotation;
+		return fileAnnotationList.set(index, fileAnnotation);
 	}
 
-	// Property
-	public StringAnnotation getStringAnnotation()
+	public void addFileAnnotation(FileAnnotation fileAnnotation)
 	{
-		return stringAnnotation;
+		fileAnnotationList.add(fileAnnotation);
 	}
 
-	public void setStringAnnotation(StringAnnotation stringAnnotation)
+	public void removeFileAnnotation(FileAnnotation fileAnnotation)
 	{
-		this.stringAnnotation = stringAnnotation;
+		fileAnnotationList.remove(fileAnnotation);
 	}
 
-	// Property
-	public BooleanAnnotation getBooleanAnnotation()
+	// Property which occurs more than once
+	public int sizeOfListAnnotationList()
 	{
-		return booleanAnnotation;
+		return listAnnotationList.size();
 	}
 
-	public void setBooleanAnnotation(BooleanAnnotation booleanAnnotation)
+	public List<ListAnnotation> copyListAnnotationList()
 	{
-		this.booleanAnnotation = booleanAnnotation;
+		return new ArrayList<ListAnnotation>(listAnnotationList);
 	}
 
-	// Property
-	public TimestampAnnotation getTimestampAnnotation()
+	public ListAnnotation getListAnnotation(int index)
 	{
-		return timestampAnnotation;
+		return listAnnotationList.get(index);
 	}
 
-	public void setTimestampAnnotation(TimestampAnnotation timestampAnnotation)
+	public ListAnnotation setListAnnotation(int index, ListAnnotation listAnnotation)
 	{
-		this.timestampAnnotation = timestampAnnotation;
+		return listAnnotationList.set(index, listAnnotation);
+	}
+
+	public void addListAnnotation(ListAnnotation listAnnotation)
+	{
+		listAnnotationList.add(listAnnotation);
+	}
+
+	public void removeListAnnotation(ListAnnotation listAnnotation)
+	{
+		listAnnotationList.remove(listAnnotation);
+	}
+
+	// Property which occurs more than once
+	public int sizeOfLongAnnotationList()
+	{
+		return longAnnotationList.size();
+	}
+
+	public List<LongAnnotation> copyLongAnnotationList()
+	{
+		return new ArrayList<LongAnnotation>(longAnnotationList);
+	}
+
+	public LongAnnotation getLongAnnotation(int index)
+	{
+		return longAnnotationList.get(index);
+	}
+
+	public LongAnnotation setLongAnnotation(int index, LongAnnotation longAnnotation)
+	{
+		return longAnnotationList.set(index, longAnnotation);
+	}
+
+	public void addLongAnnotation(LongAnnotation longAnnotation)
+	{
+		longAnnotationList.add(longAnnotation);
+	}
+
+	public void removeLongAnnotation(LongAnnotation longAnnotation)
+	{
+		longAnnotationList.remove(longAnnotation);
+	}
+
+	// Property which occurs more than once
+	public int sizeOfDoubleAnnotationList()
+	{
+		return doubleAnnotationList.size();
+	}
+
+	public List<DoubleAnnotation> copyDoubleAnnotationList()
+	{
+		return new ArrayList<DoubleAnnotation>(doubleAnnotationList);
+	}
+
+	public DoubleAnnotation getDoubleAnnotation(int index)
+	{
+		return doubleAnnotationList.get(index);
+	}
+
+	public DoubleAnnotation setDoubleAnnotation(int index, DoubleAnnotation doubleAnnotation)
+	{
+		return doubleAnnotationList.set(index, doubleAnnotation);
+	}
+
+	public void addDoubleAnnotation(DoubleAnnotation doubleAnnotation)
+	{
+		doubleAnnotationList.add(doubleAnnotation);
+	}
+
+	public void removeDoubleAnnotation(DoubleAnnotation doubleAnnotation)
+	{
+		doubleAnnotationList.remove(doubleAnnotation);
+	}
+
+	// Property which occurs more than once
+	public int sizeOfStringAnnotationList()
+	{
+		return stringAnnotationList.size();
+	}
+
+	public List<StringAnnotation> copyStringAnnotationList()
+	{
+		return new ArrayList<StringAnnotation>(stringAnnotationList);
+	}
+
+	public StringAnnotation getStringAnnotation(int index)
+	{
+		return stringAnnotationList.get(index);
+	}
+
+	public StringAnnotation setStringAnnotation(int index, StringAnnotation stringAnnotation)
+	{
+		return stringAnnotationList.set(index, stringAnnotation);
+	}
+
+	public void addStringAnnotation(StringAnnotation stringAnnotation)
+	{
+		stringAnnotationList.add(stringAnnotation);
+	}
+
+	public void removeStringAnnotation(StringAnnotation stringAnnotation)
+	{
+		stringAnnotationList.remove(stringAnnotation);
+	}
+
+	// Property which occurs more than once
+	public int sizeOfBooleanAnnotationList()
+	{
+		return booleanAnnotationList.size();
+	}
+
+	public List<BooleanAnnotation> copyBooleanAnnotationList()
+	{
+		return new ArrayList<BooleanAnnotation>(booleanAnnotationList);
+	}
+
+	public BooleanAnnotation getBooleanAnnotation(int index)
+	{
+		return booleanAnnotationList.get(index);
+	}
+
+	public BooleanAnnotation setBooleanAnnotation(int index, BooleanAnnotation booleanAnnotation)
+	{
+		return booleanAnnotationList.set(index, booleanAnnotation);
+	}
+
+	public void addBooleanAnnotation(BooleanAnnotation booleanAnnotation)
+	{
+		booleanAnnotationList.add(booleanAnnotation);
+	}
+
+	public void removeBooleanAnnotation(BooleanAnnotation booleanAnnotation)
+	{
+		booleanAnnotationList.remove(booleanAnnotation);
+	}
+
+	// Property which occurs more than once
+	public int sizeOfTimestampAnnotationList()
+	{
+		return timestampAnnotationList.size();
+	}
+
+	public List<TimestampAnnotation> copyTimestampAnnotationList()
+	{
+		return new ArrayList<TimestampAnnotation>(timestampAnnotationList);
+	}
+
+	public TimestampAnnotation getTimestampAnnotation(int index)
+	{
+		return timestampAnnotationList.get(index);
+	}
+
+	public TimestampAnnotation setTimestampAnnotation(int index, TimestampAnnotation timestampAnnotation)
+	{
+		return timestampAnnotationList.set(index, timestampAnnotation);
+	}
+
+	public void addTimestampAnnotation(TimestampAnnotation timestampAnnotation)
+	{
+		timestampAnnotationList.add(timestampAnnotation);
+	}
+
+	public void removeTimestampAnnotation(TimestampAnnotation timestampAnnotation)
+	{
+		timestampAnnotationList.remove(timestampAnnotation);
 	}
 
 	public Element asXMLElement(Document document)
@@ -368,53 +480,77 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "StructuredAnnotations");
 		}
 
-		if (xmlannotation != null)
+		if (xmlannotationList != null)
 		{
 			// Element property XMLAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(xmlannotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (XMLAnnotation xmlannotationList_value : xmlannotationList)
+			{
+				StructuredAnnotations_element.appendChild(xmlannotationList_value.asXMLElement(document));
+			}
 		}
-		if (fileAnnotation != null)
+		if (fileAnnotationList != null)
 		{
 			// Element property FileAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(fileAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (FileAnnotation fileAnnotationList_value : fileAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(fileAnnotationList_value.asXMLElement(document));
+			}
 		}
-		if (listAnnotation != null)
+		if (listAnnotationList != null)
 		{
 			// Element property ListAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(listAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (ListAnnotation listAnnotationList_value : listAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(listAnnotationList_value.asXMLElement(document));
+			}
 		}
-		if (longAnnotation != null)
+		if (longAnnotationList != null)
 		{
 			// Element property LongAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(longAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (LongAnnotation longAnnotationList_value : longAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(longAnnotationList_value.asXMLElement(document));
+			}
 		}
-		if (doubleAnnotation != null)
+		if (doubleAnnotationList != null)
 		{
 			// Element property DoubleAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(doubleAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (DoubleAnnotation doubleAnnotationList_value : doubleAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(doubleAnnotationList_value.asXMLElement(document));
+			}
 		}
-		if (stringAnnotation != null)
+		if (stringAnnotationList != null)
 		{
 			// Element property StringAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(stringAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (StringAnnotation stringAnnotationList_value : stringAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(stringAnnotationList_value.asXMLElement(document));
+			}
 		}
-		if (booleanAnnotation != null)
+		if (booleanAnnotationList != null)
 		{
 			// Element property BooleanAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(booleanAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (BooleanAnnotation booleanAnnotationList_value : booleanAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(booleanAnnotationList_value.asXMLElement(document));
+			}
 		}
-		if (timestampAnnotation != null)
+		if (timestampAnnotationList != null)
 		{
 			// Element property TimestampAnnotation which is complex (has
-			// sub-elements)
-			StructuredAnnotations_element.appendChild(timestampAnnotation.asXMLElement(document));
+			// sub-elements) and occurs more than once
+			for (TimestampAnnotation timestampAnnotationList_value : timestampAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(timestampAnnotationList_value.asXMLElement(document));
+			}
 		}
 		return super.asXMLElement(document, StructuredAnnotations_element);
 	}

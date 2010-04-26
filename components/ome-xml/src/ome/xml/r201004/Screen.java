@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -112,7 +112,7 @@ public class Screen extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from Screen specific template --
 
 
@@ -205,7 +205,8 @@ public class Screen extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			setDescription(Description_nodeList.item(0).getTextContent());
+			setDescription(
+					String.valueOf(Description_nodeList.item(0).getTextContent()));
 		}
 		// Element property Reagent which is complex (has
 		// sub-elements) and occurs more than once
@@ -500,7 +501,7 @@ public class Screen extends AbstractOMEModelObject
 			// sub-elements)
 			Element description_element = 
 					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description);
+			description_element.setTextContent(description.toString());
 			Screen_element.appendChild(description_element);
 		}
 		if (reagentList != null)

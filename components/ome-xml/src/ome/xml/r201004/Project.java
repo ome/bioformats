@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -100,7 +100,7 @@ public class Project extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from Project specific template --
 
 
@@ -163,7 +163,8 @@ public class Project extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			setDescription(Description_nodeList.item(0).getTextContent());
+			setDescription(
+					String.valueOf(Description_nodeList.item(0).getTextContent()));
 		}
 		// Element reference ExperimenterRef
 		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
@@ -391,7 +392,7 @@ public class Project extends AbstractOMEModelObject
 			// sub-elements)
 			Element description_element = 
 					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description);
+			description_element.setTextContent(description.toString());
 			Project_element.appendChild(description_element);
 		}
 		if (experimenter != null)

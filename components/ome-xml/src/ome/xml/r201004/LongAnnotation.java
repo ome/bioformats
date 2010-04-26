@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class LongAnnotation extends Annotation
 	// -- Instance variables --
 
 	// Property
-	private String value;
+	private Long value;
 
 	// -- Constructors --
 
@@ -82,7 +82,7 @@ public class LongAnnotation extends Annotation
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from LongAnnotation specific template --
 
 
@@ -125,7 +125,8 @@ public class LongAnnotation extends Annotation
 		{
 			// Element property Value which is not complex (has no
 			// sub-elements)
-			setValue(Value_nodeList.item(0).getTextContent());
+			setValue(
+					Long.valueOf(Value_nodeList.item(0).getTextContent()));
 		}
 	}
 
@@ -140,12 +141,12 @@ public class LongAnnotation extends Annotation
 
 
 	// Property
-	public String getValue()
+	public Long getValue()
 	{
 		return value;
 	}
 
-	public void setValue(String value)
+	public void setValue(Long value)
 	{
 		this.value = value;
 	}
@@ -170,7 +171,7 @@ public class LongAnnotation extends Annotation
 			// sub-elements)
 			Element value_element = 
 					document.createElementNS(NAMESPACE, "Value");
-			value_element.setTextContent(value);
+			value_element.setTextContent(value.toString());
 			LongAnnotation_element.appendChild(value_element);
 		}
 		return super.asXMLElement(document, LongAnnotation_element);

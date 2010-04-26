@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -106,7 +106,7 @@ public class Group extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from Group specific template --
 
 
@@ -169,7 +169,8 @@ public class Group extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			setDescription(Description_nodeList.item(0).getTextContent());
+			setDescription(
+					String.valueOf(Description_nodeList.item(0).getTextContent()));
 		}
 		// Element reference Leader
 		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
@@ -444,7 +445,7 @@ public class Group extends AbstractOMEModelObject
 			// sub-elements)
 			Element description_element = 
 					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description);
+			description_element.setTextContent(description.toString());
 			Group_element.appendChild(description_element);
 		}
 		if (leader != null)

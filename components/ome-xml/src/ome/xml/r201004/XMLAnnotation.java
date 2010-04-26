@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -82,7 +82,7 @@ public class XMLAnnotation extends Annotation
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from XMLAnnotation specific template --
 
 
@@ -125,7 +125,8 @@ public class XMLAnnotation extends Annotation
 		{
 			// Element property Value which is not complex (has no
 			// sub-elements)
-			setValue(Value_nodeList.item(0).getTextContent());
+			setValue(
+					String.valueOf(Value_nodeList.item(0).getTextContent()));
 		}
 	}
 
@@ -170,7 +171,7 @@ public class XMLAnnotation extends Annotation
 			// sub-elements)
 			Element value_element = 
 					document.createElementNS(NAMESPACE, "Value");
-			value_element.setTextContent(value);
+			value_element.setTextContent(value.toString());
 			XMLAnnotation_element.appendChild(value_element);
 		}
 		return super.asXMLElement(document, XMLAnnotation_element);

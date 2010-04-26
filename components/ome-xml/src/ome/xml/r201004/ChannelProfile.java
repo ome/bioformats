@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -100,7 +100,7 @@ public class ChannelProfile extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from ChannelProfile specific template --
 
 
@@ -131,11 +131,11 @@ public class ChannelProfile extends AbstractOMEModelObject
 			//		"Expecting node name of ChannelProfile got %s",
 			//		tagName));
 		}
-		if (element.hasAttribute("origin"))
+		if (element.hasAttribute("Origin"))
 		{
-			// Attribute property which is an enumeration origin
-			setorigin(ProfileSource.fromString(
-					element.getAttribute("origin")));
+			// Attribute property which is an enumeration Origin
+			setOrigin(ProfileSource.fromString(
+					element.getAttribute("Origin")));
 		}
 		NodeList Name_nodeList = element.getElementsByTagName("Name");
 		if (Name_nodeList.getLength() > 1)
@@ -149,7 +149,8 @@ public class ChannelProfile extends AbstractOMEModelObject
 		{
 			// Element property Name which is not complex (has no
 			// sub-elements)
-			setName(Name_nodeList.item(0).getTextContent());
+			setName(
+					String.valueOf(Name_nodeList.item(0).getTextContent()));
 		}
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
@@ -163,7 +164,8 @@ public class ChannelProfile extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			setDescription(Description_nodeList.item(0).getTextContent());
+			setDescription(
+					String.valueOf(Description_nodeList.item(0).getTextContent()));
 		}
 		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
 		if (LightSourceSettings_nodeList.getLength() > 1)
@@ -240,12 +242,12 @@ public class ChannelProfile extends AbstractOMEModelObject
 
 
 	// Property
-	public ProfileSource getorigin()
+	public ProfileSource getOrigin()
 	{
 		return origin;
 	}
 
-	public void setorigin(ProfileSource origin)
+	public void setOrigin(ProfileSource origin)
 	{
 		this.origin = origin;
 	}
@@ -348,8 +350,8 @@ public class ChannelProfile extends AbstractOMEModelObject
 
 		if (origin != null)
 		{
-			// Attribute property origin
-			ChannelProfile_element.setAttribute("origin", origin.toString());
+			// Attribute property Origin
+			ChannelProfile_element.setAttribute("Origin", origin.toString());
 		}
 		if (name != null)
 		{
@@ -357,7 +359,7 @@ public class ChannelProfile extends AbstractOMEModelObject
 			// sub-elements)
 			Element name_element = 
 					document.createElementNS(NAMESPACE, "Name");
-			name_element.setTextContent(name);
+			name_element.setTextContent(name.toString());
 			ChannelProfile_element.appendChild(name_element);
 		}
 		if (description != null)
@@ -366,7 +368,7 @@ public class ChannelProfile extends AbstractOMEModelObject
 			// sub-elements)
 			Element description_element = 
 					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description);
+			description_element.setTextContent(description.toString());
 			ChannelProfile_element.appendChild(description_element);
 		}
 		if (lightSourceSettings != null)

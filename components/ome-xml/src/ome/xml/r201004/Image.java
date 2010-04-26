@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -130,7 +130,7 @@ public class Image extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from Image specific template --
 
 
@@ -193,7 +193,8 @@ public class Image extends AbstractOMEModelObject
 		{
 			// Element property AcquiredDate which is not complex (has no
 			// sub-elements)
-			setAcquiredDate(AcquiredDate_nodeList.item(0).getTextContent());
+			setAcquiredDate(
+					String.valueOf(AcquiredDate_nodeList.item(0).getTextContent()));
 		}
 		// Element reference ExperimenterRef
 		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
@@ -216,7 +217,8 @@ public class Image extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			setDescription(Description_nodeList.item(0).getTextContent());
+			setDescription(
+					String.valueOf(Description_nodeList.item(0).getTextContent()));
 		}
 		// Element reference ExperimentRef
 		NodeList ExperimentRef_nodeList = element.getElementsByTagName("ExperimentRef");
@@ -767,7 +769,7 @@ public class Image extends AbstractOMEModelObject
 			// sub-elements)
 			Element acquiredDate_element = 
 					document.createElementNS(NAMESPACE, "AcquiredDate");
-			acquiredDate_element.setTextContent(acquiredDate);
+			acquiredDate_element.setTextContent(acquiredDate.toString());
 			Image_element.appendChild(acquiredDate_element);
 		}
 		if (experimenter != null)
@@ -783,7 +785,7 @@ public class Image extends AbstractOMEModelObject
 			// sub-elements)
 			Element description_element = 
 					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description);
+			description_element.setTextContent(description.toString());
 			Image_element.appendChild(description_element);
 		}
 		if (experiment != null)

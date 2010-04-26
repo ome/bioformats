@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -91,7 +91,7 @@ public class ObjectiveSettings extends Settings
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from ObjectiveSettings specific template --
 
 

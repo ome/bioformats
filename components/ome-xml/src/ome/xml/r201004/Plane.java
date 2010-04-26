@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -109,7 +109,7 @@ public class Plane extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from Plane specific template --
 
 
@@ -200,7 +200,8 @@ public class Plane extends AbstractOMEModelObject
 		{
 			// Element property HashSHA1 which is not complex (has no
 			// sub-elements)
-			setHashSHA1(HashSHA1_nodeList.item(0).getTextContent());
+			setHashSHA1(
+					String.valueOf(HashSHA1_nodeList.item(0).getTextContent()));
 		}
 		// Element reference AnnotationRef
 		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
@@ -422,7 +423,7 @@ public class Plane extends AbstractOMEModelObject
 			// sub-elements)
 			Element hashSHA1_element = 
 					document.createElementNS(NAMESPACE, "HashSHA1");
-			hashSHA1_element.setTextContent(hashSHA1);
+			hashSHA1_element.setTextContent(hashSHA1.toString());
 			Plane_element.appendChild(hashSHA1_element);
 		}
 		if (annotationList != null)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-23 18:33:43+0100
+ * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -94,7 +94,7 @@ public class ImageProfile extends AbstractOMEModelObject
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from ImageProfile specific template --
 
 
@@ -143,7 +143,8 @@ public class ImageProfile extends AbstractOMEModelObject
 		{
 			// Element property Name which is not complex (has no
 			// sub-elements)
-			setName(Name_nodeList.item(0).getTextContent());
+			setName(
+					String.valueOf(Name_nodeList.item(0).getTextContent()));
 		}
 		NodeList Description_nodeList = element.getElementsByTagName("Description");
 		if (Description_nodeList.getLength() > 1)
@@ -157,7 +158,8 @@ public class ImageProfile extends AbstractOMEModelObject
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
-			setDescription(Description_nodeList.item(0).getTextContent());
+			setDescription(
+					String.valueOf(Description_nodeList.item(0).getTextContent()));
 		}
 		// Element reference InstrumentRef
 		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
@@ -290,7 +292,7 @@ public class ImageProfile extends AbstractOMEModelObject
 			// sub-elements)
 			Element name_element = 
 					document.createElementNS(NAMESPACE, "Name");
-			name_element.setTextContent(name);
+			name_element.setTextContent(name.toString());
 			ImageProfile_element.appendChild(name_element);
 		}
 		if (description != null)
@@ -299,7 +301,7 @@ public class ImageProfile extends AbstractOMEModelObject
 			// sub-elements)
 			Element description_element = 
 					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description);
+			description_element.setTextContent(description.toString());
 			ImageProfile_element.appendChild(description_element);
 		}
 		if (instrument != null)

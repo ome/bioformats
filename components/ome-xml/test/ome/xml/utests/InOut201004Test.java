@@ -126,7 +126,7 @@ public class InOut201004Test {
 
   private static String PIXELS_ANNOTATION_ID = "Annotation:Double0";
 
-  private static String CHANNEL_ANNOTATION_ID = "Annotation:Double0";
+  private static String CHANNEL_ANNOTATION_ID = "Annotation:XML0";
 
   private static String INSTRUMENT_ID = "Instrument:0";
 
@@ -172,9 +172,6 @@ public class InOut201004Test {
 
   private static final Integer SIZE_T = 50;
 
-  private static final String CHANNEL_ANNOTATION_XML =
-    "<TestData><key>foo</key><value>bar</value></TestData>";
-
   private static final String DETECTOR_MODEL = "ReallySensitive!";
 
   private static final String LIGHTSOURCE_MODEL = "ReallyBright!";
@@ -201,9 +198,16 @@ public class InOut201004Test {
 
   private static final Boolean OTF_OPTICAL_AXIS_AVERAGED = Boolean.FALSE;
 
+  private static final Boolean IMAGE_ANNOTATION_VALUE = Boolean.FALSE;
+
+  private static final String CHANNEL_ANNOTATION_VALUE =
+  "<TestData><key>foo</key><value>bar</value></TestData>";
+
+  private static final Double PIXELS_ANNOTATION_VALUE = 3.14;
+
   private static final String PLATE_ANNOTATION_VALUE = "1970-01-01T00:00:00";
 
-  private static final String WELL_ANNOTATION_VALUE = "262144";
+  private static final Long WELL_ANNOTATION_VALUE = 262144L;
 
   private static final Integer WELL_ROWS = 3;
 
@@ -250,6 +254,8 @@ public class InOut201004Test {
 
   public OME ome;
 
+  public StructuredAnnotations annotations;
+
   public OMEModel model;
 
   @BeforeClass
@@ -261,10 +267,12 @@ public class InOut201004Test {
     document = parser.newDocument();
     // Put <Image/> under <OME/>
     ome = new OME();
+    annotations = new StructuredAnnotations();
     ome.addImage(makeImage());
     ome.addPlate(makePlate());
     ome.addInstrument(makeInstrument());
     ome.addROI(makeROI());
+    ome.setStructuredAnnotations(annotations);
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     root.setAttribute("xmlns", XML_NS);
@@ -296,9 +304,9 @@ public class InOut201004Test {
   public void testValidImageAnnotation() {
     Annotation n = ome.getImage(0).getLinkedAnnotation(0);
     assertNotNull(n);
-    assertTrue(n instanceof BooleanAnnotation);
+    assertEquals(BooleanAnnotation.class, n.getClass());
     BooleanAnnotation b = (BooleanAnnotation) n;
-    assertEquals(b.getValue(), "false");
+    assertEquals(b.getValue(), IMAGE_ANNOTATION_VALUE);
     assertEquals(b.getID(), IMAGE_ANNOTATION_ID);
   }
 
@@ -332,7 +340,7 @@ public class InOut201004Test {
     assertTrue(n instanceof XMLAnnotation);
     assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
     XMLAnnotation xml = (XMLAnnotation) n;
-    assertEquals(xml.getValue(), CHANNEL_ANNOTATION_XML);
+    assertEquals(xml.getValue(), CHANNEL_ANNOTATION_VALUE);
   }
 
   @Test(dependsOnMethods={"testValidPixelsNode"})
@@ -341,7 +349,7 @@ public class InOut201004Test {
     assertNotNull(n);
     assertTrue(n instanceof DoubleAnnotation);
     DoubleAnnotation b = (DoubleAnnotation) n;
-    assertEquals(b.getValue(), "3.14");
+    assertEquals(b.getValue(), PIXELS_ANNOTATION_VALUE);
     assertEquals(b.getID(), PIXELS_ANNOTATION_ID);
   }
 
@@ -555,8 +563,9 @@ public class InOut201004Test {
     image.setID(IMAGE_ID);
     BooleanAnnotation annotation = new BooleanAnnotation();
     annotation.setID(IMAGE_ANNOTATION_ID);
-    annotation.setValue("false");
+    annotation.setValue(IMAGE_ANNOTATION_VALUE);
     image.linkAnnotation(annotation);
+    annotations.addBooleanAnnotation(annotation);
     // Create <Pixels/>
     Pixels pixels = new Pixels();
     pixels.setID(PIXELS_ID);
@@ -575,16 +584,18 @@ public class InOut201004Test {
       if (i == 0) {
         XMLAnnotation channelAnnotation = new XMLAnnotation();
         channelAnnotation.setID(CHANNEL_ANNOTATION_ID);
-        channelAnnotation.setValue(CHANNEL_ANNOTATION_XML);
+        channelAnnotation.setValue(CHANNEL_ANNOTATION_VALUE);
         channel.linkAnnotation(channelAnnotation);
+        annotations.addXMLAnnotation(channelAnnotation);
       }
       pixels.addChannel(channel);
     }
     // create Annotation for Pixels
     DoubleAnnotation pixelsAnnotation = new DoubleAnnotation();
     pixelsAnnotation.setID(PIXELS_ANNOTATION_ID);
-    pixelsAnnotation.setValue("3.14");
+    pixelsAnnotation.setValue(PIXELS_ANNOTATION_VALUE);
     pixels.linkAnnotation(pixelsAnnotation);
+    annotations.addDoubleAnnotation(pixelsAnnotation);
     // Put <Pixels/> under <Image/>
     image.setPixels(pixels);
     return image;
@@ -679,6 +690,7 @@ public class InOut201004Test {
     plateAnnotation.setID(PLATE_ANNOTATION_ID);
     plateAnnotation.setValue(PLATE_ANNOTATION_VALUE);
     plate.linkAnnotation(plateAnnotation);
+    annotations.addTimestampAnnotation(plateAnnotation);
 
     int wellSampleIndex = 0;
     for (int row=0; row<WELL_ROWS; row++) {
@@ -693,6 +705,7 @@ public class InOut201004Test {
           annotation.setID(WELL_ANNOTATION_ID);
           annotation.setValue(WELL_ANNOTATION_VALUE);
           well.linkAnnotation(annotation);
+          annotations.addLongAnnotation(annotation);
         }
 
         WellSample sample = new WellSample();
@@ -716,6 +729,7 @@ public class InOut201004Test {
     roiAnnotation.setID(ROI_ANNOTATION_ID);
     roiAnnotation.setValue(ROI_ANNOTATION_VALUE);
     roi.linkAnnotation(roiAnnotation);
+    annotations.addStringAnnotation(roiAnnotation);
 
     Union shapeUnion = new Union();
     Rectangle rect = new Rectangle();
