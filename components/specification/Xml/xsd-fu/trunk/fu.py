@@ -24,6 +24,7 @@ an OME XML (http://www.ome-xml.org) XSD document.
 
 import generateDS.generateDS
 import logging
+import copy
 import re
 import os
 
@@ -51,8 +52,11 @@ except ImportError:
 # A global mapping from XSD Schema types and Java types that is used to
 # inform and override type mappings for OME Model properties which are
 # comprised of XML Schema attributes, elements and OME XML reference virtual
-# types.
+# types. It is a superset of JAVA_PRIMITIVE_BASE_TYPE_MAP.
 JAVA_TYPE_MAP = None
+
+# A global type mapping from XSD Schema types to Java primitive base classes.
+JAVA_PRIMITIVE_TYPE_MAP = None
 
 # A global type mapping from XSD Schema types to Java base classes that is
 # used to override places in the model where we do not wish subclassing to
@@ -78,9 +82,8 @@ def updateTypeMaps(namespace):
 	Updates the type maps with a new namespace. **Must** be executed at least 
 	once, **before** node class file generation.
 	"""
-	global JAVA_TYPE_MAP
-	JAVA_TYPE_MAP = {
-		# Base types
+	global JAVA_PRIMITIVE_TYPE_MAP
+	JAVA_PRIMITIVE_TYPE_MAP = {
 		namespace + 'boolean': 'Boolean',
 		namespace + 'dateTime': 'String',
 		namespace + 'string': 'String',
@@ -90,15 +93,16 @@ def updateTypeMaps(namespace):
 		namespace + 'float': 'Double',
 		namespace + 'anyURI': 'String',
 		namespace + 'hexBinary': 'String',
-		# Hacks
-		'NamingConvention': 'String',
-		'PercentFraction': 'Double',
-		'MIMEtype': 'String',
-		'Leader': 'Experimenter',
-		'Contact': 'Experimenter',
-		'Pump': 'Laser',
 	}
-	
+	global JAVA_TYPE_MAP
+	JAVA_TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
+	JAVA_TYPE_MAP['NamingConvention'] = 'String'
+	JAVA_TYPE_MAP['PercentFraction'] = 'Double'
+	JAVA_TYPE_MAP['MIMEtype'] = 'String'
+	JAVA_TYPE_MAP['Leader'] = 'Experimenter'
+	JAVA_TYPE_MAP['Contact'] = 'Experimenter'
+	JAVA_TYPE_MAP['Pump'] = 'Laser'
+
 	global JAVA_BASE_TYPE_MAP
 	JAVA_BASE_TYPE_MAP = {
 		'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
@@ -319,13 +323,11 @@ class OMEModelProperty(object):
 	javaType = property(_get_javaType, doc="""The property's Java type.""")
 
 	def _get_metadataStoreType(self):
-		# FIXME: No more node
-		#javaType = self.javaType
-		#if javaType[-4:] == "Node":
-		#	return "String"
-		return javaType
+		if not self.isPrimitive and not self.isEnumeration:
+			return "String"
+		return self.javaType
 	metadataStoreType = property(_get_metadataStoreType,
-			                     doc="""The property's MetadataStore type.""")
+		doc="""The property's MetadataStore type.""")
 	
 	def _get_javaArgumentName(self):
 		argumentName = self.REF_REGEX.sub('', self.name)
@@ -349,6 +351,13 @@ class OMEModelProperty(object):
 	javaInstanceVariableName = property(_get_javaInstanceVariableName,
 		doc="""The property's Java instance variable name.""")
 
+	def _get_isPrimitive(self):
+		if self.javaType in JAVA_PRIMITIVE_TYPE_MAP.values():
+			return True
+		return False
+	isPrimitive = property(_get_isPrimitive,
+		doc="""Whether or not the property's Java type is a primitive.""")
+
 	def _get_isEnumeration(self):
 		v = self.delegate.getValues()
 		if v is not None and len(v) > 0:
@@ -359,8 +368,8 @@ class OMEModelProperty(object):
 
 	def _get_isReference(self):
 		o = self.model.getObjectByName(self.type)
-		if o is not None and o.base == "Reference":
-			return True
+		if o is not None:
+			return o.isReference
 		return False
 	isReference = property(_get_isReference,
 		doc="""Whether or not the property is a reference.""")
@@ -447,6 +456,13 @@ class OMEModelObject(object):
 		name = element.getName()
 		self.properties[name] = \
 			OMEModelProperty.fromElement(element, self, self.model)
+
+	def _get_isReference(self):
+		if self.base == "Reference":
+			return True
+		return False
+	isReference = property(_get_isReference,
+		doc="""Whether or not the model object is a reference.""")
 
 	def _get_javaBase(self):
 		base = self.element.getBase()

@@ -11,13 +11,13 @@
 	// ${prop.minOccurs}:${prop.maxOccurs}
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name}, ${indexes_string(indexes)});\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.name});\
+	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName});\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -25,6 +25,13 @@
 {% python
 	def parent_object(name):
 		return model.getObjectByName(parents[name].keys()[0])
+
+	def is_abstract(name):
+		parent = parent_object(name)
+		if parent is not None and \
+		   (parent.isAbstract or parent.isAbstractProprietary):
+			return True
+		return False
 
 	def sorted_properties(o):
 		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
@@ -125,16 +132,15 @@ public interface MetadataStore
 	void setUUID(String uuid);
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
-
+{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
 	// ${o.name} property storage
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
 
-{% if parent_object(o.name).isAbstract %}\
+{% if is_abstract(o.name) %}\
 {% for prop in sorted_properties(parent_object(o.name)) %}\
 {% choose %}\
-{% when prop.javaType.endswith("Node") %}\
+{% when not prop.isPrimitive %}\
 	// Ignoring ${prop.name} of parent abstract type
 {% end %}\
 {% otherwise %}\
@@ -145,7 +151,7 @@ ${setter(o, prop, indexes[o.name])}
 {% end %}\
 {% end %}\
 {% choose %}\
-{% when o.base == "Reference" %}\
+{% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
@@ -154,7 +160,7 @@ ${setter(o, prop, indexes[o.name])}
 {% end %}\
 {% otherwise %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
-{% if not prop.isReference %}\
+{% if not prop.isBackReference %}\
 ${setter(o, prop, indexes[o.name])}
 
 {% end %}\
