@@ -123,7 +123,7 @@ public class ${klass.name} extends ${klass.javaBase}
 	{
 		update(element, model);
 	}
-	
+
 	// -- Custom content from ${klass.name} specific template --
 
 ${customContent}\
@@ -224,7 +224,8 @@ ${customContent}\
 {% if not prop.isComplex() %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
-			set${prop.javaMethodName}(${prop.name}_nodeList.item(0).getTextContent());
+			set${prop.javaMethodName}(
+					${prop.javaType}.valueOf(${prop.name}_nodeList.item(0).getTextContent()));
 {% end %}\
 		}
 {% end %}\
@@ -482,7 +483,7 @@ ${customContent}\
 			// sub-elements)
 			Element ${prop.javaInstanceVariableName}_element = 
 					document.createElementNS(NAMESPACE, "${prop.name}");
-			${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName});
+			${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}.toString());
 			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
@@ -500,7 +501,7 @@ ${customContent}\
 			{
 				Element ${prop.javaInstanceVariableName}_element =
 						document.createElementNS(NAMESPACE, "${prop.name}");
-				${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}_value);
+				${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}_value.toString());
 				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);
 			}
 {% end %}\
