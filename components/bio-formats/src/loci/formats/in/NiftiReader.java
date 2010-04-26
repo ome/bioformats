@@ -95,6 +95,7 @@ public class NiftiReader extends FormatReader {
     if (checkSuffix(name, "nii")) return true;
     int dot = name.lastIndexOf(".");
     if (dot == 0) dot = name.length() - 1;
+    if (dot < 0) return false;
     String headerFile = name.substring(0, dot) + ".hdr";
     try {
       RandomAccessInputStream header = new RandomAccessInputStream(headerFile);
