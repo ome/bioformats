@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -130,7 +130,7 @@ public class Instrument extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Instrument".equals(tagName))
@@ -157,61 +157,58 @@ public class Instrument extends AbstractOMEModelObject
 			// Adding this model object to the model handler
 		    	model.addModelObject(getID(), this);
 		}
-		NodeList Microscope_nodeList = element.getElementsByTagName("Microscope");
-		if (Microscope_nodeList.getLength() > 1)
+		List<Element> Microscope_nodeList =
+				getChildrenByTagName(element, "Microscope");
+		if (Microscope_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Microscope node list size %d != 1",
-					Microscope_nodeList.getLength()));
+					Microscope_nodeList.size()));
 		}
-		else if (Microscope_nodeList.getLength() != 0)
+		else if (Microscope_nodeList.size() != 0)
 		{
 			// Element property Microscope which is complex (has
 			// sub-elements)
 			setMicroscope(new Microscope(
-					(Element) Microscope_nodeList.item(0), model));
+					(Element) Microscope_nodeList.get(0), model));
 		}
 		// Element property LightSource which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		NodeList LightSource_nodeList = element.getElementsByTagName("LightSource");
-		for (int i = 0; i < LightSource_nodeList.getLength(); i++)
+		List<Element> LightSource_nodeList =
+				getChildrenByTagName(element, "LightSource");
+		for (Element LightSource_element : LightSource_nodeList)
 		{
-			Element LightSource_element = (Element) LightSource_nodeList.item(i);
-			NodeList Laser_nodeList = 
-					LightSource_element.getElementsByTagName("Laser");
-			for (int j = 0; j < Laser_nodeList.getLength(); j++)
+			List<Element> Laser_nodeList = 
+					getChildrenByTagName(LightSource_element, "Laser");
+			for (Element Laser_element : Laser_nodeList)
 			{
-				Element Laser_element = (Element) Laser_nodeList.item(j);
 				Laser o = new Laser(LightSource_element, model);
 				o.update(Laser_element, model);
 				addLightSource(o);
 			}
-			NodeList Filament_nodeList = 
-					LightSource_element.getElementsByTagName("Filament");
-			for (int j = 0; j < Filament_nodeList.getLength(); j++)
+			List<Element> Filament_nodeList = 
+					getChildrenByTagName(LightSource_element, "Filament");
+			for (Element Filament_element : Filament_nodeList)
 			{
-				Element Filament_element = (Element) Filament_nodeList.item(j);
 				Filament o = new Filament(LightSource_element, model);
 				o.update(Filament_element, model);
 				addLightSource(o);
 			}
-			NodeList Arc_nodeList = 
-					LightSource_element.getElementsByTagName("Arc");
-			for (int j = 0; j < Arc_nodeList.getLength(); j++)
+			List<Element> Arc_nodeList = 
+					getChildrenByTagName(LightSource_element, "Arc");
+			for (Element Arc_element : Arc_nodeList)
 			{
-				Element Arc_element = (Element) Arc_nodeList.item(j);
 				Arc o = new Arc(LightSource_element, model);
 				o.update(Arc_element, model);
 				addLightSource(o);
 			}
-			NodeList LightEmittingDiode_nodeList = 
-					LightSource_element.getElementsByTagName("LightEmittingDiode");
-			for (int j = 0; j < LightEmittingDiode_nodeList.getLength(); j++)
+			List<Element> LightEmittingDiode_nodeList = 
+					getChildrenByTagName(LightSource_element, "LightEmittingDiode");
+			for (Element LightEmittingDiode_element : LightEmittingDiode_nodeList)
 			{
-				Element LightEmittingDiode_element = (Element) LightEmittingDiode_nodeList.item(j);
 				LightEmittingDiode o = new LightEmittingDiode(LightSource_element, model);
 				o.update(LightEmittingDiode_element, model);
 				addLightSource(o);
@@ -219,55 +216,55 @@ public class Instrument extends AbstractOMEModelObject
 		}
 		// Element property Detector which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Detector_nodeList = element.getElementsByTagName("Detector");
-		for (int i = 0; i < Detector_nodeList.getLength(); i++)
+		List<Element> Detector_nodeList =
+				getChildrenByTagName(element, "Detector");
+		for (Element Detector_element : Detector_nodeList)
 		{
-			Element Detector_element = (Element) Detector_nodeList.item(i);
 			addDetector(
 					new Detector(Detector_element, model));
 		}
 		// Element property Objective which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Objective_nodeList = element.getElementsByTagName("Objective");
-		for (int i = 0; i < Objective_nodeList.getLength(); i++)
+		List<Element> Objective_nodeList =
+				getChildrenByTagName(element, "Objective");
+		for (Element Objective_element : Objective_nodeList)
 		{
-			Element Objective_element = (Element) Objective_nodeList.item(i);
 			addObjective(
 					new Objective(Objective_element, model));
 		}
 		// Element property FilterSet which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList FilterSet_nodeList = element.getElementsByTagName("FilterSet");
-		for (int i = 0; i < FilterSet_nodeList.getLength(); i++)
+		List<Element> FilterSet_nodeList =
+				getChildrenByTagName(element, "FilterSet");
+		for (Element FilterSet_element : FilterSet_nodeList)
 		{
-			Element FilterSet_element = (Element) FilterSet_nodeList.item(i);
 			addFilterSet(
 					new FilterSet(FilterSet_element, model));
 		}
 		// Element property Filter which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Filter_nodeList = element.getElementsByTagName("Filter");
-		for (int i = 0; i < Filter_nodeList.getLength(); i++)
+		List<Element> Filter_nodeList =
+				getChildrenByTagName(element, "Filter");
+		for (Element Filter_element : Filter_nodeList)
 		{
-			Element Filter_element = (Element) Filter_nodeList.item(i);
 			addFilter(
 					new Filter(Filter_element, model));
 		}
 		// Element property Dichroic which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Dichroic_nodeList = element.getElementsByTagName("Dichroic");
-		for (int i = 0; i < Dichroic_nodeList.getLength(); i++)
+		List<Element> Dichroic_nodeList =
+				getChildrenByTagName(element, "Dichroic");
+		for (Element Dichroic_element : Dichroic_nodeList)
 		{
-			Element Dichroic_element = (Element) Dichroic_nodeList.item(i);
 			addDichroic(
 					new Dichroic(Dichroic_element, model));
 		}
 		// Element property OTF which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList OTF_nodeList = element.getElementsByTagName("OTF");
-		for (int i = 0; i < OTF_nodeList.getLength(); i++)
+		List<Element> OTF_nodeList =
+				getChildrenByTagName(element, "OTF");
+		for (Element OTF_element : OTF_nodeList)
 		{
-			Element OTF_element = (Element) OTF_nodeList.item(i);
 			addOTF(
 					new OTF(OTF_element, model));
 		}

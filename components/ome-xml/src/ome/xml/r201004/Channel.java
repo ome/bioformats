@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -154,7 +154,7 @@ public class Channel extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Channel".equals(tagName))
@@ -253,77 +253,80 @@ public class Channel extends AbstractOMEModelObject
 			setSamplesPerPixel(Integer.valueOf(
 					element.getAttribute("SamplesPerPixel")));
 		}
-		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
-		if (LightSourceSettings_nodeList.getLength() > 1)
+		List<Element> LightSourceSettings_nodeList =
+				getChildrenByTagName(element, "LightSourceSettings");
+		if (LightSourceSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"LightSourceSettings node list size %d != 1",
-					LightSourceSettings_nodeList.getLength()));
+					LightSourceSettings_nodeList.size()));
 		}
-		else if (LightSourceSettings_nodeList.getLength() != 0)
+		else if (LightSourceSettings_nodeList.size() != 0)
 		{
 			// Element property LightSourceSettings which is complex (has
 			// sub-elements)
 			setLightSourceSettings(new LightSourceSettings(
-					(Element) LightSourceSettings_nodeList.item(0), model));
+					(Element) LightSourceSettings_nodeList.get(0), model));
 		}
 		// Element reference OTFRef
-		NodeList OTFRef_nodeList = element.getElementsByTagName("OTFRef");
-		for (int i = 0; i < OTFRef_nodeList.getLength(); i++)
+		List<Element> OTFRef_nodeList =
+				getChildrenByTagName(element, "OTFRef");
+		for (Element OTFRef_element : OTFRef_nodeList)
 		{
-			Element OTFRef_element = (Element) OTFRef_nodeList.item(i);
 			OTFRef otf_reference = new OTFRef();
 			otf_reference.setID(OTFRef_element.getAttribute("ID"));
 			model.addReference(this, otf_reference);
 		}
-		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
-		if (DetectorSettings_nodeList.getLength() > 1)
+		List<Element> DetectorSettings_nodeList =
+				getChildrenByTagName(element, "DetectorSettings");
+		if (DetectorSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"DetectorSettings node list size %d != 1",
-					DetectorSettings_nodeList.getLength()));
+					DetectorSettings_nodeList.size()));
 		}
-		else if (DetectorSettings_nodeList.getLength() != 0)
+		else if (DetectorSettings_nodeList.size() != 0)
 		{
 			// Element property DetectorSettings which is complex (has
 			// sub-elements)
 			setDetectorSettings(new DetectorSettings(
-					(Element) DetectorSettings_nodeList.item(0), model));
+					(Element) DetectorSettings_nodeList.get(0), model));
 		}
 		// Element reference FilterSetRef
-		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
-		for (int i = 0; i < FilterSetRef_nodeList.getLength(); i++)
+		List<Element> FilterSetRef_nodeList =
+				getChildrenByTagName(element, "FilterSetRef");
+		for (Element FilterSetRef_element : FilterSetRef_nodeList)
 		{
-			Element FilterSetRef_element = (Element) FilterSetRef_nodeList.item(i);
 			FilterSetRef filterSet_reference = new FilterSetRef();
 			filterSet_reference.setID(FilterSetRef_element.getAttribute("ID"));
 			model.addReference(this, filterSet_reference);
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);
 		}
-		NodeList LightPath_nodeList = element.getElementsByTagName("LightPath");
-		if (LightPath_nodeList.getLength() > 1)
+		List<Element> LightPath_nodeList =
+				getChildrenByTagName(element, "LightPath");
+		if (LightPath_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"LightPath node list size %d != 1",
-					LightPath_nodeList.getLength()));
+					LightPath_nodeList.size()));
 		}
-		else if (LightPath_nodeList.getLength() != 0)
+		else if (LightPath_nodeList.size() != 0)
 		{
 			// Element property LightPath which is complex (has
 			// sub-elements)
 			setLightPath(new LightPath(
-					(Element) LightPath_nodeList.item(0), model));
+					(Element) LightPath_nodeList.get(0), model));
 		}
 	}
 

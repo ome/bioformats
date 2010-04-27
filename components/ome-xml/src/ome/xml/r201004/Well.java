@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -127,7 +127,7 @@ public class Well extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Well".equals(tagName))
@@ -192,27 +192,27 @@ public class Well extends AbstractOMEModelObject
 		}
 		// Element property WellSample which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList WellSample_nodeList = element.getElementsByTagName("WellSample");
-		for (int i = 0; i < WellSample_nodeList.getLength(); i++)
+		List<Element> WellSample_nodeList =
+				getChildrenByTagName(element, "WellSample");
+		for (Element WellSample_element : WellSample_nodeList)
 		{
-			Element WellSample_element = (Element) WellSample_nodeList.item(i);
 			addWellSample(
 					new WellSample(WellSample_element, model));
 		}
 		// Element reference ReagentRef
-		NodeList ReagentRef_nodeList = element.getElementsByTagName("ReagentRef");
-		for (int i = 0; i < ReagentRef_nodeList.getLength(); i++)
+		List<Element> ReagentRef_nodeList =
+				getChildrenByTagName(element, "ReagentRef");
+		for (Element ReagentRef_element : ReagentRef_nodeList)
 		{
-			Element ReagentRef_element = (Element) ReagentRef_nodeList.item(i);
 			ReagentRef reagent_reference = new ReagentRef();
 			reagent_reference.setID(ReagentRef_element.getAttribute("ID"));
 			model.addReference(this, reagent_reference);
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);

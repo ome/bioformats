@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -112,7 +112,7 @@ public class ImageProfile extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"ImageProfile".equals(tagName))
@@ -131,59 +131,62 @@ public class ImageProfile extends AbstractOMEModelObject
 			setorigin(ProfileSource.fromString(
 					element.getAttribute("origin")));
 		}
-		NodeList Name_nodeList = element.getElementsByTagName("Name");
-		if (Name_nodeList.getLength() > 1)
+		List<Element> Name_nodeList =
+				getChildrenByTagName(element, "Name");
+		if (Name_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Name node list size %d != 1",
-					Name_nodeList.getLength()));
+					Name_nodeList.size()));
 		}
-		else if (Name_nodeList.getLength() != 0)
+		else if (Name_nodeList.size() != 0)
 		{
 			// Element property Name which is not complex (has no
 			// sub-elements)
 			setName(
-					String.valueOf(Name_nodeList.item(0).getTextContent()));
+					String.valueOf(Name_nodeList.get(0).getTextContent()));
 		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
+					Description_nodeList.size()));
 		}
-		else if (Description_nodeList.getLength() != 0)
+		else if (Description_nodeList.size() != 0)
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			setDescription(
-					String.valueOf(Description_nodeList.item(0).getTextContent()));
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
 		// Element reference InstrumentRef
-		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
-		for (int i = 0; i < InstrumentRef_nodeList.getLength(); i++)
+		List<Element> InstrumentRef_nodeList =
+				getChildrenByTagName(element, "InstrumentRef");
+		for (Element InstrumentRef_element : InstrumentRef_nodeList)
 		{
-			Element InstrumentRef_element = (Element) InstrumentRef_nodeList.item(i);
 			InstrumentRef instrument_reference = new InstrumentRef();
 			instrument_reference.setID(InstrumentRef_element.getAttribute("ID"));
 			model.addReference(this, instrument_reference);
 		}
-		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
-		if (ObjectiveSettings_nodeList.getLength() > 1)
+		List<Element> ObjectiveSettings_nodeList =
+				getChildrenByTagName(element, "ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"ObjectiveSettings node list size %d != 1",
-					ObjectiveSettings_nodeList.getLength()));
+					ObjectiveSettings_nodeList.size()));
 		}
-		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		else if (ObjectiveSettings_nodeList.size() != 0)
 		{
 			// Element property ObjectiveSettings which is complex (has
 			// sub-elements)
 			setObjectiveSettings(new ObjectiveSettings(
-					(Element) ObjectiveSettings_nodeList.item(0), model));
+					(Element) ObjectiveSettings_nodeList.get(0), model));
 		}
 	}
 

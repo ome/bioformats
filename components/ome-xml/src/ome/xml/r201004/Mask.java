@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -106,7 +106,7 @@ public class Mask extends Shape
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Mask".equals(tagName))
@@ -133,10 +133,10 @@ public class Mask extends Shape
 		}
 		// Element property BinData which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
-		for (int i = 0; i < BinData_nodeList.getLength(); i++)
+		List<Element> BinData_nodeList =
+				getChildrenByTagName(element, "BinData");
+		for (Element BinData_element : BinData_nodeList)
 		{
-			Element BinData_element = (Element) BinData_nodeList.item(i);
 			addBinData(
 					new BinData(BinData_element, model));
 		}

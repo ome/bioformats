@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -115,7 +115,7 @@ public class TiffData extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"TiffData".equals(tagName))
@@ -158,20 +158,21 @@ public class TiffData extends AbstractOMEModelObject
 			setFirstT(Integer.valueOf(
 					element.getAttribute("FirstT")));
 		}
-		NodeList UUID_nodeList = element.getElementsByTagName("UUID");
-		if (UUID_nodeList.getLength() > 1)
+		List<Element> UUID_nodeList =
+				getChildrenByTagName(element, "UUID");
+		if (UUID_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"UUID node list size %d != 1",
-					UUID_nodeList.getLength()));
+					UUID_nodeList.size()));
 		}
-		else if (UUID_nodeList.getLength() != 0)
+		else if (UUID_nodeList.size() != 0)
 		{
 			// Element property UUID which is complex (has
 			// sub-elements)
 			setUUID(new UUID(
-					(Element) UUID_nodeList.item(0), model));
+					(Element) UUID_nodeList.get(0), model));
 		}
 	}
 

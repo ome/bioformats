@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -124,7 +124,7 @@ public class Laser extends LightSource
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Laser".equals(tagName))
@@ -186,10 +186,10 @@ public class Laser extends LightSource
 					element.getAttribute("RepetitionRate")));
 		}
 		// Element reference Pump
-		NodeList Pump_nodeList = element.getElementsByTagName("Pump");
-		for (int i = 0; i < Pump_nodeList.getLength(); i++)
+		List<Element> Pump_nodeList =
+				getChildrenByTagName(element, "Pump");
+		for (Element Pump_element : Pump_nodeList)
 		{
-			Element Pump_element = (Element) Pump_nodeList.item(i);
 			Pump pump_reference = new Pump();
 			pump_reference.setID(Pump_element.getAttribute("ID"));
 			model.addReference(this, pump_reference);

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -115,7 +115,7 @@ public class Filter extends ManufacturerSpec
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Filter".equals(tagName))
@@ -154,20 +154,21 @@ public class Filter extends ManufacturerSpec
 			// Adding this model object to the model handler
 		    	model.addModelObject(getID(), this);
 		}
-		NodeList TransmittanceRange_nodeList = element.getElementsByTagName("TransmittanceRange");
-		if (TransmittanceRange_nodeList.getLength() > 1)
+		List<Element> TransmittanceRange_nodeList =
+				getChildrenByTagName(element, "TransmittanceRange");
+		if (TransmittanceRange_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"TransmittanceRange node list size %d != 1",
-					TransmittanceRange_nodeList.getLength()));
+					TransmittanceRange_nodeList.size()));
 		}
-		else if (TransmittanceRange_nodeList.getLength() != 0)
+		else if (TransmittanceRange_nodeList.size() != 0)
 		{
 			// Element property TransmittanceRange which is complex (has
 			// sub-elements)
 			setTransmittanceRange(new TransmittanceRange(
-					(Element) TransmittanceRange_nodeList.item(0), model));
+					(Element) TransmittanceRange_nodeList.get(0), model));
 		}
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		// *** IGNORING *** Skipped back reference LightPath_BackReference

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -121,7 +121,7 @@ public class WellSample extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"WellSample".equals(tagName))
@@ -173,19 +173,19 @@ public class WellSample extends AbstractOMEModelObject
 					element.getAttribute("Timepoint")));
 		}
 		// Element reference ImageRef
-		NodeList ImageRef_nodeList = element.getElementsByTagName("ImageRef");
-		for (int i = 0; i < ImageRef_nodeList.getLength(); i++)
+		List<Element> ImageRef_nodeList =
+				getChildrenByTagName(element, "ImageRef");
+		for (Element ImageRef_element : ImageRef_nodeList)
 		{
-			Element ImageRef_element = (Element) ImageRef_nodeList.item(i);
 			ImageRef image_reference = new ImageRef();
 			image_reference.setID(ImageRef_element.getAttribute("ID"));
 			model.addReference(this, image_reference);
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);

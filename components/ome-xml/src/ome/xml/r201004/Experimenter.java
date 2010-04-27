@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -142,7 +142,7 @@ public class Experimenter extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Experimenter".equals(tagName))
@@ -212,19 +212,19 @@ public class Experimenter extends AbstractOMEModelObject
 		    	model.addModelObject(getID(), this);
 		}
 		// Element reference GroupRef
-		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
-		for (int i = 0; i < GroupRef_nodeList.getLength(); i++)
+		List<Element> GroupRef_nodeList =
+				getChildrenByTagName(element, "GroupRef");
+		for (Element GroupRef_element : GroupRef_nodeList)
 		{
-			Element GroupRef_element = (Element) GroupRef_nodeList.item(i);
 			GroupRef groupList_reference = new GroupRef();
 			groupList_reference.setID(GroupRef_element.getAttribute("ID"));
 			model.addReference(this, groupList_reference);
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);

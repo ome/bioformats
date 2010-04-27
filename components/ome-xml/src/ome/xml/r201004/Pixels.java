@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -151,7 +151,7 @@ public class Pixels extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Pixels".equals(tagName))
@@ -246,60 +246,61 @@ public class Pixels extends AbstractOMEModelObject
 		}
 		// Element property Channel which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Channel_nodeList = element.getElementsByTagName("Channel");
-		for (int i = 0; i < Channel_nodeList.getLength(); i++)
+		List<Element> Channel_nodeList =
+				getChildrenByTagName(element, "Channel");
+		for (Element Channel_element : Channel_nodeList)
 		{
-			Element Channel_element = (Element) Channel_nodeList.item(i);
 			addChannel(
 					new Channel(Channel_element, model));
 		}
 		// Element property BinData which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
-		for (int i = 0; i < BinData_nodeList.getLength(); i++)
+		List<Element> BinData_nodeList =
+				getChildrenByTagName(element, "BinData");
+		for (Element BinData_element : BinData_nodeList)
 		{
-			Element BinData_element = (Element) BinData_nodeList.item(i);
 			addBinData(
 					new BinData(BinData_element, model));
 		}
 		// Element property TiffData which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList TiffData_nodeList = element.getElementsByTagName("TiffData");
-		for (int i = 0; i < TiffData_nodeList.getLength(); i++)
+		List<Element> TiffData_nodeList =
+				getChildrenByTagName(element, "TiffData");
+		for (Element TiffData_element : TiffData_nodeList)
 		{
-			Element TiffData_element = (Element) TiffData_nodeList.item(i);
 			addTiffData(
 					new TiffData(TiffData_element, model));
 		}
-		NodeList MetadataOnly_nodeList = element.getElementsByTagName("MetadataOnly");
-		if (MetadataOnly_nodeList.getLength() > 1)
+		List<Element> MetadataOnly_nodeList =
+				getChildrenByTagName(element, "MetadataOnly");
+		if (MetadataOnly_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"MetadataOnly node list size %d != 1",
-					MetadataOnly_nodeList.getLength()));
+					MetadataOnly_nodeList.size()));
 		}
-		else if (MetadataOnly_nodeList.getLength() != 0)
+		else if (MetadataOnly_nodeList.size() != 0)
 		{
 			// Element property MetadataOnly which is complex (has
 			// sub-elements)
 			setMetadataOnly(new MetadataOnly(
-					(Element) MetadataOnly_nodeList.item(0), model));
+					(Element) MetadataOnly_nodeList.get(0), model));
 		}
 		// Element property Plane which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Plane_nodeList = element.getElementsByTagName("Plane");
-		for (int i = 0; i < Plane_nodeList.getLength(); i++)
+		List<Element> Plane_nodeList =
+				getChildrenByTagName(element, "Plane");
+		for (Element Plane_element : Plane_nodeList)
 		{
-			Element Plane_element = (Element) Plane_nodeList.item(i);
 			addPlane(
 					new Plane(Plane_element, model));
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);

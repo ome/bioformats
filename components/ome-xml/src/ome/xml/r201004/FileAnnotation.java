@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -100,7 +100,7 @@ public class FileAnnotation extends Annotation
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"FileAnnotation".equals(tagName))
@@ -113,20 +113,21 @@ public class FileAnnotation extends Annotation
 			//		"Expecting node name of FileAnnotation got %s",
 			//		tagName));
 		}
-		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
-		if (BinaryFile_nodeList.getLength() > 1)
+		List<Element> BinaryFile_nodeList =
+				getChildrenByTagName(element, "BinaryFile");
+		if (BinaryFile_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"BinaryFile node list size %d != 1",
-					BinaryFile_nodeList.getLength()));
+					BinaryFile_nodeList.size()));
 		}
-		else if (BinaryFile_nodeList.getLength() != 0)
+		else if (BinaryFile_nodeList.size() != 0)
 		{
 			// Element property BinaryFile which is complex (has
 			// sub-elements)
 			setBinaryFile(new BinaryFile(
-					(Element) BinaryFile_nodeList.item(0), model));
+					(Element) BinaryFile_nodeList.get(0), model));
 		}
 	}
 

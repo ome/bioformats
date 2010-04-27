@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -115,7 +115,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"MicrobeamManipulation".equals(tagName))
@@ -149,29 +149,29 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		    	model.addModelObject(getID(), this);
 		}
 		// Element reference ROIRef
-		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
-		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
+		List<Element> ROIRef_nodeList =
+				getChildrenByTagName(element, "ROIRef");
+		for (Element ROIRef_element : ROIRef_nodeList)
 		{
-			Element ROIRef_element = (Element) ROIRef_nodeList.item(i);
 			ROIRef roiList_reference = new ROIRef();
 			roiList_reference.setID(ROIRef_element.getAttribute("ID"));
 			model.addReference(this, roiList_reference);
 		}
 		// Element reference ExperimenterRef
-		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
-		for (int i = 0; i < ExperimenterRef_nodeList.getLength(); i++)
+		List<Element> ExperimenterRef_nodeList =
+				getChildrenByTagName(element, "ExperimenterRef");
+		for (Element ExperimenterRef_element : ExperimenterRef_nodeList)
 		{
-			Element ExperimenterRef_element = (Element) ExperimenterRef_nodeList.item(i);
 			ExperimenterRef experimenter_reference = new ExperimenterRef();
 			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
 			model.addReference(this, experimenter_reference);
 		}
 		// Element property LightSourceSettings which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
-		for (int i = 0; i < LightSourceSettings_nodeList.getLength(); i++)
+		List<Element> LightSourceSettings_nodeList =
+				getChildrenByTagName(element, "LightSourceSettings");
+		for (Element LightSourceSettings_element : LightSourceSettings_nodeList)
 		{
-			Element LightSourceSettings_element = (Element) LightSourceSettings_nodeList.item(i);
 			addLightSourceSettings(
 					new LightSourceSettings(LightSourceSettings_element, model));
 		}

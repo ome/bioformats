@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -142,7 +142,7 @@ public class Plate extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Plate".equals(tagName))
@@ -223,54 +223,55 @@ public class Plate extends AbstractOMEModelObject
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
+					Description_nodeList.size()));
 		}
-		else if (Description_nodeList.getLength() != 0)
+		else if (Description_nodeList.size() != 0)
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			setDescription(
-					String.valueOf(Description_nodeList.item(0).getTextContent()));
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
 		// Element reference ScreenRef
-		NodeList ScreenRef_nodeList = element.getElementsByTagName("ScreenRef");
-		for (int i = 0; i < ScreenRef_nodeList.getLength(); i++)
+		List<Element> ScreenRef_nodeList =
+				getChildrenByTagName(element, "ScreenRef");
+		for (Element ScreenRef_element : ScreenRef_nodeList)
 		{
-			Element ScreenRef_element = (Element) ScreenRef_nodeList.item(i);
 			ScreenRef screenList_reference = new ScreenRef();
 			screenList_reference.setID(ScreenRef_element.getAttribute("ID"));
 			model.addReference(this, screenList_reference);
 		}
 		// Element property Well which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Well_nodeList = element.getElementsByTagName("Well");
-		for (int i = 0; i < Well_nodeList.getLength(); i++)
+		List<Element> Well_nodeList =
+				getChildrenByTagName(element, "Well");
+		for (Element Well_element : Well_nodeList)
 		{
-			Element Well_element = (Element) Well_nodeList.item(i);
 			addWell(
 					new Well(Well_element, model));
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);
 		}
 		// Element property PlateAcquisition which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList PlateAcquisition_nodeList = element.getElementsByTagName("PlateAcquisition");
-		for (int i = 0; i < PlateAcquisition_nodeList.getLength(); i++)
+		List<Element> PlateAcquisition_nodeList =
+				getChildrenByTagName(element, "PlateAcquisition");
+		for (Element PlateAcquisition_element : PlateAcquisition_nodeList)
 		{
-			Element PlateAcquisition_element = (Element) PlateAcquisition_nodeList.item(i);
 			addPlateAcquisition(
 					new PlateAcquisition(PlateAcquisition_element, model));
 		}

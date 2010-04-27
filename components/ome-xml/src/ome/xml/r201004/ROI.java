@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -121,7 +121,7 @@ public class ROI extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"ROI".equals(tagName))
@@ -160,44 +160,46 @@ public class ROI extends AbstractOMEModelObject
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		NodeList Union_nodeList = element.getElementsByTagName("Union");
-		if (Union_nodeList.getLength() > 1)
+		List<Element> Union_nodeList =
+				getChildrenByTagName(element, "Union");
+		if (Union_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Union node list size %d != 1",
-					Union_nodeList.getLength()));
+					Union_nodeList.size()));
 		}
-		else if (Union_nodeList.getLength() != 0)
+		else if (Union_nodeList.size() != 0)
 		{
 			// Element property Union which is complex (has
 			// sub-elements)
 			setUnion(new Union(
-					(Element) Union_nodeList.item(0), model));
+					(Element) Union_nodeList.get(0), model));
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);
 		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
+					Description_nodeList.size()));
 		}
-		else if (Description_nodeList.getLength() != 0)
+		else if (Description_nodeList.size() != 0)
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			setDescription(
-					String.valueOf(Description_nodeList.item(0).getTextContent()));
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -133,7 +133,7 @@ public class OME extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"OME".equals(tagName))
@@ -154,106 +154,107 @@ public class OME extends AbstractOMEModelObject
 		}
 		// Element property Project which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Project_nodeList = element.getElementsByTagName("Project");
-		for (int i = 0; i < Project_nodeList.getLength(); i++)
+		List<Element> Project_nodeList =
+				getChildrenByTagName(element, "Project");
+		for (Element Project_element : Project_nodeList)
 		{
-			Element Project_element = (Element) Project_nodeList.item(i);
 			addProject(
 					new Project(Project_element, model));
 		}
 		// Element property Dataset which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Dataset_nodeList = element.getElementsByTagName("Dataset");
-		for (int i = 0; i < Dataset_nodeList.getLength(); i++)
+		List<Element> Dataset_nodeList =
+				getChildrenByTagName(element, "Dataset");
+		for (Element Dataset_element : Dataset_nodeList)
 		{
-			Element Dataset_element = (Element) Dataset_nodeList.item(i);
 			addDataset(
 					new Dataset(Dataset_element, model));
 		}
 		// Element property Experiment which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Experiment_nodeList = element.getElementsByTagName("Experiment");
-		for (int i = 0; i < Experiment_nodeList.getLength(); i++)
+		List<Element> Experiment_nodeList =
+				getChildrenByTagName(element, "Experiment");
+		for (Element Experiment_element : Experiment_nodeList)
 		{
-			Element Experiment_element = (Element) Experiment_nodeList.item(i);
 			addExperiment(
 					new Experiment(Experiment_element, model));
 		}
 		// Element property Plate which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Plate_nodeList = element.getElementsByTagName("Plate");
-		for (int i = 0; i < Plate_nodeList.getLength(); i++)
+		List<Element> Plate_nodeList =
+				getChildrenByTagName(element, "Plate");
+		for (Element Plate_element : Plate_nodeList)
 		{
-			Element Plate_element = (Element) Plate_nodeList.item(i);
 			addPlate(
 					new Plate(Plate_element, model));
 		}
 		// Element property Screen which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Screen_nodeList = element.getElementsByTagName("Screen");
-		for (int i = 0; i < Screen_nodeList.getLength(); i++)
+		List<Element> Screen_nodeList =
+				getChildrenByTagName(element, "Screen");
+		for (Element Screen_element : Screen_nodeList)
 		{
-			Element Screen_element = (Element) Screen_nodeList.item(i);
 			addScreen(
 					new Screen(Screen_element, model));
 		}
 		// Element property Experimenter which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Experimenter_nodeList = element.getElementsByTagName("Experimenter");
-		for (int i = 0; i < Experimenter_nodeList.getLength(); i++)
+		List<Element> Experimenter_nodeList =
+				getChildrenByTagName(element, "Experimenter");
+		for (Element Experimenter_element : Experimenter_nodeList)
 		{
-			Element Experimenter_element = (Element) Experimenter_nodeList.item(i);
 			addExperimenter(
 					new Experimenter(Experimenter_element, model));
 		}
 		// Element property Group which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Group_nodeList = element.getElementsByTagName("Group");
-		for (int i = 0; i < Group_nodeList.getLength(); i++)
+		List<Element> Group_nodeList =
+				getChildrenByTagName(element, "Group");
+		for (Element Group_element : Group_nodeList)
 		{
-			Element Group_element = (Element) Group_nodeList.item(i);
 			addGroup(
 					new Group(Group_element, model));
 		}
 		// Element property Instrument which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Instrument_nodeList = element.getElementsByTagName("Instrument");
-		for (int i = 0; i < Instrument_nodeList.getLength(); i++)
+		List<Element> Instrument_nodeList =
+				getChildrenByTagName(element, "Instrument");
+		for (Element Instrument_element : Instrument_nodeList)
 		{
-			Element Instrument_element = (Element) Instrument_nodeList.item(i);
 			addInstrument(
 					new Instrument(Instrument_element, model));
 		}
 		// Element property Image which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList Image_nodeList = element.getElementsByTagName("Image");
-		for (int i = 0; i < Image_nodeList.getLength(); i++)
+		List<Element> Image_nodeList =
+				getChildrenByTagName(element, "Image");
+		for (Element Image_element : Image_nodeList)
 		{
-			Element Image_element = (Element) Image_nodeList.item(i);
 			addImage(
 					new Image(Image_element, model));
 		}
-		NodeList StructuredAnnotations_nodeList = element.getElementsByTagName("StructuredAnnotations");
-		if (StructuredAnnotations_nodeList.getLength() > 1)
+		List<Element> StructuredAnnotations_nodeList =
+				getChildrenByTagName(element, "StructuredAnnotations");
+		if (StructuredAnnotations_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"StructuredAnnotations node list size %d != 1",
-					StructuredAnnotations_nodeList.getLength()));
+					StructuredAnnotations_nodeList.size()));
 		}
-		else if (StructuredAnnotations_nodeList.getLength() != 0)
+		else if (StructuredAnnotations_nodeList.size() != 0)
 		{
 			// Element property StructuredAnnotations which is complex (has
 			// sub-elements)
 			setStructuredAnnotations(new StructuredAnnotations(
-					(Element) StructuredAnnotations_nodeList.item(0), model));
+					(Element) StructuredAnnotations_nodeList.get(0), model));
 		}
 		// Element property ROI which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList ROI_nodeList = element.getElementsByTagName("ROI");
-		for (int i = 0; i < ROI_nodeList.getLength(); i++)
+		List<Element> ROI_nodeList =
+				getChildrenByTagName(element, "ROI");
+		for (Element ROI_element : ROI_nodeList)
 		{
-			Element ROI_element = (Element) ROI_nodeList.item(i);
 			addROI(
 					new ROI(ROI_element, model));
 		}

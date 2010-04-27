@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -118,7 +118,7 @@ public class ChannelProfile extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"ChannelProfile".equals(tagName))
@@ -137,80 +137,84 @@ public class ChannelProfile extends AbstractOMEModelObject
 			setOrigin(ProfileSource.fromString(
 					element.getAttribute("Origin")));
 		}
-		NodeList Name_nodeList = element.getElementsByTagName("Name");
-		if (Name_nodeList.getLength() > 1)
+		List<Element> Name_nodeList =
+				getChildrenByTagName(element, "Name");
+		if (Name_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Name node list size %d != 1",
-					Name_nodeList.getLength()));
+					Name_nodeList.size()));
 		}
-		else if (Name_nodeList.getLength() != 0)
+		else if (Name_nodeList.size() != 0)
 		{
 			// Element property Name which is not complex (has no
 			// sub-elements)
 			setName(
-					String.valueOf(Name_nodeList.item(0).getTextContent()));
+					String.valueOf(Name_nodeList.get(0).getTextContent()));
 		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
+					Description_nodeList.size()));
 		}
-		else if (Description_nodeList.getLength() != 0)
+		else if (Description_nodeList.size() != 0)
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			setDescription(
-					String.valueOf(Description_nodeList.item(0).getTextContent()));
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
-		NodeList LightSourceSettings_nodeList = element.getElementsByTagName("LightSourceSettings");
-		if (LightSourceSettings_nodeList.getLength() > 1)
+		List<Element> LightSourceSettings_nodeList =
+				getChildrenByTagName(element, "LightSourceSettings");
+		if (LightSourceSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"LightSourceSettings node list size %d != 1",
-					LightSourceSettings_nodeList.getLength()));
+					LightSourceSettings_nodeList.size()));
 		}
-		else if (LightSourceSettings_nodeList.getLength() != 0)
+		else if (LightSourceSettings_nodeList.size() != 0)
 		{
 			// Element property LightSourceSettings which is complex (has
 			// sub-elements)
 			setLightSourceSettings(new LightSourceSettings(
-					(Element) LightSourceSettings_nodeList.item(0), model));
+					(Element) LightSourceSettings_nodeList.get(0), model));
 		}
 		// Element reference OTFRef
-		NodeList OTFRef_nodeList = element.getElementsByTagName("OTFRef");
-		for (int i = 0; i < OTFRef_nodeList.getLength(); i++)
+		List<Element> OTFRef_nodeList =
+				getChildrenByTagName(element, "OTFRef");
+		for (Element OTFRef_element : OTFRef_nodeList)
 		{
-			Element OTFRef_element = (Element) OTFRef_nodeList.item(i);
 			OTFRef otf_reference = new OTFRef();
 			otf_reference.setID(OTFRef_element.getAttribute("ID"));
 			model.addReference(this, otf_reference);
 		}
-		NodeList DetectorSettings_nodeList = element.getElementsByTagName("DetectorSettings");
-		if (DetectorSettings_nodeList.getLength() > 1)
+		List<Element> DetectorSettings_nodeList =
+				getChildrenByTagName(element, "DetectorSettings");
+		if (DetectorSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"DetectorSettings node list size %d != 1",
-					DetectorSettings_nodeList.getLength()));
+					DetectorSettings_nodeList.size()));
 		}
-		else if (DetectorSettings_nodeList.getLength() != 0)
+		else if (DetectorSettings_nodeList.size() != 0)
 		{
 			// Element property DetectorSettings which is complex (has
 			// sub-elements)
 			setDetectorSettings(new DetectorSettings(
-					(Element) DetectorSettings_nodeList.item(0), model));
+					(Element) DetectorSettings_nodeList.get(0), model));
 		}
 		// Element reference FilterSetRef
-		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
-		for (int i = 0; i < FilterSetRef_nodeList.getLength(); i++)
+		List<Element> FilterSetRef_nodeList =
+				getChildrenByTagName(element, "FilterSetRef");
+		for (Element FilterSetRef_element : FilterSetRef_nodeList)
 		{
-			Element FilterSetRef_element = (Element) FilterSetRef_nodeList.item(i);
 			FilterSetRef filterSet_reference = new FilterSetRef();
 			filterSet_reference.setID(FilterSetRef_element.getAttribute("ID"));
 			model.addReference(this, filterSet_reference);

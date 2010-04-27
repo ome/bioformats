@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -100,7 +100,7 @@ public class BooleanAnnotation extends Annotation
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"BooleanAnnotation".equals(tagName))
@@ -113,20 +113,21 @@ public class BooleanAnnotation extends Annotation
 			//		"Expecting node name of BooleanAnnotation got %s",
 			//		tagName));
 		}
-		NodeList Value_nodeList = element.getElementsByTagName("Value");
-		if (Value_nodeList.getLength() > 1)
+		List<Element> Value_nodeList =
+				getChildrenByTagName(element, "Value");
+		if (Value_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Value node list size %d != 1",
-					Value_nodeList.getLength()));
+					Value_nodeList.size()));
 		}
-		else if (Value_nodeList.getLength() != 0)
+		else if (Value_nodeList.size() != 0)
 		{
 			// Element property Value which is not complex (has no
 			// sub-elements)
 			setValue(
-					Boolean.valueOf(Value_nodeList.item(0).getTextContent()));
+					Boolean.valueOf(Value_nodeList.get(0).getTextContent()));
 		}
 	}
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -124,7 +124,7 @@ public class Group extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Group".equals(tagName))
@@ -157,35 +157,36 @@ public class Group extends AbstractOMEModelObject
 			// Adding this model object to the model handler
 		    	model.addModelObject(getID(), this);
 		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
+					Description_nodeList.size()));
 		}
-		else if (Description_nodeList.getLength() != 0)
+		else if (Description_nodeList.size() != 0)
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			setDescription(
-					String.valueOf(Description_nodeList.item(0).getTextContent()));
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
 		// Element reference Leader
-		NodeList Leader_nodeList = element.getElementsByTagName("Leader");
-		for (int i = 0; i < Leader_nodeList.getLength(); i++)
+		List<Element> Leader_nodeList =
+				getChildrenByTagName(element, "Leader");
+		for (Element Leader_element : Leader_nodeList)
 		{
-			Element Leader_element = (Element) Leader_nodeList.item(i);
 			Leader leader_reference = new Leader();
 			leader_reference.setID(Leader_element.getAttribute("ID"));
 			model.addReference(this, leader_reference);
 		}
 		// Element reference Contact
-		NodeList Contact_nodeList = element.getElementsByTagName("Contact");
-		for (int i = 0; i < Contact_nodeList.getLength(); i++)
+		List<Element> Contact_nodeList =
+				getChildrenByTagName(element, "Contact");
+		for (Element Contact_element : Contact_nodeList)
 		{
-			Element Contact_element = (Element) Contact_nodeList.item(i);
 			Contact contact_reference = new Contact();
 			contact_reference.setID(Contact_element.getAttribute("ID"));
 			model.addReference(this, contact_reference);

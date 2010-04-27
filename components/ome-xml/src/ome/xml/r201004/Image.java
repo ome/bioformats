@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -148,7 +148,7 @@ public class Image extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Image".equals(tagName))
@@ -181,164 +181,170 @@ public class Image extends AbstractOMEModelObject
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		NodeList AcquiredDate_nodeList = element.getElementsByTagName("AcquiredDate");
-		if (AcquiredDate_nodeList.getLength() > 1)
+		List<Element> AcquiredDate_nodeList =
+				getChildrenByTagName(element, "AcquiredDate");
+		if (AcquiredDate_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"AcquiredDate node list size %d != 1",
-					AcquiredDate_nodeList.getLength()));
+					AcquiredDate_nodeList.size()));
 		}
-		else if (AcquiredDate_nodeList.getLength() != 0)
+		else if (AcquiredDate_nodeList.size() != 0)
 		{
 			// Element property AcquiredDate which is not complex (has no
 			// sub-elements)
 			setAcquiredDate(
-					String.valueOf(AcquiredDate_nodeList.item(0).getTextContent()));
+					String.valueOf(AcquiredDate_nodeList.get(0).getTextContent()));
 		}
 		// Element reference ExperimenterRef
-		NodeList ExperimenterRef_nodeList = element.getElementsByTagName("ExperimenterRef");
-		for (int i = 0; i < ExperimenterRef_nodeList.getLength(); i++)
+		List<Element> ExperimenterRef_nodeList =
+				getChildrenByTagName(element, "ExperimenterRef");
+		for (Element ExperimenterRef_element : ExperimenterRef_nodeList)
 		{
-			Element ExperimenterRef_element = (Element) ExperimenterRef_nodeList.item(i);
 			ExperimenterRef experimenter_reference = new ExperimenterRef();
 			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
 			model.addReference(this, experimenter_reference);
 		}
-		NodeList Description_nodeList = element.getElementsByTagName("Description");
-		if (Description_nodeList.getLength() > 1)
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Description node list size %d != 1",
-					Description_nodeList.getLength()));
+					Description_nodeList.size()));
 		}
-		else if (Description_nodeList.getLength() != 0)
+		else if (Description_nodeList.size() != 0)
 		{
 			// Element property Description which is not complex (has no
 			// sub-elements)
 			setDescription(
-					String.valueOf(Description_nodeList.item(0).getTextContent()));
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
 		// Element reference ExperimentRef
-		NodeList ExperimentRef_nodeList = element.getElementsByTagName("ExperimentRef");
-		for (int i = 0; i < ExperimentRef_nodeList.getLength(); i++)
+		List<Element> ExperimentRef_nodeList =
+				getChildrenByTagName(element, "ExperimentRef");
+		for (Element ExperimentRef_element : ExperimentRef_nodeList)
 		{
-			Element ExperimentRef_element = (Element) ExperimentRef_nodeList.item(i);
 			ExperimentRef experiment_reference = new ExperimentRef();
 			experiment_reference.setID(ExperimentRef_element.getAttribute("ID"));
 			model.addReference(this, experiment_reference);
 		}
 		// Element reference GroupRef
-		NodeList GroupRef_nodeList = element.getElementsByTagName("GroupRef");
-		for (int i = 0; i < GroupRef_nodeList.getLength(); i++)
+		List<Element> GroupRef_nodeList =
+				getChildrenByTagName(element, "GroupRef");
+		for (Element GroupRef_element : GroupRef_nodeList)
 		{
-			Element GroupRef_element = (Element) GroupRef_nodeList.item(i);
 			GroupRef group_reference = new GroupRef();
 			group_reference.setID(GroupRef_element.getAttribute("ID"));
 			model.addReference(this, group_reference);
 		}
 		// Element reference DatasetRef
-		NodeList DatasetRef_nodeList = element.getElementsByTagName("DatasetRef");
-		for (int i = 0; i < DatasetRef_nodeList.getLength(); i++)
+		List<Element> DatasetRef_nodeList =
+				getChildrenByTagName(element, "DatasetRef");
+		for (Element DatasetRef_element : DatasetRef_nodeList)
 		{
-			Element DatasetRef_element = (Element) DatasetRef_nodeList.item(i);
 			DatasetRef datasetList_reference = new DatasetRef();
 			datasetList_reference.setID(DatasetRef_element.getAttribute("ID"));
 			model.addReference(this, datasetList_reference);
 		}
 		// Element reference InstrumentRef
-		NodeList InstrumentRef_nodeList = element.getElementsByTagName("InstrumentRef");
-		for (int i = 0; i < InstrumentRef_nodeList.getLength(); i++)
+		List<Element> InstrumentRef_nodeList =
+				getChildrenByTagName(element, "InstrumentRef");
+		for (Element InstrumentRef_element : InstrumentRef_nodeList)
 		{
-			Element InstrumentRef_element = (Element) InstrumentRef_nodeList.item(i);
 			InstrumentRef instrument_reference = new InstrumentRef();
 			instrument_reference.setID(InstrumentRef_element.getAttribute("ID"));
 			model.addReference(this, instrument_reference);
 		}
-		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
-		if (ObjectiveSettings_nodeList.getLength() > 1)
+		List<Element> ObjectiveSettings_nodeList =
+				getChildrenByTagName(element, "ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"ObjectiveSettings node list size %d != 1",
-					ObjectiveSettings_nodeList.getLength()));
+					ObjectiveSettings_nodeList.size()));
 		}
-		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		else if (ObjectiveSettings_nodeList.size() != 0)
 		{
 			// Element property ObjectiveSettings which is complex (has
 			// sub-elements)
 			setObjectiveSettings(new ObjectiveSettings(
-					(Element) ObjectiveSettings_nodeList.item(0), model));
+					(Element) ObjectiveSettings_nodeList.get(0), model));
 		}
-		NodeList ImagingEnvironment_nodeList = element.getElementsByTagName("ImagingEnvironment");
-		if (ImagingEnvironment_nodeList.getLength() > 1)
+		List<Element> ImagingEnvironment_nodeList =
+				getChildrenByTagName(element, "ImagingEnvironment");
+		if (ImagingEnvironment_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"ImagingEnvironment node list size %d != 1",
-					ImagingEnvironment_nodeList.getLength()));
+					ImagingEnvironment_nodeList.size()));
 		}
-		else if (ImagingEnvironment_nodeList.getLength() != 0)
+		else if (ImagingEnvironment_nodeList.size() != 0)
 		{
 			// Element property ImagingEnvironment which is complex (has
 			// sub-elements)
 			setImagingEnvironment(new ImagingEnvironment(
-					(Element) ImagingEnvironment_nodeList.item(0), model));
+					(Element) ImagingEnvironment_nodeList.get(0), model));
 		}
-		NodeList StageLabel_nodeList = element.getElementsByTagName("StageLabel");
-		if (StageLabel_nodeList.getLength() > 1)
+		List<Element> StageLabel_nodeList =
+				getChildrenByTagName(element, "StageLabel");
+		if (StageLabel_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"StageLabel node list size %d != 1",
-					StageLabel_nodeList.getLength()));
+					StageLabel_nodeList.size()));
 		}
-		else if (StageLabel_nodeList.getLength() != 0)
+		else if (StageLabel_nodeList.size() != 0)
 		{
 			// Element property StageLabel which is complex (has
 			// sub-elements)
 			setStageLabel(new StageLabel(
-					(Element) StageLabel_nodeList.item(0), model));
+					(Element) StageLabel_nodeList.get(0), model));
 		}
-		NodeList Pixels_nodeList = element.getElementsByTagName("Pixels");
-		if (Pixels_nodeList.getLength() > 1)
+		List<Element> Pixels_nodeList =
+				getChildrenByTagName(element, "Pixels");
+		if (Pixels_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Pixels node list size %d != 1",
-					Pixels_nodeList.getLength()));
+					Pixels_nodeList.size()));
 		}
-		else if (Pixels_nodeList.getLength() != 0)
+		else if (Pixels_nodeList.size() != 0)
 		{
 			// Element property Pixels which is complex (has
 			// sub-elements)
 			setPixels(new Pixels(
-					(Element) Pixels_nodeList.item(0), model));
+					(Element) Pixels_nodeList.get(0), model));
 		}
 		// Element reference ROIRef
-		NodeList ROIRef_nodeList = element.getElementsByTagName("ROIRef");
-		for (int i = 0; i < ROIRef_nodeList.getLength(); i++)
+		List<Element> ROIRef_nodeList =
+				getChildrenByTagName(element, "ROIRef");
+		for (Element ROIRef_element : ROIRef_nodeList)
 		{
-			Element ROIRef_element = (Element) ROIRef_nodeList.item(i);
 			ROIRef roiList_reference = new ROIRef();
 			roiList_reference.setID(ROIRef_element.getAttribute("ID"));
 			model.addReference(this, roiList_reference);
 		}
 		// Element reference MicrobeamManipulationRef
-		NodeList MicrobeamManipulationRef_nodeList = element.getElementsByTagName("MicrobeamManipulationRef");
-		for (int i = 0; i < MicrobeamManipulationRef_nodeList.getLength(); i++)
+		List<Element> MicrobeamManipulationRef_nodeList =
+				getChildrenByTagName(element, "MicrobeamManipulationRef");
+		for (Element MicrobeamManipulationRef_element : MicrobeamManipulationRef_nodeList)
 		{
-			Element MicrobeamManipulationRef_element = (Element) MicrobeamManipulationRef_nodeList.item(i);
 			MicrobeamManipulationRef microbeamManipulationList_reference = new MicrobeamManipulationRef();
 			microbeamManipulationList_reference.setID(MicrobeamManipulationRef_element.getAttribute("ID"));
 			model.addReference(this, microbeamManipulationList_reference);
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);

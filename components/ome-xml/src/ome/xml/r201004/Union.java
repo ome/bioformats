@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -100,7 +100,7 @@ public class Union extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"Union".equals(tagName))
@@ -117,78 +117,70 @@ public class Union extends AbstractOMEModelObject
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		NodeList Shape_nodeList = element.getElementsByTagName("Shape");
-		for (int i = 0; i < Shape_nodeList.getLength(); i++)
+		List<Element> Shape_nodeList =
+				getChildrenByTagName(element, "Shape");
+		for (Element Shape_element : Shape_nodeList)
 		{
-			Element Shape_element = (Element) Shape_nodeList.item(i);
-			NodeList Line_nodeList = 
-					Shape_element.getElementsByTagName("Line");
-			for (int j = 0; j < Line_nodeList.getLength(); j++)
+			List<Element> Line_nodeList = 
+					getChildrenByTagName(Shape_element, "Line");
+			for (Element Line_element : Line_nodeList)
 			{
-				Element Line_element = (Element) Line_nodeList.item(j);
 				Line o = new Line(Shape_element, model);
 				o.update(Line_element, model);
 				addShape(o);
 			}
-			NodeList Rectangle_nodeList = 
-					Shape_element.getElementsByTagName("Rectangle");
-			for (int j = 0; j < Rectangle_nodeList.getLength(); j++)
+			List<Element> Rectangle_nodeList = 
+					getChildrenByTagName(Shape_element, "Rectangle");
+			for (Element Rectangle_element : Rectangle_nodeList)
 			{
-				Element Rectangle_element = (Element) Rectangle_nodeList.item(j);
 				Rectangle o = new Rectangle(Shape_element, model);
 				o.update(Rectangle_element, model);
 				addShape(o);
 			}
-			NodeList Mask_nodeList = 
-					Shape_element.getElementsByTagName("Mask");
-			for (int j = 0; j < Mask_nodeList.getLength(); j++)
+			List<Element> Mask_nodeList = 
+					getChildrenByTagName(Shape_element, "Mask");
+			for (Element Mask_element : Mask_nodeList)
 			{
-				Element Mask_element = (Element) Mask_nodeList.item(j);
 				Mask o = new Mask(Shape_element, model);
 				o.update(Mask_element, model);
 				addShape(o);
 			}
-			NodeList Ellipse_nodeList = 
-					Shape_element.getElementsByTagName("Ellipse");
-			for (int j = 0; j < Ellipse_nodeList.getLength(); j++)
+			List<Element> Ellipse_nodeList = 
+					getChildrenByTagName(Shape_element, "Ellipse");
+			for (Element Ellipse_element : Ellipse_nodeList)
 			{
-				Element Ellipse_element = (Element) Ellipse_nodeList.item(j);
 				Ellipse o = new Ellipse(Shape_element, model);
 				o.update(Ellipse_element, model);
 				addShape(o);
 			}
-			NodeList Point_nodeList = 
-					Shape_element.getElementsByTagName("Point");
-			for (int j = 0; j < Point_nodeList.getLength(); j++)
+			List<Element> Point_nodeList = 
+					getChildrenByTagName(Shape_element, "Point");
+			for (Element Point_element : Point_nodeList)
 			{
-				Element Point_element = (Element) Point_nodeList.item(j);
 				Point o = new Point(Shape_element, model);
 				o.update(Point_element, model);
 				addShape(o);
 			}
-			NodeList Polyline_nodeList = 
-					Shape_element.getElementsByTagName("Polyline");
-			for (int j = 0; j < Polyline_nodeList.getLength(); j++)
+			List<Element> Polyline_nodeList = 
+					getChildrenByTagName(Shape_element, "Polyline");
+			for (Element Polyline_element : Polyline_nodeList)
 			{
-				Element Polyline_element = (Element) Polyline_nodeList.item(j);
 				Polyline o = new Polyline(Shape_element, model);
 				o.update(Polyline_element, model);
 				addShape(o);
 			}
-			NodeList Path_nodeList = 
-					Shape_element.getElementsByTagName("Path");
-			for (int j = 0; j < Path_nodeList.getLength(); j++)
+			List<Element> Path_nodeList = 
+					getChildrenByTagName(Shape_element, "Path");
+			for (Element Path_element : Path_nodeList)
 			{
-				Element Path_element = (Element) Path_nodeList.item(j);
 				Path o = new Path(Shape_element, model);
 				o.update(Path_element, model);
 				addShape(o);
 			}
-			NodeList Text_nodeList = 
-					Shape_element.getElementsByTagName("Text");
-			for (int j = 0; j < Text_nodeList.getLength(); j++)
+			List<Element> Text_nodeList = 
+					getChildrenByTagName(Shape_element, "Text");
+			for (Element Text_element : Text_nodeList)
 			{
-				Element Text_element = (Element) Text_nodeList.item(j);
 				Text o = new Text(Shape_element, model);
 				o.update(Text_element, model);
 				addShape(o);

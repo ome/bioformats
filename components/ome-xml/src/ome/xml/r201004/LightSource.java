@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -111,7 +111,7 @@ public abstract class LightSource extends ManufacturerSpec
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		if (!element.hasAttribute("ID") && getID() == null)
 		{
@@ -133,48 +133,52 @@ public abstract class LightSource extends ManufacturerSpec
 			setPower(Double.valueOf(
 					element.getAttribute("Power")));
 		}
-		NodeList Laser_nodeList = element.getElementsByTagName("Laser");
-		if (Laser_nodeList.getLength() > 1)
+		List<Element> Laser_nodeList =
+				getChildrenByTagName(element, "Laser");
+		if (Laser_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Laser node list size %d != 1",
-					Laser_nodeList.getLength()));
+					Laser_nodeList.size()));
 		}
-		else if (Laser_nodeList.getLength() != 0)
+		else if (Laser_nodeList.size() != 0)
 		{
 		}
-		NodeList Filament_nodeList = element.getElementsByTagName("Filament");
-		if (Filament_nodeList.getLength() > 1)
+		List<Element> Filament_nodeList =
+				getChildrenByTagName(element, "Filament");
+		if (Filament_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Filament node list size %d != 1",
-					Filament_nodeList.getLength()));
+					Filament_nodeList.size()));
 		}
-		else if (Filament_nodeList.getLength() != 0)
+		else if (Filament_nodeList.size() != 0)
 		{
 		}
-		NodeList Arc_nodeList = element.getElementsByTagName("Arc");
-		if (Arc_nodeList.getLength() > 1)
+		List<Element> Arc_nodeList =
+				getChildrenByTagName(element, "Arc");
+		if (Arc_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Arc node list size %d != 1",
-					Arc_nodeList.getLength()));
+					Arc_nodeList.size()));
 		}
-		else if (Arc_nodeList.getLength() != 0)
+		else if (Arc_nodeList.size() != 0)
 		{
 		}
-		NodeList LightEmittingDiode_nodeList = element.getElementsByTagName("LightEmittingDiode");
-		if (LightEmittingDiode_nodeList.getLength() > 1)
+		List<Element> LightEmittingDiode_nodeList =
+				getChildrenByTagName(element, "LightEmittingDiode");
+		if (LightEmittingDiode_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"LightEmittingDiode node list size %d != 1",
-					LightEmittingDiode_nodeList.getLength()));
+					LightEmittingDiode_nodeList.size()));
 		}
-		else if (LightEmittingDiode_nodeList.getLength() != 0)
+		else if (LightEmittingDiode_nodeList.size() != 0)
 		{
 		}
 	}

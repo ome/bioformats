@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -172,7 +172,7 @@ public abstract class Shape extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		if (element.hasAttribute("StrokeDashArray"))
 		{
@@ -290,99 +290,107 @@ public abstract class Shape extends AbstractOMEModelObject
 			setName(String.valueOf(
 					element.getAttribute("Name")));
 		}
-		NodeList Line_nodeList = element.getElementsByTagName("Line");
-		if (Line_nodeList.getLength() > 1)
+		List<Element> Line_nodeList =
+				getChildrenByTagName(element, "Line");
+		if (Line_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Line node list size %d != 1",
-					Line_nodeList.getLength()));
+					Line_nodeList.size()));
 		}
-		else if (Line_nodeList.getLength() != 0)
+		else if (Line_nodeList.size() != 0)
 		{
 		}
-		NodeList Rectangle_nodeList = element.getElementsByTagName("Rectangle");
-		if (Rectangle_nodeList.getLength() > 1)
+		List<Element> Rectangle_nodeList =
+				getChildrenByTagName(element, "Rectangle");
+		if (Rectangle_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Rectangle node list size %d != 1",
-					Rectangle_nodeList.getLength()));
+					Rectangle_nodeList.size()));
 		}
-		else if (Rectangle_nodeList.getLength() != 0)
+		else if (Rectangle_nodeList.size() != 0)
 		{
 		}
-		NodeList Mask_nodeList = element.getElementsByTagName("Mask");
-		if (Mask_nodeList.getLength() > 1)
+		List<Element> Mask_nodeList =
+				getChildrenByTagName(element, "Mask");
+		if (Mask_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Mask node list size %d != 1",
-					Mask_nodeList.getLength()));
+					Mask_nodeList.size()));
 		}
-		else if (Mask_nodeList.getLength() != 0)
+		else if (Mask_nodeList.size() != 0)
 		{
 		}
-		NodeList Ellipse_nodeList = element.getElementsByTagName("Ellipse");
-		if (Ellipse_nodeList.getLength() > 1)
+		List<Element> Ellipse_nodeList =
+				getChildrenByTagName(element, "Ellipse");
+		if (Ellipse_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Ellipse node list size %d != 1",
-					Ellipse_nodeList.getLength()));
+					Ellipse_nodeList.size()));
 		}
-		else if (Ellipse_nodeList.getLength() != 0)
+		else if (Ellipse_nodeList.size() != 0)
 		{
 		}
-		NodeList Point_nodeList = element.getElementsByTagName("Point");
-		if (Point_nodeList.getLength() > 1)
+		List<Element> Point_nodeList =
+				getChildrenByTagName(element, "Point");
+		if (Point_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Point node list size %d != 1",
-					Point_nodeList.getLength()));
+					Point_nodeList.size()));
 		}
-		else if (Point_nodeList.getLength() != 0)
+		else if (Point_nodeList.size() != 0)
 		{
 		}
-		NodeList Polyline_nodeList = element.getElementsByTagName("Polyline");
-		if (Polyline_nodeList.getLength() > 1)
+		List<Element> Polyline_nodeList =
+				getChildrenByTagName(element, "Polyline");
+		if (Polyline_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Polyline node list size %d != 1",
-					Polyline_nodeList.getLength()));
+					Polyline_nodeList.size()));
 		}
-		else if (Polyline_nodeList.getLength() != 0)
+		else if (Polyline_nodeList.size() != 0)
 		{
 		}
-		NodeList Path_nodeList = element.getElementsByTagName("Path");
-		if (Path_nodeList.getLength() > 1)
+		List<Element> Path_nodeList =
+				getChildrenByTagName(element, "Path");
+		if (Path_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Path node list size %d != 1",
-					Path_nodeList.getLength()));
+					Path_nodeList.size()));
 		}
-		else if (Path_nodeList.getLength() != 0)
+		else if (Path_nodeList.size() != 0)
 		{
 		}
-		NodeList Text_nodeList = element.getElementsByTagName("Text");
-		if (Text_nodeList.getLength() > 1)
+		List<Element> Text_nodeList =
+				getChildrenByTagName(element, "Text");
+		if (Text_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"Text node list size %d != 1",
-					Text_nodeList.getLength()));
+					Text_nodeList.size()));
 		}
-		else if (Text_nodeList.getLength() != 0)
+		else if (Text_nodeList.size() != 0)
 		{
 		}
 		// Element reference AnnotationRef
-		NodeList AnnotationRef_nodeList = element.getElementsByTagName("AnnotationRef");
-		for (int i = 0; i < AnnotationRef_nodeList.getLength(); i++)
+		List<Element> AnnotationRef_nodeList =
+				getChildrenByTagName(element, "AnnotationRef");
+		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			Element AnnotationRef_element = (Element) AnnotationRef_nodeList.item(i);
 			AnnotationRef annotationList_reference = new AnnotationRef();
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);

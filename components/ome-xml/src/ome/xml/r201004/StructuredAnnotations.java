@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -121,7 +121,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"StructuredAnnotations".equals(tagName))
@@ -136,73 +136,73 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 		}
 		// Element property XMLAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList XMLAnnotation_nodeList = element.getElementsByTagName("XMLAnnotation");
-		for (int i = 0; i < XMLAnnotation_nodeList.getLength(); i++)
+		List<Element> XMLAnnotation_nodeList =
+				getChildrenByTagName(element, "XMLAnnotation");
+		for (Element XMLAnnotation_element : XMLAnnotation_nodeList)
 		{
-			Element XMLAnnotation_element = (Element) XMLAnnotation_nodeList.item(i);
 			addXMLAnnotation(
 					new XMLAnnotation(XMLAnnotation_element, model));
 		}
 		// Element property FileAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList FileAnnotation_nodeList = element.getElementsByTagName("FileAnnotation");
-		for (int i = 0; i < FileAnnotation_nodeList.getLength(); i++)
+		List<Element> FileAnnotation_nodeList =
+				getChildrenByTagName(element, "FileAnnotation");
+		for (Element FileAnnotation_element : FileAnnotation_nodeList)
 		{
-			Element FileAnnotation_element = (Element) FileAnnotation_nodeList.item(i);
 			addFileAnnotation(
 					new FileAnnotation(FileAnnotation_element, model));
 		}
 		// Element property ListAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList ListAnnotation_nodeList = element.getElementsByTagName("ListAnnotation");
-		for (int i = 0; i < ListAnnotation_nodeList.getLength(); i++)
+		List<Element> ListAnnotation_nodeList =
+				getChildrenByTagName(element, "ListAnnotation");
+		for (Element ListAnnotation_element : ListAnnotation_nodeList)
 		{
-			Element ListAnnotation_element = (Element) ListAnnotation_nodeList.item(i);
 			addListAnnotation(
 					new ListAnnotation(ListAnnotation_element, model));
 		}
 		// Element property LongAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList LongAnnotation_nodeList = element.getElementsByTagName("LongAnnotation");
-		for (int i = 0; i < LongAnnotation_nodeList.getLength(); i++)
+		List<Element> LongAnnotation_nodeList =
+				getChildrenByTagName(element, "LongAnnotation");
+		for (Element LongAnnotation_element : LongAnnotation_nodeList)
 		{
-			Element LongAnnotation_element = (Element) LongAnnotation_nodeList.item(i);
 			addLongAnnotation(
 					new LongAnnotation(LongAnnotation_element, model));
 		}
 		// Element property DoubleAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList DoubleAnnotation_nodeList = element.getElementsByTagName("DoubleAnnotation");
-		for (int i = 0; i < DoubleAnnotation_nodeList.getLength(); i++)
+		List<Element> DoubleAnnotation_nodeList =
+				getChildrenByTagName(element, "DoubleAnnotation");
+		for (Element DoubleAnnotation_element : DoubleAnnotation_nodeList)
 		{
-			Element DoubleAnnotation_element = (Element) DoubleAnnotation_nodeList.item(i);
 			addDoubleAnnotation(
 					new DoubleAnnotation(DoubleAnnotation_element, model));
 		}
 		// Element property StringAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList StringAnnotation_nodeList = element.getElementsByTagName("StringAnnotation");
-		for (int i = 0; i < StringAnnotation_nodeList.getLength(); i++)
+		List<Element> StringAnnotation_nodeList =
+				getChildrenByTagName(element, "StringAnnotation");
+		for (Element StringAnnotation_element : StringAnnotation_nodeList)
 		{
-			Element StringAnnotation_element = (Element) StringAnnotation_nodeList.item(i);
 			addStringAnnotation(
 					new StringAnnotation(StringAnnotation_element, model));
 		}
 		// Element property BooleanAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList BooleanAnnotation_nodeList = element.getElementsByTagName("BooleanAnnotation");
-		for (int i = 0; i < BooleanAnnotation_nodeList.getLength(); i++)
+		List<Element> BooleanAnnotation_nodeList =
+				getChildrenByTagName(element, "BooleanAnnotation");
+		for (Element BooleanAnnotation_element : BooleanAnnotation_nodeList)
 		{
-			Element BooleanAnnotation_element = (Element) BooleanAnnotation_nodeList.item(i);
 			addBooleanAnnotation(
 					new BooleanAnnotation(BooleanAnnotation_element, model));
 		}
 		// Element property TimestampAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList TimestampAnnotation_nodeList = element.getElementsByTagName("TimestampAnnotation");
-		for (int i = 0; i < TimestampAnnotation_nodeList.getLength(); i++)
+		List<Element> TimestampAnnotation_nodeList =
+				getChildrenByTagName(element, "TimestampAnnotation");
+		for (Element TimestampAnnotation_element : TimestampAnnotation_nodeList)
 		{
-			Element TimestampAnnotation_element = (Element) TimestampAnnotation_nodeList.item(i);
 			addTimestampAnnotation(
 					new TimestampAnnotation(TimestampAnnotation_element, model));
 		}

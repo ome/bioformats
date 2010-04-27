@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -103,7 +103,7 @@ public class ProfileSet extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"ProfileSet".equals(tagName))
@@ -118,19 +118,19 @@ public class ProfileSet extends AbstractOMEModelObject
 		}
 		// Element property ImageProfile which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList ImageProfile_nodeList = element.getElementsByTagName("ImageProfile");
-		for (int i = 0; i < ImageProfile_nodeList.getLength(); i++)
+		List<Element> ImageProfile_nodeList =
+				getChildrenByTagName(element, "ImageProfile");
+		for (Element ImageProfile_element : ImageProfile_nodeList)
 		{
-			Element ImageProfile_element = (Element) ImageProfile_nodeList.item(i);
 			addImageProfile(
 					new ImageProfile(ImageProfile_element, model));
 		}
 		// Element property ChannelProfile which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList ChannelProfile_nodeList = element.getElementsByTagName("ChannelProfile");
-		for (int i = 0; i < ChannelProfile_nodeList.getLength(); i++)
+		List<Element> ChannelProfile_nodeList =
+				getChildrenByTagName(element, "ChannelProfile");
+		for (Element ChannelProfile_element : ChannelProfile_nodeList)
 		{
-			Element ChannelProfile_element = (Element) ChannelProfile_nodeList.item(i);
 			addChannelProfile(
 					new ChannelProfile(ChannelProfile_element, model));
 		}

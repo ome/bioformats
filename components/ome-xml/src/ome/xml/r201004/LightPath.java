@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -106,7 +106,7 @@ public class LightPath extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"LightPath".equals(tagName))
@@ -120,28 +120,28 @@ public class LightPath extends AbstractOMEModelObject
 			//		tagName));
 		}
 		// Element reference ExcitationFilterRef
-		NodeList ExcitationFilterRef_nodeList = element.getElementsByTagName("ExcitationFilterRef");
-		for (int i = 0; i < ExcitationFilterRef_nodeList.getLength(); i++)
+		List<Element> ExcitationFilterRef_nodeList =
+				getChildrenByTagName(element, "ExcitationFilterRef");
+		for (Element ExcitationFilterRef_element : ExcitationFilterRef_nodeList)
 		{
-			Element ExcitationFilterRef_element = (Element) ExcitationFilterRef_nodeList.item(i);
 			ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
 			excitationFilterList_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
 			model.addReference(this, excitationFilterList_reference);
 		}
 		// Element reference DichroicRef
-		NodeList DichroicRef_nodeList = element.getElementsByTagName("DichroicRef");
-		for (int i = 0; i < DichroicRef_nodeList.getLength(); i++)
+		List<Element> DichroicRef_nodeList =
+				getChildrenByTagName(element, "DichroicRef");
+		for (Element DichroicRef_element : DichroicRef_nodeList)
 		{
-			Element DichroicRef_element = (Element) DichroicRef_nodeList.item(i);
 			DichroicRef dichroic_reference = new DichroicRef();
 			dichroic_reference.setID(DichroicRef_element.getAttribute("ID"));
 			model.addReference(this, dichroic_reference);
 		}
 		// Element reference EmissionFilterRef
-		NodeList EmissionFilterRef_nodeList = element.getElementsByTagName("EmissionFilterRef");
-		for (int i = 0; i < EmissionFilterRef_nodeList.getLength(); i++)
+		List<Element> EmissionFilterRef_nodeList =
+				getChildrenByTagName(element, "EmissionFilterRef");
+		for (Element EmissionFilterRef_element : EmissionFilterRef_nodeList)
 		{
-			Element EmissionFilterRef_element = (Element) EmissionFilterRef_nodeList.item(i);
 			EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
 			emissionFilterList_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
 			model.addReference(this, emissionFilterList_reference);

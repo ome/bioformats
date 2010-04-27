@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -112,7 +112,7 @@ public class BinaryFile extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"BinaryFile".equals(tagName))
@@ -143,35 +143,37 @@ public class BinaryFile extends AbstractOMEModelObject
 			setFileName(String.valueOf(
 					element.getAttribute("FileName")));
 		}
-		NodeList External_nodeList = element.getElementsByTagName("External");
-		if (External_nodeList.getLength() > 1)
+		List<Element> External_nodeList =
+				getChildrenByTagName(element, "External");
+		if (External_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"External node list size %d != 1",
-					External_nodeList.getLength()));
+					External_nodeList.size()));
 		}
-		else if (External_nodeList.getLength() != 0)
+		else if (External_nodeList.size() != 0)
 		{
 			// Element property External which is complex (has
 			// sub-elements)
 			setExternal(new External(
-					(Element) External_nodeList.item(0), model));
+					(Element) External_nodeList.get(0), model));
 		}
-		NodeList BinData_nodeList = element.getElementsByTagName("BinData");
-		if (BinData_nodeList.getLength() > 1)
+		List<Element> BinData_nodeList =
+				getChildrenByTagName(element, "BinData");
+		if (BinData_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"BinData node list size %d != 1",
-					BinData_nodeList.getLength()));
+					BinData_nodeList.size()));
 		}
-		else if (BinData_nodeList.getLength() != 0)
+		else if (BinData_nodeList.size() != 0)
 		{
 			// Element property BinData which is complex (has
 			// sub-elements)
 			setBinData(new BinData(
-					(Element) BinData_nodeList.item(0), model));
+					(Element) BinData_nodeList.get(0), model));
 		}
 	}
 

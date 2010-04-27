@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-26 21:43:56+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -127,7 +127,7 @@ public class OTF extends AbstractOMEModelObject
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 		String tagName = element.getTagName();
 		if (!"OTF".equals(tagName))
@@ -178,44 +178,46 @@ public class OTF extends AbstractOMEModelObject
 			setOpticalAxisAveraged(Boolean.valueOf(
 					element.getAttribute("OpticalAxisAveraged")));
 		}
-		NodeList ObjectiveSettings_nodeList = element.getElementsByTagName("ObjectiveSettings");
-		if (ObjectiveSettings_nodeList.getLength() > 1)
+		List<Element> ObjectiveSettings_nodeList =
+				getChildrenByTagName(element, "ObjectiveSettings");
+		if (ObjectiveSettings_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"ObjectiveSettings node list size %d != 1",
-					ObjectiveSettings_nodeList.getLength()));
+					ObjectiveSettings_nodeList.size()));
 		}
-		else if (ObjectiveSettings_nodeList.getLength() != 0)
+		else if (ObjectiveSettings_nodeList.size() != 0)
 		{
 			// Element property ObjectiveSettings which is complex (has
 			// sub-elements)
 			setObjectiveSettings(new ObjectiveSettings(
-					(Element) ObjectiveSettings_nodeList.item(0), model));
+					(Element) ObjectiveSettings_nodeList.get(0), model));
 		}
 		// Element reference FilterSetRef
-		NodeList FilterSetRef_nodeList = element.getElementsByTagName("FilterSetRef");
-		for (int i = 0; i < FilterSetRef_nodeList.getLength(); i++)
+		List<Element> FilterSetRef_nodeList =
+				getChildrenByTagName(element, "FilterSetRef");
+		for (Element FilterSetRef_element : FilterSetRef_nodeList)
 		{
-			Element FilterSetRef_element = (Element) FilterSetRef_nodeList.item(i);
 			FilterSetRef filterSet_reference = new FilterSetRef();
 			filterSet_reference.setID(FilterSetRef_element.getAttribute("ID"));
 			model.addReference(this, filterSet_reference);
 		}
-		NodeList BinaryFile_nodeList = element.getElementsByTagName("BinaryFile");
-		if (BinaryFile_nodeList.getLength() > 1)
+		List<Element> BinaryFile_nodeList =
+				getChildrenByTagName(element, "BinaryFile");
+		if (BinaryFile_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"BinaryFile node list size %d != 1",
-					BinaryFile_nodeList.getLength()));
+					BinaryFile_nodeList.size()));
 		}
-		else if (BinaryFile_nodeList.getLength() != 0)
+		else if (BinaryFile_nodeList.size() != 0)
 		{
 			// Element property BinaryFile which is complex (has
 			// sub-elements)
 			setBinaryFile(new BinaryFile(
-					(Element) BinaryFile_nodeList.item(0), model));
+					(Element) BinaryFile_nodeList.get(0), model));
 		}
 		// *** IGNORING *** Skipped back reference Channel_BackReference
 		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference

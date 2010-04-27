@@ -23,10 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package ome.xml.r201004;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ome.xml.r201004.enums.EnumerationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author callan
@@ -82,4 +87,24 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
    * @see ome.xml.r201004.OMEModelObject#link(ome.xml.r201004.Reference, ome.xml.r201004.OMEModelObject)
    */
   public abstract void link(Reference reference, OMEModelObject o);
+
+  /**
+   * Retrieves all the children of an element that have a given tag name.
+   * @param parent DOM element to retrieve tags based upon.
+   * @param name Name of the tags to retrieve.
+   * @return List of elements which have the tag <code>name</code>.
+   */
+  public static List<Element> getChildrenByTagName(
+      Element parent, String name) {
+    List<Element> toReturn = new ArrayList<Element>();
+    NodeList children = parent.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      Node child = children.item(i);
+      if (child.getNodeType() == Node.ELEMENT_NODE
+          && name.equals(child.getNodeName())) {
+        toReturn.add((Element) child);
+      }
+    }
+    return toReturn;
+  }
 }
