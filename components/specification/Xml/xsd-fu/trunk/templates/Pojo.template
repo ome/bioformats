@@ -59,6 +59,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ${fu.package}.enums.*;
+import ${fu.package}.primitives.*;
 
 {% choose %}\
 {% when parent_object() is not None and parent_object().isAbstractProprietary %}\

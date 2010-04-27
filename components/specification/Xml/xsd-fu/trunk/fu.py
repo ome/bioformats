@@ -89,8 +89,8 @@ def updateTypeMaps(namespace):
 		namespace + 'string': 'String',
 		namespace + 'integer': 'Integer',
 		namespace + 'long': 'Long',
-		namespace + 'positiveInteger': 'Integer',
-		namespace + 'nonNegativeInteger': 'Integer',
+		namespace + 'positiveInteger': 'PositiveInteger',
+		namespace + 'nonNegativeInteger': 'NonNegativeInteger',
 		namespace + 'float': 'Double',
 		namespace + 'double': 'Double',
 		namespace + 'anyURI': 'String',
@@ -98,8 +98,7 @@ def updateTypeMaps(namespace):
 	}
 	global JAVA_TYPE_MAP
 	JAVA_TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
-	JAVA_TYPE_MAP['NamingConvention'] = 'String'
-	JAVA_TYPE_MAP['PercentFraction'] = 'Double'
+	JAVA_TYPE_MAP['PercentFraction'] = 'PercentFraction'
 	JAVA_TYPE_MAP['MIMEtype'] = 'String'
 	JAVA_TYPE_MAP['Leader'] = 'Experimenter'
 	JAVA_TYPE_MAP['Contact'] = 'Experimenter'
