@@ -142,7 +142,7 @@ ${customContent}\
 	 */
 	public void update(Element element, OMEModel model)
 	    throws EnumerationException
-	{	
+	{
 		super.update(element, model);
 {% if not klass.isAbstractProprietary %}\
 		String tagName = element.getTagName();
@@ -161,10 +161,10 @@ ${customContent}\
 {% choose %}\
 {% when prop.isReference %}\
 		// Element reference ${prop.name}
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
-			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
 			${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
 			${prop.javaInstanceVariableName}_reference.setID(${prop.name}_element.getAttribute("ID"));
 			model.addReference(this, ${prop.javaInstanceVariableName}_reference);
@@ -205,27 +205,28 @@ ${customContent}\
 		}
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isComplex()) %}\
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		if (${prop.name}_nodeList.getLength() > 1)
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		if (${prop.name}_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
 					"${prop.name} node list size %d != 1",
-					${prop.name}_nodeList.getLength()));
+					${prop.name}_nodeList.size()));
 		}
-		else if (${prop.name}_nodeList.getLength() != 0)
+		else if (${prop.name}_nodeList.size() != 0)
 		{
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
 			set${prop.javaMethodName}(new ${prop.javaType}(
-					(Element) ${prop.name}_nodeList.item(0), model));
+					(Element) ${prop.name}_nodeList.get(0), model));
 {% end %}\
 {% if not prop.isComplex() %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
 			set${prop.javaMethodName}(
-					${prop.javaType}.valueOf(${prop.name}_nodeList.item(0).getTextContent()));
+					${prop.javaType}.valueOf(${prop.name}_nodeList.get(0).getTextContent()));
 {% end %}\
 		}
 {% end %}\
@@ -235,17 +236,16 @@ ${customContent}\
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
-			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference %}\
-			NodeList ${inner_prop.name}_nodeList = 
-					${prop.name}_element.getElementsByTagName("${inner_prop.name}");
-			for (int j = 0; j < ${inner_prop.name}_nodeList.getLength(); j++)
+			List<Element> ${inner_prop.name}_nodeList = 
+					getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
+			for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
 			{
-				Element ${inner_prop.name}_element = (Element) ${inner_prop.name}_nodeList.item(j);
 				${inner_prop.javaType} o = new ${inner_prop.javaType}(${prop.name}_element, model);
 				o.update(${inner_prop.name}_element, model);
 				add${prop.javaMethodName}(o);
@@ -257,10 +257,10 @@ ${customContent}\
 {% if not is_abstract_proprietary(prop.name) %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
-			Element ${prop.name}_element = (Element) ${prop.name}_nodeList.item(i);
 			add${prop.javaMethodName}(
 					new ${prop.javaType}(${prop.name}_element, model));
 		}
@@ -269,11 +269,12 @@ ${customContent}\
 {% when prop.maxOccurs > 1 %}\
 		// Element property ${prop.name} which is not complex (has no
 		// sub-elements) which occurs more than once
-		NodeList ${prop.name}_nodeList = element.getElementsByTagName("${prop.name}");
-		for (int i = 0; i < ${prop.name}_nodeList.getLength(); i++)
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName("${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
 			add${prop.javaMethodName}(new ${prop.javaType}(
-					${prop.name}_nodeList.item(i).getTextContent(), model));
+					${prop.name}_element.getTextContent(), model));
 		}
 {% end %}\
 {% otherwise %}\
