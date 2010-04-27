@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class BinData extends AbstractOMEModelObject
 {
@@ -61,7 +62,7 @@ public class BinData extends AbstractOMEModelObject
 	private Boolean bigEndian;
 
 	// Property
-	private Integer length;
+	private NonNegativeInteger length;
 
 	// Property
 	private Compression compression;
@@ -128,7 +129,7 @@ public class BinData extends AbstractOMEModelObject
 		if (element.hasAttribute("Length"))
 		{
 			// Attribute property Length
-			setLength(Integer.valueOf(
+			setLength(NonNegativeInteger.valueOf(
 					element.getAttribute("Length")));
 		}
 		if (element.hasAttribute("Compression"))
@@ -161,12 +162,12 @@ public class BinData extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getLength()
+	public NonNegativeInteger getLength()
 	{
 		return length;
 	}
 
-	public void setLength(Integer length)
+	public void setLength(NonNegativeInteger length)
 	{
 		this.length = length;
 	}

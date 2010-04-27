@@ -26,11 +26,6 @@ package ome.xml.r201004;
 import java.util.List;
 import java.util.Map;
 
-import ome.xml.r201004.enums.EnumerationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
  * @author callan
  *

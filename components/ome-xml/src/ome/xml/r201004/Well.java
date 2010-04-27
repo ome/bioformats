@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class Well extends AbstractOMEModelObject
 {
@@ -64,7 +65,7 @@ public class Well extends AbstractOMEModelObject
 	private String externalIdentifier;
 
 	// Property
-	private Integer column;
+	private NonNegativeInteger column;
 
 	// Property
 	private String externalDescription;
@@ -76,7 +77,7 @@ public class Well extends AbstractOMEModelObject
 	private String id;
 
 	// Property
-	private Integer row;
+	private NonNegativeInteger row;
 
 	// Property which occurs more than once
 	private List<WellSample> wellSampleList = new ArrayList<WellSample>();
@@ -155,7 +156,7 @@ public class Well extends AbstractOMEModelObject
 		if (element.hasAttribute("Column"))
 		{
 			// Attribute property Column
-			setColumn(Integer.valueOf(
+			setColumn(NonNegativeInteger.valueOf(
 					element.getAttribute("Column")));
 		}
 		if (element.hasAttribute("ExternalDescription"))
@@ -187,7 +188,7 @@ public class Well extends AbstractOMEModelObject
 		if (element.hasAttribute("Row"))
 		{
 			// Attribute property Row
-			setRow(Integer.valueOf(
+			setRow(NonNegativeInteger.valueOf(
 					element.getAttribute("Row")));
 		}
 		// Element property WellSample which is complex (has
@@ -266,12 +267,12 @@ public class Well extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getColumn()
+	public NonNegativeInteger getColumn()
 	{
 		return column;
 	}
 
-	public void setColumn(Integer column)
+	public void setColumn(NonNegativeInteger column)
 	{
 		this.column = column;
 	}
@@ -310,12 +311,12 @@ public class Well extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getRow()
+	public NonNegativeInteger getRow()
 	{
 		return row;
 	}
 
-	public void setRow(Integer row)
+	public void setRow(NonNegativeInteger row)
 	{
 		this.row = row;
 	}

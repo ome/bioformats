@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class ImagingEnvironment extends AbstractOMEModelObject
 {
@@ -58,7 +59,7 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 	// -- Instance variables --
 
 	// Property
-	private Double co2percent;
+	private PercentFraction co2percent;
 
 	// Property
 	private Double temperature;
@@ -67,7 +68,7 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 	private Double airPressure;
 
 	// Property
-	private Double humidity;
+	private PercentFraction humidity;
 
 	// -- Constructors --
 
@@ -125,7 +126,7 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 		if (element.hasAttribute("CO2Percent"))
 		{
 			// Attribute property CO2Percent
-			setCO2Percent(Double.valueOf(
+			setCO2Percent(PercentFraction.valueOf(
 					element.getAttribute("CO2Percent")));
 		}
 		if (element.hasAttribute("Temperature"))
@@ -143,7 +144,7 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 		if (element.hasAttribute("Humidity"))
 		{
 			// Attribute property Humidity
-			setHumidity(Double.valueOf(
+			setHumidity(PercentFraction.valueOf(
 					element.getAttribute("Humidity")));
 		}
 	}
@@ -159,12 +160,12 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 
 
 	// Property
-	public Double getCO2Percent()
+	public PercentFraction getCO2Percent()
 	{
 		return co2percent;
 	}
 
-	public void setCO2Percent(Double co2percent)
+	public void setCO2Percent(PercentFraction co2percent)
 	{
 		this.co2percent = co2percent;
 	}
@@ -192,12 +193,12 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Double getHumidity()
+	public PercentFraction getHumidity()
 	{
 		return humidity;
 	}
 
-	public void setHumidity(Double humidity)
+	public void setHumidity(PercentFraction humidity)
 	{
 		this.humidity = humidity;
 	}

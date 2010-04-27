@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class Laser extends LightSource
 {
@@ -70,10 +71,10 @@ public class Laser extends LightSource
 	private Boolean tuneable;
 
 	// Property
-	private Integer wavelength;
+	private PositiveInteger wavelength;
 
 	// Property
-	private Integer frequencyMultiplication;
+	private PositiveInteger frequencyMultiplication;
 
 	// Property
 	private LaserType type;
@@ -164,13 +165,13 @@ public class Laser extends LightSource
 		if (element.hasAttribute("Wavelength"))
 		{
 			// Attribute property Wavelength
-			setWavelength(Integer.valueOf(
+			setWavelength(PositiveInteger.valueOf(
 					element.getAttribute("Wavelength")));
 		}
 		if (element.hasAttribute("FrequencyMultiplication"))
 		{
 			// Attribute property FrequencyMultiplication
-			setFrequencyMultiplication(Integer.valueOf(
+			setFrequencyMultiplication(PositiveInteger.valueOf(
 					element.getAttribute("FrequencyMultiplication")));
 		}
 		if (element.hasAttribute("Type"))
@@ -257,23 +258,23 @@ public class Laser extends LightSource
 	}
 
 	// Property
-	public Integer getWavelength()
+	public PositiveInteger getWavelength()
 	{
 		return wavelength;
 	}
 
-	public void setWavelength(Integer wavelength)
+	public void setWavelength(PositiveInteger wavelength)
 	{
 		this.wavelength = wavelength;
 	}
 
 	// Property
-	public Integer getFrequencyMultiplication()
+	public PositiveInteger getFrequencyMultiplication()
 	{
 		return frequencyMultiplication;
 	}
 
-	public void setFrequencyMultiplication(Integer frequencyMultiplication)
+	public void setFrequencyMultiplication(PositiveInteger frequencyMultiplication)
 	{
 		this.frequencyMultiplication = frequencyMultiplication;
 	}

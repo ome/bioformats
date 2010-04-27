@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class WellSample extends AbstractOMEModelObject
 {
@@ -58,7 +59,7 @@ public class WellSample extends AbstractOMEModelObject
 	// -- Instance variables --
 
 	// Property
-	private Integer index;
+	private NonNegativeInteger index;
 
 	// Property
 	private Double positionX;
@@ -137,7 +138,7 @@ public class WellSample extends AbstractOMEModelObject
 		if (element.hasAttribute("Index"))
 		{
 			// Attribute property Index
-			setIndex(Integer.valueOf(
+			setIndex(NonNegativeInteger.valueOf(
 					element.getAttribute("Index")));
 		}
 		if (element.hasAttribute("PositionX"))
@@ -218,12 +219,12 @@ public class WellSample extends AbstractOMEModelObject
 
 
 	// Property
-	public Integer getIndex()
+	public NonNegativeInteger getIndex()
 	{
 		return index;
 	}
 
-	public void setIndex(Integer index)
+	public void setIndex(NonNegativeInteger index)
 	{
 		this.index = index;
 	}

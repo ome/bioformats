@@ -35,10 +35,7 @@
 package ome.xml.utests;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +60,6 @@ import ome.xml.r201004.BinaryFile;
 import ome.xml.r201004.BooleanAnnotation;
 import ome.xml.r201004.DoubleAnnotation;
 import ome.xml.r201004.External;
-import ome.xml.r201004.FileAnnotation;
-import ome.xml.r201004.ListAnnotation;
 import ome.xml.r201004.LongAnnotation;
 import ome.xml.r201004.OMEModel;
 import ome.xml.r201004.OMEModelImpl;
@@ -101,15 +96,13 @@ import ome.xml.r201004.enums.FilterType;
 import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.primitives.NonNegativeInteger;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -260,8 +253,7 @@ public class InOut201004Test {
 
   @BeforeClass
   public void setUp()
-  throws ParserConfigurationException, TransformerException,
-  EnumerationException, UnsupportedEncodingException {
+  throws ParserConfigurationException, TransformerException, UnsupportedEncodingException {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     document = parser.newDocument();
@@ -313,11 +305,11 @@ public class InOut201004Test {
   @Test(dependsOnMethods={"testValidImageNode"})
   public void testValidPixelsNode() {
     Pixels pixels = ome.getImage(0).getPixels();
-    assertEquals(SIZE_X, pixels.getSizeX());
-    assertEquals(SIZE_Y, pixels.getSizeY());
-    assertEquals(SIZE_Z, pixels.getSizeZ());
-    assertEquals(SIZE_C, pixels.getSizeC());
-    assertEquals(SIZE_T, pixels.getSizeT());
+    assertEquals(SIZE_X, pixels.getSizeX().getValue());
+    assertEquals(SIZE_Y, pixels.getSizeY().getValue());
+    assertEquals(SIZE_Z, pixels.getSizeZ().getValue());
+    assertEquals(SIZE_C, pixels.getSizeC().getValue());
+    assertEquals(SIZE_T, pixels.getSizeT().getValue());
     assertEquals(DIMENSION_ORDER, pixels.getDimensionOrder());
     assertEquals(PIXEL_TYPE, pixels.getType());
     assertNotNull(pixels.getMetadataOnly());
@@ -432,8 +424,8 @@ public class InOut201004Test {
     assertNotNull(otf);
     assertEquals(OTF_ID, otf.getID());
     assertEquals(OTF_PIXELTYPE, otf.getType());
-    assertEquals(OTF_SIZE_X, otf.getSizeX());
-    assertEquals(OTF_SIZE_Y, otf.getSizeY());
+    assertEquals(OTF_SIZE_X, otf.getSizeX().getValue());
+    assertEquals(OTF_SIZE_Y, otf.getSizeY().getValue());
     assertEquals(OTF_OPTICAL_AXIS_AVERAGED, otf.getOpticalAxisAveraged());
     ObjectiveSettings settings = otf.getObjectiveSettings();
     assertNotNull(settings);
@@ -507,7 +499,7 @@ public class InOut201004Test {
         assertNotNull(sample);
         assertEquals(String.format("WellSample:%d_%d", row, col),
           sample.getID());
-        assertEquals(wellSampleIndex, sample.getIndex());
+        assertEquals(wellSampleIndex, sample.getIndex().getValue());
         Image image = sample.getLinkedImage();
         assertNotNull(image);
         assertEquals(IMAGE_ID, image.getID());
@@ -569,11 +561,11 @@ public class InOut201004Test {
     // Create <Pixels/>
     Pixels pixels = new Pixels();
     pixels.setID(PIXELS_ID);
-    pixels.setSizeX(SIZE_X);
-    pixels.setSizeY(SIZE_Y);
-    pixels.setSizeZ(SIZE_Z);
-    pixels.setSizeC(SIZE_C);
-    pixels.setSizeT(SIZE_T);
+    pixels.setSizeX(new PositiveInteger(SIZE_X));
+    pixels.setSizeY(new PositiveInteger(SIZE_Y));
+    pixels.setSizeZ(new PositiveInteger(SIZE_Z));
+    pixels.setSizeC(new PositiveInteger(SIZE_C));
+    pixels.setSizeT(new PositiveInteger(SIZE_T));
     pixels.setDimensionOrder(DIMENSION_ORDER);
     pixels.setType(PIXEL_TYPE);
     pixels.setMetadataOnly(new MetadataOnly());
@@ -642,8 +634,8 @@ public class InOut201004Test {
     exFilter.setType(EX_FILTER_TYPE);
     otf.setID(OTF_ID);
     otf.setType(OTF_PIXELTYPE);
-    otf.setSizeX(OTF_SIZE_X);
-    otf.setSizeY(OTF_SIZE_Y);
+    otf.setSizeX(new PositiveInteger(OTF_SIZE_X));
+    otf.setSizeY(new PositiveInteger(OTF_SIZE_Y));
     otf.setOpticalAxisAveraged(OTF_OPTICAL_AXIS_AVERAGED);
     // Create <ObjectiveSettings/> under <OTF/>
     ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
@@ -697,8 +689,8 @@ public class InOut201004Test {
       for (int col=0; col<WELL_COLS; col++) {
         Well well = new Well();
         well.setID(String.format("Well:%d_%d", row, col));
-        well.setRow(row);
-        well.setColumn(col);
+        well.setRow(new NonNegativeInteger(row));
+        well.setColumn(new NonNegativeInteger(col));
 
         if (row == 0 && col == 0) {
           LongAnnotation annotation = new LongAnnotation();
@@ -710,7 +702,7 @@ public class InOut201004Test {
 
         WellSample sample = new WellSample();
         sample.setID(String.format("WellSample:%d_%d", row, col));
-        sample.setIndex(wellSampleIndex);
+        sample.setIndex(new NonNegativeInteger(wellSampleIndex));
         sample.linkImage(ome.getImage(0));
         well.addWellSample(sample);
         plate.addWell(well);
@@ -759,13 +751,6 @@ public class InOut201004Test {
     Result result = new StreamResult(new OutputStreamWriter(os, "utf-8"));
     transformer.transform(source, result);
     return os.toString();
-  }
-
-  private Document fromString(String xml)
-  throws ParserConfigurationException, IOException, SAXException {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    return builder.parse(new InputSource(new StringReader(xml)));
   }
 
   public static void main(String[] args) throws Exception {

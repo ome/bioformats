@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class Channel extends AbstractOMEModelObject
 {
@@ -73,7 +74,7 @@ public class Channel extends AbstractOMEModelObject
 	private ContrastMethod contrastMethod;
 
 	// Property
-	private Integer excitationWavelength;
+	private PositiveInteger excitationWavelength;
 
 	// Property
 	private IlluminationType illuminationType;
@@ -85,7 +86,7 @@ public class Channel extends AbstractOMEModelObject
 	private Integer pockelCellSetting;
 
 	// Property
-	private Integer emissionWavelength;
+	private PositiveInteger emissionWavelength;
 
 	// Property
 	private Double ndfilter;
@@ -200,7 +201,7 @@ public class Channel extends AbstractOMEModelObject
 		if (element.hasAttribute("ExcitationWavelength"))
 		{
 			// Attribute property ExcitationWavelength
-			setExcitationWavelength(Integer.valueOf(
+			setExcitationWavelength(PositiveInteger.valueOf(
 					element.getAttribute("ExcitationWavelength")));
 		}
 		if (element.hasAttribute("IlluminationType"))
@@ -224,7 +225,7 @@ public class Channel extends AbstractOMEModelObject
 		if (element.hasAttribute("EmissionWavelength"))
 		{
 			// Attribute property EmissionWavelength
-			setEmissionWavelength(Integer.valueOf(
+			setEmissionWavelength(PositiveInteger.valueOf(
 					element.getAttribute("EmissionWavelength")));
 		}
 		if (element.hasAttribute("NDFilter"))
@@ -417,12 +418,12 @@ public class Channel extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getExcitationWavelength()
+	public PositiveInteger getExcitationWavelength()
 	{
 		return excitationWavelength;
 	}
 
-	public void setExcitationWavelength(Integer excitationWavelength)
+	public void setExcitationWavelength(PositiveInteger excitationWavelength)
 	{
 		this.excitationWavelength = excitationWavelength;
 	}
@@ -461,12 +462,12 @@ public class Channel extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getEmissionWavelength()
+	public PositiveInteger getEmissionWavelength()
 	{
 		return emissionWavelength;
 	}
 
-	public void setEmissionWavelength(Integer emissionWavelength)
+	public void setEmissionWavelength(PositiveInteger emissionWavelength)
 	{
 		this.emissionWavelength = emissionWavelength;
 	}

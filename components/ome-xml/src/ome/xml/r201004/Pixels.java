@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class Pixels extends AbstractOMEModelObject
 {
@@ -58,7 +59,7 @@ public class Pixels extends AbstractOMEModelObject
 	// -- Instance variables --
 
 	// Property
-	private Integer sizeT;
+	private PositiveInteger sizeT;
 
 	// Property
 	private DimensionOrder dimensionOrder;
@@ -76,16 +77,16 @@ public class Pixels extends AbstractOMEModelObject
 	private Double physicalSizeZ;
 
 	// Property
-	private Integer sizeX;
+	private PositiveInteger sizeX;
 
 	// Property
-	private Integer sizeY;
+	private PositiveInteger sizeY;
 
 	// Property
-	private Integer sizeZ;
+	private PositiveInteger sizeZ;
 
 	// Property
-	private Integer sizeC;
+	private PositiveInteger sizeC;
 
 	// Property
 	private PixelType type;
@@ -167,7 +168,7 @@ public class Pixels extends AbstractOMEModelObject
 		if (element.hasAttribute("SizeT"))
 		{
 			// Attribute property SizeT
-			setSizeT(Integer.valueOf(
+			setSizeT(PositiveInteger.valueOf(
 					element.getAttribute("SizeT")));
 		}
 		if (element.hasAttribute("DimensionOrder"))
@@ -203,25 +204,25 @@ public class Pixels extends AbstractOMEModelObject
 		if (element.hasAttribute("SizeX"))
 		{
 			// Attribute property SizeX
-			setSizeX(Integer.valueOf(
+			setSizeX(PositiveInteger.valueOf(
 					element.getAttribute("SizeX")));
 		}
 		if (element.hasAttribute("SizeY"))
 		{
 			// Attribute property SizeY
-			setSizeY(Integer.valueOf(
+			setSizeY(PositiveInteger.valueOf(
 					element.getAttribute("SizeY")));
 		}
 		if (element.hasAttribute("SizeZ"))
 		{
 			// Attribute property SizeZ
-			setSizeZ(Integer.valueOf(
+			setSizeZ(PositiveInteger.valueOf(
 					element.getAttribute("SizeZ")));
 		}
 		if (element.hasAttribute("SizeC"))
 		{
 			// Attribute property SizeC
-			setSizeC(Integer.valueOf(
+			setSizeC(PositiveInteger.valueOf(
 					element.getAttribute("SizeC")));
 		}
 		if (element.hasAttribute("Type"))
@@ -325,12 +326,12 @@ public class Pixels extends AbstractOMEModelObject
 
 
 	// Property
-	public Integer getSizeT()
+	public PositiveInteger getSizeT()
 	{
 		return sizeT;
 	}
 
-	public void setSizeT(Integer sizeT)
+	public void setSizeT(PositiveInteger sizeT)
 	{
 		this.sizeT = sizeT;
 	}
@@ -391,45 +392,45 @@ public class Pixels extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getSizeX()
+	public PositiveInteger getSizeX()
 	{
 		return sizeX;
 	}
 
-	public void setSizeX(Integer sizeX)
+	public void setSizeX(PositiveInteger sizeX)
 	{
 		this.sizeX = sizeX;
 	}
 
 	// Property
-	public Integer getSizeY()
+	public PositiveInteger getSizeY()
 	{
 		return sizeY;
 	}
 
-	public void setSizeY(Integer sizeY)
+	public void setSizeY(PositiveInteger sizeY)
 	{
 		this.sizeY = sizeY;
 	}
 
 	// Property
-	public Integer getSizeZ()
+	public PositiveInteger getSizeZ()
 	{
 		return sizeZ;
 	}
 
-	public void setSizeZ(Integer sizeZ)
+	public void setSizeZ(PositiveInteger sizeZ)
 	{
 		this.sizeZ = sizeZ;
 	}
 
 	// Property
-	public Integer getSizeC()
+	public PositiveInteger getSizeC()
 	{
 		return sizeC;
 	}
 
-	public void setSizeC(Integer sizeC)
+	public void setSizeC(PositiveInteger sizeC)
 	{
 		this.sizeC = sizeC;
 	}

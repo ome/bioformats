@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class OTF extends AbstractOMEModelObject
 {
@@ -58,10 +59,10 @@ public class OTF extends AbstractOMEModelObject
 	// -- Instance variables --
 
 	// Property
-	private Integer sizeX;
+	private PositiveInteger sizeX;
 
 	// Property
-	private Integer sizeY;
+	private PositiveInteger sizeY;
 
 	// Property
 	private PixelType type;
@@ -143,13 +144,13 @@ public class OTF extends AbstractOMEModelObject
 		if (element.hasAttribute("SizeX"))
 		{
 			// Attribute property SizeX
-			setSizeX(Integer.valueOf(
+			setSizeX(PositiveInteger.valueOf(
 					element.getAttribute("SizeX")));
 		}
 		if (element.hasAttribute("SizeY"))
 		{
 			// Attribute property SizeY
-			setSizeY(Integer.valueOf(
+			setSizeY(PositiveInteger.valueOf(
 					element.getAttribute("SizeY")));
 		}
 		if (element.hasAttribute("Type"))
@@ -241,23 +242,23 @@ public class OTF extends AbstractOMEModelObject
 
 
 	// Property
-	public Integer getSizeX()
+	public PositiveInteger getSizeX()
 	{
 		return sizeX;
 	}
 
-	public void setSizeX(Integer sizeX)
+	public void setSizeX(PositiveInteger sizeX)
 	{
 		this.sizeX = sizeX;
 	}
 
 	// Property
-	public Integer getSizeY()
+	public PositiveInteger getSizeY()
 	{
 		return sizeY;
 	}
 
-	public void setSizeY(Integer sizeY)
+	public void setSizeY(PositiveInteger sizeY)
 	{
 		this.sizeY = sizeY;
 	}

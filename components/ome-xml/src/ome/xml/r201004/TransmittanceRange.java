@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class TransmittanceRange extends AbstractOMEModelObject
 {
@@ -61,7 +62,7 @@ public class TransmittanceRange extends AbstractOMEModelObject
 	private Integer cutIn;
 
 	// Property
-	private Double transmittance;
+	private PercentFraction transmittance;
 
 	// Property
 	private Integer cutOut;
@@ -134,7 +135,7 @@ public class TransmittanceRange extends AbstractOMEModelObject
 		if (element.hasAttribute("Transmittance"))
 		{
 			// Attribute property Transmittance
-			setTransmittance(Double.valueOf(
+			setTransmittance(PercentFraction.valueOf(
 					element.getAttribute("Transmittance")));
 		}
 		if (element.hasAttribute("CutOut"))
@@ -179,12 +180,12 @@ public class TransmittanceRange extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Double getTransmittance()
+	public PercentFraction getTransmittance()
 	{
 		return transmittance;
 	}
 
-	public void setTransmittance(Double transmittance)
+	public void setTransmittance(PercentFraction transmittance)
 	{
 		this.transmittance = transmittance;
 	}

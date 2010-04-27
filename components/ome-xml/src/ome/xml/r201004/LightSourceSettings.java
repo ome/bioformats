@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:14:49+0100
+ * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,6 +48,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 public class LightSourceSettings extends Settings
 {
@@ -58,10 +59,10 @@ public class LightSourceSettings extends Settings
 	// -- Instance variables --
 
 	// Property
-	private Integer wavelength;
+	private PositiveInteger wavelength;
 
 	// Property
-	private Double attenuation;
+	private PercentFraction attenuation;
 
 	// Property
 	private String id;
@@ -122,13 +123,13 @@ public class LightSourceSettings extends Settings
 		if (element.hasAttribute("Wavelength"))
 		{
 			// Attribute property Wavelength
-			setWavelength(Integer.valueOf(
+			setWavelength(PositiveInteger.valueOf(
 					element.getAttribute("Wavelength")));
 		}
 		if (element.hasAttribute("Attenuation"))
 		{
 			// Attribute property Attenuation
-			setAttenuation(Double.valueOf(
+			setAttenuation(PercentFraction.valueOf(
 					element.getAttribute("Attenuation")));
 		}
 		if (!element.hasAttribute("ID") && getID() == null)
@@ -158,23 +159,23 @@ public class LightSourceSettings extends Settings
 
 
 	// Property
-	public Integer getWavelength()
+	public PositiveInteger getWavelength()
 	{
 		return wavelength;
 	}
 
-	public void setWavelength(Integer wavelength)
+	public void setWavelength(PositiveInteger wavelength)
 	{
 		this.wavelength = wavelength;
 	}
 
 	// Property
-	public Double getAttenuation()
+	public PercentFraction getAttenuation()
 	{
 		return attenuation;
 	}
 
-	public void setAttenuation(Double attenuation)
+	public void setAttenuation(PercentFraction attenuation)
 	{
 		this.attenuation = attenuation;
 	}
