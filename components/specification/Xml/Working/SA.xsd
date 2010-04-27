@@ -95,7 +95,7 @@
 	</xsd:element>
 	<xsd:complexType name="Annotation">
 		<xsd:annotation>
-			<xsd:appinfo>abstract-proprietary</xsd:appinfo>
+			<xsd:appinfo>abstract</xsd:appinfo>
 			<xsd:documentation>
 				An annotation from which the other are derived.
 			</xsd:documentation>
