@@ -80,6 +80,7 @@ loci.formats.in.QuesantReader         # afm
 loci.formats.in.BioRadGelReader       # 1sc
 loci.formats.in.SPALEEDReader         # d1d, d2d
 loci.formats.in.RHKReader             # sm2, sm3
+loci.formats.in.MolecularImagingReader # stp
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
@@ -117,6 +118,7 @@ loci.formats.in.FlexReader            # flex [LuraWave]
 loci.formats.in.SVSReader             # svs
 loci.formats.in.ImaconReader          # fff
 loci.formats.in.LEOReader             # sxm
+loci.formats.in.JPKReader             # jpk
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.MIASReader            # tif

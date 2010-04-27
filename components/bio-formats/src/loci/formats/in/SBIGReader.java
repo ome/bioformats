@@ -117,6 +117,7 @@ public class SBIGReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      compressed = false;
     }
   }
 
