@@ -1,4 +1,4 @@
-{% def indexes_string(indexes) %}${}", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
 \
 {% def index_string(name) %}\
 {% choose %}\
@@ -23,6 +23,21 @@
 {% end %}\
 {% end %}\
 {% end %}\
+\
+{% python
+	def parent_object(name):
+		return model.getObjectByName(parents[name].keys()[0])
+
+	def is_abstract(name):
+		parent = parent_object(name)
+		if parent is not None and \
+		   (parent.isAbstract or parent.isAbstractProprietary):
+			return True
+		return False
+
+	def sorted_properties(o):
+		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+%}
 \
 \
 /*
@@ -98,11 +113,9 @@ public interface MetadataRetrieve {
 	// - Entity counting -
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
-{% if parents[o.name] is not None %}\
-{% if o.base != "Reference" %}\
+{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary and not o.isReference %}\
 	int get${o.name}Count(${indexes_string(indexes[o.name])});
 
-{% end %}\
 {% end %}\
 {% end %}\
 
@@ -112,14 +125,39 @@ public interface MetadataRetrieve {
 	String getUUID();
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
-{% if parents[o.name] is not None %}\
+{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+	// ${o.name} property storage
+	// ${repr(parents[o.name])}
+	// Is multi path? ${is_multi_path[o.name]}
 
-	// ${o.name} property retrieval
-
-{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
-{% if not prop.isReference %}\
+{% if is_abstract(o.name) %}\
+{% for prop in sorted_properties(parent_object(o.name)) %}\
+{% choose %}\
+{% when not prop.isPrimitive %}\
+	// Ignoring ${prop.name} of parent abstract type
+{% end %}\
+{% otherwise %}\
 ${getter(o, prop, indexes[o.name])}
 
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% choose %}\
+{% when o.isReference %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	// Ignoring ${prop.name} property of reference ${o.name}
+{% end %}\
+{% end %}\
+{% otherwise %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if not prop.isBackReference %}\
+${getter(o, prop, indexes[o.name])}
+
+{% end %}\
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
