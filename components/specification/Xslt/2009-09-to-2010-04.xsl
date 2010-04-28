@@ -170,7 +170,7 @@
 		<xsl:param name="plateID"/>
 		<xsl:for-each select="$allAcquisitionsInReferencedScreens">
 
-			<!-- FIX
+			<!--
 				if 
 				the ID WellSampleRef in the ScreenAcquisition
 				matches an ID in the list allWellSamplesInCurrentPlate
@@ -372,8 +372,7 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd">
-			<!-- FIX SCHEMA LOCATION -->
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>
