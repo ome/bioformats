@@ -77,7 +77,7 @@
 	
 	<xsd:element name="Shape"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo>abstract</xsd:appinfo>
+			<xsd:appinfo>abstract-proprietary</xsd:appinfo>
 			<xsd:documentation>
 				The shape element contains a single specific ROI shape and links 
 				that to any channels, and a timepoint and a z-section. It also 

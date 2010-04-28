@@ -58,7 +58,7 @@
 	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				A collection of annotation attached to objects in the OME data model.
+				An unordered collection of annotation attached to objects in the OME data model.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
