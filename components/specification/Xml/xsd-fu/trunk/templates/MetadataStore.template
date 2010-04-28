@@ -75,7 +75,11 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+// TODO: TEMPORARY, WILL NOT BE USED AFTER TESTING IS COMPLETE
+package ome.xml;
+
+import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
@@ -121,7 +125,7 @@ public interface MetadataStore
 {
 	void createRoot();
 
-   	Object getRoot();
+	Object getRoot();
 
 	void setRoot(Object root);
 

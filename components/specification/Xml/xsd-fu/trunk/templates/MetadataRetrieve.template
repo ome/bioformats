@@ -16,7 +16,7 @@
 	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType});\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)});\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -75,7 +75,11 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+// TODO: TEMPORARY, WILL NOT BE USED AFTER TESTING IS COMPLETE
+package ome.xml;
+
+import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 /**
  * A proxy whose responsibility it is to extract biological image data from a
@@ -111,6 +115,7 @@ public interface MetadataRetrieve {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 %}\
 	int get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])});
