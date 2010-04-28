@@ -7,17 +7,16 @@
 {% end %}\
 {% end %}\
 \
-{% def setter(obj, prop, indexes) %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
+{% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)});\
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	void set${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName});\
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName});\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -144,8 +143,10 @@ public interface MetadataStore
 	// Ignoring ${prop.name} of parent abstract type
 {% end %}\
 {% otherwise %}\
-${setter(o, prop, indexes[o.name])}
+{% for k, v in indexes[o.name].items() %}\
+${setter(k, o, prop, v)}
 
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -161,8 +162,10 @@ ${setter(o, prop, indexes[o.name])}
 {% otherwise %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if not prop.isBackReference %}\
-${setter(o, prop, indexes[o.name])}
+{% for k, v in indexes[o.name].items() %}\
+${setter(k, o, prop, v)}
 
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\

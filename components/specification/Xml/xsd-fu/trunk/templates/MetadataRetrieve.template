@@ -7,19 +7,16 @@
 {% end %}\
 {% end %}\
 \
-{% def getter(obj, prop, indexes) %}\
-	// ${repr(parents[obj.name])}
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[obj.name]}
+{% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	${prop.metadataStoreType} get${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
-	${prop.metadataStoreType} get${obj.name}${prop.name}(${indexes_string(indexes)});\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	${prop.metadataStoreType} get${obj.name}${prop.name}(${prop.metadataStoreType});\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType});\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -110,23 +107,29 @@ package loci.formats.meta;
  */
 public interface MetadataRetrieve {
 
-	// - Entity counting -
+	// -- Entity counting --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary and not o.isReference %}\
-	int get${o.name}Count(${indexes_string(indexes[o.name])});
+{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% for k, v in indexes[o.name].items() %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 %}\
+	int get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])});
 
 {% end %}\
 {% end %}\
+{% end %}\
+{% end %}\
 
-	// - Entity retrieval -
+	// -- Entity retrieval --
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+	//
 	// ${o.name} property storage
+	//
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
 
@@ -137,8 +140,10 @@ public interface MetadataRetrieve {
 	// Ignoring ${prop.name} of parent abstract type
 {% end %}\
 {% otherwise %}\
-${getter(o, prop, indexes[o.name])}
+{% for k, v in indexes[o.name].items() %}\
+${getter(k, o, prop, v)}
 
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -149,13 +154,16 @@ ${getter(o, prop, indexes[o.name])}
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
+
 {% end %}\
 {% end %}\
 {% otherwise %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if not prop.isBackReference %}\
-${getter(o, prop, indexes[o.name])}
+{% for k, v in indexes[o.name].items() %}\
+${getter(k, o, prop, v)}
 
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
