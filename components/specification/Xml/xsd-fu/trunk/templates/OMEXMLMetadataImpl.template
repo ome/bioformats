@@ -1,11 +1,13 @@
 {% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
 \
-{% def index_string(name) %}\
+{% def index_name_string(name) %}\
 {% choose %}\
-{% when name[:2].isupper()%}int ${name}Index{% end %}\
-{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
+{% when name[:2].isupper()%}${name}Index{% end %}\
+{% otherwise %}${name[:1].lower()}${name[1:]}Index{% end %}\
 {% end %}\
 {% end %}\
+\
+{% def index_string(name) %}int ${index_name_string(name)}{% end %}\
 \
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
@@ -13,9 +15,24 @@
 	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		// Parents: ${repr(parents[obj.name])}
-		${accessor(obj.name, parent, prop)}
-{% for parent in parents[obj.name] %}\
-		// Parent: ${repr(parent)}
+{% choose %}\
+{% when model.getObjectByName(parent).isAbstractProprietary %}\
+		// ${parent} is abstract proprietary
+		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
+		return o.get${prop.javaMethodName}();
+{% end %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+		// ${prop.name} is reference and occurs more than once
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}(${index_name_string(prop.name)}).getID();
+{% end %}\
+{% when prop.isReference %}\
+		// ${prop.name} is reference and occurs only once
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}().getID();
+{% end %}\
+{% otherwise %}\
+		// ${prop.name} is not a reference
+		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.javaMethodName}();
+{% end %}\
 {% end %}\
 	}
 {% end %}\
@@ -23,7 +40,25 @@
 	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 	{
 		// Parents: ${repr(parents[obj.name])}
-		${accessor(obj.name, parent, prop)}
+{% choose %}\
+{% when model.getObjectByName(parent).isAbstractProprietary %}\
+		// ${parent} is abstract proprietary
+		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
+		return o.get${prop.javaMethodName}();
+{% end %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+		// ${prop.name} is reference and occurs more than once
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}(${index_name_string(prop.name)}).getID();
+{% end %}\
+{% when prop.isReference %}\
+		// ${prop.name} is reference and occurs only once
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}().getID();
+{% end %}\
+{% otherwise %}\
+		// ${prop.name} is not a reference
+		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.javaMethodName}();
+{% end %}\
+{% end %}\
 {% for parent in parents[obj.name] %}\
 		// Parent: ${repr(parent)}
 {% end %}\
@@ -33,7 +68,25 @@
 	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
 	{
 		// Parents: ${repr(parents[obj.name])}
-		${accessor(obj.name, parent, prop)}
+{% choose %}\
+{% when model.getObjectByName(parent).isAbstractProprietary %}\
+		// ${parent} is abstract proprietary
+		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
+		return o.get${prop.javaMethodName}();
+{% end %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+		// ${prop.name} is reference and occurs more than once
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}(${index_name_string(prop.name)}).getID();
+{% end %}\
+{% when prop.isReference %}\
+		// ${prop.name} is reference and occurs only once
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}().getID();
+{% end %}\
+{% otherwise %}\
+		// ${prop.name} is not a reference
+		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.javaMethodName}();
+{% end %}\
+{% end %}\
 {% for parent in parents[obj.name] %}\
 		// Parent: ${repr(parent)}
 {% end %}\
@@ -83,7 +136,7 @@
 			return "Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results)
 		if len(results.keys()) == 0:
 			return "Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results)
-		return "return root.%s.get%s();  // %s" % (".".join(results[parent]), prop.javaMethodName, results)
+		return results[parent]
 
 	def accessor_string(name, max_occurs):
 		#def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0):
