@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-28 16:12:52+0100
+ * Created by callan via xsd-fu on 2010-04-29 17:45:10+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,13 +76,11 @@ public interface MetadataRetrieve {
 	// -- Entity counting --
 
 	// AnnotationRef entity counting
-	int getROIAnnotationRefCount(int ROIIndex);
+	int getPlateAnnotationRefCount(int plateIndex);
 
-	int getReagentAnnotationRefCount(int screenIndex, int reagentIndex);
+	int getListAnnotationAnnotationRefCount(int listAnnotationIndex);
 
 	int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex);
-
-	int getPlateAnnotationRefCount(int plateIndex);
 
 	int getImageAnnotationRefCount(int imageIndex);
 
@@ -90,11 +88,13 @@ public interface MetadataRetrieve {
 
 	int getWellAnnotationRefCount(int plateIndex, int wellIndex);
 
+	int getROIAnnotationRefCount(int ROIIndex);
+
 	int getDatasetAnnotationRefCount(int datasetIndex);
 
 	int getProjectAnnotationRefCount(int projectIndex);
 
-	int getListAnnotationAnnotationRefCount(int listAnnotationIndex);
+	int getReagentAnnotationRefCount(int screenIndex, int reagentIndex);
 
 	int getShapeAnnotationRefCount(int ROIIndex, int shapeIndex);
 
@@ -120,9 +120,6 @@ public interface MetadataRetrieve {
 
 	// Channel entity counting
 	int getChannelCount(int imageIndex);
-
-	// ChannelProfile entity counting
-	int getChannelProfileCount();
 
 	// Contact entity counting
 	// Dataset entity counting
@@ -181,9 +178,6 @@ public interface MetadataRetrieve {
 
 	// Image entity counting
 	int getImageCount();
-
-	// ImageProfile entity counting
-	int getImageProfileCount();
 
 	// ImageRef entity counting
 	// ImagingEnvironment entity counting
@@ -300,7 +294,7 @@ public interface MetadataRetrieve {
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'Plate': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'ROI': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -332,43 +326,13 @@ public interface MetadataRetrieve {
 	ArcType getArcType(int instrumentIndex, int lightSourceIndex);
 
 	//
-	// BinData property storage
-	//
-	// {u'BinaryFile': {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}, u'Mask': {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}, u'Pixels': {u'Image': {u'OME': None}}}
-	// Is multi path? True
-
-	Boolean getBinaryFileBinDataBigEndian(int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	Boolean getMaskBinDataBigEndian(int ROIIndex, int shapeIndex, int binDataIndex);
-
-	Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
-
-	Compression getBinaryFileBinDataCompression(int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	Compression getMaskBinDataCompression(int ROIIndex, int shapeIndex, int binDataIndex);
-
-	Compression getPixelsBinDataCompression(int imageIndex, int binDataIndex);
-
-	NonNegativeInteger getBinaryFileBinDataLength(int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	NonNegativeInteger getMaskBinDataLength(int ROIIndex, int shapeIndex, int binDataIndex);
-
-	NonNegativeInteger getPixelsBinDataLength(int imageIndex, int binDataIndex);
-
-	//
 	// BinaryFile property storage
 	//
 	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
-	String getFileAnnotationBinaryFileBinData(int fileAnnotationIndex);
-
-	String getOTFBinaryFileBinData(int instrumentIndex, int OTFIndex);
-
-	String getFileAnnotationBinaryFileExternal(int fileAnnotationIndex);
-
-	String getOTFBinaryFileExternal(int instrumentIndex, int OTFIndex);
-
+	// Ignoring BinData element, complex property
+	// Ignoring External element, complex property
 	String getFileAnnotationBinaryFileFileName(int fileAnnotationIndex);
 
 	String getOTFBinaryFileFileName(int instrumentIndex, int OTFIndex);
@@ -387,12 +351,28 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getBooleanAnnotationID(int booleanAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getBooleanAnnotationNamespace(int booleanAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	Boolean getBooleanAnnotationValue(int booleanAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Channel property storage
 	//
@@ -407,8 +387,7 @@ public interface MetadataRetrieve {
 
 	ContrastMethod getChannelContrastMethod(int imageIndex, int channelIndex);
 
-	String getChannelDetectorSettings(int imageIndex, int channelIndex);
-
+	// Ignoring DetectorSettings element, complex property
 	PositiveInteger getChannelEmissionWavelength(int imageIndex, int channelIndex);
 
 	PositiveInteger getChannelExcitationWavelength(int imageIndex, int channelIndex);
@@ -421,10 +400,8 @@ public interface MetadataRetrieve {
 
 	IlluminationType getChannelIlluminationType(int imageIndex, int channelIndex);
 
-	String getChannelLightPath(int imageIndex, int channelIndex);
-
-	String getChannelLightSourceSettings(int imageIndex, int channelIndex);
-
+	// Ignoring LightPath element, complex property
+	// Ignoring LightSourceSettings element, complex property
 	Double getChannelNDFilter(int imageIndex, int channelIndex);
 
 	String getChannelName(int imageIndex, int channelIndex);
@@ -436,26 +413,6 @@ public interface MetadataRetrieve {
 	Integer getChannelPockelCellSetting(int imageIndex, int channelIndex);
 
 	Integer getChannelSamplesPerPixel(int imageIndex, int channelIndex);
-
-	//
-	// ChannelProfile property storage
-	//
-	// {u'ProfileSet': None}
-	// Is multi path? False
-
-	String getChannelProfileDescription(int channelProfileIndex);
-
-	String getChannelProfileDetectorSettings(int channelProfileIndex);
-
-	String getChannelProfileFilterSetRef(int channelProfileIndex);
-
-	String getChannelProfileLightSourceSettings(int channelProfileIndex);
-
-	String getChannelProfileName(int channelProfileIndex);
-
-	String getChannelProfileOTFRef(int channelProfileIndex);
-
-	ProfileSource getChannelProfileOrigin(int channelProfileIndex);
 
 	//
 	// Contact property storage
@@ -483,6 +440,7 @@ public interface MetadataRetrieve {
 
 	String getDatasetID(int datasetIndex);
 
+	// Ignoring Image_BackReference back reference
 	String getDatasetName(int datasetIndex);
 
 	String getDatasetProjectRef(int datasetIndex, int projectRefIndex);
@@ -528,32 +486,20 @@ public interface MetadataRetrieve {
 	//
 	// DetectorSettings property storage
 	//
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
 
-	Binning getChannelProfileDetectorSettingsBinning(int channelProfileIndex);
+	Binning getDetectorSettingsBinning(int imageIndex, int channelIndex);
 
-	Binning getChannelDetectorSettingsBinning(int imageIndex, int channelIndex);
+	Double getDetectorSettingsGain(int imageIndex, int channelIndex);
 
-	Double getChannelProfileDetectorSettingsGain(int channelProfileIndex);
+	String getDetectorSettingsID(int imageIndex, int channelIndex);
 
-	Double getChannelDetectorSettingsGain(int imageIndex, int channelIndex);
+	Double getDetectorSettingsOffset(int imageIndex, int channelIndex);
 
-	String getChannelProfileDetectorSettingsID(int channelProfileIndex);
+	Double getDetectorSettingsReadOutRate(int imageIndex, int channelIndex);
 
-	String getChannelDetectorSettingsID(int imageIndex, int channelIndex);
-
-	Double getChannelProfileDetectorSettingsOffset(int channelProfileIndex);
-
-	Double getChannelDetectorSettingsOffset(int imageIndex, int channelIndex);
-
-	Double getChannelProfileDetectorSettingsReadOutRate(int channelProfileIndex);
-
-	Double getChannelDetectorSettingsReadOutRate(int imageIndex, int channelIndex);
-
-	Double getChannelProfileDetectorSettingsVoltage(int channelProfileIndex);
-
-	Double getChannelDetectorSettingsVoltage(int imageIndex, int channelIndex);
+	Double getDetectorSettingsVoltage(int imageIndex, int channelIndex);
 
 	//
 	// Dichroic property storage
@@ -561,8 +507,10 @@ public interface MetadataRetrieve {
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	String getDichroicID(int instrumentIndex, int dichroicIndex);
 
+	// Ignoring LightPath_BackReference back reference
 	String getDichroicLotNumber(int instrumentIndex, int dichroicIndex);
 
 	String getDichroicManufacturer(int instrumentIndex, int dichroicIndex);
@@ -587,12 +535,28 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getDoubleAnnotationID(int doubleAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getDoubleAnnotationNamespace(int doubleAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	Double getDoubleAnnotationValue(int doubleAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Ellipse property storage
 	//
@@ -684,8 +648,8 @@ public interface MetadataRetrieve {
 
 	String getExperimentID(int experimentIndex);
 
-	String getExperimentMicrobeamManipulation(int experimentIndex, int microbeamManipulationIndex);
-
+	// Ignoring Image_BackReference back reference
+	// Ignoring MicrobeamManipulation element, complex property
 	ExperimentType getExperimentType(int experimentIndex);
 
 	//
@@ -706,22 +670,27 @@ public interface MetadataRetrieve {
 
 	String getExperimenterAnnotationRef(int experimenterIndex, int annotationRefIndex);
 
+	// Ignoring Dataset_BackReference back reference
 	String getExperimenterDisplayName(int experimenterIndex);
 
 	String getExperimenterEmail(int experimenterIndex);
 
+	// Ignoring Experiment_BackReference back reference
 	String getExperimenterFirstName(int experimenterIndex);
 
 	String getExperimenterGroupRef(int experimenterIndex, int groupRefIndex);
 
 	String getExperimenterID(int experimenterIndex);
 
+	// Ignoring Image_BackReference back reference
 	String getExperimenterInstitution(int experimenterIndex);
 
 	String getExperimenterLastName(int experimenterIndex);
 
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	String getExperimenterMiddleName(int experimenterIndex);
 
+	// Ignoring Project_BackReference back reference
 	String getExperimenterUserName(int experimenterIndex);
 
 	//
@@ -733,18 +702,6 @@ public interface MetadataRetrieve {
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference ExperimenterRef
-
-	//
-	// External property storage
-	//
-	// {u'BinaryFile': {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}}
-	// Is multi path? True
-
-	Compression getBinaryFileExternalCompression(int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	String getBinaryFileExternalSHA1(int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	String getBinaryFileExternalhref(int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
 
 	//
 	// Filament property storage
@@ -776,22 +733,39 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
-	String getFileAnnotationBinaryFile(int fileAnnotationIndex);
-
+	// Ignoring BinaryFile element, complex property
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getFileAnnotationID(int fileAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getFileAnnotationNamespace(int fileAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Filter property storage
 	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	String getFilterFilterWheel(int instrumentIndex, int filterIndex);
 
 	String getFilterID(int instrumentIndex, int filterIndex);
 
+	// Ignoring LightPath_BackReference back reference
 	String getFilterLotNumber(int instrumentIndex, int filterIndex);
 
 	String getFilterManufacturer(int instrumentIndex, int filterIndex);
@@ -800,8 +774,7 @@ public interface MetadataRetrieve {
 
 	String getFilterSerialNumber(int instrumentIndex, int filterIndex);
 
-	String getFilterTransmittanceRange(int instrumentIndex, int filterIndex);
-
+	// Ignoring TransmittanceRange element, complex property
 	FilterType getFilterType(int instrumentIndex, int filterIndex);
 
 	//
@@ -810,6 +783,7 @@ public interface MetadataRetrieve {
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
 	String getFilterSetDichroicRef(int instrumentIndex, int filterSetIndex);
 
 	String getFilterSetEmissionFilterRef(int instrumentIndex, int filterSetIndex, int emissionFilterRefIndex);
@@ -824,12 +798,13 @@ public interface MetadataRetrieve {
 
 	String getFilterSetModel(int instrumentIndex, int filterSetIndex);
 
+	// Ignoring OTF_BackReference back reference
 	String getFilterSetSerialNumber(int instrumentIndex, int filterSetIndex);
 
 	//
 	// FilterSetRef property storage
 	//
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -844,14 +819,18 @@ public interface MetadataRetrieve {
 
 	String getGroupContact(int groupIndex);
 
+	// Ignoring Dataset_BackReference back reference
 	String getGroupDescription(int groupIndex);
 
+	// Ignoring Experimenter_BackReference back reference
 	String getGroupID(int groupIndex);
 
+	// Ignoring Image_BackReference back reference
 	String getGroupLeader(int groupIndex);
 
 	String getGroupName(int groupIndex);
 
+	// Ignoring Project_BackReference back reference
 	//
 	// GroupRef property storage
 	//
@@ -884,38 +863,19 @@ public interface MetadataRetrieve {
 
 	String getImageID(int imageIndex);
 
-	String getImageImagingEnvironment(int imageIndex);
-
+	// Ignoring ImagingEnvironment element, complex property
 	String getImageInstrumentRef(int imageIndex);
 
 	String getImageMicrobeamManipulationRef(int imageIndex, int microbeamManipulationRefIndex);
 
 	String getImageName(int imageIndex);
 
-	String getImageObjectiveSettings(int imageIndex);
-
-	String getImagePixels(int imageIndex);
-
+	// Ignoring ObjectiveSettings element, complex property
+	// Ignoring Pixels element, complex property
 	String getImageROIRef(int imageIndex, int ROIRefIndex);
 
-	String getImageStageLabel(int imageIndex);
-
-	//
-	// ImageProfile property storage
-	//
-	// {u'ProfileSet': None}
-	// Is multi path? False
-
-	String getImageProfileDescription(int imageProfileIndex);
-
-	String getImageProfileInstrumentRef(int imageProfileIndex);
-
-	String getImageProfileName(int imageProfileIndex);
-
-	String getImageProfileObjectiveSettings(int imageProfileIndex);
-
-	ProfileSource getImageProfileorigin(int imageProfileIndex);
-
+	// Ignoring StageLabel element, complex property
+	// Ignoring WellSample_BackReference back reference
 	//
 	// ImageRef property storage
 	//
@@ -934,9 +894,9 @@ public interface MetadataRetrieve {
 
 	Double getImagingEnvironmentAirPressure(int imageIndex);
 
-	String getImagingEnvironmentCO2Percent(int imageIndex);
+	PercentFraction getImagingEnvironmentCO2Percent(int imageIndex);
 
-	String getImagingEnvironmentHumidity(int imageIndex);
+	PercentFraction getImagingEnvironmentHumidity(int imageIndex);
 
 	Double getImagingEnvironmentTemperature(int imageIndex);
 
@@ -946,32 +906,25 @@ public interface MetadataRetrieve {
 	// {u'OME': None}
 	// Is multi path? False
 
-	String getInstrumentDetector(int instrumentIndex, int detectorIndex);
-
-	String getInstrumentDichroic(int instrumentIndex, int dichroicIndex);
-
-	String getInstrumentFilter(int instrumentIndex, int filterIndex);
-
-	String getInstrumentFilterSet(int instrumentIndex, int filterSetIndex);
-
+	// Ignoring Detector element, complex property
+	// Ignoring Dichroic element, complex property
+	// Ignoring Filter element, complex property
+	// Ignoring FilterSet element, complex property
 	String getInstrumentID(int instrumentIndex);
 
-	String getInstrumentLightSource(int instrumentIndex, int lightSourceIndex);
-
-	String getInstrumentMicroscope(int instrumentIndex);
-
-	String getInstrumentOTF(int instrumentIndex, int OTFIndex);
-
-	String getInstrumentObjective(int instrumentIndex, int objectiveIndex);
-
+	// Ignoring Image_BackReference back reference
+	// Ignoring LightSource element, complex property
+	// Ignoring Microscope element, complex property
+	// Ignoring OTF element, complex property
+	// Ignoring Objective element, complex property
 	//
 	// InstrumentRef property storage
 	//
-	// {u'Image': {u'OME': None}, u'ImageProfile': {u'ProfileSet': None}}
-	// Is multi path? True
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
 
 	// 1:1
-	// Is multi path? True
+	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
 
 	//
@@ -1061,22 +1014,16 @@ public interface MetadataRetrieve {
 	//
 	// LightSourceSettings property storage
 	//
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
-	String getChannelProfileLightSourceSettingsAttenuation(int channelProfileIndex);
+	PercentFraction getChannelLightSourceSettingsAttenuation(int imageIndex, int channelIndex);
 
-	String getChannelLightSourceSettingsAttenuation(int imageIndex, int channelIndex);
-
-	String getMicrobeamManipulationLightSourceSettingsAttenuation(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
-
-	String getChannelProfileLightSourceSettingsID(int channelProfileIndex);
+	PercentFraction getMicrobeamManipulationLightSourceSettingsAttenuation(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
 
 	String getChannelLightSourceSettingsID(int imageIndex, int channelIndex);
 
 	String getMicrobeamManipulationLightSourceSettingsID(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
-
-	PositiveInteger getChannelProfileLightSourceSettingsWavelength(int channelProfileIndex);
 
 	PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex);
 
@@ -1145,22 +1092,54 @@ public interface MetadataRetrieve {
 
 	String getListAnnotationAnnotationRef(int listAnnotationIndex, int annotationRefIndex);
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getListAnnotationID(int listAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getListAnnotationNamespace(int listAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// LongAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getLongAnnotationID(int longAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getLongAnnotationNamespace(int longAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	Long getLongAnnotationValue(int longAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Mask property storage
 	//
@@ -1208,8 +1187,7 @@ public interface MetadataRetrieve {
 
 	String getMaskTransform(int ROIIndex, int shapeIndex);
 
-	String getMaskBinData(int ROIIndex, int shapeIndex, int binDataIndex);
-
+	// Ignoring BinData element, complex property
 	Double getMaskX(int ROIIndex, int shapeIndex);
 
 	Double getMaskY(int ROIIndex, int shapeIndex);
@@ -1230,8 +1208,8 @@ public interface MetadataRetrieve {
 
 	String getMicrobeamManipulationID(int experimentIndex, int microbeamManipulationIndex);
 
-	String getMicrobeamManipulationLightSourceSettings(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
-
+	// Ignoring Image_BackReference back reference
+	// Ignoring LightSourceSettings element, complex property
 	String getMicrobeamManipulationROIRef(int experimentIndex, int microbeamManipulationIndex, int ROIRefIndex);
 
 	MicrobeamManipulationType getMicrobeamManipulationType(int experimentIndex, int microbeamManipulationIndex);
@@ -1268,14 +1246,13 @@ public interface MetadataRetrieve {
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
-	String getOTFBinaryFile(int instrumentIndex, int OTFIndex);
-
+	// Ignoring BinaryFile element, complex property
+	// Ignoring Channel_BackReference back reference
 	String getOTFFilterSetRef(int instrumentIndex, int OTFIndex);
 
 	String getOTFID(int instrumentIndex, int OTFIndex);
 
-	String getOTFObjectiveSettings(int instrumentIndex, int OTFIndex);
-
+	// Ignoring ObjectiveSettings element, complex property
 	Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int OTFIndex);
 
 	PositiveInteger getOTFSizeX(int instrumentIndex, int OTFIndex);
@@ -1287,11 +1264,11 @@ public interface MetadataRetrieve {
 	//
 	// OTFRef property storage
 	//
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
 
 	// 1:1
-	// Is multi path? True
+	// Is multi path? False
 	// Ignoring ID property of reference OTFRef
 
 	//
@@ -1327,30 +1304,22 @@ public interface MetadataRetrieve {
 	//
 	// ObjectiveSettings property storage
 	//
-	// {u'Image': {u'OME': None}, u'ImageProfile': {u'ProfileSet': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
 	Double getImageObjectiveSettingsCorrectionCollar(int imageIndex);
-
-	Double getImageProfileObjectiveSettingsCorrectionCollar(int imageProfileIndex);
 
 	Double getOTFObjectiveSettingsCorrectionCollar(int instrumentIndex, int OTFIndex);
 
 	String getImageObjectiveSettingsID(int imageIndex);
 
-	String getImageProfileObjectiveSettingsID(int imageProfileIndex);
-
 	String getOTFObjectiveSettingsID(int instrumentIndex, int OTFIndex);
 
 	Medium getImageObjectiveSettingsMedium(int imageIndex);
 
-	Medium getImageProfileObjectiveSettingsMedium(int imageProfileIndex);
-
 	Medium getOTFObjectiveSettingsMedium(int instrumentIndex, int OTFIndex);
 
 	Double getImageObjectiveSettingsRefractiveIndex(int imageIndex);
-
-	Double getImageProfileObjectiveSettingsRefractiveIndex(int imageProfileIndex);
 
 	Double getOTFObjectiveSettingsRefractiveIndex(int instrumentIndex, int OTFIndex);
 
@@ -1411,24 +1380,20 @@ public interface MetadataRetrieve {
 
 	String getPixelsAnnotationRef(int imageIndex, int annotationRefIndex);
 
-	String getPixelsBinData(int imageIndex, int binDataIndex);
-
-	String getPixelsChannel(int imageIndex, int channelIndex);
-
+	// Ignoring BinData element, complex property
+	// Ignoring Channel element, complex property
 	DimensionOrder getPixelsDimensionOrder(int imageIndex);
 
 	String getPixelsID(int imageIndex);
 
-	String getPixelsMetadataOnly(int imageIndex);
-
+	// Ignoring MetadataOnly element, complex property
 	Double getPixelsPhysicalSizeX(int imageIndex);
 
 	Double getPixelsPhysicalSizeY(int imageIndex);
 
 	Double getPixelsPhysicalSizeZ(int imageIndex);
 
-	String getPixelsPlane(int imageIndex, int planeIndex);
-
+	// Ignoring Plane element, complex property
 	PositiveInteger getPixelsSizeC(int imageIndex);
 
 	PositiveInteger getPixelsSizeT(int imageIndex);
@@ -1439,8 +1404,7 @@ public interface MetadataRetrieve {
 
 	PositiveInteger getPixelsSizeZ(int imageIndex);
 
-	String getPixelsTiffData(int imageIndex, int tiffDataIndex);
-
+	// Ignoring TiffData element, complex property
 	Double getPixelsTimeIncrement(int imageIndex);
 
 	PixelType getPixelsType(int imageIndex);
@@ -1491,8 +1455,7 @@ public interface MetadataRetrieve {
 
 	String getPlateName(int plateIndex);
 
-	String getPlatePlateAcquisition(int plateIndex, int plateAcquisitionIndex);
-
+	// Ignoring PlateAcquisition element, complex property
 	NamingConvention getPlateRowNamingConvention(int plateIndex);
 
 	Integer getPlateRows(int plateIndex);
@@ -1501,8 +1464,7 @@ public interface MetadataRetrieve {
 
 	String getPlateStatus(int plateIndex);
 
-	String getPlateWell(int plateIndex, int wellIndex);
-
+	// Ignoring Well element, complex property
 	Double getPlateWellOriginX(int plateIndex);
 
 	Double getPlateWellOriginY(int plateIndex);
@@ -1649,6 +1611,7 @@ public interface MetadataRetrieve {
 
 	String getProjectAnnotationRef(int projectIndex, int annotationRefIndex);
 
+	// Ignoring Dataset_BackReference back reference
 	String getProjectDescription(int projectIndex);
 
 	String getProjectExperimenterRef(int projectIndex);
@@ -1691,12 +1654,13 @@ public interface MetadataRetrieve {
 
 	String getROIID(int ROIIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	String getROIName(int ROIIndex);
 
 	String getROINamespace(int ROIIndex);
 
-	String getROIUnion(int ROIIndex);
-
+	// Ignoring Union element, complex property
 	//
 	// ROIRef property storage
 	//
@@ -1723,6 +1687,7 @@ public interface MetadataRetrieve {
 
 	String getReagentReagentIdentifier(int screenIndex, int reagentIndex);
 
+	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
 	//
@@ -1808,8 +1773,7 @@ public interface MetadataRetrieve {
 
 	String getScreenProtocolIdentifier(int screenIndex);
 
-	String getScreenReagent(int screenIndex, int reagentIndex);
-
+	// Ignoring Reagent element, complex property
 	String getScreenReagentSetDescription(int screenIndex);
 
 	String getScreenReagentSetIdentifier(int screenIndex);
@@ -1846,34 +1810,42 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getStringAnnotationID(int stringAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getStringAnnotationNamespace(int stringAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	String getStringAnnotationValue(int stringAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// StructuredAnnotations property storage
 	//
 	// {u'OME': None}
 	// Is multi path? False
 
-	String getStructuredAnnotationsBooleanAnnotation(int booleanAnnotationIndex);
-
-	String getStructuredAnnotationsDoubleAnnotation(int doubleAnnotationIndex);
-
-	String getStructuredAnnotationsFileAnnotation(int fileAnnotationIndex);
-
-	String getStructuredAnnotationsListAnnotation(int listAnnotationIndex);
-
-	String getStructuredAnnotationsLongAnnotation(int longAnnotationIndex);
-
-	String getStructuredAnnotationsStringAnnotation(int stringAnnotationIndex);
-
-	String getStructuredAnnotationsTimestampAnnotation(int timestampAnnotationIndex);
-
-	String getStructuredAnnotationsXMLAnnotation(int XMLAnnotationIndex);
-
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring StringAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
 	//
 	// Text property storage
 	//
@@ -1943,20 +1915,35 @@ public interface MetadataRetrieve {
 
 	Integer getTiffDataPlaneCount(int imageIndex, int tiffDataIndex);
 
-	String getTiffDataUUID(int imageIndex, int tiffDataIndex);
-
+	// Ignoring UUID element, complex property
 	//
 	// TimestampAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getTimestampAnnotationID(int timestampAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getTimestampAnnotationNamespace(int timestampAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	String getTimestampAnnotationValue(int timestampAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// TransmittanceRange property storage
 	//
@@ -1971,7 +1958,7 @@ public interface MetadataRetrieve {
 
 	Integer getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex);
 
-	String getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex);
+	PercentFraction getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex);
 
 	//
 	// UUID property storage
@@ -1987,8 +1974,7 @@ public interface MetadataRetrieve {
 	// {u'ROI': {u'OME': None}}
 	// Is multi path? False
 
-	String getUnionShape(int ROIIndex, int shapeIndex);
-
+	// Ignoring Shape element, complex property
 	//
 	// Well property storage
 	//
@@ -2013,8 +1999,7 @@ public interface MetadataRetrieve {
 
 	String getWellStatus(int plateIndex, int wellIndex);
 
-	String getWellWellSample(int plateIndex, int wellIndex, int wellSampleIndex);
-
+	// Ignoring WellSample element, complex property
 	//
 	// WellSample property storage
 	//
@@ -2029,6 +2014,7 @@ public interface MetadataRetrieve {
 
 	NonNegativeInteger getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex);
 
+	// Ignoring PlateAcquisition_BackReference back reference
 	Double getWellSamplePositionX(int plateIndex, int wellIndex, int wellSampleIndex);
 
 	Double getWellSamplePositionY(int plateIndex, int wellIndex, int wellSampleIndex);
@@ -2051,10 +2037,26 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	String getXMLAnnotationID(int XMLAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	String getXMLAnnotationNamespace(int XMLAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	String getXMLAnnotationValue(int XMLAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 }

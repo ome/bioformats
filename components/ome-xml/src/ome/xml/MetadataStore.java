@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-28 15:55:10+0100
+ * Created by callan via xsd-fu on 2010-04-29 17:55:03+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,7 +87,7 @@ public interface MetadataStore
 {
 	void createRoot();
 
-   	Object getRoot();
+	Object getRoot();
 
 	void setRoot(Object root);
 
@@ -97,7 +97,7 @@ public interface MetadataStore
 	void setUUID(String uuid);
 
 	// AnnotationRef property storage
-	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'Plate': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'ROI': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -125,40 +125,12 @@ public interface MetadataStore
 
 	void setArcType(ArcType type, int instrumentIndex, int lightSourceIndex);
 
-	// BinData property storage
-	// {u'BinaryFile': {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}, u'Mask': {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}, u'Pixels': {u'Image': {u'OME': None}}}
-	// Is multi path? True
-
-	void setBinaryFileBinDataBigEndian(Boolean bigEndian, int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	void setMaskBinDataBigEndian(Boolean bigEndian, int ROIIndex, int shapeIndex, int binDataIndex);
-
-	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
-
-	void setBinaryFileBinDataCompression(Compression compression, int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	void setMaskBinDataCompression(Compression compression, int ROIIndex, int shapeIndex, int binDataIndex);
-
-	void setPixelsBinDataCompression(Compression compression, int imageIndex, int binDataIndex);
-
-	void setBinaryFileBinDataLength(NonNegativeInteger length, int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	void setMaskBinDataLength(NonNegativeInteger length, int ROIIndex, int shapeIndex, int binDataIndex);
-
-	void setPixelsBinDataLength(NonNegativeInteger length, int imageIndex, int binDataIndex);
-
 	// BinaryFile property storage
 	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
-	void setFileAnnotationBinaryFileBinData(String binData, int fileAnnotationIndex);
-
-	void setOTFBinaryFileBinData(String binData, int instrumentIndex, int OTFIndex);
-
-	void setFileAnnotationBinaryFileExternal(String external, int fileAnnotationIndex);
-
-	void setOTFBinaryFileExternal(String external, int instrumentIndex, int OTFIndex);
-
+	// Ignoring BinData element, complex property
+	// Ignoring External element, complex property
 	void setFileAnnotationBinaryFileFileName(String fileName, int fileAnnotationIndex);
 
 	void setOTFBinaryFileFileName(String fileName, int instrumentIndex, int OTFIndex);
@@ -175,12 +147,28 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setBooleanAnnotationID(String id, int booleanAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setBooleanAnnotationNamespace(String namespace, int booleanAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// Channel property storage
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
@@ -193,8 +181,7 @@ public interface MetadataStore
 
 	void setChannelContrastMethod(ContrastMethod contrastMethod, int imageIndex, int channelIndex);
 
-	void setChannelDetectorSettings(String detectorSettings, int imageIndex, int channelIndex);
-
+	// Ignoring DetectorSettings element, complex property
 	void setChannelEmissionWavelength(PositiveInteger emissionWavelength, int imageIndex, int channelIndex);
 
 	void setChannelExcitationWavelength(PositiveInteger excitationWavelength, int imageIndex, int channelIndex);
@@ -207,10 +194,8 @@ public interface MetadataStore
 
 	void setChannelIlluminationType(IlluminationType illuminationType, int imageIndex, int channelIndex);
 
-	void setChannelLightPath(String lightPath, int imageIndex, int channelIndex);
-
-	void setChannelLightSourceSettings(String lightSourceSettings, int imageIndex, int channelIndex);
-
+	// Ignoring LightPath element, complex property
+	// Ignoring LightSourceSettings element, complex property
 	void setChannelNDFilter(Double ndfilter, int imageIndex, int channelIndex);
 
 	void setChannelName(String name, int imageIndex, int channelIndex);
@@ -222,24 +207,6 @@ public interface MetadataStore
 	void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex);
 
 	void setChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int channelIndex);
-
-	// ChannelProfile property storage
-	// {u'ProfileSet': None}
-	// Is multi path? False
-
-	void setChannelProfileDescription(String description, int channelProfileIndex);
-
-	void setChannelProfileDetectorSettings(String detectorSettings, int channelProfileIndex);
-
-	void setChannelProfileFilterSetRef(String filterSet, int channelProfileIndex);
-
-	void setChannelProfileLightSourceSettings(String lightSourceSettings, int channelProfileIndex);
-
-	void setChannelProfileName(String name, int channelProfileIndex);
-
-	void setChannelProfileOTFRef(String otf, int channelProfileIndex);
-
-	void setChannelProfileOrigin(ProfileSource origin, int channelProfileIndex);
 
 	// Contact property storage
 	// {u'Group': {u'OME': None}}
@@ -262,6 +229,7 @@ public interface MetadataStore
 
 	void setDatasetID(String id, int datasetIndex);
 
+	// Ignoring Image_BackReference back reference
 	void setDatasetName(String name, int datasetIndex);
 
 	void setDatasetProjectRef(String project, int datasetIndex, int projectRefIndex);
@@ -300,39 +268,29 @@ public interface MetadataStore
 	void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex);
 
 	// DetectorSettings property storage
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
 
-	void setChannelProfileDetectorSettingsBinning(Binning binning, int channelProfileIndex);
+	void setDetectorSettingsBinning(Binning binning, int imageIndex, int channelIndex);
 
-	void setChannelDetectorSettingsBinning(Binning binning, int imageIndex, int channelIndex);
+	void setDetectorSettingsGain(Double gain, int imageIndex, int channelIndex);
 
-	void setChannelProfileDetectorSettingsGain(Double gain, int channelProfileIndex);
+	void setDetectorSettingsID(String id, int imageIndex, int channelIndex);
 
-	void setChannelDetectorSettingsGain(Double gain, int imageIndex, int channelIndex);
+	void setDetectorSettingsOffset(Double offset, int imageIndex, int channelIndex);
 
-	void setChannelProfileDetectorSettingsID(String id, int channelProfileIndex);
+	void setDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int channelIndex);
 
-	void setChannelDetectorSettingsID(String id, int imageIndex, int channelIndex);
-
-	void setChannelProfileDetectorSettingsOffset(Double offset, int channelProfileIndex);
-
-	void setChannelDetectorSettingsOffset(Double offset, int imageIndex, int channelIndex);
-
-	void setChannelProfileDetectorSettingsReadOutRate(Double readOutRate, int channelProfileIndex);
-
-	void setChannelDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int channelIndex);
-
-	void setChannelProfileDetectorSettingsVoltage(Double voltage, int channelProfileIndex);
-
-	void setChannelDetectorSettingsVoltage(Double voltage, int imageIndex, int channelIndex);
+	void setDetectorSettingsVoltage(Double voltage, int imageIndex, int channelIndex);
 
 	// Dichroic property storage
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
 
+	// Ignoring LightPath_BackReference back reference
 	void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex);
 
 	void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex);
@@ -352,12 +310,28 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setDoubleAnnotationID(String id, int doubleAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setDoubleAnnotationNamespace(String namespace, int doubleAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// Ellipse property storage
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
@@ -437,8 +411,8 @@ public interface MetadataStore
 
 	void setExperimentID(String id, int experimentIndex);
 
-	void setExperimentMicrobeamManipulation(String microbeamManipulation, int experimentIndex, int microbeamManipulationIndex);
-
+	// Ignoring Image_BackReference back reference
+	// Ignoring MicrobeamManipulation element, complex property
 	void setExperimentType(ExperimentType type, int experimentIndex);
 
 	// ExperimentRef property storage
@@ -454,22 +428,27 @@ public interface MetadataStore
 
 	void setExperimenterAnnotationRef(String annotation, int experimenterIndex, int annotationRefIndex);
 
+	// Ignoring Dataset_BackReference back reference
 	void setExperimenterDisplayName(String displayName, int experimenterIndex);
 
 	void setExperimenterEmail(String email, int experimenterIndex);
 
+	// Ignoring Experiment_BackReference back reference
 	void setExperimenterFirstName(String firstName, int experimenterIndex);
 
 	void setExperimenterGroupRef(String group, int experimenterIndex, int groupRefIndex);
 
 	void setExperimenterID(String id, int experimenterIndex);
 
+	// Ignoring Image_BackReference back reference
 	void setExperimenterInstitution(String institution, int experimenterIndex);
 
 	void setExperimenterLastName(String lastName, int experimenterIndex);
 
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	void setExperimenterMiddleName(String middleName, int experimenterIndex);
 
+	// Ignoring Project_BackReference back reference
 	void setExperimenterUserName(String userName, int experimenterIndex);
 
 	// ExperimenterRef property storage
@@ -479,16 +458,6 @@ public interface MetadataStore
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference ExperimenterRef
-	// External property storage
-	// {u'BinaryFile': {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}}
-	// Is multi path? True
-
-	void setBinaryFileExternalCompression(Compression compression, int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	void setBinaryFileExternalSHA1(String sha1, int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
-	void setBinaryFileExternalhref(String href, int fileAnnotationIndex, int instrumentIndex, int OTFIndex);
-
 	// Filament property storage
 	// {u'LightSource': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
@@ -515,20 +484,37 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
-	void setFileAnnotationBinaryFile(String binaryFile, int fileAnnotationIndex);
-
+	// Ignoring BinaryFile element, complex property
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setFileAnnotationID(String id, int fileAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setFileAnnotationNamespace(String namespace, int fileAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// Filter property storage
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex);
 
 	void setFilterID(String id, int instrumentIndex, int filterIndex);
 
+	// Ignoring LightPath_BackReference back reference
 	void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
 
 	void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
@@ -537,14 +523,14 @@ public interface MetadataStore
 
 	void setFilterSerialNumber(String serialNumber, int instrumentIndex, int filterIndex);
 
-	void setFilterTransmittanceRange(String transmittanceRange, int instrumentIndex, int filterIndex);
-
+	// Ignoring TransmittanceRange element, complex property
 	void setFilterType(FilterType type, int instrumentIndex, int filterIndex);
 
 	// FilterSet property storage
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
 	void setFilterSetDichroicRef(String dichroic, int instrumentIndex, int filterSetIndex);
 
 	void setFilterSetEmissionFilterRef(String emissionFilter, int instrumentIndex, int filterSetIndex, int emissionFilterRefIndex);
@@ -559,10 +545,11 @@ public interface MetadataStore
 
 	void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex);
 
+	// Ignoring OTF_BackReference back reference
 	void setFilterSetSerialNumber(String serialNumber, int instrumentIndex, int filterSetIndex);
 
 	// FilterSetRef property storage
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -574,14 +561,18 @@ public interface MetadataStore
 
 	void setGroupContact(String contact, int groupIndex);
 
+	// Ignoring Dataset_BackReference back reference
 	void setGroupDescription(String description, int groupIndex);
 
+	// Ignoring Experimenter_BackReference back reference
 	void setGroupID(String id, int groupIndex);
 
+	// Ignoring Image_BackReference back reference
 	void setGroupLeader(String leader, int groupIndex);
 
 	void setGroupName(String name, int groupIndex);
 
+	// Ignoring Project_BackReference back reference
 	// GroupRef property storage
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
@@ -609,36 +600,19 @@ public interface MetadataStore
 
 	void setImageID(String id, int imageIndex);
 
-	void setImageImagingEnvironment(String imagingEnvironment, int imageIndex);
-
+	// Ignoring ImagingEnvironment element, complex property
 	void setImageInstrumentRef(String instrument, int imageIndex);
 
 	void setImageMicrobeamManipulationRef(String microbeamManipulation, int imageIndex, int microbeamManipulationRefIndex);
 
 	void setImageName(String name, int imageIndex);
 
-	void setImageObjectiveSettings(String objectiveSettings, int imageIndex);
-
-	void setImagePixels(String pixels, int imageIndex);
-
+	// Ignoring ObjectiveSettings element, complex property
+	// Ignoring Pixels element, complex property
 	void setImageROIRef(String roi, int imageIndex, int ROIRefIndex);
 
-	void setImageStageLabel(String stageLabel, int imageIndex);
-
-	// ImageProfile property storage
-	// {u'ProfileSet': None}
-	// Is multi path? False
-
-	void setImageProfileDescription(String description, int imageProfileIndex);
-
-	void setImageProfileInstrumentRef(String instrument, int imageProfileIndex);
-
-	void setImageProfileName(String name, int imageProfileIndex);
-
-	void setImageProfileObjectiveSettings(String objectiveSettings, int imageProfileIndex);
-
-	void setImageProfileorigin(ProfileSource origin, int imageProfileIndex);
-
+	// Ignoring StageLabel element, complex property
+	// Ignoring WellSample_BackReference back reference
 	// ImageRef property storage
 	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
 	// Is multi path? False
@@ -652,9 +626,9 @@ public interface MetadataStore
 
 	void setImagingEnvironmentAirPressure(Double airPressure, int imageIndex);
 
-	void setImagingEnvironmentCO2Percent(String co2percent, int imageIndex);
+	void setImagingEnvironmentCO2Percent(PercentFraction co2percent, int imageIndex);
 
-	void setImagingEnvironmentHumidity(String humidity, int imageIndex);
+	void setImagingEnvironmentHumidity(PercentFraction humidity, int imageIndex);
 
 	void setImagingEnvironmentTemperature(Double temperature, int imageIndex);
 
@@ -662,30 +636,23 @@ public interface MetadataStore
 	// {u'OME': None}
 	// Is multi path? False
 
-	void setInstrumentDetector(String detector, int instrumentIndex, int detectorIndex);
-
-	void setInstrumentDichroic(String dichroic, int instrumentIndex, int dichroicIndex);
-
-	void setInstrumentFilter(String filter, int instrumentIndex, int filterIndex);
-
-	void setInstrumentFilterSet(String filterSet, int instrumentIndex, int filterSetIndex);
-
+	// Ignoring Detector element, complex property
+	// Ignoring Dichroic element, complex property
+	// Ignoring Filter element, complex property
+	// Ignoring FilterSet element, complex property
 	void setInstrumentID(String id, int instrumentIndex);
 
-	void setInstrumentLightSource(String lightSource, int instrumentIndex, int lightSourceIndex);
-
-	void setInstrumentMicroscope(String microscope, int instrumentIndex);
-
-	void setInstrumentOTF(String otf, int instrumentIndex, int OTFIndex);
-
-	void setInstrumentObjective(String objective, int instrumentIndex, int objectiveIndex);
-
+	// Ignoring Image_BackReference back reference
+	// Ignoring LightSource element, complex property
+	// Ignoring Microscope element, complex property
+	// Ignoring OTF element, complex property
+	// Ignoring Objective element, complex property
 	// InstrumentRef property storage
-	// {u'Image': {u'OME': None}, u'ImageProfile': {u'ProfileSet': None}}
-	// Is multi path? True
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
 
 	// 1:1
-	// Is multi path? True
+	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
 	// Laser property storage
 	// {u'LightSource': {u'Instrument': {u'OME': None}}}
@@ -763,22 +730,16 @@ public interface MetadataStore
 	void setLightPathExcitationFilterRef(String excitationFilter, int imageIndex, int channelIndex, int excitationFilterRefIndex);
 
 	// LightSourceSettings property storage
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
-	void setChannelProfileLightSourceSettingsAttenuation(String attenuation, int channelProfileIndex);
+	void setChannelLightSourceSettingsAttenuation(PercentFraction attenuation, int imageIndex, int channelIndex);
 
-	void setChannelLightSourceSettingsAttenuation(String attenuation, int imageIndex, int channelIndex);
-
-	void setMicrobeamManipulationLightSourceSettingsAttenuation(String attenuation, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
-
-	void setChannelProfileLightSourceSettingsID(String id, int channelProfileIndex);
+	void setMicrobeamManipulationLightSourceSettingsAttenuation(PercentFraction attenuation, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
 
 	void setChannelLightSourceSettingsID(String id, int imageIndex, int channelIndex);
 
 	void setMicrobeamManipulationLightSourceSettingsID(String id, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
-
-	void setChannelProfileLightSourceSettingsWavelength(PositiveInteger wavelength, int channelProfileIndex);
 
 	void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex);
 
@@ -843,20 +804,52 @@ public interface MetadataStore
 
 	void setListAnnotationAnnotationRef(String annotation, int listAnnotationIndex, int annotationRefIndex);
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setListAnnotationID(String id, int listAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setListAnnotationNamespace(String namespace, int listAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// LongAnnotation property storage
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setLongAnnotationID(String id, int longAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setLongAnnotationNamespace(String namespace, int longAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	void setLongAnnotationValue(Long value, int longAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// Mask property storage
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
@@ -902,8 +895,7 @@ public interface MetadataStore
 
 	void setMaskTransform(String transform, int ROIIndex, int shapeIndex);
 
-	void setMaskBinData(String binData, int ROIIndex, int shapeIndex, int binDataIndex);
-
+	// Ignoring BinData element, complex property
 	void setMaskX(Double x, int ROIIndex, int shapeIndex);
 
 	void setMaskY(Double y, int ROIIndex, int shapeIndex);
@@ -920,8 +912,8 @@ public interface MetadataStore
 
 	void setMicrobeamManipulationID(String id, int experimentIndex, int microbeamManipulationIndex);
 
-	void setMicrobeamManipulationLightSourceSettings(String lightSourceSettings, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
-
+	// Ignoring Image_BackReference back reference
+	// Ignoring LightSourceSettings element, complex property
 	void setMicrobeamManipulationROIRef(String roi, int experimentIndex, int microbeamManipulationIndex, int ROIRefIndex);
 
 	void setMicrobeamManipulationType(MicrobeamManipulationType type, int experimentIndex, int microbeamManipulationIndex);
@@ -951,14 +943,13 @@ public interface MetadataStore
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
-	void setOTFBinaryFile(String binaryFile, int instrumentIndex, int OTFIndex);
-
+	// Ignoring BinaryFile element, complex property
+	// Ignoring Channel_BackReference back reference
 	void setOTFFilterSetRef(String filterSet, int instrumentIndex, int OTFIndex);
 
 	void setOTFID(String id, int instrumentIndex, int OTFIndex);
 
-	void setOTFObjectiveSettings(String objectiveSettings, int instrumentIndex, int OTFIndex);
-
+	// Ignoring ObjectiveSettings element, complex property
 	void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int OTFIndex);
 
 	void setOTFSizeX(PositiveInteger sizeX, int instrumentIndex, int OTFIndex);
@@ -968,11 +959,11 @@ public interface MetadataStore
 	void setOTFType(PixelType type, int instrumentIndex, int OTFIndex);
 
 	// OTFRef property storage
-	// {u'ChannelProfile': {u'ProfileSet': None}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
 
 	// 1:1
-	// Is multi path? True
+	// Is multi path? False
 	// Ignoring ID property of reference OTFRef
 	// Objective property storage
 	// {u'Instrument': {u'OME': None}}
@@ -1003,30 +994,22 @@ public interface MetadataStore
 	void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex);
 
 	// ObjectiveSettings property storage
-	// {u'Image': {u'OME': None}, u'ImageProfile': {u'ProfileSet': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
 	void setImageObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex);
-
-	void setImageProfileObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageProfileIndex);
 
 	void setOTFObjectiveSettingsCorrectionCollar(Double correctionCollar, int instrumentIndex, int OTFIndex);
 
 	void setImageObjectiveSettingsID(String id, int imageIndex);
 
-	void setImageProfileObjectiveSettingsID(String id, int imageProfileIndex);
-
 	void setOTFObjectiveSettingsID(String id, int instrumentIndex, int OTFIndex);
 
 	void setImageObjectiveSettingsMedium(Medium medium, int imageIndex);
 
-	void setImageProfileObjectiveSettingsMedium(Medium medium, int imageProfileIndex);
-
 	void setOTFObjectiveSettingsMedium(Medium medium, int instrumentIndex, int OTFIndex);
 
 	void setImageObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex);
-
-	void setImageProfileObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageProfileIndex);
 
 	void setOTFObjectiveSettingsRefractiveIndex(Double refractiveIndex, int instrumentIndex, int OTFIndex);
 
@@ -1083,24 +1066,20 @@ public interface MetadataStore
 
 	void setPixelsAnnotationRef(String annotation, int imageIndex, int annotationRefIndex);
 
-	void setPixelsBinData(String binData, int imageIndex, int binDataIndex);
-
-	void setPixelsChannel(String channel, int imageIndex, int channelIndex);
-
+	// Ignoring BinData element, complex property
+	// Ignoring Channel element, complex property
 	void setPixelsDimensionOrder(DimensionOrder dimensionOrder, int imageIndex);
 
 	void setPixelsID(String id, int imageIndex);
 
-	void setPixelsMetadataOnly(String metadataOnly, int imageIndex);
-
+	// Ignoring MetadataOnly element, complex property
 	void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex);
 
 	void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex);
 
 	void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex);
 
-	void setPixelsPlane(String plane, int imageIndex, int planeIndex);
-
+	// Ignoring Plane element, complex property
 	void setPixelsSizeC(PositiveInteger sizeC, int imageIndex);
 
 	void setPixelsSizeT(PositiveInteger sizeT, int imageIndex);
@@ -1111,8 +1090,7 @@ public interface MetadataStore
 
 	void setPixelsSizeZ(PositiveInteger sizeZ, int imageIndex);
 
-	void setPixelsTiffData(String tiffData, int imageIndex, int tiffDataIndex);
-
+	// Ignoring TiffData element, complex property
 	void setPixelsTimeIncrement(Double timeIncrement, int imageIndex);
 
 	void setPixelsType(PixelType type, int imageIndex);
@@ -1159,8 +1137,7 @@ public interface MetadataStore
 
 	void setPlateName(String name, int plateIndex);
 
-	void setPlatePlateAcquisition(String plateAcquisition, int plateIndex, int plateAcquisitionIndex);
-
+	// Ignoring PlateAcquisition element, complex property
 	void setPlateRowNamingConvention(NamingConvention rowNamingConvention, int plateIndex);
 
 	void setPlateRows(Integer rows, int plateIndex);
@@ -1169,8 +1146,7 @@ public interface MetadataStore
 
 	void setPlateStatus(String status, int plateIndex);
 
-	void setPlateWell(String well, int plateIndex, int wellIndex);
-
+	// Ignoring Well element, complex property
 	void setPlateWellOriginX(Double wellOriginX, int plateIndex);
 
 	void setPlateWellOriginY(Double wellOriginY, int plateIndex);
@@ -1306,6 +1282,7 @@ public interface MetadataStore
 
 	void setProjectAnnotationRef(String annotation, int projectIndex, int annotationRefIndex);
 
+	// Ignoring Dataset_BackReference back reference
 	void setProjectDescription(String description, int projectIndex);
 
 	void setProjectExperimenterRef(String experimenter, int projectIndex);
@@ -1340,12 +1317,13 @@ public interface MetadataStore
 
 	void setROIID(String id, int ROIIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	void setROIName(String name, int ROIIndex);
 
 	void setROINamespace(String namespace, int ROIIndex);
 
-	void setROIUnion(String union, int ROIIndex);
-
+	// Ignoring Union element, complex property
 	// ROIRef property storage
 	// {u'Image': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
@@ -1367,6 +1345,7 @@ public interface MetadataStore
 
 	void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
 
+	// Ignoring Well_BackReference back reference
 	// ReagentRef property storage
 	// {u'Well': {u'Plate': {u'OME': None}}}
 	// Is multi path? False
@@ -1445,8 +1424,7 @@ public interface MetadataStore
 
 	void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex);
 
-	void setScreenReagent(String reagent, int screenIndex, int reagentIndex);
-
+	// Ignoring Reagent element, complex property
 	void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex);
 
 	void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex);
@@ -1476,32 +1454,40 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setStringAnnotationID(String id, int stringAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setStringAnnotationNamespace(String namespace, int stringAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	void setStringAnnotationValue(String value, int stringAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// StructuredAnnotations property storage
 	// {u'OME': None}
 	// Is multi path? False
 
-	void setStructuredAnnotationsBooleanAnnotation(String booleanAnnotation);
-
-	void setStructuredAnnotationsDoubleAnnotation(String doubleAnnotation);
-
-	void setStructuredAnnotationsFileAnnotation(String fileAnnotation);
-
-	void setStructuredAnnotationsListAnnotation(String listAnnotation);
-
-	void setStructuredAnnotationsLongAnnotation(String longAnnotation);
-
-	void setStructuredAnnotationsStringAnnotation(String stringAnnotation);
-
-	void setStructuredAnnotationsTimestampAnnotation(String timestampAnnotation);
-
-	void setStructuredAnnotationsXMLAnnotation(String xmlannotation);
-
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring StringAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
 	// Text property storage
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
@@ -1567,18 +1553,33 @@ public interface MetadataStore
 
 	void setTiffDataPlaneCount(Integer planeCount, int imageIndex, int tiffDataIndex);
 
-	void setTiffDataUUID(String uuid, int imageIndex, int tiffDataIndex);
-
+	// Ignoring UUID element, complex property
 	// TimestampAnnotation property storage
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setTimestampAnnotationID(String id, int timestampAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setTimestampAnnotationNamespace(String namespace, int timestampAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	void setTimestampAnnotationValue(String value, int timestampAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	// TransmittanceRange property storage
 	// {u'Filter': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
@@ -1591,7 +1592,7 @@ public interface MetadataStore
 
 	void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex);
 
-	void setTransmittanceRangeTransmittance(String transmittance, int instrumentIndex, int filterIndex);
+	void setTransmittanceRangeTransmittance(PercentFraction transmittance, int instrumentIndex, int filterIndex);
 
 	// UUID property storage
 	// {u'TiffData': {u'Pixels': {u'Image': {u'OME': None}}}}
@@ -1603,8 +1604,7 @@ public interface MetadataStore
 	// {u'ROI': {u'OME': None}}
 	// Is multi path? False
 
-	void setUnionShape(String shape, int ROIIndex, int shapeIndex);
-
+	// Ignoring Shape element, complex property
 	// Well property storage
 	// {u'Plate': {u'OME': None}}
 	// Is multi path? False
@@ -1627,8 +1627,7 @@ public interface MetadataStore
 
 	void setWellStatus(String status, int plateIndex, int wellIndex);
 
-	void setWellWellSample(String wellSample, int plateIndex, int wellIndex, int wellSampleIndex);
-
+	// Ignoring WellSample element, complex property
 	// WellSample property storage
 	// {u'Well': {u'Plate': {u'OME': None}}}
 	// Is multi path? False
@@ -1641,6 +1640,7 @@ public interface MetadataStore
 
 	void setWellSampleIndex(NonNegativeInteger index, int plateIndex, int wellIndex, int wellSampleIndex);
 
+	// Ignoring PlateAcquisition_BackReference back reference
 	void setWellSamplePositionX(Double positionX, int plateIndex, int wellIndex, int wellSampleIndex);
 
 	void setWellSamplePositionY(Double positionY, int plateIndex, int wellIndex, int wellSampleIndex);
@@ -1658,10 +1658,26 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
 	void setXMLAnnotationID(String id, int XMLAnnotationIndex);
 
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
 	void setXMLAnnotationNamespace(String namespace, int XMLAnnotationIndex);
 
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
 	void setXMLAnnotationValue(String value, int XMLAnnotationIndex);
 
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 }
