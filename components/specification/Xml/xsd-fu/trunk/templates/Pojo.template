@@ -88,7 +88,7 @@ public class ${klass.name} extends ${klass.javaBase}
 	// Back reference ${prop.name}
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex()) %}
 	// Property
 	private ${prop.javaType} ${prop.javaInstanceVariableName};
 {% end %}\
@@ -205,7 +205,7 @@ ${customContent}\
 {% end %}\
 		}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isComplex()) %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
 		List<Element> ${prop.name}_nodeList =
 				getChildrenByTagName(element, "${prop.name}");
 		if (${prop.name}_nodeList.size() > 1)
@@ -372,7 +372,7 @@ ${customContent}\
 		}
 	}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex()) %}
 	// Property
 	public ${prop.javaType} get${prop.javaMethodName}()
 	{
@@ -449,7 +449,7 @@ ${customContent}\
 		}
 
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
 		if (${prop.javaInstanceVariableName} != null)
 		{
 {% choose %}\
