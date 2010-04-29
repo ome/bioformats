@@ -46,6 +46,7 @@ Executes an OME-XML Schema definition parsing and code generation subcommand.
 
 Available subcommands:
   java_classes
+  omexml_metadata
   metadata_store
   metadata_retrieve
   metadata_aggregate
@@ -539,7 +540,7 @@ if __name__ == '__main__':
 	a = sys.argv[1]
 	if a == "java_classes":
 		main(sys.argv[2:])
-	if a == "omexml_metadata":
+	elif a == "omexml_metadata":
 		omeXmlMetadataMain(sys.argv[2:])
 	elif a == "metadata_store":
 		metadataStoreMain(sys.argv[2:])
