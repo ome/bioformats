@@ -253,7 +253,7 @@ def enumHandlersMain(args):
 			f.write(classContent)
 			f.close()
 
-def index_string(name):
+def index_string(name, max_occurs):
 	"""Makes a Java method signature string from an index name."""
 	if name[:2].isupper():
 		return "int %sIndex" % name
@@ -271,11 +271,11 @@ def max_occurs_under_parent(model, parent, name):
 			return prop.maxOccurs
 	return 0
 
-def resolve_indexes(indexes, model, names, child=None, key=None, level=0):
+def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0, min_occurs=2):
 	"""
-	Resolves a String index representation of the hierarchical structure of
-	element names. Updates indexes list and returns a boolean True if the
-	indexes are multi-path, a boolean False otherwise.
+	Resolves a representation of the hierarchical structure of element names.
+	Updates the result list and returns a boolean True if the result list is
+	multi-path, a boolean False otherwise.
 	"""
 	is_multi_path = False
 	if names is None:
@@ -284,20 +284,17 @@ def resolve_indexes(indexes, model, names, child=None, key=None, level=0):
 		# Set our key and instantiate our index list if we're the first level
 		if level == 1:
 			key = name
-			indexes[key] = list()
+			results[key] = list()
 		# We only want to add the index if the object count at this level
 		# is greater than 1.
 		max_occurs = max_occurs_under_parent(model, name, child)
 		if len(names.keys()) > 1:
 			is_multi_path = True
-		is_child_multi_path = resolve_indexes(indexes, model, names[name], name, key, level + 1)
+		is_child_multi_path = resolve_hierarchy(results, model, names[name], func, name, key, level + 1, min_occurs)
 		if is_child_multi_path:
 			is_multi_path = True
-		if child is not None and max_occurs > 1:
-			if level == 0:
-				indexes[indexes.keys()[-1]].append(index_string(child))
-			else:
-				indexes[key].append(index_string(child))
+		if child is not None and max_occurs >= min_occurs:
+			results[key].append(func(child, max_occurs))
 	return is_multi_path
 
 def processMetadataTemplate(template, outputFilename, namespace, args):
@@ -314,12 +311,12 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 		name = obj.name
 		indexes[name] = odict()
 		parents[name] = resolve_parents(model, name)
-		is_multi_path[name] = resolve_indexes(indexes[name], model,
-		                                      {name: parents[name]})
-		#for key in indexes[name].keys():
-		#	indexes[name][key].reverse()
+		is_multi_path[name] = resolve_hierarchy(indexes[name], model,
+		                                        {name: parents[name]},
+		                                        index_string)
 	fu = TemplateInfo(None, None)
 	fu.max_occurs_under_parent = max_occurs_under_parent
+	fu.resolve_hierarchy = resolve_hierarchy
 	template = NewTextTemplate(open(template).read())
 	content = template.generate(fu=fu, model=model, parents=parents,
 	                            is_multi_path=is_multi_path,
@@ -327,6 +324,27 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 	f = open(outputFilename, "w")
 	f.write(content)
 	f.close()
+
+def omeXmlMetadataMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataStore implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl.java",
+	                        namespace, args)
 
 def metadataStoreMain(args):
 	"""
@@ -348,7 +366,7 @@ def metadataStoreMain(args):
 
 	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore.java",
 	                        namespace, args)
-	
+
 def metadataRetrieveMain(args):
 	"""
 	Default main() that parses command line options and generates a
@@ -521,6 +539,8 @@ if __name__ == '__main__':
 	a = sys.argv[1]
 	if a == "java_classes":
 		main(sys.argv[2:])
+	if a == "omexml_metadata":
+		omeXmlMetadataMain(sys.argv[2:])
 	elif a == "metadata_store":
 		metadataStoreMain(sys.argv[2:])
 	elif a == "metadata_retrieve":
