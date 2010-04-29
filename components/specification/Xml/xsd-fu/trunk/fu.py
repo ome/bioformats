@@ -49,6 +49,11 @@ except ImportError:
 #logging.basicConfig(level=logging.DEBUG,
 #                    format='%(asctime)s %(levelname)s %(message)s')
 
+# Types which should be ignored from metadata store, retrieve, etc. code
+# generation due either to their incompatibility or complexity as it applies
+# to these interfaces and implementations.
+METADATA_OBJECT_IGNORE = ('BinData', 'External')
+
 # A global mapping from XSD Schema types and Java types that is used to
 # inform and override type mappings for OME Model properties which are
 # comprised of XML Schema attributes, elements and OME XML reference virtual
@@ -95,10 +100,10 @@ def updateTypeMaps(namespace):
 		namespace + 'double': 'Double',
 		namespace + 'anyURI': 'String',
 		namespace + 'hexBinary': 'String',
+		'PercentFraction': 'PercentFraction',
 	}
 	global JAVA_TYPE_MAP
 	JAVA_TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
-	JAVA_TYPE_MAP['PercentFraction'] = 'PercentFraction'
 	JAVA_TYPE_MAP['MIMEtype'] = 'String'
 	JAVA_TYPE_MAP['Leader'] = 'Experimenter'
 	JAVA_TYPE_MAP['Contact'] = 'Experimenter'

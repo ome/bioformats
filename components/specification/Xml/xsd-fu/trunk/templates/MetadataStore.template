@@ -135,6 +135,7 @@ public interface MetadataStore
 	void setUUID(String uuid);
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
 	// ${o.name} property storage
 	// ${repr(parents[o.name])}
@@ -165,10 +166,19 @@ ${setter(k, o, prop, v)}
 {% end %}\
 {% otherwise %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
-{% if not prop.isBackReference %}\
+{% choose %}\
+{% when prop.isBackReference %}\
+	// Ignoring ${prop.name} back reference
+{% end %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+	// Ignoring ${prop.name} element, complex property
+{% end %}\
+{% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
 ${setter(k, o, prop, v)}
 
+{% end %}\
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\

@@ -318,6 +318,7 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 	fu = TemplateInfo(None, None)
 	fu.max_occurs_under_parent = max_occurs_under_parent
 	fu.resolve_hierarchy = resolve_hierarchy
+	fu.METADATA_OBJECT_IGNORE = METADATA_OBJECT_IGNORE
 	template = NewTextTemplate(open(template).read())
 	content = template.generate(fu=fu, model=model, parents=parents,
 	                            is_multi_path=is_multi_path,
