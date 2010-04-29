@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-29 09:45:43+0100
+ * Created by callan via xsd-fu on 2010-04-29 16:39:29+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -131,7 +131,8 @@ public abstract class Shape extends AbstractOMEModelObject
 	// Reference AnnotationRef
 	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
-	// *** WARNING *** Unhandled or skipped property Description
+	// Property
+	private String description;
 
 	// -- Constructors --
 
@@ -396,7 +397,22 @@ public abstract class Shape extends AbstractOMEModelObject
 			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationList_reference);
 		}
-		// *** WARNING *** Unhandled or skipped property Description
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.size()));
+		}
+		else if (Description_nodeList.size() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
+		}
 	}
 
 	// -- Shape API methods --
@@ -663,7 +679,16 @@ public abstract class Shape extends AbstractOMEModelObject
 		return annotationList.remove(o);
 	}
 
-	// *** WARNING *** Unhandled or skipped property Description
+	// Property
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
 	protected Element asXMLElement(Document document, Element Shape_element)
 	{
@@ -771,6 +796,15 @@ public abstract class Shape extends AbstractOMEModelObject
 		{
 			// Attribute property Name
 			Shape_element.setAttribute("Name", name.toString());
+		}
+		if (description != null)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			Element description_element = 
+					document.createElementNS(NAMESPACE, "Description");
+			description_element.setTextContent(description.toString());
+			Shape_element.appendChild(description_element);
 		}
 		return super.asXMLElement(document, Shape_element);
 	}
