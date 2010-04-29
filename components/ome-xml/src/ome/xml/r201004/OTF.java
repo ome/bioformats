@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
+ * Created by callan via xsd-fu on 2010-04-29 09:45:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -84,9 +84,6 @@ public class OTF extends AbstractOMEModelObject
 
 	// Back reference Channel_BackReference
 	private List<Channel> channel_BackReferenceList = new ArrayList<Channel>();
-
-	// Back reference ChannelProfile_BackReference
-	private List<ChannelProfile> channelProfile_BackReferenceList = new ArrayList<ChannelProfile>();
 
 	// -- Constructors --
 
@@ -221,7 +218,6 @@ public class OTF extends AbstractOMEModelObject
 					(Element) BinaryFile_nodeList.get(0), model));
 		}
 		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 	}
 
 	// -- OTF API methods --
@@ -368,37 +364,6 @@ public class OTF extends AbstractOMEModelObject
 		return channel_BackReferenceList.remove(o);
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedChannelProfileList()
-	{
-		return channelProfile_BackReferenceList.size();
-	}
-
-	public List<ChannelProfile> copyLinkedChannelProfileList()
-	{
-		return new ArrayList<ChannelProfile>(channelProfile_BackReferenceList);
-	}
-
-	public ChannelProfile getLinkedChannelProfile(int index)
-	{
-		return channelProfile_BackReferenceList.get(index);
-	}
-
-	public ChannelProfile setLinkedChannelProfile(int index, ChannelProfile o)
-	{
-		return channelProfile_BackReferenceList.set(index, o);
-	}
-
-	public boolean linkChannelProfile(ChannelProfile o)
-	{
-		return channelProfile_BackReferenceList.add(o);
-	}
-
-	public boolean unlinkChannelProfile(ChannelProfile o)
-	{
-		return channelProfile_BackReferenceList.remove(o);
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -460,10 +425,6 @@ public class OTF extends AbstractOMEModelObject
 		if (channel_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference Channel_BackReference
-		}
-		if (channelProfile_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference ChannelProfile_BackReference
 		}
 		return super.asXMLElement(document, OTF_element);
 	}

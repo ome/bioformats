@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-27 09:58:45+0100
+ * Created by callan via xsd-fu on 2010-04-29 09:45:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,9 +87,6 @@ public class Instrument extends AbstractOMEModelObject
 
 	// Back reference Image_BackReference
 	private List<Image> image_BackReferenceList = new ArrayList<Image>();
-
-	// Back reference ImageProfile_BackReference
-	private List<ImageProfile> imageProfile_BackReferenceList = new ArrayList<ImageProfile>();
 
 	// -- Constructors --
 
@@ -270,7 +267,6 @@ public class Instrument extends AbstractOMEModelObject
 					new OTF(OTF_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
-		// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 	}
 
 	// -- Instrument API methods --
@@ -553,37 +549,6 @@ public class Instrument extends AbstractOMEModelObject
 		return image_BackReferenceList.remove(o);
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedImageProfileList()
-	{
-		return imageProfile_BackReferenceList.size();
-	}
-
-	public List<ImageProfile> copyLinkedImageProfileList()
-	{
-		return new ArrayList<ImageProfile>(imageProfile_BackReferenceList);
-	}
-
-	public ImageProfile getLinkedImageProfile(int index)
-	{
-		return imageProfile_BackReferenceList.get(index);
-	}
-
-	public ImageProfile setLinkedImageProfile(int index, ImageProfile o)
-	{
-		return imageProfile_BackReferenceList.set(index, o);
-	}
-
-	public boolean linkImageProfile(ImageProfile o)
-	{
-		return imageProfile_BackReferenceList.add(o);
-	}
-
-	public boolean unlinkImageProfile(ImageProfile o)
-	{
-		return imageProfile_BackReferenceList.remove(o);
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -675,10 +640,6 @@ public class Instrument extends AbstractOMEModelObject
 		if (image_BackReferenceList != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
-		}
-		if (imageProfile_BackReferenceList != null)
-		{
-			// *** IGNORING *** Skipped back reference ImageProfile_BackReference
 		}
 		return super.asXMLElement(document, Instrument_element);
 	}
