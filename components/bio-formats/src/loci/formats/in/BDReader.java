@@ -494,6 +494,7 @@ public class BDReader extends FormatReader {
   }
 
   private void parseROIs(MetadataStore store) throws IOException {
+    if (roiFile == null) return;
     String roiData = DataTools.readFile(roiFile);
     String[] lines = roiData.split("\r\n");
 
