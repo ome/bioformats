@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-29 17:55:03+0100
+ * Created by callan via xsd-fu on 2010-04-30 10:56:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -96,36 +96,49 @@ public interface MetadataStore
 	/** Sets the UUID associated with this collection of metadata. */
 	void setUUID(String uuid);
 
+	//
 	// AnnotationRef property storage
+	//
 	// {u'Plate': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'ROI': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference AnnotationRef
+
+	//
 	// Arc property storage
+	//
 	// {u'LightSource': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	void setArcID(String id, int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	void setArcLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	void setArcManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	void setArcModel(String model, int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	void setArcPower(Double power, int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	void setArcSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
 
 	void setArcType(ArcType type, int instrumentIndex, int lightSourceIndex);
 
+	//
 	// BinaryFile property storage
+	//
 	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
@@ -143,7 +156,9 @@ public interface MetadataStore
 
 	void setOTFBinaryFileSize(Integer size, int instrumentIndex, int OTFIndex);
 
+	//
 	// BooleanAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -169,7 +184,9 @@ public interface MetadataStore
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// Channel property storage
+	//
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
@@ -208,14 +225,19 @@ public interface MetadataStore
 
 	void setChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int channelIndex);
 
+	//
 	// Contact property storage
+	//
 	// {u'Group': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Contact
+
+	//
 	// Dataset property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -234,14 +256,19 @@ public interface MetadataStore
 
 	void setDatasetProjectRef(String project, int datasetIndex, int projectRefIndex);
 
+	//
 	// DatasetRef property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference DatasetRef
+
+	//
 	// Detector property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -267,7 +294,9 @@ public interface MetadataStore
 
 	void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex);
 
+	//
 	// DetectorSettings property storage
+	//
 	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
@@ -283,7 +312,9 @@ public interface MetadataStore
 
 	void setDetectorSettingsVoltage(Double voltage, int imageIndex, int channelIndex);
 
+	//
 	// Dichroic property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -299,14 +330,19 @@ public interface MetadataStore
 
 	void setDichroicSerialNumber(String serialNumber, int instrumentIndex, int dichroicIndex);
 
+	//
 	// DichroicRef property storage
+	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference DichroicRef
+
+	//
 	// DoubleAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -332,23 +368,30 @@ public interface MetadataStore
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// Ellipse property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setEllipseDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setEllipseFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setEllipseFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setEllipseID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setEllipseLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -356,25 +399,33 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setEllipseName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setEllipseStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setEllipseStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setEllipseStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setEllipseTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setEllipseTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setEllipseTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setEllipseTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setEllipseRadiusX(Double radiusX, int ROIIndex, int shapeIndex);
@@ -385,23 +436,33 @@ public interface MetadataStore
 
 	void setEllipseY(Double y, int ROIIndex, int shapeIndex);
 
+	//
 	// EmissionFilterRef property storage
+	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
+	//
 	// EmissionFilterRef property storage
+	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
+	//
 	// ExcitationFilterRef property storage
+	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
+	//
 	// ExcitationFilterRef property storage
+	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
+	//
 	// Experiment property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -415,14 +476,19 @@ public interface MetadataStore
 	// Ignoring MicrobeamManipulation element, complex property
 	void setExperimentType(ExperimentType type, int experimentIndex);
 
+	//
 	// ExperimentRef property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference ExperimentRef
+
+	//
 	// Experimenter property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -451,36 +517,49 @@ public interface MetadataStore
 	// Ignoring Project_BackReference back reference
 	void setExperimenterUserName(String userName, int experimenterIndex);
 
+	//
 	// ExperimenterRef property storage
+	//
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference ExperimenterRef
+
+	//
 	// Filament property storage
+	//
 	// {u'LightSource': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	void setFilamentID(String id, int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	void setFilamentLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	void setFilamentManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	void setFilamentModel(String model, int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	void setFilamentPower(Double power, int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	void setFilamentSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
 
 	void setFilamentType(FilamentType type, int instrumentIndex, int lightSourceIndex);
 
+	//
 	// FileAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -505,7 +584,9 @@ public interface MetadataStore
 	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// Filter property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -526,7 +607,9 @@ public interface MetadataStore
 	// Ignoring TransmittanceRange element, complex property
 	void setFilterType(FilterType type, int instrumentIndex, int filterIndex);
 
+	//
 	// FilterSet property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -548,14 +631,19 @@ public interface MetadataStore
 	// Ignoring OTF_BackReference back reference
 	void setFilterSetSerialNumber(String serialNumber, int instrumentIndex, int filterSetIndex);
 
+	//
 	// FilterSetRef property storage
+	//
 	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference FilterSetRef
+
+	//
 	// Group property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -573,14 +661,19 @@ public interface MetadataStore
 	void setGroupName(String name, int groupIndex);
 
 	// Ignoring Project_BackReference back reference
+	//
 	// GroupRef property storage
+	//
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference GroupRef
+
+	//
 	// Image property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -613,14 +706,19 @@ public interface MetadataStore
 
 	// Ignoring StageLabel element, complex property
 	// Ignoring WellSample_BackReference back reference
+	//
 	// ImageRef property storage
+	//
 	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference ImageRef
+
+	//
 	// ImagingEnvironment property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
@@ -632,7 +730,9 @@ public interface MetadataStore
 
 	void setImagingEnvironmentTemperature(Double temperature, int imageIndex);
 
+	//
 	// Instrument property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -647,31 +747,42 @@ public interface MetadataStore
 	// Ignoring Microscope element, complex property
 	// Ignoring OTF element, complex property
 	// Ignoring Objective element, complex property
+	//
 	// InstrumentRef property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
+
+	//
 	// Laser property storage
+	//
 	// {u'LightSource': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	void setLaserID(String id, int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	void setLaserLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	void setLaserManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	void setLaserModel(String model, int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	void setLaserPower(Double power, int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	void setLaserSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
 
 	void setLaserFrequencyMultiplication(PositiveInteger frequencyMultiplication, int instrumentIndex, int lightSourceIndex);
@@ -692,34 +803,47 @@ public interface MetadataStore
 
 	void setLaserWavelength(PositiveInteger wavelength, int instrumentIndex, int lightSourceIndex);
 
+	//
 	// Leader property storage
+	//
 	// {u'Group': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Leader
+
+	//
 	// LightEmittingDiode property storage
+	//
 	// {u'LightSource': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	void setLightEmittingDiodeID(String id, int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	void setLightEmittingDiodeLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	void setLightEmittingDiodeManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	void setLightEmittingDiodeModel(String model, int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	void setLightEmittingDiodePower(Double power, int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	void setLightEmittingDiodeSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
 
+	//
 	// LightPath property storage
+	//
 	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
@@ -729,7 +853,9 @@ public interface MetadataStore
 
 	void setLightPathExcitationFilterRef(String excitationFilter, int imageIndex, int channelIndex, int excitationFilterRefIndex);
 
+	//
 	// LightSourceSettings property storage
+	//
 	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
@@ -745,23 +871,30 @@ public interface MetadataStore
 
 	void setMicrobeamManipulationLightSourceSettingsWavelength(PositiveInteger wavelength, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
 
+	//
 	// Line property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setLineDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setLineFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setLineFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setLineID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setLineLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -769,25 +902,33 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setLineName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setLineStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setLineStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setLineStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setLineTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setLineTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setLineTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setLineTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setLineX1(Double x1, int ROIIndex, int shapeIndex);
@@ -798,7 +939,9 @@ public interface MetadataStore
 
 	void setLineY2(Double y2, int ROIIndex, int shapeIndex);
 
+	//
 	// ListAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -824,7 +967,9 @@ public interface MetadataStore
 	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// LongAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -850,23 +995,30 @@ public interface MetadataStore
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// Mask property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setMaskDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setMaskFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setMaskFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setMaskID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setMaskLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -874,25 +1026,33 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setMaskName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setMaskStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setMaskStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setMaskStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setMaskTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setMaskTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setMaskTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setMaskTransform(String transform, int ROIIndex, int shapeIndex);
 
 	// Ignoring BinData element, complex property
@@ -900,11 +1060,15 @@ public interface MetadataStore
 
 	void setMaskY(Double y, int ROIIndex, int shapeIndex);
 
+	//
 	// MetadataOnly property storage
+	//
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
+	//
 	// MicrobeamManipulation property storage
+	//
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
 
@@ -918,14 +1082,19 @@ public interface MetadataStore
 
 	void setMicrobeamManipulationType(MicrobeamManipulationType type, int experimentIndex, int microbeamManipulationIndex);
 
+	//
 	// MicrobeamManipulationRef property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference MicrobeamManipulationRef
+
+	//
 	// Microscope property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -939,7 +1108,9 @@ public interface MetadataStore
 
 	void setMicroscopeType(MicroscopeType type, int instrumentIndex);
 
+	//
 	// OTF property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -958,14 +1129,19 @@ public interface MetadataStore
 
 	void setOTFType(PixelType type, int instrumentIndex, int OTFIndex);
 
+	//
 	// OTFRef property storage
+	//
 	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference OTFRef
+
+	//
 	// Objective property storage
+	//
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
@@ -993,7 +1169,9 @@ public interface MetadataStore
 
 	void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex);
 
+	//
 	// ObjectiveSettings property storage
+	//
 	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
 
@@ -1013,23 +1191,30 @@ public interface MetadataStore
 
 	void setOTFObjectiveSettingsRefractiveIndex(Double refractiveIndex, int instrumentIndex, int OTFIndex);
 
+	//
 	// Path property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setPathDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setPathFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setPathFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setPathID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setPathLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1037,30 +1222,40 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setPathName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setPathStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setPathStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setPathStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setPathTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setPathTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setPathTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setPathTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setPathDefinition(String definition, int ROIIndex, int shapeIndex);
 
+	//
 	// Pixels property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
@@ -1095,7 +1290,9 @@ public interface MetadataStore
 
 	void setPixelsType(PixelType type, int imageIndex);
 
+	//
 	// Plane property storage
+	//
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
@@ -1119,7 +1316,9 @@ public interface MetadataStore
 
 	void setPlaneTheZ(Integer theZ, int imageIndex, int planeIndex);
 
+	//
 	// Plate property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -1151,7 +1350,9 @@ public interface MetadataStore
 
 	void setPlateWellOriginY(Double wellOriginY, int plateIndex);
 
+	//
 	// PlateAcquisition property storage
+	//
 	// {u'Plate': {u'OME': None}}
 	// Is multi path? False
 
@@ -1171,30 +1372,40 @@ public interface MetadataStore
 
 	void setPlateAcquisitionWellSampleRef(String wellSample, int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
 
+	//
 	// PlateRef property storage
+	//
 	// {u'Screen': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference PlateRef
+
+	//
 	// Point property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setPointDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setPointFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setPointFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setPointID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setPointLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1202,48 +1413,63 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setPointName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setPointStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setPointStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setPointStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setPointTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setPointTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setPointTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setPointTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setPointX(Double x, int ROIIndex, int shapeIndex);
 
 	void setPointY(Double y, int ROIIndex, int shapeIndex);
 
+	//
 	// Polyline property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setPolylineDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setPolylineFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setPolylineFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setPolylineID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setPolylineLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1251,32 +1477,42 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setPolylineName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setPolylineStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setPolylineStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setPolylineStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setPolylineTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setPolylineTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setPolylineTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setPolylineTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setPolylineClosed(Boolean closed, int ROIIndex, int shapeIndex);
 
 	void setPolylinePoints(String points, int ROIIndex, int shapeIndex);
 
+	//
 	// Project property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -1293,21 +1529,29 @@ public interface MetadataStore
 
 	void setProjectName(String name, int projectIndex);
 
+	//
 	// ProjectRef property storage
+	//
 	// {u'Dataset': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference ProjectRef
+
+	//
 	// Pump property storage
+	//
 	// {u'Laser': {u'LightSource': {u'Instrument': {u'OME': None}}}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Pump
+
+	//
 	// ROI property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -1324,14 +1568,19 @@ public interface MetadataStore
 	void setROINamespace(String namespace, int ROIIndex);
 
 	// Ignoring Union element, complex property
+	//
 	// ROIRef property storage
+	//
 	// {u'Image': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
 	// Is multi path? True
 	// Ignoring ID property of reference ROIRef
+
+	//
 	// Reagent property storage
+	//
 	// {u'Screen': {u'OME': None}}
 	// Is multi path? False
 
@@ -1346,30 +1595,40 @@ public interface MetadataStore
 	void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
 
 	// Ignoring Well_BackReference back reference
+	//
 	// ReagentRef property storage
+	//
 	// {u'Well': {u'Plate': {u'OME': None}}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference ReagentRef
+
+	//
 	// Rectangle property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setRectangleDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setRectangleFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setRectangleFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setRectangleID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setRectangleLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1377,25 +1636,33 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setRectangleName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setRectangleStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setRectangleStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setRectangleStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setRectangleTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setRectangleTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setRectangleTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setRectangleTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setRectangleHeight(Double height, int ROIIndex, int shapeIndex);
@@ -1406,7 +1673,9 @@ public interface MetadataStore
 
 	void setRectangleY(Double y, int ROIIndex, int shapeIndex);
 
+	//
 	// Screen property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -1431,14 +1700,19 @@ public interface MetadataStore
 
 	void setScreenType(String type, int screenIndex);
 
+	//
 	// ScreenRef property storage
+	//
 	// {u'Plate': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference ScreenRef
+
+	//
 	// StageLabel property storage
+	//
 	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
@@ -1450,7 +1724,9 @@ public interface MetadataStore
 
 	void setStageLabelZ(Double z, int imageIndex);
 
+	//
 	// StringAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -1476,7 +1752,9 @@ public interface MetadataStore
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// StructuredAnnotations property storage
+	//
 	// {u'OME': None}
 	// Is multi path? False
 
@@ -1488,23 +1766,30 @@ public interface MetadataStore
 	// Ignoring StringAnnotation element, complex property
 	// Ignoring TimestampAnnotation element, complex property
 	// Ignoring XMLAnnotation element, complex property
+	//
 	// Text property storage
+	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	void setTextDescription(String description, int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	void setTextFill(Integer fill, int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	void setTextFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	void setTextID(String id, int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	void setTextLabel(String label, int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1512,25 +1797,33 @@ public interface MetadataStore
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	void setTextName(String name, int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	void setTextStroke(Integer stroke, int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	void setTextStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	void setTextStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	void setTextTheC(Integer theC, int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	void setTextTheT(Integer theT, int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	void setTextTheZ(Integer theZ, int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	void setTextTransform(String transform, int ROIIndex, int shapeIndex);
 
 	void setTextValue(String value, int ROIIndex, int shapeIndex);
@@ -1539,7 +1832,9 @@ public interface MetadataStore
 
 	void setTextY(Double y, int ROIIndex, int shapeIndex);
 
+	//
 	// TiffData property storage
+	//
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
@@ -1554,7 +1849,9 @@ public interface MetadataStore
 	void setTiffDataPlaneCount(Integer planeCount, int imageIndex, int tiffDataIndex);
 
 	// Ignoring UUID element, complex property
+	//
 	// TimestampAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
@@ -1580,7 +1877,9 @@ public interface MetadataStore
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
+	//
 	// TransmittanceRange property storage
+	//
 	// {u'Filter': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
@@ -1594,18 +1893,24 @@ public interface MetadataStore
 
 	void setTransmittanceRangeTransmittance(PercentFraction transmittance, int instrumentIndex, int filterIndex);
 
+	//
 	// UUID property storage
+	//
 	// {u'TiffData': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
 	void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex);
 
+	//
 	// Union property storage
+	//
 	// {u'ROI': {u'OME': None}}
 	// Is multi path? False
 
 	// Ignoring Shape element, complex property
+	//
 	// Well property storage
+	//
 	// {u'Plate': {u'OME': None}}
 	// Is multi path? False
 
@@ -1628,7 +1933,9 @@ public interface MetadataStore
 	void setWellStatus(String status, int plateIndex, int wellIndex);
 
 	// Ignoring WellSample element, complex property
+	//
 	// WellSample property storage
+	//
 	// {u'Well': {u'Plate': {u'OME': None}}}
 	// Is multi path? False
 
@@ -1647,14 +1954,19 @@ public interface MetadataStore
 
 	void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 
+	//
 	// WellSampleRef property storage
+	//
 	// {u'PlateAcquisition': {u'Plate': {u'OME': None}}}
 	// Is multi path? False
 
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference WellSampleRef
+
+	//
 	// XMLAnnotation property storage
+	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 

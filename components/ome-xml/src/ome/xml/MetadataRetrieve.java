@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-29 17:45:10+0100
+ * Created by callan via xsd-fu on 2010-04-30 16:21:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -109,11 +109,6 @@ public interface MetadataRetrieve {
 	int getChannelAnnotationRefCount(int imageIndex, int channelIndex);
 
 	// Arc entity counting
-	// BinData entity counting
-	int getMaskBinDataCount(int ROIIndex, int shapeIndex);
-
-	int getPixelsBinDataCount(int imageIndex);
-
 	// BinaryFile entity counting
 	// BooleanAnnotation entity counting
 	int getBooleanAnnotationCount();
@@ -158,7 +153,6 @@ public interface MetadataRetrieve {
 	int getExperimenterCount();
 
 	// ExperimenterRef entity counting
-	// External entity counting
 	// Filament entity counting
 	// FileAnnotation entity counting
 	int getFileAnnotationCount();
@@ -309,18 +303,24 @@ public interface MetadataRetrieve {
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	String getArcID(int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	String getArcLotNumber(int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	String getArcManufacturer(int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	String getArcModel(int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	Double getArcPower(int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	String getArcSerialNumber(int instrumentIndex, int lightSourceIndex);
 
 	ArcType getArcType(int instrumentIndex, int lightSourceIndex);
@@ -564,18 +564,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getEllipseDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getEllipseFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getEllipseFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getEllipseID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getEllipseLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -583,25 +588,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getEllipseName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getEllipseStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getEllipseStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getEllipseStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getEllipseTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getEllipseTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getEllipseTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getEllipseTransform(int ROIIndex, int shapeIndex);
 
 	Double getEllipseRadiusX(int ROIIndex, int shapeIndex);
@@ -711,18 +724,24 @@ public interface MetadataRetrieve {
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	String getFilamentID(int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	String getFilamentLotNumber(int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	String getFilamentManufacturer(int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	String getFilamentModel(int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	Double getFilamentPower(int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	String getFilamentSerialNumber(int instrumentIndex, int lightSourceIndex);
 
 	FilamentType getFilamentType(int instrumentIndex, int lightSourceIndex);
@@ -935,18 +954,24 @@ public interface MetadataRetrieve {
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	String getLaserID(int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	String getLaserLotNumber(int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	String getLaserManufacturer(int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	String getLaserModel(int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	Double getLaserPower(int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	String getLaserSerialNumber(int instrumentIndex, int lightSourceIndex);
 
 	PositiveInteger getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex);
@@ -985,18 +1010,24 @@ public interface MetadataRetrieve {
 
 	// Ignoring Arc of parent abstract type
 	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
 	String getLightEmittingDiodeID(int instrumentIndex, int lightSourceIndex);
 
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
 	String getLightEmittingDiodeLotNumber(int instrumentIndex, int lightSourceIndex);
 
+	// Manufacturer accessor from parent LightSource
 	String getLightEmittingDiodeManufacturer(int instrumentIndex, int lightSourceIndex);
 
+	// Model accessor from parent LightSource
 	String getLightEmittingDiodeModel(int instrumentIndex, int lightSourceIndex);
 
+	// Power accessor from parent LightSource
 	Double getLightEmittingDiodePower(int instrumentIndex, int lightSourceIndex);
 
+	// SerialNumber accessor from parent LightSource
 	String getLightEmittingDiodeSerialNumber(int instrumentIndex, int lightSourceIndex);
 
 	//
@@ -1036,18 +1067,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getLineDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getLineFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getLineFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getLineID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getLineLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1055,25 +1091,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getLineName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getLineStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getLineStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getLineStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getLineTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getLineTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getLineTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getLineTransform(int ROIIndex, int shapeIndex);
 
 	Double getLineX1(int ROIIndex, int shapeIndex);
@@ -1147,18 +1191,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getMaskDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getMaskFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getMaskFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getMaskID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getMaskLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1166,25 +1215,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getMaskName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getMaskStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getMaskStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getMaskStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getMaskTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getMaskTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getMaskTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getMaskTransform(int ROIIndex, int shapeIndex);
 
 	// Ignoring BinData element, complex property
@@ -1330,18 +1387,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getPathDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getPathFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getPathFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getPathID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getPathLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1349,25 +1411,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getPathName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getPathStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getPathStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getPathStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getPathTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getPathTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getPathTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getPathTransform(int ROIIndex, int shapeIndex);
 
 	String getPathDefinition(int ROIIndex, int shapeIndex);
@@ -1508,18 +1578,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getPointDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getPointFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getPointFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getPointID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getPointLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1527,25 +1602,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getPointName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getPointStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getPointStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getPointStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getPointTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getPointTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getPointTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getPointTransform(int ROIIndex, int shapeIndex);
 
 	Double getPointX(int ROIIndex, int shapeIndex);
@@ -1559,18 +1642,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getPolylineDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getPolylineFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getPolylineFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getPolylineID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getPolylineLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1578,25 +1666,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getPolylineName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getPolylineStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getPolylineStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getPolylineStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getPolylineTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getPolylineTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getPolylineTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getPolylineTransform(int ROIIndex, int shapeIndex);
 
 	Boolean getPolylineClosed(int ROIIndex, int shapeIndex);
@@ -1705,18 +1801,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getRectangleDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getRectangleFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getRectangleFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getRectangleID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getRectangleLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1724,25 +1825,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getRectangleName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getRectangleStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getRectangleStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getRectangleStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getRectangleTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getRectangleTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getRectangleTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getRectangleTransform(int ROIIndex, int shapeIndex);
 
 	Double getRectangleHeight(int ROIIndex, int shapeIndex);
@@ -1853,18 +1962,23 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
 	String getTextDescription(int ROIIndex, int shapeIndex);
 
 	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
 	Integer getTextFill(int ROIIndex, int shapeIndex);
 
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
 	Integer getTextFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
 	String getTextID(int ROIIndex, int shapeIndex);
 
+	// Label accessor from parent Shape
 	String getTextLabel(int ROIIndex, int shapeIndex);
 
 	// Ignoring Line of parent abstract type
@@ -1872,25 +1986,33 @@ public interface MetadataRetrieve {
 	// Ignoring MarkerEnd of parent abstract type
 	// Ignoring MarkerStart of parent abstract type
 	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
 	String getTextName(int ROIIndex, int shapeIndex);
 
 	// Ignoring Path of parent abstract type
 	// Ignoring Point of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
 	Integer getTextStroke(int ROIIndex, int shapeIndex);
 
+	// StrokeDashArray accessor from parent Shape
 	String getTextStrokeDashArray(int ROIIndex, int shapeIndex);
 
+	// StrokeWidth accessor from parent Shape
 	Double getTextStrokeWidth(int ROIIndex, int shapeIndex);
 
 	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
 	Integer getTextTheC(int ROIIndex, int shapeIndex);
 
+	// TheT accessor from parent Shape
 	Integer getTextTheT(int ROIIndex, int shapeIndex);
 
+	// TheZ accessor from parent Shape
 	Integer getTextTheZ(int ROIIndex, int shapeIndex);
 
+	// Transform accessor from parent Shape
 	String getTextTransform(int ROIIndex, int shapeIndex);
 
 	String getTextValue(int ROIIndex, int shapeIndex);

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-29 16:39:29+0100
+ * Created by callan via xsd-fu on 2010-04-30 16:52:08+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -183,7 +183,7 @@ public abstract class Annotation extends AbstractOMEModelObject
 			setID(String.valueOf(
 						element.getAttribute("ID")));
 			// Adding this model object to the model handler
-		    	model.addModelObject(getID(), this);
+			model.addModelObject(getID(), this);
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference Pixels_BackReference
