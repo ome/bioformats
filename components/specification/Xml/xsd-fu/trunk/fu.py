@@ -470,6 +470,10 @@ class OMEModelObject(object):
 	def _get_isReference(self):
 		if self.base == "Reference":
 			return True
+		typeObject = self.model.getObjectByName(self.type)
+		if typeObject is not None and typeObject.name != self.name \
+		   and typeObject.isReference:
+			return True
 		return False
 	isReference = property(_get_isReference,
 		doc="""Whether or not the model object is a reference.""")

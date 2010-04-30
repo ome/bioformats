@@ -254,7 +254,7 @@ def enumHandlersMain(args):
 			f.write(classContent)
 			f.close()
 
-def index_string(name, max_occurs):
+def index_string(name, max_occurs, level):
 	"""Makes a Java method signature string from an index name."""
 	if name[:2].isupper():
 		return "int %sIndex" % name
@@ -295,7 +295,7 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
 		if is_child_multi_path:
 			is_multi_path = True
 		if child is not None and max_occurs >= min_occurs:
-			results[key].append(func(child, max_occurs))
+			results[key].append(func(child, max_occurs, level))
 	return is_multi_path
 
 def processMetadataTemplate(template, outputFilename, namespace, args):

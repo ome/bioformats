@@ -187,7 +187,7 @@ ${customContent}\
 			set${prop.javaMethodName}(${prop.javaType}.valueOf(
 						element.getAttribute("${prop.name}")));
 			// Adding this model object to the model handler
-		    	model.addModelObject(getID(), this);
+			model.addModelObject(getID(), this);
 		}
 {% end %}\
 {% when prop.isAttribute %}\
