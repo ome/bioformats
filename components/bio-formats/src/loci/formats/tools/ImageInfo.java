@@ -466,9 +466,9 @@ public class ImageInfo {
       StringBuilder sb = new StringBuilder();
       sb.append("\tIndexed = ");
       sb.append(indexed);
-      sb.append("(");
+      sb.append(" (");
       sb.append(!falseColor);
-      sb.append("color");
+      sb.append(" color");
       if (table8 != null) {
         sb.append(", 8-bit LUT: ");
         sb.append(table8.length);
