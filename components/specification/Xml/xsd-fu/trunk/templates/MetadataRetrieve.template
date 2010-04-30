@@ -26,6 +26,13 @@
 		return model.getObjectByName(parents[name].keys()[0])
 
 	def is_abstract(name):
+		o = model.getObjectByName(name)
+		if o is not None and \
+		   (o.isAbstract or o.isAbstractProprietary):
+			return True
+		return False
+
+	def is_parent_abstract(name):
 		parent = parent_object(name)
 		if parent is not None and \
 		   (parent.isAbstract or parent.isAbstractProprietary):
@@ -139,14 +146,27 @@ public interface MetadataRetrieve {
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
 
-{% if is_abstract(o.name) %}\
-{% for prop in sorted_properties(parent_object(o.name)) %}\
+{% choose %}\
+{% when o.isReference %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	// Ignoring ${prop.name} property of reference ${o.name}
+
+{% end %}\
+{% end %}\
+{% otherwise %}\
+\
+{% for k, v in indexes[o.name].items() %}\
+{% if is_abstract(k) %}\
+{% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive %}\
 	// Ignoring ${prop.name} of parent abstract type
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for parent_k, parent_v in indexes[k].items() %}\
+	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}
 
 {% end %}\
@@ -154,15 +174,8 @@ ${getter(k, o, prop, v)}
 {% end %}\
 {% end %}\
 {% end %}\
-{% choose %}\
-{% when o.isReference %}\
-{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
 {% end %}\
-{% end %}\
-{% otherwise %}\
+\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
