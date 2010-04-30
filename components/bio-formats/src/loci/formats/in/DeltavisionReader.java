@@ -919,7 +919,7 @@ public class DeltavisionReader extends FormatReader {
           try {
             int cIndex = getZCTCoords(currentImage)[1];
             double nd = Double.parseDouble(value);
-            ndFilters[cIndex] = new Double(Math.pow(10, -1 * nd));
+            ndFilters[cIndex] = new Double(nd / 100);
           }
           catch (NumberFormatException exc) {
             LOGGER.warn("Could not parse ND filter '{}'", value);
