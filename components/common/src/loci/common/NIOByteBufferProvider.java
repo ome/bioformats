@@ -70,39 +70,8 @@ public class NIOByteBufferProvider {
   private MapMode mapMode;
 
   static {
-    String osArch = System.getProperty("os.arch");
-    String javaVersion = System.getProperty("java.version");
-    if ("amd64".equals(osArch) || "x86_64".equals(osArch)) {
-      // We're on a 64-bit platform; we're safe to use memory mapped I/O
-      // without consequence.
-      useMappedByteBuffer = true;
-    }
-    else if (osArch == null) {
-      LOGGER.warn("Java Virtual Machine os.arch system property missing!");
-    }
-    else if (javaVersion == null) {
-      LOGGER.warn("Java Virtual Machine os.arch system property missing!");
-    }
-    else {
-      // Check if we're on a Java 1.6 VM where we're safe to use memory
-      // mapped I/O without consequence regardless of architecture.
-      StringTokenizer tokenizer = new StringTokenizer(javaVersion, ".");
-      try {
-        // Ensure we have an integer here at least
-        Integer.parseInt(tokenizer.nextToken());
-        // This is the actual "major" version number we want to check
-        int y = Integer.parseInt(tokenizer.nextToken());
-        if (y >= MINIMUM_JAVA_VERSION) {
-          useMappedByteBuffer = true;
-        }
-        else {
-          useMappedByteBuffer = false;
-        }
-      }
-      catch (Exception e) {
-        LOGGER.warn("Error parsing x.y.z Java version string.", e);
-      }
-    }
+    String mapping = System.getProperty("mappedBuffers");
+    useMappedByteBuffer = Boolean.parseBoolean(mapping);
     LOGGER.info("Using mapped byte buffer? " + useMappedByteBuffer);
   }
 

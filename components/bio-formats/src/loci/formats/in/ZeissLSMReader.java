@@ -166,6 +166,9 @@ public class ZeissLSMReader extends FormatReader {
 
   private int totalROIs = 0;
 
+  private int prevPlane = -1;
+  private byte[] prevBuf = null;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -201,6 +204,8 @@ public class ZeissLSMReader extends FormatReader {
       imageNames = null;
       binning = null;
       totalROIs = 0;
+      prevPlane = -1;
+      prevBuf = null;
     }
   }
 
@@ -286,9 +291,12 @@ public class ZeissLSMReader extends FormatReader {
       int plane = no / getSizeC();
       int c = no % getSizeC();
 
-      byte[] b = new byte[buf.length * getSizeC()];
-      tiffParser.getSamples(ifds.get(plane), b, x, y, w, h);
-      ImageTools.splitChannels(b, buf, c, getSizeC(), bpp, false, false);
+      if (prevPlane != plane || prevBuf == null) {
+        prevBuf = new byte[buf.length * getSizeC()];
+        tiffParser.getSamples(ifds.get(plane), prevBuf, x, y, w, h);
+        prevPlane = plane;
+      }
+      ImageTools.splitChannels(prevBuf, buf, c, getSizeC(), bpp, false, false);
     }
     else tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
     in.close();
