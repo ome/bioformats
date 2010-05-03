@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-30 16:40:47+0100
+ * Created by callan via xsd-fu on 2010-05-03 15:00:30+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -283,7 +283,6 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		return root.getInstrument(instrumentIndex).getFilterSet(filterSetIndex).sizeOfLinkedEmissionFilterList();
 	}
 
-		// Parents: {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// ExcitationFilterRef entity counting
 	public int getLightPathExcitationFilterRefCount(int imageIndex, int channelIndex)
 	{
@@ -5086,12 +5085,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// FileName is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfFileAnnotationList() == fileAnnotationIndex)
 		{
 			o1.addFileAnnotation(new FileAnnotation());
 		}
 		FileAnnotation o2 = o1.getFileAnnotation(fileAnnotationIndex);
+		if (o2.getBinaryFile() == null)
+		{
+			o2.setBinaryFile(new BinaryFile());
+		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setFileName(fileName);
 	}
@@ -5111,6 +5118,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getBinaryFile() == null)
+		{
+			o2.setBinaryFile(new BinaryFile());
+		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setFileName(fileName);
 	}
@@ -5120,12 +5131,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// MIMEType is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfFileAnnotationList() == fileAnnotationIndex)
 		{
 			o1.addFileAnnotation(new FileAnnotation());
 		}
 		FileAnnotation o2 = o1.getFileAnnotation(fileAnnotationIndex);
+		if (o2.getBinaryFile() == null)
+		{
+			o2.setBinaryFile(new BinaryFile());
+		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setMIMEType(mimetype);
 	}
@@ -5145,6 +5164,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getBinaryFile() == null)
+		{
+			o2.setBinaryFile(new BinaryFile());
+		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setMIMEType(mimetype);
 	}
@@ -5154,12 +5177,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// Size is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfFileAnnotationList() == fileAnnotationIndex)
 		{
 			o1.addFileAnnotation(new FileAnnotation());
 		}
 		FileAnnotation o2 = o1.getFileAnnotation(fileAnnotationIndex);
+		if (o2.getBinaryFile() == null)
+		{
+			o2.setBinaryFile(new BinaryFile());
+		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setSize(size);
 	}
@@ -5179,6 +5210,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getBinaryFile() == null)
+		{
+			o2.setBinaryFile(new BinaryFile());
+		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setSize(size);
 	}
@@ -5197,6 +5232,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfBooleanAnnotationList() == booleanAnnotationIndex)
 		{
@@ -5214,6 +5253,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfBooleanAnnotationList() == booleanAnnotationIndex)
 		{
@@ -5237,6 +5280,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfBooleanAnnotationList() == booleanAnnotationIndex)
 		{
@@ -5264,6 +5311,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5294,6 +5345,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5313,6 +5368,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5333,6 +5392,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5352,6 +5415,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5382,6 +5449,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5401,6 +5472,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5421,6 +5496,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5442,6 +5521,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5461,6 +5544,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5491,6 +5578,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5510,6 +5601,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5529,6 +5624,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
@@ -5870,12 +5969,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getDetectorSettings() == null)
+		{
+			o3.setDetectorSettings(new DetectorSettings());
+		}
 		DetectorSettings o4 = o3.getDetectorSettings();
 		o4.setBinning(binning);
 	}
@@ -5890,12 +5997,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getDetectorSettings() == null)
+		{
+			o3.setDetectorSettings(new DetectorSettings());
+		}
 		DetectorSettings o4 = o3.getDetectorSettings();
 		o4.setGain(gain);
 	}
@@ -5910,12 +6025,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getDetectorSettings() == null)
+		{
+			o3.setDetectorSettings(new DetectorSettings());
+		}
 		DetectorSettings o4 = o3.getDetectorSettings();
 		model.addModelObject(id, o4);
 		o4.setID(id);
@@ -5931,12 +6054,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getDetectorSettings() == null)
+		{
+			o3.setDetectorSettings(new DetectorSettings());
+		}
 		DetectorSettings o4 = o3.getDetectorSettings();
 		o4.setOffset(offset);
 	}
@@ -5951,12 +6082,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getDetectorSettings() == null)
+		{
+			o3.setDetectorSettings(new DetectorSettings());
+		}
 		DetectorSettings o4 = o3.getDetectorSettings();
 		o4.setReadOutRate(readOutRate);
 	}
@@ -5971,12 +6110,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getDetectorSettings() == null)
+		{
+			o3.setDetectorSettings(new DetectorSettings());
+		}
 		DetectorSettings o4 = o3.getDetectorSettings();
 		o4.setVoltage(voltage);
 	}
@@ -6104,6 +6251,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfDoubleAnnotationList() == doubleAnnotationIndex)
 		{
@@ -6121,6 +6272,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfDoubleAnnotationList() == doubleAnnotationIndex)
 		{
@@ -6144,6 +6299,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfDoubleAnnotationList() == doubleAnnotationIndex)
 		{
@@ -6173,6 +6332,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6194,6 +6357,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6216,6 +6383,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6237,6 +6408,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6258,6 +6433,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6283,6 +6462,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6307,6 +6490,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6327,6 +6514,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6347,6 +6538,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6368,6 +6563,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6388,6 +6587,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6408,6 +6611,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6428,6 +6635,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6447,6 +6658,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6466,6 +6681,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6485,6 +6704,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6504,6 +6727,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -6912,6 +7139,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfFileAnnotationList() == fileAnnotationIndex)
 		{
@@ -6929,6 +7160,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfFileAnnotationList() == fileAnnotationIndex)
 		{
@@ -7487,6 +7722,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getImagingEnvironment() == null)
+		{
+			o1.setImagingEnvironment(new ImagingEnvironment());
+		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
 		o2.setAirPressure(airPressure);
 	}
@@ -7501,6 +7740,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getImagingEnvironment() == null)
+		{
+			o1.setImagingEnvironment(new ImagingEnvironment());
+		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
 		o2.setCO2Percent(co2percent);
 	}
@@ -7515,6 +7758,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getImagingEnvironment() == null)
+		{
+			o1.setImagingEnvironment(new ImagingEnvironment());
+		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
 		o2.setHumidity(humidity);
 	}
@@ -7529,6 +7776,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getImagingEnvironment() == null)
+		{
+			o1.setImagingEnvironment(new ImagingEnvironment());
+		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
 		o2.setTemperature(temperature);
 	}
@@ -7772,9 +8023,13 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 	public void setLaserPump(String pump, int instrumentIndex, int lightSourceIndex)
 	{
 		// Parents: {u'LightSource': {u'Instrument': {u'OME': None}}}
+		// Pump is abstract proprietary and is a reference
+		Pump pump_reference = new Pump();
+		pump_reference.setID(pump);
+		model.addReference(
+				root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex),
+				pump_reference);
 		// LightSource is abstract proprietary
-		Laser o = (Laser) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
-		// TODO: Do link here
 	}
 
 	public void setLaserRepetitionRate(Double repetitionRate, int instrumentIndex, int lightSourceIndex)
@@ -8039,12 +8294,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getLightSourceSettings() == null)
+		{
+			o3.setLightSourceSettings(new LightSourceSettings());
+		}
 		LightSourceSettings o4 = o3.getLightSourceSettings();
 		o4.setAttenuation(attenuation);
 	}
@@ -8082,12 +8345,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getLightSourceSettings() == null)
+		{
+			o3.setLightSourceSettings(new LightSourceSettings());
+		}
 		LightSourceSettings o4 = o3.getLightSourceSettings();
 		model.addModelObject(id, o4);
 		o4.setID(id);
@@ -8127,12 +8398,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfChannelList() == channelIndex)
 		{
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
+		if (o3.getLightSourceSettings() == null)
+		{
+			o3.setLightSourceSettings(new LightSourceSettings());
+		}
 		LightSourceSettings o4 = o3.getLightSourceSettings();
 		o4.setWavelength(wavelength);
 	}
@@ -8178,6 +8457,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8199,6 +8482,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8221,6 +8508,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8242,6 +8533,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8263,6 +8558,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8288,6 +8587,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8312,6 +8615,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8332,6 +8639,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8352,6 +8663,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8373,6 +8688,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8393,6 +8712,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8413,6 +8736,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8433,6 +8760,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8452,6 +8783,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8471,6 +8806,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8490,6 +8829,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8509,6 +8852,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8543,6 +8890,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfListAnnotationList() == listAnnotationIndex)
 		{
@@ -8560,6 +8911,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfListAnnotationList() == listAnnotationIndex)
 		{
@@ -8594,6 +8949,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfLongAnnotationList() == longAnnotationIndex)
 		{
@@ -8611,6 +8970,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfLongAnnotationList() == longAnnotationIndex)
 		{
@@ -8634,6 +8997,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfLongAnnotationList() == longAnnotationIndex)
 		{
@@ -8663,6 +9030,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8684,6 +9055,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8706,6 +9081,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8727,6 +9106,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8748,6 +9131,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8773,6 +9160,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8797,6 +9188,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8817,6 +9212,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8837,6 +9236,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8858,6 +9261,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8878,6 +9285,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8898,6 +9309,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8918,6 +9333,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8938,6 +9357,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -8957,6 +9380,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9065,6 +9492,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addInstrument(new Instrument());
 		}
 		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.getMicroscope() == null)
+		{
+			o1.setMicroscope(new Microscope());
+		}
 		Microscope o2 = o1.getMicroscope();
 		o2.setLotNumber(lotNumber);
 	}
@@ -9079,6 +9510,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addInstrument(new Instrument());
 		}
 		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.getMicroscope() == null)
+		{
+			o1.setMicroscope(new Microscope());
+		}
 		Microscope o2 = o1.getMicroscope();
 		o2.setManufacturer(manufacturer);
 	}
@@ -9093,6 +9528,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addInstrument(new Instrument());
 		}
 		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.getMicroscope() == null)
+		{
+			o1.setMicroscope(new Microscope());
+		}
 		Microscope o2 = o1.getMicroscope();
 		o2.setModel(model);
 	}
@@ -9107,6 +9546,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addInstrument(new Instrument());
 		}
 		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.getMicroscope() == null)
+		{
+			o1.setMicroscope(new Microscope());
+		}
 		Microscope o2 = o1.getMicroscope();
 		o2.setSerialNumber(serialNumber);
 	}
@@ -9121,6 +9564,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addInstrument(new Instrument());
 		}
 		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.getMicroscope() == null)
+		{
+			o1.setMicroscope(new Microscope());
+		}
 		Microscope o2 = o1.getMicroscope();
 		o2.setType(type);
 	}
@@ -9485,6 +9932,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getObjectiveSettings() == null)
+		{
+			o1.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o2 = o1.getObjectiveSettings();
 		o2.setCorrectionCollar(correctionCollar);
 	}
@@ -9504,6 +9955,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getObjectiveSettings() == null)
+		{
+			o2.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o3 = o2.getObjectiveSettings();
 		o3.setCorrectionCollar(correctionCollar);
 	}
@@ -9518,6 +9973,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getObjectiveSettings() == null)
+		{
+			o1.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o2 = o1.getObjectiveSettings();
 		model.addModelObject(id, o2);
 		o2.setID(id);
@@ -9538,6 +9997,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getObjectiveSettings() == null)
+		{
+			o2.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o3 = o2.getObjectiveSettings();
 		model.addModelObject(id, o3);
 		o3.setID(id);
@@ -9553,6 +10016,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getObjectiveSettings() == null)
+		{
+			o1.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o2 = o1.getObjectiveSettings();
 		o2.setMedium(medium);
 	}
@@ -9572,6 +10039,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getObjectiveSettings() == null)
+		{
+			o2.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o3 = o2.getObjectiveSettings();
 		o3.setMedium(medium);
 	}
@@ -9586,6 +10057,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getObjectiveSettings() == null)
+		{
+			o1.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o2 = o1.getObjectiveSettings();
 		o2.setRefractiveIndex(refractiveIndex);
 	}
@@ -9605,6 +10080,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addOTF(new OTF());
 		}
 		OTF o2 = o1.getOTF(OTFIndex);
+		if (o2.getObjectiveSettings() == null)
+		{
+			o2.setObjectiveSettings(new ObjectiveSettings());
+		}
 		ObjectiveSettings o3 = o2.getObjectiveSettings();
 		o3.setRefractiveIndex(refractiveIndex);
 	}
@@ -9627,6 +10106,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9648,6 +10131,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9670,6 +10157,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9691,6 +10182,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9712,6 +10207,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9737,6 +10236,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9761,6 +10264,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9781,6 +10288,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9801,6 +10312,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9822,6 +10337,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9842,6 +10361,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9862,6 +10385,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9882,6 +10409,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9901,6 +10432,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -9939,6 +10474,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setDimensionOrder(dimensionOrder);
 	}
@@ -9953,6 +10492,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		model.addModelObject(id, o2);
 		o2.setID(id);
@@ -9969,6 +10512,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setPhysicalSizeX(physicalSizeX);
 	}
@@ -9983,6 +10530,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setPhysicalSizeY(physicalSizeY);
 	}
@@ -9997,6 +10548,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setPhysicalSizeZ(physicalSizeZ);
 	}
@@ -10012,6 +10567,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setSizeC(sizeC);
 	}
@@ -10026,6 +10585,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setSizeT(sizeT);
 	}
@@ -10040,6 +10603,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setSizeX(sizeX);
 	}
@@ -10054,6 +10621,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setSizeY(sizeY);
 	}
@@ -10068,6 +10639,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setSizeZ(sizeZ);
 	}
@@ -10083,6 +10658,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setTimeIncrement(timeIncrement);
 	}
@@ -10097,6 +10676,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		o2.setType(type);
 	}
@@ -10128,6 +10711,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10147,6 +10734,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10166,6 +10757,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10185,6 +10780,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10204,6 +10803,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10223,6 +10826,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10242,6 +10849,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10261,6 +10872,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10280,6 +10895,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfPlaneList() == planeIndex)
 		{
@@ -10628,6 +11247,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10649,6 +11272,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10671,6 +11298,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10692,6 +11323,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10713,6 +11348,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10738,6 +11377,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10762,6 +11405,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10782,6 +11429,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10802,6 +11453,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10823,6 +11478,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10843,6 +11502,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10863,6 +11526,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10883,6 +11550,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10902,6 +11573,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10921,6 +11596,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10948,6 +11627,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10969,6 +11652,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -10991,6 +11678,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11012,6 +11703,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11033,6 +11728,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11058,6 +11757,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11082,6 +11785,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11102,6 +11809,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11122,6 +11833,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11143,6 +11858,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11163,6 +11882,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11183,6 +11906,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11203,6 +11930,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11222,6 +11953,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11241,6 +11976,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11552,6 +12291,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11573,6 +12316,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11595,6 +12342,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11616,6 +12367,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11637,6 +12392,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11662,6 +12421,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11686,6 +12449,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11706,6 +12473,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11726,6 +12497,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11747,6 +12522,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11767,6 +12546,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11787,6 +12570,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11807,6 +12594,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11826,6 +12617,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11845,6 +12640,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11864,6 +12663,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -11883,6 +12686,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12052,6 +12859,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getStageLabel() == null)
+		{
+			o1.setStageLabel(new StageLabel());
+		}
 		StageLabel o2 = o1.getStageLabel();
 		o2.setName(name);
 	}
@@ -12066,6 +12877,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getStageLabel() == null)
+		{
+			o1.setStageLabel(new StageLabel());
+		}
 		StageLabel o2 = o1.getStageLabel();
 		o2.setX(x);
 	}
@@ -12080,6 +12895,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getStageLabel() == null)
+		{
+			o1.setStageLabel(new StageLabel());
+		}
 		StageLabel o2 = o1.getStageLabel();
 		o2.setY(y);
 	}
@@ -12094,6 +12913,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getStageLabel() == null)
+		{
+			o1.setStageLabel(new StageLabel());
+		}
 		StageLabel o2 = o1.getStageLabel();
 		o2.setZ(z);
 	}
@@ -12112,6 +12935,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfStringAnnotationList() == stringAnnotationIndex)
 		{
@@ -12129,6 +12956,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfStringAnnotationList() == stringAnnotationIndex)
 		{
@@ -12152,6 +12983,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfStringAnnotationList() == stringAnnotationIndex)
 		{
@@ -12195,6 +13030,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12216,6 +13055,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12238,6 +13081,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12259,6 +13106,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12280,6 +13131,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12305,6 +13160,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12329,6 +13188,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12349,6 +13212,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12369,6 +13236,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12390,6 +13261,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12410,6 +13285,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12430,6 +13309,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12450,6 +13333,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12469,6 +13356,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12488,6 +13379,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12507,6 +13402,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addROI(new ROI());
 		}
 		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
 		Union o2 = o1.getUnion();
 		if (o2.sizeOfShapeList() == shapeIndex)
 		{
@@ -12532,6 +13431,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfTiffDataList() == tiffDataIndex)
 		{
@@ -12551,6 +13454,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfTiffDataList() == tiffDataIndex)
 		{
@@ -12570,6 +13477,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfTiffDataList() == tiffDataIndex)
 		{
@@ -12589,6 +13500,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfTiffDataList() == tiffDataIndex)
 		{
@@ -12608,6 +13523,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfTiffDataList() == tiffDataIndex)
 		{
@@ -12632,6 +13551,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfTimestampAnnotationList() == timestampAnnotationIndex)
 		{
@@ -12649,6 +13572,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfTimestampAnnotationList() == timestampAnnotationIndex)
 		{
@@ -12672,6 +13599,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfTimestampAnnotationList() == timestampAnnotationIndex)
 		{
@@ -12704,6 +13635,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addFilter(new Filter());
 		}
 		Filter o2 = o1.getFilter(filterIndex);
+		if (o2.getTransmittanceRange() == null)
+		{
+			o2.setTransmittanceRange(new TransmittanceRange());
+		}
 		TransmittanceRange o3 = o2.getTransmittanceRange();
 		o3.setCutIn(cutIn);
 	}
@@ -12723,6 +13658,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addFilter(new Filter());
 		}
 		Filter o2 = o1.getFilter(filterIndex);
+		if (o2.getTransmittanceRange() == null)
+		{
+			o2.setTransmittanceRange(new TransmittanceRange());
+		}
 		TransmittanceRange o3 = o2.getTransmittanceRange();
 		o3.setCutInTolerance(cutInTolerance);
 	}
@@ -12742,6 +13681,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addFilter(new Filter());
 		}
 		Filter o2 = o1.getFilter(filterIndex);
+		if (o2.getTransmittanceRange() == null)
+		{
+			o2.setTransmittanceRange(new TransmittanceRange());
+		}
 		TransmittanceRange o3 = o2.getTransmittanceRange();
 		o3.setCutOut(cutOut);
 	}
@@ -12761,6 +13704,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addFilter(new Filter());
 		}
 		Filter o2 = o1.getFilter(filterIndex);
+		if (o2.getTransmittanceRange() == null)
+		{
+			o2.setTransmittanceRange(new TransmittanceRange());
+		}
 		TransmittanceRange o3 = o2.getTransmittanceRange();
 		o3.setCutOutTolerance(cutOutTolerance);
 	}
@@ -12780,6 +13727,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o1.addFilter(new Filter());
 		}
 		Filter o2 = o1.getFilter(filterIndex);
+		if (o2.getTransmittanceRange() == null)
+		{
+			o2.setTransmittanceRange(new TransmittanceRange());
+		}
 		TransmittanceRange o3 = o2.getTransmittanceRange();
 		o3.setTransmittance(transmittance);
 	}
@@ -12800,12 +13751,20 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
 		Pixels o2 = o1.getPixels();
 		if (o2.sizeOfTiffDataList() == tiffDataIndex)
 		{
 			o2.addTiffData(new TiffData());
 		}
 		TiffData o3 = o2.getTiffData(tiffDataIndex);
+		if (o3.getUUID() == null)
+		{
+			o3.setUUID(new UUID());
+		}
 		UUID o4 = o3.getUUID();
 		o4.setFileName(fileName);
 	}
@@ -13142,6 +14101,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfXMLAnnotationList() == XMLAnnotationIndex)
 		{
@@ -13159,6 +14122,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfXMLAnnotationList() == XMLAnnotationIndex)
 		{
@@ -13182,6 +14149,10 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
 		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
 		if (o1.sizeOfXMLAnnotationList() == XMLAnnotationIndex)
 		{
