@@ -330,7 +330,15 @@ public class ZeissLSMReader extends FormatReader {
       core[i].littleEndian = s.read() == TiffConstants.LITTLE;
       s.order(isLittleEndian());
       s.seek(0);
-      ifdsList.set(i, new TiffParser(s).getNonThumbnailIFDs());
+      // calling tp.getNonThumbnailIFDs() would give us the same IFDList, but
+      // assuming that every other IFD is a thumbnail reduces the parsing time
+      TiffParser tp = new TiffParser(s);
+      long[] ifdOffsets = tp.getIFDOffsets();
+      IFDList ifds = new IFDList();
+      for (int offset=0; offset<ifdOffsets.length; offset+=2) {
+        ifds.add(tp.getIFD(ifdOffsets[offset]));
+      }
+      ifdsList.set(i, ifds);
       s.close();
     }
 
