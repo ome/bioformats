@@ -450,8 +450,7 @@ public class InOut201004Test {
   public void testValidInstrumentMetadata() {
     assertEquals(1, metadata.getInstrumentCount());
     assertEquals(INSTRUMENT_ID, metadata.getInstrumentID(0));
-    // FIXME: Missing method
-    //assertEquals(5, metadata.getLightSourceCount(0));
+    assertEquals(5, metadata.getLightSourceCount(0));
     assertEquals(1, metadata.getDetectorCount(0));
     assertEquals(2, metadata.getFilterCount(0));
   }
