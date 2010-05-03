@@ -57,6 +57,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import static org.testng.AssertJUnit.*;
 
+import ome.xml.OMEXMLMetadataImpl;
 import ome.xml.r201004.Annotation;
 import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
@@ -291,6 +292,8 @@ public class InOut201004Test {
 
   public OMEModel model;
 
+  public OMEXMLMetadataImpl metadata;
+
   @Parameters({"mockClassName"})
   @BeforeClass
   public void setUp(String mockClassName) throws Exception {
@@ -321,11 +324,24 @@ public class InOut201004Test {
     assertEquals(1, ome.sizeOfImageList());
   }
 
+  @Test
+  public void testValidMetadataRoot() {
+    metadata = new OMEXMLMetadataImpl();
+    metadata.setRoot(ome);
+    assertEquals(ome, metadata.getRoot());
+  }
+
   @Test(dependsOnMethods={"testValidOMENode"})
   public void testValidImageNode() {
     Image image = ome.getImage(0);
     assertNotNull(image);
     assertEquals(IMAGE_ID, image.getID());
+  }
+
+  @Test(dependsOnMethods={"testValidMetadataRoot"})
+  public void testValidImageMetadata() {
+    assertEquals(1, metadata.getImageCount());
+    assertEquals(IMAGE_ID, metadata.getImageID(0));
   }
 
   @Test(dependsOnMethods={"testValidImageNode"})
@@ -337,6 +353,16 @@ public class InOut201004Test {
     assertEquals(b.getValue(), IMAGE_ANNOTATION_VALUE);
     assertEquals(b.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertEquals(b.getID(), IMAGE_ANNOTATION_ID);
+  }
+
+  @Test(dependsOnMethods={"testValidImageMetadata"})
+  public void testValidImageAnnotationMetadata() {
+    assertEquals(1, metadata.getBooleanAnnotationCount());
+    assertEquals(1, metadata.getImageAnnotationRefCount(0));
+    assertEquals(IMAGE_ANNOTATION_VALUE, metadata.getBooleanAnnotationValue(0));
+    assertEquals(GENERAL_ANNOTATION_NAMESPACE,
+                 metadata.getBooleanAnnotationNamespace(0));
+    assertEquals(IMAGE_ANNOTATION_ID, metadata.getBooleanAnnotationID(0));
   }
 
   @Test(dependsOnMethods={"testValidImageNode"})
@@ -352,12 +378,31 @@ public class InOut201004Test {
     assertNotNull(pixels.getMetadataOnly());
   }
 
+  @Test(dependsOnMethods={"testValidImageNode"})
+  public void testValidPixelsMetadata() {
+    assertEquals(SIZE_X, metadata.getPixelsSizeX(0).getValue());
+    assertEquals(SIZE_Y, metadata.getPixelsSizeY(0).getValue());
+    assertEquals(SIZE_Z, metadata.getPixelsSizeZ(0).getValue());
+    assertEquals(SIZE_C, metadata.getPixelsSizeC(0).getValue());
+    assertEquals(SIZE_T, metadata.getPixelsSizeT(0).getValue());
+    assertEquals(DIMENSION_ORDER, metadata.getPixelsDimensionOrder(0));
+    assertEquals(PIXEL_TYPE, metadata.getPixelsType(0));
+  }
+
   @Test(dependsOnMethods={"testValidPixelsNode"})
   public void testValidChannelNode() {
     Pixels pixels = ome.getImage(0).getPixels();
     assertEquals(3, pixels.sizeOfChannelList());
     for (Channel channel : pixels.copyChannelList()) {
       assertNotNull(channel.getID());
+    }
+  }
+
+  @Test(dependsOnMethods={"testValidPixelsMetadata"})
+  public void testValidChannelMetadata() {
+    assertEquals(3, metadata.getChannelCount(0));
+    for (int i = 0; i < 3; i++) {
+      assertNotNull(metadata.getChannelID(0, i));
     }
   }
 
@@ -384,11 +429,32 @@ public class InOut201004Test {
     assertEquals(b.getID(), PIXELS_ANNOTATION_ID);
   }
 
+  @Test(dependsOnMethods={"testValidPixelsMetadata"})
+  public void testValidPixelsAnnotationMetadata() {
+    assertEquals(1, metadata.getDoubleAnnotationCount());
+    assertEquals(1, metadata.getPixelsAnnotationRefCount(0));
+    assertEquals(PIXELS_ANNOTATION_VALUE,
+                 metadata.getDoubleAnnotationValue(0));
+    assertEquals(GENERAL_ANNOTATION_NAMESPACE,
+                 metadata.getDoubleAnnotationNamespace(0));
+    assertEquals(PIXELS_ANNOTATION_ID, metadata.getDoubleAnnotationID(0));
+  }
+
   @Test(dependsOnMethods={"testValidOMENode"})
   public void testValidInstrumentNode() {
     Instrument instrument = ome.getInstrument(0);
     assertNotNull(instrument);
     assertEquals(INSTRUMENT_ID, instrument.getID());
+  }
+
+  @Test(dependsOnMethods={"testValidMetadataRoot"})
+  public void testValidInstrumentMetadata() {
+    assertEquals(1, metadata.getInstrumentCount());
+    assertEquals(INSTRUMENT_ID, metadata.getInstrumentID(0));
+    // FIXME: Missing method
+    //assertEquals(5, metadata.getLightSourceCount(0));
+    assertEquals(1, metadata.getDetectorCount(0));
+    assertEquals(2, metadata.getFilterCount(0));
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode"})
@@ -399,6 +465,13 @@ public class InOut201004Test {
     assertEquals(DETECTOR_MODEL, detector.getModel());
   }
 
+  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  public void testValidDetectorMetadata() {
+    assertEquals(1, metadata.getDetectorCount(0));
+    assertEquals(DETECTOR_ID, metadata.getDetectorID(0, 0));
+    assertEquals(DETECTOR_MODEL, metadata.getDetectorModel(0, 0));
+  }
+
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidLaserNode() {
     Laser laser = (Laser) ome.getInstrument(0).getLightSource(0);
@@ -407,6 +480,14 @@ public class InOut201004Test {
     assertEquals(LIGHTSOURCE_LASER_MODEL, laser.getModel());
     assertEquals(LIGHTSOURCE_LASER_POWER, laser.getPower());
     assertEquals(LASER_TYPE, laser.getType());
+  }
+
+  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  public void testValidLaserMetadata() {
+    assertEquals(LIGHTSOURCE_LASER_ID, metadata.getLaserID(0, 0));
+    assertEquals(LIGHTSOURCE_LASER_MODEL, metadata.getLaserModel(0, 0));
+    assertEquals(LIGHTSOURCE_LASER_POWER, metadata.getLaserPower(0, 0));
+    assertEquals(LASER_TYPE, metadata.getLaserType(0, 0));
   }
 
   @Test(dependsOnMethods={"testValidLaserNode"})
@@ -421,6 +502,15 @@ public class InOut201004Test {
     assertEquals(laser.getLinkedPump(),laserPump);
   }
 
+  @Test(dependsOnMethods={"testValidLaserMetadata"})
+  public void testValidPumpMetadata() {
+    assertEquals(LIGHTSOURCE_PUMP_ID, metadata.getLaserID(0, 1));
+    assertEquals(LIGHTSOURCE_PUMP_MODEL, metadata.getLaserModel(0, 1));
+    assertEquals(LIGHTSOURCE_PUMP_POWER, metadata.getLaserPower(0, 1));
+    assertEquals(LASER_TYPE, metadata.getLaserType(0, 1));
+    assertEquals(LIGHTSOURCE_PUMP_ID, metadata.getLaserPump(0, 0));
+  }
+
   // Create <Arc/> under <Instrument/>
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidArcNode() {
@@ -431,7 +521,15 @@ public class InOut201004Test {
     assertEquals(LIGHTSOURCE_ARC_POWER, arc.getPower());
     assertEquals(ARC_TYPE, arc.getType());
   }
-  
+
+  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  public void testValidArcMetadata() {
+    assertEquals(LIGHTSOURCE_ARC_ID, metadata.getArcID(0, 2));
+    assertEquals(LIGHTSOURCE_ARC_MODEL, metadata.getArcModel(0, 2));
+    assertEquals(LIGHTSOURCE_ARC_POWER, metadata.getArcPower(0, 2));
+    assertEquals(ARC_TYPE, metadata.getArcType(0, 2));
+  }
+
   // Create <Filament/> under <Instrument/>
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidFilamentNode() {
@@ -441,6 +539,15 @@ public class InOut201004Test {
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, filament.getModel());
     assertEquals(LIGHTSOURCE_FILAMENT_POWER, filament.getPower());
     assertEquals(FILAMENT_TYPE, filament.getType());
+  }
+
+  // Create <Filament/> under <Instrument/>
+  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  public void testValidFilamentMetadata() {
+    assertEquals(LIGHTSOURCE_FILAMENT_ID, metadata.getFilamentID(0, 3));
+    assertEquals(LIGHTSOURCE_FILAMENT_MODEL, metadata.getFilamentModel(0, 3));
+    assertEquals(LIGHTSOURCE_FILAMENT_POWER, metadata.getFilamentPower(0, 3));
+    assertEquals(FILAMENT_TYPE, metadata.getFilamentType(0, 3));
   }
 
   // Create <LightEmittingDiode/> under <Instrument/>
