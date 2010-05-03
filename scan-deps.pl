@@ -929,15 +929,19 @@ foreach my $c (@components) {
     }
   }
   if ($compileError) {
-    print STDERR "  project deps        =";
+    print STDERR "  component.classpath:\n";
+    print STDERR "    Actual    = @cp\n";
+    print STDERR "    Synthetic = @deps\n";
+    print STDERR "\n";
+    print STDERR "  project deps =";
     foreach my $q (@projDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  library deps        =";
+    print STDERR "\n";
+    print STDERR "  library deps =";
     foreach my $q (@libDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  component.classpath = @cp\n";
     print STDERR "\n";
     $programErrors++;
   }
@@ -981,15 +985,19 @@ foreach my $c (@components) {
     }
   }
   if ($eclipseError) {
-    print STDERR "  project deps      =";
+    print STDERR "  Eclipse classpath:\n";
+    print STDERR "    Actual    = @cp\n";
+    print STDERR "    Synthetic = @deps\n";
+    print STDERR "\n";
+    print STDERR "  project deps =";
     foreach my $q (@projDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  library deps      =";
+    print STDERR "\n";
+    print STDERR "  library deps =";
     foreach my $q (@libDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  Eclipse classpath = @cp\n";
     print STDERR "\n";
     $programErrors++;
   }
@@ -1023,24 +1031,29 @@ foreach my $c (@components) {
     }
   }
   if ($runtimeError) {
-    print STDERR "  project deps         =";
+    print STDERR "  component.runtime-cp:\n";
+    print STDERR "    Actual    = @cp\n";
+    print STDERR "    Synthetic = @deps\n";
+    print STDERR "\n";
+    print STDERR "  project deps        =";
     foreach my $q (@projDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  reflected projects   =";
+    print STDERR "\n";
+    print STDERR "  reflected projects  =";
     foreach my $q (@projOpt) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  library deps         =";
+    print STDERR "\n";
+    print STDERR "  library deps        =";
     foreach my $q (@libDeps) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  reflected libraries  =";
+    print STDERR "\n";
+    print STDERR "  reflected libraries =";
     foreach my $q (@libOpt) {
       print STDERR " $$q{NAME}";
     }
-    print STDERR "\n  component.runtime-cp = @cp\n";
-    print STDERR "\n";
     $programErrors++;
   }
 }
