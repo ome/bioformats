@@ -158,7 +158,9 @@ public class NikonReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    return ifd.containsKey(new Integer(TIFF_EPS_STANDARD));
+    if (ifd.containsKey(new Integer(TIFF_EPS_STANDARD))) return true;
+    String make = ifd.getIFDTextValue(IFD.MAKE);
+    return make != null && make.indexOf("Nikon") != -1;
   }
 
   /**
@@ -170,10 +172,18 @@ public class NikonReader extends BaseTiffReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     IFD ifd = ifds.get(no);
-
-    int dataSize = ifd.getBitsPerSample()[0];
+    int[] bps = ifd.getBitsPerSample();
+    int dataSize = bps[0];
 
     long[] byteCounts = ifd.getStripByteCounts();
+    long totalBytes = 0;
+    for (long b : byteCounts) {
+      totalBytes += b;
+    }
+    if (totalBytes == FormatTools.getPlaneSize(this) || bps.length > 1) {
+      return super.openBytes(no, buf, x, y, w, h);
+    }
+
     long[] offsets = ifd.getStripOffsets();
     long[] rowsPerStrip = ifd.getRowsPerStrip();
 
@@ -448,6 +458,7 @@ public class NikonReader extends BaseTiffReader {
     ifds.set(0, original);
 
     core[0].imageCount = 1;
+    core[0].sizeT = 1;
     core[0].interleaved = true;
   }
 
