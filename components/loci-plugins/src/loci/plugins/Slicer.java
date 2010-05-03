@@ -88,7 +88,7 @@ public class Slicer implements PlugInFilter {
       gd.addCheckbox("Split Z slices", false);
       gd.addCheckbox("Split timepoints", false);
       gd.addCheckbox("Keep original stack", false);
-      gd.addCheckbox("Open as HyperStack", false);
+      gd.addCheckbox("Open as hyperstack", true);
       gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
         "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
       gd.showDialog();
