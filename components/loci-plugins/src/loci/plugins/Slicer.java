@@ -119,10 +119,10 @@ public class Slicer implements PlugInFilter {
       "Please convert the virtual stack using Image>Duplicate.");
       return;
     }
-    ImagePlus newImp = Slicer.reslice(imp,
+    ImagePlus[] newImps = Slicer.reslice(imp,
       sliceC, sliceZ, sliceT, hyperstack, stackOrder);
     if (!keepOriginal) imp.close();
-    newImp.show();
+    for (ImagePlus imp : newImps) imp.show();
   }
 
   // -- Helper methods --
@@ -131,10 +131,10 @@ public class Slicer implements PlugInFilter {
   private boolean getBooleanValue(String key) {
     return Boolean.valueOf(Macro.getValue(arg, key, "false"));
   }
-  
+
   // -- Static utility methods --
 
-  public static ImagePlus reslice(ImagePlus imp,
+  public static ImagePlus[] reslice(ImagePlus imp,
     boolean sliceC, boolean sliceZ, boolean sliceT,
     boolean hyperstack, String stackOrder)
   {
@@ -172,7 +172,7 @@ public class Slicer implements PlugInFilter {
         stack.getProcessor(i + 1));
     }
 
-    ImagePlus newImp = null;
+    ImagePlus[] newImps = new ImagePlus[newStacks.length];
     for (int i=0; i<newStacks.length; i++) {
       int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
         sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
@@ -201,11 +201,11 @@ public class Slicer implements PlugInFilter {
       if (imp.isComposite() && !sliceC) {
         p = ImagePlusTools.reorder(p, stackOrder, "XYCZT");
         int mode = ((CompositeImage) imp).getMode();
-        newImp = new CompositeImage(p, mode);
+        newImps[i] = new CompositeImage(p, mode);
       }
-      else newImp = p;
+      else newImps[i] = p;
     }
-    return newImp;
+    return newImps;
   }
-  
+
 }
