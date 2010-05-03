@@ -9,13 +9,26 @@
             <package name="ome.xml.utests"/>
         </packages>
     </test>
-    <test name="2010-04Schema">
+    <test name="2010-04SchemaModelObjects">
         <groups>
             <run>
                 <exclude name="disabled"/>
             </run>
-        </groups>        <parameter name="mockClassName"
+        </groups>
+        <parameter name="mockClassName"
                    value="ome.xml.utests.ObjectBasedOMEModelMock"/>
+        <classes>
+            <class name="ome.xml.utests.InOut201004Test"/>
+        </classes>
+    </test>
+    <test name="2010-04SchemaIMetadata">
+        <groups>
+            <run>
+                <exclude name="disabled"/>
+            </run>
+        </groups>
+        <parameter name="mockClassName"
+                   value="ome.xml.utests.IMetadataBasedOMEModelMock"/>
         <classes>
             <class name="ome.xml.utests.InOut201004Test"/>
         </classes>
