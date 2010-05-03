@@ -34,6 +34,7 @@
 
 package ome.xml.utests;
 
+import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
 import ome.xml.r201004.BooleanAnnotation;
 import ome.xml.r201004.Channel;
@@ -41,11 +42,13 @@ import ome.xml.r201004.Detector;
 import ome.xml.r201004.Dichroic;
 import ome.xml.r201004.DoubleAnnotation;
 import ome.xml.r201004.External;
+import ome.xml.r201004.Filament;
 import ome.xml.r201004.Filter;
 import ome.xml.r201004.FilterSet;
 import ome.xml.r201004.Image;
 import ome.xml.r201004.Instrument;
 import ome.xml.r201004.Laser;
+import ome.xml.r201004.LightEmittingDiode;
 import ome.xml.r201004.LongAnnotation;
 import ome.xml.r201004.MetadataOnly;
 import ome.xml.r201004.OME;
@@ -102,6 +105,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     BooleanAnnotation annotation = new BooleanAnnotation();
     annotation.setID(InOut201004Test.IMAGE_ANNOTATION_ID);
     annotation.setValue(InOut201004Test.IMAGE_ANNOTATION_VALUE);
+    annotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     image.linkAnnotation(annotation);
     annotations.addBooleanAnnotation(annotation);
     // Create <Pixels/>
@@ -123,6 +127,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
         XMLAnnotation channelAnnotation = new XMLAnnotation();
         channelAnnotation.setID(InOut201004Test.CHANNEL_ANNOTATION_ID);
         channelAnnotation.setValue(InOut201004Test.CHANNEL_ANNOTATION_VALUE);
+        channelAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
         channel.linkAnnotation(channelAnnotation);
         annotations.addXMLAnnotation(channelAnnotation);
       }
@@ -132,6 +137,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     DoubleAnnotation pixelsAnnotation = new DoubleAnnotation();
     pixelsAnnotation.setID(InOut201004Test.PIXELS_ANNOTATION_ID);
     pixelsAnnotation.setValue(InOut201004Test.PIXELS_ANNOTATION_VALUE);
+    pixelsAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     pixels.linkAnnotation(pixelsAnnotation);
     annotations.addDoubleAnnotation(pixelsAnnotation);
     // Put <Pixels/> under <Image/>
@@ -150,11 +156,44 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     instrument.addDetector(detector);
     // Create <Laser/> under <Instrument/>
     Laser laser = new Laser();
-    laser.setID(InOut201004Test.LIGHTSOURCE_ID);
-    laser.setModel(InOut201004Test.LIGHTSOURCE_MODEL);
+    laser.setID(InOut201004Test.LIGHTSOURCE_LASER_ID);
+    laser.setModel(InOut201004Test.LIGHTSOURCE_LASER_MODEL);
     laser.setType(InOut201004Test.LASER_TYPE);
-    laser.setPower(InOut201004Test.LIGHTSOURCE_POWER);
+    laser.setPower(InOut201004Test.LIGHTSOURCE_LASER_POWER);
+    // with a <Pump/>
+    Laser laserPump = new Laser();
+    laserPump.setID(InOut201004Test.LIGHTSOURCE_PUMP_ID);
+    laserPump.setModel(InOut201004Test.LIGHTSOURCE_PUMP_MODEL);
+    laserPump.setType(InOut201004Test.LASER_TYPE);
+    laserPump.setPower(InOut201004Test.LIGHTSOURCE_PUMP_POWER);
+    
+    laser.linkPump(laserPump);
+    
     instrument.addLightSource(laser);
+    instrument.addLightSource(laserPump);
+    
+    // Create <Arc/> under <Instrument/>
+    Arc arc = new Arc();
+    arc.setID(InOut201004Test.LIGHTSOURCE_ARC_ID);
+    arc.setModel(InOut201004Test.LIGHTSOURCE_ARC_MODEL);
+    arc.setType(InOut201004Test.ARC_TYPE);
+    arc.setPower(InOut201004Test.LIGHTSOURCE_ARC_POWER);
+    instrument.addLightSource(arc);
+    
+    // Create <Filament/> under <Instrument/>
+    Filament filament = new Filament();
+    filament.setID(InOut201004Test.LIGHTSOURCE_FILAMENT_ID);
+    filament.setModel(InOut201004Test.LIGHTSOURCE_FILAMENT_MODEL);
+    filament.setType(InOut201004Test.FILAMENT_TYPE);
+    filament.setPower(InOut201004Test.LIGHTSOURCE_FILAMENT_POWER);
+    instrument.addLightSource(filament);
+
+    // Create <LightEmittingDiode/> under <Instrument/>
+    LightEmittingDiode led = new LightEmittingDiode();
+    led.setID(InOut201004Test.LIGHTSOURCE_LED_ID);
+    led.setModel(InOut201004Test.LIGHTSOURCE_LED_MODEL);
+    led.setPower(InOut201004Test.LIGHTSOURCE_LED_POWER);
+    instrument.addLightSource(led);
 
     // Create <Dichroic/> under <Instrument/>
     Dichroic dichroic = new Dichroic();
@@ -227,6 +266,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     TimestampAnnotation plateAnnotation = new TimestampAnnotation();
     plateAnnotation.setID(InOut201004Test.PLATE_ANNOTATION_ID);
     plateAnnotation.setValue(InOut201004Test.PLATE_ANNOTATION_VALUE);
+    plateAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     plate.linkAnnotation(plateAnnotation);
     annotations.addTimestampAnnotation(plateAnnotation);
 
@@ -242,6 +282,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
           LongAnnotation annotation = new LongAnnotation();
           annotation.setID(InOut201004Test.WELL_ANNOTATION_ID);
           annotation.setValue(InOut201004Test.WELL_ANNOTATION_VALUE);
+          annotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
           well.linkAnnotation(annotation);
           annotations.addLongAnnotation(annotation);
         }
@@ -266,6 +307,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     StringAnnotation roiAnnotation = new StringAnnotation();
     roiAnnotation.setID(InOut201004Test.ROI_ANNOTATION_ID);
     roiAnnotation.setValue(InOut201004Test.ROI_ANNOTATION_VALUE);
+    roiAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     roi.linkAnnotation(roiAnnotation);
     annotations.addStringAnnotation(roiAnnotation);
 

@@ -58,10 +58,13 @@ import javax.xml.transform.stream.StreamResult;
 import static org.testng.AssertJUnit.*;
 
 import ome.xml.r201004.Annotation;
+import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
 import ome.xml.r201004.BooleanAnnotation;
 import ome.xml.r201004.DoubleAnnotation;
 import ome.xml.r201004.External;
+import ome.xml.r201004.Filament;
+import ome.xml.r201004.LightEmittingDiode;
 import ome.xml.r201004.LongAnnotation;
 import ome.xml.r201004.OMEModel;
 import ome.xml.r201004.OMEModelImpl;
@@ -92,8 +95,10 @@ import ome.xml.r201004.Shape;
 import ome.xml.r201004.Union;
 import ome.xml.r201004.Well;
 import ome.xml.r201004.WellSample;
+import ome.xml.r201004.enums.ArcType;
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.FilamentType;
 import ome.xml.r201004.enums.FilterType;
 import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.enums.NamingConvention;
@@ -118,6 +123,8 @@ import org.w3c.dom.Element;
 public class InOut201004Test {
   public static final String IMAGE_ID = "Image:0";
 
+  public static final String GENERAL_ANNOTATION_NAMESPACE = "test-ome-InOut201004-namespace";
+
   public static final String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
 
   public static final String PIXELS_ID = "Pixels:0";
@@ -130,7 +137,15 @@ public class InOut201004Test {
 
   public static final String DETECTOR_ID = "Detector:0";
 
-  public static final String LIGHTSOURCE_ID = "LightSource:0";
+  public static final String LIGHTSOURCE_LASER_ID = "LightSource:0";
+
+  public static final String LIGHTSOURCE_PUMP_ID = "LightSource:1";
+
+  public static final String LIGHTSOURCE_ARC_ID = "LightSource:2";
+
+  public static final String LIGHTSOURCE_FILAMENT_ID = "LightSource:3";
+
+  public static final String LIGHTSOURCE_LED_ID = "LightSource:4";
 
   public static final String DICHROIC_ID = "Dichroic:0";
 
@@ -172,7 +187,15 @@ public class InOut201004Test {
 
   public static final String DETECTOR_MODEL = "ReallySensitive!";
 
-  public static final String LIGHTSOURCE_MODEL = "ReallyBright!";
+  public static final String LIGHTSOURCE_LASER_MODEL = "ReallyBrightLaser!";
+
+  public static final String LIGHTSOURCE_PUMP_MODEL = "ReallyBrightPump!";
+
+  public static final String LIGHTSOURCE_ARC_MODEL = "ReallyBrightArc!";
+
+  public static final String LIGHTSOURCE_FILAMENT_MODEL = "ReallyBrightFilament!";
+
+  public static final String LIGHTSOURCE_LED_MODEL = "ReallyBrightLED!";
 
   public static final String OBJECTIVE_MODEL = "ReallyClear!";
 
@@ -186,9 +209,21 @@ public class InOut201004Test {
 
   public static final PixelType OTF_PIXELTYPE = PixelType.FLOAT;
 
-  public static final Double LIGHTSOURCE_POWER = 1000.0;
+  public static final Double LIGHTSOURCE_LASER_POWER = 1000.0;
+
+  public static final Double LIGHTSOURCE_PUMP_POWER = 100.0;
+
+  public static final Double LIGHTSOURCE_ARC_POWER = 500.0;
+
+  public static final Double LIGHTSOURCE_FILAMENT_POWER = 200.0;
+
+  public static final Double LIGHTSOURCE_LED_POWER = 10.0;
 
   public static final LaserType LASER_TYPE = LaserType.DYE;
+  
+  public static final ArcType ARC_TYPE = ArcType.HGXE;
+
+  public static final FilamentType FILAMENT_TYPE = FilamentType.HALOGEN;
 
   public static final Integer OTF_SIZE_X = 512;
 
@@ -300,6 +335,7 @@ public class InOut201004Test {
     assertEquals(BooleanAnnotation.class, n.getClass());
     BooleanAnnotation b = (BooleanAnnotation) n;
     assertEquals(b.getValue(), IMAGE_ANNOTATION_VALUE);
+    assertEquals(b.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertEquals(b.getID(), IMAGE_ANNOTATION_ID);
   }
 
@@ -332,6 +368,7 @@ public class InOut201004Test {
     assertNotNull(n);
     assertTrue(n instanceof XMLAnnotation);
     assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     XMLAnnotation xml = (XMLAnnotation) n;
     assertEquals(xml.getValue(), CHANNEL_ANNOTATION_VALUE);
   }
@@ -343,6 +380,7 @@ public class InOut201004Test {
     assertTrue(n instanceof DoubleAnnotation);
     DoubleAnnotation b = (DoubleAnnotation) n;
     assertEquals(b.getValue(), PIXELS_ANNOTATION_VALUE);
+    assertEquals(b.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertEquals(b.getID(), PIXELS_ANNOTATION_ID);
   }
 
@@ -365,12 +403,57 @@ public class InOut201004Test {
   public void testValidLaserNode() {
     Laser laser = (Laser) ome.getInstrument(0).getLightSource(0);
     assertNotNull(laser);
-    assertEquals(LIGHTSOURCE_ID, laser.getID());
-    assertEquals(LIGHTSOURCE_MODEL, laser.getModel());
-    assertEquals(LIGHTSOURCE_POWER, laser.getPower());
+    assertEquals(LIGHTSOURCE_LASER_ID, laser.getID());
+    assertEquals(LIGHTSOURCE_LASER_MODEL, laser.getModel());
+    assertEquals(LIGHTSOURCE_LASER_POWER, laser.getPower());
     assertEquals(LASER_TYPE, laser.getType());
   }
 
+  @Test(dependsOnMethods={"testValidLaserNode"})
+  public void testValidPumpNode() {
+    Laser laser = (Laser) ome.getInstrument(0).getLightSource(0);
+    Laser laserPump = (Laser) ome.getInstrument(0).getLightSource(1);
+    assertNotNull(laserPump);
+    assertEquals(LIGHTSOURCE_PUMP_ID, laserPump.getID());
+    assertEquals(LIGHTSOURCE_PUMP_MODEL, laserPump.getModel());
+    assertEquals(LIGHTSOURCE_PUMP_POWER, laserPump.getPower());
+    assertEquals(LASER_TYPE, laserPump.getType());
+    assertEquals(laser.getLinkedPump(),laserPump);
+  }
+
+  // Create <Arc/> under <Instrument/>
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidArcNode() {
+    Arc arc = (Arc) ome.getInstrument(0).getLightSource(2);
+    assertNotNull(arc);
+    assertEquals(LIGHTSOURCE_ARC_ID, arc.getID());
+    assertEquals(LIGHTSOURCE_ARC_MODEL, arc.getModel());
+    assertEquals(LIGHTSOURCE_ARC_POWER, arc.getPower());
+    assertEquals(ARC_TYPE, arc.getType());
+  }
+  
+  // Create <Filament/> under <Instrument/>
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidFilamentNode() {
+    Filament filament = (Filament) ome.getInstrument(0).getLightSource(3);
+    assertNotNull(filament);
+    assertEquals(LIGHTSOURCE_FILAMENT_ID, filament.getID());
+    assertEquals(LIGHTSOURCE_FILAMENT_MODEL, filament.getModel());
+    assertEquals(LIGHTSOURCE_FILAMENT_POWER, filament.getPower());
+    assertEquals(FILAMENT_TYPE, filament.getType());
+  }
+
+  // Create <LightEmittingDiode/> under <Instrument/>
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidLightEmittingDiodeNode() {
+    LightEmittingDiode led = (LightEmittingDiode) ome.getInstrument(0).getLightSource(4);
+    assertNotNull(led);
+    assertEquals(LIGHTSOURCE_LED_ID, led.getID());
+    assertEquals(LIGHTSOURCE_LED_MODEL, led.getModel());
+    assertEquals(LIGHTSOURCE_LED_POWER, led.getPower());
+  }
+
+  
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidDichroicNode() {
     Dichroic dichroic = ome.getInstrument(0).getDichroic(0);
@@ -483,6 +566,7 @@ public class InOut201004Test {
     Annotation n = ome.getPlate(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(PLATE_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertTrue(n instanceof TimestampAnnotation);
     TimestampAnnotation timestamp = (TimestampAnnotation) n;
     assertEquals(timestamp.getValue(), PLATE_ANNOTATION_VALUE);
@@ -514,6 +598,7 @@ public class InOut201004Test {
     Annotation n = ome.getPlate(0).getWell(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(WELL_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertTrue(n instanceof LongAnnotation);
     LongAnnotation longAnnotation = (LongAnnotation) n;
     assertEquals(longAnnotation.getValue(), WELL_ANNOTATION_VALUE);
@@ -545,6 +630,7 @@ public class InOut201004Test {
     Annotation n = ome.getROI(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(ROI_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertTrue(n instanceof StringAnnotation);
     StringAnnotation string = (StringAnnotation) n;
     assertEquals(ROI_ANNOTATION_VALUE, string.getValue());
