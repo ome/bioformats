@@ -37,6 +37,8 @@ package ome.xml.utests;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -100,6 +102,8 @@ import ome.xml.r201004.primitives.NonNegativeInteger;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -110,123 +114,124 @@ import org.w3c.dom.Element;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-xml/test/ome/xml/utests/InOut201004Test.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-xml/test/ome/xml/utests/InOut201004Test.java">SVN</a></dd></dl>
  */
+@Test(groups={"inOutTests"})
 public class InOut201004Test {
-  private static String IMAGE_ID = "Image:0";
+  public static final String IMAGE_ID = "Image:0";
 
-  private static String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
+  public static final String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
 
-  private static String PIXELS_ID = "Pixels:0";
+  public static final String PIXELS_ID = "Pixels:0";
 
-  private static String PIXELS_ANNOTATION_ID = "Annotation:Double0";
+  public static final String PIXELS_ANNOTATION_ID = "Annotation:Double0";
 
-  private static String CHANNEL_ANNOTATION_ID = "Annotation:XML0";
+  public static final String CHANNEL_ANNOTATION_ID = "Annotation:XML0";
 
-  private static String INSTRUMENT_ID = "Instrument:0";
+  public static final String INSTRUMENT_ID = "Instrument:0";
 
-  private static String DETECTOR_ID = "Detector:0";
+  public static final String DETECTOR_ID = "Detector:0";
 
-  private static String LIGHTSOURCE_ID = "LightSource:0";
+  public static final String LIGHTSOURCE_ID = "LightSource:0";
 
-  private static String DICHROIC_ID = "Dichroic:0";
+  public static final String DICHROIC_ID = "Dichroic:0";
 
-  private static String FILTERSET_ID = "FilterSet:0";
+  public static final String FILTERSET_ID = "FilterSet:0";
 
-  private static String EM_FILTER_ID = "Filter:0";
+  public static final String EM_FILTER_ID = "Filter:0";
 
-  private static String EX_FILTER_ID = "Filter:1";
+  public static final String EX_FILTER_ID = "Filter:1";
 
-  private static String OBJECTIVE_ID = "Objective:0";
+  public static final String OBJECTIVE_ID = "Objective:0";
 
-  private static String OTF_ID = "OTF:0";
+  public static final String OTF_ID = "OTF:0";
 
-  private static String PLATE_ID = "Plate:0";
+  public static final String PLATE_ID = "Plate:0";
 
-  private static String PLATE_ANNOTATION_ID = "Annotation:Timestamp0";
+  public static final String PLATE_ANNOTATION_ID = "Annotation:Timestamp0";
 
-  private static String WELL_ANNOTATION_ID = "Annotation:Long0";
+  public static final String WELL_ANNOTATION_ID = "Annotation:Long0";
 
-  private static String ROI_ID = "ROI:5";
+  public static final String ROI_ID = "ROI:5";
 
-  private static String ROI_ANNOTATION_ID = "Annotation:String0";
+  public static final String ROI_ANNOTATION_ID = "Annotation:String0";
 
-  private static String SHAPE_ID = "Shape:0";
+  public static final String SHAPE_ID = "Shape:0";
 
-  private static DimensionOrder DIMENSION_ORDER = DimensionOrder.XYZCT;
+  public static final DimensionOrder DIMENSION_ORDER = DimensionOrder.XYZCT;
 
-  private static PixelType PIXEL_TYPE = PixelType.UINT16;
+  public static final PixelType PIXEL_TYPE = PixelType.UINT16;
 
-  private static final Integer SIZE_X = 512;
+  public static final Integer SIZE_X = 512;
 
-  private static final Integer SIZE_Y = 512;
+  public static final Integer SIZE_Y = 512;
 
-  private static final Integer SIZE_Z = 64;
+  public static final Integer SIZE_Z = 64;
 
-  private static final Integer SIZE_C = 3;
+  public static final Integer SIZE_C = 3;
 
-  private static final Integer SIZE_T = 50;
+  public static final Integer SIZE_T = 50;
 
-  private static final String DETECTOR_MODEL = "ReallySensitive!";
+  public static final String DETECTOR_MODEL = "ReallySensitive!";
 
-  private static final String LIGHTSOURCE_MODEL = "ReallyBright!";
+  public static final String LIGHTSOURCE_MODEL = "ReallyBright!";
 
-  private static final String OBJECTIVE_MODEL = "ReallyClear!";
+  public static final String OBJECTIVE_MODEL = "ReallyClear!";
 
-  private static final String DICHROIC_SN = "0123456789";
+  public static final String DICHROIC_SN = "0123456789";
 
-  private static final String FILTERSET_LOT = "RandomLot";
+  public static final String FILTERSET_LOT = "RandomLot";
 
-  private static final FilterType EM_FILTER_TYPE = FilterType.LONGPASS;
+  public static final FilterType EM_FILTER_TYPE = FilterType.LONGPASS;
 
-  private static final FilterType EX_FILTER_TYPE = FilterType.NEUTRALDENSITY;
+  public static final FilterType EX_FILTER_TYPE = FilterType.NEUTRALDENSITY;
 
-  private static final PixelType OTF_PIXELTYPE = PixelType.FLOAT;
+  public static final PixelType OTF_PIXELTYPE = PixelType.FLOAT;
 
-  private static final Double LIGHTSOURCE_POWER = 1000.0;
+  public static final Double LIGHTSOURCE_POWER = 1000.0;
 
-  private static final LaserType LASER_TYPE = LaserType.DYE;
+  public static final LaserType LASER_TYPE = LaserType.DYE;
 
-  private static final Integer OTF_SIZE_X = 512;
+  public static final Integer OTF_SIZE_X = 512;
 
-  private static final Integer OTF_SIZE_Y = 512;
+  public static final Integer OTF_SIZE_Y = 512;
 
-  private static final Boolean OTF_OPTICAL_AXIS_AVERAGED = Boolean.FALSE;
+  public static final Boolean OTF_OPTICAL_AXIS_AVERAGED = Boolean.FALSE;
 
-  private static final Boolean IMAGE_ANNOTATION_VALUE = Boolean.FALSE;
+  public static final Boolean IMAGE_ANNOTATION_VALUE = Boolean.FALSE;
 
-  private static final String CHANNEL_ANNOTATION_VALUE =
+  public static final String CHANNEL_ANNOTATION_VALUE =
   "<TestData><key>foo</key><value>bar</value></TestData>";
 
-  private static final Double PIXELS_ANNOTATION_VALUE = 3.14;
+  public static final Double PIXELS_ANNOTATION_VALUE = 3.14;
 
-  private static final String PLATE_ANNOTATION_VALUE = "1970-01-01T00:00:00";
+  public static final String PLATE_ANNOTATION_VALUE = "1970-01-01T00:00:00";
 
-  private static final Long WELL_ANNOTATION_VALUE = 262144L;
+  public static final Long WELL_ANNOTATION_VALUE = 262144L;
 
-  private static final Integer WELL_ROWS = 3;
+  public static final Integer WELL_ROWS = 3;
 
-  private static final Integer WELL_COLS = 2;
+  public static final Integer WELL_COLS = 2;
 
-  private static final NamingConvention WELL_ROW = NamingConvention.LETTER;
+  public static final NamingConvention WELL_ROW = NamingConvention.LETTER;
 
-  private static final NamingConvention WELL_COL = NamingConvention.NUMBER;
+  public static final NamingConvention WELL_COL = NamingConvention.NUMBER;
 
-  private static final String ROI_ANNOTATION_VALUE = "Some extra ROI data";
+  public static final String ROI_ANNOTATION_VALUE = "Some extra ROI data";
 
-  private static final Double RECTANGLE_X = 10.0;
+  public static final Double RECTANGLE_X = 10.0;
 
-  private static final Double RECTANGLE_Y = 20.0;
+  public static final Double RECTANGLE_Y = 20.0;
 
-  private static final Double RECTANGLE_WIDTH = 128.0;
+  public static final Double RECTANGLE_WIDTH = 128.0;
 
-  private static final Double RECTANGLE_HEIGHT = 256.0;
+  public static final Double RECTANGLE_HEIGHT = 256.0;
 
-  private static final String OTF_BINARY_FILE_NAME = "abc.bin";
+  public static final String OTF_BINARY_FILE_NAME = "abc.bin";
 
-  private static final Integer OTF_BINARY_FILE_SIZE = 64;
+  public static final Integer OTF_BINARY_FILE_SIZE = 64;
 
-  private static final String OTF_BINARY_FILE_EXTERNAL_HREF = "file:///abc.bin";
+  public static final String OTF_BINARY_FILE_EXTERNAL_HREF = "file:///abc.bin";
 
-  private static final String OTF_BINARY_FILE_EXTERNAL_SHA1 =
+  public static final String OTF_BINARY_FILE_EXTERNAL_SHA1 =
     "1234567890123456789012345678901234567890";
 
   /** XML namespace. */
@@ -245,26 +250,22 @@ public class InOut201004Test {
 
   public String asString;
 
-  public OME ome;
+  public OMEModelMock mock;
 
-  public StructuredAnnotations annotations;
+  public OME ome;
 
   public OMEModel model;
 
+  @Parameters({"mockClassName"})
   @BeforeClass
-  public void setUp()
-  throws ParserConfigurationException, TransformerException, UnsupportedEncodingException {
+  public void setUp(String mockClassName) throws Exception {
+    Class mockClass = Class.forName(mockClassName);
+    Constructor constructor = mockClass.getDeclaredConstructor();
+    mock = (OMEModelMock) constructor.newInstance();
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     document = parser.newDocument();
-    // Put <Image/> under <OME/>
-    ome = new OME();
-    annotations = new StructuredAnnotations();
-    ome.addImage(makeImage());
-    ome.addPlate(makePlate());
-    ome.addInstrument(makeInstrument());
-    ome.addROI(makeROI());
-    ome.setStructuredAnnotations(annotations);
+    ome = mock.getRoot();
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     root.setAttribute("xmlns", XML_NS);
@@ -549,194 +550,6 @@ public class InOut201004Test {
     assertEquals(ROI_ANNOTATION_VALUE, string.getValue());
   }
 
-  private Image makeImage() {
-    // Create <Image/>
-    Image image = new Image();
-    image.setID(IMAGE_ID);
-    BooleanAnnotation annotation = new BooleanAnnotation();
-    annotation.setID(IMAGE_ANNOTATION_ID);
-    annotation.setValue(IMAGE_ANNOTATION_VALUE);
-    image.linkAnnotation(annotation);
-    annotations.addBooleanAnnotation(annotation);
-    // Create <Pixels/>
-    Pixels pixels = new Pixels();
-    pixels.setID(PIXELS_ID);
-    pixels.setSizeX(new PositiveInteger(SIZE_X));
-    pixels.setSizeY(new PositiveInteger(SIZE_Y));
-    pixels.setSizeZ(new PositiveInteger(SIZE_Z));
-    pixels.setSizeC(new PositiveInteger(SIZE_C));
-    pixels.setSizeT(new PositiveInteger(SIZE_T));
-    pixels.setDimensionOrder(DIMENSION_ORDER);
-    pixels.setType(PIXEL_TYPE);
-    pixels.setMetadataOnly(new MetadataOnly());
-    // Create <Channel/> under <Pixels/>
-    for (int i = 0; i < SIZE_C; i++) {
-      Channel channel = new Channel();
-      channel.setID("Channel:" + i);
-      if (i == 0) {
-        XMLAnnotation channelAnnotation = new XMLAnnotation();
-        channelAnnotation.setID(CHANNEL_ANNOTATION_ID);
-        channelAnnotation.setValue(CHANNEL_ANNOTATION_VALUE);
-        channel.linkAnnotation(channelAnnotation);
-        annotations.addXMLAnnotation(channelAnnotation);
-      }
-      pixels.addChannel(channel);
-    }
-    // create Annotation for Pixels
-    DoubleAnnotation pixelsAnnotation = new DoubleAnnotation();
-    pixelsAnnotation.setID(PIXELS_ANNOTATION_ID);
-    pixelsAnnotation.setValue(PIXELS_ANNOTATION_VALUE);
-    pixels.linkAnnotation(pixelsAnnotation);
-    annotations.addDoubleAnnotation(pixelsAnnotation);
-    // Put <Pixels/> under <Image/>
-    image.setPixels(pixels);
-    return image;
-  }
-
-  private Instrument makeInstrument() {
-    // Create <Instrument/>
-    Instrument instrument = new Instrument();
-    instrument.setID(INSTRUMENT_ID);
-    // Create <Detector/> under <Instrument/>
-    Detector detector = new Detector();
-    detector.setID(DETECTOR_ID);
-    detector.setModel(DETECTOR_MODEL);
-    instrument.addDetector(detector);
-    // Create <Laser/> under <Instrument/>
-    Laser laser = new Laser();
-    laser.setID(LIGHTSOURCE_ID);
-    laser.setModel(LIGHTSOURCE_MODEL);
-    laser.setType(LASER_TYPE);
-    laser.setPower(LIGHTSOURCE_POWER);
-    instrument.addLightSource(laser);
-
-    // Create <Dichroic/> under <Instrument/>
-    Dichroic dichroic = new Dichroic();
-    dichroic.setID(DICHROIC_ID);
-    dichroic.setSerialNumber(DICHROIC_SN);
-    // Create <FilterSet/> under <Dichroic/>
-    FilterSet filterSet = new FilterSet();
-    filterSet.setID(FILTERSET_ID);
-    filterSet.setLotNumber(FILTERSET_LOT);
-    filterSet.linkDichroic(dichroic);
-
-    Filter emFilter = new Filter();
-    Filter exFilter = new Filter();
-    OTF otf = new OTF();
-    // Create <Objective/> under <Instrument/>
-    Objective objective = new Objective();
-    objective.setID(OBJECTIVE_ID);
-    objective.setModel(OBJECTIVE_MODEL);
-
-    emFilter.setID(EM_FILTER_ID);
-    emFilter.setType(EM_FILTER_TYPE);
-    exFilter.setID(EX_FILTER_ID);
-    exFilter.setType(EX_FILTER_TYPE);
-    otf.setID(OTF_ID);
-    otf.setType(OTF_PIXELTYPE);
-    otf.setSizeX(new PositiveInteger(OTF_SIZE_X));
-    otf.setSizeY(new PositiveInteger(OTF_SIZE_Y));
-    otf.setOpticalAxisAveraged(OTF_OPTICAL_AXIS_AVERAGED);
-    // Create <ObjectiveSettings/> under <OTF/>
-    ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
-    otfObjectiveSettings.setID(objective.getID());
-    otf.setObjectiveSettings(otfObjectiveSettings);
-    // Create <BinaryFile/> under <OTF/>
-    BinaryFile otfBinaryFile = new BinaryFile();
-    otfBinaryFile.setFileName(OTF_BINARY_FILE_NAME);
-    otfBinaryFile.setSize(OTF_BINARY_FILE_SIZE);
-    External otfBinaryFileExternal = new External();
-    otfBinaryFileExternal.sethref(OTF_BINARY_FILE_EXTERNAL_HREF);
-    otfBinaryFileExternal.setSHA1(OTF_BINARY_FILE_EXTERNAL_SHA1);
-    otfBinaryFile.setExternal(otfBinaryFileExternal);
-    otf.setBinaryFile(otfBinaryFile);
-    otf.linkFilterSet(filterSet);
-
-    instrument.addFilter(emFilter);
-    instrument.addFilter(exFilter);
-    instrument.addOTF(otf);
-    instrument.addObjective(objective);
-
-    filterSet.linkEmissionFilter(emFilter);
-    filterSet.linkExcitationFilter(exFilter);
-    filterSet.linkDichroic(dichroic);
-    instrument.addFilterSet(filterSet);
-    instrument.addDichroic(dichroic);
-
-    // link Instrument to the first Image
-    Image image = ome.getImage(0);
-    image.linkInstrument(instrument);
-
-    return instrument;
-  }
-
-  private Plate makePlate() {
-    Plate plate = new Plate();
-    plate.setID(PLATE_ID);
-    plate.setRows(WELL_ROWS);
-    plate.setColumns(WELL_COLS);
-    plate.setRowNamingConvention(WELL_ROW);
-    plate.setColumnNamingConvention(WELL_COL);
-
-    TimestampAnnotation plateAnnotation = new TimestampAnnotation();
-    plateAnnotation.setID(PLATE_ANNOTATION_ID);
-    plateAnnotation.setValue(PLATE_ANNOTATION_VALUE);
-    plate.linkAnnotation(plateAnnotation);
-    annotations.addTimestampAnnotation(plateAnnotation);
-
-    int wellSampleIndex = 0;
-    for (int row=0; row<WELL_ROWS; row++) {
-      for (int col=0; col<WELL_COLS; col++) {
-        Well well = new Well();
-        well.setID(String.format("Well:%d_%d", row, col));
-        well.setRow(new NonNegativeInteger(row));
-        well.setColumn(new NonNegativeInteger(col));
-
-        if (row == 0 && col == 0) {
-          LongAnnotation annotation = new LongAnnotation();
-          annotation.setID(WELL_ANNOTATION_ID);
-          annotation.setValue(WELL_ANNOTATION_VALUE);
-          well.linkAnnotation(annotation);
-          annotations.addLongAnnotation(annotation);
-        }
-
-        WellSample sample = new WellSample();
-        sample.setID(String.format("WellSample:%d_%d", row, col));
-        sample.setIndex(new NonNegativeInteger(wellSampleIndex));
-        sample.linkImage(ome.getImage(0));
-        well.addWellSample(sample);
-        plate.addWell(well);
-        wellSampleIndex++;
-      }
-    }
-
-    return plate;
-  }
-
-  private ROI makeROI() {
-    ROI roi = new ROI();
-    roi.setID(ROI_ID);
-
-    StringAnnotation roiAnnotation = new StringAnnotation();
-    roiAnnotation.setID(ROI_ANNOTATION_ID);
-    roiAnnotation.setValue(ROI_ANNOTATION_VALUE);
-    roi.linkAnnotation(roiAnnotation);
-    annotations.addStringAnnotation(roiAnnotation);
-
-    Union shapeUnion = new Union();
-    Rectangle rect = new Rectangle();
-    rect.setID(SHAPE_ID);
-    rect.setX(RECTANGLE_X);
-    rect.setY(RECTANGLE_Y);
-    rect.setWidth(RECTANGLE_WIDTH);
-    rect.setHeight(RECTANGLE_HEIGHT);
-
-    shapeUnion.addShape(rect);
-    roi.setUnion(shapeUnion);
-
-    return roi;
-  }
-
   private String asString()
   throws TransformerException, UnsupportedEncodingException {
     TransformerFactory transformerFactory =
@@ -753,9 +566,10 @@ public class InOut201004Test {
     return os.toString();
   }
 
+  @Test(groups={"disabled"})
   public static void main(String[] args) throws Exception {
     InOut201004Test t = new InOut201004Test();
-    t.setUp();
+    t.setUp("ome.xml.utests.ObjectBasedOMEModelMock");
     System.out.println("###\n### XML\n###");
     System.out.println(t.asString);
     t.testValidOMENode();

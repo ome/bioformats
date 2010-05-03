@@ -1,8 +1,23 @@
 <suite name="OMEXMLTests">
-    <test name="2010-04Schema">
-        <groups/>
+    <test name="2010-04SchemaPrimitives">
+        <groups>
+            <run>
+                <exclude name="inOutTests"/>
+            </run>
+        </groups>
         <packages>
             <package name="ome.xml.utests"/>
         </packages>
+    </test>
+    <test name="2010-04Schema">
+        <groups>
+            <run>
+                <exclude name="disabled"/>
+            </run>
+        </groups>        <parameter name="mockClassName"
+                   value="ome.xml.utests.ObjectBasedOMEModelMock"/>
+        <classes>
+            <class name="ome.xml.utests.InOut201004Test"/>
+        </classes>
     </test>
 </suite>
