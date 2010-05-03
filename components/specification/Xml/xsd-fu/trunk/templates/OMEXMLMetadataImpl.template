@@ -81,9 +81,13 @@
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
+		// ${prop.name} is abstract proprietary and is a reference
+		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
+		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
+		model.addReference(
+				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
+				${prop.javaInstanceVariableName}_reference);
 		// ${parent} is abstract proprietary
-		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		// TODO: Do link here
 {% end %}\
 {% when is_abstract(parent) %}\
 		// ${parent} is abstract proprietary and not a reference
@@ -102,7 +106,7 @@
 			o${i}.add${v['name']}(new ${v['name']}());
 		}
 {% end %}\
-{% when v['max_occurs'] == 0 %}\
+{% when v['max_occurs'] == 1 %}\
 		if (o${i}.${v['accessor']} == null)
 		{
 			o${i}.set${v['name']}(new ${v['name']}());
@@ -137,7 +141,7 @@
 			o${i}.add${v['name']}(new ${v['name']}());
 		}
 {% end %}\
-{% when v['max_occurs'] == 0 %}\
+{% when v['max_occurs'] == 1 %}\
 		if (o${i}.${v['accessor']} == null)
 		{
 			o${i}.set${v['name']}(new ${v['name']}());
