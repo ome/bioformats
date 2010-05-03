@@ -375,7 +375,6 @@ public class InOut201004Test {
     assertEquals(SIZE_T, pixels.getSizeT().getValue());
     assertEquals(DIMENSION_ORDER, pixels.getDimensionOrder());
     assertEquals(PIXEL_TYPE, pixels.getType());
-    assertNotNull(pixels.getMetadataOnly());
   }
 
   @Test(dependsOnMethods={"testValidImageNode"})

@@ -35,6 +35,7 @@
 package ome.xml.utests;
 
 import ome.xml.OMEXMLMetadataImpl;
+import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
 import ome.xml.r201004.BooleanAnnotation;
 import ome.xml.r201004.Channel;
@@ -42,11 +43,13 @@ import ome.xml.r201004.Detector;
 import ome.xml.r201004.Dichroic;
 import ome.xml.r201004.DoubleAnnotation;
 import ome.xml.r201004.External;
+import ome.xml.r201004.Filament;
 import ome.xml.r201004.Filter;
 import ome.xml.r201004.FilterSet;
 import ome.xml.r201004.Image;
 import ome.xml.r201004.Instrument;
 import ome.xml.r201004.Laser;
+import ome.xml.r201004.LightEmittingDiode;
 import ome.xml.r201004.LongAnnotation;
 import ome.xml.r201004.MetadataOnly;
 import ome.xml.r201004.OME;
@@ -82,6 +85,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store = new OMEXMLMetadataImpl();
     store.createRoot();
     makeImage();
+    makeInstrument();
+    store.resolveReferences();
   }
 
   public OME getRoot() {
@@ -92,6 +97,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     // Create <Image/>
     store.setImageID(InOut201004Test.IMAGE_ID, 0);
     store.setBooleanAnnotationID(InOut201004Test.IMAGE_ANNOTATION_ID, 0);
+    store.setBooleanAnnotationNamespace(
+        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
     store.setImageAnnotationRef(InOut201004Test.IMAGE_ANNOTATION_ID, 0, 0);
     // Create <Pixels/>
@@ -106,6 +113,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     // Create <Channel/> under <Pixels/>
     store.setXMLAnnotationID(
         InOut201004Test.CHANNEL_ANNOTATION_ID, 0);
+    store.setXMLAnnotationNamespace(
+        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setXMLAnnotationValue(
         InOut201004Test.CHANNEL_ANNOTATION_VALUE, 0);
     for (int i = 0; i < InOut201004Test.SIZE_C; i++) {
@@ -118,86 +127,97 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     // create Annotation for Pixels
     store.setDoubleAnnotationID(
         InOut201004Test.PIXELS_ANNOTATION_ID, 0);
+    store.setDoubleAnnotationNamespace(
+        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setDoubleAnnotationValue(
         InOut201004Test.PIXELS_ANNOTATION_VALUE, 0);
     store.setPixelsAnnotationRef(InOut201004Test.PIXELS_ANNOTATION_ID, 0, 0);
   }
 
-  private Instrument makeInstrument() {
+  private void makeInstrument() {
     // Create <Instrument/>
-    Instrument instrument = new Instrument();
-    instrument.setID(InOut201004Test.INSTRUMENT_ID);
+    store.setInstrumentID(InOut201004Test.INSTRUMENT_ID, 0);
+
     // Create <Detector/> under <Instrument/>
-    Detector detector = new Detector();
-    detector.setID(InOut201004Test.DETECTOR_ID);
-    detector.setModel(InOut201004Test.DETECTOR_MODEL);
-    instrument.addDetector(detector);
+    store.setDetectorID(InOut201004Test.DETECTOR_ID, 0, 0);
+    store.setDetectorModel(InOut201004Test.DETECTOR_MODEL, 0, 0);
+
     // Create <Laser/> under <Instrument/>
-    Laser laser = new Laser();
-    laser.setID(InOut201004Test.LIGHTSOURCE_ID);
-    laser.setModel(InOut201004Test.LIGHTSOURCE_MODEL);
-    laser.setType(InOut201004Test.LASER_TYPE);
-    laser.setPower(InOut201004Test.LIGHTSOURCE_POWER);
-    instrument.addLightSource(laser);
+    store.setLaserID(InOut201004Test.LIGHTSOURCE_LASER_ID, 0, 0);
+    store.setLaserModel(InOut201004Test.LIGHTSOURCE_LASER_MODEL, 0, 0);
+    store.setLaserType(InOut201004Test.LASER_TYPE, 0, 0);
+    store.setLaserPower(InOut201004Test.LIGHTSOURCE_LASER_POWER, 0, 0);
+
+    // with a Pump>
+    store.setLaserID(InOut201004Test.LIGHTSOURCE_PUMP_ID, 0, 1);
+    store.setLaserModel(InOut201004Test.LIGHTSOURCE_PUMP_MODEL, 0, 1);
+    store.setLaserType(InOut201004Test.LASER_TYPE, 0, 1);
+    store.setLaserPower(InOut201004Test.LIGHTSOURCE_PUMP_POWER, 0, 1);
+    // and link them
+    store.setLaserPump(InOut201004Test.LIGHTSOURCE_PUMP_ID, 0, 0);
+
+    // Create <Arc/> under <Instrument/>
+    store.setArcID(InOut201004Test.LIGHTSOURCE_ARC_ID, 0, 2);
+    store.setArcModel(InOut201004Test.LIGHTSOURCE_ARC_MODEL, 0, 2);
+    store.setArcType(InOut201004Test.ARC_TYPE, 0, 2);
+    store.setArcPower(InOut201004Test.LIGHTSOURCE_ARC_POWER, 0, 2);
+
+    // Create <Filament/> under <Instrument/>
+    store.setFilamentID(InOut201004Test.LIGHTSOURCE_FILAMENT_ID, 0, 3);
+    store.setFilamentModel(InOut201004Test.LIGHTSOURCE_FILAMENT_MODEL, 0, 3);
+    store.setFilamentType(InOut201004Test.FILAMENT_TYPE, 0, 3);
+    store.setFilamentPower(InOut201004Test.LIGHTSOURCE_FILAMENT_POWER, 0, 3);
+
+    // Create <LightEmittingDiode/> under <Instrument/>
+    store.setLightEmittingDiodeID(InOut201004Test.LIGHTSOURCE_LED_ID, 0, 4);
+    store.setLightEmittingDiodeModel(InOut201004Test.LIGHTSOURCE_LED_MODEL, 0, 4);
+    store.setLightEmittingDiodePower(InOut201004Test.LIGHTSOURCE_LED_POWER, 0, 4);
 
     // Create <Dichroic/> under <Instrument/>
-    Dichroic dichroic = new Dichroic();
-    dichroic.setID(InOut201004Test.DICHROIC_ID);
-    dichroic.setSerialNumber(InOut201004Test.DICHROIC_SN);
-    // Create <FilterSet/> under <Dichroic/>
-    FilterSet filterSet = new FilterSet();
-    filterSet.setID(InOut201004Test.FILTERSET_ID);
-    filterSet.setLotNumber(InOut201004Test.FILTERSET_LOT);
-    filterSet.linkDichroic(dichroic);
+    store.setDichroicID(InOut201004Test.DICHROIC_ID, 0, 0);
+    store.setDichroicSerialNumber(InOut201004Test.DICHROIC_SN, 0, 0);
 
-    Filter emFilter = new Filter();
-    Filter exFilter = new Filter();
-    OTF otf = new OTF();
+    // Create <FilterSet/> under <Instrument/>
+    store.setFilterSetID(InOut201004Test.FILTERSET_ID, 0, 0);
+    store.setFilterSetLotNumber(InOut201004Test.FILTERSET_LOT, 0, 0);
+    store.setFilterSetDichroicRef(InOut201004Test.DICHROIC_ID, 0, 0);
+    store.setFilterSetEmissionFilterRef(InOut201004Test.EM_FILTER_ID, 0, 0, 0);
+    store.setFilterSetExcitationFilterRef(InOut201004Test.EX_FILTER_ID, 0, 0, 0);
+    
+    // Create <Filter/>s under <Instrument/>
+    store.setFilterID(InOut201004Test.EM_FILTER_ID, 0, 0);
+    store.setFilterType(InOut201004Test.EM_FILTER_TYPE, 0, 0);
+    
+    store.setFilterID(InOut201004Test.EX_FILTER_ID, 0, 1);
+    store.setFilterType(InOut201004Test.EX_FILTER_TYPE, 0, 1);
+
     // Create <Objective/> under <Instrument/>
-    Objective objective = new Objective();
-    objective.setID(InOut201004Test.OBJECTIVE_ID);
-    objective.setModel(InOut201004Test.OBJECTIVE_MODEL);
-
-    emFilter.setID(InOut201004Test.EM_FILTER_ID);
-    emFilter.setType(InOut201004Test.EM_FILTER_TYPE);
-    exFilter.setID(InOut201004Test.EX_FILTER_ID);
-    exFilter.setType(InOut201004Test.EX_FILTER_TYPE);
-    otf.setID(InOut201004Test.OTF_ID);
-    otf.setType(InOut201004Test.OTF_PIXELTYPE);
-    otf.setSizeX(new PositiveInteger(InOut201004Test.OTF_SIZE_X));
-    otf.setSizeY(new PositiveInteger(InOut201004Test.OTF_SIZE_Y));
-    otf.setOpticalAxisAveraged(InOut201004Test.OTF_OPTICAL_AXIS_AVERAGED);
+    store.setObjectiveID(InOut201004Test.OBJECTIVE_ID, 0, 0);
+    store.setObjectiveModel(InOut201004Test.OBJECTIVE_MODEL, 0, 0);
+    
+    // Create <OFT/> under <Instrument/>
+    store.setOTFID(InOut201004Test.OTF_ID, 0, 0);
+    store.setOTFType(InOut201004Test.OTF_PIXELTYPE, 0, 0);
+    store.setOTFSizeX(new PositiveInteger(InOut201004Test.OTF_SIZE_X), 0, 0);
+    store.setOTFSizeY(new PositiveInteger(InOut201004Test.OTF_SIZE_Y), 0, 0);
+    store.setOTFOpticalAxisAveraged(InOut201004Test.OTF_OPTICAL_AXIS_AVERAGED, 0, 0);
+    
     // Create <ObjectiveSettings/> under <OTF/>
-    ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
-    otfObjectiveSettings.setID(objective.getID());
-    otf.setObjectiveSettings(otfObjectiveSettings);
+    store.setOTFObjectiveSettingsID(InOut201004Test.OBJECTIVE_ID, 0, 0);
+
     // Create <BinaryFile/> under <OTF/>
-    BinaryFile otfBinaryFile = new BinaryFile();
-    otfBinaryFile.setFileName(InOut201004Test.OTF_BINARY_FILE_NAME);
-    otfBinaryFile.setSize(InOut201004Test.OTF_BINARY_FILE_SIZE);
-    External otfBinaryFileExternal = new External();
-    otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
-    otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
-    otfBinaryFile.setExternal(otfBinaryFileExternal);
-    otf.setBinaryFile(otfBinaryFile);
-    otf.linkFilterSet(filterSet);
-
-    instrument.addFilter(emFilter);
-    instrument.addFilter(exFilter);
-    instrument.addOTF(otf);
-    instrument.addObjective(objective);
-
-    filterSet.linkEmissionFilter(emFilter);
-    filterSet.linkExcitationFilter(exFilter);
-    filterSet.linkDichroic(dichroic);
-    instrument.addFilterSet(filterSet);
-    instrument.addDichroic(dichroic);
+    store.setOTFBinaryFileFileName(InOut201004Test.OTF_BINARY_FILE_NAME, 0, 0);
+    store.setOTFBinaryFileSize(InOut201004Test.OTF_BINARY_FILE_SIZE, 0, 0);
+    
+//    External otfBinaryFileExternal = new External();
+//    otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
+//    otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
+//    otfBinaryFile.setExternal(otfBinaryFileExternal);
+//    otf.setBinaryFile(otfBinaryFile);
+//    otf.linkFilterSet(filterSet);
 
     // link Instrument to the first Image
-    //Image image = ome.getImage(0);
-    //image.linkInstrument(instrument);
-
-    return instrument;
+    store.setImageInstrumentRef(InOut201004Test.INSTRUMENT_ID, 0);
   }
 
   private Plate makePlate() {
