@@ -66,7 +66,7 @@ import org.xml.sax.SAXException;
 public class DisplayHandler implements StatusListener {
 
   // -- Fields --
-  
+
   protected ImporterOptions options;
   protected XMLWindow xmlWindow;
 
@@ -81,7 +81,7 @@ public class DisplayHandler implements StatusListener {
   /** Displays standard metadata in a table in its own window. */
   public SearchableWindow displayOriginalMetadata() {
     if (!options.isShowMetadata()) return null;
-    
+
     String name = options.getIdName();
     ImporterMetadata meta = options.getOriginalMetadata();
     String metaString = meta.getMetadataString("\t");
@@ -113,12 +113,12 @@ public class DisplayHandler implements StatusListener {
     xmlWindow = metaWindow; // save reference to OME-XML window
     return metaWindow;
   }
-  
+
   /** Displays the given images according to the configured options. */
   public void displayImages(ImagePlus[] imps, String stackOrder, IndexColorModel[] colorModels) {
     for (ImagePlus imp : imps) displayImage(imp, stackOrder, colorModels);
   }
-  
+
   /** Displays the given image according to the configured options. */
   public void displayImage(ImagePlus imp, String stackOrder, IndexColorModel[] colorModels) {
     if (options.isViewNone()) return;
@@ -152,7 +152,7 @@ public class DisplayHandler implements StatusListener {
       // CTR TODO finish this
       if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
     }
-    
+
     // NB: ImageJ 1.39+ is required for hyperstacks
 
     if (!options.isConcatenate()) {
@@ -183,14 +183,15 @@ public class DisplayHandler implements StatusListener {
           stackOrder, lut, r.getSeries(), null, hyper);
       }
 
-      if (splitC || splitZ || splitT) {
-        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
-      }
+      // CTR FIXME
+      //if (splitC || splitZ || splitT) {
+      //  imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
+      //}
     }
 
     imp.show();
   }
-  
+
   public void displayDataBrowser(ImagePlus imp, String stackOrder,
       IndexColorModel[] colorModels)
   {
@@ -204,7 +205,7 @@ public class DisplayHandler implements StatusListener {
 //    int[] dimLengths = r.getChannelDimLengths();
 //    new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
   }
-  
+
   public void displayImage5D(ImagePlus imp, String stackOrder, IndexColorModel[] colorModels) {
     displayNormal(imp, stackOrder, colorModels); //TEMP?
 

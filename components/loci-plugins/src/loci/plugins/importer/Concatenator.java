@@ -102,10 +102,11 @@ public class Concatenator {
 
     for (int j=0; j<newImps.size(); j++) {
       ImagePlus imp = newImps.get(j);
-      if (splitC || splitZ || splitT) {
-        imp = Slicer.reslice(imp, splitC, splitZ, splitT,
-          options.isViewHyperstack(), stackOrder);
-      }
+      // CTR FIXME
+      //if (splitC || splitZ || splitT) {
+      //  imp = Slicer.reslice(imp, splitC, splitZ, splitT,
+      //    options.isViewHyperstack(), stackOrder);
+      //}
       if (options.isMergeChannels() && options.isWindowless()) {
         imp = Colorizer.colorize(imp, true, stackOrder, null,
           r.getSeries(), options.getMergeOption(), options.isViewHyperstack());
