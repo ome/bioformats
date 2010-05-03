@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-03 15:00:30+0100
+ * Created by callan via xsd-fu on 2010-05-03 18:01:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -381,6 +381,14 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 	// Leader entity counting
 	// LightEmittingDiode entity counting
 	// LightPath entity counting
+	// LightSource entity counting
+	public int getLightSourceCount(int instrumentIndex)
+	{
+		// Parents: {u'Instrument': {u'OME': None}}
+		// LightSource is not a reference
+		return root.getInstrument(instrumentIndex).sizeOfLightSourceList();
+	}
+
 	// LightSourceSettings entity counting
 	public int getMicrobeamManipulationLightSourceSettingsCount(int experimentIndex, int microbeamManipulationIndex)
 	{
@@ -543,6 +551,14 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 		// Parents: {u'Plate': {u'OME': None}}
 		// ScreenRef is a reference
 		return root.getPlate(plateIndex).sizeOfLinkedScreenList();
+	}
+
+	// Shape entity counting
+	public int getShapeCount(int ROIIndex)
+	{
+		// Parents: {u'Union': {u'ROI': {u'OME': None}}}
+		// Shape is not a reference
+		return root.getROI(ROIIndex).getUnion().sizeOfShapeList();
 	}
 
 	// StageLabel entity counting
