@@ -86,6 +86,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.createRoot();
     makeImage();
     makeInstrument();
+    makePlate();
+    makeROI();
     store.resolveReferences();
   }
 
@@ -99,6 +101,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setBooleanAnnotationID(InOut201004Test.IMAGE_ANNOTATION_ID, 0);
     store.setBooleanAnnotationNamespace(
         InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
+    store.setBooleanAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
     store.setImageAnnotationRef(InOut201004Test.IMAGE_ANNOTATION_ID, 0, 0);
     // Create <Pixels/>
@@ -117,6 +121,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
         InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setXMLAnnotationValue(
         InOut201004Test.CHANNEL_ANNOTATION_VALUE, 0);
+    store.setXMLAnnotationNamespace(
+        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     for (int i = 0; i < InOut201004Test.SIZE_C; i++) {
       store.setChannelID("Channel:" + i, 0, i);
       if (i == 0) {
@@ -131,6 +137,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
         InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setDoubleAnnotationValue(
         InOut201004Test.PIXELS_ANNOTATION_VALUE, 0);
+    store.setDoubleAnnotationNamespace(
+        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setPixelsAnnotationRef(InOut201004Test.PIXELS_ANNOTATION_ID, 0, 0);
   }
 
@@ -161,7 +169,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setArcModel(InOut201004Test.LIGHTSOURCE_ARC_MODEL, 0, 2);
     store.setArcType(InOut201004Test.ARC_TYPE, 0, 2);
     store.setArcPower(InOut201004Test.LIGHTSOURCE_ARC_POWER, 0, 2);
-
+    
     // Create <Filament/> under <Instrument/>
     store.setFilamentID(InOut201004Test.LIGHTSOURCE_FILAMENT_ID, 0, 3);
     store.setFilamentModel(InOut201004Test.LIGHTSOURCE_FILAMENT_MODEL, 0, 3);
@@ -209,81 +217,72 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setOTFBinaryFileFileName(InOut201004Test.OTF_BINARY_FILE_NAME, 0, 0);
     store.setOTFBinaryFileSize(InOut201004Test.OTF_BINARY_FILE_SIZE, 0, 0);
     
-//    External otfBinaryFileExternal = new External();
-//    otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
-//    otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
-//    otfBinaryFile.setExternal(otfBinaryFileExternal);
-//    otf.setBinaryFile(otfBinaryFile);
-//    otf.linkFilterSet(filterSet);
+    // Link <FilterSet/> under <OTF/>
+    store.setOTFFilterSetRef(InOut201004Test.FILTERSET_ID, 0, 0);
+    
+    
+    // BinaryFile/External is not in the code generation
+    // otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
+    // otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
 
     // link Instrument to the first Image
     store.setImageInstrumentRef(InOut201004Test.INSTRUMENT_ID, 0);
   }
 
-  private Plate makePlate() {
-    Plate plate = new Plate();
-    plate.setID(InOut201004Test.PLATE_ID);
-    plate.setRows(InOut201004Test.WELL_ROWS);
-    plate.setColumns(InOut201004Test.WELL_COLS);
-    plate.setRowNamingConvention(InOut201004Test.WELL_ROW);
-    plate.setColumnNamingConvention(InOut201004Test.WELL_COL);
+  private void makePlate() {
+    store.setPlateID(InOut201004Test.PLATE_ID, 0);
+    store.setPlateRows(InOut201004Test.WELL_ROWS, 0);
+    store.setPlateColumns(InOut201004Test.WELL_COLS, 0);
+    store.setPlateRowNamingConvention(InOut201004Test.WELL_ROW, 0);
+    store.setPlateColumnNamingConvention(InOut201004Test.WELL_COL, 0);
+    
+    store.setPlateAnnotationRef(InOut201004Test.PLATE_ANNOTATION_ID, 0, 0);
 
-    TimestampAnnotation plateAnnotation = new TimestampAnnotation();
-    plateAnnotation.setID(InOut201004Test.PLATE_ANNOTATION_ID);
-    plateAnnotation.setValue(InOut201004Test.PLATE_ANNOTATION_VALUE);
-    plate.linkAnnotation(plateAnnotation);
-    //annotations.addTimestampAnnotation(plateAnnotation);
+    store.setTimestampAnnotationID(InOut201004Test.PLATE_ANNOTATION_ID, 0);
+    store.setTimestampAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setTimestampAnnotationValue(InOut201004Test.PLATE_ANNOTATION_VALUE, 0);
 
     int wellSampleIndex = 0;
+    int wellCount = 0;
     for (int row=0; row<InOut201004Test.WELL_ROWS; row++) {
       for (int col=0; col<InOut201004Test.WELL_COLS; col++) {
-        Well well = new Well();
-        well.setID(String.format("Well:%d_%d", row, col));
-        well.setRow(new NonNegativeInteger(row));
-        well.setColumn(new NonNegativeInteger(col));
+
+        store.setWellID(String.format("Well:%d_%d", row, col), 0, wellCount);
+        store.setWellRow(new NonNegativeInteger(row), 0, wellCount);
+        store.setWellColumn(new NonNegativeInteger(col), 0, wellCount);
 
         if (row == 0 && col == 0) {
-          LongAnnotation annotation = new LongAnnotation();
-          annotation.setID(InOut201004Test.WELL_ANNOTATION_ID);
-          annotation.setValue(InOut201004Test.WELL_ANNOTATION_VALUE);
-          well.linkAnnotation(annotation);
-          //annotations.addLongAnnotation(annotation);
+          store.setLongAnnotationID(InOut201004Test.WELL_ANNOTATION_ID, 0);
+          store.setLongAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+          store.setLongAnnotationValue(InOut201004Test.WELL_ANNOTATION_VALUE, 0);
+          store.setWellAnnotationRef(InOut201004Test.WELL_ANNOTATION_ID, 0, wellCount, 0);
         }
 
-        WellSample sample = new WellSample();
-        sample.setID(String.format("WellSample:%d_%d", row, col));
-        sample.setIndex(new NonNegativeInteger(wellSampleIndex));
-        //sample.linkImage(ome.getImage(0));
-        well.addWellSample(sample);
-        plate.addWell(well);
+        store.setWellSampleID(String.format("WellSample:%d_%d", row, col), 0, wellCount, 0);
+        store.setWellSampleIndex(new NonNegativeInteger(wellSampleIndex), 0, wellCount, 0);
+        store.setWellSampleImageRef(InOut201004Test.IMAGE_ID, 0, wellCount, 0);
+
         wellSampleIndex++;
+        wellCount++;
       }
     }
-
-    return plate;
   }
 
-  private ROI makeROI() {
-    ROI roi = new ROI();
-    roi.setID(InOut201004Test.ROI_ID);
+  private void makeROI() {
+    store.setROIID(InOut201004Test.ROI_ID, 0);
 
-    StringAnnotation roiAnnotation = new StringAnnotation();
-    roiAnnotation.setID(InOut201004Test.ROI_ANNOTATION_ID);
-    roiAnnotation.setValue(InOut201004Test.ROI_ANNOTATION_VALUE);
-    roi.linkAnnotation(roiAnnotation);
-    //annotations.addStringAnnotation(roiAnnotation);
+    store.setStringAnnotationID(InOut201004Test.ROI_ANNOTATION_ID, 0);
+    store.setStringAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setStringAnnotationValue(InOut201004Test.ROI_ANNOTATION_VALUE, 0);
+    
+    store.setROIAnnotationRef(InOut201004Test.ROI_ANNOTATION_ID, 0, 0);
 
-    Union shapeUnion = new Union();
-    Rectangle rect = new Rectangle();
-    rect.setID(InOut201004Test.SHAPE_ID);
-    rect.setX(InOut201004Test.RECTANGLE_X);
-    rect.setY(InOut201004Test.RECTANGLE_Y);
-    rect.setWidth(InOut201004Test.RECTANGLE_WIDTH);
-    rect.setHeight(InOut201004Test.RECTANGLE_HEIGHT);
-
-    shapeUnion.addShape(rect);
-    roi.setUnion(shapeUnion);
-
-    return roi;
+    store.setRectangleID(InOut201004Test.SHAPE_ID, 0, 0);
+    store.setRectangleX(InOut201004Test.RECTANGLE_X, 0, 0);
+    store.setRectangleY(InOut201004Test.RECTANGLE_Y, 0, 0);
+    store.setRectangleWidth(InOut201004Test.RECTANGLE_WIDTH, 0, 0);
+    store.setRectangleHeight(InOut201004Test.RECTANGLE_HEIGHT, 0, 0);
+    
+    
   }
 }

@@ -625,9 +625,10 @@ public class InOut201004Test {
     assertEquals(OTF_BINARY_FILE_NAME, bf.getFileName());
     assertEquals(OTF_BINARY_FILE_SIZE, bf.getSize());
     External external = bf.getExternal();
-    assertNotNull(external);
-    assertEquals(OTF_BINARY_FILE_EXTERNAL_HREF, external.gethref());
-    assertEquals(OTF_BINARY_FILE_EXTERNAL_SHA1, external.getSHA1());
+    if (external != null) {
+      assertEquals(OTF_BINARY_FILE_EXTERNAL_HREF, external.gethref());
+      assertEquals(OTF_BINARY_FILE_EXTERNAL_SHA1, external.getSHA1());
+    }
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})
