@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.colorize;
 
 import ij.gui.GenericDialog;
 import ij.util.Tools;
@@ -55,7 +55,7 @@ import loci.plugins.util.WindowTools;
  */
 public class CustomColorChooser implements TextListener {
   Vector<TextField> colors;
-  CustomColorPanel panel;
+  Panel panel;
   Color initialColor;
   int red, green, blue;
   String title;
@@ -86,8 +86,14 @@ public class CustomColorChooser implements TextListener {
     gd.addSlider(makeLabel("Red:"), 0, 255, red);
     gd.addSlider(makeLabel("Green:"), 0, 255, green);
     gd.addSlider(makeLabel("Blue:"), 0, 255, blue);
-    panel = new CustomColorPanel(initialColor);
+
+    panel = new Panel();
+    Dimension prefSize = new Dimension(100, 50);
+    panel.setPreferredSize(prefSize);
+    panel.setMinimumSize(prefSize);
+    panel.setBackground(initialColor);
     gd.addPanel(panel, GridBagConstraints.CENTER, new Insets(10, 0, 0, 0));
+
     colors = WindowTools.getNumericFields(gd);
     for (int i=0; i<colors.size(); i++) {
       colors.get(i).addTextListener(this);
@@ -104,7 +110,7 @@ public class CustomColorChooser implements TextListener {
     int red = getColorValue(0);
     int green = getColorValue(1);
     int blue = getColorValue(2);
-    panel.setColor(new Color(red, green, blue));
+    panel.setBackground(new Color(red, green, blue));
     panel.repaint();
   }
 
@@ -120,33 +126,5 @@ public class CustomColorChooser implements TextListener {
   private String makeLabel(String baseLabel) {
     return "Series_" + series + "_Channel_" + channel + "_" + baseLabel;
   }
-  
-  // -- Helper classes --
 
-	static class CustomColorPanel extends Panel {
-	  private static final int WIDTH = 100, HEIGHT = 50;
-	  private Color c;
-	
-	  public CustomColorPanel(Color c) {
-	    this.c = c;
-	  }
-	
-	  public Dimension getPreferredSize() {
-	    return new Dimension(WIDTH, HEIGHT);
-	  }
-	
-	  void setColor(Color c) { this.c = c; }
-	
-	  public Dimension getMinimumSize() {
-	    return new Dimension(WIDTH, HEIGHT);
-	  }
-	
-	  public void paint(Graphics g) {
-	    g.setColor(c);
-	    g.fillRect(0, 0, WIDTH, HEIGHT);
-	    g.setColor(Color.black);
-	    g.drawRect(0, 0, WIDTH-1, HEIGHT-1);
-	  }
-	}
-	
 }

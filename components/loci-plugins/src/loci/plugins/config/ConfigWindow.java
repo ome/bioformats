@@ -61,7 +61,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import loci.plugins.importer.ImporterOptions;
+import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.WindowTools;
 
 /**

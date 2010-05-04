@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.colorize;
 
 import ij.CompositeImage;
 import ij.IJ;
@@ -42,8 +42,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import loci.formats.FormatTools;
-import loci.plugins.importer.ImporterOptions;
-import loci.plugins.importer.MergeDialog;
+import loci.plugins.in.ImporterOptions;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LibraryChecker;
@@ -82,6 +81,14 @@ public class Colorizer implements PlugInFilter {
   public void run(ImageProcessor ip) {
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
 
+    ImageStack stack = imp.getImageStack();
+
+    if (stack.isVirtual()) {
+      IJ.error("Colorizer plugin cannot be used with virtual stacks.\n" +
+        "Please convert the virtual stack using Image>Duplicate.");
+      return;
+    }
+
     String stackOrder = "XYCZT";
     boolean color = false;
     boolean hyperstack = false;
@@ -97,7 +104,7 @@ public class Colorizer implements PlugInFilter {
       gd.addCheckbox("Colorize", false);
       gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
         "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
-      gd.addCheckbox("Open as HyperStack", false);
+      gd.addCheckbox("Open as hyperstack", true);
       gd.showDialog();
 
       if (gd.wasCanceled()) {
@@ -121,14 +128,6 @@ public class Colorizer implements PlugInFilter {
         Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
     }
 
-    ImageStack stack = imp.getImageStack();
-
-    if (stack.isVirtual()) {
-      IJ.error("Colorizer plugin cannot be used with virtual stacks.\n" +
-        "Please convert the virtual stack using Image>Duplicate.");
-      return;
-    }
-    
     ImagePlus newImp = Colorizer.colorize(imp, color, stackOrder, lut, series, mergeOption, hyperstack);
 
     if (newImp != null) {
@@ -292,7 +291,7 @@ public class Colorizer implements PlugInFilter {
     }
     return lut;
   }
-  
+
   // -- Helper methods --
 
   private static ImagePlus makeRGB(ImagePlus imp, String stackOrder, ImagePlus ip, ImageStack s, int c) {
@@ -342,7 +341,7 @@ public class Colorizer implements PlugInFilter {
     }
     return channelLut;
   }
-  
+
   private static byte[][][] promptForColors(int nChannels, int series) {
     byte[][][] lut = new byte[nChannels][][];
     for (int i=0; i<nChannels; i++) {

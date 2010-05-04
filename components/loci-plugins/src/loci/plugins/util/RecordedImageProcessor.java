@@ -1110,7 +1110,7 @@ public class RecordedImageProcessor extends ImageProcessor {
   private void record(String method) {
     record(method, (Object[]) null, (Class<?>) null);
   }
-  
+
   private void record(String method, Object v, Class<?> c) {
     record(method, v == null ? null : new Object[] {v},
       c == null ? null : new Class<?>[] {c});

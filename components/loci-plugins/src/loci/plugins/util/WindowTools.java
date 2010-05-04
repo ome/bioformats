@@ -197,10 +197,10 @@ public final class WindowTools {
   public static Vector<TextField> getNumericFields(GenericDialog gd) {
     return gd.getNumericFields();
   }
-  
+
   @SuppressWarnings("unchecked")
   public static Vector<Checkbox> getCheckboxes(GenericDialog gd) {
     return gd.getCheckboxes();
   }
-  
+
 }

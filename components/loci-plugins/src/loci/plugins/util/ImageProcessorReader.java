@@ -44,7 +44,7 @@ import loci.formats.MinMaxCalculator;
 /**
  * A low-level reader for {@link ij.process.ImageProcessor} objects.
  * For a higher-level reader that returns {@link ij.ImagePlus} objects,
- * see {@link loci.plugins.importer.ImagePlusReader} instead.
+ * see {@link loci.plugins.in.ImagePlusReader} instead.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">Trac</a>,
@@ -218,17 +218,17 @@ public class ImageProcessorReader extends MinMaxCalculator {
 
     return ip;
   }
-  
+
   // -- IFormatReader methods --
-  
-  /** @Override */
+
+  @Override
   public Class<?> getNativeDataType() {
     return ImageProcessor[].class;
   }
-  
-  /** @Override */
+
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
-    throws FormatException, IOException 
+    throws FormatException, IOException
   {
     return openProcessors(no, new Rectangle(x, y, w, h));
   }

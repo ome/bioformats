@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.importer;
+package loci.plugins.in;
 
 import ij.gui.GenericDialog;
 import loci.plugins.prefs.OptionsDialog;
@@ -32,8 +32,8 @@ import loci.plugins.prefs.OptionsDialog;
  * Bio-Formats Importer location chooser dialog box.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/LocationDialog.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/LocationDialog.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/LocationDialog.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/LocationDialog.java">SVN</a></dd></dl>
  */
 public class LocationDialog extends OptionsDialog {
 

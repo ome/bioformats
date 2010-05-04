@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.importer;
+package loci.plugins.in;
 
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -66,8 +66,8 @@ import loci.plugins.util.VirtualReader;
  * A high-level reader for {@link ij.ImagePlus} objects.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/ImagePlusReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/ImagePlusReader.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java">SVN</a></dd></dl>
  */
 public class ImagePlusReader implements StatusReporter {
 
@@ -80,7 +80,7 @@ public class ImagePlusReader implements StatusReporter {
 
   public String stackOrder;//TEMP!
   public IndexColorModel[] colorModels;//TEMP!
-  
+
   // -- Constructors --
 
   /**
@@ -396,14 +396,14 @@ public class ImagePlusReader implements StatusReporter {
     String title = file.substring(file.lastIndexOf(File.separator) + 1);
     if (used.length > 1 && groupFiles) {
       FilePattern fp = new FilePattern(new Location(file));
-	    title = fp.getPattern();
-	    if (title == null) {
-	      title = file;
-	      if (title.indexOf(".") != -1) {
-	        title = title.substring(0, title.lastIndexOf("."));
-	      }
-	    }
-	    title = title.substring(title.lastIndexOf(File.separator) + 1);
+      title = fp.getPattern();
+      if (title == null) {
+        title = file;
+        if (title.indexOf(".") != -1) {
+          title = title.substring(0, title.lastIndexOf("."));
+        }
+      }
+      title = title.substring(title.lastIndexOf(File.separator) + 1);
     }
     if (seriesName != null && !file.endsWith(seriesName) &&
       r.getSeriesCount() > 1)

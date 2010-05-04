@@ -67,7 +67,7 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
     catch (DependencyException e) {
       throw new RuntimeException(e);
     }
-    
+
     // get license code from ImageJ preferences
     String prefCode = Prefs.get(LuraWaveServiceImpl.LICENSE_PROPERTY, null);
     String propCode = service.getLicenseCode();

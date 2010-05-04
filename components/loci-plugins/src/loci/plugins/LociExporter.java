@@ -31,12 +31,12 @@ import ij.process.ImageProcessor;
 
 import java.util.HashSet;
 
-import loci.plugins.exporter.Exporter;
+import loci.plugins.out.Exporter;
 import loci.plugins.util.LibraryChecker;
 
 /**
  * ImageJ plugin for writing files using the LOCI Bio-Formats package.
- * Wraps core logic in {@link loci.plugins.exporter.Exporter}, to avoid
+ * Wraps core logic in {@link loci.plugins.out.Exporter}, to avoid
  * direct references to classes in the external Bio-Formats library.
  *
  * <dl><dt><b>Source code:</b></dt>

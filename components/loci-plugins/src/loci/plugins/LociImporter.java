@@ -29,12 +29,12 @@ import ij.plugin.PlugIn;
 
 import java.util.HashSet;
 
-import loci.plugins.importer.Importer;
+import loci.plugins.in.Importer;
 import loci.plugins.util.LibraryChecker;
 
 /**
  * ImageJ plugin for reading files using the LOCI Bio-Formats package.
- * Wraps core logic in {@link loci.plugins.importer.Importer}, to avoid
+ * Wraps core logic in {@link loci.plugins.in.Importer}, to avoid
  * direct references to classes in the external Bio-Formats library.
  *
  * <dl><dt><b>Source code:</b></dt>
