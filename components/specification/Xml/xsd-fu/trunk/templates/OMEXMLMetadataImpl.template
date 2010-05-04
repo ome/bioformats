@@ -317,7 +317,14 @@ ${counter(k, o, v)}\
 {% end %}\
 {% end %}\
 
-	// -- Entity retrieval --
+	// -- Entity retrieval (manual definitions) --
+
+	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+	{
+		return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
+	}
+
+	// -- Entity retrieval (code generated definitions) --
 
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
@@ -387,7 +394,32 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 
-	// - Entity storage -
+	// -- Entity storage (manual definitions) --
+
+	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+	{
+		// Parents: {u'Image': {u'OME': None}}
+		// Type is not a reference
+		OME o0 = root;
+		if (o0.sizeOfImageList() == imageIndex)
+		{
+			o0.addImage(new Image());
+		}
+		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
+		Pixels o2 = o1.getPixels();
+		if (o2.sizeOfBinDataList() == binDataIndex)
+		{
+			o2.addBinData(new BinData());
+		}
+		BinData o3 = o2.getBinData(binDataIndex);
+		o3.setBigEndian(bigEndian);
+	}
+
+	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)

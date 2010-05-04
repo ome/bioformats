@@ -135,8 +135,12 @@ public interface MetadataStore
 	Object getRoot();
 
 	void setRoot(Object root);
+	
+	// -- Entity storage (manual definitions) --
 
-	// - Entity storage -
+	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
+
+	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */
 	void setUUID(String uuid);

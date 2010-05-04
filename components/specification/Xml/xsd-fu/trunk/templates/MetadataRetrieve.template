@@ -134,7 +134,11 @@ public interface MetadataRetrieve {
 {% end %}\
 {% end %}\
 
-	// -- Entity retrieval --
+	// -- Entity retrieval (manual definitions) --
+
+	Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
+
+	// -- Entity retrieval (code generated definitions) --
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
