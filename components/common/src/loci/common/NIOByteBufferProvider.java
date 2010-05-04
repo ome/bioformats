@@ -72,7 +72,7 @@ public class NIOByteBufferProvider {
   static {
     String mapping = System.getProperty("mappedBuffers");
     useMappedByteBuffer = Boolean.parseBoolean(mapping);
-    LOGGER.info("Using mapped byte buffer? " + useMappedByteBuffer);
+    LOGGER.debug("Using mapped byte buffer? {}", useMappedByteBuffer);
   }
 
   // -- Constructors --

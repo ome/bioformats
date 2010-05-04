@@ -160,13 +160,13 @@ public class ImageViewer extends JFrame implements ActionListener,
         omeReader = service.newOMEReader();
       }
       catch (Exception exc) {
-        LOGGER.warn("OME reader not available", exc);
+        LOGGER.debug("OME reader not available", exc);
       }
       try {
         omeWriter = service.newOMEWriter();
       }
       catch (Exception exc) {
-        LOGGER.warn("OME writer not available", exc);
+        LOGGER.debug("OME writer not available", exc);
       }
 
       // OMERO server I/O engine
@@ -174,17 +174,17 @@ public class ImageViewer extends JFrame implements ActionListener,
         omeroReader = service.newOMEROReader();
       }
       catch (Exception exc) {
-        LOGGER.warn("OMERO reader not available", exc);
+        LOGGER.debug("OMERO reader not available", exc);
       }
       try {
         omeroWriter = service.newOMEROWriter();
       }
       catch (Exception exc) {
-        LOGGER.warn("OMERO writer not available", exc);
+        LOGGER.debug("OMERO writer not available", exc);
       }
     }
     catch (DependencyException e) {
-      LOGGER.warn("OME and OMERO reader/writer service unavailble", e);
+      LOGGER.debug("OME and OMERO reader/writer service unavailble", e);
     }
 
     // content pane
