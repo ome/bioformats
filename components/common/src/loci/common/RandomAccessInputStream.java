@@ -321,8 +321,10 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     return findString("\0");
   }
 
-  /** Read a string of length n. */
+  /** Read a string of up to length n. */
   public String readString(int n) throws IOException {
+    int avail = available();
+    if (n > avail) n = avail;
     byte[] b = new byte[n];
     readFully(b);
     return new String(b);
@@ -403,9 +405,9 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   }
 
   public int available() throws IOException {
-    long fp = getFilePointer();
-    if (fp > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-    return (int) fp;
+    long remain = length() - getFilePointer();
+    if (remain > Integer.MAX_VALUE) remain = Integer.MAX_VALUE;
+    return (int) remain;
   }
 
   public void mark(int readLimit) { }
