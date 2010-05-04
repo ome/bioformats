@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-03 18:01:20+0100
+ * Created by callan via xsd-fu on 2010-05-04 18:20:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -624,7 +624,14 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 	}
 
 
-	// -- Entity retrieval --
+	// -- Entity retrieval (manual definitions) --
+
+	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+	{
+		return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
+	}
+
+	// -- Entity retrieval (code generated definitions) --
 
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
@@ -1576,7 +1583,7 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
+	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
@@ -4927,7 +4934,32 @@ public class OMEXMLMetadataImpl implements MetadataStore, MetadataRetrieve
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 
-	// - Entity storage -
+	// -- Entity storage (manual definitions) --
+
+	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+	{
+		// Parents: {u'Image': {u'OME': None}}
+		// Type is not a reference
+		OME o0 = root;
+		if (o0.sizeOfImageList() == imageIndex)
+		{
+			o0.addImage(new Image());
+		}
+		Image o1 = o0.getImage(imageIndex);
+		if (o1.getPixels() == null)
+		{
+			o1.setPixels(new Pixels());
+		}
+		Pixels o2 = o1.getPixels();
+		if (o2.sizeOfBinDataList() == binDataIndex)
+		{
+			o2.addBinData(new BinData());
+		}
+		BinData o3 = o2.getBinData(binDataIndex);
+		o3.setBigEndian(bigEndian);
+	}
+
+	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)

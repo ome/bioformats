@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-30 10:56:43+0100
+ * Created by callan via xsd-fu on 2010-05-04 18:17:27+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,8 +90,12 @@ public interface MetadataStore
 	Object getRoot();
 
 	void setRoot(Object root);
+	
+	// -- Entity storage (manual definitions) --
 
-	// - Entity storage -
+	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
+
+	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */
 	void setUUID(String uuid);

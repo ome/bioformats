@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-30 16:21:18+0100
+ * Created by callan via xsd-fu on 2010-05-04 18:17:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -280,7 +280,11 @@ public interface MetadataRetrieve {
 	int getXMLAnnotationCount();
 
 
-	// -- Entity retrieval --
+	// -- Entity retrieval (manual definitions) --
+
+	Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
+
+	// -- Entity retrieval (code generated definitions) --
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
