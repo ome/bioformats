@@ -30,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -108,15 +107,14 @@ public class SeikoReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].pixelType = FormatTools.UINT16;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription(comment, 0);
-      store.setDimensionsPhysicalSizeX(xSize, 0, 0);
-      store.setDimensionsPhysicalSizeY(ySize, 0, 0);
+      store.setPixelsPhysicalSizeX(xSize, 0);
+      store.setPixelsPhysicalSizeY(ySize, 0);
     }
   }
 

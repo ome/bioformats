@@ -32,7 +32,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -153,8 +152,7 @@ public class ImaconReader extends BaseTiffReader {
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     if (creationDate != null) {
       creationDate = DateTools.formatDate(creationDate, "yyyyMMdd HHmmSSZ");
@@ -163,7 +161,7 @@ public class ImaconReader extends BaseTiffReader {
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(imageName + " #" + (i + 1), i);
       if (creationDate != null) {
-        store.setImageCreationDate(creationDate, i);
+        store.setImageAcquiredDate(creationDate, i);
       }
       else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
@@ -182,7 +180,7 @@ public class ImaconReader extends BaseTiffReader {
       store.setExperimenterID(experimenter, 0);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
-  
+
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageExperimenterRef(experimenter, i);
       }

@@ -30,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -106,8 +105,7 @@ public class UBMReader extends FormatReader {
     padding =
       (int) ((in.length() - FormatTools.getPlaneSize(this)) / (getSizeY() * 4));
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
   }

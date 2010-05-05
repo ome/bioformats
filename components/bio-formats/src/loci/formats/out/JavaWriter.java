@@ -66,14 +66,15 @@ public class JavaWriter extends FormatWriter {
     // check pixel type
     MetadataRetrieve meta = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(meta, series);
-    String pixelType = meta.getPixelsPixelType(series, 0);
+    String pixelType = meta.getPixelsType(series).toString();
     int type = FormatTools.pixelTypeFromString(pixelType);
     if (!DataTools.containsValue(getPixelTypes(), type)) {
       throw new FormatException("Unsupported image type '" + pixelType + "'.");
     }
     int bpp = FormatTools.getBytesPerPixel(type);
     boolean fp = FormatTools.isFloatingPoint(type);
-    boolean little = Boolean.FALSE.equals(meta.getPixelsBigEndian(series, 0));
+    boolean little =
+      Boolean.FALSE.equals(meta.getPixelsBinDataBigEndian(series, 0));
 
     if (!initialized) {
       writeHeader();
@@ -83,8 +84,8 @@ public class JavaWriter extends FormatWriter {
     // write array
     String varName = "series" + series + "Plane" + no;
     Object array = DataTools.makeDataArray(buf, bpp, fp, little);
-    int w = meta.getPixelsSizeX(series, 0).intValue();
-    int h = meta.getPixelsSizeY(series, 0).intValue();
+    int w = meta.getPixelsSizeX(series).getValue().intValue();
+    int h = meta.getPixelsSizeY(series).getValue().intValue();
     if (array instanceof byte[]) {
       writePlane(varName, (byte[]) array, w, h);
     }

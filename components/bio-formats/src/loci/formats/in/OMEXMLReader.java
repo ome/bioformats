@@ -290,8 +290,9 @@ public class OMEXMLReader extends FormatReader {
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
 
-    Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();
-    if (originalMetadata != null) metadata = originalMetadata;
+    // TODO
+    //Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();
+    //if (originalMetadata != null) metadata = originalMetadata;
 
     int numDatasets = omexmlMeta.getImageCount();
 
@@ -304,17 +305,17 @@ public class OMEXMLReader extends FormatReader {
 
       core[i] = new CoreMetadata();
 
-      Integer w = omexmlMeta.getPixelsSizeX(i, 0);
-      Integer h = omexmlMeta.getPixelsSizeY(i, 0);
-      Integer t = omexmlMeta.getPixelsSizeT(i, 0);
-      Integer z = omexmlMeta.getPixelsSizeZ(i, 0);
-      Integer c = omexmlMeta.getPixelsSizeC(i, 0);
+      Integer w = omexmlMeta.getPixelsSizeX(i).getValue();
+      Integer h = omexmlMeta.getPixelsSizeY(i).getValue();
+      Integer t = omexmlMeta.getPixelsSizeT(i).getValue();
+      Integer z = omexmlMeta.getPixelsSizeZ(i).getValue();
+      Integer c = omexmlMeta.getPixelsSizeC(i).getValue();
       if (w == null || h == null || t == null || z == null | c == null) {
         throw new FormatException("Image dimensions not found");
       }
-      Boolean endian = omexmlMeta.getPixelsBigEndian(i, 0);
-      String pixType = omexmlMeta.getPixelsPixelType(i, 0);
-      core[i].dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i, 0);
+      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      String pixType = omexmlMeta.getPixelsType(i).toString();
+      core[i].dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       core[i].sizeX = w.intValue();
       core[i].sizeY = h.intValue();
       core[i].sizeT = t.intValue();

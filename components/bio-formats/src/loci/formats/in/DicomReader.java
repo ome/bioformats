@@ -43,7 +43,6 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -672,8 +671,7 @@ public class DicomReader extends FormatReader {
     }
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     String stamp = null;
@@ -686,7 +684,7 @@ public class DicomReader extends FormatReader {
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
     for (int i=0; i<core.length; i++) {
-      if (stamp != null) store.setImageCreationDate(stamp, i);
+      if (stamp != null) store.setImageAcquiredDate(stamp, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
       store.setImageName("Series " + i, i);
     }
@@ -696,10 +694,10 @@ public class DicomReader extends FormatReader {
         store.setImageDescription(imageType, i);
 
         if (pixelSizeX != null) {
-          store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
+          store.setPixelsPhysicalSizeX(new Double(pixelSizeX), i);
         }
         if (pixelSizeY != null) {
-          store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
+          store.setPixelsPhysicalSizeY(new Double(pixelSizeY), i);
         }
       }
     }

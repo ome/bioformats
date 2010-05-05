@@ -37,7 +37,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -238,8 +237,7 @@ public class MNGReader extends BIFormatReader {
       core[i].imageCount = inf.offsets.size();
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);

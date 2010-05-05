@@ -41,7 +41,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -239,8 +238,7 @@ public class TCSReader extends FormatReader {
 
     super.initFile(id);
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     in = new RandomAccessInputStream(id);
     tiffParser = new TiffParser(in);
@@ -449,9 +447,9 @@ public class TCSReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
-    store.setDimensionsPhysicalSizeX(voxelX, 0, 0);
-    store.setDimensionsPhysicalSizeY(voxelY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(voxelZ, 0, 0);
+    store.setPixelsPhysicalSizeX(voxelX, 0);
+    store.setPixelsPhysicalSizeY(voxelY, 0);
+    store.setPixelsPhysicalSizeZ(voxelZ, 0);
   }
 
   // -- Helper methods --

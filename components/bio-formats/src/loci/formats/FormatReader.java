@@ -37,7 +37,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
-import loci.formats.meta.DummyMetadata;
+//import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -107,10 +107,10 @@ public abstract class FormatReader extends FormatHandler
    * Current metadata store. Should never be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
    */
-  protected MetadataStore metadataStore = new DummyMetadata();
+  protected MetadataStore metadataStore = /*new DummyMetadata()*/null;
 
   /** Metadata parsing options. */
-  protected MetadataOptions metadataOptions;
+  protected MetadataOptions metadataOptions = new DefaultMetadataOptions();
 
   private ServiceFactory factory;
   private OMEXMLService service;
@@ -149,10 +149,6 @@ public abstract class FormatReader extends FormatHandler
     core = new CoreMetadata[1];
     core[0] = new CoreMetadata();
     core[0].orderCertain = true;
-
-    if (metadataOptions == null) {
-      metadataOptions = new DefaultMetadataOptions();
-    }
 
     // reinitialize the MetadataStore
     // NB: critical for metadata conversion to work properly!
@@ -410,6 +406,13 @@ public abstract class FormatReader extends FormatHandler
       }
     }
     return buf;
+  }
+
+  /** Return a properly configured loci.formats.meta.FilterMetadata. */
+  protected MetadataStore makeFilterMetadata() {
+    // TODO : uncomment once FilterMetadata is updated
+    //return new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    return getMetadataStore();
   }
 
   // -- IMetadataConfigurable API methods --

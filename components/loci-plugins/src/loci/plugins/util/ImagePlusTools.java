@@ -128,13 +128,13 @@ public final class ImagePlusTools {
     double xcal = Double.NaN, ycal = Double.NaN;
     double zcal = Double.NaN, tcal = Double.NaN;
 
-    Double xd = retrieve.getDimensionsPhysicalSizeX(series, 0);
+    Double xd = retrieve.getPixelsPhysicalSizeX(series);
     if (xd != null) xcal = xd.floatValue();
-    Double yd = retrieve.getDimensionsPhysicalSizeY(series, 0);
+    Double yd = retrieve.getPixelsPhysicalSizeY(series);
     if (yd != null) ycal = yd.floatValue();
-    Double zd = retrieve.getDimensionsPhysicalSizeZ(series, 0);
+    Double zd = retrieve.getPixelsPhysicalSizeZ(series);
     if (zd != null) zcal = zd.floatValue();
-    Double td = retrieve.getDimensionsTimeIncrement(series, 0);
+    Double td = retrieve.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 
     if (xcal == xcal || ycal == ycal || zcal == zcal || tcal == tcal) {
@@ -152,7 +152,7 @@ public final class ImagePlusTools {
       imp.setCalibration(cal);
     }
 
-    String type = retrieve.getPixelsPixelType(series, 0);
+    String type = retrieve.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
 
     boolean signed = pixelType == FormatTools.INT8 ||

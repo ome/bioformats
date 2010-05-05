@@ -95,81 +95,14 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** Adds the key/value pair as a new OriginalMetadata node. */
   public void setOriginalMetadata(String key, String value) {
-    if (imageCA == null) {
-      Element ome = root.getDOMElement();
-      Element image = DOMUtil.getChildElement("Image", ome);
-      if (image == null) {
-        setImageName("", 0); // HACK - force creation of Image element
-        image = DOMUtil.getChildElement("Image", ome);
-      }
-      imageCA = DOMUtil.getChildElement("CA:CustomAttributes", image);
-      if (imageCA == null) {
-        imageCA = DOMUtil.createChild(image, "CA:CustomAttributes", true);
-      }
-    }
-    if (!omCreated) {
-      Element std = DOMUtil.createChild(root.getDOMElement(),
-        "STD:SemanticTypeDefinitions");
-      DOMUtil.setAttribute("xmlns",
-        "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd", std);
-      Element st = DOMUtil.createChild(std, "STD:SemanticType");
-      DOMUtil.setAttribute("Name", ORIGINAL_METADATA, st);
-      DOMUtil.setAttribute("AppliesTo", "I", st);
-
-      Element nameElement = DOMUtil.createChild(st, "STD:Element");
-      DOMUtil.setAttribute("Name", "Name", nameElement);
-      DOMUtil.setAttribute("DBLocation", "ORIGINAL_METADATA.NAME", nameElement);
-      DOMUtil.setAttribute("DataType", "string", nameElement);
-
-      Element valueElement = DOMUtil.createChild(st, "STD:Element");
-      DOMUtil.setAttribute("Name", "Value", valueElement);
-      DOMUtil.setAttribute("DBLocation",
-        "ORIGINAL_METADATA.VALUE", valueElement);
-      DOMUtil.setAttribute("DataType", "string", valueElement);
-      omCreated = true;
-    }
-    Element om = DOMUtil.createChild(imageCA, ORIGINAL_METADATA);
-    DOMUtil.setAttribute("ID", root.makeID(ORIGINAL_METADATA), om);
-    DOMUtil.setAttribute("Name", key, om);
-    DOMUtil.setAttribute("Value", value, om);
+    // TODO : deprecate and use a StringAnnotation instead
   }
 
   /** Gets the Hashtable containing all OriginalMetadata key/value pairs. */
   public Hashtable<String, String> getOriginalMetadata() {
+    // TODO : deprecate and return StringAnnotations instead
     if (originalMetadata != null) return originalMetadata;
     originalMetadata = new Hashtable<String, String>();
-
-    if (imageCA == null) {
-      Element ome = root.getDOMElement();
-      Element image = DOMUtil.getChildElement("Image", ome);
-      if (image == null) return null;
-      imageCA = DOMUtil.getChildElement("CA:CustomAttributes", image);
-      if (imageCA == null) return null;
-    }
-
-    NodeList list = imageCA.getChildNodes();
-    int size = list.getLength();
-    for (int i=0; i<size; i++) {
-      Node node = list.item(i);
-      if (!(node instanceof Element)) continue;
-      String nodeName = node.getNodeName();
-      if (!nodeName.equals(ORIGINAL_METADATA)) {
-        // not an OriginalMetadata element
-        continue;
-      }
-      NamedNodeMap attrs = node.getAttributes();
-      int len = attrs.getLength();
-      String key = null, value = null;
-      for (int j=0; j<len; j++) {
-        Attr attr = (Attr) attrs.item(j);
-        if (attr == null) continue;
-        String name = attr.getName();
-        if ("Name".equals(name)) key = attr.getValue();
-        else if ("Value".equals(name)) value = attr.getValue();
-      }
-      if (key != null) originalMetadata.put(key, value);
-    }
-
     return originalMetadata;
   }
 

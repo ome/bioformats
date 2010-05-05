@@ -37,6 +37,11 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.primitives.PositiveInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,34 +107,34 @@ public final class MetadataTools {
       r.setSeries(i);
       if (doImageName) store.setImageName(r.getCurrentFile(), i);
       String pixelsID = createLSID("Pixels", i, 0);
-      store.setPixelsID(pixelsID, i, 0);
-      store.setImageDefaultPixels(pixelsID, i);
-      store.setPixelsSizeX(new Integer(r.getSizeX()), i, 0);
-      store.setPixelsSizeY(new Integer(r.getSizeY()), i, 0);
-      store.setPixelsSizeZ(new Integer(r.getSizeZ()), i, 0);
-      store.setPixelsSizeC(new Integer(r.getSizeC()), i, 0);
-      store.setPixelsSizeT(new Integer(r.getSizeT()), i, 0);
-      store.setPixelsPixelType(
-        FormatTools.getPixelTypeString(r.getPixelType()), i, 0);
-      store.setPixelsBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
-      store.setPixelsDimensionOrder(r.getDimensionOrder(), i, 0);
+      store.setPixelsID(pixelsID, i);
+      store.setPixelsSizeX(new PositiveInteger(r.getSizeX()), i);
+      store.setPixelsSizeY(new PositiveInteger(r.getSizeY()), i);
+      store.setPixelsSizeZ(new PositiveInteger(r.getSizeZ()), i);
+      store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
+      store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
+      store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
+      try {
+        store.setPixelsType(PixelType.fromString(
+          FormatTools.getPixelTypeString(r.getPixelType())), i);
+        store.setPixelsDimensionOrder(
+          DimensionOrder.fromString(r.getDimensionOrder()), i);
+      }
+      catch (EnumerationException e) {
+        LOGGER.debug("Failed to create enumeration", e);
+      }
       if (r.getSizeC() > 0) {
         Integer sampleCount = new Integer(r.getRGBChannelCount());
         for (int c=0; c<r.getEffectiveSizeC(); c++) {
-          store.setLogicalChannelSamplesPerPixel(sampleCount, i, c);
-          for (int rgb=0; rgb<r.getRGBChannelCount(); rgb++) {
-            store.setChannelComponentIndex(
-              new Integer(c * r.getRGBChannelCount() + rgb), i, c, rgb);
-            store.setChannelComponentPixels(pixelsID, i, c, rgb);
-          }
+          store.setChannelSamplesPerPixel(sampleCount, i, c);
         }
       }
       if (doPlane) {
         for (int q=0; q<r.getImageCount(); q++) {
           int[] coords = r.getZCTCoords(q);
-          store.setPlaneTheZ(new Integer(coords[0]), i, 0, q);
-          store.setPlaneTheC(new Integer(coords[1]), i, 0, q);
-          store.setPlaneTheT(new Integer(coords[2]), i, 0, q);
+          store.setPlaneTheZ(new Integer(coords[0]), i, q);
+          store.setPlaneTheC(new Integer(coords[1]), i, q);
+          store.setPlaneTheT(new Integer(coords[2]), i, q);
         }
       }
     }
@@ -182,28 +187,28 @@ public final class MetadataTools {
       throw new FormatException("Metadata object has null root; " +
         "call IMetadata.createRoot() first");
     }
-    if (src.getPixelsBigEndian(n, 0) == null) {
+    if (src.getPixelsBinDataBigEndian(n, 0) == null) {
       throw new FormatException("BigEndian #" + n + " is null");
     }
-    if (src.getPixelsDimensionOrder(n, 0) == null) {
+    if (src.getPixelsDimensionOrder(n) == null) {
       throw new FormatException("DimensionOrder #" + n + " is null");
     }
-    if (src.getPixelsPixelType(n, 0) == null) {
+    if (src.getPixelsType(n) == null) {
       throw new FormatException("PixelType #" + n + " is null");
     }
-    if (src.getPixelsSizeC(n, 0) == null) {
+    if (src.getPixelsSizeC(n) == null) {
       throw new FormatException("SizeC #" + n + " is null");
     }
-    if (src.getPixelsSizeT(n, 0) == null) {
+    if (src.getPixelsSizeT(n) == null) {
       throw new FormatException("SizeT #" + n + " is null");
     }
-    if (src.getPixelsSizeX(n, 0) == null) {
+    if (src.getPixelsSizeX(n) == null) {
       throw new FormatException("SizeX #" + n + " is null");
     }
-    if (src.getPixelsSizeY(n, 0) == null) {
+    if (src.getPixelsSizeY(n) == null) {
       throw new FormatException("SizeY #" + n + " is null");
     }
-    if (src.getPixelsSizeZ(n, 0) == null) {
+    if (src.getPixelsSizeZ(n) == null) {
       throw new FormatException("SizeZ #" + n + " is null");
     }
   }
@@ -219,7 +224,7 @@ public final class MetadataTools {
     Location file = new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
     if (file.exists()) time = file.lastModified();
-    store.setImageCreationDate(DateTools.convertDate(time, DateTools.UNIX),
+    store.setImageAcquiredDate(DateTools.convertDate(time, DateTools.UNIX),
       series);
   }
 

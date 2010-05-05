@@ -31,7 +31,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -153,8 +152,7 @@ public class CellomicsReader extends FormatReader {
 
     LOGGER.info("Populating metadata store");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -164,8 +162,8 @@ public class CellomicsReader extends FormatReader {
       double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-      store.setDimensionsPhysicalSizeX(width, 0, 0);
-      store.setDimensionsPhysicalSizeY(height, 0, 0);
+      store.setPixelsPhysicalSizeX(width, 0);
+      store.setPixelsPhysicalSizeY(height, 0);
     }
   }
 

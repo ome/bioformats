@@ -35,8 +35,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.Immersion;
 
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
@@ -509,8 +511,7 @@ public class SlidebookReader extends FormatReader {
     }
     setSeries(0);
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     // populate Image data
@@ -530,26 +531,26 @@ public class SlidebookReader extends FormatReader {
 
       // populate Objective data
       store.setObjectiveModel(objective, 0, 0);
-      store.setObjectiveCorrection("Unknown", 0, 0);
-      store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
 
       // populate Dimensions data
 
       for (int i=0; i<getSeriesCount(); i++) {
-        store.setDimensionsPhysicalSizeX(new Double(pixelSize), i, 0);
-        store.setDimensionsPhysicalSizeY(new Double(pixelSize), i, 0);
+        store.setPixelsPhysicalSizeX(new Double(pixelSize), i);
+        store.setPixelsPhysicalSizeY(new Double(pixelSize), i);
         int idx = 0;
         for (int q=0; q<i; q++) {
           idx += core[q].sizeC;
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          store.setDimensionsPhysicalSizeZ(pixelSizeZ.get(idx), i, 0);
+          store.setPixelsPhysicalSizeZ(pixelSizeZ.get(idx), i);
         }
       }
 
@@ -559,11 +560,11 @@ public class SlidebookReader extends FormatReader {
         setSeries(i);
         for (int c=0; c<getSizeC(); c++) {
           if (index < channelNames.size() && channelNames.get(index) != null) {
-            store.setLogicalChannelName(channelNames.get(index), i, c);
+            store.setChannelName(channelNames.get(index), i, c);
             addSeriesMeta("channel " + c, channelNames.get(index));
           }
           if (index < ndFilters.size() && ndFilters.get(index) != null) {
-            store.setLogicalChannelNdFilter(ndFilters.get(index), i, c);
+            store.setChannelNDFilter(ndFilters.get(index), i, c);
             addSeriesMeta("channel " + c + " Neutral density",
               ndFilters.get(index));
           }

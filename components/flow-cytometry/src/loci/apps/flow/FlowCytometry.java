@@ -74,6 +74,9 @@ import loci.formats.MetadataTools;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
+
 import visad.DataReferenceImpl;
 import visad.Display;
 import visad.DisplayImpl;
@@ -458,14 +461,20 @@ public class FlowCytometry {
 
     omexmlMeta.createRoot();
 
-    omexmlMeta.setPixelsSizeX(new Integer(resolutionWidth), 0, 0);
-    omexmlMeta.setPixelsSizeY(new Integer(resolutionHeight), 0, 0);
-    omexmlMeta.setPixelsSizeZ(new Integer(1), 0, 0);
-    omexmlMeta.setPixelsSizeC(new Integer(1), 0, 0);
-    omexmlMeta.setPixelsSizeT(new Integer(stack.getSize()), 0, 0);
-    omexmlMeta.setPixelsPixelType("Uint8", 0, 0);
-    omexmlMeta.setPixelsBigEndian(new Boolean(false), 0, 0);
-    omexmlMeta.setPixelsDimensionOrder("XYTZC", 0, 0);
+    omexmlMeta.setPixelsSizeX(new PositiveInteger(resolutionWidth), 0);
+    omexmlMeta.setPixelsSizeY(new PositiveInteger(resolutionHeight), 0);
+    omexmlMeta.setPixelsSizeZ(new PositiveInteger(1), 0);
+    omexmlMeta.setPixelsSizeC(new PositiveInteger(1), 0);
+    omexmlMeta.setPixelsSizeT(new PositiveInteger(stack.getSize()), 0);
+    try {
+      omexmlMeta.setPixelsType(PixelType.fromString("uint8"), 0);
+    }
+    catch (EnumerationException e) { }
+    omexmlMeta.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
+    try {
+      omexmlMeta.setPixelsDimensionOrder(DimensionOrder.fromString("XYTZC"), 0);
+    }
+    catch (EnumerationException e) { }
     omexmlMeta.setExperimenterFirstName(s_Name, 0);
 
     iw.setMetadataRetrieve(omexmlMeta);

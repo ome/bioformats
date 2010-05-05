@@ -39,7 +39,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -207,8 +206,7 @@ public class LegacyQTReader extends BIFormatReader {
       core[0].indexed = false;
       core[0].falseColor = false;
 
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      MetadataStore store = makeFilterMetadata();
       MetadataTools.populatePixels(store, this);
       MetadataTools.setDefaultCreationDate(store, id, 0);
     }

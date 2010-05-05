@@ -62,6 +62,9 @@ import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
 import loci.plugins.util.VirtualReader;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
  *
@@ -196,7 +199,11 @@ public class ImagePlusReader implements StatusReporter {
       }
       ((VirtualReader) r.getReader()).setOutputOrder(stackOrder);
 
-      options.getOMEMetadata().setPixelsDimensionOrder(stackOrder, s, 0);
+      try {
+        options.getOMEMetadata().setPixelsDimensionOrder(
+          DimensionOrder.fromString(stackOrder), s);
+      }
+      catch (EnumerationException e) { }
 
       // dump OME-XML to ImageJ's description field, if available
       try {

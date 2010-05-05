@@ -41,6 +41,7 @@ import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.MetadataTools;
 import ome.xml.DOMUtil;
 import ome.xml.r2003fc.ome.OMENode;
 
@@ -96,7 +97,7 @@ public class OmeisImporter {
     stitch = stitchFiles;
     reader = new ChannelSeparator(new ChannelFiller());
     if (stitch) reader = new FileStitcher(reader);
-    omexmlMeta = new OMEXML2003FCMetadata();
+    omexmlMeta = (AbstractOMEXMLMetadata) MetadataTools.createOMEXMLMetadata();
     reader.setOriginalMetadataPopulated(true);
     reader.setMetadataStore(omexmlMeta);
   }

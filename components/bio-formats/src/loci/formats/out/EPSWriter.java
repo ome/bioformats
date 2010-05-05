@@ -67,11 +67,11 @@ public class EPSWriter extends FormatWriter {
 
     MetadataRetrieve meta = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(meta, series);
-    int width = meta.getPixelsSizeX(series, 0).intValue();
-    int height = meta.getPixelsSizeY(series, 0).intValue();
+    int width = meta.getPixelsSizeX(series).getValue().intValue();
+    int height = meta.getPixelsSizeY(series).getValue().intValue();
     int type =
-      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
-    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
+    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }

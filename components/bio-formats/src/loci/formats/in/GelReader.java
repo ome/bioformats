@@ -31,7 +31,6 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -178,18 +177,17 @@ public class GelReader extends BaseTiffReader {
         fmt == SQUARE_ROOT ? "square root" : "linear");
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     String parsedDate = DateTools.formatDate(prepDate, FORMATS);
     String parsedTime = DateTools.formatDate(prepTime, FORMATS);
 
     if (parsedDate != null) {
-      store.setImageCreationDate(parsedDate, 0);
+      store.setImageAcquiredDate(parsedDate, 0);
     }
     else if (parsedTime != null) {
-      store.setImageCreationDate(parsedTime, 0);
+      store.setImageAcquiredDate(parsedTime, 0);
     }
     else {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
@@ -198,8 +196,8 @@ public class GelReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription(info, 0);
       Double pixelSize = new Double(scale.doubleValue());
-      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+      store.setPixelsPhysicalSizeX(pixelSize, 0);
+      store.setPixelsPhysicalSizeY(pixelSize, 0);
     }
   }
 

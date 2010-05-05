@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -228,8 +227,7 @@ public class FakeReader extends FormatReader {
       core[s].thumbnail = thumbnail;
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;

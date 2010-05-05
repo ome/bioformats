@@ -30,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -182,8 +181,7 @@ public class IPLabReader extends FormatReader {
     addGlobalMeta("TDepth", getSizeT());
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -192,11 +190,11 @@ public class IPLabReader extends FormatReader {
       parseTags(store);
 
       if (pixelSize != null) {
-        store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-        store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+        store.setPixelsPhysicalSizeX(pixelSize, 0);
+        store.setPixelsPhysicalSizeY(pixelSize, 0);
       }
       if (timeIncrement != null) {
-        store.setDimensionsTimeIncrement(timeIncrement, 0, 0);
+        store.setPixelsTimeIncrement(timeIncrement, 0);
       }
     }
   }
@@ -284,10 +282,13 @@ public class IPLabReader extends FormatReader {
         int roiBottom = in.readInt();
         int numRoiPts = in.readInt();
 
-        store.setRectX(String.valueOf(roiLeft), 0, 0, 0);
-        store.setRectY(String.valueOf(roiTop), 0, 0, 0);
-        store.setRectWidth(String.valueOf(roiRight - roiLeft), 0, 0, 0);
-        store.setRectHeight(String.valueOf(roiBottom - roiTop), 0, 0, 0);
+        store.setRectangleX(new Double(roiLeft), 0, 0);
+        store.setRectangleY(new Double(roiTop), 0, 0);
+        store.setRectangleWidth(new Double(roiRight - roiLeft), 0, 0);
+        store.setRectangleHeight(new Double(roiBottom - roiTop), 0, 0);
+        String roiID = MetadataTools.createLSID("ROI", 0, 0);
+        store.setROIID(roiID, 0);
+        store.setImageROIRef(roiID, 0, 0);
 
         in.skipBytes(8 * numRoiPts);
       }
@@ -375,7 +376,7 @@ public class IPLabReader extends FormatReader {
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {
               int plane = getIndex(z, c, i);
-              store.setPlaneTimingDeltaT(new Double(timepoint), 0, 0, plane);
+              store.setPlaneDeltaT(new Double(timepoint), 0, plane);
             }
           }
           if (i == 1) {

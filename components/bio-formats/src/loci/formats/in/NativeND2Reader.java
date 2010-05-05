@@ -42,8 +42,15 @@ import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.AcquisitionMode;
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -894,8 +901,7 @@ public class NativeND2Reader extends FormatReader {
   // -- Helper methods --
 
   private void populateMetadataStore() {
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     String filename = new Location(getCurrentFile()).getName();
@@ -918,9 +924,9 @@ public class NativeND2Reader extends FormatReader {
 
     // populate Dimensions data
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(pixelSizeX, i, 0);
-      store.setDimensionsPhysicalSizeY(pixelSizeY, i, 0);
-      store.setDimensionsPhysicalSizeZ(pixelSizeZ, i, 0);
+      store.setPixelsPhysicalSizeX(pixelSizeX, i);
+      store.setPixelsPhysicalSizeY(pixelSizeY, i);
+      store.setPixelsPhysicalSizeZ(pixelSizeZ, i);
     }
 
     // populate PlaneTiming and StagePosition data
@@ -932,11 +938,11 @@ public class NativeND2Reader extends FormatReader {
           int stampIndex = coords[2] + i * getSizeT();
           if (tsT.size() == getImageCount()) stampIndex = n;
           double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneTimingDeltaT(stamp, i, 0, n);
+          store.setPlaneDeltaT(stamp, i, n);
 
           int index = i * getSizeC() + coords[1];
           if (index < exposureTime.size()) {
-            store.setPlaneTimingExposureTime(exposureTime.get(index), i, 0, n);
+            store.setPlaneExposureTime(exposureTime.get(index), i, n);
           }
         }
       }
@@ -944,17 +950,17 @@ public class NativeND2Reader extends FormatReader {
         int index = i * getImageCount() + n;
         if (index >= posX.size()) index = i;
         if (index < posX.size()) {
-          store.setStagePositionPositionX(posX.get(index), i, 0, n);
+          store.setPlanePositionX(posX.get(index), i, n);
           addSeriesMeta("X position " + (i + 1), posX.get(index));
           addGlobalMeta("X position for position #" + (i + 1), posX.get(index));
         }
         if (index < posY.size()) {
-          store.setStagePositionPositionY(posY.get(index), i, 0, n);
+          store.setPlanePositionY(posY.get(index), i, n);
           addSeriesMeta("Y position " + (i + 1), posY.get(index));
           addGlobalMeta("Y position for position #" + (i + 1), posY.get(index));
         }
         if (index < posZ.size()) {
-          store.setStagePositionPositionZ(posZ.get(index), i, 0, n);
+          store.setPlanePositionZ(posZ.get(index), i, n);
           String key =
             "Z position for position #" + (i + 1) + ", plane #" + (n + 1);
           addSeriesMeta(key, posZ.get(index));
@@ -967,28 +973,38 @@ public class NativeND2Reader extends FormatReader {
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
     store.setDetectorModel(cameraModel, 0, 0);
-    store.setDetectorType("Unknown", 0, 0);
+    store.setDetectorType(DetectorType.OTHER, 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         int index = i * getSizeC() + c;
         if (pinholeSize != null) {
-          store.setLogicalChannelPinholeSize(pinholeSize, i, c);
+          store.setChannelPinholeSize(pinholeSize, i, c);
         }
         if (index < channelNames.size()) {
-          store.setLogicalChannelName(channelNames.get(index), i, c);
+          store.setChannelName(channelNames.get(index), i, c);
         }
         if (index < modality.size()) {
-          store.setLogicalChannelMode(modality.get(index), i, c);
+          try {
+            store.setChannelAcquisitionMode(
+              AcquisitionMode.fromString(modality.get(index)), i, c);
+          }
+          catch (EnumerationException e) { }
         }
         if (index < emWave.size()) {
-          store.setLogicalChannelEmWave(emWave.get(index), i, c);
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWave.get(index)), i, c);
         }
         if (index < exWave.size()) {
-          store.setLogicalChannelExWave(exWave.get(index), i, c);
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWave.get(index)), i, c);
         }
         if (index < binning.size()) {
-          store.setDetectorSettingsBinning(binning.get(index), i, c);
+          try {
+            store.setDetectorSettingsBinning(
+              Binning.fromString(binning.get(index)), i, c);
+          }
+          catch (EnumerationException e) { }
         }
         if (index < gain.size()) {
           store.setDetectorSettingsGain(gain.get(index), i, c);
@@ -996,7 +1012,7 @@ public class NativeND2Reader extends FormatReader {
         if (index < speed.size()) {
           store.setDetectorSettingsReadOutRate(speed.get(index), i, c);
         }
-        store.setDetectorSettingsDetector(detectorID, i, c);
+        store.setDetectorSettingsID(detectorID, i, c);
       }
     }
 
@@ -1025,10 +1041,16 @@ public class NativeND2Reader extends FormatReader {
     if (objectiveModel != null) {
       store.setObjectiveModel(objectiveModel, 0, 0);
     }
-    if (immersion == null) immersion = "Unknown";
-    store.setObjectiveImmersion(immersion, 0, 0);
-    if (correction == null || correction.length() == 0) correction = "Unknown";
-    store.setObjectiveCorrection(correction, 0, 0);
+    if (immersion == null) immersion = "Other";
+    try {
+      store.setObjectiveImmersion(Immersion.fromString(immersion), 0, 0);
+    }
+    catch (EnumerationException e) { }
+    if (correction == null || correction.length() == 0) correction = "Other";
+    try {
+      store.setObjectiveCorrection(Correction.fromString(correction), 0, 0);
+    }
+    catch (EnumerationException e) { }
 
     // link Objective to Image
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -1039,9 +1061,9 @@ public class NativeND2Reader extends FormatReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setObjectiveSettingsObjective(objectiveID, i);
+      store.setImageObjectiveSettingsID(objectiveID, i);
       if (refractiveIndex != null) {
-        store.setObjectiveSettingsRefractiveIndex(
+        store.setImageObjectiveSettingsRefractiveIndex(
           new Double(refractiveIndex), i);
       }
     }
@@ -1054,23 +1076,10 @@ public class NativeND2Reader extends FormatReader {
       Hashtable<String, String> roi = rois.get(r);
       String type = roi.get("ROIType");
 
-      store.setShapeLocked(new Boolean(roi.get("locked")), 0, r, 0);
-      store.setShapeStrokeWidth(new Integer(roi.get("line-width")), 0, r, 0);
-      store.setShapeVisibility(new Boolean(roi.get("visible")), 0, r, 0);
-      store.setShapeStrokeColor(roi.get("color"), 0, r, 0);
-
       if (type.equals("Text")) {
-        store.setShapeFontFamily(roi.get("fFaceName"), 0, r, 0);
-        store.setShapeFontSize(new Integer(roi.get("fHeight")), 0, r, 0);
-        store.setShapeText(roi.get("eval-text"), 0, r, 0);
-        store.setShapeFontWeight(roi.get("fWeight"), 0, r, 0);
-
-        boolean italic = Integer.parseInt(roi.get("fItalic")) != 0;
-        boolean underline = Integer.parseInt(roi.get("fUnderline")) != 0;
-        boolean strikeOut = Integer.parseInt(roi.get("fStrikeOut")) != 0;
-        store.setShapeFontStyle(italic ? "italic" : "normal", 0, r, 0);
-        store.setShapeTextDecoration(underline ? "underline" : strikeOut ?
-          "line-through" : "normal", 0, r, 0);
+        store.setTextFontSize(new Integer(roi.get("fHeight")), r, 0);
+        store.setTextValue(roi.get("eval-text"), r, 0);
+        store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
 
         String rectangle = roi.get("rectangle");
         String[] p = rectangle.split(",");
@@ -1079,10 +1088,10 @@ public class NativeND2Reader extends FormatReader {
           points[i] = Double.parseDouble(p[i]);
         }
 
-        store.setRectX(p[0], 0, r, 0);
-        store.setRectY(p[1], 0, r, 0);
-        store.setRectWidth(String.valueOf(points[2] - points[0]), 0, r, 0);
-        store.setRectHeight(String.valueOf(points[3] - points[1]), 0, r, 0);
+        store.setRectangleX(points[0], r, 0);
+        store.setRectangleY(points[1], r, 0);
+        store.setRectangleWidth(points[2] - points[0], r, 0);
+        store.setRectangleHeight(points[3] - points[1], r, 0);
       }
       else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
         String segments = roi.get("segments");
@@ -1096,7 +1105,7 @@ public class NativeND2Reader extends FormatReader {
           sb.append(points[i]);
           if (i < points.length - 1) sb.append(" ");
         }
-        store.setPolylinePoints(sb.toString(), 0, r, 0);
+        store.setPolylinePoints(sb.toString(), r, 0);
       }
     }
   }

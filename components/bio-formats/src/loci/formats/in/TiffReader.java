@@ -32,7 +32,6 @@ import loci.common.Location;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -192,8 +191,7 @@ public class TiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     if (description != null) {
       store.setImageDescription(description, 0);
     }
@@ -333,10 +331,10 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      store.setDimensionsPhysicalSizeZ(zDepth, 0, 0);
+      store.setPixelsPhysicalSizeZ(zDepth, 0);
     }
     if (timeIncrement != null) {
-      store.setDimensionsTimeIncrement(timeIncrement, 0, 0);
+      store.setPixelsTimeIncrement(timeIncrement, 0);
     }
   }
 

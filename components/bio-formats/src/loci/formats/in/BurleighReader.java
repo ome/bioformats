@@ -30,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -172,15 +171,14 @@ public class BurleighReader extends FormatReader {
     core[0].imageCount = 1;
     core[0].dimensionOrder = "XYZCT";
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setDimensionsPhysicalSizeX(xSize / getSizeX(), 0, 0);
-      store.setDimensionsPhysicalSizeY(ySize / getSizeY(), 0, 0);
-      store.setDimensionsPhysicalSizeZ(zSize / getSizeZ(), 0, 0);
+      store.setPixelsPhysicalSizeX(xSize / getSizeX(), 0);
+      store.setPixelsPhysicalSizeY(ySize / getSizeY(), 0);
+      store.setPixelsPhysicalSizeZ(zSize / getSizeZ(), 0);
     }
   }
 

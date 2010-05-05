@@ -44,9 +44,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
+
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.ExperimentType;
 
 /**
  * TillVisionReader is the file format reader for TillVision files.
@@ -74,7 +76,6 @@ public class TillVisionReader extends FormatReader {
   private long embeddedOffset;
 
   private Vector<String> imageNames = new Vector<String>();
-  private Vector<String> waves = new Vector<String>();
   private Vector<String> types = new Vector<String>();
   private Vector<String> dates = new Vector<String>();
 
@@ -123,7 +124,6 @@ public class TillVisionReader extends FormatReader {
       embeddedImages = false;
       exposureTimes = null;
       imageNames.clear();
-      waves.clear();
       types.clear();
       dates.clear();
     }
@@ -247,9 +247,6 @@ public class TillVisionReader extends FormatReader {
               }
               else if (key.equals("Image type")) {
                 types.add(value);
-              }
-              else if (key.equals("Monochromator wavelength increment[nm]")) {
-                waves.add(value);
               }
             }
           }
@@ -388,8 +385,7 @@ public class TillVisionReader extends FormatReader {
   // -- Helper methods --
 
   private void populateMetadataStore() {
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -399,7 +395,7 @@ public class TillVisionReader extends FormatReader {
       }
       String date = i < dates.size() ? dates.get(i) : "";
       if (date != null && !date.equals("")) {
-        store.setImageCreationDate(date, i);
+        store.setImageAcquiredDate(date, i);
       }
       else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
@@ -409,22 +405,16 @@ public class TillVisionReader extends FormatReader {
         // populate PlaneTiming data
 
         for (int q=0; q<core[i].imageCount; q++) {
-          store.setPlaneTimingExposureTime(exposureTimes.get(i), i, 0, q);
-        }
-
-        // populate Dimensions data
-
-        if (i < waves.size()) {
-          int waveIncrement = Integer.parseInt(waves.get(i));
-          if (waveIncrement > 0) {
-            store.setDimensionsWaveIncrement(waveIncrement, i, 0);
-          }
+          store.setPlaneExposureTime(exposureTimes.get(i), i, q);
         }
 
         // populate Experiment data
 
         if (i < types.size()) {
-          store.setExperimentType(types.get(i), i);
+          try {
+            store.setExperimentType(ExperimentType.fromString(types.get(i)), i);
+          }
+          catch (EnumerationException e) { }
         }
       }
     }

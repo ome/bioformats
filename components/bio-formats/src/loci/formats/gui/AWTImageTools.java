@@ -433,16 +433,17 @@ public final class AWTImageTools {
     MetadataRetrieve meta, int series) throws FormatException
   {
     MetadataTools.verifyMinimumPopulated(meta, series);
-    int width = meta.getPixelsSizeX(series, 0).intValue();
-    int height = meta.getPixelsSizeY(series, 0).intValue();
-    String pixelType = meta.getPixelsPixelType(series, 0);
+    int width = meta.getPixelsSizeX(series).getValue().intValue();
+    int height = meta.getPixelsSizeY(series).getValue().intValue();
+    String pixelType = meta.getPixelsType(series).toString();
     int type = FormatTools.pixelTypeFromString(pixelType);
-    Integer nChannels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    Integer nChannels = meta.getChannelSamplesPerPixel(series, 0);
     if (nChannels == null) {
       LOGGER.warn("SamplesPerPixel is null; it is assumed to be 1.");
     }
     int channels = nChannels == null ? 1 : nChannels.intValue();
-    boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
+    boolean littleEndian =
+      !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
     return makeImage(data, width, height, channels,
       interleaved, FormatTools.getBytesPerPixel(type),
       FormatTools.isFloatingPoint(type), littleEndian,

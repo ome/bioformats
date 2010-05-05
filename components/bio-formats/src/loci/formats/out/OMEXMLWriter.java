@@ -117,14 +117,14 @@ public class OMEXMLWriter extends FormatWriter {
       initialized = true;
     }
     boolean littleEndian =
-      !retrieve.getPixelsBigEndian(series, 0).booleanValue();
+      !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
 
-    String type = retrieve.getPixelsPixelType(series, 0);
+    String type = retrieve.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
 
     CodecOptions options = new CodecOptions();
-    options.width = retrieve.getPixelsSizeX(series, 0).intValue();
-    options.height = retrieve.getPixelsSizeY(series, 0).intValue();
+    options.width = retrieve.getPixelsSizeX(series).getValue().intValue();
+    options.height = retrieve.getPixelsSizeY(series).getValue().intValue();
     options.channels = 1;
     options.interleaved = false;
     options.littleEndian = littleEndian;
@@ -134,7 +134,7 @@ public class OMEXMLWriter extends FormatWriter {
     int bytes = FormatTools.getBytesPerPixel(pixelType);
     options.bitsPerSample = bytes * 8;
 
-    Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
+    Integer channels = retrieve.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }

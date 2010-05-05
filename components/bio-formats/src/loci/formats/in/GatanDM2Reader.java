@@ -32,8 +32,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
@@ -112,8 +114,7 @@ public class GatanDM2Reader extends FormatReader {
     core[0].littleEndian = false;
 
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -195,10 +196,14 @@ public class GatanDM2Reader extends FormatReader {
         time = value.toString();
       }
       else if (label.equals("Binning")) {
-        store.setDetectorSettingsBinning(value + "x" + value, 0, 0);
+        try {
+          store.setDetectorSettingsBinning(
+            Binning.fromString(value + "x" + value), 0, 0);
+        }
+        catch (EnumerationException e) { }
         String detectorID = MetadataTools.createLSID("Detector", 0);
         store.setDetectorID(detectorID, 0, 0);
-        store.setDetectorSettingsDetector(detectorID, 0, 0);
+        store.setDetectorSettingsID(detectorID, 0, 0);
       }
       else if (label.equals("Name")) {
         name = value.toString();
@@ -220,7 +225,7 @@ public class GatanDM2Reader extends FormatReader {
         "M/d/yy h:mm:ss a", "d/M/yy h:mm:ss a",
         "M/d/yy H:mm:ss", "d/M/yy H:mm:ss"};
       date += " " + time;
-      store.setImageCreationDate(DateTools.formatDate(date, format), 0);
+      store.setImageAcquiredDate(DateTools.formatDate(date, format), 0);
     }
     if (name != null) {
       store.setImageName(name, 0);

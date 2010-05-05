@@ -33,7 +33,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.TargaRLECodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -231,8 +230,7 @@ public class TargaReader extends FormatReader {
     core[0].interleaved = true;
     core[0].indexed = colorMap != null && !isRGB();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     // populate Image data

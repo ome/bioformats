@@ -35,7 +35,6 @@ import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -253,8 +252,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
       else tag.skipBytes(length + skip);
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     store.setImageName("Merged", 0);
     for (int layer=0; layer<layerNames.length; layer++) {

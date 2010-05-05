@@ -35,8 +35,17 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.ExperimentType;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.NamingConvention;
+import ome.xml.r201004.primitives.NonNegativeInteger;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -249,8 +258,7 @@ public class InCellReader extends FormatReader {
 
     core[0].dimensionOrder = "XYZCT";
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     DefaultHandler handler = new MinimalInCellHandler();
     XMLTools.parseXML(b, handler);
 
@@ -391,19 +399,19 @@ public class InCellReader extends FormatReader {
       }
 
       store.setImageName(imageName, i);
-      store.setImageCreationDate(creationDate, i);
+      store.setImageAcquiredDate(creationDate, i);
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
       int sampleIndex = (field - 1) * totalTimepoints + timepoint;
 
-      store.setWellSampleIndex(i, 0, well, sampleIndex);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
       if (field < posX.size()) {
-        store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
+        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
       }
       if (field < posY.size()) {
-        store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
+        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
       }
     }
 
@@ -422,12 +430,12 @@ public class InCellReader extends FormatReader {
             Image img = imageFiles[well][field][timepoint][q];
             if (img == null) continue;
             int plane = time * getSizeZ() * c + q;
-            store.setPlaneTimingDeltaT(img.deltaT, i, 0, plane);
-            store.setPlaneTimingExposureTime(img.exposure, i, 0, plane);
+            store.setPlaneDeltaT(img.deltaT, i, plane);
+            store.setPlaneExposureTime(img.exposure, i, plane);
 
-            store.setStagePositionPositionX(posX.get(field), i, 0, plane);
-            store.setStagePositionPositionY(posY.get(field), i, 0, plane);
-            store.setStagePositionPositionZ(img.zPosition, i, 0, plane);
+            store.setPlanePositionX(posX.get(field), i, plane);
+            store.setPlanePositionY(posY.get(field), i, plane);
+            store.setPlanePositionZ(img.zPosition, i, plane);
           }
         }
       }
@@ -438,18 +446,20 @@ public class InCellReader extends FormatReader {
         setSeries(i);
         for (int q=0; q<getEffectiveSizeC(); q++) {
           if (q < channelNames.size()) {
-            store.setLogicalChannelName(channelNames.get(q), i, q);
+            store.setChannelName(channelNames.get(q), i, q);
           }
           if (q < emWaves.size()) {
             int wave = emWaves.get(q).intValue();
             if (wave > 0) {
-              store.setLogicalChannelEmWave(wave, i, q);
+              store.setChannelEmissionWavelength(
+                new PositiveInteger(wave), i, q);
             }
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
             if (wave > 0) {
-              store.setLogicalChannelExWave(wave, i, q);
+              store.setChannelExcitationWavelength(
+                new PositiveInteger(wave), i, q);
             }
           }
         }
@@ -458,8 +468,13 @@ public class InCellReader extends FormatReader {
 
       // populate Plate data
 
-      store.setPlateRowNamingConvention(rowName, 0);
-      store.setPlateColumnNamingConvention(colName, 0);
+      NamingConvention rowNaming = Character.isDigit(rowName.charAt(0)) ?
+        NamingConvention.NUMBER : NamingConvention.LETTER;
+      NamingConvention colNaming = Character.isDigit(colName.charAt(0)) ?
+        NamingConvention.NUMBER : NamingConvention.LETTER;
+
+      store.setPlateRowNamingConvention(rowNaming, 0);
+      store.setPlateColumnNamingConvention(colNaming, 0);
       store.setPlateWellOriginX(0.5, 0);
       store.setPlateWellOriginY(0.5, 0);
 
@@ -475,10 +490,11 @@ public class InCellReader extends FormatReader {
         int sampleIndex = field * totalTimepoints + timepoint;
 
         String imageID = MetadataTools.createLSID("Image", i);
-        store.setWellSampleIndex(i, 0, well, sampleIndex);
+        store.setWellSampleIndex(
+          new NonNegativeInteger(i), 0, well, sampleIndex);
         store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-        store.setWellSamplePosX(posX.get(field), 0, well, sampleIndex);
-        store.setWellSamplePosY(posY.get(field), 0, well, sampleIndex);
+        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
+        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
       }
     }
   }
@@ -692,7 +708,11 @@ public class InCellReader extends FormatReader {
       if (qName.equals("Microscopy")) {
         String experimentID = MetadataTools.createLSID("Experiment", 0);
         store.setExperimentID(experimentID, 0);
-        store.setExperimentType(attributes.getValue("type"), 0);
+        try {
+          store.setExperimentType(
+            ExperimentType.fromString(attributes.getValue("type")), 0);
+        }
+        catch (EnumerationException e) { }
       }
       else if (qName.equals("Image")) {
         openImage = true;
@@ -724,14 +744,20 @@ public class InCellReader extends FormatReader {
           Double.parseDouble(attributes.getValue("magnification")), 0, 0);
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
-        store.setObjectiveImmersion("Unknown", 0, 0);
+        store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
         String objective = attributes.getValue("objective_name");
         String[] tokens = objective.split("_");
 
         store.setObjectiveManufacturer(tokens[0], 0, 0);
-        if (tokens.length > 2) store.setObjectiveCorrection(tokens[2], 0, 0);
-        else store.setObjectiveCorrection("Unknown", 0, 0);
+        if (tokens.length > 2) {
+          try {
+            store.setObjectiveCorrection(
+              Correction.fromString(tokens[2]), 0, 0);
+          }
+          catch (EnumerationException e) { }
+        }
+        else store.setObjectiveCorrection(Correction.OTHER, 0, 0);
 
         Double pixelSizeX = new Double(attributes.getValue("pixel_width"));
         Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
@@ -741,10 +767,10 @@ public class InCellReader extends FormatReader {
         String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
         store.setObjectiveID(objectiveID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
-          store.setObjectiveSettingsObjective(objectiveID, i);
-          store.setObjectiveSettingsRefractiveIndex(refractive, i);
-          store.setDimensionsPhysicalSizeX(pixelSizeX, i, 0);
-          store.setDimensionsPhysicalSizeY(pixelSizeY, i, 0);
+          store.setImageObjectiveSettingsID(objectiveID, i);
+          store.setImageObjectiveSettingsRefractiveIndex(refractive, i);
+          store.setPixelsPhysicalSizeX(pixelSizeX, i);
+          store.setPixelsPhysicalSizeY(pixelSizeY, i);
         }
       }
       else if (qName.equals("ExcitationFilter")) {
@@ -759,25 +785,29 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
-        store.setDetectorType("Unknown", 0, 0);
+        store.setDetectorType(DetectorType.OTHER, 0, 0);
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
         store.setDetectorID(detectorID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
           setSeries(i);
           for (int q=0; q<getSizeC(); q++) {
-            store.setDetectorSettingsDetector(detectorID, i, q);
+            store.setDetectorSettingsID(detectorID, i, q);
           }
         }
         setSeries(0);
       }
       else if (qName.equals("Binning")) {
         String binning = attributes.getValue("value");
-        for (int i=0; i<getSeriesCount(); i++) {
-          setSeries(i);
-          for (int q=0; q<getSizeC(); q++) {
-            store.setDetectorSettingsBinning(binning, i, q);
+        try {
+          Binning b = Binning.fromString(binning);
+          for (int i=0; i<getSeriesCount(); i++) {
+            setSeries(i);
+            for (int q=0; q<getSizeC(); q++) {
+              store.setDetectorSettingsBinning(b, i, q);
+            }
           }
         }
+        catch (EnumerationException e) { }
         setSeries(0);
       }
       else if (qName.equals("Gain")) {
@@ -801,8 +831,9 @@ public class InCellReader extends FormatReader {
 
         for (int r=0; r<wellRows; r++) {
           for (int c=0; c<wellCols; c++) {
-            store.setWellRow(r, nextPlate, r*wellCols + c);
-            store.setWellColumn(c, nextPlate, r*wellCols + c);
+            int well = r * wellCols + c;
+            store.setWellRow(new NonNegativeInteger(r), nextPlate, well);
+            store.setWellColumn(new NonNegativeInteger(c), nextPlate, well);
           }
         }
         nextPlate++;

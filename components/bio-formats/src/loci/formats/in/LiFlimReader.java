@@ -45,7 +45,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -398,8 +397,7 @@ public class LiFlimReader extends FormatReader {
   private void initOMEMetadata() {
     int times = timestamps == null ? 0 : Integer.parseInt(timestamps);
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, times > 0);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
@@ -425,7 +423,7 @@ public class LiFlimReader extends FormatReader {
       Double deltaT;
       if (t == 0) {
         String date = DateTools.convertDate(stamp, DateTools.COBOL);
-        store.setImageCreationDate(date, 0);
+        store.setImageAcquiredDate(date, 0);
         firstStamp = stamp;
         deltaT = new Double(0);
       }
@@ -436,8 +434,8 @@ public class LiFlimReader extends FormatReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {
           int index = getIndex(z, c, t);
-          store.setPlaneTimingDeltaT(deltaT, 0, 0, index);
-          store.setPlaneTimingExposureTime(exposureTime, 0, 0, index);
+          store.setPlaneDeltaT(deltaT, 0, index);
+          store.setPlaneExposureTime(exposureTime, 0, index);
         }
       }
     }
@@ -451,7 +449,11 @@ public class LiFlimReader extends FormatReader {
     Arrays.sort(roiIndices);
     for (int roi=0; roi<roiIndices.length; roi++) {
       ROI r = rois.get(roiIndices[roi]);
-      store.setPolygonPoints(r.pointsToString(), 0, roi, 0);
+      store.setPolylinePoints(r.pointsToString(), roi, 0);
+      store.setPolylineClosed(Boolean.TRUE, roi, 0);
+      String roiID = MetadataTools.createLSID("Polyline", roi, 0);
+      store.setPolylineID(roiID, roi, 0);
+      store.setImageROIRef(roiID, 0, roi);
     }
   }
 

@@ -66,6 +66,11 @@ import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.primitives.PositiveInteger;
+
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
  *
@@ -232,7 +237,7 @@ public class Exporter {
         // the original dataset had multiple series
         // we need to modify the IMetadata to represent the correct series
         for (int series=0; series<store.getImageCount(); series++) {
-          String type = store.getPixelsPixelType(series, 0);
+          String type = store.getPixelsType(series).toString();
           int pixelType = FormatTools.pixelTypeFromString(type);
           if (pixelType == ptype) {
             String imageName = store.getImageName(series);
@@ -265,31 +270,38 @@ public class Exporter {
         }
       }
 
-      store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
-      store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
-      store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
-      store.setPixelsSizeC(new Integer(channels*imp.getNChannels()), 0, 0);
-      store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
+      store.setPixelsSizeX(new PositiveInteger(imp.getWidth()), 0);
+      store.setPixelsSizeY(new PositiveInteger(imp.getHeight()), 0);
+      store.setPixelsSizeZ(new PositiveInteger(imp.getNSlices()), 0);
+      store.setPixelsSizeC(new PositiveInteger(channels*imp.getNChannels()), 0);
+      store.setPixelsSizeT(new PositiveInteger(imp.getNFrames()), 0);
 
-      if (store.getPixelsPixelType(0, 0) == null) {
-        store.setPixelsPixelType(FormatTools.getPixelTypeString(ptype), 0, 0);
+      if (store.getPixelsType(0) == null) {
+        try {
+        store.setPixelsType(PixelType.fromString(
+          FormatTools.getPixelTypeString(ptype)), 0);
+        }
+        catch (EnumerationException e) { }
       }
-      if (store.getPixelsBigEndian(0, 0) == null) {
-        store.setPixelsBigEndian(Boolean.FALSE, 0, 0);
+      if (store.getPixelsBinDataBigEndian(0, 0) == null) {
+        store.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
       }
-      if (store.getPixelsDimensionOrder(0, 0) == null) {
-        store.setPixelsDimensionOrder("XYCZT", 0, 0);
+      if (store.getPixelsDimensionOrder(0) == null) {
+        try {
+          store.setPixelsDimensionOrder(DimensionOrder.fromString("XYCZT"), 0);
+        }
+        catch (EnumerationException e) { }
       }
-      if (store.getLogicalChannelSamplesPerPixel(0, 0) == null) {
-        store.setLogicalChannelSamplesPerPixel(new Integer(channels), 0, 0);
+      if (store.getChannelSamplesPerPixel(0, 0) == null) {
+        store.setChannelSamplesPerPixel(new Integer(channels), 0, 0);
       }
 
       Calibration cal = imp.getCalibration();
 
-      store.setDimensionsPhysicalSizeX(new Double(cal.pixelWidth), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Double(cal.pixelHeight), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(cal.pixelDepth), 0, 0);
-      store.setDimensionsTimeIncrement(new Double(cal.frameInterval), 0, 0);
+      store.setPixelsPhysicalSizeX(new Double(cal.pixelWidth), 0);
+      store.setPixelsPhysicalSizeY(new Double(cal.pixelHeight), 0);
+      store.setPixelsPhysicalSizeZ(new Double(cal.pixelDepth), 0);
+      store.setPixelsTimeIncrement(new Double(cal.frameInterval), 0);
 
       if (imp.getImageStackSize() !=
         imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
@@ -302,9 +314,9 @@ public class Exporter {
           " planes will be exported. If you wish to export all of the " +
           "planes,\nselect 'Cancel' and convert the Image5D window " +
           "to a stack.");
-        store.setPixelsSizeZ(new Integer(imp.getImageStackSize()), 0, 0);
-        store.setPixelsSizeC(new Integer(1), 0, 0);
-        store.setPixelsSizeT(new Integer(1), 0, 0);
+        store.setPixelsSizeZ(new PositiveInteger(imp.getImageStackSize()), 0);
+        store.setPixelsSizeC(new PositiveInteger(1), 0);
+        store.setPixelsSizeT(new PositiveInteger(1), 0);
       }
 
       w.setMetadataRetrieve(store);
@@ -357,7 +369,7 @@ public class Exporter {
       int end = doStack ? size : start + 1;
 
       boolean littleEndian =
-        !w.getMetadataRetrieve().getPixelsBigEndian(0, 0).booleanValue();
+        !w.getMetadataRetrieve().getPixelsBinDataBigEndian(0, 0).booleanValue();
       byte[] plane = null;
       w.setInterleaved(false);
 

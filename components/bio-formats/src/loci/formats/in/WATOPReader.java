@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -143,16 +142,15 @@ public class WATOPReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].rgb = false;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setImageCreationDate(date, 0);
+    store.setImageAcquiredDate(date, 0);
 
     if (level == MetadataLevel.ALL) {
       store.setImageDescription(comment, 0);
-      store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
-      store.setDimensionsPhysicalSizeY((double) ySize / getSizeY(), 0, 0);
+      store.setPixelsPhysicalSizeX((double) xSize / getSizeX(), 0);
+      store.setPixelsPhysicalSizeY((double) ySize / getSizeY(), 0);
     }
   }
 

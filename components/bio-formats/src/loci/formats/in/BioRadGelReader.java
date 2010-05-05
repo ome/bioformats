@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -160,14 +159,13 @@ public class BioRadGelReader extends FormatReader {
     core[0].indexed = false;
     core[0].littleEndian = in.isLittleEndian();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setImageCreationDate(date, 0);
+    store.setImageAcquiredDate(date, 0);
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setDimensionsPhysicalSizeX(physicalWidth / getSizeX(), 0, 0);
-      store.setDimensionsPhysicalSizeY(physicalHeight / getSizeY(), 0, 0);
+      store.setPixelsPhysicalSizeX(physicalWidth / getSizeX(), 0);
+      store.setPixelsPhysicalSizeY(physicalHeight / getSizeY(), 0);
     }
   }
 

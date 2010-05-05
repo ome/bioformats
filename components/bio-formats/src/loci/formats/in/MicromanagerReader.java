@@ -37,8 +37,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
@@ -401,13 +404,12 @@ public class MicromanagerReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
     if (time != null) {
       long stamp = DateTools.getTime(time, DATE_FORMAT);
       String date = DateTools.convertDate(stamp, DateTools.UNIX);
-      store.setImageCreationDate(date, 0);
+      store.setImageAcquiredDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -420,17 +422,17 @@ public class MicromanagerReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       for (int i=0; i<channels.length; i++) {
-        store.setLogicalChannelName(channels[i], 0, i);
+        store.setChannelName(channels[i], 0, i);
       }
 
-      store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
-      store.setDimensionsPhysicalSizeZ(sliceThickness, 0, 0);
+      store.setPixelsPhysicalSizeX(pixelSize, 0);
+      store.setPixelsPhysicalSizeY(pixelSize, 0);
+      store.setPixelsPhysicalSizeZ(sliceThickness, 0);
 
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneTimingExposureTime(exposureTime, 0, 0, i);
+        store.setPlaneExposureTime(exposureTime, 0, i);
         if (i < timestamps.length) {
-          store.setPlaneTimingDeltaT(timestamps[i], 0, 0, i);
+          store.setPlaneDeltaT(timestamps[i], 0, i);
         }
       }
 
@@ -443,12 +445,16 @@ public class MicromanagerReader extends FormatReader {
       }
 
       for (int i=0; i<channels.length; i++) {
-        store.setDetectorSettingsBinning(binning, 0, i);
+        try {
+          Binning realBinning = Binning.fromString(binning);
+          store.setDetectorSettingsBinning(realBinning, 0, i);
+        }
+        catch (EnumerationException e) { }
         store.setDetectorSettingsGain(new Double(gain), 0, i);
         if (i < voltage.size()) {
           store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
         }
-        store.setDetectorSettingsDetector(detectorID, 0, i);
+        store.setDetectorSettingsID(detectorID, 0, i);
       }
 
       store.setDetectorID(detectorID, 0, 0);
@@ -460,8 +466,11 @@ public class MicromanagerReader extends FormatReader {
         store.setDetectorManufacturer(detectorManufacturer, 0, 0);
       }
 
-      if (cameraMode == null) cameraMode = "Unknown";
-      store.setDetectorType(cameraMode, 0, 0);
+      if (cameraMode == null) cameraMode = "Other";
+      try {
+        store.setDetectorType(DetectorType.fromString(cameraMode), 0, 0);
+      }
+      catch (EnumerationException e) { }
 
       store.setImagingEnvironmentTemperature(temperature, 0);
     }

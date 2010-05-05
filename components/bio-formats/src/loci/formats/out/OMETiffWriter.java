@@ -111,10 +111,11 @@ public class OMETiffWriter extends TiffWriter {
       omeMeta.setUUID(uuid);
 
       for (int series=0; series<omeMeta.getImageCount(); series++) {
-        String dimensionOrder = omeMeta.getPixelsDimensionOrder(series, 0);
-        int sizeZ = omeMeta.getPixelsSizeZ(series, 0).intValue();
-        int sizeC = omeMeta.getPixelsSizeC(series, 0).intValue();
-        int sizeT = omeMeta.getPixelsSizeT(series, 0).intValue();
+        String dimensionOrder =
+          omeMeta.getPixelsDimensionOrder(series).toString();
+        int sizeZ = omeMeta.getPixelsSizeZ(series).getValue().intValue();
+        int sizeC = omeMeta.getPixelsSizeC(series).getValue().intValue();
+        int sizeT = omeMeta.getPixelsSizeT(series).getValue().intValue();
 
         int imageCount = 0;
         int ifdCount = seriesMap.size();
@@ -123,7 +124,7 @@ public class OMETiffWriter extends TiffWriter {
         }
 
         if (imageCount == 0) {
-          omeMeta.setTiffDataNumPlanes(new Integer(0), series, 0, 0);
+          omeMeta.setTiffDataPlaneCount(new Integer(0), series, 0);
           continue;
         }
 
@@ -134,8 +135,8 @@ public class OMETiffWriter extends TiffWriter {
 
         Integer samplesPerPixel =
           new Integer((sizeZ * sizeC * sizeT) / imageCount);
-        for (int c=0; c<omeMeta.getLogicalChannelCount(series); c++) {
-          omeMeta.setLogicalChannelSamplesPerPixel(samplesPerPixel, series, c);
+        for (int c=0; c<omeMeta.getChannelCount(series); c++) {
+          omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
         }
 
         int ifd = 0, plane = 0;
@@ -154,23 +155,24 @@ public class OMETiffWriter extends TiffWriter {
           // fill in filename and UUID values
           int[] zct = FormatTools.getZCTCoords(dimensionOrder,
             sizeZ, sizeC, sizeT, imageCount, plane);
-          omeMeta.setTiffDataFileName(filename, series, 0, plane);
-          omeMeta.setTiffDataUUID(uuid, series, 0, plane);
+          omeMeta.setUUIDFileName(filename, series, plane);
+          // TODO
+          //omeMeta.setTiffDataUUID(uuid, series, 0, plane);
           // fill in any non-default TiffData attributes
           if (zct[0] > 0) {
-            omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, 0, plane);
+            omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, plane);
           }
           if (zct[1] > 0) {
-            omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, 0, plane);
+            omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, plane);
           }
           if (zct[2] > 0) {
-            omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, 0, plane);
+            omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, plane);
           }
           if (ifd > 0) {
-            omeMeta.setTiffDataIFD(new Integer(ifd), series, 0, plane);
+            omeMeta.setTiffDataIFD(new Integer(ifd), series, plane);
           }
           if (num != ifdCount) {
-            omeMeta.setTiffDataNumPlanes(new Integer(num), series, 0, plane);
+            omeMeta.setTiffDataPlaneCount(new Integer(num), series, plane);
           }
           plane += num;
           ifd = end;

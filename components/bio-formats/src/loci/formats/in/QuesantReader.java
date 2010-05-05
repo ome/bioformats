@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -113,19 +112,18 @@ public class QuesantReader extends FormatReader {
     core[0].imageCount = 1;
     core[0].dimensionOrder = "XYZCT";
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     if (date != null) {
       date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
-      store.setImageCreationDate(date, 0);
+      store.setImageAcquiredDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription(comment, 0);
-      store.setDimensionsPhysicalSizeX((double) xSize / getSizeX(), 0, 0);
-      store.setDimensionsPhysicalSizeY((double) xSize / getSizeY(), 0, 0);
+      store.setPixelsPhysicalSizeX((double) xSize / getSizeX(), 0);
+      store.setPixelsPhysicalSizeY((double) xSize / getSizeY(), 0);
     }
   }
 

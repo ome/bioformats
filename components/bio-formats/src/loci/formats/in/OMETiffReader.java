@@ -117,13 +117,11 @@ public class OMETiffReader extends FormatReader {
 
     int nImages = 0;
     for (int i=0; i<meta.getImageCount(); i++) {
-      int nChannels = meta.getLogicalChannelCount(i);
+      int nChannels = meta.getChannelCount(i);
       if (nChannels == 0) nChannels = 1;
-      for (int p=0; p<meta.getPixelsCount(i); p++) {
-        int z = meta.getPixelsSizeZ(i, p).intValue();
-        int t = meta.getPixelsSizeT(i, p).intValue();
-        nImages += z * t * nChannels;
-      }
+      int z = meta.getPixelsSizeZ(i).getValue().intValue();
+      int t = meta.getPixelsSizeT(i).getValue().intValue();
+      nImages += z * t * nChannels;
     }
     return nImages <= ifds.size();
   }
@@ -253,8 +251,9 @@ public class OMETiffReader extends FormatReader {
 
     hasSPW = meta.getPlateCount() > 0;
 
-    Hashtable originalMetadata = meta.getOriginalMetadata();
-    if (originalMetadata != null) metadata = originalMetadata;
+    // TODO
+    //Hashtable originalMetadata = meta.getOriginalMetadata();
+    //if (originalMetadata != null) metadata = originalMetadata;
 
     LOGGER.trace(xml);
 
@@ -266,9 +265,7 @@ public class OMETiffReader extends FormatReader {
     service.convertMetadata(meta, metadataStore);
 
     // determine series count from Image and Pixels elements
-    int seriesCount = 0;
-    int imageCount = meta.getImageCount();
-    for (int i=0; i<imageCount; i++) seriesCount += meta.getPixelsCount(i);
+    int seriesCount = meta.getImageCount();
     core = new CoreMetadata[seriesCount];
     for (int i=0; i<seriesCount; i++) {
       core[i] = new CoreMetadata();
@@ -278,39 +275,38 @@ public class OMETiffReader extends FormatReader {
     // compile list of file/UUID mappings
     Hashtable<String, String> files = new Hashtable<String, String>();
     boolean needSearch = false;
-    for (int i=0; i<imageCount; i++) {
-      int pixelsCount = meta.getPixelsCount(i);
-      for (int p=0; p<pixelsCount; p++) {
-        int tiffDataCount = meta.getTiffDataCount(i, p);
-        for (int td=0; td<tiffDataCount; td++) {
-          String uuid = meta.getTiffDataUUID(i, p, td);
-          String filename = null;
-          if (uuid == null) {
-            // no UUID means that TiffData element refers to this file
-            uuid = "";
-            filename = id;
-          }
-          else {
-            filename = meta.getTiffDataFileName(i, p, td);
-            if (!new Location(dir, filename).exists()) filename = null;
-            if (filename == null) {
-              if (uuid.equals(currentUUID)) {
-                // UUID references this file
-                filename = id;
-              }
-              else {
-                // will need to search for this UUID
-                filename = "";
-                needSearch = true;
-              }
+    for (int i=0; i<seriesCount; i++) {
+      int tiffDataCount = meta.getTiffDataCount(i);
+      for (int td=0; td<tiffDataCount; td++) {
+        // TODO
+        // String uuid = ?
+        String uuid = null;
+        String filename = null;
+        if (uuid == null) {
+          // no UUID means that TiffData element refers to this file
+          uuid = "";
+          filename = id;
+        }
+        else {
+          filename = meta.getUUIDFileName(i, td);
+          if (!new Location(dir, filename).exists()) filename = null;
+          if (filename == null) {
+            if (uuid.equals(currentUUID)) {
+              // UUID references this file
+              filename = id;
             }
-            else filename = normalizeFilename(dir, filename);
+            else {
+              // will need to search for this UUID
+              filename = "";
+              needSearch = true;
+            }
           }
-          String existing = files.get(uuid);
-          if (existing == null) files.put(uuid, filename);
-          else if (!existing.equals(filename)) {
-            throw new FormatException("Inconsistent UUID filenames");
-          }
+          else filename = normalizeFilename(dir, filename);
+        }
+        String existing = files.get(uuid);
+        if (existing == null) files.put(uuid, filename);
+        else if (!existing.equals(filename)) {
+          throw new FormatException("Inconsistent UUID filenames");
         }
       }
     }
@@ -347,226 +343,223 @@ public class OMETiffReader extends FormatReader {
     Hashtable<String, IFormatReader> readers =
       new Hashtable<String, IFormatReader>();
     int s = 0;
-    for (int i=0; i<imageCount; i++) {
+    for (int i=0; i<seriesCount; i++) {
       LOGGER.debug("Image[{}] {", i);
       LOGGER.debug("  id = {}", meta.getImageID(i));
-      int pixelsCount = meta.getPixelsCount(i);
-      for (int p=0; p<pixelsCount; p++, s++) {
-        LOGGER.debug("  Pixels[{}] {", p);
-        LOGGER.debug("    id = {}", meta.getPixelsID(i, p));
-        String order = meta.getPixelsDimensionOrder(i, p);
 
-        Integer samplesPerPixel = meta.getLogicalChannelSamplesPerPixel(i, 0);
-        int samples = samplesPerPixel == null ?
-          -1 : samplesPerPixel.intValue();
-        int tiffSamples = firstIFD.getSamplesPerPixel();
-        if (samples != tiffSamples) {
-          LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
-            samples, tiffSamples);
-          samples = tiffSamples;
+      String order = meta.getPixelsDimensionOrder(i).toString();
+
+      Integer samplesPerPixel = meta.getChannelSamplesPerPixel(i, 0);
+      int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.intValue();
+      int tiffSamples = firstIFD.getSamplesPerPixel();
+      if (samples != tiffSamples) {
+        LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
+          samples, tiffSamples);
+        samples = tiffSamples;
+      }
+
+      int effSizeC = meta.getPixelsSizeC(i).getValue().intValue() / samples;
+      if (effSizeC == 0) effSizeC = 1;
+      if (effSizeC * samples != meta.getPixelsSizeC(i).getValue().intValue()) {
+        effSizeC = meta.getPixelsSizeC(i).getValue().intValue();
+      }
+      int sizeT = meta.getPixelsSizeT(i).getValue().intValue();
+      int sizeZ = meta.getPixelsSizeZ(i).getValue().intValue();
+      int num = effSizeC * sizeT * sizeZ;
+
+      OMETiffPlane[] planes = new OMETiffPlane[num];
+      for (int no=0; no<num; no++) planes[no] = new OMETiffPlane();
+
+      int tiffDataCount = meta.getTiffDataCount(i);
+      for (int td=0; td<tiffDataCount; td++) {
+        LOGGER.debug("    TiffData[{}] {", td);
+        // extract TiffData parameters
+        String filename = meta.getUUIDFileName(i, td);
+        // TODO
+        //String uuid = meta.getTiffDataUUID(i, td);
+        String uuid = null;
+        Integer tdIFD = meta.getTiffDataIFD(i, td);
+        int ifd = tdIFD == null ? 0 : tdIFD.intValue();
+        Integer numPlanes = meta.getTiffDataPlaneCount(i, td);
+        Integer firstC = meta.getTiffDataFirstC(i, td);
+        Integer firstT = meta.getTiffDataFirstT(i, td);
+        Integer firstZ = meta.getTiffDataFirstZ(i, td);
+        int c = firstC == null ? 0 : firstC.intValue();
+        int t = firstT == null ? 0 : firstT.intValue();
+        int z = firstZ == null ? 0 : firstZ.intValue();
+
+        // NB: some writers index FirstC, FirstZ and FirstT from 1
+        if (c >= effSizeC) c--;
+        if (z >= sizeZ) z--;
+        if (t >= sizeT) t--;
+
+        int index = FormatTools.getIndex(order,
+          sizeZ, effSizeC, sizeT, num, z, c, t);
+        int count = numPlanes == null ? 1 : numPlanes.intValue();
+        if (count == 0) {
+          core[s] = null;
+          break;
         }
 
-        int effSizeC = meta.getPixelsSizeC(i, p).intValue() / samples;
-        if (effSizeC == 0) effSizeC = 1;
-        if (effSizeC * samples != meta.getPixelsSizeC(i, p).intValue()) {
-          effSizeC = meta.getPixelsSizeC(i, p).intValue();
+        // get reader object for this filename
+        if (filename == null) {
+          if (uuid == null) filename = id;
+          else filename = files.get(uuid);
         }
-        int sizeT = meta.getPixelsSizeT(i, p).intValue();
-        int sizeZ = meta.getPixelsSizeZ(i, p).intValue();
-        int num = effSizeC * sizeT * sizeZ;
+        else filename = normalizeFilename(dir, filename);
+        IFormatReader r = readers.get(filename);
+        if (r == null) {
+          r = new MinimalTiffReader();
+          readers.put(filename, r);
+        }
 
-        OMETiffPlane[] planes = new OMETiffPlane[num];
-        for (int no=0; no<num; no++) planes[no] = new OMETiffPlane();
+        Location file = new Location(filename);
+        if (!file.exists()) {
+          // if this is an absolute file name, try using a relative name
+          // old versions of OMETiffWriter wrote an absolute path to
+          // UUID.FileName, which causes problems if the file is moved to
+          // a different directory
+          filename =
+            filename.substring(filename.lastIndexOf(File.separator) + 1);
+          filename = dir + File.separator + filename;
 
-        int tiffDataCount = meta.getTiffDataCount(i, p);
-        for (int td=0; td<tiffDataCount; td++) {
-          LOGGER.debug("    TiffData[{}] {", td);
-          // extract TiffData parameters
-          String filename = meta.getTiffDataFileName(i, p, td);
-          String uuid = meta.getTiffDataUUID(i, p, td);
-          Integer tdIFD = meta.getTiffDataIFD(i, p, td);
-          int ifd = tdIFD == null ? 0 : tdIFD.intValue();
-          Integer numPlanes = meta.getTiffDataNumPlanes(i, p, td);
-          Integer firstC = meta.getTiffDataFirstC(i, p, td);
-          Integer firstT = meta.getTiffDataFirstT(i, p, td);
-          Integer firstZ = meta.getTiffDataFirstZ(i, p, td);
-          int c = firstC == null ? 0 : firstC.intValue();
-          int t = firstT == null ? 0 : firstT.intValue();
-          int z = firstZ == null ? 0 : firstZ.intValue();
-
-          // NB: some writers index FirstC, FirstZ and FirstT from 1
-          if (c >= effSizeC) c--;
-          if (z >= sizeZ) z--;
-          if (t >= sizeT) t--;
-
-          int index = FormatTools.getIndex(order,
-            sizeZ, effSizeC, sizeT, num, z, c, t);
-          int count = numPlanes == null ? 1 : numPlanes.intValue();
-          if (count == 0) {
-            core[s] = null;
-            break;
+          if (!new Location(filename).exists()) {
+            filename = currentId;
           }
+        }
 
-          // get reader object for this filename
-          if (filename == null) {
-            if (uuid == null) filename = id;
-            else filename = files.get(uuid);
-          }
-          else filename = normalizeFilename(dir, filename);
-          IFormatReader r = readers.get(filename);
-          if (r == null) {
-            r = new MinimalTiffReader();
-            readers.put(filename, r);
-          }
-
-          Location file = new Location(filename);
-          if (!file.exists()) {
-            // if this is an absolute file name, try using a relative name
-            // old versions of OMETiffWriter wrote an absolute path to
-            // UUID.FileName, which causes problems if the file is moved to
-            // a different directory
-            filename =
-              filename.substring(filename.lastIndexOf(File.separator) + 1);
-            filename = dir + File.separator + filename;
-
-            if (!new Location(filename).exists()) {
-              filename = currentId;
-            }
-          }
-
-          // populate plane index -> IFD mapping
-          for (int q=0; q<count; q++) {
-            int no = index + q;
+        // populate plane index -> IFD mapping
+        for (int q=0; q<count; q++) {
+          int no = index + q;
+          planes[no].reader = r;
+          planes[no].id = filename;
+          planes[no].ifd = ifd + q;
+          planes[no].certain = true;
+          LOGGER.debug("      Plane[{}]: file={}, IFD={}",
+            new Object[] {no, planes[no].id, planes[no].ifd});
+        }
+        if (numPlanes == null) {
+          // unknown number of planes; fill down
+          for (int no=index+1; no<num; no++) {
+            if (planes[no].certain) break;
             planes[no].reader = r;
             planes[no].id = filename;
-            planes[no].ifd = ifd + q;
-            planes[no].certain = true;
-            LOGGER.debug("      Plane[{}]: file={}, IFD={}",
-              new Object[] {no, planes[no].id, planes[no].ifd});
-          }
-          if (numPlanes == null) {
-            // unknown number of planes; fill down
-            for (int no=index+1; no<num; no++) {
-              if (planes[no].certain) break;
-              planes[no].reader = r;
-              planes[no].id = filename;
-              planes[no].ifd = planes[no - 1].ifd + 1;
-              LOGGER.debug("      Plane[{}]: FILLED", no);
-            }
-          }
-          else {
-            // known number of planes; clear anything subsequently filled
-            for (int no=index+count; no<num; no++) {
-              if (planes[no].certain) break;
-              planes[no].reader = null;
-              planes[no].id = null;
-              planes[no].ifd = -1;
-              LOGGER.debug("      Plane[{}]: CLEARED", no);
-            }
-          }
-          LOGGER.debug("    }");
-        }
-
-        if (core[s] == null) continue;
-
-        // verify that all planes are available
-        LOGGER.debug("    --------------------------------");
-        for (int no=0; no<num; no++) {
-          LOGGER.debug("    Plane[{}]: file={}, IFD={}",
-            new Object[] {no, planes[no].id, planes[no].ifd});
-          if (planes[no].reader == null) {
-            LOGGER.warn("Pixels ID '{}': missing plane #{}.  " +
-              "Using TiffReader to determine the number of planes.",
-              meta.getPixelsID(i, p), no);
-            TiffReader r = new TiffReader();
-            r.setId(currentId);
-            planes = new OMETiffPlane[r.getImageCount()];
-            for (int plane=0; plane<planes.length; plane++) {
-              planes[plane] = new OMETiffPlane();
-              planes[plane].id = currentId;
-              planes[plane].reader = r;
-              planes[plane].ifd = plane;
-            }
-            num = planes.length;
-            r.close();
+            planes[no].ifd = planes[no - 1].ifd + 1;
+            LOGGER.debug("      Plane[{}]: FILLED", no);
           }
         }
-        LOGGER.debug("  }");
-
-        // populate core metadata
-        info[s] = planes;
-        try {
-          core[s].sizeX = meta.getPixelsSizeX(i, p).intValue();
-          int tiffWidth = (int) firstIFD.getImageWidth();
-          if (core[s].sizeX != tiffWidth) {
-            LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
-              core[s].sizeX, tiffWidth);
+        else {
+          // known number of planes; clear anything subsequently filled
+          for (int no=index+count; no<num; no++) {
+            if (planes[no].certain) break;
+            planes[no].reader = null;
+            planes[no].id = null;
+            planes[no].ifd = -1;
+            LOGGER.debug("      Plane[{}]: CLEARED", no);
           }
-          core[s].sizeY = meta.getPixelsSizeY(i, p).intValue();
-          int tiffHeight = (int) firstIFD.getImageLength();
-          if (core[s].sizeY != tiffHeight) {
-            LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
-              core[s].sizeY, tiffHeight);
-          }
-          core[s].sizeZ = meta.getPixelsSizeZ(i, p).intValue();
-          core[s].sizeC = meta.getPixelsSizeC(i, p).intValue();
-          core[s].sizeT = meta.getPixelsSizeT(i, p).intValue();
-          core[s].pixelType = FormatTools.pixelTypeFromString(
-            meta.getPixelsPixelType(i, p));
-          int tiffPixelType = firstIFD.getPixelType();
-          if (core[s].pixelType != tiffPixelType) {
-            LOGGER.warn("PixelType mismatch: OME={}, TIFF={}",
-              core[s].pixelType, tiffPixelType);
-            core[s].pixelType = tiffPixelType;
-          }
-          core[s].imageCount = num;
-          core[s].dimensionOrder = meta.getPixelsDimensionOrder(i, p);
-          core[s].orderCertain = true;
-          PhotoInterp photo = firstIFD.getPhotometricInterpretation();
-          core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
-          if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
-            (core[s].sizeC % samples) != 0) || core[s].sizeC == 1)
-          {
-            core[s].sizeC *= samples;
-          }
-
-          if (core[s].sizeZ * core[s].sizeT * core[s].sizeC >
-            core[s].imageCount && !core[s].rgb)
-          {
-            if (core[s].sizeZ == core[s].imageCount) {
-              core[s].sizeT = 1;
-              core[s].sizeC = 1;
-            }
-            else if (core[s].sizeT == core[s].imageCount) {
-              core[s].sizeZ = 1;
-              core[s].sizeC = 1;
-            }
-            else if (core[s].sizeC == core[s].imageCount) {
-              core[s].sizeT = 1;
-              core[s].sizeZ = 1;
-            }
-          }
-
-          core[s].littleEndian = !meta.getPixelsBigEndian(i, p).booleanValue();
-          boolean tiffLittleEndian = firstIFD.isLittleEndian();
-          if (core[s].littleEndian != tiffLittleEndian) {
-            LOGGER.warn("BigEndian mismatch: OME={}, TIFF={}",
-              !core[s].littleEndian, !tiffLittleEndian);
-          }
-          core[s].interleaved = false;
-          core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
-            firstIFD.getIFDValue(IFD.COLOR_MAP) != null;
-          if (core[s].indexed) {
-            core[s].rgb = false;
-          }
-          core[s].falseColor = false;
-          core[s].metadataComplete = true;
         }
-        catch (NullPointerException exc) {
-          throw new FormatException("Incomplete Pixels metadata", exc);
+        LOGGER.debug("    }");
+      }
+
+      if (core[s] == null) continue;
+
+      // verify that all planes are available
+      LOGGER.debug("    --------------------------------");
+      for (int no=0; no<num; no++) {
+        LOGGER.debug("    Plane[{}]: file={}, IFD={}",
+          new Object[] {no, planes[no].id, planes[no].ifd});
+        if (planes[no].reader == null) {
+          LOGGER.warn("Image ID '{}': missing plane #{}.  " +
+            "Using TiffReader to determine the number of planes.",
+            meta.getImageID(i), no);
+          TiffReader r = new TiffReader();
+          r.setId(currentId);
+          planes = new OMETiffPlane[r.getImageCount()];
+          for (int plane=0; plane<planes.length; plane++) {
+            planes[plane] = new OMETiffPlane();
+            planes[plane].id = currentId;
+            planes[plane].reader = r;
+            planes[plane].ifd = plane;
+          }
+          num = planes.length;
+          r.close();
         }
       }
-      LOGGER.debug("}");
+      LOGGER.debug("  }");
+
+      // populate core metadata
+      info[s] = planes;
+      try {
+        core[s].sizeX = meta.getPixelsSizeX(i).getValue().intValue();
+        int tiffWidth = (int) firstIFD.getImageWidth();
+        if (core[s].sizeX != tiffWidth) {
+          LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
+            core[s].sizeX, tiffWidth);
+        }
+        core[s].sizeY = meta.getPixelsSizeY(i).getValue().intValue();
+        int tiffHeight = (int) firstIFD.getImageLength();
+        if (core[s].sizeY != tiffHeight) {
+          LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
+            core[s].sizeY, tiffHeight);
+        }
+        core[s].sizeZ = meta.getPixelsSizeZ(i).getValue().intValue();
+        core[s].sizeC = meta.getPixelsSizeC(i).getValue().intValue();
+        core[s].sizeT = meta.getPixelsSizeT(i).getValue().intValue();
+        core[s].pixelType = FormatTools.pixelTypeFromString(
+          meta.getPixelsType(i).toString());
+        int tiffPixelType = firstIFD.getPixelType();
+        if (core[s].pixelType != tiffPixelType) {
+          LOGGER.warn("PixelType mismatch: OME={}, TIFF={}",
+            core[s].pixelType, tiffPixelType);
+          core[s].pixelType = tiffPixelType;
+        }
+        core[s].imageCount = num;
+        core[s].dimensionOrder = meta.getPixelsDimensionOrder(i).toString();
+        core[s].orderCertain = true;
+        PhotoInterp photo = firstIFD.getPhotometricInterpretation();
+        core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
+        if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
+          (core[s].sizeC % samples) != 0) || core[s].sizeC == 1)
+        {
+          core[s].sizeC *= samples;
+        }
+
+        if (core[s].sizeZ * core[s].sizeT * core[s].sizeC >
+          core[s].imageCount && !core[s].rgb)
+        {
+          if (core[s].sizeZ == core[s].imageCount) {
+            core[s].sizeT = 1;
+            core[s].sizeC = 1;
+          }
+          else if (core[s].sizeT == core[s].imageCount) {
+            core[s].sizeZ = 1;
+            core[s].sizeC = 1;
+          }
+          else if (core[s].sizeC == core[s].imageCount) {
+            core[s].sizeT = 1;
+            core[s].sizeZ = 1;
+          }
+        }
+
+        core[s].littleEndian =
+          !meta.getPixelsBinDataBigEndian(i, 0).booleanValue();
+        boolean tiffLittleEndian = firstIFD.isLittleEndian();
+        if (core[s].littleEndian != tiffLittleEndian) {
+          LOGGER.warn("BigEndian mismatch: OME={}, TIFF={}",
+            !core[s].littleEndian, !tiffLittleEndian);
+        }
+        core[s].interleaved = false;
+        core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
+          firstIFD.getIFDValue(IFD.COLOR_MAP) != null;
+        if (core[s].indexed) {
+          core[s].rgb = false;
+        }
+        core[s].falseColor = false;
+        core[s].metadataComplete = true;
+      }
+      catch (NullPointerException exc) {
+        throw new FormatException("Incomplete Pixels metadata", exc);
+      }
     }
 
     // remove null CoreMetadata entries

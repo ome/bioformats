@@ -29,7 +29,6 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -113,15 +112,14 @@ public class LEOReader extends BaseTiffReader {
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     date = DateTools.formatDate(date, "HH:mm dd-MMM-yyyy");
-    store.setImageCreationDate(date, 0);
+    store.setImageAcquiredDate(date, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setDimensionsPhysicalSizeX(xSize, 0, 0);
-      store.setDimensionsPhysicalSizeY(xSize, 0, 0);
+      store.setPixelsPhysicalSizeX(xSize, 0);
+      store.setPixelsPhysicalSizeY(xSize, 0);
       store.setObjectiveWorkingDistance(workingDistance, 0, 0);
     }
   }

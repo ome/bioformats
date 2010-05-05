@@ -32,7 +32,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -144,8 +143,7 @@ public class JPEG2000Reader extends FormatReader {
     core[0].interleaved = true;
     core[0].littleEndian = false;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
   }

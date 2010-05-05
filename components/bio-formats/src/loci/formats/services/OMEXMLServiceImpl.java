@@ -112,12 +112,13 @@ public class OMEXMLServiceImpl extends AbstractService
       else {
         // extract schema version from OME root node
         version = ome.getVersion();
+
+        // TODO : transform XML to most recent version, if necessary
       }
     }
 
     // create metadata object of the appropriate schema version
-    String metaClass = "loci.formats.ome.OMEXML" +
-      version.replaceAll("[^\\w]", "") + "Metadata";
+    String metaClass = "loci.formats.ome.OMEXMLMetadataImpl";
     try {
       Class<? extends OMEXMLMetadata> klass = 
         (Class<? extends OMEXMLMetadata>) Class.forName(metaClass);
@@ -217,15 +218,7 @@ public class OMEXMLServiceImpl extends AbstractService
    */
   public String getOMEXML(MetadataRetrieve src) throws ServiceException {
     OMEXMLMetadata omexmlMeta = getOMEMetadata(src);
-    String xml = omexmlMeta.dumpXML();
-    String reordered = null;
-    try {
-      reordered = XMLTools.transformXML(xml, reorderXSLT);
-    }
-    catch (IOException exc) {
-      LOGGER.warn("Could not transform OME-XML", exc);
-    }
-    return reordered == null ? xml : reordered;
+    return omexmlMeta.dumpXML();
   }
 
   /* (non-Javadoc)

@@ -28,7 +28,6 @@ import java.io.IOException;
 import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -372,8 +371,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     LOGGER.info("Populating OME metadata");
 
     // the metadata store we're working with
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     IFD firstIFD = ifds.get(0);
@@ -390,7 +388,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // populate Image
 
     if (creationDate != null) {
-      store.setImageCreationDate(creationDate, 0);
+      store.setImageAcquiredDate(creationDate, 0);
     }
     else {
        MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
@@ -437,9 +435,9 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
           break;
       }
 
-      store.setDimensionsPhysicalSizeX(pixX, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixY, 0, 0);
-      store.setDimensionsPhysicalSizeZ(0.0, 0, 0);
+      store.setPixelsPhysicalSizeX(pixX, 0);
+      store.setPixelsPhysicalSizeY(pixY, 0);
+      store.setPixelsPhysicalSizeZ(0.0, 0);
     }
   }
 

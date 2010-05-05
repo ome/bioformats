@@ -38,7 +38,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
@@ -245,8 +244,7 @@ public class ImarisHDFReader extends FormatReader {
       core[i].indexed = false;
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     String imageName = new Location(getCurrentFile()).getName();
@@ -263,9 +261,9 @@ public class ImarisHDFReader extends FormatReader {
       if (px == 1) px = (maxX - minX) / core[s].sizeX;
       if (py == 1) py = (maxY - minY) / core[s].sizeY;
       if (pz == 1) pz = (maxZ - minZ) / core[s].sizeZ;
-      store.setDimensionsPhysicalSizeX(px, s, 0);
-      store.setDimensionsPhysicalSizeY(py, s, 0);
-      store.setDimensionsPhysicalSizeZ(pz, s, 0);
+      store.setPixelsPhysicalSizeX(px, s);
+      store.setPixelsPhysicalSizeY(py, s);
+      store.setPixelsPhysicalSizeZ(pz, s);
 
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;

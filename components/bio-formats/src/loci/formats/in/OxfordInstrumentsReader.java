@@ -30,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -159,14 +158,13 @@ public class OxfordInstrumentsReader extends FormatReader {
       addGlobalMeta("Z maximum (um)", zMax);
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     store.setImageDescription(comment, 0);
-    store.setImageCreationDate(dateTime, 0);
-    store.setDimensionsPhysicalSizeX(xSize / getSizeX(), 0, 0);
-    store.setDimensionsPhysicalSizeY(ySize / getSizeY(), 0, 0);
+    store.setImageAcquiredDate(dateTime, 0);
+    store.setPixelsPhysicalSizeX(xSize / getSizeX(), 0);
+    store.setPixelsPhysicalSizeY(ySize / getSizeY(), 0);
   }
 
   // -- Helper methods --

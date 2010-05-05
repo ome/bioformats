@@ -35,8 +35,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.enums.MicroscopeType;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
@@ -241,8 +245,7 @@ public class L2DReader extends FormatReader {
 
     reader = new MinimalTiffReader();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     for (int i=0; i<getSeriesCount(); i++) {
       core[i].imageCount = tiffs[i].length;
@@ -267,7 +270,7 @@ public class L2DReader extends FormatReader {
       store.setImageName(scans[i], i);
       if (dates[i] != null) {
         dates[i] = DateTools.formatDate(dates[i], DATE_FORMAT);
-        store.setImageCreationDate(dates[i], i);
+        store.setImageAcquiredDate(dates[i], i);
       }
       else MetadataTools.setDefaultCreationDate(store, id, i);
     }
@@ -278,7 +281,6 @@ public class L2DReader extends FormatReader {
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-
         store.setImageDescription(comments[i], i);
 
         if (wavelengths[i] != null) {
@@ -288,18 +290,19 @@ public class L2DReader extends FormatReader {
               getEffectiveSizeC(), waves.length);
           }
           for (int q=0; q<waves.length; q++) {
-            String lightSource = MetadataTools.createLSID("LightSource", 0, q);
-            store.setLightSourceID(lightSource, 0, q);
-            store.setLaserWavelength(new Integer(waves[q].trim()), 0, q);
-            store.setLaserType("Unknown", 0, q);
-            store.setLaserLaserMedium("Unknown", 0, q);
-            store.setLogicalChannelLightSource(lightSource, i, q);
+            String laser = MetadataTools.createLSID("LightSource", 0, q);
+            store.setLaserID(laser, 0, q);
+            Integer wave = new Integer(waves[q].trim());
+            store.setLaserWavelength(new PositiveInteger(wave), 0, q);
+            store.setLaserType(LaserType.OTHER, 0, q);
+            store.setLaserLaserMedium(LaserMedium.OTHER, 0, q);
+            store.setChannelLightSourceSettingsID(laser, i, q);
           }
         }
       }
 
       store.setMicroscopeModel(model, 0);
-      store.setMicroscopeType("Unknown", 0);
+      store.setMicroscopeType(MicroscopeType.OTHER, 0);
     }
   }
 

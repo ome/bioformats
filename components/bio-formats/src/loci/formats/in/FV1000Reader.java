@@ -46,12 +46,20 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.IlluminationType;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -788,8 +796,7 @@ public class FV1000Reader extends FormatReader {
 
     // populate MetadataStore
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     MetadataTools.populatePixels(store, this);
 
@@ -801,7 +808,7 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       store.setImageName("Series " + (i + 1), i);
-      if (creationDate != null) store.setImageCreationDate(creationDate, i);
+      if (creationDate != null) store.setImageAcquiredDate(creationDate, i);
       else MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
@@ -823,10 +830,10 @@ public class FV1000Reader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizeX != null) {
-        store.setDimensionsPhysicalSizeX(new Double(pixelSizeX), i, 0);
+        store.setPixelsPhysicalSizeX(new Double(pixelSizeX), i);
       }
       if (pixelSizeY != null) {
-        store.setDimensionsPhysicalSizeY(new Double(pixelSizeY), i, 0);
+        store.setPixelsPhysicalSizeY(new Double(pixelSizeY), i);
       }
       if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
         pixelSizeZ == Double.POSITIVE_INFINITY || getSizeZ() == 1)
@@ -839,14 +846,18 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 0d;
       }
 
-      store.setDimensionsPhysicalSizeZ(pixelSizeZ, i, 0);
-      store.setDimensionsTimeIncrement(pixelSizeT, i, 0);
+      store.setPixelsPhysicalSizeZ(pixelSizeZ, i);
+      store.setPixelsTimeIncrement(pixelSizeT, i);
 
       // populate LogicalChannel data
 
       for (int c=0; c<core[i].sizeC; c++) {
         if (c < illuminations.size()) {
-          store.setLogicalChannelIlluminationType(illuminations.get(c), i, c);
+          try {
+            store.setChannelIlluminationType(
+              IlluminationType.fromString(illuminations.get(c)), i, c);
+          }
+          catch (EnumerationException e) { }
         }
       }
     }
@@ -859,28 +870,31 @@ public class FV1000Reader extends FormatReader {
       // populate Detector data
       String detectorID = MetadataTools.createLSID("Detector", 0, channelIndex);
       store.setDetectorID(detectorID, 0, channelIndex);
-      store.setDetectorSettingsDetector(detectorID, 0, channelIndex);
+      store.setDetectorSettingsID(detectorID, 0, channelIndex);
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
       store.setDetectorVoltage(channel.voltage, 0, channelIndex);
-      store.setDetectorType("PMT", 0, channelIndex);
+      store.setDetectorType(DetectorType.PMT, 0, channelIndex);
 
       // populate LogicalChannel data
       String filterSet = MetadataTools.createLSID("FilterSet", 0, channelIndex);
 
-      store.setLogicalChannelName(channel.name, 0, channelIndex);
+      store.setChannelName(channel.name, 0, channelIndex);
       String lightSourceID =
         MetadataTools.createLSID("LightSource", 0, channelIndex);
-      store.setLightSourceSettingsLightSource(lightSourceID, 0, channelIndex);
+      store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
       if (channel.emWave.intValue() > 0) {
-        store.setLogicalChannelEmWave(channel.emWave, 0, channelIndex);
+        store.setChannelEmissionWavelength(
+          new PositiveInteger(channel.emWave), 0, channelIndex);
       }
       if (channel.exWave.intValue() > 0) {
-        store.setLogicalChannelExWave(channel.exWave, 0, channelIndex);
-        store.setLightSourceSettingsWavelength(channel.exWave, 0, channelIndex);
+        store.setChannelExcitationWavelength(
+          new PositiveInteger(channel.exWave), 0, channelIndex);
+        store.setChannelLightSourceSettingsWavelength(
+          new PositiveInteger(channel.exWave), 0, channelIndex);
       }
-      store.setLogicalChannelFilterSet(filterSet, 0, channelIndex);
+      store.setChannelFilterSetRef(filterSet, 0, channelIndex);
 
       // populate Filter data
       if (channel.barrierFilter != null) {
@@ -901,8 +915,9 @@ public class FV1000Reader extends FormatReader {
           }
           catch (NumberFormatException e) { }
         }
-        store.setLogicalChannelSecondaryEmissionFilter(
-          filterID, 0, channelIndex);
+        // TODO
+        //store.setLogicalChannelSecondaryEmissionFilter(
+        //  filterID, 0, channelIndex);
       }
 
       // populate FilterSet data
@@ -912,7 +927,7 @@ public class FV1000Reader extends FormatReader {
       String exFilter = MetadataTools.createLSID("Dichroic", 0, exIndex);
 
       store.setFilterSetID(filterSet, 0, channelIndex);
-      store.setFilterSetDichroic(exFilter, 0, channelIndex);
+      store.setFilterSetDichroicRef(exFilter, 0, channelIndex);
 
       // populate Dichroic data
       store.setDichroicID(emFilter, 0, emIndex);
@@ -922,13 +937,17 @@ public class FV1000Reader extends FormatReader {
       store.setDichroicModel(channel.excitationFilter, 0, exIndex);
 
       // populate Laser data
-      store.setLightSourceID(lightSourceID, 0, channelIndex);
-      store.setLaserLaserMedium(channel.dyeName, 0, channelIndex);
+      store.setLaserID(lightSourceID, 0, channelIndex);
+      try {
+        store.setLaserLaserMedium(LaserMedium.fromString(channel.dyeName),
+          0, channelIndex);
+      }
+      catch (EnumerationException e) { }
       if (channelIndex < wavelengths.size()) {
         store.setLaserWavelength(
-          wavelengths.get(channelIndex), 0, channelIndex);
+          new PositiveInteger(wavelengths.get(channelIndex)), 0, channelIndex);
       }
-      store.setLaserType("Unknown", 0, channelIndex);
+      store.setLaserType(LaserType.OTHER, 0, channelIndex);
 
       channelIndex++;
     }
@@ -944,13 +963,13 @@ public class FV1000Reader extends FormatReader {
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     }
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
+    store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+    store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
+    store.setImageObjectiveSettingsID(objectiveID, 0);
 
     int nextROI = -1;
 
@@ -982,7 +1001,7 @@ public class FV1000Reader extends FormatReader {
 
     String[] xc = null, yc = null;
     int divide = 0;
-    int color = 0, fontSize = 0, lineWidth = 0, angle = 0;
+    int fontSize = 0, lineWidth = 0, angle = 0;
     String fontName = null, name = null;
 
     for (IniTable table : roiFile) {
@@ -1003,7 +1022,6 @@ public class FV1000Reader extends FormatReader {
         fontSize = Integer.parseInt(fontAttributes[1]);
 
         lineWidth = Integer.parseInt(table.get("LINEWIDTH"));
-        color = Integer.parseInt(table.get("FORECOLOR"));
         name = table.get("NAME");
         angle = Integer.parseInt(table.get("ANGLE"));
         xc = table.get("X").split(",");
@@ -1022,24 +1040,16 @@ public class FV1000Reader extends FormatReader {
 
           if (shape == 0) {
             nextROI++;
-            store.setROIZ0(zIndex, 0, nextROI);
-            store.setROIZ1(zIndex, 0, nextROI);
-            store.setROIT0(tIndex, 0, nextROI);
-            store.setROIT1(tIndex, 0, nextROI);
           }
 
-          store.setShapeTheZ(zIndex, 0, nextROI, shape);
-          store.setShapeTheT(tIndex, 0, nextROI, shape);
-
-          store.setShapeFontSize(fontSize, 0, nextROI, shape);
-          store.setShapeFontFamily(fontName, 0, nextROI, shape);
-          store.setShapeText(name, 0, nextROI, shape);
-          store.setShapeStrokeWidth(lineWidth, 0, nextROI, shape);
-          store.setShapeStrokeColor(String.valueOf(color), 0, nextROI, shape);
-
           if (shapeType == POINT) {
-            store.setPointCx(xc[0], 0, nextROI, shape);
-            store.setPointCy(yc[0], 0, nextROI, shape);
+            store.setPointTheZ(zIndex, nextROI, shape);
+            store.setPointTheT(tIndex, nextROI, shape);
+            store.setPointFontSize(fontSize, nextROI, shape);
+            store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
+
+            store.setPointX(new Double(xc[0]), nextROI, shape);
+            store.setPointY(new Double(yc[0]), nextROI, shape);
           }
           else if (shapeType == GRID || shapeType == RECTANGLE) {
             if (shapeType == RECTANGLE) divide = 1;
@@ -1047,51 +1057,61 @@ public class FV1000Reader extends FormatReader {
             height /= divide;
             for (int row=0; row<divide; row++) {
               for (int col=0; col<divide; col++) {
-                int realX = x + col * width;
-                int realY = y + row * height;
+                double realX = x + col * width;
+                double realY = y + row * height;
 
-                store.setRectX(String.valueOf(realX), 0, nextROI, shape);
-                store.setRectY(String.valueOf(realY), 0, nextROI, shape);
-                store.setRectWidth(String.valueOf(width), 0, nextROI, shape);
-                store.setRectHeight(String.valueOf(height), 0, nextROI, shape);
+                store.setRectangleX(realX, nextROI, shape);
+                store.setRectangleY(realY, nextROI, shape);
+                store.setRectangleWidth(new Double(width), nextROI, shape);
+                store.setRectangleHeight(new Double(height), nextROI, shape);
 
-                int centerX = realX + (width / 2);
-                int centerY = realY + (height / 2);
+                store.setRectangleTheZ(zIndex, nextROI, shape);
+                store.setRectangleTheT(tIndex, nextROI, shape);
+                store.setRectangleFontSize(fontSize, nextROI, shape);
+                store.setRectangleStrokeWidth(
+                  new Double(lineWidth), nextROI, shape);
 
-                store.setRectTransform(String.format("rotate(%d %d %d)",
-                  angle, centerX, centerY), 0, nextROI, shape);
+                double centerX = realX + (width / 2);
+                double centerY = realY + (height / 2);
+
+                store.setRectangleTransform(String.format("rotate(%d %d %d)",
+                  angle, centerX, centerY), nextROI, shape);
 
                 if (row < divide - 1 || col < divide - 1) shape++;
               }
             }
           }
           else if (shapeType == LINE) {
-            store.setLineX1(String.valueOf(x), 0, nextROI, shape);
-            store.setLineY1(String.valueOf(y), 0, nextROI, shape);
-            store.setLineX2(String.valueOf(x + width), 0, nextROI, shape);
-            store.setLineY2(String.valueOf(y + height), 0, nextROI, shape);
+            store.setLineX1(new Double(x), nextROI, shape);
+            store.setLineY1(new Double(y), nextROI, shape);
+            store.setLineX2(new Double(x + width), nextROI, shape);
+            store.setLineY2(new Double(y + height), nextROI, shape);
+
+            store.setLineTheZ(zIndex, nextROI, shape);
+            store.setLineTheT(tIndex, nextROI, shape);
+            store.setLineFontSize(fontSize, nextROI, shape);
+            store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
 
             store.setLineTransform(String.format("rotate(%d %d %d)",
-              angle, centerX, centerY), 0, nextROI, shape);
+              angle, centerX, centerY), nextROI, shape);
           }
-          else if (shapeType == CIRCLE) {
-            int r = width / 2;
-            store.setCircleCx(String.valueOf(x + r), 0, nextROI, shape);
-            store.setCircleCy(String.valueOf(y + r), 0, nextROI, shape);
-            store.setCircleR(String.valueOf(r), 0, nextROI, shape);
-          }
-          else if (shapeType == ELLIPSE) {
-            int rx = width / 2;
-            int ry = height / 2;
-            store.setEllipseCx(String.valueOf(x + rx), 0, nextROI, shape);
-            store.setEllipseCy(String.valueOf(y + ry), 0, nextROI, shape);
-            store.setEllipseRx(String.valueOf(rx), 0, nextROI, shape);
-            store.setEllipseRy(String.valueOf(ry), 0, nextROI, shape);
+          else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
+            double rx = width / 2;
+            double ry = shapeType == CIRCLE ? rx : height / 2;
+            store.setEllipseX(x + rx, nextROI, shape);
+            store.setEllipseY(y + ry, nextROI, shape);
+            store.setEllipseRadiusX(rx, nextROI, shape);
+            store.setEllipseRadiusY(ry, nextROI, shape);
+
+            store.setEllipseTheZ(zIndex, nextROI, shape);
+            store.setEllipseTheT(tIndex, nextROI, shape);
+            store.setEllipseFontSize(fontSize, nextROI, shape);
+            store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
             store.setEllipseTransform(String.format("rotate(%d %d %d)",
-              angle, x + rx, y + ry), 0, nextROI, shape);
+              angle, x + rx, y + ry), nextROI, shape);
           }
           else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
             shapeType == POLYLINE || shapeType == FREE_LINE)
@@ -1103,16 +1123,14 @@ public class FV1000Reader extends FormatReader {
               points.append(yc[point]);
               if (point < xc.length - 1) points.append(" ");
             }
-            if (shapeType == POLYGON || shapeType == FREE_SHAPE) {
-              store.setPolygonPoints(points.toString(), 0, nextROI, shape);
-              store.setPolygonTransform("rotate(" + angle + ")", 0, nextROI,
-                shape);
-            }
-            else {
-              store.setPolylinePoints(points.toString(), 0, nextROI, shape);
-              store.setPolylineTransform("rotate(" + angle + ")", 0, nextROI,
-                shape);
-            }
+            store.setPolylinePoints(points.toString(), nextROI, shape);
+            store.setPolylineTransform("rotate(" + angle + ")", nextROI, shape);
+            store.setPolylineClosed(
+              shapeType == POLYGON || shapeType == FREE_SHAPE, nextROI, shape);
+            store.setPolylineTheZ(zIndex, nextROI, shape);
+            store.setPolylineTheT(tIndex, nextROI, shape);
+            store.setPolylineFontSize(fontSize, nextROI, shape);
+            store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
           }
         }
       }

@@ -34,8 +34,11 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * HISReader is the file format reader for Hamamatsu .his files.
@@ -229,8 +232,7 @@ public class HISReader extends FormatReader {
         (getSizeX() * getSizeY() * getSizeC() * getBitsPerPixel()) / 8);
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -239,16 +241,20 @@ public class HISReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       for (int i=0; i<nSeries; i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageCreationDate(date[i], i);
+        store.setImageAcquiredDate(date[i], i);
 
-        store.setPlaneTimingExposureTime(exposureTime[i], i, 0, 0);
+        store.setPlaneExposureTime(exposureTime[i], i, 0);
 
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
         store.setDetectorOffset(offset[i], 0, i);
-        store.setDetectorType("Unknown", 0, i);
-        store.setDetectorSettingsDetector(detectorID, i, 0);
-        store.setDetectorSettingsBinning(binning[i], i, 0);
+        store.setDetectorType(DetectorType.OTHER, 0, i);
+        store.setDetectorSettingsID(detectorID, i, 0);
+        try {
+          store.setDetectorSettingsBinning(
+            Binning.fromString(binning[i]), i, 0);
+        }
+        catch (EnumerationException e) { }
       }
     }
   }

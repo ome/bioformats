@@ -37,7 +37,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
 
@@ -160,8 +159,7 @@ public class AmiraReader extends FormatReader {
     }
     LOGGER.info("Populating metadata store");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -182,9 +180,9 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      store.setDimensionsPhysicalSizeX(new Double(pixelWidth), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Double(pixelHeight), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(pixelDepth), 0, 0);
+      store.setPixelsPhysicalSizeX(new Double(pixelWidth), 0);
+      store.setPixelsPhysicalSizeY(new Double(pixelHeight), 0);
+      store.setPixelsPhysicalSizeZ(new Double(pixelDepth), 0);
     }
 
     if (parameters.ascii) {
@@ -396,19 +394,22 @@ public class AmiraReader extends FormatReader {
   class HxRLE implements PlaneReader {
     long compressedSize;
     long[] offsets;
+    int[] internalOffsets;
     int currentNo, maxOffsetIndex, planeSize;
 
     HxRLE(int sliceCount, long compressedSize) {
       this.compressedSize = compressedSize;
       offsets = new long[sliceCount + 1];
+      internalOffsets = new int[sliceCount + 1];
       offsets[0] = offsetOfFirstStream;
+      internalOffsets[0] = 0;
       planeSize = FormatTools.getPlaneSize(AmiraReader.this);
       maxOffsetIndex = currentNo = 0;
     }
 
     void read(byte[] buf, int len) throws FormatException, IOException {
       int off = 0;
-      while (len > 0) {
+      while (len > 0 && in.getFilePointer() < in.length()) {
         int insn = in.readByte();
         if (insn < 0) {
           insn = (insn & 0x7f);
@@ -425,7 +426,11 @@ public class AmiraReader extends FormatReader {
         }
         else {
           if (insn > len) {
-            throw new FormatException("Slice " + currentNo + " is unaligned!");
+            internalOffsets[currentNo] = insn - len;
+            insn = len;
+          }
+          if (off == 0 && internalOffsets[currentNo - 1] > 0) {
+            insn = internalOffsets[currentNo - 1];
           }
           Arrays.fill(buf, off, off + insn, in.readByte());
           len -= insn;
@@ -439,6 +444,7 @@ public class AmiraReader extends FormatReader {
         if (currentNo != maxOffsetIndex) {
           in.seek(offsets[maxOffsetIndex]);
         }
+        currentNo = no + 1;
         while (maxOffsetIndex < no) {
           read(buf, planeSize);
           offsets[++maxOffsetIndex] = in.getFilePointer();
@@ -448,12 +454,12 @@ public class AmiraReader extends FormatReader {
         if (currentNo != no) {
           in.seek(offsets[no]);
         }
+        currentNo = no + 1;
         read(buf, planeSize);
         if (maxOffsetIndex == no) {
           offsets[++maxOffsetIndex] = in.getFilePointer();
         }
       }
-      currentNo = no + 1;
       return buf;
     }
   }

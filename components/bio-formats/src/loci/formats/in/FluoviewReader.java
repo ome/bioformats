@@ -31,10 +31,14 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
 
 /**
  * FluoviewReader is the file format reader for
@@ -313,12 +317,11 @@ public class FluoviewReader extends BaseTiffReader {
   /* @see loci.formats.in.BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     if (date != null) {
-      store.setImageCreationDate(date, 0);
+      store.setImageAcquiredDate(date, 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
@@ -335,25 +338,21 @@ public class FluoviewReader extends BaseTiffReader {
     // populate timing data
     if (timeIndex >= 0) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneTimingDeltaT(
-          new Double(stamps[timeIndex][i] / 1000.0), 0, 0, i);
+        store.setPlaneDeltaT(new Double(stamps[timeIndex][i] / 1000.0), 0, i);
       }
     }
 
     // populate Dimensions
-    store.setDimensionsPhysicalSizeX(voxelX, 0, 0);
-    store.setDimensionsPhysicalSizeY(voxelY, 0, 0);
-    store.setDimensionsPhysicalSizeZ(voxelZ, 0, 0);
-    store.setDimensionsTimeIncrement(voxelT, 0, 0);
-    if ((int) voxelC > 0) {
-      store.setDimensionsWaveIncrement((int) voxelC, 0, 0);
-    }
+    store.setPixelsPhysicalSizeX(voxelX, 0);
+    store.setPixelsPhysicalSizeY(voxelY, 0);
+    store.setPixelsPhysicalSizeZ(voxelZ, 0);
+    store.setPixelsTimeIncrement(voxelT, 0);
 
     // populate LogicalChannel data
 
     for (int i=0; i<getSizeC(); i++) {
       if (channelNames[i] != null) {
-        store.setLogicalChannelName(channelNames[i].trim(), 0, i);
+        store.setChannelName(channelNames[i].trim(), 0, i);
       }
     }
 
@@ -364,7 +363,7 @@ public class FluoviewReader extends BaseTiffReader {
         if (detectorManufacturer != null) {
           store.setDetectorManufacturer(detectorManufacturer, 0, 0);
         }
-        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, 0);
+        store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, i);
       }
       if (gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
@@ -372,12 +371,12 @@ public class FluoviewReader extends BaseTiffReader {
       if (offsets[i] != null) {
         store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
       }
-      store.setDetectorType("Unknown", 0, i);
+      store.setDetectorType(DetectorType.OTHER, 0, i);
 
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
       store.setDetectorID(detectorID, 0, i);
-      store.setDetectorSettingsDetector(detectorID, 0, i);
+      store.setDetectorSettingsID(detectorID, 0, i);
     }
 
     // populate Objective data
@@ -387,14 +386,18 @@ public class FluoviewReader extends BaseTiffReader {
     }
     else if (mag == null) mag = "1";
 
-    store.setObjectiveCorrection("Unknown", 0, 0);
-    store.setObjectiveImmersion("Unknown", 0, 0);
+    store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+    store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
     if (objectiveManufacturer != null) {
       String[] objectiveData = objectiveManufacturer.split(" ");
       store.setObjectiveModel(objectiveData[0], 0, 0);
       if (objectiveData.length > 2) {
-        store.setObjectiveImmersion(objectiveData[2], 0, 0);
+        try {
+          store.setObjectiveImmersion(
+            Immersion.fromString(objectiveData[2]), 0, 0);
+        }
+        catch (EnumerationException e) { }
       }
     }
 
@@ -411,7 +414,7 @@ public class FluoviewReader extends BaseTiffReader {
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
-    store.setObjectiveSettingsObjective(objectiveID, 0);
+    store.setImageObjectiveSettingsID(objectiveID, 0);
   }
 
   // -- Helper methods --

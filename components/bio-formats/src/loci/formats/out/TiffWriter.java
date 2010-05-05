@@ -110,7 +110,7 @@ public class TiffWriter extends FormatWriter {
   {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(retrieve, series);
-    Boolean bigEndian = retrieve.getPixelsBigEndian(series, 0);
+    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
@@ -134,15 +134,15 @@ public class TiffWriter extends FormatWriter {
       }
     }
 
-    int width = retrieve.getPixelsSizeX(series, 0).intValue();
-    int height = retrieve.getPixelsSizeY(series, 0).intValue();
-    Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
+    int width = retrieve.getPixelsSizeX(series).getValue().intValue();
+    int height = retrieve.getPixelsSizeY(series).getValue().intValue();
+    Integer channels = retrieve.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int c = channels == null ? 1 : channels.intValue();
-    int type =
-      FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0));
+    int type = FormatTools.pixelTypeFromString(
+      retrieve.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
     int plane = width * height * c * bytesPerPixel;

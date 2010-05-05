@@ -38,8 +38,15 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
@@ -748,16 +755,14 @@ public class ICSReader extends FormatReader {
 
     LOGGER.info("Populating OME metadata");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     // populate Image data
 
     store.setImageName(imageName, 0);
 
-    if (date != null) store.setImageCreationDate(date, 0);
+    if (date != null) store.setImageAcquiredDate(date, 0);
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
@@ -773,30 +778,26 @@ public class ICSReader extends FormatReader {
       if (pixelSizes != null) {
         for (int i=0; i<pixelSizes.length; i++) {
           if (axes[i].equals("x")) {
-            store.setDimensionsPhysicalSizeX(pixelSizes[i], 0, 0);
+            store.setPixelsPhysicalSizeX(pixelSizes[i], 0);
           }
           else if (axes[i].equals("y")) {
-            store.setDimensionsPhysicalSizeY(pixelSizes[i], 0, 0);
+            store.setPixelsPhysicalSizeY(pixelSizes[i], 0);
           }
           else if (axes[i].equals("z")) {
-            store.setDimensionsPhysicalSizeZ(pixelSizes[i], 0, 0);
+            store.setPixelsPhysicalSizeZ(pixelSizes[i], 0);
           }
           else if (axes[i].equals("t")) {
-            store.setDimensionsTimeIncrement(pixelSizes[i], 0, 0);
-          }
-          else if (axes[i].equals("ch")) {
-            int c = pixelSizes[i].intValue();
-            if (c > 0) store.setDimensionsWaveIncrement(c, 0, 0);
+            store.setPixelsTimeIncrement(pixelSizes[i], 0);
           }
         }
       }
       else if (sizes != null) {
         if (sizes.length > 0) {
-          store.setDimensionsPhysicalSizeX(sizes[0], 0, 0);
+          store.setPixelsPhysicalSizeX(sizes[0], 0);
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          store.setDimensionsPhysicalSizeY(sizes[1], 0, 0);
+          store.setPixelsPhysicalSizeY(sizes[1], 0);
         }
       }
 
@@ -804,18 +805,20 @@ public class ICSReader extends FormatReader {
 
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (channelNames.containsKey(i)) {
-          store.setLogicalChannelName(channelNames.get(i), 0, i);
+          store.setChannelName(channelNames.get(i), 0, i);
         }
         if (pinholes.containsKey(i)) {
-          store.setLogicalChannelPinholeSize(pinholes.get(i), 0, i);
+          store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
         if (emWaves != null && i < emWaves.length && emWaves[i].intValue() > 0)
         {
-          store.setLogicalChannelEmWave(emWaves[i], 0, i);
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWaves[i]), 0, i);
         }
         if (exWaves != null && i < exWaves.length && exWaves[i].intValue() > 0)
         {
-          store.setLogicalChannelExWave(exWaves[i], 0, i);
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWaves[i]), 0, i);
         }
       }
 
@@ -823,16 +826,20 @@ public class ICSReader extends FormatReader {
 
       Integer[] lasers = wavelengths.keySet().toArray(new Integer[0]);
       for (Integer laser : lasers) {
-        store.setLaserWavelength(wavelengths.get(laser), 0, laser.intValue());
-        store.setLaserType("Unknown", 0, laser.intValue());
-        store.setLaserLaserMedium("Unknown", 0, laser.intValue());
+        store.setLaserWavelength(
+          new PositiveInteger(wavelengths.get(laser)), 0, laser.intValue());
+        store.setLaserType(LaserType.OTHER, 0, laser.intValue());
+        store.setLaserLaserMedium(LaserMedium.OTHER, 0, laser.intValue());
       }
 
       // populate Objective data
 
       if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
-      if (immersion != null) store.setObjectiveImmersion(immersion, 0, 0);
-      else store.setObjectiveImmersion("Unknown", 0, 0);
+      if (immersion == null) immersion = "Other";
+      try {
+        store.setObjectiveImmersion(Immersion.fromString(immersion), 0, 0);
+      }
+      catch (EnumerationException e) { }
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
         store.setObjectiveWorkingDistance(workingDistance, 0, 0);
@@ -840,21 +847,21 @@ public class ICSReader extends FormatReader {
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);
       }
-      store.setObjectiveCorrection("Unknown", 0, 0);
+      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
 
       for (Integer key : gains.keySet()) {
         int index = key.intValue();
         if (index < getEffectiveSizeC()) {
           store.setDetectorSettingsGain(gains.get(key), 0, index);
-          store.setDetectorType("Unknown", 0, index);
+          store.setDetectorType(DetectorType.OTHER, 0, index);
           String detectorID = MetadataTools.createLSID("Detector", 0, index);
           store.setDetectorID(detectorID, 0, index);
-          store.setDetectorSettingsDetector(detectorID, 0, index);
+          store.setDetectorSettingsID(detectorID, 0, index);
         }
       }
 
@@ -867,13 +874,13 @@ public class ICSReader extends FormatReader {
       if (stagePos != null) {
         for (int i=0; i<getImageCount(); i++) {
           if (stagePos.length > 0) {
-            store.setStagePositionPositionX(stagePos[0], 0, 0, i);
+            store.setPlanePositionX(stagePos[0], 0, i);
           }
           if (stagePos.length > 1) {
-            store.setStagePositionPositionY(stagePos[1], 0, 0, i);
+            store.setPlanePositionY(stagePos[1], 0, i);
           }
           if (stagePos.length > 2) {
-            store.setStagePositionPositionZ(stagePos[2], 0, 0, i);
+            store.setPlanePositionZ(stagePos[2], 0, i);
           }
         }
       }

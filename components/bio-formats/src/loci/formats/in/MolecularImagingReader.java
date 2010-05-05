@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -143,17 +142,16 @@ public class MolecularImagingReader extends FormatReader {
     core[0].littleEndian = true;
     core[0].dimensionOrder = "XYZCT";
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     if (date != null) {
-      store.setImageCreationDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+      store.setPixelsPhysicalSizeX(pixelSizeX, 0);
+      store.setPixelsPhysicalSizeY(pixelSizeY, 0);
     }
   }
 

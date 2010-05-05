@@ -34,7 +34,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -266,17 +265,16 @@ public class NRRDReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       for (int i=0; i<pixelSizes.length; i++) {
         Double d = new Double(pixelSizes[i].trim());
-        if (i == 0) store.setDimensionsPhysicalSizeX(d, 0, 0);
-        else if (i == 1) store.setDimensionsPhysicalSizeY(d, 0, 0);
-        else if (i == 2) store.setDimensionsPhysicalSizeZ(d, 0, 0);
+        if (i == 0) store.setPixelsPhysicalSizeX(d, 0);
+        else if (i == 1) store.setPixelsPhysicalSizeY(d, 0);
+        else if (i == 2) store.setPixelsPhysicalSizeZ(d, 0);
       }
     }
   }

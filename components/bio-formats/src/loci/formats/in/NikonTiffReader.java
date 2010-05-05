@@ -30,10 +30,17 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
@@ -206,16 +213,15 @@ public class NikonTiffReader extends BaseTiffReader {
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription("", 0);
 
-      store.setDimensionsPhysicalSizeX(physicalSizeX, 0, 0);
-      store.setDimensionsPhysicalSizeY(physicalSizeY, 0, 0);
-      store.setDimensionsPhysicalSizeZ(physicalSizeZ, 0, 0);
+      store.setPixelsPhysicalSizeX(physicalSizeX, 0);
+      store.setPixelsPhysicalSizeY(physicalSizeY, 0);
+      store.setPixelsPhysicalSizeZ(physicalSizeZ, 0);
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -223,37 +229,45 @@ public class NikonTiffReader extends BaseTiffReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
       store.setObjectiveNominalMagnification(magnification, 0, 0);
 
-      if (correction == null) correction = "Unknown";
-      store.setObjectiveCorrection(correction, 0, 0);
+      if (correction == null) correction = "Other";
+      try {
+        store.setObjectiveCorrection(Correction.fromString(correction), 0, 0);
+      }
+      catch (EnumerationException e) { }
       store.setObjectiveLensNA(lensNA, 0, 0);
       store.setObjectiveWorkingDistance(workingDistance, 0, 0);
-      if (immersion == null) immersion = "Unknown";
-      store.setObjectiveImmersion(immersion, 0, 0);
+      if (immersion == null) immersion = "Other";
+      try {
+        store.setObjectiveImmersion(Immersion.fromString(immersion), 0, 0);
+      }
+      catch (EnumerationException e) { }
 
       for (int i=0; i<wavelength.size(); i++) {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
-        store.setLightSourceID(laser, 0, i);
-        store.setLightSourceModel(laserIDs.get(i), 0, i);
-        store.setLaserWavelength(wavelength.get(i), 0, i);
-        store.setLaserType("Unknown", 0, i);
-        store.setLaserLaserMedium("Unknown", 0, i);
+        store.setLaserID(laser, 0, i);
+        store.setLaserModel(laserIDs.get(i), 0, i);
+        store.setLaserWavelength(new PositiveInteger(wavelength.get(i)), 0, i);
+        store.setLaserType(LaserType.OTHER, 0, i);
+        store.setLaserLaserMedium(LaserMedium.OTHER, 0, i);
       }
 
       for (int i=0; i<gain.size(); i++) {
         store.setDetectorGain(gain.get(i), 0, i);
-        store.setDetectorType("Unknown", 0, i);
+        store.setDetectorType(DetectorType.OTHER, 0, i);
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setLogicalChannelPinholeSize(pinholeSize, 0, c);
+        store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          store.setLogicalChannelExWave(exWave.get(c), 0, c);
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWave.get(c)), 0, c);
         }
         if (c < emWave.size()) {
-          store.setLogicalChannelEmWave(emWave.get(c), 0, c);
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWave.get(c)), 0, c);
         }
       }
 

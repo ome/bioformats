@@ -37,9 +37,14 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.ExperimentType;
+import ome.xml.r201004.enums.Immersion;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -371,8 +376,7 @@ public class BioRadReader extends FormatReader {
     String ex1 = null, ex2 = null, ex3 = null;
     String em1 = null, em2 = null, em3 = null;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     // read notes
 
@@ -483,12 +487,12 @@ public class BioRadReader extends FormatReader {
       // link Objective to Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
       store.setObjectiveNominalMagnification((int) magFactor, 0, 0);
-      store.setObjectiveCorrection("Unknown", 0, 0);
-      store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
       // link Detector to Image
       for (int i=0; i<getEffectiveSizeC(); i++) {
@@ -497,9 +501,9 @@ public class BioRadReader extends FormatReader {
 
         if (detectorOffset != null || detectorGain != null) {
           String detectorID = MetadataTools.createLSID("Detector", 0, i);
-          store.setDetectorSettingsDetector(detectorID, 0, i);
+          store.setDetectorSettingsID(detectorID, 0, i);
           store.setDetectorID(detectorID, 0, i);
-          store.setDetectorType("Unknown", 0, i);
+          store.setDetectorType(DetectorType.OTHER, 0, i);
         }
         if (detectorOffset != null) {
           store.setDetectorSettingsOffset(detectorOffset, 0, i);
@@ -645,7 +649,7 @@ public class BioRadReader extends FormatReader {
                     String detectorID =
                       MetadataTools.createLSID("Detector", 0, nextDetector);
                     store.setDetectorID(detectorID, 0, nextDetector);
-                    store.setDetectorType("Unknown", 0, nextDetector);
+                    store.setDetectorType(DetectorType.OTHER, 0, nextDetector);
 
                     if (key.endsWith("OFFSET")) {
                       if (nextDetector < offset.size()) {
@@ -682,10 +686,10 @@ public class BioRadReader extends FormatReader {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
                       if (key.equals("AXIS_2")) {
-                        store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+                        store.setPixelsPhysicalSizeX(pixelSize, 0);
                       }
                       else if (key.equals("AXIS_3")) {
-                        store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+                        store.setPixelsPhysicalSizeY(pixelSize, 0);
                       }
                     }
                   }
@@ -696,12 +700,12 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setDimensionsPhysicalSizeX(pixelSize, 0, 0);
+              store.setPixelsPhysicalSizeX(pixelSize, 0);
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setDimensionsPhysicalSizeY(pixelSize, 0, 0);
+              store.setPixelsPhysicalSizeY(pixelSize, 0);
             }
             else {
               addGlobalMeta("Note #" + noteIndex, n.toString());
@@ -720,8 +724,7 @@ public class BioRadReader extends FormatReader {
 
                   store.setObjectiveNominalMagnification(
                     (int) Float.parseFloat(values[11]), 0, 0);
-                  store.setDimensionsPhysicalSizeZ(
-                    new Double(values[14]), 0, 0);
+                  store.setPixelsPhysicalSizeZ(new Double(values[14]), 0);
                   break;
                 case 2:
                   for (int i=0; i<STRUCTURE_LABELS_2.length; i++) {
@@ -738,8 +741,8 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  store.setDimensionsPhysicalSizeX(width, 0, 0);
-                  store.setDimensionsPhysicalSizeY(height, 0, 0);
+                  store.setPixelsPhysicalSizeX(width, 0);
+                  store.setPixelsPhysicalSizeY(height, 0);
 
                   break;
                 case 3:
@@ -811,7 +814,7 @@ public class BioRadReader extends FormatReader {
                     store.setDetectorID(detectorID, 0, i);
                     store.setDetectorOffset(new Double(values[i * 3]), 0, i);
                     store.setDetectorGain(new Double(values[i * 3 + 1]), 0, i);
-                    store.setDetectorType("Unknown", 0, i);
+                    store.setDetectorType(DetectorType.OTHER, 0, i);
                   }
                   break;
                 case 12:
@@ -858,7 +861,7 @@ public class BioRadReader extends FormatReader {
                   String date = year + "-" + values[4] + "-" + values[3] + "T" +
                     values[2] + ":" + values[1] + ":" + values[0];
                   addGlobalMeta("Acquisition date", date);
-                  store.setImageCreationDate(date, 0);
+                  store.setImageAcquiredDate(date, 0);
                   break;
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);
@@ -888,7 +891,11 @@ public class BioRadReader extends FormatReader {
                   addGlobalMeta("Course", values[1]);
                   addGlobalMeta("Time Course - experiment type", values[2]);
                   addGlobalMeta("Time Course - kd factor", values[3]);
-                  store.setExperimentType(values[2], 0);
+                  try {
+                    store.setExperimentType(
+                      ExperimentType.fromString(values[2]), 0);
+                  }
+                  catch (EnumerationException e) { }
                   break;
                 case 21:
                   addGlobalMeta("Time Course - ion name", values[0]);

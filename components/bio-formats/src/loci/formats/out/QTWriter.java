@@ -178,16 +178,16 @@ public class QTWriter extends FormatWriter {
     MetadataTools.verifyMinimumPopulated(r, series);
 
     // get the width and height of the image
-    int width = r.getPixelsSizeX(series, 0).intValue();
-    int height = r.getPixelsSizeY(series, 0).intValue();
+    int width = r.getPixelsSizeX(series).getValue().intValue();
+    int height = r.getPixelsSizeY(series).getValue().intValue();
 
     // need to check if the width is a multiple of 8
     // if it is, great; if not, we need to pad each scanline with enough
     // bytes to make the width a multiple of 8
 
     int bytesPerPixel =
-      FormatTools.pixelTypeFromString(r.getPixelsPixelType(series, 0));
-    Integer samples = r.getLogicalChannelSamplesPerPixel(series, 0);
+      FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
+    Integer samples = r.getChannelSamplesPerPixel(series, 0);
     if (samples == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }

@@ -30,8 +30,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.Immersion;
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
@@ -190,8 +193,7 @@ public class AliconaReader extends FormatReader {
     core[0].indexed = false;
     core[0].falseColor = false;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     // populate Image data
@@ -214,10 +216,10 @@ public class AliconaReader extends FormatReader {
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
         store.setDetectorID(detectorID, 0, 0);
-        store.setDetectorSettingsDetector(detectorID, 0, 0);
+        store.setDetectorSettingsID(detectorID, 0, 0);
 
         // set required Detector type
-        store.setDetectorType("Unknown", 0, 0);
+        store.setDetectorType(DetectorType.OTHER, 0, 0);
       }
 
       // populate Objective data
@@ -231,13 +233,13 @@ public class AliconaReader extends FormatReader {
         store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
       }
 
-      store.setObjectiveCorrection("Unknown", 0, 0);
-      store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
       // link Objective to an Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
 
       // populate Dimensions data
 
@@ -245,8 +247,8 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-        store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+        store.setPixelsPhysicalSizeX(pixelSizeX, 0);
+        store.setPixelsPhysicalSizeY(pixelSizeY, 0);
       }
     }
   }

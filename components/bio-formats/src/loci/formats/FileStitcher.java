@@ -545,7 +545,7 @@ public class FileStitcher implements IFormatReader {
     else {
       for (int i=0; i<readers.length; i++) {
         for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].close(fileOnly);
+          if (readers[i][j] != null) readers[i][j].close(fileOnly);
         }
       }
     }

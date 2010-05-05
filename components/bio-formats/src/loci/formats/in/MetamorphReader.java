@@ -39,7 +39,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -47,6 +46,23 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.primitives.PositiveInteger;
+
+/**
+ * Reader is the file format reader for Metamorph STK files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java">SVN</a></dd></dl>
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -476,8 +492,7 @@ public class MetamorphReader extends BaseTiffReader {
     Vector<String> timestamps = null;
     MetamorphHandler handler = null;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
 
@@ -496,7 +511,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (creationTime != null) {
         String date = DateTools.formatDate(creationTime, SHORT_DATE_FORMAT);
-        store.setImageCreationDate(date, 0);
+        store.setImageAcquiredDate(date, 0);
       }
       else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
 
@@ -508,12 +523,12 @@ public class MetamorphReader extends BaseTiffReader {
       store.setImageDescription("", i);
 
       store.setImagingEnvironmentTemperature(handler.getTemperature(), i);
-      store.setDimensionsPhysicalSizeX(handler.getPixelSizeX(), i, 0);
-      store.setDimensionsPhysicalSizeY(handler.getPixelSizeY(), i, 0);
+      store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), i);
+      store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), i);
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
-      store.setDimensionsPhysicalSizeZ(stepSize, i, 0);
+      store.setPixelsPhysicalSizeZ(stepSize, i);
 
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -532,28 +547,31 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (waveNames != null && waveIndex < waveNames.size()) {
-          store.setLogicalChannelName(waveNames.get(waveIndex), i, c);
+          store.setChannelName(waveNames.get(waveIndex), i, c);
         }
-        store.setDetectorSettingsBinning(binning, i, c);
-        if (handler.getBinning() != null) {
-          store.setDetectorSettingsBinning(handler.getBinning(), i, c);
+        if (handler.getBinning() != null) binning = handler.getBinning();
+        try {
+          Binning b = Binning.fromString(binning);
+          store.setDetectorSettingsBinning(b, i, c);
         }
+        catch (EnumerationException e) { }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
-        store.setDetectorSettingsDetector(detectorID, i, c);
+        store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length &&
           (int) wave[waveIndex] >= 1)
         {
-          store.setLightSourceSettingsWavelength((int) wave[waveIndex], i, c);
+          store.setChannelLightSourceSettingsWavelength(
+            new PositiveInteger((int) wave[waveIndex]), i, c);
 
           // link LightSource to Image
           String lightSourceID = MetadataTools.createLSID("LightSource", i, c);
-          store.setLightSourceID(lightSourceID, i, c);
-          store.setLightSourceSettingsLightSource(lightSourceID, i, c);
-          store.setLaserType("Unknown", i, c);
-          store.setLaserLaserMedium("Unknown", i, c);
+          store.setLaserID(lightSourceID, i, c);
+          store.setChannelLightSourceSettingsID(lightSourceID, i, c);
+          store.setLaserType(LaserType.OTHER, i, c);
+          store.setLaserLaserMedium(LaserMedium.OTHER, i, c);
         }
         waveIndex++;
       }
@@ -628,19 +646,19 @@ public class MetamorphReader extends BaseTiffReader {
           exposureTime = exposureTimes.get(index);
         }
 
-        store.setPlaneTimingDeltaT(deltaT, i, 0, p);
-        store.setPlaneTimingExposureTime(exposureTime, i, 0, p);
+        store.setPlaneDeltaT(deltaT, i, p);
+        store.setPlaneExposureTime(exposureTime, i, p);
 
         if (stageX != null && p < stageX.length) {
-          store.setStagePositionPositionX(stageX[p], i, 0, p);
+          store.setPlanePositionX(stageX[p], i, p);
         }
         if (stageY != null && p < stageY.length) {
-          store.setStagePositionPositionY(stageY[p], i, 0, p);
+          store.setPlanePositionY(stageY[p], i, p);
         }
         if (zDistances != null && p < zDistances.length) {
           if (zDistances[p] != 0d) distance += zDistances[p];
           else distance += zDistances[0];
-          store.setStagePositionPositionZ(distance, i, 0, p);
+          store.setPlanePositionZ(distance, i, p);
         }
       }
     }
@@ -652,7 +670,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (handler != null && handler.getZoom() != 0) {
         store.setDetectorZoom(handler.getZoom(), 0, 0);
       }
-      store.setDetectorType("Unknown", 0, 0);
+      store.setDetectorType(DetectorType.OTHER, 0, 0);
     }
   }
 

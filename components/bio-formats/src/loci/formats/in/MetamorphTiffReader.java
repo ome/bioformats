@@ -32,7 +32,6 @@ import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -113,14 +112,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
     core[0].sizeZ = uniqueZ.size();
     core[0].sizeT = ifds.size() / (getSizeZ() * effectiveC);
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
     store.setImageName(handler.getImageName(), 0);
 
     String date =
       DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
-    store.setImageCreationDate(date, 0);
+    store.setImageAcquiredDate(date, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       for (int i=0; i<timestamps.size(); i++) {
@@ -144,16 +142,16 @@ public class MetamorphTiffReader extends BaseTiffReader {
         if (coords[2] < timestamps.size()) {
           String stamp = timestamps.get(coords[2]);
           long ms = DateTools.getTime(stamp, DATE_FORMAT);
-          store.setPlaneTimingDeltaT((ms - startDate) / 1000.0, 0, 0, i);
+          store.setPlaneDeltaT((ms - startDate) / 1000.0, 0, i);
         }
         if (i < exposures.size()) {
-          store.setPlaneTimingExposureTime(exposures.get(i), 0, 0, i);
+          store.setPlaneExposureTime(exposures.get(i), 0, i);
         }
       }
 
       store.setImagingEnvironmentTemperature(handler.getTemperature(), 0);
-      store.setDimensionsPhysicalSizeX(handler.getPixelSizeX(), 0, 0);
-      store.setDimensionsPhysicalSizeY(handler.getPixelSizeY(), 0, 0);
+      store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), 0);
+      store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), 0);
     }
   }
 }

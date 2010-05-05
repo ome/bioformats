@@ -1,35 +1,47 @@
-//
-// MetadataStore.java
-//
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2010 UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-/*-----------------------------------------------------------------------------
+ * loci.formats.meta.MetadataStore
  *
- * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Mar 15, 2010 2:19:27 PM CDT
+ *-----------------------------------------------------------------------------
+ *
+ *  Copyright (C) 2005-@year@ Open Microscopy Environment
+ *      Massachusetts Institute of Technology,
+ *      National Institutes of Health,
+ *      University of Dundee,
+ *      University of Wisconsin-Madison
+ *
+ *
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *-----------------------------------------------------------------------------
  */
 
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by callan via xsd-fu on 2010-05-04 18:17:27+0100
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+// TODO: TEMPORARY, WILL NOT BE USED AFTER TESTING IS COMPLETE
 package loci.formats.meta;
+
+import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
@@ -71,2954 +83,1917 @@ package loci.formats.meta;
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface MetadataStore {
-
-  void createRoot();
-
-  Object getRoot();
-
-  void setRoot(Object root);
-
-  // - Entity storage -
-
-  /** Sets the UUID associated with this collection of metadata. */
-  void setUUID(String uuid);
-
-  // - Arc property storage -
-
-  /**
-   * For a particular Arc, sets the type of arc.
-   * @param type the type of arc
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setArcType(String type, int instrumentIndex, int lightSourceIndex);
-
-  // - ChannelComponent property storage -
-
-  /**
-   * For a particular ChannelComponent, sets which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation).
-   * @param colorDomain which color channel this ChannelComponent belongs to (for example, 'R' for an 'RGB' PhotometricInterpretation)
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   * @param channelComponentIndex index of the ChannelComponent
-   */
-  void setChannelComponentColorDomain(String colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-
-  /**
-   * For a particular ChannelComponent, sets the index into the channel dimension of the 5-D pixel array.
-   * @param index the index into the channel dimension of the 5-D pixel array
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   * @param channelComponentIndex index of the ChannelComponent
-   */
-  void setChannelComponentIndex(Integer index, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-
-  /**
-   * For a particular ChannelComponent, sets the pixels to which this channel component corresponds.
-   * @param pixels the pixels to which this channel component corresponds
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   * @param channelComponentIndex index of the ChannelComponent
-   */
-  void setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex);
-
-  // - Circle property storage -
-
-  /**
-   * For a particular Circle, sets X coordinate of the center of the circle.
-   * @param cx X coordinate of the center of the circle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Circle, sets Y coordinate of the center of the circle.
-   * @param cy Y coordinate of the center of the circle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Circle, sets unique label identifying the circle.
-   * @param id unique label identifying the circle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Circle, sets radius of the circle, in pixels.
-   * @param r radius of the circle, in pixels
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Circle, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - Contact property storage -
-
-  /**
-   * For a particular Contact, sets unique label identifying the experimenter who is the group contact.
-   * @param experimenter unique label identifying the experimenter who is the group contact
-   * @param groupIndex index of the Group
-   */
-  void setContactExperimenter(String experimenter, int groupIndex);
-
-  // - Dataset property storage -
-
-  /**
-   * For a particular Dataset, sets description of the dataset.
-   * @param description description of the dataset
-   * @param datasetIndex index of the Dataset
-   */
-  void setDatasetDescription(String description, int datasetIndex);
-
-  /**
-   * For a particular Dataset, sets reference to the experimenter who owns the dataset.
-   * @param experimenterRef reference to the experimenter who owns the dataset
-   * @param datasetIndex index of the Dataset
-   */
-  void setDatasetExperimenterRef(String experimenterRef, int datasetIndex);
-
-  /**
-   * For a particular Dataset, sets reference to the group that owns the dataset.
-   * @param groupRef reference to the group that owns the dataset
-   * @param datasetIndex index of the Dataset
-   */
-  void setDatasetGroupRef(String groupRef, int datasetIndex);
-
-  /**
-   * For a particular Dataset, sets unique label identifying the dataset.
-   * @param id unique label identifying the dataset
-   * @param datasetIndex index of the Dataset
-   */
-  void setDatasetID(String id, int datasetIndex);
-
-  /**
-   * For a particular Dataset, sets indicates whether the images in the dataset can be altered.
-   * @param locked indicates whether the images in the dataset can be altered
-   * @param datasetIndex index of the Dataset
-   */
-  void setDatasetLocked(Boolean locked, int datasetIndex);
-
-  /**
-   * For a particular Dataset, sets name of the dataset.
-   * @param name name of the dataset
-   * @param datasetIndex index of the Dataset
-   */
-  void setDatasetName(String name, int datasetIndex);
-
-  // - DatasetRef property storage -
-
-  /**
-   * For a particular DatasetRef, sets TODO.
-   * @param id TODO
-   * @param imageIndex index of the Image
-   * @param datasetRefIndex index of the DatasetRef
-   */
-  void setDatasetRefID(String id, int imageIndex, int datasetRefIndex);
-
-  // - Detector property storage -
-
-  /**
-   * For a particular Detector, sets amplification gain of the detector.
-   * @param amplificationGain amplification gain of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorAmplificationGain(Double amplificationGain, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets the gain of the detector.
-   * @param gain the gain of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorGain(Double gain, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets unique label identifying the detector.
-   * @param id unique label identifying the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorID(String id, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets name of the detector manufacturer.
-   * @param manufacturer name of the detector manufacturer
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets model name/number of the detector.
-   * @param model model name/number of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorModel(String model, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets the offset of the detector.
-   * @param offset the offset of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorOffset(Double offset, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets serial number of the detector.
-   * @param serialNumber serial number of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets the detector type, e.g. CCD, PMT.
-   * @param type the detector type, e.g. CCD, PMT
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorType(String type, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets the voltage of the detector.
-   * @param voltage the voltage of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorVoltage(Double voltage, int instrumentIndex, int detectorIndex);
-
-  /**
-   * For a particular Detector, sets optional zoom value of the detector.
-   * @param zoom optional zoom value of the detector
-   * @param instrumentIndex index of the Instrument
-   * @param detectorIndex index of the Detector
-   */
-  void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex);
-
-  // - DetectorSettings property storage -
-
-  /**
-   * For a particular DetectorSettings, sets the detector binning.
-   * @param binning the detector binning
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular DetectorSettings, sets the detector associated with this channel.
-   * @param detector the detector associated with this channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular DetectorSettings, sets the detector gain.
-   * @param gain the detector gain
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setDetectorSettingsGain(Double gain, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular DetectorSettings, sets the detector offset.
-   * @param offset the detector offset
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setDetectorSettingsOffset(Double offset, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular DetectorSettings, sets the speed at which the detector can count pixels, in MHz.
-   * @param readOutRate the speed at which the detector can count pixels, in MHz
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular DetectorSettings, sets the detector voltage.
-   * @param voltage the detector voltage
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setDetectorSettingsVoltage(Double voltage, int imageIndex, int logicalChannelIndex);
-
-  // - Dichroic property storage -
-
-  /**
-   * For a particular Dichroic, sets unique label identifying the dichroic.
-   * @param id unique label identifying the dichroic
-   * @param instrumentIndex index of the Instrument
-   * @param dichroicIndex index of the Dichroic
-   */
-  void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
-
-  /**
-   * For a particular Dichroic, sets TODO.
-   * @param lotNumber TODO
-   * @param instrumentIndex index of the Instrument
-   * @param dichroicIndex index of the Dichroic
-   */
-  void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex);
-
-  /**
-   * For a particular Dichroic, sets TODO.
-   * @param manufacturer TODO
-   * @param instrumentIndex index of the Instrument
-   * @param dichroicIndex index of the Dichroic
-   */
-  void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex);
-
-  /**
-   * For a particular Dichroic, sets TODO.
-   * @param model TODO
-   * @param instrumentIndex index of the Instrument
-   * @param dichroicIndex index of the Dichroic
-   */
-  void setDichroicModel(String model, int instrumentIndex, int dichroicIndex);
-
-  // - Dimensions property storage -
-
-  /**
-   * For a particular Dimensions, sets the size of an individual pixel's X axis in microns.
-   * @param physicalSizeX the size of an individual pixel's X axis in microns
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsPhysicalSizeX(Double physicalSizeX, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Dimensions, sets the size of an individual pixel's Y axis in microns.
-   * @param physicalSizeY the size of an individual pixel's Y axis in microns
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsPhysicalSizeY(Double physicalSizeY, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Dimensions, sets the size of an individual pixel's Z axis in microns.
-   * @param physicalSizeZ the size of an individual pixel's Z axis in microns
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsPhysicalSizeZ(Double physicalSizeZ, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Dimensions, sets the distance between adjacent time points in seconds.
-   * @param timeIncrement the distance between adjacent time points in seconds
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsTimeIncrement(Double timeIncrement, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Dimensions, sets the distance between adjacent wavelengths in nanometers.
-   * @param waveIncrement the distance between adjacent wavelengths in nanometers
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsWaveIncrement(Integer waveIncrement, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Dimensions, sets the starting wavelength in nanometers.
-   * @param waveStart the starting wavelength in nanometers
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setDimensionsWaveStart(Integer waveStart, int imageIndex, int pixelsIndex);
-
-  // - DisplayOptions property storage -
-
-  /**
-   * For a particular DisplayOptions, sets specifies to display the image as grayscale or RGB.
-   * @param display specifies to display the image as grayscale or RGB
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsDisplay(String display, int imageIndex);
-
-  /**
-   * For a particular DisplayOptions, sets unique label identifying the display options.
-   * @param id unique label identifying the display options
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsID(String id, int imageIndex);
-
-  /**
-   * For a particular DisplayOptions, sets zoom factor for use in the display (NOT THE LENS ZOOM).
-   * @param zoom zoom factor for use in the display (NOT THE LENS ZOOM)
-   * @param imageIndex index of the Image
-   */
-  void setDisplayOptionsZoom(Double zoom, int imageIndex);
-
-  // - Ellipse property storage -
-
-  /**
-   * For a particular Ellipse, sets X coordinate of the center of the ellipse.
-   * @param cx X coordinate of the center of the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, sets Y coordinate of the center of the ellipse.
-   * @param cy Y coordinate of the center of the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, sets unique label identifying the ellipse.
-   * @param id unique label identifying the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, sets horizontal radius of the ellipse.
-   * @param rx horizontal radius of the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, sets vertical radius of the ellipse.
-   * @param ry vertical radius of the ellipse
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Ellipse, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - EmFilter property storage -
-
-  /**
-   * For a particular EmFilter, sets TODO.
-   * @param lotNumber TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular EmFilter, sets TODO.
-   * @param manufacturer TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular EmFilter, sets TODO.
-   * @param model TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setEmFilterModel(String model, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular EmFilter, sets TODO.
-   * @param type TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setEmFilterType(String type, int instrumentIndex, int filterIndex);
-
-  // - ExFilter property storage -
-
-  /**
-   * For a particular ExFilter, sets TODO.
-   * @param lotNumber TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular ExFilter, sets TODO.
-   * @param manufacturer TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular ExFilter, sets TODO.
-   * @param model TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setExFilterModel(String model, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular ExFilter, sets TODO.
-   * @param type TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setExFilterType(String type, int instrumentIndex, int filterIndex);
-
-  // - Experiment property storage -
-
-  /**
-   * For a particular Experiment, sets description of the experiment.
-   * @param description description of the experiment
-   * @param experimentIndex index of the Experiment
-   */
-  void setExperimentDescription(String description, int experimentIndex);
-
-  /**
-   * For a particular Experiment, sets ID of the experimenter who conducted the experiment.
-   * @param experimenterRef ID of the experimenter who conducted the experiment
-   * @param experimentIndex index of the Experiment
-   */
-  void setExperimentExperimenterRef(String experimenterRef, int experimentIndex);
-
-  /**
-   * For a particular Experiment, sets unique label identifying the experiment.
-   * @param id unique label identifying the experiment
-   * @param experimentIndex index of the Experiment
-   */
-  void setExperimentID(String id, int experimentIndex);
-
-  /**
-   * For a particular Experiment, sets type of experiment, e.g. FRET, TimeLapse.
-   * @param type type of experiment, e.g. FRET, TimeLapse
-   * @param experimentIndex index of the Experiment
-   */
-  void setExperimentType(String type, int experimentIndex);
-
-  // - Experimenter property storage -
-
-  /**
-   * For a particular Experimenter, sets the e-mail address of the experimenter.
-   * @param email the e-mail address of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterEmail(String email, int experimenterIndex);
-
-  /**
-   * For a particular Experimenter, sets the first name of the experimenter.
-   * @param firstName the first name of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterFirstName(String firstName, int experimenterIndex);
-
-  /**
-   * For a particular Experimenter, sets unique label identifying the experimenter.
-   * @param id unique label identifying the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterID(String id, int experimenterIndex);
-
-  /**
-   * For a particular Experimenter, sets the institution to which the experimenter belongs.
-   * @param institution the institution to which the experimenter belongs
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterInstitution(String institution, int experimenterIndex);
-
-  /**
-   * For a particular Experimenter, sets the last name of the experimenter.
-   * @param lastName the last name of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterLastName(String lastName, int experimenterIndex);
-
-  /**
-   * For a particular Experimenter, sets OME user name of the experimenter.
-   * @param omeName OME user name of the experimenter
-   * @param experimenterIndex index of the Experimenter
-   */
-  void setExperimenterOMEName(String omeName, int experimenterIndex);
-
-  // - ExperimenterMembership property storage -
-
-  /**
-   * For a particular ExperimenterMembership, sets the group associated with this membership.
-   * @param group the group associated with this membership
-   * @param experimenterIndex index of the Experimenter
-   * @param groupRefIndex index of the GroupRef
-   */
-  void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex);
-
-  // - Filament property storage -
-
-  /**
-   * For a particular Filament, sets the type of filament.
-   * @param type the type of filament
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setFilamentType(String type, int instrumentIndex, int lightSourceIndex);
-
-  // - Filter property storage -
-
-  /**
-   * For a particular Filter, sets TODO.
-   * @param filterWheel TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular Filter, sets unique label identifying the filter.
-   * @param id unique label identifying the filter
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setFilterID(String id, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular Filter, sets TODO.
-   * @param lotNumber TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular Filter, sets TODO.
-   * @param manufacturer TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular Filter, sets TODO.
-   * @param model TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setFilterModel(String model, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular Filter, sets TODO.
-   * @param type TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setFilterType(String type, int instrumentIndex, int filterIndex);
-
-  // - FilterSet property storage -
-
-  /**
-   * For a particular FilterSet, sets TODO.
-   * @param dichroic TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex);
-
-  /**
-   * For a particular FilterSet, sets TODO.
-   * @param emFilter TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex);
-
-  /**
-   * For a particular FilterSet, sets TODO.
-   * @param exFilter TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex);
-
-  /**
-   * For a particular FilterSet, sets unique label identifying the filter set.
-   * @param id unique label identifying the filter set
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetID(String id, int instrumentIndex, int filterSetIndex);
-
-  /**
-   * For a particular FilterSet, sets TODO.
-   * @param lotNumber TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex);
-
-  /**
-   * For a particular FilterSet, sets TODO.
-   * @param manufacturer TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex);
-
-  /**
-   * For a particular FilterSet, sets TODO.
-   * @param model TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterSetIndex index of the FilterSet
-   */
-  void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex);
-
-  // - Group property storage -
-
-  /**
-   * For a particular Group, sets unique label identifying the group.
-   * @param id unique label identifying the group
-   * @param groupIndex index of the Group
-   */
-  void setGroupID(String id, int groupIndex);
-
-  /**
-   * For a particular Group, sets the name of the group.
-   * @param name the name of the group
-   * @param groupIndex index of the Group
-   */
-  void setGroupName(String name, int groupIndex);
-
-  // - GroupRef property storage -
-
-  // - Image property storage -
-
-  /**
-   * For a particular Image, sets acquired pixels set for the image.
-   * @param acquiredPixels acquired pixels set for the image
-   * @param imageIndex index of the Image
-   */
-  void setImageAcquiredPixels(String acquiredPixels, int imageIndex);
-
-  /**
-   * For a particular Image, sets the creation date of the image.
-   * @param creationDate the creation date of the image
-   * @param imageIndex index of the Image
-   */
-  void setImageCreationDate(String creationDate, int imageIndex);
-
-  /**
-   * For a particular Image, sets default pixels set for the image.
-   * @param defaultPixels default pixels set for the image
-   * @param imageIndex index of the Image
-   */
-  void setImageDefaultPixels(String defaultPixels, int imageIndex);
-
-  /**
-   * For a particular Image, sets the full description of the image.
-   * @param description the full description of the image
-   * @param imageIndex index of the Image
-   */
-  void setImageDescription(String description, int imageIndex);
-
-  /**
-   * For a particular Image, sets reference to the experiment to which this image belongs.
-   * @param experimentRef reference to the experiment to which this image belongs
-   * @param imageIndex index of the Image
-   */
-  void setImageExperimentRef(String experimentRef, int imageIndex);
-
-  /**
-   * For a particular Image, sets reference to the experimenter who created this image.
-   * @param experimenterRef reference to the experimenter who created this image
-   * @param imageIndex index of the Image
-   */
-  void setImageExperimenterRef(String experimenterRef, int imageIndex);
-
-  /**
-   * For a particular Image, sets reference to the group that owns this image.
-   * @param groupRef reference to the group that owns this image
-   * @param imageIndex index of the Image
-   */
-  void setImageGroupRef(String groupRef, int imageIndex);
-
-  /**
-   * For a particular Image, sets unique label identifying the image.
-   * @param id unique label identifying the image
-   * @param imageIndex index of the Image
-   */
-  void setImageID(String id, int imageIndex);
-
-  /**
-   * For a particular Image, sets label reference for the associated instrument.
-   * @param instrumentRef label reference for the associated instrument
-   * @param imageIndex index of the Image
-   */
-  void setImageInstrumentRef(String instrumentRef, int imageIndex);
-
-  /**
-   * For a particular Image, sets the full name of the image.
-   * @param name the full name of the image
-   * @param imageIndex index of the Image
-   */
-  void setImageName(String name, int imageIndex);
-
-  // - ImagingEnvironment property storage -
-
-  /**
-   * For a particular ImagingEnvironment, sets air pressure, in millibars.
-   * @param airPressure air pressure, in millibars
-   * @param imageIndex index of the Image
-   */
-  void setImagingEnvironmentAirPressure(Double airPressure, int imageIndex);
-
-  /**
-   * For a particular ImagingEnvironment, sets CO2 level, in percent fractions from 0.0 to 1.0.
-   * @param cO2Percent CO2 level, in percent fractions from 0.0 to 1.0
-   * @param imageIndex index of the Image
-   */
-  void setImagingEnvironmentCO2Percent(Double cO2Percent, int imageIndex);
-
-  /**
-   * For a particular ImagingEnvironment, sets humidity, in percent fractions from 0.0 to 1.0.
-   * @param humidity humidity, in percent fractions from 0.0 to 1.0
-   * @param imageIndex index of the Image
-   */
-  void setImagingEnvironmentHumidity(Double humidity, int imageIndex);
-
-  /**
-   * For a particular ImagingEnvironment, sets temperature of the imaging environment, in Celsius.
-   * @param temperature temperature of the imaging environment, in Celsius
-   * @param imageIndex index of the Image
-   */
-  void setImagingEnvironmentTemperature(Double temperature, int imageIndex);
-
-  // - Instrument property storage -
-
-  /**
-   * For a particular Instrument, sets unique label identifying the instrument.
-   * @param id unique label identifying the instrument
-   * @param instrumentIndex index of the Instrument
-   */
-  void setInstrumentID(String id, int instrumentIndex);
-
-  // - Laser property storage -
-
-  /**
-   * For a particular Laser, sets value by which frequency is multiplied.
-   * @param frequencyMultiplication value by which frequency is multiplied
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserFrequencyMultiplication(Integer frequencyMultiplication, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets lasing medium for the laser.
-   * @param laserMedium lasing medium for the laser
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets TODO.
-   * @param pockelCell TODO
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserPockelCell(Boolean pockelCell, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets TODO.
-   * @param pulse TODO
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets rate in Hz at which the laser pulses.
-   * @param repetitionRate rate in Hz at which the laser pulses
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserRepetitionRate(Double repetitionRate, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets indicates whether or not the laser can be tuned.
-   * @param tuneable indicates whether or not the laser can be tuned
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserTuneable(Boolean tuneable, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, SemiConductor, FreeElectron, or Unknown.
-   * @param type type of laser - Excimer, Gas, MetalVapor, SolidState, Dye, SemiConductor, FreeElectron, or Unknown
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserType(String type, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular Laser, sets wavelength of the laser, in nm.
-   * @param wavelength wavelength of the laser, in nm
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLaserWavelength(Integer wavelength, int instrumentIndex, int lightSourceIndex);
-
-  // - LightSource property storage -
-
-  /**
-   * For a particular LightSource, sets unique label identifying the light source.
-   * @param id unique label identifying the light source
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLightSourceID(String id, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular LightSource, sets manufacturer of the light source.
-   * @param manufacturer manufacturer of the light source
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLightSourceManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular LightSource, sets model number of the light source.
-   * @param model model number of the light source
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular LightSource, sets the light source power, in watts.
-   * @param power the light source power, in watts
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLightSourcePower(Double power, int instrumentIndex, int lightSourceIndex);
-
-  /**
-   * For a particular LightSource, sets serial number of the light source.
-   * @param serialNumber serial number of the light source
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
-
-  // - LightSourceRef property storage -
-
-  /**
-   * For a particular LightSourceRef, sets the primary light source attenuation.
-   * @param attenuation the primary light source attenuation
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   * @param lightSourceRefIndex index of the LightSourceRef
-   */
-  void setLightSourceRefAttenuation(Double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-
-  /**
-   * For a particular LightSourceRef, sets TODO.
-   * @param lightSource TODO
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   * @param lightSourceRefIndex index of the LightSourceRef
-   */
-  void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-
-  /**
-   * For a particular LightSourceRef, sets the primary light source wavelength.
-   * @param wavelength the primary light source wavelength
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   * @param lightSourceRefIndex index of the LightSourceRef
-   */
-  void setLightSourceRefWavelength(Integer wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex);
-
-  // - LightSourceSettings property storage -
-
-  /**
-   * For a particular LightSourceSettings, sets the primary light source attenuation.
-   * @param attenuation the primary light source attenuation
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLightSourceSettingsAttenuation(Double attenuation, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LightSourceSettings, sets the primary light source.
-   * @param lightSource the primary light source
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LightSourceSettings, sets the primary light source wavelength.
-   * @param wavelength the primary light source wavelength
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLightSourceSettingsWavelength(Integer wavelength, int imageIndex, int logicalChannelIndex);
-
-  // - Line property storage -
-
-  /**
-   * For a particular Line, sets unique label identifying the line.
-   * @param id unique label identifying the line
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Line, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Line, sets X coordinate of the first endpoint of the line.
-   * @param x1 X coordinate of the first endpoint of the line
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Line, sets X coordinate of the second endpoint of the line.
-   * @param x2 X coordinate of the second endpoint of the line
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Line, sets Y coordinate of the first endpoint of the line.
-   * @param y1 Y coordinate of the first endpoint of the line
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Line, sets Y coordinate of the second endpoint of the line.
-   * @param y2 Y coordinate of the second endpoint of the line
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - LogicalChannel property storage -
-
-  /**
-   * For a particular LogicalChannel, sets the constrast method name.
-   * @param contrastMethod the constrast method name
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets reference to the detector used to acquire this logical channel.
-   * @param detector reference to the detector used to acquire this logical channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the emission wavelength.
-   * @param emWave the emission wavelength
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelEmWave(Integer emWave, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the excitation wavelength.
-   * @param exWave the excitation wavelength
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelExWave(Integer exWave, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets reference to the filter set associated with this channel.
-   * @param filterSet reference to the filter set associated with this channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the fluorescence type.
-   * @param fluor the fluorescence type
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelFluor(String fluor, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets unique label identifying the logical channel.
-   * @param id unique label identifying the logical channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelID(String id, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the illumination type.
-   * @param illuminationType the illumination type
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets reference to the light source used to acquire this logical channel.
-   * @param lightSource reference to the light source used to acquire this logical channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the acquisition mode.
-   * @param mode the acquisition mode
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelMode(String mode, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the logical channel's name.
-   * @param name the logical channel's name
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the neutral-density filter value.
-   * @param ndFilter the neutral-density filter value
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelNdFilter(Double ndFilter, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the OTF associated with the logical channel.
-   * @param otf the OTF associated with the logical channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the photometric interpretation type.
-   * @param photometricInterpretation the photometric interpretation type
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets the size of the pinhole.
-   * @param pinholeSize the size of the pinhole
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelPinholeSize(Double pinholeSize, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets TODO.
-   * @param pockelCellSetting TODO
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets number of channel components in the logical channel.
-   * @param samplesPerPixel number of channel components in the logical channel
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets TODO.
-   * @param secondaryEmissionFilter TODO
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex);
-
-  /**
-   * For a particular LogicalChannel, sets TODO.
-   * @param secondaryExcitationFilter TODO
-   * @param imageIndex index of the Image
-   * @param logicalChannelIndex index of the LogicalChannel
-   */
-  void setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex);
-
-  // - Mask property storage -
-
-  /**
-   * For a particular Mask, sets TODO.
-   * @param height TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, sets unique label identifying the mask.
-   * @param id unique label identifying the mask
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, sets TODO.
-   * @param width TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, sets TODO.
-   * @param x TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Mask, sets TODO.
-   * @param y TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - MaskPixels property storage -
-
-  /**
-   * For a particular MaskPixels, sets TODO.
-   * @param bigEndian TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskPixelsBigEndian(Boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular MaskPixels, sets TODO.
-   * @param binData TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular MaskPixels, sets TODO.
-   * @param extendedPixelType TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular MaskPixels, sets unique label identifying the mask's pixels.
-   * @param id unique label identifying the mask's pixels
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular MaskPixels, sets TODO.
-   * @param sizeX TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskPixelsSizeX(Integer sizeX, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular MaskPixels, sets TODO.
-   * @param sizeY TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setMaskPixelsSizeY(Integer sizeY, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - MicrobeamManipulation property storage -
-
-  /**
-   * For a particular MicrobeamManipulation, sets reference to the experimenter who applied this manipulation.
-   * @param experimenterRef reference to the experimenter who applied this manipulation
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   */
-  void setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex);
-
-  /**
-   * For a particular MicrobeamManipulation, sets unique label identifying the microbeam manipulation.
-   * @param id unique label identifying the microbeam manipulation
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   */
-  void setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex);
-
-  /**
-   * For a particular MicrobeamManipulation, sets type of operation - FRAP, Photoablation, Photoactivation, Uncaging, OpticalTrapping, or Other.
-   * @param type type of operation - FRAP, Photoablation, Photoactivation, Uncaging, OpticalTrapping, or Other
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   */
-  void setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex);
-
-  // - MicrobeamManipulationRef property storage -
-
-  /**
-   * For a particular MicrobeamManipulationRef, sets TODO.
-   * @param id TODO
-   * @param experimentIndex index of the Experiment
-   * @param microbeamManipulationRefIndex index of the MicrobeamManipulationRef
-   */
-  void setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex);
-
-  // - Microscope property storage -
-
-  /**
-   * For a particular Microscope, sets unique label identifying the microscope.
-   * @param id unique label identifying the microscope
-   * @param instrumentIndex index of the Instrument
-   */
-  void setMicroscopeID(String id, int instrumentIndex);
-
-  /**
-   * For a particular Microscope, sets manufacturer of the microscope.
-   * @param manufacturer manufacturer of the microscope
-   * @param instrumentIndex index of the Instrument
-   */
-  void setMicroscopeManufacturer(String manufacturer, int instrumentIndex);
-
-  /**
-   * For a particular Microscope, sets model number of the microscope.
-   * @param model model number of the microscope
-   * @param instrumentIndex index of the Instrument
-   */
-  void setMicroscopeModel(String model, int instrumentIndex);
-
-  /**
-   * For a particular Microscope, sets serial number of the microscope.
-   * @param serialNumber serial number of the microscope
-   * @param instrumentIndex index of the Instrument
-   */
-  void setMicroscopeSerialNumber(String serialNumber, int instrumentIndex);
-
-  /**
-   * For a particular Microscope, sets microscope type - Upright, Inverted, Dissection, Electrophysiology, or Unknown.
-   * @param type microscope type - Upright, Inverted, Dissection, Electrophysiology, or Unknown
-   * @param instrumentIndex index of the Instrument
-   */
-  void setMicroscopeType(String type, int instrumentIndex);
-
-  // - OTF property storage -
-
-  /**
-   * For a particular OTF, sets the Base64-encoded optical transfer function, or the path to a file containing it.
-   * @param binaryFile the Base64-encoded optical transfer function, or the path to a file containing it
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex);
-
-  /**
-   * For a particular OTF, sets unique label identifying the optical transfer function.
-   * @param id unique label identifying the optical transfer function
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFID(String id, int instrumentIndex, int otfIndex);
-
-  /**
-   * For a particular OTF, sets objective described by the optical transfer function.
-   * @param objective objective described by the optical transfer function
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFObjective(String objective, int instrumentIndex, int otfIndex);
-
-  /**
-   * For a particular OTF, sets indicates whether or not optical axis averaging was performed.
-   * @param opticalAxisAveraged indicates whether or not optical axis averaging was performed
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int otfIndex);
-
-  /**
-   * For a particular OTF, sets the pixel type of the optical transfer function.
-   * @param pixelType the pixel type of the optical transfer function
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFPixelType(String pixelType, int instrumentIndex, int otfIndex);
-
-  /**
-   * For a particular OTF, sets width of the optical transfer function.
-   * @param sizeX width of the optical transfer function
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFSizeX(Integer sizeX, int instrumentIndex, int otfIndex);
-
-  /**
-   * For a particular OTF, sets height of the optical transfer function.
-   * @param sizeY height of the optical transfer function
-   * @param instrumentIndex index of the Instrument
-   * @param otfIndex index of the OTF
-   */
-  void setOTFSizeY(Integer sizeY, int instrumentIndex, int otfIndex);
-
-  // - Objective property storage -
-
-  /**
-   * For a particular Objective, sets the measured magnification of the objective.
-   * @param calibratedMagnification the measured magnification of the objective
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveCalibratedMagnification(Double calibratedMagnification, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets type of correction coating applied to the objective lens.
-   * @param correction type of correction coating applied to the objective lens
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets unique label identifying the objective.
-   * @param id unique label identifying the objective
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveID(String id, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets immersion medium used with the objective lens.
-   * @param immersion immersion medium used with the objective lens
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets TODO.
-   * @param iris TODO
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets numerical aperture of the lens.
-   * @param lensNA numerical aperture of the lens
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveLensNA(Double lensNA, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets the name of the objective's manufacturer.
-   * @param manufacturer the name of the objective's manufacturer
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets model name/number of the objective.
-   * @param model model name/number of the objective
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveModel(String model, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets the specified magnification of the objective.
-   * @param nominalMagnification the specified magnification of the objective
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets serial number of the objective.
-   * @param serialNumber serial number of the objective
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
-
-  /**
-   * For a particular Objective, sets working distance of the objective, in um.
-   * @param workingDistance working distance of the objective, in um
-   * @param instrumentIndex index of the Instrument
-   * @param objectiveIndex index of the Objective
-   */
-  void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex);
-
-  // - ObjectiveSettings property storage -
-
-  /**
-   * For a particular ObjectiveSettings, sets unit-less setting of the adjustable correction collar.
-   * @param correctionCollar unit-less setting of the adjustable correction collar
-   * @param imageIndex index of the Image
-   */
-  void setObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex);
-
-  /**
-   * For a particular ObjectiveSettings, sets immersion medium for the lens.
-   * @param medium immersion medium for the lens
-   * @param imageIndex index of the Image
-   */
-  void setObjectiveSettingsMedium(String medium, int imageIndex);
-
-  /**
-   * For a particular ObjectiveSettings, sets the objective associated with this image.
-   * @param objective the objective associated with this image
-   * @param imageIndex index of the Image
-   */
-  void setObjectiveSettingsObjective(String objective, int imageIndex);
-
-  /**
-   * For a particular ObjectiveSettings, sets unit-less refractive index of the immersion medium.
-   * @param refractiveIndex unit-less refractive index of the immersion medium
-   * @param imageIndex index of the Image
-   */
-  void setObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex);
-
-  // - Path property storage -
-
-  /**
-   * For a particular Path, sets EXPERIMENTAL.
-   * @param d EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Path, sets unique label identifying the path.
-   * @param id unique label identifying the path
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - Pixels property storage -
-
-  /**
-   * For a particular Pixels, sets endianness of the pixels set.
-   * @param bigEndian endianness of the pixels set
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsBigEndian(Boolean bigEndian, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets the dimension order of the pixels set.
-   * @param dimensionOrder the dimension order of the pixels set
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsDimensionOrder(String dimensionOrder, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets unique label identifying the pixels set.
-   * @param id unique label identifying the pixels set
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsID(String id, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets the pixel type.
-   * @param pixelType the pixel type
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsPixelType(String pixelType, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets number of channels per timepoint.
-   * @param sizeC number of channels per timepoint
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsSizeC(Integer sizeC, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets number of timepoints.
-   * @param sizeT number of timepoints
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsSizeT(Integer sizeT, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets The size of an individual plane or section's X axis (width)..
-   * @param sizeX The size of an individual plane or section's X axis (width).
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsSizeX(Integer sizeX, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets The size of an individual plane or section's Y axis (height)..
-   * @param sizeY The size of an individual plane or section's Y axis (height).
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsSizeY(Integer sizeY, int imageIndex, int pixelsIndex);
-
-  /**
-   * For a particular Pixels, sets number of optical sections per stack.
-   * @param sizeZ number of optical sections per stack
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   */
-  void setPixelsSizeZ(Integer sizeZ, int imageIndex, int pixelsIndex);
-
-  // - Plane property storage -
-
-  /**
-   * For a particular Plane, sets the SHA1 hash of this plane's pixels.
-   * @param hashSHA1 the SHA1 hash of this plane's pixels
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular Plane, sets unique label identifying this plane.
-   * @param id unique label identifying this plane
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular Plane, sets the channel index.
-   * @param theC the channel index
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneTheC(Integer theC, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular Plane, sets the timepoint.
-   * @param theT the timepoint
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneTheT(Integer theT, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular Plane, sets the optical section index.
-   * @param theZ the optical section index
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneTheZ(Integer theZ, int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - PlaneTiming property storage -
-
-  /**
-   * For a particular PlaneTiming, sets the time in seconds since the beginning of the experiment.
-   * @param deltaT the time in seconds since the beginning of the experiment
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneTimingDeltaT(Double deltaT, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular PlaneTiming, sets the exposure time in seconds.
-   * @param exposureTime the exposure time in seconds
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setPlaneTimingExposureTime(Double exposureTime, int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - Plate property storage -
-
-  /**
-   * For a particular Plate, sets name of the first column in the plate.
-   * @param columnNamingConvention name of the first column in the plate
-   * @param plateIndex index of the Plate
-   */
-  void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex);
-
-  /**
-   * For a particular Plate, sets description of the plate.
-   * @param description description of the plate
-   * @param plateIndex index of the Plate
-   */
-  void setPlateDescription(String description, int plateIndex);
-
-  /**
-   * For a particular Plate, sets reference to the plate in an external database.
-   * @param externalIdentifier reference to the plate in an external database
-   * @param plateIndex index of the Plate
-   */
-  void setPlateExternalIdentifier(String externalIdentifier, int plateIndex);
-
-  /**
-   * For a particular Plate, sets unique label identifying the plate.
-   * @param id unique label identifying the plate
-   * @param plateIndex index of the Plate
-   */
-  void setPlateID(String id, int plateIndex);
-
-  /**
-   * For a particular Plate, sets the plate's name.
-   * @param name the plate's name
-   * @param plateIndex index of the Plate
-   */
-  void setPlateName(String name, int plateIndex);
-
-  /**
-   * For a particular Plate, sets name of the first row in the plate.
-   * @param rowNamingConvention name of the first row in the plate
-   * @param plateIndex index of the Plate
-   */
-  void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex);
-
-  /**
-   * For a particular Plate, sets current state of the plate with respect to the experiment work-flow.
-   * @param status current state of the plate with respect to the experiment work-flow
-   * @param plateIndex index of the Plate
-   */
-  void setPlateStatus(String status, int plateIndex);
-
-  /**
-   * For a particular Plate, sets percent width offset from top left corner.
-   * @param wellOriginX percent width offset from top left corner
-   * @param plateIndex index of the Plate
-   */
-  void setPlateWellOriginX(Double wellOriginX, int plateIndex);
-
-  /**
-   * For a particular Plate, sets percent height offset from top left corner.
-   * @param wellOriginY percent height offset from top left corner
-   * @param plateIndex index of the Plate
-   */
-  void setPlateWellOriginY(Double wellOriginY, int plateIndex);
-
-  // - PlateRef property storage -
-
-  /**
-   * For a particular PlateRef, sets TODO.
-   * @param id TODO
-   * @param screenIndex index of the Screen
-   * @param plateRefIndex index of the PlateRef
-   */
-  void setPlateRefID(String id, int screenIndex, int plateRefIndex);
-
-  /**
-   * For a particular PlateRef, sets TODO.
-   * @param sample TODO
-   * @param screenIndex index of the Screen
-   * @param plateRefIndex index of the PlateRef
-   */
-  void setPlateRefSample(Integer sample, int screenIndex, int plateRefIndex);
-
-  /**
-   * For a particular PlateRef, sets TODO.
-   * @param well TODO
-   * @param screenIndex index of the Screen
-   * @param plateRefIndex index of the PlateRef
-   */
-  void setPlateRefWell(String well, int screenIndex, int plateRefIndex);
-
-  // - Point property storage -
-
-  /**
-   * For a particular Point, sets X coordinate of the center of the point.
-   * @param cx X coordinate of the center of the point
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Point, sets Y coordinate of the center of the point.
-   * @param cy Y coordinate of the center of the point
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Point, sets unique label identifying the point.
-   * @param id unique label identifying the point
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Point, sets radius of the point, in pixels.
-   * @param r radius of the point, in pixels
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Point, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - Polygon property storage -
-
-  /**
-   * For a particular Polygon, sets unique label identifying the polygon.
-   * @param id unique label identifying the polygon
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Polygon, sets TODO.
-   * @param points TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Polygon, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - Polyline property storage -
-
-  /**
-   * For a particular Polyline, sets unique label identifying the polyline.
-   * @param id unique label identifying the polyline
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Polyline, sets TODO.
-   * @param points TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Polyline, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - Project property storage -
-
-  /**
-   * For a particular Project, sets description of the project.
-   * @param description description of the project
-   * @param projectIndex index of the Project
-   */
-  void setProjectDescription(String description, int projectIndex);
-
-  /**
-   * For a particular Project, sets reference to the experimenter who owns the project.
-   * @param experimenterRef reference to the experimenter who owns the project
-   * @param projectIndex index of the Project
-   */
-  void setProjectExperimenterRef(String experimenterRef, int projectIndex);
-
-  /**
-   * For a particular Project, sets reference to the group that owns the project.
-   * @param groupRef reference to the group that owns the project
-   * @param projectIndex index of the Project
-   */
-  void setProjectGroupRef(String groupRef, int projectIndex);
-
-  /**
-   * For a particular Project, sets unique label identifying the project.
-   * @param id unique label identifying the project
-   * @param projectIndex index of the Project
-   */
-  void setProjectID(String id, int projectIndex);
-
-  /**
-   * For a particular Project, sets name of the project.
-   * @param name name of the project
-   * @param projectIndex index of the Project
-   */
-  void setProjectName(String name, int projectIndex);
-
-  // - ProjectRef property storage -
-
-  /**
-   * For a particular ProjectRef, sets unique label identifying the project.
-   * @param id unique label identifying the project
-   * @param datasetIndex index of the Dataset
-   * @param projectRefIndex index of the ProjectRef
-   */
-  void setProjectRefID(String id, int datasetIndex, int projectRefIndex);
-
-  // - Pump property storage -
-
-  /**
-   * For a particular Pump, sets unique label identifying the light source to be used as a pump.
-   * @param lightSource unique label identifying the light source to be used as a pump
-   * @param instrumentIndex index of the Instrument
-   * @param lightSourceIndex index of the LightSource
-   */
-  void setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex);
-
-  // - ROI property storage -
-
-  /**
-   * For a particular ROI, sets unique label identifying the 5D bounding box ROI.
-   * @param id unique label identifying the 5D bounding box ROI
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIID(String id, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the starting timepoint.
-   * @param t0 the starting timepoint
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIT0(Integer t0, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the ending timepoint.
-   * @param t1 the ending timepoint
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIT1(Integer t1, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the starting X coordinate.
-   * @param x0 the starting X coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIX0(Integer x0, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the ending X coordinate.
-   * @param x1 the ending X coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIX1(Integer x1, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the starting Y coordinate.
-   * @param y0 the starting Y coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIY0(Integer y0, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the ending Y coordinate.
-   * @param y1 the ending Y coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIY1(Integer y1, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the starting Z coordinate.
-   * @param z0 the starting Z coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIZ0(Integer z0, int imageIndex, int roiIndex);
-
-  /**
-   * For a particular ROI, sets the ending Z coordinate.
-   * @param z1 the ending Z coordinate
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   */
-  void setROIZ1(Integer z1, int imageIndex, int roiIndex);
-
-  // - ROIRef property storage -
-
-  /**
-   * For a particular ROIRef, sets reference to an ROI associated with the microbeam manipulation.
-   * @param id reference to an ROI associated with the microbeam manipulation
-   * @param imageIndex index of the Image
-   * @param microbeamManipulationIndex index of the MicrobeamManipulation
-   * @param roiRefIndex index of the ROIRef
-   */
-  void setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex);
-
-  // - Reagent property storage -
-
-  /**
-   * For a particular Reagent, sets the reagent's description.
-   * @param description the reagent's description
-   * @param screenIndex index of the Screen
-   * @param reagentIndex index of the Reagent
-   */
-  void setReagentDescription(String description, int screenIndex, int reagentIndex);
-
-  /**
-   * For a particular Reagent, sets unique label identifying the reagent.
-   * @param id unique label identifying the reagent
-   * @param screenIndex index of the Screen
-   * @param reagentIndex index of the Reagent
-   */
-  void setReagentID(String id, int screenIndex, int reagentIndex);
-
-  /**
-   * For a particular Reagent, sets the reagent's name.
-   * @param name the reagent's name
-   * @param screenIndex index of the Screen
-   * @param reagentIndex index of the Reagent
-   */
-  void setReagentName(String name, int screenIndex, int reagentIndex);
-
-  /**
-   * For a particular Reagent, sets reference to the reagent in an external database.
-   * @param reagentIdentifier reference to the reagent in an external database
-   * @param screenIndex index of the Screen
-   * @param reagentIndex index of the Reagent
-   */
-  void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
-
-  // - Rect property storage -
-
-  /**
-   * For a particular Rect, sets height of the rectangle, in pixels.
-   * @param height height of the rectangle, in pixels
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Rect, sets unique label identifying the rectangle.
-   * @param id unique label identifying the rectangle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Rect, sets TODO.
-   * @param transform TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Rect, sets width of the rectangle, in pixels.
-   * @param width width of the rectangle, in pixels
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Rect, sets X coordinate of the upper left corner of the rectangle.
-   * @param x X coordinate of the upper left corner of the rectangle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Rect, sets Y coordinate of the upper left corner of the rectangle.
-   * @param y Y coordinate of the upper left corner of the rectangle
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - Region property storage -
-
-  /**
-   * For a particular Region, sets TODO.
-   * @param id TODO
-   * @param imageIndex index of the Image
-   * @param regionIndex index of the Region
-   */
-  void setRegionID(String id, int imageIndex, int regionIndex);
-
-  /**
-   * For a particular Region, sets TODO.
-   * @param name TODO
-   * @param imageIndex index of the Image
-   * @param regionIndex index of the Region
-   */
-  void setRegionName(String name, int imageIndex, int regionIndex);
-
-  /**
-   * For a particular Region, sets TODO.
-   * @param tag TODO
-   * @param imageIndex index of the Image
-   * @param regionIndex index of the Region
-   */
-  void setRegionTag(String tag, int imageIndex, int regionIndex);
-
-  // - RoiLink property storage -
-
-  /**
-   * For a particular RoiLink, sets TODO.
-   * @param direction TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param roiLinkIndex index of the RoiLink
-   */
-  void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex);
-
-  /**
-   * For a particular RoiLink, sets TODO.
-   * @param name TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param roiLinkIndex index of the RoiLink
-   */
-  void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex);
-
-  /**
-   * For a particular RoiLink, sets TODO.
-   * @param ref TODO
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param roiLinkIndex index of the RoiLink
-   */
-  void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex);
-
-  // - Screen property storage -
-
-  /**
-   * For a particular Screen, sets description of the screen.
-   * @param description description of the screen
-   * @param screenIndex index of the Screen
-   */
-  void setScreenDescription(String description, int screenIndex);
-
-  /**
-   * For a particular Screen, sets TODO.
-   * @param extern TODO
-   * @param screenIndex index of the Screen
-   */
-  void setScreenExtern(String extern, int screenIndex);
-
-  /**
-   * For a particular Screen, sets unique label identifying the screen.
-   * @param id unique label identifying the screen
-   * @param screenIndex index of the Screen
-   */
-  void setScreenID(String id, int screenIndex);
-
-  /**
-   * For a particular Screen, sets the screen's name.
-   * @param name the screen's name
-   * @param screenIndex index of the Screen
-   */
-  void setScreenName(String name, int screenIndex);
-
-  /**
-   * For a particular Screen, sets description of the screen's protocol.
-   * @param protocolDescription description of the screen's protocol
-   * @param screenIndex index of the Screen
-   */
-  void setScreenProtocolDescription(String protocolDescription, int screenIndex);
-
-  /**
-   * For a particular Screen, sets reference to an externally defined protocol.
-   * @param protocolIdentifier reference to an externally defined protocol
-   * @param screenIndex index of the Screen
-   */
-  void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex);
-
-  /**
-   * For a particular Screen, sets description of a set of reagents.
-   * @param reagentSetDescription description of a set of reagents
-   * @param screenIndex index of the Screen
-   */
-  void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex);
-
-  /**
-   * For a particular Screen, sets reference to an externally defined set of reagents.
-   * @param reagentSetIdentifier reference to an externally defined set of reagents
-   * @param screenIndex index of the Screen
-   */
-  void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex);
-
-  /**
-   * For a particular Screen, sets human-readable screen type, e.g. RNAi, cDNA.
-   * @param type human-readable screen type, e.g. RNAi, cDNA
-   * @param screenIndex index of the Screen
-   */
-  void setScreenType(String type, int screenIndex);
-
-  // - ScreenAcquisition property storage -
-
-  /**
-   * For a particular ScreenAcquisition, sets time when the last image was acquired.
-   * @param endTime time when the last image was acquired
-   * @param screenIndex index of the Screen
-   * @param screenAcquisitionIndex index of the ScreenAcquisition
-   */
-  void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex);
-
-  /**
-   * For a particular ScreenAcquisition, sets unique label identifying the screen's acquisition run.
-   * @param id unique label identifying the screen's acquisition run
-   * @param screenIndex index of the Screen
-   * @param screenAcquisitionIndex index of the ScreenAcquisition
-   */
-  void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex);
-
-  /**
-   * For a particular ScreenAcquisition, sets time when the first image was acquired.
-   * @param startTime time when the first image was acquired
-   * @param screenIndex index of the Screen
-   * @param screenAcquisitionIndex index of the ScreenAcquisition
-   */
-  void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex);
-
-  // - ScreenRef property storage -
-
-  /**
-   * For a particular ScreenRef, sets label reference to a screen.
-   * @param id label reference to a screen
-   * @param plateIndex index of the Plate
-   * @param screenRefIndex index of the ScreenRef
-   */
-  void setScreenRefID(String id, int plateIndex, int screenRefIndex);
-
-  // - Shape property storage -
-
-  /**
-   * For a particular Shape, sets vertical text shift, e.g. sup, sub, normal, -70%. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param baselineShift vertical text shift, e.g. sup, sub, normal, -70%. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets text direction, e.g. ltr. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param direction text direction, e.g. ltr. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets name of the color with which to fill this ROI. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fillColor name of the color with which to fill this ROI. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets opacity (0-100) of the fill color. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fillOpacity opacity (0-100) of the fill color. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets rule for filling the ROI, e.g. even-odd, non-zero. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fillRule rule for filling the ROI, e.g. even-odd, non-zero. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets the name of the font (e.g. "Arial"). This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fontFamily the name of the font (e.g. "Arial"). This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets size of the font. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fontSize size of the font. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFontSize(Integer fontSize, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets how the font should be stretched, e.g. normal, wider -  EXPERIMENTAL.
-   * @param fontStretch how the font should be stretched, e.g. normal, wider -  EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets font style, e.g. normal, italic. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fontStyle font style, e.g. normal, italic. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets font variant, e.g. normal, small-caps. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fontVariant font variant, e.g. normal, small-caps. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets font weight, e.g. normal, bold. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param fontWeight font weight, e.g. normal, bold. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets group identifier. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param g group identifier. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param glyphOrientationVertical EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeGlyphOrientationVertical(Integer glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets unique label identifying the shape.
-   * @param id unique label identifying the shape
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets whether or not the ROI can be modified. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param locked whether or not the ROI can be modified. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeLocked(Boolean locked, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets additional stroke information. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param strokeAttribute additional stroke information. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets name of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param strokeColor name of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param strokeDashArray EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param strokeLineCap EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param strokeLineJoin EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param strokeMiterLimit EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeMiterLimit(Integer strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param strokeOpacity opacity (0-100) of the stroke color. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeOpacity(Double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param strokeWidth width (in pixels) of the stroke. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeStrokeWidth(Integer strokeWidth, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets text label associated with this shape. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param text text label associated with this shape. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets relative position of the text, e.g. start, middle. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param textAnchor relative position of the text, e.g. start, middle. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets text decoration, e.g. underline, line-through. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param textDecoration text decoration, e.g. underline, line-through. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets text color. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param textFill text color. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param textStroke EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets T position of the shape.
-   * @param theT T position of the shape
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeTheT(Integer theT, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets Z position of the shape.
-   * @param theZ Z position of the shape
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeTheZ(Integer theZ, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param vectorEffect EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets whether or not the ROI should be displayed. This attribute is experimental, and not present in the existing OME-XML schemas..
-   * @param visibility whether or not the ROI should be displayed. This attribute is experimental, and not present in the existing OME-XML schemas.
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeVisibility(Boolean visibility, int imageIndex, int roiIndex, int shapeIndex);
-
-  /**
-   * For a particular Shape, sets EXPERIMENTAL.
-   * @param writingMode EXPERIMENTAL
-   * @param imageIndex index of the Image
-   * @param roiIndex index of the ROI
-   * @param shapeIndex index of the Shape
-   */
-  void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex);
-
-  // - StageLabel property storage -
-
-  /**
-   * For a particular StageLabel, sets a name for the stage label.
-   * @param name a name for the stage label
-   * @param imageIndex index of the Image
-   */
-  void setStageLabelName(String name, int imageIndex);
-
-  /**
-   * For a particular StageLabel, sets the x coordinate of the stage.
-   * @param x the x coordinate of the stage
-   * @param imageIndex index of the Image
-   */
-  void setStageLabelX(Double x, int imageIndex);
-
-  /**
-   * For a particular StageLabel, sets the y coordinate of the stage.
-   * @param y the y coordinate of the stage
-   * @param imageIndex index of the Image
-   */
-  void setStageLabelY(Double y, int imageIndex);
-
-  /**
-   * For a particular StageLabel, sets the z coordinate of the stage.
-   * @param z the z coordinate of the stage
-   * @param imageIndex index of the Image
-   */
-  void setStageLabelZ(Double z, int imageIndex);
-
-  // - StagePosition property storage -
-
-  /**
-   * For a particular StagePosition, sets the X coordinate of the stage position.
-   * @param positionX the X coordinate of the stage position
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setStagePositionPositionX(Double positionX, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular StagePosition, sets the Y coordinate of the stage position.
-   * @param positionY the Y coordinate of the stage position
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setStagePositionPositionY(Double positionY, int imageIndex, int pixelsIndex, int planeIndex);
-
-  /**
-   * For a particular StagePosition, sets the Z coordinate of the stage position.
-   * @param positionZ the Z coordinate of the stage position
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param planeIndex index of the Plane
-   */
-  void setStagePositionPositionZ(Double positionZ, int imageIndex, int pixelsIndex, int planeIndex);
-
-  // - Thumbnail property storage -
-
-  /**
-   * For a particular Thumbnail, sets external URI referring to the thumbnail.
-   * @param href external URI referring to the thumbnail
-   * @param imageIndex index of the Image
-   */
-  void setThumbnailHref(String href, int imageIndex);
-
-  /**
-   * For a particular Thumbnail, sets unique label identifying the thumbnail.
-   * @param id unique label identifying the thumbnail
-   * @param imageIndex index of the Image
-   */
-  void setThumbnailID(String id, int imageIndex);
-
-  /**
-   * For a particular Thumbnail, sets MIME-type of the thumbnail; must be set to 'SVG' if thumbnail data is embedded.
-   * @param mimEtype MIME-type of the thumbnail; must be set to 'SVG' if thumbnail data is embedded
-   * @param imageIndex index of the Image
-   */
-  void setThumbnailMIMEtype(String mimEtype, int imageIndex);
-
-  // - TiffData property storage -
-
-  /**
-   * For a particular TiffData, sets the name of the file containing these IFDs.
-   * @param fileName the name of the file containing these IFDs
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  /**
-   * For a particular TiffData, sets C position of the image plane at the specified IFD, indexed from 0.
-   * @param firstC C position of the image plane at the specified IFD, indexed from 0
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataFirstC(Integer firstC, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  /**
-   * For a particular TiffData, sets T position of the image plane at the specified IFD, indexed from 0.
-   * @param firstT T position of the image plane at the specified IFD, indexed from 0
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataFirstT(Integer firstT, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  /**
-   * For a particular TiffData, sets Z position of the image plane at the specified IFD, indexed from 0.
-   * @param firstZ Z position of the image plane at the specified IFD, indexed from 0
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataFirstZ(Integer firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  /**
-   * For a particular TiffData, sets first IFD for which this element is applicable, indexed from 0.
-   * @param ifd first IFD for which this element is applicable, indexed from 0
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataIFD(Integer ifd, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  /**
-   * For a particular TiffData, sets Number of IFDs for which this element is applicable; default is the number of planes (if no IFD is specified), or 1 (if an IFD is specified)..
-   * @param numPlanes Number of IFDs for which this element is applicable; default is the number of planes (if no IFD is specified), or 1 (if an IFD is specified).
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataNumPlanes(Integer numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  /**
-   * For a particular TiffData, sets unique identifier indicating which file contains these IFDs.
-   * @param uuid unique identifier indicating which file contains these IFDs
-   * @param imageIndex index of the Image
-   * @param pixelsIndex index of the Pixels
-   * @param tiffDataIndex index of the TiffData
-   */
-  void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex);
-
-  // - TransmittanceRange property storage -
-
-  /**
-   * For a particular TransmittanceRange, sets TODO.
-   * @param cutIn TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular TransmittanceRange, sets TODO.
-   * @param cutInTolerance TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular TransmittanceRange, sets TODO.
-   * @param cutOut TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular TransmittanceRange, sets TODO.
-   * @param cutOutTolerance TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex);
-
-  /**
-   * For a particular TransmittanceRange, sets TODO.
-   * @param transmittance TODO
-   * @param instrumentIndex index of the Instrument
-   * @param filterIndex index of the Filter
-   */
-  void setTransmittanceRangeTransmittance(Integer transmittance, int instrumentIndex, int filterIndex);
-
-  // - Well property storage -
-
-  /**
-   * For a particular Well, sets column index of the well, where top-left is 0.
-   * @param column column index of the well, where top-left is 0
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellColumn(Integer column, int plateIndex, int wellIndex);
-
-  /**
-   * For a particular Well, sets description of the externally defined ID for the well.
-   * @param externalDescription description of the externally defined ID for the well
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex);
-
-  /**
-   * For a particular Well, sets reference to the well in an external database.
-   * @param externalIdentifier reference to the well in an external database
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex);
-
-  /**
-   * For a particular Well, sets unique label identifying the well.
-   * @param id unique label identifying the well
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellID(String id, int plateIndex, int wellIndex);
-
-  /**
-   * For a particular Well, sets label reference for the associated reagent.
-   * @param reagent label reference for the associated reagent
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellReagent(String reagent, int plateIndex, int wellIndex);
-
-  /**
-   * For a particular Well, sets row index of the well, where top-left is 0.
-   * @param row row index of the well, where top-left is 0
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellRow(Integer row, int plateIndex, int wellIndex);
-
-  /**
-   * For a particular Well, sets human-readable identifier of the screen status, e.g. empty, control.
-   * @param type human-readable identifier of the screen status, e.g. empty, control
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   */
-  void setWellType(String type, int plateIndex, int wellIndex);
-
-  // - WellSample property storage -
-
-  /**
-   * For a particular WellSample, sets unique label identifying the individual well image.
-   * @param id unique label identifying the individual well image
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   * @param wellSampleIndex index of the WellSample
-   */
-  void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex);
-
-  /**
-   * For a particular WellSample, sets label reference for the associated image.
-   * @param imageRef label reference for the associated image
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   * @param wellSampleIndex index of the WellSample
-   */
-  void setWellSampleImageRef(String imageRef, int plateIndex, int wellIndex, int wellSampleIndex);
-
-  /**
-   * For a particular WellSample, sets link to the Image element.
-   * @param index link to the Image element
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   * @param wellSampleIndex index of the WellSample
-   */
-  void setWellSampleIndex(Integer index, int plateIndex, int wellIndex, int wellSampleIndex);
-
-  /**
-   * For a particular WellSample, sets X position of the image within the well.
-   * @param posX X position of the image within the well
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   * @param wellSampleIndex index of the WellSample
-   */
-  void setWellSamplePosX(Double posX, int plateIndex, int wellIndex, int wellSampleIndex);
-
-  /**
-   * For a particular WellSample, sets Y position of the image within the well.
-   * @param posY Y position of the image within the well
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   * @param wellSampleIndex index of the WellSample
-   */
-  void setWellSamplePosY(Double posY, int plateIndex, int wellIndex, int wellSampleIndex);
-
-  /**
-   * For a particular WellSample, sets time-point at which the image started to be collected.
-   * @param timepoint time-point at which the image started to be collected
-   * @param plateIndex index of the Plate
-   * @param wellIndex index of the Well
-   * @param wellSampleIndex index of the WellSample
-   */
-  void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
-
-  // - WellSampleRef property storage -
-
-  /**
-   * For a particular WellSampleRef, sets TODO.
-   * @param id TODO
-   * @param screenIndex index of the Screen
-   * @param screenAcquisitionIndex index of the ScreenAcquisition
-   * @param wellSampleRefIndex index of the WellSampleRef
-   */
-  void setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex);
+public interface MetadataStore
+{
+	void createRoot();
 
+	Object getRoot();
+
+	void setRoot(Object root);
+	
+	// -- Entity storage (manual definitions) --
+
+	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
+
+	// -- Entity storage (code generated definitions) --
+
+	/** Sets the UUID associated with this collection of metadata. */
+	void setUUID(String uuid);
+
+	//
+	// AnnotationRef property storage
+	//
+	// {u'Plate': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'ROI': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference AnnotationRef
+
+	//
+	// Arc property storage
+	//
+	// {u'LightSource': {u'Instrument': {u'OME': None}}}
+	// Is multi path? False
+
+	// Ignoring Arc of parent abstract type
+	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
+	void setArcID(String id, int instrumentIndex, int lightSourceIndex);
+
+	// Ignoring Laser of parent abstract type
+	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
+	void setArcLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
+
+	// Manufacturer accessor from parent LightSource
+	void setArcManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
+
+	// Model accessor from parent LightSource
+	void setArcModel(String model, int instrumentIndex, int lightSourceIndex);
+
+	// Power accessor from parent LightSource
+	void setArcPower(Double power, int instrumentIndex, int lightSourceIndex);
+
+	// SerialNumber accessor from parent LightSource
+	void setArcSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
+
+	void setArcType(ArcType type, int instrumentIndex, int lightSourceIndex);
+
+	//
+	// BinaryFile property storage
+	//
+	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	// Ignoring BinData element, complex property
+	// Ignoring External element, complex property
+	void setFileAnnotationBinaryFileFileName(String fileName, int fileAnnotationIndex);
+
+	void setOTFBinaryFileFileName(String fileName, int instrumentIndex, int OTFIndex);
+
+	void setFileAnnotationBinaryFileMIMEType(String mimetype, int fileAnnotationIndex);
+
+	void setOTFBinaryFileMIMEType(String mimetype, int instrumentIndex, int OTFIndex);
+
+	void setFileAnnotationBinaryFileSize(Integer size, int fileAnnotationIndex);
+
+	void setOTFBinaryFileSize(Integer size, int instrumentIndex, int OTFIndex);
+
+	//
+	// BooleanAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setBooleanAnnotationID(String id, int booleanAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setBooleanAnnotationNamespace(String namespace, int booleanAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// Channel property storage
+	//
+	// {u'Pixels': {u'Image': {u'OME': None}}}
+	// Is multi path? False
+
+	void setChannelAcquisitionMode(AcquisitionMode acquisitionMode, int imageIndex, int channelIndex);
+
+	void setChannelAnnotationRef(String annotation, int imageIndex, int channelIndex, int annotationRefIndex);
+
+	void setChannelColor(Integer color, int imageIndex, int channelIndex);
+
+	void setChannelContrastMethod(ContrastMethod contrastMethod, int imageIndex, int channelIndex);
+
+	// Ignoring DetectorSettings element, complex property
+	void setChannelEmissionWavelength(PositiveInteger emissionWavelength, int imageIndex, int channelIndex);
+
+	void setChannelExcitationWavelength(PositiveInteger excitationWavelength, int imageIndex, int channelIndex);
+
+	void setChannelFilterSetRef(String filterSet, int imageIndex, int channelIndex);
+
+	void setChannelFluor(String fluor, int imageIndex, int channelIndex);
+
+	void setChannelID(String id, int imageIndex, int channelIndex);
+
+	void setChannelIlluminationType(IlluminationType illuminationType, int imageIndex, int channelIndex);
+
+	// Ignoring LightPath element, complex property
+	// Ignoring LightSourceSettings element, complex property
+	void setChannelNDFilter(Double ndfilter, int imageIndex, int channelIndex);
+
+	void setChannelName(String name, int imageIndex, int channelIndex);
+
+	void setChannelOTFRef(String otf, int imageIndex, int channelIndex);
+
+	void setChannelPinholeSize(Double pinholeSize, int imageIndex, int channelIndex);
+
+	void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex);
+
+	void setChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int channelIndex);
+
+	//
+	// Contact property storage
+	//
+	// {u'Group': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference Contact
+
+	//
+	// Dataset property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setDatasetAnnotationRef(String annotation, int datasetIndex, int annotationRefIndex);
+
+	void setDatasetDescription(String description, int datasetIndex);
+
+	void setDatasetExperimenterRef(String experimenter, int datasetIndex);
+
+	void setDatasetGroupRef(String group, int datasetIndex);
+
+	void setDatasetID(String id, int datasetIndex);
+
+	// Ignoring Image_BackReference back reference
+	void setDatasetName(String name, int datasetIndex);
+
+	void setDatasetProjectRef(String project, int datasetIndex, int projectRefIndex);
+
+	//
+	// DatasetRef property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference DatasetRef
+
+	//
+	// Detector property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	void setDetectorAmplificationGain(Double amplificationGain, int instrumentIndex, int detectorIndex);
+
+	void setDetectorGain(Double gain, int instrumentIndex, int detectorIndex);
+
+	void setDetectorID(String id, int instrumentIndex, int detectorIndex);
+
+	void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex);
+
+	void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex);
+
+	void setDetectorModel(String model, int instrumentIndex, int detectorIndex);
+
+	void setDetectorOffset(Double offset, int instrumentIndex, int detectorIndex);
+
+	void setDetectorSerialNumber(String serialNumber, int instrumentIndex, int detectorIndex);
+
+	void setDetectorType(DetectorType type, int instrumentIndex, int detectorIndex);
+
+	void setDetectorVoltage(Double voltage, int instrumentIndex, int detectorIndex);
+
+	void setDetectorZoom(Double zoom, int instrumentIndex, int detectorIndex);
+
+	//
+	// DetectorSettings property storage
+	//
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
+
+	void setDetectorSettingsBinning(Binning binning, int imageIndex, int channelIndex);
+
+	void setDetectorSettingsGain(Double gain, int imageIndex, int channelIndex);
+
+	void setDetectorSettingsID(String id, int imageIndex, int channelIndex);
+
+	void setDetectorSettingsOffset(Double offset, int imageIndex, int channelIndex);
+
+	void setDetectorSettingsReadOutRate(Double readOutRate, int imageIndex, int channelIndex);
+
+	void setDetectorSettingsVoltage(Double voltage, int imageIndex, int channelIndex);
+
+	//
+	// Dichroic property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring FilterSet_BackReference back reference
+	void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
+
+	// Ignoring LightPath_BackReference back reference
+	void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex);
+
+	void setDichroicManufacturer(String manufacturer, int instrumentIndex, int dichroicIndex);
+
+	void setDichroicModel(String model, int instrumentIndex, int dichroicIndex);
+
+	void setDichroicSerialNumber(String serialNumber, int instrumentIndex, int dichroicIndex);
+
+	//
+	// DichroicRef property storage
+	//
+	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference DichroicRef
+
+	//
+	// DoubleAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setDoubleAnnotationID(String id, int doubleAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setDoubleAnnotationNamespace(String namespace, int doubleAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// Ellipse property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setEllipseDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setEllipseFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setEllipseFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setEllipseID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setEllipseLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setEllipseName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setEllipseStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setEllipseStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setEllipseStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setEllipseTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setEllipseTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setEllipseTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setEllipseTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setEllipseRadiusX(Double radiusX, int ROIIndex, int shapeIndex);
+
+	void setEllipseRadiusY(Double radiusY, int ROIIndex, int shapeIndex);
+
+	void setEllipseX(Double x, int ROIIndex, int shapeIndex);
+
+	void setEllipseY(Double y, int ROIIndex, int shapeIndex);
+
+	//
+	// EmissionFilterRef property storage
+	//
+	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	//
+	// EmissionFilterRef property storage
+	//
+	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	//
+	// ExcitationFilterRef property storage
+	//
+	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	//
+	// ExcitationFilterRef property storage
+	//
+	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	//
+	// Experiment property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setExperimentDescription(String description, int experimentIndex);
+
+	void setExperimentExperimenterRef(String experimenter, int experimentIndex);
+
+	void setExperimentID(String id, int experimentIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring MicrobeamManipulation element, complex property
+	void setExperimentType(ExperimentType type, int experimentIndex);
+
+	//
+	// ExperimentRef property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference ExperimentRef
+
+	//
+	// Experimenter property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setExperimenterAnnotationRef(String annotation, int experimenterIndex, int annotationRefIndex);
+
+	// Ignoring Dataset_BackReference back reference
+	void setExperimenterDisplayName(String displayName, int experimenterIndex);
+
+	void setExperimenterEmail(String email, int experimenterIndex);
+
+	// Ignoring Experiment_BackReference back reference
+	void setExperimenterFirstName(String firstName, int experimenterIndex);
+
+	void setExperimenterGroupRef(String group, int experimenterIndex, int groupRefIndex);
+
+	void setExperimenterID(String id, int experimenterIndex);
+
+	// Ignoring Image_BackReference back reference
+	void setExperimenterInstitution(String institution, int experimenterIndex);
+
+	void setExperimenterLastName(String lastName, int experimenterIndex);
+
+	// Ignoring MicrobeamManipulation_BackReference back reference
+	void setExperimenterMiddleName(String middleName, int experimenterIndex);
+
+	// Ignoring Project_BackReference back reference
+	void setExperimenterUserName(String userName, int experimenterIndex);
+
+	//
+	// ExperimenterRef property storage
+	//
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ExperimenterRef
+
+	//
+	// Filament property storage
+	//
+	// {u'LightSource': {u'Instrument': {u'OME': None}}}
+	// Is multi path? False
+
+	// Ignoring Arc of parent abstract type
+	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
+	void setFilamentID(String id, int instrumentIndex, int lightSourceIndex);
+
+	// Ignoring Laser of parent abstract type
+	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
+	void setFilamentLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
+
+	// Manufacturer accessor from parent LightSource
+	void setFilamentManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
+
+	// Model accessor from parent LightSource
+	void setFilamentModel(String model, int instrumentIndex, int lightSourceIndex);
+
+	// Power accessor from parent LightSource
+	void setFilamentPower(Double power, int instrumentIndex, int lightSourceIndex);
+
+	// SerialNumber accessor from parent LightSource
+	void setFilamentSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
+
+	void setFilamentType(FilamentType type, int instrumentIndex, int lightSourceIndex);
+
+	//
+	// FileAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring BinaryFile element, complex property
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setFileAnnotationID(String id, int fileAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setFileAnnotationNamespace(String namespace, int fileAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// Filter property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring FilterSet_BackReference back reference
+	void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex);
+
+	void setFilterID(String id, int instrumentIndex, int filterIndex);
+
+	// Ignoring LightPath_BackReference back reference
+	void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
+
+	void setFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex);
+
+	void setFilterModel(String model, int instrumentIndex, int filterIndex);
+
+	void setFilterSerialNumber(String serialNumber, int instrumentIndex, int filterIndex);
+
+	// Ignoring TransmittanceRange element, complex property
+	void setFilterType(FilterType type, int instrumentIndex, int filterIndex);
+
+	//
+	// FilterSet property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	void setFilterSetDichroicRef(String dichroic, int instrumentIndex, int filterSetIndex);
+
+	void setFilterSetEmissionFilterRef(String emissionFilter, int instrumentIndex, int filterSetIndex, int emissionFilterRefIndex);
+
+	void setFilterSetExcitationFilterRef(String excitationFilter, int instrumentIndex, int filterSetIndex, int excitationFilterRefIndex);
+
+	void setFilterSetID(String id, int instrumentIndex, int filterSetIndex);
+
+	void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex);
+
+	void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex);
+
+	void setFilterSetModel(String model, int instrumentIndex, int filterSetIndex);
+
+	// Ignoring OTF_BackReference back reference
+	void setFilterSetSerialNumber(String serialNumber, int instrumentIndex, int filterSetIndex);
+
+	//
+	// FilterSetRef property storage
+	//
+	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference FilterSetRef
+
+	//
+	// Group property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setGroupContact(String contact, int groupIndex);
+
+	// Ignoring Dataset_BackReference back reference
+	void setGroupDescription(String description, int groupIndex);
+
+	// Ignoring Experimenter_BackReference back reference
+	void setGroupID(String id, int groupIndex);
+
+	// Ignoring Image_BackReference back reference
+	void setGroupLeader(String leader, int groupIndex);
+
+	void setGroupName(String name, int groupIndex);
+
+	// Ignoring Project_BackReference back reference
+	//
+	// GroupRef property storage
+	//
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference GroupRef
+
+	//
+	// Image property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setImageAcquiredDate(String acquiredDate, int imageIndex);
+
+	void setImageAnnotationRef(String annotation, int imageIndex, int annotationRefIndex);
+
+	void setImageDatasetRef(String dataset, int imageIndex, int datasetRefIndex);
+
+	void setImageDescription(String description, int imageIndex);
+
+	void setImageExperimentRef(String experiment, int imageIndex);
+
+	void setImageExperimenterRef(String experimenter, int imageIndex);
+
+	void setImageGroupRef(String group, int imageIndex);
+
+	void setImageID(String id, int imageIndex);
+
+	// Ignoring ImagingEnvironment element, complex property
+	void setImageInstrumentRef(String instrument, int imageIndex);
+
+	void setImageMicrobeamManipulationRef(String microbeamManipulation, int imageIndex, int microbeamManipulationRefIndex);
+
+	void setImageName(String name, int imageIndex);
+
+	// Ignoring ObjectiveSettings element, complex property
+	// Ignoring Pixels element, complex property
+	void setImageROIRef(String roi, int imageIndex, int ROIRefIndex);
+
+	// Ignoring StageLabel element, complex property
+	// Ignoring WellSample_BackReference back reference
+	//
+	// ImageRef property storage
+	//
+	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference ImageRef
+
+	//
+	// ImagingEnvironment property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	void setImagingEnvironmentAirPressure(Double airPressure, int imageIndex);
+
+	void setImagingEnvironmentCO2Percent(PercentFraction co2percent, int imageIndex);
+
+	void setImagingEnvironmentHumidity(PercentFraction humidity, int imageIndex);
+
+	void setImagingEnvironmentTemperature(Double temperature, int imageIndex);
+
+	//
+	// Instrument property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	// Ignoring Detector element, complex property
+	// Ignoring Dichroic element, complex property
+	// Ignoring Filter element, complex property
+	// Ignoring FilterSet element, complex property
+	void setInstrumentID(String id, int instrumentIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring LightSource element, complex property
+	// Ignoring Microscope element, complex property
+	// Ignoring OTF element, complex property
+	// Ignoring Objective element, complex property
+	//
+	// InstrumentRef property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference InstrumentRef
+
+	//
+	// Laser property storage
+	//
+	// {u'LightSource': {u'Instrument': {u'OME': None}}}
+	// Is multi path? False
+
+	// Ignoring Arc of parent abstract type
+	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
+	void setLaserID(String id, int instrumentIndex, int lightSourceIndex);
+
+	// Ignoring Laser of parent abstract type
+	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
+	void setLaserLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
+
+	// Manufacturer accessor from parent LightSource
+	void setLaserManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
+
+	// Model accessor from parent LightSource
+	void setLaserModel(String model, int instrumentIndex, int lightSourceIndex);
+
+	// Power accessor from parent LightSource
+	void setLaserPower(Double power, int instrumentIndex, int lightSourceIndex);
+
+	// SerialNumber accessor from parent LightSource
+	void setLaserSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserFrequencyMultiplication(PositiveInteger frequencyMultiplication, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserLaserMedium(LaserMedium laserMedium, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserPockelCell(Boolean pockelCell, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserPulse(Pulse pulse, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserPump(String pump, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserRepetitionRate(Double repetitionRate, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserTuneable(Boolean tuneable, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserType(LaserType type, int instrumentIndex, int lightSourceIndex);
+
+	void setLaserWavelength(PositiveInteger wavelength, int instrumentIndex, int lightSourceIndex);
+
+	//
+	// Leader property storage
+	//
+	// {u'Group': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference Leader
+
+	//
+	// LightEmittingDiode property storage
+	//
+	// {u'LightSource': {u'Instrument': {u'OME': None}}}
+	// Is multi path? False
+
+	// Ignoring Arc of parent abstract type
+	// Ignoring Filament of parent abstract type
+	// ID accessor from parent LightSource
+	void setLightEmittingDiodeID(String id, int instrumentIndex, int lightSourceIndex);
+
+	// Ignoring Laser of parent abstract type
+	// Ignoring LightEmittingDiode of parent abstract type
+	// LotNumber accessor from parent LightSource
+	void setLightEmittingDiodeLotNumber(String lotNumber, int instrumentIndex, int lightSourceIndex);
+
+	// Manufacturer accessor from parent LightSource
+	void setLightEmittingDiodeManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex);
+
+	// Model accessor from parent LightSource
+	void setLightEmittingDiodeModel(String model, int instrumentIndex, int lightSourceIndex);
+
+	// Power accessor from parent LightSource
+	void setLightEmittingDiodePower(Double power, int instrumentIndex, int lightSourceIndex);
+
+	// SerialNumber accessor from parent LightSource
+	void setLightEmittingDiodeSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex);
+
+	//
+	// LightPath property storage
+	//
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
+
+	void setLightPathDichroicRef(String dichroic, int imageIndex, int channelIndex);
+
+	void setLightPathEmissionFilterRef(String emissionFilter, int imageIndex, int channelIndex, int emissionFilterRefIndex);
+
+	void setLightPathExcitationFilterRef(String excitationFilter, int imageIndex, int channelIndex, int excitationFilterRefIndex);
+
+	//
+	// LightSourceSettings property storage
+	//
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Is multi path? True
+
+	void setChannelLightSourceSettingsAttenuation(PercentFraction attenuation, int imageIndex, int channelIndex);
+
+	void setMicrobeamManipulationLightSourceSettingsAttenuation(PercentFraction attenuation, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
+
+	void setChannelLightSourceSettingsID(String id, int imageIndex, int channelIndex);
+
+	void setMicrobeamManipulationLightSourceSettingsID(String id, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
+
+	void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex);
+
+	void setMicrobeamManipulationLightSourceSettingsWavelength(PositiveInteger wavelength, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
+
+	//
+	// Line property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setLineDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setLineFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setLineFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setLineID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setLineLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setLineName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setLineStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setLineStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setLineStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setLineTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setLineTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setLineTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setLineTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setLineX1(Double x1, int ROIIndex, int shapeIndex);
+
+	void setLineX2(Double x2, int ROIIndex, int shapeIndex);
+
+	void setLineY1(Double y1, int ROIIndex, int shapeIndex);
+
+	void setLineY2(Double y2, int ROIIndex, int shapeIndex);
+
+	//
+	// ListAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	void setListAnnotationAnnotationRef(String annotation, int listAnnotationIndex, int annotationRefIndex);
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setListAnnotationID(String id, int listAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setListAnnotationNamespace(String namespace, int listAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// LongAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setLongAnnotationID(String id, int longAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setLongAnnotationNamespace(String namespace, int longAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	void setLongAnnotationValue(Long value, int longAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// Mask property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setMaskDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setMaskFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setMaskFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setMaskID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setMaskLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setMaskName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setMaskStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setMaskStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setMaskStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setMaskTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setMaskTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setMaskTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setMaskTransform(String transform, int ROIIndex, int shapeIndex);
+
+	// Ignoring BinData element, complex property
+	void setMaskX(Double x, int ROIIndex, int shapeIndex);
+
+	void setMaskY(Double y, int ROIIndex, int shapeIndex);
+
+	//
+	// MetadataOnly property storage
+	//
+	// {u'Pixels': {u'Image': {u'OME': None}}}
+	// Is multi path? False
+
+	//
+	// MicrobeamManipulation property storage
+	//
+	// {u'Experiment': {u'OME': None}}
+	// Is multi path? False
+
+	void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex);
+
+	void setMicrobeamManipulationID(String id, int experimentIndex, int microbeamManipulationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring LightSourceSettings element, complex property
+	void setMicrobeamManipulationROIRef(String roi, int experimentIndex, int microbeamManipulationIndex, int ROIRefIndex);
+
+	void setMicrobeamManipulationType(MicrobeamManipulationType type, int experimentIndex, int microbeamManipulationIndex);
+
+	//
+	// MicrobeamManipulationRef property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference MicrobeamManipulationRef
+
+	//
+	// Microscope property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	void setMicroscopeLotNumber(String lotNumber, int instrumentIndex);
+
+	void setMicroscopeManufacturer(String manufacturer, int instrumentIndex);
+
+	void setMicroscopeModel(String model, int instrumentIndex);
+
+	void setMicroscopeSerialNumber(String serialNumber, int instrumentIndex);
+
+	void setMicroscopeType(MicroscopeType type, int instrumentIndex);
+
+	//
+	// OTF property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring BinaryFile element, complex property
+	// Ignoring Channel_BackReference back reference
+	void setOTFFilterSetRef(String filterSet, int instrumentIndex, int OTFIndex);
+
+	void setOTFID(String id, int instrumentIndex, int OTFIndex);
+
+	// Ignoring ObjectiveSettings element, complex property
+	void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int OTFIndex);
+
+	void setOTFSizeX(PositiveInteger sizeX, int instrumentIndex, int OTFIndex);
+
+	void setOTFSizeY(PositiveInteger sizeY, int instrumentIndex, int OTFIndex);
+
+	void setOTFType(PixelType type, int instrumentIndex, int OTFIndex);
+
+	//
+	// OTFRef property storage
+	//
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference OTFRef
+
+	//
+	// Objective property storage
+	//
+	// {u'Instrument': {u'OME': None}}
+	// Is multi path? False
+
+	void setObjectiveCalibratedMagnification(Double calibratedMagnification, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveCorrection(Correction correction, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveID(String id, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveImmersion(Immersion immersion, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveLensNA(Double lensNA, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveLotNumber(String lotNumber, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveModel(String model, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
+
+	void setObjectiveWorkingDistance(Double workingDistance, int instrumentIndex, int objectiveIndex);
+
+	//
+	// ObjectiveSettings property storage
+	//
+	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+	// Is multi path? True
+
+	void setImageObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex);
+
+	void setOTFObjectiveSettingsCorrectionCollar(Double correctionCollar, int instrumentIndex, int OTFIndex);
+
+	void setImageObjectiveSettingsID(String id, int imageIndex);
+
+	void setOTFObjectiveSettingsID(String id, int instrumentIndex, int OTFIndex);
+
+	void setImageObjectiveSettingsMedium(Medium medium, int imageIndex);
+
+	void setOTFObjectiveSettingsMedium(Medium medium, int instrumentIndex, int OTFIndex);
+
+	void setImageObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex);
+
+	void setOTFObjectiveSettingsRefractiveIndex(Double refractiveIndex, int instrumentIndex, int OTFIndex);
+
+	//
+	// Path property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setPathDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setPathFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setPathFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setPathID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setPathLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setPathName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setPathStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setPathStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setPathStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setPathTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setPathTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setPathTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setPathTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setPathDefinition(String definition, int ROIIndex, int shapeIndex);
+
+	//
+	// Pixels property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	void setPixelsAnnotationRef(String annotation, int imageIndex, int annotationRefIndex);
+
+	// Ignoring BinData element, complex property
+	// Ignoring Channel element, complex property
+	void setPixelsDimensionOrder(DimensionOrder dimensionOrder, int imageIndex);
+
+	void setPixelsID(String id, int imageIndex);
+
+	// Ignoring MetadataOnly element, complex property
+	void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex);
+
+	void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex);
+
+	void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex);
+
+	// Ignoring Plane element, complex property
+	void setPixelsSizeC(PositiveInteger sizeC, int imageIndex);
+
+	void setPixelsSizeT(PositiveInteger sizeT, int imageIndex);
+
+	void setPixelsSizeX(PositiveInteger sizeX, int imageIndex);
+
+	void setPixelsSizeY(PositiveInteger sizeY, int imageIndex);
+
+	void setPixelsSizeZ(PositiveInteger sizeZ, int imageIndex);
+
+	// Ignoring TiffData element, complex property
+	void setPixelsTimeIncrement(Double timeIncrement, int imageIndex);
+
+	void setPixelsType(PixelType type, int imageIndex);
+
+	//
+	// Plane property storage
+	//
+	// {u'Pixels': {u'Image': {u'OME': None}}}
+	// Is multi path? False
+
+	void setPlaneAnnotationRef(String annotation, int imageIndex, int planeIndex, int annotationRefIndex);
+
+	void setPlaneDeltaT(Double deltaT, int imageIndex, int planeIndex);
+
+	void setPlaneExposureTime(Double exposureTime, int imageIndex, int planeIndex);
+
+	void setPlaneHashSHA1(String hashSHA1, int imageIndex, int planeIndex);
+
+	void setPlanePositionX(Double positionX, int imageIndex, int planeIndex);
+
+	void setPlanePositionY(Double positionY, int imageIndex, int planeIndex);
+
+	void setPlanePositionZ(Double positionZ, int imageIndex, int planeIndex);
+
+	void setPlaneTheC(Integer theC, int imageIndex, int planeIndex);
+
+	void setPlaneTheT(Integer theT, int imageIndex, int planeIndex);
+
+	void setPlaneTheZ(Integer theZ, int imageIndex, int planeIndex);
+
+	//
+	// Plate property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setPlateAnnotationRef(String annotation, int plateIndex, int annotationRefIndex);
+
+	void setPlateColumnNamingConvention(NamingConvention columnNamingConvention, int plateIndex);
+
+	void setPlateColumns(Integer columns, int plateIndex);
+
+	void setPlateDescription(String description, int plateIndex);
+
+	void setPlateExternalIdentifier(String externalIdentifier, int plateIndex);
+
+	void setPlateID(String id, int plateIndex);
+
+	void setPlateName(String name, int plateIndex);
+
+	// Ignoring PlateAcquisition element, complex property
+	void setPlateRowNamingConvention(NamingConvention rowNamingConvention, int plateIndex);
+
+	void setPlateRows(Integer rows, int plateIndex);
+
+	void setPlateScreenRef(String screen, int plateIndex, int screenRefIndex);
+
+	void setPlateStatus(String status, int plateIndex);
+
+	// Ignoring Well element, complex property
+	void setPlateWellOriginX(Double wellOriginX, int plateIndex);
+
+	void setPlateWellOriginY(Double wellOriginY, int plateIndex);
+
+	//
+	// PlateAcquisition property storage
+	//
+	// {u'Plate': {u'OME': None}}
+	// Is multi path? False
+
+	void setPlateAcquisitionAnnotationRef(String annotation, int plateIndex, int plateAcquisitionIndex, int annotationRefIndex);
+
+	void setPlateAcquisitionDescription(String description, int plateIndex, int plateAcquisitionIndex);
+
+	void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex);
+
+	void setPlateAcquisitionID(String id, int plateIndex, int plateAcquisitionIndex);
+
+	void setPlateAcquisitionMaximumFieldCount(Integer maximumFieldCount, int plateIndex, int plateAcquisitionIndex);
+
+	void setPlateAcquisitionName(String name, int plateIndex, int plateAcquisitionIndex);
+
+	void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex);
+
+	void setPlateAcquisitionWellSampleRef(String wellSample, int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
+
+	//
+	// PlateRef property storage
+	//
+	// {u'Screen': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference PlateRef
+
+	//
+	// Point property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setPointDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setPointFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setPointFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setPointID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setPointLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setPointName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setPointStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setPointStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setPointStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setPointTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setPointTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setPointTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setPointTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setPointX(Double x, int ROIIndex, int shapeIndex);
+
+	void setPointY(Double y, int ROIIndex, int shapeIndex);
+
+	//
+	// Polyline property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setPolylineDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setPolylineFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setPolylineFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setPolylineID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setPolylineLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setPolylineName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setPolylineStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setPolylineStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setPolylineStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setPolylineTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setPolylineTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setPolylineTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setPolylineTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setPolylineClosed(Boolean closed, int ROIIndex, int shapeIndex);
+
+	void setPolylinePoints(String points, int ROIIndex, int shapeIndex);
+
+	//
+	// Project property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setProjectAnnotationRef(String annotation, int projectIndex, int annotationRefIndex);
+
+	// Ignoring Dataset_BackReference back reference
+	void setProjectDescription(String description, int projectIndex);
+
+	void setProjectExperimenterRef(String experimenter, int projectIndex);
+
+	void setProjectGroupRef(String group, int projectIndex);
+
+	void setProjectID(String id, int projectIndex);
+
+	void setProjectName(String name, int projectIndex);
+
+	//
+	// ProjectRef property storage
+	//
+	// {u'Dataset': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference ProjectRef
+
+	//
+	// Pump property storage
+	//
+	// {u'Laser': {u'LightSource': {u'Instrument': {u'OME': None}}}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference Pump
+
+	//
+	// ROI property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setROIAnnotationRef(String annotation, int ROIIndex, int annotationRefIndex);
+
+	void setROIDescription(String description, int ROIIndex);
+
+	void setROIID(String id, int ROIIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
+	void setROIName(String name, int ROIIndex);
+
+	void setROINamespace(String namespace, int ROIIndex);
+
+	// Ignoring Union element, complex property
+	//
+	// ROIRef property storage
+	//
+	// {u'Image': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ROIRef
+
+	//
+	// Reagent property storage
+	//
+	// {u'Screen': {u'OME': None}}
+	// Is multi path? False
+
+	void setReagentAnnotationRef(String annotation, int screenIndex, int reagentIndex, int annotationRefIndex);
+
+	void setReagentDescription(String description, int screenIndex, int reagentIndex);
+
+	void setReagentID(String id, int screenIndex, int reagentIndex);
+
+	void setReagentName(String name, int screenIndex, int reagentIndex);
+
+	void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
+
+	// Ignoring Well_BackReference back reference
+	//
+	// ReagentRef property storage
+	//
+	// {u'Well': {u'Plate': {u'OME': None}}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference ReagentRef
+
+	//
+	// Rectangle property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setRectangleDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setRectangleFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setRectangleFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setRectangleID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setRectangleLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setRectangleName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setRectangleStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setRectangleStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setRectangleStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setRectangleTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setRectangleTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setRectangleTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setRectangleTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setRectangleHeight(Double height, int ROIIndex, int shapeIndex);
+
+	void setRectangleWidth(Double width, int ROIIndex, int shapeIndex);
+
+	void setRectangleX(Double x, int ROIIndex, int shapeIndex);
+
+	void setRectangleY(Double y, int ROIIndex, int shapeIndex);
+
+	//
+	// Screen property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	void setScreenAnnotationRef(String annotation, int screenIndex, int annotationRefIndex);
+
+	void setScreenDescription(String description, int screenIndex);
+
+	void setScreenID(String id, int screenIndex);
+
+	void setScreenName(String name, int screenIndex);
+
+	void setScreenPlateRef(String plate, int screenIndex, int plateRefIndex);
+
+	void setScreenProtocolDescription(String protocolDescription, int screenIndex);
+
+	void setScreenProtocolIdentifier(String protocolIdentifier, int screenIndex);
+
+	// Ignoring Reagent element, complex property
+	void setScreenReagentSetDescription(String reagentSetDescription, int screenIndex);
+
+	void setScreenReagentSetIdentifier(String reagentSetIdentifier, int screenIndex);
+
+	void setScreenType(String type, int screenIndex);
+
+	//
+	// ScreenRef property storage
+	//
+	// {u'Plate': {u'OME': None}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference ScreenRef
+
+	//
+	// StageLabel property storage
+	//
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
+
+	void setStageLabelName(String name, int imageIndex);
+
+	void setStageLabelX(Double x, int imageIndex);
+
+	void setStageLabelY(Double y, int imageIndex);
+
+	void setStageLabelZ(Double z, int imageIndex);
+
+	//
+	// StringAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setStringAnnotationID(String id, int stringAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setStringAnnotationNamespace(String namespace, int stringAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	void setStringAnnotationValue(String value, int stringAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// StructuredAnnotations property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring StringAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
+	//
+	// Text property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring AnnotationRef of parent abstract type
+	// Description accessor from parent Shape
+	void setTextDescription(String description, int ROIIndex, int shapeIndex);
+
+	// Ignoring Ellipse of parent abstract type
+	// Fill accessor from parent Shape
+	void setTextFill(Integer fill, int ROIIndex, int shapeIndex);
+
+	// Ignoring FillRule of parent abstract type
+	// Ignoring FontFamily of parent abstract type
+	// FontSize accessor from parent Shape
+	void setTextFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+
+	// Ignoring FontStyle of parent abstract type
+	// ID accessor from parent Shape
+	void setTextID(String id, int ROIIndex, int shapeIndex);
+
+	// Label accessor from parent Shape
+	void setTextLabel(String label, int ROIIndex, int shapeIndex);
+
+	// Ignoring Line of parent abstract type
+	// Ignoring LineCap of parent abstract type
+	// Ignoring MarkerEnd of parent abstract type
+	// Ignoring MarkerStart of parent abstract type
+	// Ignoring Mask of parent abstract type
+	// Name accessor from parent Shape
+	void setTextName(String name, int ROIIndex, int shapeIndex);
+
+	// Ignoring Path of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// Stroke accessor from parent Shape
+	void setTextStroke(Integer stroke, int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	void setTextStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	void setTextStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex);
+
+	// Ignoring Text of parent abstract type
+	// TheC accessor from parent Shape
+	void setTextTheC(Integer theC, int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	void setTextTheT(Integer theT, int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	void setTextTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	void setTextTransform(String transform, int ROIIndex, int shapeIndex);
+
+	void setTextValue(String value, int ROIIndex, int shapeIndex);
+
+	void setTextX(Double x, int ROIIndex, int shapeIndex);
+
+	void setTextY(Double y, int ROIIndex, int shapeIndex);
+
+	//
+	// TiffData property storage
+	//
+	// {u'Pixels': {u'Image': {u'OME': None}}}
+	// Is multi path? False
+
+	void setTiffDataFirstC(Integer firstC, int imageIndex, int tiffDataIndex);
+
+	void setTiffDataFirstT(Integer firstT, int imageIndex, int tiffDataIndex);
+
+	void setTiffDataFirstZ(Integer firstZ, int imageIndex, int tiffDataIndex);
+
+	void setTiffDataIFD(Integer ifd, int imageIndex, int tiffDataIndex);
+
+	void setTiffDataPlaneCount(Integer planeCount, int imageIndex, int tiffDataIndex);
+
+	// Ignoring UUID element, complex property
+	//
+	// TimestampAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setTimestampAnnotationID(String id, int timestampAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setTimestampAnnotationNamespace(String namespace, int timestampAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	void setTimestampAnnotationValue(String value, int timestampAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
+	//
+	// TransmittanceRange property storage
+	//
+	// {u'Filter': {u'Instrument': {u'OME': None}}}
+	// Is multi path? False
+
+	void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex);
+
+	void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex);
+
+	void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex);
+
+	void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex);
+
+	void setTransmittanceRangeTransmittance(PercentFraction transmittance, int instrumentIndex, int filterIndex);
+
+	//
+	// UUID property storage
+	//
+	// {u'TiffData': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Is multi path? False
+
+	void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex);
+
+	//
+	// Union property storage
+	//
+	// {u'ROI': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Shape element, complex property
+	//
+	// Well property storage
+	//
+	// {u'Plate': {u'OME': None}}
+	// Is multi path? False
+
+	void setWellAnnotationRef(String annotation, int plateIndex, int wellIndex, int annotationRefIndex);
+
+	void setWellColor(Integer color, int plateIndex, int wellIndex);
+
+	void setWellColumn(NonNegativeInteger column, int plateIndex, int wellIndex);
+
+	void setWellExternalDescription(String externalDescription, int plateIndex, int wellIndex);
+
+	void setWellExternalIdentifier(String externalIdentifier, int plateIndex, int wellIndex);
+
+	void setWellID(String id, int plateIndex, int wellIndex);
+
+	void setWellReagentRef(String reagent, int plateIndex, int wellIndex);
+
+	void setWellRow(NonNegativeInteger row, int plateIndex, int wellIndex);
+
+	void setWellStatus(String status, int plateIndex, int wellIndex);
+
+	// Ignoring WellSample element, complex property
+	//
+	// WellSample property storage
+	//
+	// {u'Well': {u'Plate': {u'OME': None}}}
+	// Is multi path? False
+
+	void setWellSampleAnnotationRef(String annotation, int plateIndex, int wellIndex, int wellSampleIndex, int annotationRefIndex);
+
+	void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex);
+
+	void setWellSampleImageRef(String image, int plateIndex, int wellIndex, int wellSampleIndex);
+
+	void setWellSampleIndex(NonNegativeInteger index, int plateIndex, int wellIndex, int wellSampleIndex);
+
+	// Ignoring PlateAcquisition_BackReference back reference
+	void setWellSamplePositionX(Double positionX, int plateIndex, int wellIndex, int wellSampleIndex);
+
+	void setWellSamplePositionY(Double positionY, int plateIndex, int wellIndex, int wellSampleIndex);
+
+	void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
+
+	//
+	// WellSampleRef property storage
+	//
+	// {u'PlateAcquisition': {u'Plate': {u'OME': None}}}
+	// Is multi path? False
+
+	// 1:1
+	// Is multi path? False
+	// Ignoring ID property of reference WellSampleRef
+
+	//
+	// XMLAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	// Ignoring Experimenter_BackReference back reference
+	void setXMLAnnotationID(String id, int XMLAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	// Ignoring ListAnnotation_BackReference back reference
+	void setXMLAnnotationNamespace(String namespace, int XMLAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	// Ignoring Shape_BackReference back reference
+	void setXMLAnnotationValue(String value, int XMLAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 }

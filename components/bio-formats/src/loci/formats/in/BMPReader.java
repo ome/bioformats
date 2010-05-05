@@ -32,7 +32,6 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -279,8 +278,7 @@ public class BMPReader extends FormatReader {
 
     // Populate metadata store.
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -291,8 +289,8 @@ public class BMPReader extends FormatReader {
       double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
       double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
 
-      store.setDimensionsPhysicalSizeX(correctedX, 0, 0);
-      store.setDimensionsPhysicalSizeY(correctedY, 0, 0);
+      store.setPixelsPhysicalSizeX(correctedX, 0);
+      store.setPixelsPhysicalSizeY(correctedY, 0);
     }
   }
 

@@ -32,8 +32,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.AcquisitionMode;
+import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -192,20 +194,19 @@ public class GatanReader extends FormatReader {
     core[0].falseColor = false;
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       if (pixelSizes.size() > 0) {
-        store.setDimensionsPhysicalSizeX(pixelSizes.get(0), 0, 0);
+        store.setPixelsPhysicalSizeX(pixelSizes.get(0), 0);
       }
       if (pixelSizes.size() > 1) {
-        store.setDimensionsPhysicalSizeY(pixelSizes.get(1), 0, 0);
+        store.setPixelsPhysicalSizeY(pixelSizes.get(1), 0);
       }
       if (pixelSizes.size() > 2) {
-        store.setDimensionsPhysicalSizeZ(pixelSizes.get(2), 0, 0);
+        store.setPixelsPhysicalSizeZ(pixelSizes.get(2), 0);
       }
 
       if (info == null) info = "";
@@ -216,7 +217,11 @@ public class GatanReader extends FormatReader {
           token = token.substring(token.indexOf(" ")).trim();
           String mode = token.substring(0, token.indexOf(" ")).trim();
           if (mode.equals("TEM")) mode = "Other";
-          store.setLogicalChannelMode(mode, 0, 0);
+          try {
+            store.setChannelAcquisitionMode(
+              AcquisitionMode.fromString(mode), 0, 0);
+          }
+          catch (EnumerationException e) { }
         }
       }
     }

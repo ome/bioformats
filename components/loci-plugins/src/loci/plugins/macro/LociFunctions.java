@@ -301,7 +301,7 @@ public class LociFunctions extends MacroFunctions {
 
   public void getImageCreationDate(String[] creationDate) {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    creationDate[0] = retrieve.getImageCreationDate(r.getSeries());
+    creationDate[0] = retrieve.getImageAcquiredDate(r.getSeries());
   }
 
   public void getPlaneTimingDeltaT(Double[] deltaT, Double no) {
@@ -310,7 +310,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Double val = null;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneTimingDeltaT(imageIndex, 0, planeIndex);
+      val = retrieve.getPlaneDeltaT(imageIndex, planeIndex);
     }
     deltaT[0] = val == null ? new Double(Double.NaN) : val;
   }
@@ -321,7 +321,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Double val = null;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneTimingExposureTime(imageIndex, 0, planeIndex);
+      val = retrieve.getPlaneExposureTime(imageIndex, planeIndex);
     }
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
@@ -512,12 +512,12 @@ public class LociFunctions extends MacroFunctions {
   private static int getPlaneIndex(IFormatReader r, int no) {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     int imageIndex = r.getSeries();
-    int planeCount = retrieve.getPlaneCount(imageIndex, 0);
+    int planeCount = retrieve.getPlaneCount(imageIndex);
     int[] zct = r.getZCTCoords(no);
     for (int i=0; i<planeCount; i++) {
-      Integer theC = retrieve.getPlaneTheC(imageIndex, 0, i);
-      Integer theT = retrieve.getPlaneTheT(imageIndex, 0, i);
-      Integer theZ = retrieve.getPlaneTheZ(imageIndex, 0, i);
+      Integer theC = retrieve.getPlaneTheC(imageIndex, i);
+      Integer theT = retrieve.getPlaneTheT(imageIndex, i);
+      Integer theZ = retrieve.getPlaneTheZ(imageIndex, i);
       if (zct[0] == theZ.intValue() && zct[1] == theC.intValue() &&
         zct[2] == theT.intValue())
       {

@@ -30,7 +30,6 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.TiffParser;
 
@@ -214,19 +213,18 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
-      store.setDimensionsPhysicalSizeZ(pixelSizeZ, 0, 0);
-      store.setDimensionsTimeIncrement(pixelSizeT / 1000000.0, 0, 0);
+      store.setPixelsPhysicalSizeX(pixelSizeX, 0);
+      store.setPixelsPhysicalSizeY(pixelSizeY, 0);
+      store.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
+      store.setPixelsTimeIncrement(pixelSizeT / 1000000.0, 0);
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (cNames != null && i < cNames.length) {
-          store.setLogicalChannelName(cNames[i], 0, i); 
-        } 
+          store.setChannelName(cNames[i], 0, i);
+        }
       }
     }
   }

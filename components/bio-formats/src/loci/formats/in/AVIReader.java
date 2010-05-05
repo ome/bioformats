@@ -36,7 +36,6 @@ import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.MSRLECodec;
 import loci.formats.codec.MSVideoCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -528,8 +527,7 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
   }

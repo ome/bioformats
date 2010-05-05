@@ -40,7 +40,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
@@ -279,12 +278,11 @@ public class IPWReader extends FormatReader {
     int bitsPerSample = firstIFD.getBitsPerSample()[0];
     core[0].pixelType = firstIFD.getPixelType();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     store.setImageDescription(description, 0);
     if (creationDate != null) {
-      store.setImageCreationDate(creationDate, 0);
+      store.setImageAcquiredDate(creationDate, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
   }

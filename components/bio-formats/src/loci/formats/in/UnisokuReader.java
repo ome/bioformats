@@ -33,7 +33,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -182,17 +181,16 @@ public class UnisokuReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].littleEndian = true;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageCreationDate(date, 0);
+    store.setImageAcquiredDate(date, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription(remark, 0);
-      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+      store.setPixelsPhysicalSizeX(pixelSizeX, 0);
+      store.setPixelsPhysicalSizeY(pixelSizeY, 0);
     }
   }
 

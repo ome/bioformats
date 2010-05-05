@@ -40,7 +40,6 @@ import loci.formats.codec.MJPBCodecOptions;
 import loci.formats.codec.QTRLECodec;
 import loci.formats.codec.RPZACodec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -363,8 +362,7 @@ public class NativeQTReader extends FormatReader {
     core[0].sizeT = getImageCount();
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
   }

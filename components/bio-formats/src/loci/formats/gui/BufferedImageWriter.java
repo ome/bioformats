@@ -97,7 +97,7 @@ public class BufferedImageWriter extends WriterWrapper {
 
       MetadataRetrieve r = getMetadataRetrieve();
       if (r != null) {
-        Boolean bigEndian = r.getPixelsBigEndian(series, 0);
+        Boolean bigEndian = r.getPixelsBinDataBigEndian(series, 0);
         if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
       }
 

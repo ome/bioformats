@@ -32,8 +32,13 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -230,13 +235,12 @@ public class IvisionReader extends FormatReader {
     core[0].imageCount = getSizeZ() * getSizeT();
 
     LOGGER.info("Populating MetadataStore");
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
       String date = DateTools.formatDate(creationDate, DATE_FORMAT);
-      store.setImageCreationDate(date, 0);
+      store.setImageAcquiredDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
@@ -247,32 +251,38 @@ public class IvisionReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       if (deltaT != null) {
-        store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
+        store.setPixelsTimeIncrement(new Double(deltaT), 0);
       }
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
 
-      store.setObjectiveCorrection("Unknown", 0, 0);
-      store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (magnification != null) {
         store.setObjectiveNominalMagnification(magnification, 0, 0);
       }
       if (refractiveIndex != null) {
-        store.setObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
+        store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
       }
 
       String detectorID = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detectorID, 0, 0);
-      store.setDetectorSettingsDetector(detectorID, 0, 0);
+      store.setDetectorSettingsID(detectorID, 0, 0);
 
-      store.setDetectorType("Unknown", 0, 0);
+      store.setDetectorType(DetectorType.OTHER, 0, 0);
 
-      store.setDetectorSettingsBinning(binX + "x" + binY, 0, 0);
-      if (gain != null) store.setDetectorSettingsGain(new Double(gain), 0, 0);
+      try {
+        store.setDetectorSettingsBinning(
+          Binning.fromString(binX + "x" + binY), 0, 0);
+      }
+      catch (EnumerationException e) { }
+      if (gain != null) {
+        store.setDetectorSettingsGain(new Double(gain), 0, 0);
+      }
     }
   }
 

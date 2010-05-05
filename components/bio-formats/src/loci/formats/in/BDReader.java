@@ -42,10 +42,15 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.NamingConvention;
+import ome.xml.r201004.primitives.NonNegativeInteger;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * BDReader is the file format reader for BD Pathway datasets.
@@ -255,8 +260,7 @@ public class BDReader extends FormatReader {
       core[i].imageCount = nSlices * nTimepoints * nChannels;
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     boolean populatePlanes =
       getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL;
     MetadataTools.populatePixels(store, this, populatePlanes);
@@ -268,10 +272,10 @@ public class BDReader extends FormatReader {
       String row = name.substring(0, 1);
       Integer col = Integer.parseInt(name.substring(1));
 
-      store.setWellColumn(col - 1, 0, i);
-      store.setWellRow(row.charAt(0)-'A', 0, i);
+      store.setWellColumn(new NonNegativeInteger(col - 1), 0, i);
+      store.setWellRow(new NonNegativeInteger(row.charAt(0) - 'A'), 0, i);
 
-      store.setWellSampleIndex(i, 0, i, 0);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
 
       String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleImageRef(imageID, 0, i, 0);
@@ -311,29 +315,34 @@ public class BDReader extends FormatReader {
       // populate LogicalChannel data
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setObjectiveSettingsObjective(objectiveID, i);
+        store.setImageObjectiveSettingsID(objectiveID, i);
 
         for (int c=0; c<getSizeC(); c++) {
-          store.setLogicalChannelName(channelNames.get(c), i, c);
-          store.setLogicalChannelEmWave(emWave[c], i, c);
-          store.setLogicalChannelExWave(exWave[c], i, c);
+          store.setChannelName(channelNames.get(c), i, c);
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWave[c]), i, c);
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWave[c]), i, c);
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);
           store.setDetectorID(detectorID, 0, c);
-          store.setDetectorSettingsDetector(detectorID, i, c);
+          store.setDetectorSettingsID(detectorID, i, c);
           store.setDetectorSettingsGain(gain[c], i, c);
           store.setDetectorSettingsOffset(offset[c], i, c);
-          store.setDetectorSettingsBinning(binning, i, c);
+          try {
+            store.setDetectorSettingsBinning(Binning.fromString(binning), i, c);
+          }
+          catch (EnumerationException e) { }
         }
 
         for (int p=0; p<getImageCount(); p++) {
           int[] zct = getZCTCoords(p);
-          store.setPlaneTimingExposureTime(exposure[zct[1]], i, 0, p);
+          store.setPlaneExposureTime(exposure[zct[1]], i, p);
         }
       }
 
-      store.setPlateRowNamingConvention("A", 0);
-      store.setPlateColumnNamingConvention("01", 0);
+      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
       store.setPlateName(plateName, 0);
       store.setPlateDescription(plateDescription, 0);
 
@@ -507,10 +516,13 @@ public class BDReader extends FormatReader {
       if (cols.length < 6) break;
 
       if (cols[2].trim().length() > 0) {
-        store.setRectX(cols[2], 0, i - firstRow, 0);
-        store.setRectY(cols[3], 0, i - firstRow, 0);
-        store.setRectWidth(cols[4], 0, i - firstRow, 0);
-        store.setRectHeight(cols[5], 0, i - firstRow, 0);
+        store.setRectangleX(new Double(cols[2]), i - firstRow, 0);
+        store.setRectangleY(new Double(cols[3]), i - firstRow, 0);
+        store.setRectangleWidth(new Double(cols[4]), i - firstRow, 0);
+        store.setRectangleHeight(new Double(cols[5]), i - firstRow, 0);
+        String roiID = MetadataTools.createLSID("Rectangle", i - firstRow, 0);
+        store.setRectangleID(roiID, i - firstRow, 0);
+        store.setImageROIRef(roiID, 0, i - firstRow);
       }
     }
   }

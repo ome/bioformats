@@ -40,7 +40,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MDBService;
 import loci.formats.tiff.IFD;
@@ -49,6 +48,15 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.FilterType;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -350,8 +358,7 @@ public class ZeissLSMReader extends FormatReader {
       s.close();
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     for (int series=0; series<ifdsList.size(); series++) {
       IFDList ifds = ifdsList.get(series);
@@ -390,7 +397,7 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       initMetadata(series);
-      store.setPixelsBigEndian(!isLittleEndian(), series, 0);
+      store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
     for (int series=0; series<ifdsList.size(); series++) {
       store.setImageName(imageNames.get(series), series);
@@ -446,8 +453,7 @@ public class ZeissLSMReader extends FormatReader {
 
     LOGGER.info("Reading LSM metadata for series #{}", series);
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     String imageName = lsmFilenames[series];
     if (imageName.indexOf(".") != -1) {
@@ -864,9 +870,9 @@ public class ZeissLSMReader extends FormatReader {
       Double pixY = new Double(pixelSizeY);
       Double pixZ = new Double(pixelSizeZ);
 
-      store.setDimensionsPhysicalSizeX(pixX, series, 0);
-      store.setDimensionsPhysicalSizeY(pixY, series, 0);
-      store.setDimensionsPhysicalSizeZ(pixZ, series, 0);
+      store.setPixelsPhysicalSizeX(pixX, series);
+      store.setPixelsPhysicalSizeY(pixY, series);
+      store.setPixelsPhysicalSizeZ(pixZ, series);
 
       double firstStamp = 0;
       if (timestamps.size() > 0) {
@@ -878,14 +884,14 @@ public class ZeissLSMReader extends FormatReader {
 
         if (zct[2] < timestamps.size()) {
           double thisStamp = timestamps.get(zct[2]).doubleValue();
-          store.setPlaneTimingDeltaT(thisStamp - firstStamp, series, 0, i);
+          store.setPlaneDeltaT(thisStamp - firstStamp, series, i);
           int index = zct[2] + 1;
           double nextStamp = index < timestamps.size() ?
             timestamps.get(index).doubleValue() : thisStamp;
           if (i == getSizeT() - 1 && zct[2] > 0) {
             thisStamp = timestamps.get(zct[2] - 1).doubleValue();
           }
-          store.setPlaneTimingExposureTime(nextStamp - thisStamp, series, 0, i);
+          store.setPlaneExposureTime(nextStamp - thisStamp, series, i);
         }
       }
     }
@@ -907,12 +913,20 @@ public class ZeissLSMReader extends FormatReader {
       String objectiveID = MetadataTools.createLSID("Objective", series, 0);
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
-        store.setImageCreationDate(recording.startTime, series);
-        store.setObjectiveSettingsObjective(objectiveID, series);
+        store.setImageAcquiredDate(recording.startTime, series);
+        store.setImageObjectiveSettingsID(objectiveID, series);
         binning = recording.binning;
       }
-      store.setObjectiveCorrection(recording.correction, series, 0);
-      store.setObjectiveImmersion(recording.immersion, series, 0);
+      try {
+        store.setObjectiveCorrection(
+          Correction.fromString(recording.correction), series, 0);
+      }
+      catch (EnumerationException e) { }
+      try {
+        store.setObjectiveImmersion(
+          Immersion.fromString(recording.immersion), series, 0);
+      }
+      catch (EnumerationException e) { }
       store.setObjectiveNominalMagnification(recording.magnification,
         series, 0);
       store.setObjectiveLensNA(recording.lensNA, series, 0);
@@ -922,20 +936,28 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
       if (laser.medium != null) {
-        store.setLaserLaserMedium(laser.medium, series, nextLaser);
+        try {
+          store.setLaserLaserMedium(LaserMedium.fromString(laser.medium),
+            series, nextLaser);
+        }
+        catch (EnumerationException e) { }
       }
       if (laser.type != null) {
-        store.setLaserType(laser.type, series, nextLaser);
+        try {
+          store.setLaserType(
+            LaserType.fromString(laser.type), series, nextLaser);
+        }
+        catch (EnumerationException e) { }
       }
       String lightSourceID =
         MetadataTools.createLSID("LightSource", series, nextLaser);
-      store.setLightSourceID(lightSourceID, series, nextLaser);
+      store.setLaserID(lightSourceID, series, nextLaser);
       nextLaser++;
     }
     else if (block instanceof Track) {
       Track track = (Track) block;
       if (track.acquire) {
-        store.setDimensionsTimeIncrement(track.timeIncrement, series, 0);
+        store.setPixelsTimeIncrement(track.timeIncrement, series);
       }
     }
     else if (block instanceof DataChannel) {
@@ -943,7 +965,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.name != null && nextDataChannel < getSizeC() &&
         channel.acquire)
       {
-        store.setLogicalChannelName(channel.name, series, nextDataChannel++);
+        store.setChannelName(channel.name, series, nextDataChannel++);
       }
     }
     else if (block instanceof DetectionChannel) {
@@ -951,14 +973,14 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.pinhole != null && channel.pinhole.doubleValue() != 0f &&
         nextDetectChannel < getSizeC() && channel.acquire)
       {
-        store.setLogicalChannelPinholeSize(channel.pinhole, series,
-          nextDetectChannel);
+        store.setChannelPinholeSize(channel.pinhole, series, nextDetectChannel);
       }
       if (channel.filter != null) {
         String id = MetadataTools.createLSID("Filter", series, nextFilter);
         if (channel.acquire && nextDetectChannel < getSizeC()) {
-          store.setLogicalChannelSecondaryEmissionFilter(
-            id, series, nextDetectChannel);
+          // TODO
+          //store.setLogicalChannelSecondaryEmissionFilter(
+          //  id, series, nextDetectChannel);
         }
         store.setFilterID(id, series, nextFilter);
         store.setFilterModel(channel.filter, series, nextFilter);
@@ -969,7 +991,11 @@ public class ZeissLSMReader extends FormatReader {
           if (type.equals("BP")) type = "BandPass";
           else if (type.equals("LP")) type = "LongPass";
 
-          store.setFilterType(type, series, nextFilter);
+          try {
+            store.setFilterType(
+              FilterType.fromString(type), series, nextFilter);
+          }
+          catch (EnumerationException e) { }
 
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
@@ -994,8 +1020,12 @@ public class ZeissLSMReader extends FormatReader {
           MetadataTools.createLSID("Detector", series, nextDetector);
         store.setDetectorID(detectorID, series, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
-          store.setDetectorSettingsDetector(detectorID, series, nextDetector);
-          store.setDetectorSettingsBinning(binning, series, nextDetector);
+          store.setDetectorSettingsID(detectorID, series, nextDetector);
+          try {
+            store.setDetectorSettingsBinning(
+              Binning.fromString(binning), series, nextDetector);
+          }
+          catch (EnumerationException e) { }
         }
       }
       if (channel.amplificationGain != null) {
@@ -1005,7 +1035,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.gain != null) {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
-      store.setDetectorType("PMT", series, nextDetector);
+      store.setDetectorType(DetectorType.PMT, series, nextDetector);
       store.setDetectorZoom(zoom, series, nextDetector);
       nextDetectChannel++;
       nextDetector++;
@@ -1020,7 +1050,7 @@ public class ZeissLSMReader extends FormatReader {
           String id = MetadataTools.createLSID("Dichroic", series, nextFilter);
           store.setDichroicID(id, series, nextFilter);
           store.setDichroicModel(beamSplitter.filter, series, nextFilter);
-          store.setFilterSetDichroic(id, series, nextFilterSet);
+          store.setFilterSetDichroicRef(id, series, nextFilterSet);
           nextFilter++;
         }
         nextFilterSet++;
@@ -1050,7 +1080,7 @@ public class ZeissLSMReader extends FormatReader {
       long offset = in.getFilePointer();
       int type = in.readInt();
       int blockLength = in.readInt();
-      int lineWidth = in.readInt();
+      double lineWidth = in.readInt();
       int measurements = in.readInt();
       double textOffsetX = in.readDouble();
       double textOffsetY = in.readDouble();
@@ -1081,7 +1111,9 @@ public class ZeissLSMReader extends FormatReader {
           double x = in.readDouble();
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
-          store.setShapeText(text, series, i, 0);
+          store.setTextValue(text, i, 0);
+          store.setTextFontSize(fontHeight, i, 0);
+          store.setTextStrokeWidth(lineWidth, i, 0);
           break;
         case LINE:
           in.skipBytes(4);
@@ -1090,10 +1122,12 @@ public class ZeissLSMReader extends FormatReader {
           double endX = in.readDouble();
           double endY = in.readDouble();
 
-          store.setLineX1(String.valueOf(startX), series, i, 0);
-          store.setLineY1(String.valueOf(startY), series, i, 0);
-          store.setLineX2(String.valueOf(endX), series, i, 0);
-          store.setLineY2(String.valueOf(endY), series, i, 0);
+          store.setLineX1(startX, i, 0);
+          store.setLineY1(startY, i, 0);
+          store.setLineX2(endX, i, 0);
+          store.setLineY2(endY, i, 0);
+          store.setLineFontSize(fontHeight, i, 0);
+          store.setLineStrokeWidth(lineWidth, i, 0);
           break;
         case SCALE_BAR:
         case OPEN_ARROW:
@@ -1113,10 +1147,12 @@ public class ZeissLSMReader extends FormatReader {
           topX = Math.min(topX, bottomX);
           topY = Math.min(topY, bottomY);
 
-          store.setRectX(String.valueOf(topX), series, i, 0);
-          store.setRectY(String.valueOf(topY), series, i, 0);
-          store.setRectWidth(String.valueOf(width), series, i, 0);
-          store.setRectHeight(String.valueOf(height), series, i, 0);
+          store.setRectangleX(topX, i, 0);
+          store.setRectangleY(topY, i, 0);
+          store.setRectangleWidth(width, i, 0);
+          store.setRectangleHeight(height, i, 0);
+          store.setRectangleFontSize(fontHeight, i, 0);
+          store.setRectangleStrokeWidth(lineWidth, i, 0);
 
           break;
         case ELLIPSE:
@@ -1164,13 +1200,15 @@ public class ZeissLSMReader extends FormatReader {
             double theta = Math.toDegrees(Math.atan(slope));
 
             store.setEllipseTransform("rotate(" + theta + " " + centerX +
-              " " + centerY + ")", series, i, 0);
+              " " + centerY + ")", i, 0);
           }
 
-          store.setEllipseCx(String.valueOf(centerX), series, i, 0);
-          store.setEllipseCy(String.valueOf(centerY), series, i, 0);
-          store.setEllipseRx(String.valueOf(rx), series, i, 0);
-          store.setEllipseRy(String.valueOf(ry), series, i, 0);
+          store.setEllipseX(centerX, i, 0);
+          store.setEllipseY(centerY, i, 0);
+          store.setEllipseRadiusX(rx, i, 0);
+          store.setEllipseRadiusY(ry, i, 0);
+          store.setEllipseFontSize(fontHeight, i, 0);
+          store.setEllipseStrokeWidth(lineWidth, i, 0);
 
           break;
         case CIRCLE:
@@ -1183,9 +1221,12 @@ public class ZeissLSMReader extends FormatReader {
           double radius = Math.sqrt(Math.pow(curveX - centerX, 2) +
             Math.pow(curveY - centerY, 2));
 
-          store.setCircleCx(String.valueOf(centerX), series, i, 0);
-          store.setCircleCy(String.valueOf(centerY), series, i, 0);
-          store.setCircleR(String.valueOf(radius), series, i, 0);
+          store.setEllipseX(centerX, i, 0);
+          store.setEllipseY(centerY, i, 0);
+          store.setEllipseRadiusX(radius, i, 0);
+          store.setEllipseRadiusY(radius, i, 0);
+          store.setEllipseFontSize(fontHeight, i, 0);
+          store.setEllipseStrokeWidth(lineWidth, i, 0);
 
           break;
         case CIRCLE_3POINT:
@@ -1215,9 +1256,12 @@ public class ZeissLSMReader extends FormatReader {
           double r = Math.sqrt(Math.pow(points[0][0] - cx, 2) +
             Math.pow(points[0][1] - cy, 2));
 
-          store.setCircleCx(String.valueOf(cx), series, i, 0);
-          store.setCircleCy(String.valueOf(cy), series, i, 0);
-          store.setCircleR(String.valueOf(r), series, i, 0);
+          store.setEllipseX(cx, i, 0);
+          store.setEllipseY(cy, i, 0);
+          store.setEllipseRadiusX(r, i, 0);
+          store.setEllipseRadiusY(r, i, 0);
+          store.setEllipseFontSize(fontHeight, i, 0);
+          store.setEllipseStrokeWidth(lineWidth, i, 0);
 
           break;
         case ANGLE:
@@ -1237,7 +1281,9 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
-          store.setPolylinePoints(p.toString(), series, i, 0);
+          store.setPolylinePoints(p.toString(), i, 0);
+          store.setPolylineFontSize(fontHeight, i, 0);
+          store.setPolylineStrokeWidth(lineWidth, i, 0);
 
           break;
         case CLOSED_POLYLINE:
@@ -1259,10 +1305,10 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
-          if (type == CLOSED_POLYLINE) {
-            store.setPolygonPoints(p.toString(), series, i, 0);
-          }
-          else store.setPolylinePoints(p.toString(), series, i, 0);
+          store.setPolylinePoints(p.toString(), i, 0);
+          store.setPolylineClosed(type == CLOSED_POLYLINE, i, 0);
+          store.setPolylineFontSize(fontHeight, i, 0);
+          store.setPolylineStrokeWidth(lineWidth, i, 0);
 
           break;
         case CLOSED_BEZIER:
@@ -1284,10 +1330,10 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
-          if (type == OPEN_BEZIER) {
-            store.setPolylinePoints(p.toString(), series, i, 0);
-          }
-          else store.setPolygonPoints(p.toString(), series, i, 0);
+          store.setPolylinePoints(p.toString(), i, 0);
+          store.setPolylineClosed(type != OPEN_BEZIER, i, 0);
+          store.setPolylineFontSize(fontHeight, i, 0);
+          store.setPolylineStrokeWidth(lineWidth, i, 0);
 
           break;
         default:
@@ -1297,17 +1343,6 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       // populate shape attributes
-
-      store.setShapeFontFamily(fontName, series, i, 0);
-      store.setShapeFontSize(fontHeight, series, i, 0);
-      store.setShapeFontStyle(fontItalic ? "normal" : "italic", series, i, 0);
-      store.setShapeFontWeight(String.valueOf(fontWeight), series, i, 0);
-      store.setShapeLocked(moveable, series, i, 0);
-      store.setShapeStrokeColor(String.valueOf(color), series, i, 0);
-      store.setShapeStrokeWidth(lineWidth, series, i, 0);
-      store.setShapeTextDecoration(fontUnderlined ? "underline" :
-        fontStrikeout ? "line-through" : "normal", series, i, 0);
-      store.setShapeVisibility(enabled, series, i, 0);
 
       in.seek(offset + blockLength);
     }

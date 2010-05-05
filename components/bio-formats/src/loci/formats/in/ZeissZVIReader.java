@@ -46,10 +46,15 @@ import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.meta.DummyMetadata;
-import loci.formats.meta.FilterMetadata;
+//import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -475,8 +480,7 @@ public class ZeissZVIReader extends FormatReader {
     Vector<Integer> zIndices = new Vector<Integer>();
     Vector<Integer> tIndices = new Vector<Integer>();
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     for (String name : files) {
       String relPath = name.substring(name.lastIndexOf(File.separator) + 1);
@@ -489,7 +493,8 @@ public class ZeissZVIReader extends FormatReader {
       if (name.indexOf("Scaling") == -1 && dirName.equals("Tags")) {
         int imageNum = getImageNumber(name, -1);
         if (imageNum == -1) {
-          parseTags(imageNum, name, new DummyMetadata());
+          // TODO
+          parseTags(imageNum, name, /*new DummyMetadata()*/null);
         }
         else tagsToParse.add(name);
       }
@@ -683,7 +688,7 @@ public class ZeissZVIReader extends FormatReader {
     if (timestamps.size() > 0) {
       String timestamp = timestamps.get(new Integer(0));
       firstStamp = parseTimestamp(timestamp);
-      store.setImageCreationDate(DateTools.convertDate(
+      store.setImageAcquiredDate(DateTools.convertDate(
         (long) (firstStamp / 1600), DateTools.ZVI), 0);
     }
     else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
@@ -701,33 +706,33 @@ public class ZeissZVIReader extends FormatReader {
         try { exp = new Double(exposure); }
         catch (NumberFormatException e) { }
         catch (NullPointerException e) { }
-        store.setPlaneTimingExposureTime(exp, 0, 0, plane);
+        store.setPlaneExposureTime(exp, 0, plane);
 
         if (plane < timestamps.size()) {
           String timestamp = timestamps.get(new Integer(plane));
           long stamp = parseTimestamp(timestamp);
           stamp -= firstStamp;
-          store.setPlaneTimingDeltaT(new Double(stamp / 1600000), 0, 0, plane);
+          store.setPlaneDeltaT(new Double(stamp / 1600000), 0, plane);
         }
 
-        store.setStagePositionPositionX(stageX, 0, 0, plane);
-        store.setStagePositionPositionY(stageY, 0, 0, plane);
+        store.setPlanePositionX(stageX, 0, plane);
+        store.setPlanePositionY(stageY, 0, plane);
       }
 
       // link DetectorSettings to an actual Detector
       for (int i=0; i<getEffectiveSizeC(); i++) {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
-        store.setDetectorSettingsDetector(detectorID, 0, i);
-        store.setDetectorType("Unknown", 0, i);
+        store.setDetectorSettingsID(detectorID, 0, i);
+        store.setDetectorType(DetectorType.OTHER, 0, i);
       }
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsObjective(objectiveID, 0);
-      store.setObjectiveCorrection("Unknown", 0, 0);
-      store.setObjectiveImmersion("Unknown", 0, 0);
+      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
     }
   }
 
@@ -840,7 +845,8 @@ public class ZeissZVIReader extends FormatReader {
         if (cIndex != -1) key += " " + cIndex;
         addGlobalMeta(key, value);
 
-        if (key.startsWith("ImageTile") && !(store instanceof DummyMetadata)) {
+        // TODO
+        if (key.startsWith("ImageTile")/* && !(store instanceof DummyMetadata)*/ ) {
           if (!tiles.containsKey(new Integer(value))) {
             tiles.put(new Integer(value), new Integer(1));
           }
@@ -867,19 +873,20 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
         else if (key.startsWith("Scale Factor for X")) {
-          store.setDimensionsPhysicalSizeX(new Double(value), 0, 0);
+          store.setPixelsPhysicalSizeX(new Double(value), 0);
         }
         else if (key.startsWith("Scale Factor for Y")) {
-          store.setDimensionsPhysicalSizeY(new Double(value), 0, 0);
+          store.setPixelsPhysicalSizeY(new Double(value), 0);
         }
         else if (key.startsWith("Scale Factor for Z")) {
-          store.setDimensionsPhysicalSizeZ(new Double(value), 0, 0);
+          store.setPixelsPhysicalSizeZ(new Double(value), 0);
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1 && nextEmWave < effectiveSizeC) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
-              store.setLogicalChannelEmWave(wave, 0, nextEmWave);
+              store.setChannelEmissionWavelength(
+                new PositiveInteger(wave), 0, nextEmWave);
               nextEmWave++;
             }
           }
@@ -888,14 +895,15 @@ public class ZeissZVIReader extends FormatReader {
           if (cIndex != -1 && nextExWave < effectiveSizeC) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
-              store.setLogicalChannelExWave(wave, 0, nextExWave);
+              store.setChannelExcitationWavelength(
+                new PositiveInteger(wave), 0, nextExWave);
               nextExWave++;
             }
           }
         }
         else if (key.startsWith("Channel Name")) {
           if (cIndex != -1 && nextChName < effectiveSizeC) {
-            store.setLogicalChannelName(value, 0, nextChName);
+            store.setChannelName(value, 0, nextChName);
             nextChName++;
           }
         }
@@ -914,7 +922,6 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.equals("User company")) {
           store.setExperimenterInstitution(value, 0);
-          store.setExperimenterOMEName("Unknown", 0);
         }
         else if (key.startsWith("Objective Magnification")) {
           double mag = Double.parseDouble(value);
@@ -922,8 +929,8 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
-          store.setObjectiveCorrection("Unknown", 0, 0);
-          store.setObjectiveImmersion("Unknown", 0, 0);
+          store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+          store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
           store.setObjectiveLensNA(new Double(value), 0, 0);
@@ -938,7 +945,11 @@ public class ZeissZVIReader extends FormatReader {
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(mag, 0, 0);
               store.setObjectiveLensNA(new Double(na), 0, 0);
-              store.setObjectiveCorrection(tokens[q - 1], 0, 0);
+              try {
+                store.setObjectiveCorrection(
+                  Correction.fromString(tokens[q - 1]), 0, 0);
+              }
+              catch (EnumerationException e) { }
               break;
             }
           }
@@ -947,17 +958,17 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveWorkingDistance(new Double(value), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
-          String immersion = null;
+          Immersion immersion = null;
           switch (Integer.parseInt(value)) {
             // case 1: no immersion
             case 2:
-              immersion = "oil";
+              immersion = Immersion.OIL;
               break;
             case 3:
-              immersion = "water";
+              immersion = Immersion.WATER;
               break;
             default:
-              immersion = "Unknown";
+              immersion = Immersion.OTHER;
           }
           store.setObjectiveImmersion(immersion, 0, 0);
         }
@@ -1065,19 +1076,16 @@ public class ZeissZVIReader extends FormatReader {
       int typeLength = s.readInt();
       s.skipBytes(typeLength);
 
-      store.setShapeText(roiName, 0, imageNum, shape);
-      store.setShapeFontFamily(fontName, 0, imageNum, shape);
-
       // read list of points that define this ROI
       s.skipBytes(10);
       int nPoints = s.readInt();
       s.skipBytes(6);
 
       if (roiType == ELLIPSE) {
-        store.setEllipseCx(String.valueOf(x + (w / 2)), 0, imageNum, shape);
-        store.setEllipseCy(String.valueOf(y + (h / 2)), 0, imageNum, shape);
-        store.setEllipseRx(String.valueOf(w / 2), 0, imageNum, shape);
-        store.setEllipseRy(String.valueOf(h / 2), 0, imageNum, shape);
+        store.setEllipseX(new Double(x + (w / 2)), imageNum, shape);
+        store.setEllipseY(new Double(y + (h / 2)), imageNum, shape);
+        store.setEllipseRadiusX(new Double(w / 2), imageNum, shape);
+        store.setEllipseRadiusY(new Double(h / 2), imageNum, shape);
       }
       else if (roiType == CURVE || roiType == OUTLINE ||
         roiType == OUTLINE_SPLINE)
@@ -1091,28 +1099,25 @@ public class ZeissZVIReader extends FormatReader {
           points.append(py);
           if (p < nPoints - 1) points.append(" ");
         }
-        if (roiType == CURVE) {
-          store.setPolylinePoints(points.toString(), 0, imageNum, shape);
-        }
-        else {
-          store.setPolygonPoints(points.toString(), 0, imageNum, shape);
-        }
+
+        store.setPolylinePoints(points.toString(), imageNum, shape);
+        store.setPolylineClosed(roiType != CURVE, imageNum, shape);
       }
       else if (roiType == RECTANGLE || roiType == TEXT) {
-        store.setRectX(String.valueOf(x), 0, imageNum, shape);
-        store.setRectY(String.valueOf(y), 0, imageNum, shape);
-        store.setRectWidth(String.valueOf(w), 0, imageNum, shape);
-        store.setRectHeight(String.valueOf(h), 0, imageNum, shape);
+        store.setRectangleX(new Double(x), imageNum, shape);
+        store.setRectangleY(new Double(y), imageNum, shape);
+        store.setRectangleWidth(new Double(w), imageNum, shape);
+        store.setRectangleHeight(new Double(h), imageNum, shape);
       }
       else if (roiType == LINE || roiType == SCALE_BAR) {
         double x1 = s.readDouble();
         double y1 = s.readDouble();
         double x2 = s.readDouble();
         double y2 = s.readDouble();
-        store.setLineX1(String.valueOf(x1), 0, imageNum, shape);
-        store.setLineY1(String.valueOf(y1), 0, imageNum, shape);
-        store.setLineX2(String.valueOf(x2), 0, imageNum, shape);
-        store.setLineY2(String.valueOf(y2), 0, imageNum, shape);
+        store.setLineX1(x1, imageNum, shape);
+        store.setLineY1(y1, imageNum, shape);
+        store.setLineX2(x2, imageNum, shape);
+        store.setLineY2(y2, imageNum, shape);
       }
     }
     s.close();

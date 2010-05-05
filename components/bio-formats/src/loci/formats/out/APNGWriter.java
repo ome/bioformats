@@ -78,19 +78,19 @@ public class APNGWriter extends FormatWriter {
     MetadataRetrieve meta = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(meta, series);
     int pixelType =
-      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
     boolean signed = FormatTools.isSigned(pixelType);
-    littleEndian = !meta.getPixelsBigEndian(0, 0);
+    littleEndian = !meta.getPixelsBinDataBigEndian(0, 0);
 
     boolean indexed = getColorModel() instanceof IndexColorModel;
-    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
     int nChannels = channels == null ? 1 : channels.intValue();
-    int width = meta.getPixelsSizeX(series, 0).intValue();
-    int height = meta.getPixelsSizeY(series, 0).intValue();
+    int width = meta.getPixelsSizeX(series).getValue().intValue();
+    int height = meta.getPixelsSizeY(series).getValue().intValue();
 
     if (!initialized) {
       out = new RandomAccessOutputStream(currentId);

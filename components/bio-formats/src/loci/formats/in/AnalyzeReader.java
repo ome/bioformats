@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -284,18 +283,17 @@ public class AnalyzeReader extends FormatReader {
 
     LOGGER.info("Populating MetadataStore");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription(description, 0);
-      store.setDimensionsPhysicalSizeX(voxelWidth * 0.001, 0, 0);
-      store.setDimensionsPhysicalSizeY(voxelHeight * 0.001, 0, 0);
-      store.setDimensionsPhysicalSizeZ(sliceThickness * 0.001, 0, 0);
-      store.setDimensionsTimeIncrement(new Double(deltaT * 1000), 0, 0);
+      store.setPixelsPhysicalSizeX(voxelWidth * 0.001, 0);
+      store.setPixelsPhysicalSizeY(voxelHeight * 0.001, 0);
+      store.setPixelsPhysicalSizeZ(sliceThickness * 0.001, 0);
+      store.setPixelsTimeIncrement(new Double(deltaT * 1000), 0);
     }
   }
 

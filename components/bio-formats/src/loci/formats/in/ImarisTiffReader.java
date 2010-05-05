@@ -30,10 +30,11 @@ import java.util.Vector;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * ImarisTiffReader is the file format reader for
@@ -106,8 +107,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     // likely an INI-style comment, although we can't be sure
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
@@ -150,13 +150,15 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate Image data
       store.setImageDescription(description, 0);
-      store.setImageCreationDate(creationDate, 0);
+      store.setImageAcquiredDate(creationDate, 0);
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {
-        store.setLogicalChannelEmWave(emWave.get(i), 0, i);
-        store.setLogicalChannelExWave(exWave.get(i), 0, i);
-        store.setLogicalChannelName(channelNames.get(i), 0, i);
+        store.setChannelEmissionWavelength(
+          new PositiveInteger(emWave.get(i)), 0, i);
+        store.setChannelExcitationWavelength(
+          new PositiveInteger(exWave.get(i)), 0, i);
+        store.setChannelName(channelNames.get(i), 0, i);
       }
     }
   }

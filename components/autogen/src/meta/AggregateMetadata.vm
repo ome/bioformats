@@ -34,6 +34,9 @@ package loci.formats.meta;
 import java.util.Iterator;
 import java.util.List;
 
+import ome.xml.r201004.enums.*;
+import ome.xml.r201004.primitives.*;
+
 /**
  * A metadata store which delegates the actual storage to one or more <i>sub</i>
  * metadata stores.

@@ -31,7 +31,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -190,10 +189,9 @@ public class OpenlabRawReader extends FormatReader {
     addGlobalMeta("Version", version);
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    store.setImageCreationDate(stamp, 0);
+    store.setImageAcquiredDate(stamp, 0);
     store.setImageName(imageName, 0);
   }
 

@@ -38,10 +38,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.DetectorType;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -273,13 +274,12 @@ public class PrairieReader extends FormatReader {
         core[0].indexed = tiff.isIndexed();
         core[0].falseColor = false;
 
-        MetadataStore store =
-          new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+        MetadataStore store = makeFilterMetadata();
         MetadataTools.populatePixels(store, this);
 
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
-          if (date != null) store.setImageCreationDate(date, 0);
+          if (date != null) store.setImageAcquiredDate(date, 0);
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
 
@@ -289,8 +289,8 @@ public class PrairieReader extends FormatReader {
           store.setInstrumentID(instrumentID, 0);
           store.setImageInstrumentRef(instrumentID, 0);
 
-          store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-          store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+          store.setPixelsPhysicalSizeX(pixelSizeX, 0);
+          store.setPixelsPhysicalSizeY(pixelSizeY, 0);
           for (int i=0; i<getSizeC(); i++) {
             String gain = i < gains.size() ? gains.get(i) : null;
             String offset = i < offsets.size() ? offsets.get(i) : null;
@@ -305,8 +305,8 @@ public class PrairieReader extends FormatReader {
             // link DetectorSettings to an actual Detector
             String detectorID = MetadataTools.createLSID("Detector", 0, i);
             store.setDetectorID(detectorID, 0, i);
-            store.setDetectorSettingsDetector(detectorID, 0, i);
-            store.setDetectorType("Unknown", 0, i);
+            store.setDetectorSettingsID(detectorID, 0, i);
+            store.setDetectorType(DetectorType.OTHER, 0, i);
           }
 
           /* TODO : check if this is correct

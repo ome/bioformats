@@ -30,8 +30,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.DetectorType;
 
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
@@ -191,8 +192,7 @@ public class ImarisReader extends FormatReader {
     core[0].pixelType = FormatTools.UINT8;
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     // populate Image data
@@ -210,17 +210,16 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      store.setDimensionsPhysicalSizeX(new Double(dx), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Double(dy), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(dz), 0, 0);
-      store.setDimensionsTimeIncrement(1.0, 0, 0);
-      store.setDimensionsWaveIncrement(1, 0, 0);
+      store.setPixelsPhysicalSizeX(new Double(dx), 0);
+      store.setPixelsPhysicalSizeY(new Double(dy), 0);
+      store.setPixelsPhysicalSizeZ(new Double(dz), 0);
+      store.setPixelsTimeIncrement(1.0, 0);
 
       // populate LogicalChannel data
 
       for (int i=0; i<getSizeC(); i++) {
         if (pinholes[i] > 0) {
-          store.setLogicalChannelPinholeSize(new Double(pinholes[i]), 0, i);
+          store.setChannelPinholeSize(new Double(pinholes[i]), 0, i);
         }
       }
 
@@ -235,8 +234,8 @@ public class ImarisReader extends FormatReader {
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
-        store.setDetectorType("Unknown", 0, i);
-        store.setDetectorSettingsDetector(detectorID, 0, i);
+        store.setDetectorType(DetectorType.OTHER, 0, i);
+        store.setDetectorSettingsID(detectorID, 0, i);
       }
     }
   }

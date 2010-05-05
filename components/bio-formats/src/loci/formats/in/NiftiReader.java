@@ -32,7 +32,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -238,16 +237,15 @@ public class NiftiReader extends FormatReader {
 
     LOGGER.info("Populating MetadataStore");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setImageDescription(description, 0);
-      store.setDimensionsPhysicalSizeX(new Double(voxelWidth), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Double(voxelHeight), 0, 0);
-      store.setDimensionsPhysicalSizeZ(new Double(sliceThickness), 0, 0);
-      store.setDimensionsTimeIncrement(new Double(deltaT), 0, 0);
+      store.setPixelsPhysicalSizeX(new Double(voxelWidth), 0);
+      store.setPixelsPhysicalSizeY(new Double(voxelHeight), 0);
+      store.setPixelsPhysicalSizeZ(new Double(sliceThickness), 0);
+      store.setPixelsTimeIncrement(new Double(deltaT), 0);
     }
   }
 

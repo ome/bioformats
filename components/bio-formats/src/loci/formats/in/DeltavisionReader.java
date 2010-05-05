@@ -34,9 +34,15 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
@@ -197,8 +203,7 @@ public class DeltavisionReader extends FormatReader {
     throws FormatException, IOException {
     LOGGER.info("Reading header");
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     in = new RandomAccessInputStream(id);
 
@@ -344,8 +349,7 @@ public class DeltavisionReader extends FormatReader {
 
     super.initFile(id);
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     // --- read in the image header data ---
 
@@ -606,9 +610,9 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    store.setDimensionsPhysicalSizeX(new Double(pixX), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(pixY), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(pixZ), 0, 0);
+    store.setPixelsPhysicalSizeX(new Double(pixX), 0);
+    store.setPixelsPhysicalSizeY(new Double(pixY), 0);
+    store.setPixelsPhysicalSizeZ(new Double(pixZ), 0);
 
     store.setImageDescription(imageDesc, 0);
 
@@ -657,26 +661,28 @@ public class DeltavisionReader extends FormatReader {
 
       // plane timing
       if (!logFound) {
-        store.setPlaneTimingDeltaT(new Double(hdr.timeStampSeconds), 0, 0, i);
+        store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), 0, i);
       }
-      store.setPlaneTimingExposureTime(new Double(hdr.expTime), 0, 0, i);
+      store.setPlaneExposureTime(new Double(hdr.expTime), 0, i);
 
       // stage position
       if (!logFound) {
-        store.setStagePositionPositionX(new Double(hdr.stageXCoord), 0, 0, i);
-        store.setStagePositionPositionY(new Double(hdr.stageYCoord), 0, 0, i);
-        store.setStagePositionPositionZ(new Double(hdr.stageZCoord), 0, 0, i);
+        store.setPlanePositionX(new Double(hdr.stageXCoord), 0, i);
+        store.setPlanePositionY(new Double(hdr.stageYCoord), 0, i);
+        store.setPlanePositionZ(new Double(hdr.stageZCoord), 0, i);
       }
     }
 
     for (int w=0; w<sizeC; w++) {
       DVExtHdrFields hdrC = extHdrFields[0][w][0];
-      store.setLogicalChannelEmWave(new Integer(waves[w]), 0, w);
+      store.setChannelEmissionWavelength(
+        new PositiveInteger((int) waves[w]), 0, w);
       if ((int) hdrC.exWavelen > 0) {
-        store.setLogicalChannelExWave((int) hdrC.exWavelen, 0, w);
+        store.setChannelExcitationWavelength(
+          new PositiveInteger((int) hdrC.exWavelen), 0, w);
       }
       if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
-      store.setLogicalChannelNdFilter(ndFilters[w], 0, w);
+      store.setChannelNDFilter(ndFilters[w], 0, w);
     }
   }
 
@@ -810,7 +816,11 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse N.A. '{}'", na);
             }
             if (tokens.length >= 2) {
-              store.setObjectiveCorrection(tokens[1], 0, 0);
+              try {
+                store.setObjectiveCorrection(
+                  Correction.fromString(tokens[1]), 0, 0);
+              }
+              catch (EnumerationException e) { }
             }
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
@@ -822,9 +832,9 @@ public class DeltavisionReader extends FormatReader {
           }
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
-          store.setObjectiveSettingsObjective(objectiveID, 0);
-          store.setObjectiveCorrection("Unknown", 0, 0);
-          store.setObjectiveImmersion("Unknown", 0, 0);
+          store.setImageObjectiveSettingsID(objectiveID, 0);
+          store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+          store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
         }
         // Image properties
         else if (key.equals("Pixel Size")) {
@@ -839,19 +849,22 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse pixel size '{}'",
                 pixelSizes[q].trim());
             }
-            if (q == 0) store.setDimensionsPhysicalSizeX(size, 0, 0);
-            if (q == 1) store.setDimensionsPhysicalSizeY(size, 0, 0);
-            if (q == 2) store.setDimensionsPhysicalSizeZ(size, 0, 0);
+            if (q == 0) store.setPixelsPhysicalSizeX(size, 0);
+            if (q == 1) store.setPixelsPhysicalSizeY(size, 0);
+            if (q == 2) store.setPixelsPhysicalSizeZ(size, 0);
           }
         }
         else if (key.equals("Binning")) {
-          store.setDetectorType("Unknown", 0, 0);
+          store.setDetectorType(DetectorType.OTHER, 0, 0);
           String detectorID = MetadataTools.createLSID("Detector", 0, 0);
           store.setDetectorID(detectorID, 0, 0);
           for (int c=0; c<getSizeC(); c++) {
-            store.setDetectorSettingsBinning(value, 0, c);
+            try {
+              store.setDetectorSettingsBinning(Binning.fromString(value), 0, c);
+            }
+            catch (EnumerationException e) { }
             // link DetectorSettings to an actual Detector
-            store.setDetectorSettingsDetector(detectorID, 0, c);
+            store.setDetectorSettingsID(detectorID, 0, c);
           }
         }
         // Camera properties
@@ -897,7 +910,7 @@ public class DeltavisionReader extends FormatReader {
           if (space >= 0) value = value.substring(0, space);
           try {
             if (currentImage < getImageCount()) {
-              store.setPlaneTimingDeltaT(new Double(value), 0, 0, currentImage);
+              store.setPlaneDeltaT(new Double(value), 0, currentImage);
             }
           }
           catch (NumberFormatException e) {
@@ -912,7 +925,7 @@ public class DeltavisionReader extends FormatReader {
           catch (IllegalArgumentException e) {
             LOGGER.debug("", e);
           }
-          store.setLogicalChannelName(value, 0, cIndex);
+          store.setChannelName(value, 0, cIndex);
         }
         else if (key.equals("ND filter")) {
           value = value.replaceAll("%", "");
@@ -944,13 +957,13 @@ public class DeltavisionReader extends FormatReader {
 
             if (currentImage < getImageCount()) {
               if (i == 0) {
-                store.setStagePositionPositionX(p, 0, 0, currentImage);
+                store.setPlanePositionX(p, 0, currentImage);
               }
               if (i == 1) {
-                store.setStagePositionPositionY(p, 0, 0, currentImage);
+                store.setPlanePositionY(p, 0, currentImage);
               }
               if (i == 2) {
-                store.setStagePositionPositionZ(p, 0, 0, currentImage);
+                store.setPlanePositionZ(p, 0, currentImage);
               }
             }
           }
@@ -963,7 +976,7 @@ public class DeltavisionReader extends FormatReader {
         if (line.length() > 8) line = line.substring(8).trim();
         String date = DateTools.formatDate(line, DATE_FORMAT);
         if (date != null) {
-          store.setImageCreationDate(date, 0);
+          store.setImageAcquiredDate(date, 0);
         }
         else {
           LOGGER.warn("Could not parse date '{}'", line);

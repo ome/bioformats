@@ -38,11 +38,14 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
@@ -256,26 +259,25 @@ public class PCIReader extends FormatReader {
     core[0].falseColor = false;
     core[0].metadataComplete = true;
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
-      store.setImageCreationDate(creationDate, 0);
+      store.setImageAcquiredDate(creationDate, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setDimensionsPhysicalSizeX(scaleFactor, 0, 0);
-      store.setDimensionsPhysicalSizeY(scaleFactor, 0, 0);
+      store.setPixelsPhysicalSizeX(scaleFactor, 0);
+      store.setPixelsPhysicalSizeY(scaleFactor, 0);
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());
-        store.setPlaneTimingDeltaT(timestamp, 0, 0, i);
+        store.setPlaneDeltaT(timestamp, 0, i);
         if (i == 2) {
           double first = timestamps.get(1).doubleValue();
           Double increment = new Double(timestamp.doubleValue() - first);
-          store.setDimensionsTimeIncrement(increment, 0, 0);
+          store.setPixelsTimeIncrement(increment, 0);
         }
       }
 
@@ -284,12 +286,16 @@ public class PCIReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0);
         store.setInstrumentID(instrumentID, 0);
         store.setDetectorID(detectorID, 0, 0);
-        store.setDetectorType("Unknown", 0, 0);
+        store.setDetectorType(DetectorType.OTHER, 0, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
-          store.setDetectorSettingsDetector(detectorID, 0, c);
-          store.setDetectorSettingsBinning(binning + "x" + binning, 0, c);
+          store.setDetectorSettingsID(detectorID, 0, c);
+          try {
+            store.setDetectorSettingsBinning(
+              Binning.fromString(binning + "x" + binning), 0, c);
+          }
+          catch (EnumerationException e) { }
         }
       }
     }

@@ -30,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -199,8 +198,7 @@ public class EPSReader extends FormatReader {
       core[0].indexed = false;
       core[0].falseColor = false;
 
-      MetadataStore store =
-        new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+      MetadataStore store = makeFilterMetadata();
       MetadataTools.populatePixels(store, this);
       MetadataTools.setDefaultCreationDate(store, id, 0);
       return;

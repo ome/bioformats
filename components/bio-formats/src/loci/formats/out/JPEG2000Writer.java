@@ -62,12 +62,13 @@ public class JPEG2000Writer extends FormatWriter {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(retrieve, series);
     boolean littleEndian =
-      !retrieve.getPixelsBigEndian(series, 0).booleanValue();
-    int width = retrieve.getPixelsSizeX(series, 0).intValue();
-    int height = retrieve.getPixelsSizeY(series, 0).intValue();
+      !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    int width = retrieve.getPixelsSizeX(series).getValue().intValue();
+    int height = retrieve.getPixelsSizeY(series).getValue().intValue();
     int bytesPerPixel = FormatTools.getBytesPerPixel(
-      FormatTools.pixelTypeFromString(retrieve.getPixelsPixelType(series, 0)));
-    Integer channels = retrieve.getLogicalChannelSamplesPerPixel(series, 0);
+      FormatTools.pixelTypeFromString(
+      retrieve.getPixelsType(series).toString()));
+    Integer channels = retrieve.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }

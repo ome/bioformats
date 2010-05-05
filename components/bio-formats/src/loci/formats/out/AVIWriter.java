@@ -109,13 +109,13 @@ public class AVIWriter extends FormatWriter {
     MetadataRetrieve meta = getMetadataRetrieve();
     MetadataTools.verifyMinimumPopulated(meta, series);
     int type =
-      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     if (!DataTools.containsValue(getPixelTypes(), type)) {
       throw new FormatException("Unsupported image type '" +
         FormatTools.getPixelTypeString(type) + "'.");
     }
 
-    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
@@ -164,10 +164,10 @@ public class AVIWriter extends FormatWriter {
 
       out.order(true);
 
-      tDim = meta.getPixelsSizeZ(series, 0).intValue();
-      zDim = meta.getPixelsSizeT(series, 0).intValue();
-      yDim = meta.getPixelsSizeY(series, 0).intValue();
-      xDim = meta.getPixelsSizeX(series, 0).intValue();
+      tDim = meta.getPixelsSizeZ(series).getValue().intValue();
+      zDim = meta.getPixelsSizeT(series).getValue().intValue();
+      yDim = meta.getPixelsSizeY(series).getValue().intValue();
+      xDim = meta.getPixelsSizeX(series).getValue().intValue();
 
       xPad = 0;
       xMod = xDim % 4;

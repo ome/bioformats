@@ -41,12 +41,17 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * LeicaReader is the file format reader for Leica files.
@@ -528,8 +533,7 @@ public class LeicaReader extends FormatReader {
         MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     if (metadataLevel == MetadataLevel.MINIMUM) return;
@@ -542,7 +546,7 @@ public class LeicaReader extends FormatReader {
         timestamps[i].length > 0)
       {
         firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
-        store.setImageCreationDate(
+        store.setImageAcquiredDate(
           DateTools.formatDate(timestamps[i][0], DATE_FORMAT), i);
       }
       else {
@@ -587,22 +591,19 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      store.setDimensionsPhysicalSizeX(physicalSizes[i][0], i, 0);
-      store.setDimensionsPhysicalSizeY(physicalSizes[i][1], i, 0);
-      store.setDimensionsPhysicalSizeZ(physicalSizes[i][2], i, 0);
-      if ((int) physicalSizes[i][3] > 0) {
-        store.setDimensionsWaveIncrement((int) physicalSizes[i][3], i, 0);
-      }
+      store.setPixelsPhysicalSizeX(physicalSizes[i][0], i);
+      store.setPixelsPhysicalSizeY(physicalSizes[i][1], i);
+      store.setPixelsPhysicalSizeZ(physicalSizes[i][2], i);
       if ((int) physicalSizes[i][4] > 0) {
-        store.setDimensionsTimeIncrement(physicalSizes[i][4], i, 0);
+        store.setPixelsTimeIncrement(physicalSizes[i][4], i);
       }
 
       for (int j=0; j<core[i].imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
-          store.setPlaneTimingDeltaT(elapsedTime, i, 0, j);
-          store.setPlaneTimingExposureTime(exposureTime[i], i, 0, j);
+          store.setPlaneDeltaT(elapsedTime, i, j);
+          store.setPlaneExposureTime(exposureTime[i], i, j);
         }
       }
     }
@@ -1078,7 +1079,7 @@ public class LeicaReader extends FormatReader {
               nextDetector++;
             }
             else if (tokens[2].equals("State")) {
-              store.setDetectorType("PMT", series, nextDetector);
+              store.setDetectorType(DetectorType.PMT, series, nextDetector);
               // link Detector to Image, if the detector was actually used
               if (data.equals("Active")) {
                 String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
@@ -1100,12 +1101,12 @@ public class LeicaReader extends FormatReader {
                   // if additional detectors are found, the links will be
                   // overwritten
                   for (int c=0; c<getEffectiveSizeC(); c++) {
-                    store.setDetectorSettingsDetector(detectorID, series, c);
+                    store.setDetectorSettingsID(detectorID, series, c);
                   }
                 }
 
                 if (nextChannel < getEffectiveSizeC()) {
-                  store.setDetectorSettingsDetector(
+                  store.setDetectorSettingsID(
                     detectorID, series, nextChannel++);
                 }
               }
@@ -1152,9 +1153,16 @@ public class LeicaReader extends FormatReader {
           }
           if (correction == null) correction = "Unknown";
 
-          store.setObjectiveImmersion(immersion, series, objective);
-          store.setObjectiveCorrection(correction.trim(), series,
-            objective);
+          try {
+            store.setObjectiveImmersion(
+              Immersion.fromString(immersion), series, objective);
+          }
+          catch (EnumerationException e) { }
+          try {
+            store.setObjectiveCorrection(
+              Correction.fromString(correction.trim()), series, objective);
+          }
+          catch (EnumerationException e) { }
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
           store.setObjectiveNominalMagnification((int)
@@ -1164,7 +1172,8 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveSerialNumber(data, series, objective);
         }
         else if (tokens[2].equals("RefractionIndex")) {
-          store.setObjectiveSettingsRefractiveIndex(new Double(data), series);
+          store.setImageObjectiveSettingsRefractiveIndex(
+            new Double(data), series);
         }
 
         // link Objective to Image
@@ -1172,7 +1181,7 @@ public class LeicaReader extends FormatReader {
           MetadataTools.createLSID("Objective", series, objective);
         store.setObjectiveID(objectiveID, series, objective);
         if (objective == 0) {
-          store.setObjectiveSettingsObjective(objectiveID, series);
+          store.setImageObjectiveSettingsID(objectiveID, series);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {
@@ -1188,8 +1197,9 @@ public class LeicaReader extends FormatReader {
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
           if (index >= 0 && index < core[series].sizeC) {
-            store.setLogicalChannelSecondaryEmissionFilter(filterID, series,
-              index);
+            // TODO
+            //store.setLogicalChannelSecondaryEmissionFilter(filterID, series,
+            //  index);
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
               store.setTransmittanceRangeCutIn(wavelength, series, channel);
@@ -1216,17 +1226,17 @@ public class LeicaReader extends FormatReader {
         // NB: there is only one stage position specified for each series
         if (tokens[2].equals("XPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
-            store.setStagePositionPositionX(new Double(data), series, 0, q);
+            store.setPlanePositionX(new Double(data), series, q);
           }
         }
         else if (tokens[2].equals("YPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
-            store.setStagePositionPositionY(new Double(data), series, 0, q);
+            store.setPlanePositionY(new Double(data), series, q);
           }
         }
         else if (tokens[2].equals("ZPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
-            store.setStagePositionPositionZ(new Double(data), series, 0, q);
+            store.setPlanePositionZ(new Double(data), series, q);
           }
         }
       }
@@ -1235,7 +1245,7 @@ public class LeicaReader extends FormatReader {
       {
         double pos = Double.parseDouble(data) * 1000000;
         for (int q=0; q<core[series].imageCount; q++) {
-          store.setStagePositionPositionZ(pos, series, 0, q);
+          store.setPlanePositionZ(pos, series, q);
         }
       }
 
@@ -1270,20 +1280,21 @@ public class LeicaReader extends FormatReader {
         if (channel < channelNames[i].size()) {
           String name = (String) channelNames[i].get(channel);
           if (name != null && !name.trim().equals("") && !name.equals("None")) {
-            store.setLogicalChannelName(name, i, channel);
+            store.setChannelName(name, i, channel);
           }
         }
         if (channel < emWaves[i].size()) {
-          store.setLogicalChannelEmWave((Integer) emWaves[i].get(channel),
-            i, channel);
+          Integer wave = new Integer(emWaves[i].get(channel).toString());
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(wave), i, channel);
         }
         if (channel < exWaves[i].size()) {
-          store.setLogicalChannelExWave((Integer) exWaves[i].get(channel),
-            i, channel);
+          Integer wave = new Integer(exWaves[i].get(channel).toString());
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(wave), i, channel);
         }
         if (i < pinhole.length) {
-          store.setLogicalChannelPinholeSize(
-            new Double(pinhole[i]), i, channel);
+          store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);
         }
       }
     }

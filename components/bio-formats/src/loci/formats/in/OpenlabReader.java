@@ -38,8 +38,9 @@ import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.enums.DetectorType;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
@@ -549,8 +550,7 @@ public class OpenlabReader extends FormatReader {
       parseImageNames(s);
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     boolean planeInfoNeeded = level == MetadataLevel.ALL &&
@@ -562,8 +562,8 @@ public class OpenlabReader extends FormatReader {
     if (level == MetadataLevel.ALL) {
       // populate MetadataStore
 
-      store.setDimensionsPhysicalSizeX(new Double(xcal), 0, 0);
-      store.setDimensionsPhysicalSizeY(new Double(ycal), 0, 0);
+      store.setPixelsPhysicalSizeX(new Double(xcal), 0);
+      store.setPixelsPhysicalSizeY(new Double(ycal), 0);
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -571,7 +571,9 @@ public class OpenlabReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       try {
-        if (gain != null) store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        if (gain != null) {
+          store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        }
       }
       catch (NumberFormatException e) { }
       try {
@@ -584,9 +586,9 @@ public class OpenlabReader extends FormatReader {
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detectorID, 0, 0);
-      store.setDetectorSettingsDetector(detectorID, 0, 0);
+      store.setDetectorSettingsID(detectorID, 0, 0);
 
-      store.setDetectorType("Unknown", 0, 0);
+      store.setDetectorType(DetectorType.OTHER, 0, 0);
 
       Double stageX = xPos == null ? null : new Double(xPos);
       Double stageY = yPos == null ? null : new Double(yPos);
@@ -596,13 +598,13 @@ public class OpenlabReader extends FormatReader {
         setSeries(series);
         for (int plane=0; plane<getImageCount(); plane++) {
           if (stageX != null) {
-            store.setStagePositionPositionX(stageX, series, 0, plane);
+            store.setPlanePositionX(stageX, series, plane);
           }
           if (stageY != null) {
-            store.setStagePositionPositionY(stageY, series, 0, plane);
+            store.setPlanePositionY(stageY, series, plane);
           }
           if (stageZ != null) {
-            store.setStagePositionPositionZ(stageZ, series, 0, plane);
+            store.setPlanePositionZ(stageZ, series, plane);
           }
         }
       }

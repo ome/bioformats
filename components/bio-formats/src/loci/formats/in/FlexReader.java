@@ -39,13 +39,24 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
+
+
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.enums.NamingConvention;
+import ome.xml.r201004.primitives.NonNegativeInteger;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -345,8 +356,7 @@ public class FlexReader extends FormatReader {
       }
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     groupFiles(flex.toArray(new String[flex.size()]), store);
     populateMetadataStore(store);
@@ -389,8 +399,7 @@ public class FlexReader extends FormatReader {
       }
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
 
     LOGGER.info("Making sure that all .flex files are valid");
     Vector<String> flex = new Vector<String>();
@@ -446,10 +455,10 @@ public class FlexReader extends FormatReader {
       char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
-      store.setWellSampleIndex(i, pos[2], well, pos[0]);
+      store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
-      store.setWellRow(wellNumber[pos[1]][0], 0, i);
-      store.setWellColumn(wellNumber[pos[1]][1], 0, i);
+      store.setWellRow(new NonNegativeInteger(wellNumber[pos[1]][0]), 0, i);
+      store.setWellColumn(new NonNegativeInteger(wellNumber[pos[1]][1]), 0, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
@@ -459,8 +468,8 @@ public class FlexReader extends FormatReader {
       if (plateName == null) plateName = currentFile.getParentFile().getName();
       if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
       store.setPlateName(plateName, 0);
-      store.setPlateRowNamingConvention("A", 0);
-      store.setPlateColumnNamingConvention("1", 0);
+      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         int[] pos = FormatTools.rasterToPosition(lengths, i);
@@ -469,8 +478,7 @@ public class FlexReader extends FormatReader {
 
         int seriesIndex = i * getImageCount();
         if (seriesIndex < objectiveRefs.size()) {
-          store.setObjectiveSettingsObjective(
-            objectiveRefs.get(seriesIndex), i);
+          store.setImageObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
         }
 
         if (seriesIndex < lightSourceCombinationRefs.size()) {
@@ -481,32 +489,34 @@ public class FlexReader extends FormatReader {
           for (int c=0; c<getEffectiveSizeC(); c++) {
             int index = seriesIndex + c;
             if (index < cameraRefs.size()) {
-              store.setDetectorSettingsDetector(cameraRefs.get(index), i, c);
+              store.setDetectorSettingsID(cameraRefs.get(index), i, c);
             }
             if (index < binnings.size()) {
-              store.setDetectorSettingsBinning(binnings.get(index), i, c);
+              try {
+                store.setDetectorSettingsBinning(
+                  Binning.fromString(binnings.get(index)), i, c);
+              }
+              catch (EnumerationException e) { }
             }
             if (lightSources != null && c < lightSources.size()) {
-              store.setLightSourceSettingsLightSource(
-                lightSources.get(c), i, c);
+              store.setChannelLightSourceSettingsID(lightSources.get(c), i, c);
             }
             else if (c > 0 && lightSources != null && lightSources.size() == 1)
             {
-              store.setLightSourceSettingsLightSource(
-                lightSources.get(0), i, c);
+              store.setChannelLightSourceSettingsID(lightSources.get(0), i, c);
             }
             if (index < filterSets.size()) {
               String filterSetID = filterSetMap.get(filterSets.get(index));
-              store.setLogicalChannelFilterSet(filterSetID, i, c);
+              store.setChannelFilterSetRef(filterSetID, i, c);
             }
           }
         }
 
         if (seriesIndex < xSizes.size()) {
-          store.setDimensionsPhysicalSizeX(xSizes.get(seriesIndex), i, 0);
+          store.setPixelsPhysicalSizeX(xSizes.get(seriesIndex), i);
         }
         if (seriesIndex < ySizes.size()) {
-          store.setDimensionsPhysicalSizeY(ySizes.get(seriesIndex), i, 0);
+          store.setPixelsPhysicalSizeY(ySizes.get(seriesIndex), i);
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
@@ -515,10 +525,12 @@ public class FlexReader extends FormatReader {
         }
 
         if (pos[0] < xPositions.size()) {
-          store.setWellSamplePosX(xPositions.get(pos[0]), pos[2], well, pos[0]);
+          store.setWellSamplePositionX(
+            xPositions.get(pos[0]), pos[2], well, pos[0]);
         }
         if (pos[0] < yPositions.size()) {
-          store.setWellSamplePosY(yPositions.get(pos[0]), pos[2], well, pos[0]);
+          store.setWellSamplePositionY(
+            yPositions.get(pos[0]), pos[2], well, pos[0]);
         }
       }
     }
@@ -1122,7 +1134,7 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageCreationDate(value, currentSeries);
+          store.setImageAcquiredDate(value, currentSeries);
         }
       }
 
@@ -1140,10 +1152,11 @@ public class FlexReader extends FormatReader {
       }
       else if (qName.equals("Wavelength")) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
-        store.setLightSourceID(lsid, 0, nextLaser);
-        store.setLaserWavelength(new Integer(value), 0, nextLaser);
-        store.setLaserType("Unknown", 0, nextLaser);
-        store.setLaserLaserMedium("Unknown", 0, nextLaser);
+        store.setLaserID(lsid, 0, nextLaser);
+        store.setLaserWavelength(
+          new PositiveInteger(new Integer(value)), 0, nextLaser);
+        store.setLaserType(LaserType.OTHER, 0, nextLaser);
+        store.setLaserLaserMedium(LaserMedium.OTHER, 0, nextLaser);
       }
       else if (qName.equals("Magnification")) {
         store.setObjectiveCalibratedMagnification(new Double(value), 0,
@@ -1153,10 +1166,11 @@ public class FlexReader extends FormatReader {
         store.setObjectiveLensNA(new Double(value), 0, nextObjective);
       }
       else if (qName.equals("Immersion")) {
-        if (value.equals("1.33")) value = "Water";
-        else if (value.equals("1.00")) value = "Air";
+        Immersion immersion = Immersion.OTHER;
+        if (value.equals("1.33")) immersion = Immersion.WATER;
+        else if (value.equals("1.00")) immersion = Immersion.AIR;
         else LOGGER.warn("Unknown immersion medium: {}", value);
-        store.setObjectiveImmersion(value, 0, nextObjective);
+        store.setObjectiveImmersion(immersion, 0, nextObjective);
       }
       else if (qName.equals("OffsetX") || qName.equals("OffsetY")) {
         Double offset = new Double(Double.parseDouble(value) * 1000000);
@@ -1203,22 +1217,21 @@ public class FlexReader extends FormatReader {
         }
         else if (qName.equals("PositionX")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
-          store.setStagePositionPositionX(v, currentSeries, 0, currentImage);
+          store.setPlanePositionX(v, currentSeries, currentImage);
         }
         else if (qName.equals("PositionY")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
-          store.setStagePositionPositionY(v, currentSeries, 0, currentImage);
+          store.setPlanePositionY(v, currentSeries, currentImage);
         }
         else if (qName.equals("PositionZ")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
-          store.setStagePositionPositionZ(v, currentSeries, 0, currentImage);
+          store.setPlanePositionZ(v, currentSeries, currentImage);
         }
         else if (qName.equals("TimepointOffsetUsed")) {
-          store.setPlaneTimingDeltaT(new Double(value), currentSeries, 0,
-            currentImage);
+          store.setPlaneDeltaT(new Double(value), currentSeries, currentImage);
         }
         else if (qName.equals("CameraExposureTime")) {
-          store.setPlaneTimingExposureTime(new Double(value), currentSeries, 0,
+          store.setPlaneExposureTime(new Double(value), currentSeries,
             currentImage);
         }
         else if (qName.equals("LightSourceCombinationRef")) {
@@ -1273,7 +1286,11 @@ public class FlexReader extends FormatReader {
         parentQName = qName;
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
-        store.setDetectorType(attributes.getValue("CameraType"), 0, nextCamera);
+        try {
+          store.setDetectorType(DetectorType.fromString(
+            attributes.getValue("CameraType")), 0, nextCamera);
+        }
+        catch (EnumerationException e) { }
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
       }
@@ -1284,7 +1301,7 @@ public class FlexReader extends FormatReader {
         String objectiveID =
           MetadataTools.createLSID("Objective", 0, nextObjective);
         store.setObjectiveID(objectiveID, 0, nextObjective);
-        store.setObjectiveCorrection("Unknown", 0, nextObjective);
+        store.setObjectiveCorrection(Correction.OTHER, 0, nextObjective);
         objectiveIDs.add(attributes.getValue("ID"));
       }
       else if (qName.equals("Field")) {
@@ -1362,13 +1379,13 @@ public class FlexReader extends FormatReader {
         String dichroicID = dichroicMap.get(filterName);
         String slider = attributes.getValue("ID");
         if (nextSliderRef == 0 && slider.startsWith("Camera")) {
-          store.setFilterSetEmFilter(filterID, 0, nextFilterSet);
+          store.setFilterSetEmissionFilterRef(filterID, 0, nextFilterSet, 0);
         }
         else if (nextSliderRef == 1 && slider.startsWith("Camera")) {
-          store.setFilterSetExFilter(filterID, 0, nextFilterSet);
+          store.setFilterSetExcitationFilterRef(filterID, 0, nextFilterSet, 0);
         }
         else if (slider.equals("Primary_Dichro")) {
-          store.setFilterSetDichroic(dichroicID, 0, nextFilterSet);
+          store.setFilterSetDichroicRef(dichroicID, 0, nextFilterSet);
         }
         String lname = filterName.toLowerCase();
         if (!lname.startsWith("empty") && !lname.startsWith("blocked")) {

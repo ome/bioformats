@@ -38,8 +38,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
  * PerkinElmerReader is the file format reader for PerkinElmer files.
@@ -524,21 +525,20 @@ public class PerkinElmerReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
     // populate Image element
     if (finishTime != null) {
       finishTime = DateTools.formatDate(finishTime, DATE_FORMAT);
-      store.setImageCreationDate(finishTime, 0);
+      store.setImageAcquiredDate(finishTime, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       // populate Dimensions element
-      store.setDimensionsPhysicalSizeX(pixelSizeX, 0, 0);
-      store.setDimensionsPhysicalSizeY(pixelSizeY, 0, 0);
+      store.setPixelsPhysicalSizeX(pixelSizeX, 0);
+      store.setPixelsPhysicalSizeY(pixelSizeY, 0);
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -548,10 +548,12 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          store.setLogicalChannelEmWave(emWaves.get(i), 0, i);
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWaves.get(i)), 0, i);
         }
         if (i < exWaves.size()) {
-          store.setLogicalChannelExWave(exWaves.get(i), 0, i);
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWaves.get(i)), 0, i);
         }
       }
 
@@ -569,15 +571,15 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneTimingDeltaT(i * secondsPerPlane, 0, 0, i);
+        store.setPlaneDeltaT(i * secondsPerPlane, 0, i);
         if (zct[1] < exposureTimes.size()) {
-          store.setPlaneTimingExposureTime(exposureTimes.get(zct[1]), 0, 0, i);
+          store.setPlaneExposureTime(exposureTimes.get(zct[1]), 0, i);
         }
 
         if (zct[0] < zPositions.size()) {
-          store.setStagePositionPositionX(0.0, 0, 0, i);
-          store.setStagePositionPositionY(0.0, 0, 0, i);
-          store.setStagePositionPositionZ(zPositions.get(zct[0]), 0, 0, i);
+          store.setPlanePositionX(0.0, 0, i);
+          store.setPlanePositionY(0.0, 0, i);
+          store.setPlanePositionZ(zPositions.get(zct[0]), 0, i);
         }
       }
     }

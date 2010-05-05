@@ -66,9 +66,9 @@ public class ICSWriter extends FormatWriter {
     MetadataTools.verifyMinimumPopulated(meta, series);
 
     int pixelType =
-      FormatTools.pixelTypeFromString(meta.getPixelsPixelType(series, 0));
+      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    Integer channels = meta.getLogicalChannelSamplesPerPixel(series, 0);
+    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
     if (channels == null) {
       LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
     }
@@ -82,12 +82,12 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("filename\t" + currentId + "\n");
       out.writeBytes("layout\tparameters\t6\n");
 
-      String order = meta.getPixelsDimensionOrder(series, 0);
-      int x = meta.getPixelsSizeX(series, 0).intValue();
-      int y = meta.getPixelsSizeY(series, 0).intValue();
-      int z = meta.getPixelsSizeZ(series, 0).intValue();
-      int c = meta.getPixelsSizeC(series, 0).intValue();
-      int t = meta.getPixelsSizeT(series, 0).intValue();
+      String order = meta.getPixelsDimensionOrder(series).toString();
+      int x = meta.getPixelsSizeX(series).getValue().intValue();
+      int y = meta.getPixelsSizeY(series).getValue().intValue();
+      int z = meta.getPixelsSizeZ(series).getValue().intValue();
+      int c = meta.getPixelsSizeC(series).getValue().intValue();
+      int t = meta.getPixelsSizeT(series).getValue().intValue();
 
       StringBuffer dimOrder = new StringBuffer();
       int[] sizes = new int[6];
@@ -121,7 +121,8 @@ public class ICSWriter extends FormatWriter {
       }
 
       boolean signed = FormatTools.isSigned(pixelType);
-      boolean littleEndian = !meta.getPixelsBigEndian(series, 0).booleanValue();
+      boolean littleEndian =
+        !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
 
       out.writeBytes("representation\tformat\t" +
         (pixelType == FormatTools.FLOAT ? "real\n" : "integer\n"));
@@ -145,24 +146,20 @@ public class ICSWriter extends FormatWriter {
         String token = st.nextToken();
         Number value = null;
         if (token.equals("x")) {
-          value = meta.getDimensionsPhysicalSizeX(0, 0);
+          value = meta.getPixelsPhysicalSizeX(0);
           units.append("micrometers\t");
         }
         else if (token.equals("y")) {
-          value = meta.getDimensionsPhysicalSizeY(0, 0);
+          value = meta.getPixelsPhysicalSizeY(0);
           units.append("micrometers\t");
         }
         else if (token.equals("z")) {
-          value = meta.getDimensionsPhysicalSizeZ(0, 0);
+          value = meta.getPixelsPhysicalSizeZ(0);
           units.append("micrometers\t");
         }
         else if (token.equals("t")) {
-          value = meta.getDimensionsTimeIncrement(0, 0);
+          value = meta.getPixelsTimeIncrement(0);
           units.append("seconds\t");
-        }
-        else if (token.equals("ch")) {
-          value = meta.getDimensionsWaveIncrement(0, 0);
-          units.append("nm\t");
         }
         if (value == null) out.writeBytes("1.000000\t");
         else out.writeBytes(value + "\t");

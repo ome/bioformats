@@ -36,10 +36,14 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.NamingConvention;
+import ome.xml.r201004.primitives.NonNegativeInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -397,8 +401,7 @@ public class ScanrReader extends FormatReader {
       core[i].imageCount = nSlices * nTimepoints * nChannels;
     }
 
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     int nFields = fieldRows * fieldColumns;
@@ -412,10 +415,10 @@ public class ScanrReader extends FormatReader {
       int wellRow = well / wellColumns;
       int wellCol = well % wellColumns;
 
-      store.setWellColumn(wellCol, 0, well);
-      store.setWellRow(wellRow, 0, well);
+      store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
+      store.setWellRow(new NonNegativeInteger(wellRow), 0, well);
 
-      store.setWellSampleIndex(i, 0, well, field);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, field);
       String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
@@ -434,17 +437,17 @@ public class ScanrReader extends FormatReader {
 
       for (int i=0; i<getSeriesCount(); i++) {
         for (int c=0; c<getSizeC(); c++) {
-          store.setLogicalChannelName(channelNames.get(c), i, c);
+          store.setChannelName(channelNames.get(c), i, c);
         }
       }
 
       if (wellRows > 26) {
-        store.setPlateRowNamingConvention("1", 0);
-        store.setPlateColumnNamingConvention("A", 0);
+        store.setPlateRowNamingConvention(NamingConvention.NUMBER, 0);
+        store.setPlateColumnNamingConvention(NamingConvention.LETTER, 0);
       }
       else {
-        store.setPlateRowNamingConvention("A", 0);
-        store.setPlateColumnNamingConvention("1", 0);
+        store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+        store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
       }
       store.setPlateName(plateName, 0);
     }
