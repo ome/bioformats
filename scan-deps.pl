@@ -672,7 +672,7 @@ ZZ
 # List of active LOCI software components
 my @active = (
   \%autogen,
-  \%bfIce,
+#  \%bfIce,
   \%bioFormats,
   \%flowCytometry,
   \%lociChecks,
@@ -691,7 +691,7 @@ my @legacy = (
   \%jvmlink,
   \%multiLUT,
   \%omeEditor,
-  \%omeNotes,
+#  \%omeNotes,
 );
 
 # List of external project forks
