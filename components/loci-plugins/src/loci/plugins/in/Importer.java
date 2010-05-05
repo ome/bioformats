@@ -82,7 +82,11 @@ public class Importer {
       displayHandler.displayOMEXML();
 
       BF.debug("read pixel data");
-      ImagePlus[] imps = readPixels(options, displayHandler);
+      ImagePlusReader ipr = new ImagePlusReader(options);
+      ImagePlus[] imps = readPixels(ipr, options, displayHandler);
+
+      BF.debug("display pixels");
+      displayHandler.displayImages(imps, ipr.stackOrder, ipr.colorModels);
 
       BF.debug("display ROIs");
       displayHandler.displayROIs(imps);
@@ -130,17 +134,12 @@ public class Importer {
     displayHandler.displayOMEXML();
   }
 
-  public ImagePlus[] readPixels(ImporterOptions options,
+  public ImagePlus[] readPixels(ImagePlusReader ipr, ImporterOptions options,
     DisplayHandler displayHandler) throws FormatException, IOException
   {
     if (options.isViewNone()) return null;
-    ImagePlusReader ipr = new ImagePlusReader(options);
     ipr.addStatusListener(displayHandler);
     ImagePlus[] imps = ipr.openImagePlus();
-
-    // TEMP!
-    displayHandler.displayImages(imps, ipr.stackOrder, ipr.colorModels);
-
     return imps;
   }
 

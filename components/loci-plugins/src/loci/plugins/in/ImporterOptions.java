@@ -480,7 +480,7 @@ public class ImporterOptions extends OptionsList {
     if (id == null) id = reader.currentFile;
     FilePattern fp = new FilePattern(id);
     if (!fp.isValid()) id = reader.currentFile;
-    setId(id); // CTR CHECK -- probably the wrong way to do this
+    setId(id); // overwrite base filename with file pattern
     return true;
   }
 
