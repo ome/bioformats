@@ -361,32 +361,42 @@ public class FormatReaderTest {
 
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
-        if (reader.getSizeX() != retrieve.getPixelsSizeX(i, 0).intValue()) {
+        if (reader.getSizeX() !=
+          retrieve.getPixelsSizeX(i).getValue().intValue())
+        {
           msg = "SizeX";
         }
-        if (reader.getSizeY() != retrieve.getPixelsSizeY(i, 0).intValue()) {
+        if (reader.getSizeY() !=
+          retrieve.getPixelsSizeY(i).getValue().intValue())
+        {
           msg = "SizeY";
         }
-        if (reader.getSizeZ() != retrieve.getPixelsSizeZ(i, 0).intValue()) {
+        if (reader.getSizeZ() !=
+          retrieve.getPixelsSizeZ(i).getValue().intValue())
+        {
           msg = "SizeZ";
         }
-        if (reader.getSizeC() != retrieve.getPixelsSizeC(i, 0).intValue()) {
+        if (reader.getSizeC() !=
+          retrieve.getPixelsSizeC(i).getValue().intValue())
+        {
           msg = "SizeC";
         }
-        if (reader.getSizeT() != retrieve.getPixelsSizeT(i, 0).intValue()) {
+        if (reader.getSizeT() !=
+          retrieve.getPixelsSizeT(i).getValue().intValue())
+        {
           msg = "SizeT";
         }
         if (reader.isLittleEndian() ==
-          retrieve.getPixelsBigEndian(i, 0).booleanValue())
+          retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue())
         {
           msg = "BigEndian";
         }
         if (!reader.getDimensionOrder().equals(
-          retrieve.getPixelsDimensionOrder(i, 0)))
+          retrieve.getPixelsDimensionOrder(i).toString()))
         {
           msg = "DimensionOrder";
         }
-        if (!type.equalsIgnoreCase(retrieve.getPixelsPixelType(i, 0))) {
+        if (!type.equalsIgnoreCase(retrieve.getPixelsType(i).toString())) {
           msg = "PixelType";
         }
       }
@@ -412,30 +422,18 @@ public class FormatReaderTest {
 
       for (int i=0; i<reader.getSeriesCount() && msg == null; i++) {
         // total number of ChannelComponents should match SizeC
-        int sizeC = retrieve.getPixelsSizeC(i, 0).intValue();
-        int nChannelComponents = 0;
-        for (int c=0; c<retrieve.getLogicalChannelCount(i); c++) {
-          nChannelComponents += retrieve.getChannelComponentCount(i, c);
-        }
+        int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
+        int nChannelComponents = retrieve.getChannelCount(i);
 
         if (sizeC != nChannelComponents) msg = "ChannelComponent";
 
-        // all LogicalChannels should have at least one ChannelComponent
-
-        for (int c=0; c<retrieve.getLogicalChannelCount(i) && msg == null; c++)
-        {
-          if (retrieve.getChannelComponentCount(i, c) == 0) {
-            msg = "LogicalChannel";
-          }
-        }
-
         // Z, C and T indices should be populated if PlaneTiming is present
 
-        Double deltaT = retrieve.getPlaneTimingDeltaT(i, 0, 0);
-        Double exposure = retrieve.getPlaneTimingExposureTime(i, 0, 0);
-        Integer z = retrieve.getPlaneTheZ(i, 0, 0);
-        Integer c = retrieve.getPlaneTheC(i, 0, 0);
-        Integer t = retrieve.getPlaneTheT(i, 0, 0);
+        Double deltaT = retrieve.getPlaneDeltaT(i, 0);
+        Double exposure = retrieve.getPlaneExposureTime(i, 0);
+        Integer z = retrieve.getPlaneTheZ(i, 0);
+        Integer c = retrieve.getPlaneTheC(i, 0);
+        Integer t = retrieve.getPlaneTheT(i, 0);
 
         if ((deltaT != null || exposure != null) &&
           (z == null || c == null || t == null))
@@ -444,7 +442,7 @@ public class FormatReaderTest {
         }
 
         // if CreationDate is before 1995, it's probably invalid
-        String date = retrieve.getImageCreationDate(i);
+        String date = retrieve.getImageAcquiredDate(i);
         if (date != null && DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
           DateTools.getTime("1995-01-01T00:00:00", DateTools.ISO8601_FORMAT))
         {

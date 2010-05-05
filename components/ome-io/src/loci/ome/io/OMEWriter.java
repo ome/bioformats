@@ -186,17 +186,17 @@ public class OMEWriter extends FormatWriter {
       LOGGER.debug("Original file upload failed", e);
     }
 
-    int x = metadataRetrieve.getPixelsSizeX(series, 0).intValue();
-    int y = metadataRetrieve.getPixelsSizeY(series, 0).intValue();
-    int z = metadataRetrieve.getPixelsSizeZ(series, 0).intValue();
-    int c = metadataRetrieve.getPixelsSizeC(series, 0).intValue();
-    int t = metadataRetrieve.getPixelsSizeT(series, 0).intValue();
-    String order = metadataRetrieve.getPixelsDimensionOrder(series, 0);
-    String pixelTypeString = metadataRetrieve.getPixelsPixelType(series, 0);
+    int x = metadataRetrieve.getPixelsSizeX(series).getValue().intValue();
+    int y = metadataRetrieve.getPixelsSizeY(series).getValue().intValue();
+    int z = metadataRetrieve.getPixelsSizeZ(series).getValue().intValue();
+    int c = metadataRetrieve.getPixelsSizeC(series).getValue().intValue();
+    int t = metadataRetrieve.getPixelsSizeT(series).getValue().intValue();
+    String order = metadataRetrieve.getPixelsDimensionOrder(series).toString();
+    String pixelTypeString = metadataRetrieve.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(pixelTypeString);
     int bpp = FormatTools.getBytesPerPixel(pixelType);
     boolean bigEndian =
-      metadataRetrieve.getPixelsBigEndian(series, 0).booleanValue();
+      metadataRetrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
 
     try {
       r.exec("sessionKey = rc.getSessionKey()");
@@ -252,7 +252,7 @@ public class OMEWriter extends FormatWriter {
 
         r.setVar("NOW", "now");
 
-        String creationDate = metadataRetrieve.getImageCreationDate(series);
+        String creationDate = metadataRetrieve.getImageAcquiredDate(series);
         if (creationDate == null) {
           creationDate =
             DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);

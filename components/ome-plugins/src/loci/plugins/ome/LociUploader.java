@@ -50,6 +50,11 @@ import loci.formats.services.OMEXMLService;
 import loci.ome.io.OMEWriter;
 import loci.plugins.util.LibraryChecker;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.primitives.PositiveInteger;
+
 /**
  * ImageJ plugin for uploading images to an OME server.
  *
@@ -171,17 +176,25 @@ public class LociUploader implements PlugIn {
           case 32: pixelType = FormatTools.FLOAT; break;
         }
 
-        store.setPixelsSizeX(new Integer(imp.getWidth()), 0, 0);
-        store.setPixelsSizeY(new Integer(imp.getHeight()), 0, 0);
-        store.setPixelsSizeZ(new Integer(imp.getNSlices()), 0, 0);
-        store.setPixelsSizeC(new Integer(imp.getNChannels()), 0, 0);
-        store.setPixelsSizeT(new Integer(imp.getNFrames()), 0, 0);
-        store.setPixelsPixelType(
-          FormatTools.getPixelTypeString(pixelType), 0, 0);
-        store.setPixelsBigEndian(fi == null ?
+        store.setPixelsSizeX(
+          new PositiveInteger(new Integer(imp.getWidth())), 0);
+        store.setPixelsSizeY(
+          new PositiveInteger(new Integer(imp.getHeight())), 0);
+        store.setPixelsSizeZ(
+          new PositiveInteger(new Integer(imp.getNSlices())), 0);
+        store.setPixelsSizeC(
+          new PositiveInteger(new Integer(imp.getNChannels())), 0);
+        store.setPixelsSizeT(
+          new PositiveInteger(new Integer(imp.getNFrames())), 0);
+        try {
+          store.setPixelsType(
+            PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
+        }
+        catch (EnumerationException e) { }
+        store.setPixelsBinDataBigEndian(fi == null ?
           Boolean.TRUE : new Boolean(!fi.intelByteOrder), 0, 0);
         // TODO : figure out a way to calculate the dimension order
-        store.setPixelsDimensionOrder("XYCZT", 0, 0);
+        store.setPixelsDimensionOrder(DimensionOrder.XYCZT, 0);
 
         String name = fi == null ? imp.getTitle() : fi.fileName;
         store.setImageName(name, 0);
@@ -191,7 +204,7 @@ public class LociUploader implements PlugIn {
       ul.setMetadataRetrieve(retrieve);
       ul.setId(id);
 
-      boolean little = !retrieve.getPixelsBigEndian(0, 0).booleanValue();
+      boolean little = !retrieve.getPixelsBinDataBigEndian(0, 0).booleanValue();
 
       for (int i=0; i<is.getSize(); i++) {
         IJ.showStatus("Reading plane " + (i+1) + "/" + is.getSize());
@@ -214,7 +227,8 @@ public class LociUploader implements PlugIn {
             byte[][] rgb = new byte[3][((int[]) pix).length];
             ((ColorProcessor) is.getProcessor(i+1)).getRGB(rgb[0],
               rgb[1], rgb[2]);
-            int channels = retrieve.getPixelsSizeC(0, 0).intValue();
+            int channels =
+              ((Integer) retrieve.getPixelsSizeC(0).getValue()).intValue();
             if (channels > 3) channels = 3;
             toUpload = new byte[channels * rgb[0].length];
             for (int j=0; j<channels; j++) {

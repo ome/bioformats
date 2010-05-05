@@ -65,10 +65,30 @@ public class OMEXMLServiceImpl extends AbstractService
   private static final Logger LOGGER =
     LoggerFactory.getLogger(OMEXMLService.class);
 
-  /** Reorderingstylesheet. */
+  /** Reordering stylesheet. */
   private static Templates reorderXSLT =
     XMLTools.getStylesheet("/loci/formats/meta/reorder-2008-09.xsl",
                            OMEXMLServiceImpl.class);
+
+  /** Stylesheets for updating from previous schema releases. */
+  private static Templates UPDATE_2003FC =
+    XMLTools.getStylesheet("/loci/formats/meta/2003-FC-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_2006LO =
+    XMLTools.getStylesheet("/loci/formats/meta/2006-LO-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200706 =
+    XMLTools.getStylesheet("/loci/formats/meta/2007-06-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200802 =
+    XMLTools.getStylesheet("/loci/formats/meta/2008-02-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200809 =
+    XMLTools.getStylesheet("/loci/formats/meta/2008-09-to-2009-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200909 =
+    XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
+    OMEXMLServiceImpl.class);
 
   /**
    * Default constructor.
@@ -83,6 +103,38 @@ public class OMEXMLServiceImpl extends AbstractService
    */
   public String getLatestVersion() {
     return OMEXMLFactory.LATEST_VERSION;
+  }
+
+  /* @see OMEXMLService#transformToLatestVersion(String) */
+  public String transformToLatestVersion(String xml) throws ServiceException {
+    String version = getOMEXMLVersion(createOMEXMLRoot(xml));
+    if (version.equals(getLatestVersion())) return xml;
+
+    String transformed = null;
+    try {
+      if (version.equals("2003-FC")) {
+        transformed = XMLTools.transformXML(xml, UPDATE_2003FC);
+      }
+      else if (version.equals("2006-LO")) {
+        transformed = XMLTools.transformXML(xml, UPDATE_2006LO);
+      }
+      else if (version.equals("2007-06")) {
+        transformed = XMLTools.transformXML(xml, UPDATE_200706);
+      }
+      else if (version.equals("2008-02")) {
+        transformed = XMLTools.transformXML(xml, UPDATE_200802);
+      }
+      else transformed = xml;
+
+      if (!version.equals("2009-09")) {
+        transformed = XMLTools.transformXML(transformed, UPDATE_200809);
+      }
+      return XMLTools.transformXML(transformed, UPDATE_200909);
+    }
+    catch (IOException e) {
+      LOGGER.warn("Could not transform version " + version + " OME-XML.");
+    }
+    return null;
   }
 
   /* (non-Javadoc)
@@ -114,15 +166,13 @@ public class OMEXMLServiceImpl extends AbstractService
       else {
         // extract schema version from OME root node
         version = ome.getVersion();
-
-        // TODO : transform XML to most recent version, if necessary
       }
     }
 
     // create metadata object of the appropriate schema version
     String metaClass = "loci.formats.ome.OMEXMLMetadataImpl";
     try {
-      Class<? extends OMEXMLMetadata> klass = 
+      Class<? extends OMEXMLMetadata> klass =
         (Class<? extends OMEXMLMetadata>) Class.forName(metaClass);
       OMEXMLMetadata meta = klass.newInstance();
       // attach OME root node to metadata object
@@ -169,7 +219,7 @@ public class OMEXMLServiceImpl extends AbstractService
    */
   private OMEXMLNode createRoot(String xml) throws ServiceException {
     try {
-      return OMEXMLFactory.newOMENodeFromSource(xml);
+      return OMEXMLFactory.newOMENodeFromSource(transformToLatestVersion(xml));
     }
     catch (Exception e) {
       throw new ServiceException(e);

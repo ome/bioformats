@@ -81,10 +81,10 @@ public class ImageUploader {
       String id = server + "?user=" + username + "&password=" + password;
       writer.setId(id);
 
-      String order = retrieve.getPixelsDimensionOrder(0, 0);
-      int sizeZ = retrieve.getPixelsSizeZ(0, 0).intValue();
-      int sizeC = retrieve.getPixelsSizeZ(0, 0).intValue();
-      int sizeT = retrieve.getPixelsSizeZ(0, 0).intValue();
+      String order = retrieve.getPixelsDimensionOrder(0).toString();
+      int sizeZ = ((Integer) retrieve.getPixelsSizeZ(0).getValue()).intValue();
+      int sizeC = ((Integer) retrieve.getPixelsSizeC(0).getValue()).intValue();
+      int sizeT = ((Integer) retrieve.getPixelsSizeT(0).getValue()).intValue();
 
       int[] len = data.getLengths();
       int total = FormatTools.getRasterLength(len);

@@ -263,9 +263,9 @@ public class OmeroReader extends FormatReader {
     store.setImageDescription(description, 0);
     MetadataTools.populatePixels(store, this);
 
-    store.setDimensionsPhysicalSizeX(new Double(px), 0, 0);
-    store.setDimensionsPhysicalSizeY(new Double(py), 0, 0);
-    store.setDimensionsPhysicalSizeZ(new Double(pz), 0, 0);
+    store.setPixelsPhysicalSizeX(new Double(px), 0);
+    store.setPixelsPhysicalSizeY(new Double(py), 0);
+    store.setPixelsPhysicalSizeZ(new Double(pz), 0);
   }
 
 }

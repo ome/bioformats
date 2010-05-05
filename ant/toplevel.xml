@@ -16,7 +16,6 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
-      jar-bf-ice,
       jar-checks,
       jar-common,
       jar-flow,
@@ -29,7 +28,6 @@ Type "ant -p" for a list of targets.
       jar-multi-lut,
       jar-ome-editor,
       jar-ome-io,
-      jar-ome-notes,
       jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
@@ -41,7 +39,6 @@ Type "ant -p" for a list of targets.
   <target name="osgi"
     depends="copy-jars,
       osgi-autogen,
-      osgi-bf-ice,
       osgi-checks,
       osgi-common,
       osgi-flow,
@@ -54,7 +51,6 @@ Type "ant -p" for a list of targets.
       osgi-multi-lut,
       osgi-ome-editor,
       osgi-ome-io,
-      osgi-ome-notes,
       osgi-ome-plugins,
       osgi-ome-xml,
       osgi-poi-loci,
@@ -93,7 +89,6 @@ Type "ant -p" for a list of targets.
   <target name="clean"
     depends="
       clean-autogen,
-      clean-bf-ice,
       clean-checks,
       clean-common,
       clean-flow,
@@ -106,7 +101,6 @@ Type "ant -p" for a list of targets.
       clean-multi-lut,
       clean-ome-editor,
       clean-ome-io,
-      clean-ome-notes,
       clean-ome-plugins,
       clean-ome-xml,
       clean-poi-loci,
@@ -120,7 +114,6 @@ Type "ant -p" for a list of targets.
 
   <target name="test"
     depends="test-autogen,
-      test-bf-ice,
       test-checks,
       test-common,
       test-flow,
@@ -133,7 +126,6 @@ Type "ant -p" for a list of targets.
       test-multi-lut,
       test-ome-editor,
       test-ome-io,
-      test-ome-notes,
       test-ome-plugins,
       test-ome-xml,
       test-poi-loci,

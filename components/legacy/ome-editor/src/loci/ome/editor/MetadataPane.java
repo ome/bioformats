@@ -82,7 +82,6 @@ import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.OMEXMLReader;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
-import loci.formats.ome.OMEXML2003FCMetadata;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.out.TiffWriter;
@@ -91,6 +90,9 @@ import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.openmicroscopy.xml.AttributeNode;
 import org.openmicroscopy.xml.CustomAttributesNode;
@@ -473,13 +475,23 @@ public class MetadataPane extends JPanel
           (OMEXMLService) factory.getInstance(OMEXMLService.class);
         IMetadata meta = service.createOMEXMLMetadata();
         writer.setMetadataRetrieve(meta);
-        meta.setPixelsBigEndian(new Boolean(!reader.isLittleEndian()), 0, 0);
-        meta.setPixelsDimensionOrder(reader.getDimensionOrder(), 0, 0);
-        meta.setPixelsSizeX(new Integer(reader.getSizeX()), 0, 0);
-        meta.setPixelsSizeY(new Integer(reader.getSizeY()), 0, 0);
-        meta.setPixelsSizeZ(new Integer(reader.getSizeZ()), 0, 0);
-        meta.setPixelsSizeC(new Integer(reader.getSizeC()), 0, 0);
-        meta.setPixelsSizeT(new Integer(reader.getSizeT()), 0, 0);
+        meta.setPixelsBinDataBigEndian(
+          new Boolean(!reader.isLittleEndian()), 0, 0);
+        try {
+          meta.setPixelsDimensionOrder(
+            DimensionOrder.fromString(reader.getDimensionOrder()), 0);
+        }
+        catch (EnumerationException e) { }
+        meta.setPixelsSizeX(
+          new PositiveInteger(new Integer(reader.getSizeX())), 0);
+        meta.setPixelsSizeY(
+          new PositiveInteger(new Integer(reader.getSizeY())), 0);
+        meta.setPixelsSizeZ(
+          new PositiveInteger(new Integer(reader.getSizeZ())), 0);
+        meta.setPixelsSizeC(
+          new PositiveInteger(new Integer(reader.getSizeC())), 0);
+        meta.setPixelsSizeT(
+          new PositiveInteger(new Integer(reader.getSizeT())), 0);
         writer.setId(outId);
       }
       catch (Exception exc) {
@@ -581,7 +593,8 @@ public class MetadataPane extends JPanel
     if (currentFile != null) {
       String id = currentFile.getPath();
       ImageReader read = new ImageReader();
-      OMEXMLMetadata oms = new OMEXML2003FCMetadata();
+      OMEXMLMetadata oms =
+        (OMEXMLMetadata) MetadataTools.createOMEXMLMetadata();
       read.setMetadataStore(oms);
 
       try {
@@ -814,7 +827,7 @@ public class MetadataPane extends JPanel
 
       try {
         reader = new BufferedImageReader();
-        ms = new OMEXML2003FCMetadata();
+        ms = (OMEXMLMetadata) MetadataTools.createOMEXMLMetadata();
 
         // tell reader to write metadata as it's being
         // parsed to an OMENode (DOM in memory)

@@ -44,6 +44,12 @@ public interface OMEXMLService extends Service {
   public String getLatestVersion();
 
   /**
+   * Transforms the given OME-XML string to the latest supported version of
+   * of the OME-XML schema.
+   */
+  public String transformToLatestVersion(String xml) throws ServiceException;
+
+  /**
    * Creates an OME-XML metadata object using reflection, to avoid
    * direct dependencies on the optional {@link loci.formats.ome} package.
    * @return A new instance of {@link loci.formats.ome.AbstractOMEXMLMetadata},
@@ -176,7 +182,7 @@ public interface OMEXMLService extends Service {
    * (source) into a metadata store (destination).
    */
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest);
-  
+
   // -- Utility methods - casting --
 
   /**
