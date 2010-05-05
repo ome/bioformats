@@ -44,8 +44,8 @@ public class PrintTimestamps {
   /** Outputs global timing details. */
   public static void printGlobalTiming(IMetadata meta, int series) {
     String imageName = meta.getImageName(series);
-    String creationDate = meta.getImageCreationDate(series);
-    Double timeInc = meta.getDimensionsTimeIncrement(series, 0);
+    String creationDate = meta.getImageAcquiredDate(series);
+    Double timeInc = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Global timing information:");
     System.out.println("\tImage name = " + imageName);
@@ -62,14 +62,14 @@ public class PrintTimestamps {
     System.out.println();
     System.out.println(
       "Timing information per timepoint (from beginning of experiment):");
-    int planeCount = meta.getPlaneCount(series, 0);
+    int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
-      Double deltaT = meta.getPlaneTimingDeltaT(series, 0, i);
+      Double deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
-      int z = meta.getPlaneTheZ(series, 0, i).intValue();
-      int c = meta.getPlaneTheC(series, 0, i).intValue();
-      int t = meta.getPlaneTheT(series, 0, i).intValue();
+      int z = meta.getPlaneTheZ(series, i).intValue();
+      int c = meta.getPlaneTheC(series, i).intValue();
+      int t = meta.getPlaneTheT(series, i).intValue();
       if (z == 0 && c == 0) {
         System.out.println("\tTimepoint #" + t + " = " + deltaT + " s");
       }
@@ -88,14 +88,14 @@ public class PrintTimestamps {
     System.out.println();
     System.out.println(
       "Timing information per plane (from beginning of experiment):");
-    int planeCount = meta.getPlaneCount(series, 0);
+    int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
-      Double deltaT = meta.getPlaneTimingDeltaT(series, 0, i);
+      Double deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
-      int z = meta.getPlaneTheZ(series, 0, i).intValue();
-      int c = meta.getPlaneTheC(series, 0, i).intValue();
-      int t = meta.getPlaneTheT(series, 0, i).intValue();
+      int z = meta.getPlaneTheZ(series, i).intValue();
+      int c = meta.getPlaneTheC(series, i).intValue();
+      int t = meta.getPlaneTheT(series, i).intValue();
       System.out.println("\tZ " + z + ", C " + c + ", T " + t + " = " +
         deltaT + " s");
     }

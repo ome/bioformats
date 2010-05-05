@@ -7,6 +7,11 @@ import loci.formats.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.primitives.PositiveInteger;
+
 /**
  * Demonstrates writing multiple RGB image planes to a movie.
  *
@@ -46,15 +51,16 @@ public class WriteRGBMovie {
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
     IMetadata meta = service.createOMEXMLMetadata();
     meta.createRoot();
-    meta.setPixelsBigEndian(Boolean.TRUE, 0, 0);
-    meta.setPixelsDimensionOrder("XYZCT", 0, 0);
-    meta.setPixelsPixelType(FormatTools.getPixelTypeString(pixelType), 0, 0);
-    meta.setPixelsSizeX(w, 0, 0);
-    meta.setPixelsSizeY(h, 0, 0);
-    meta.setPixelsSizeZ(1, 0, 0);
-    meta.setPixelsSizeC(numChannels, 0, 0);
-    meta.setPixelsSizeT(numFrames, 0, 0);
-    meta.setLogicalChannelSamplesPerPixel(numChannels, 0, 0);
+    meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
+    meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+    meta.setPixelsType(
+      PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
+    meta.setPixelsSizeX(new PositiveInteger(w), 0);
+    meta.setPixelsSizeY(new PositiveInteger(h), 0);
+    meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+    meta.setPixelsSizeC(new PositiveInteger(numChannels), 0);
+    meta.setPixelsSizeT(new PositiveInteger(numFrames), 0);
+    meta.setChannelSamplesPerPixel(numChannels, 0, 0);
 
     // write image planes to disk
     System.out.print("Writing planes to '" + id + "'");

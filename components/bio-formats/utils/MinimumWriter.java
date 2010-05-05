@@ -7,6 +7,11 @@ import loci.formats.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.primitives.PositiveInteger;
+
 /**
  * Demonstrates the minimum amount of metadata
  * necessary to write out an image plane.
@@ -41,15 +46,16 @@ public class MinimumWriter {
     IMetadata meta = service.createOMEXMLMetadata();
 
     meta.createRoot();
-    meta.setPixelsBigEndian(Boolean.TRUE, 0, 0);
-    meta.setPixelsDimensionOrder("XYZCT", 0, 0);
-    meta.setPixelsPixelType(FormatTools.getPixelTypeString(pixelType), 0, 0);
-    meta.setPixelsSizeX(w, 0, 0);
-    meta.setPixelsSizeY(h, 0, 0);
-    meta.setPixelsSizeZ(1, 0, 0);
-    meta.setPixelsSizeC(1, 0, 0);
-    meta.setPixelsSizeT(1, 0, 0);
-    meta.setLogicalChannelSamplesPerPixel(1, 0, 0);
+    meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
+    meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+    meta.setPixelsType(
+      PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
+    meta.setPixelsSizeX(new PositiveInteger(w), 0);
+    meta.setPixelsSizeY(new PositiveInteger(h), 0);
+    meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+    meta.setPixelsSizeC(new PositiveInteger(1), 0);
+    meta.setPixelsSizeT(new PositiveInteger(1), 0);
+    meta.setChannelSamplesPerPixel(1, 0, 0);
 
     // write image plane to disk
     System.out.println("Writing image to '" + id + "'...");
