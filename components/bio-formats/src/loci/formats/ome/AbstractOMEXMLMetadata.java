@@ -26,16 +26,16 @@ package loci.formats.ome;
 import java.io.ByteArrayOutputStream;
 import java.util.Hashtable;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import ome.xml.DOMUtil;
-import ome.xml.OMEXMLNode;
+import ome.xml.r201004.OMEModelObject;
 
-import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
@@ -59,7 +59,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
   // -- Fields --
 
   /** The root element of OME-XML. */
-  protected OMEXMLNode root;
+  protected OMEModelObject root;
 
   /** DOM element that backs the first Image's CustomAttributes node. */
   private Element imageCA;
@@ -70,10 +70,17 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
   /** Hashtable containing all OriginalMetadata objects. */
   private Hashtable<String, String> originalMetadata;
 
+  private DocumentBuilder builder;
+
   // -- Constructors --
 
   /** Creates a new OME-XML metadata object. */
-  public AbstractOMEXMLMetadata() { }
+  public AbstractOMEXMLMetadata() {
+    try {
+      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    catch (ParserConfigurationException e) { }
+  }
 
   // -- OMEXMLMetadata API methods --
 
@@ -82,10 +89,16 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * @return OME-XML as a string.
    */
   public String dumpXML() {
-    if (root == null) return null;
+    if (root == null) {
+      root = (OMEModelObject) getRoot();
+      if (root == null) return null;
+    }
     try {
       ByteArrayOutputStream os = new ByteArrayOutputStream();
-      DOMUtil.writeXML(os, root.getDOMElement().getOwnerDocument());
+      Document doc = builder.newDocument();
+      Element r = root.asXMLElement(doc);
+      doc.appendChild(r);
+      DOMUtil.writeXML(os, doc);
       return os.toString();
     }
     catch (TransformerException exc) {
@@ -115,7 +128,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getUUID() */
   public String getUUID() {
-    Element ome = root.getDOMElement();
+    Element ome = root.asXMLElement(builder.newDocument());
     return DOMUtil.getAttribute("UUID", ome);
   }
 
@@ -133,7 +146,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#setUUID(String) */
   public void setUUID(String uuid) {
-    Element ome = root.getDOMElement();
+    Element ome = root.asXMLElement(builder.newDocument());
     DOMUtil.setAttribute("UUID", uuid, ome);
   }
 
