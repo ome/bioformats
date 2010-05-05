@@ -26,6 +26,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.util;
 
 import ij.IJ;
+import ij.ImagePlus;
+
+import java.io.IOException;
+
+import loci.formats.FormatException;
+import loci.plugins.in.ImagePlusReader;
+import loci.plugins.in.ImporterOptions;
 
 /**
  * Miscellaneous LOCI plugins utility methods.
@@ -44,6 +51,23 @@ public final class BF {
 
   public static void debug(String msg) {
     if (IJ.debugMode) IJ.log("LOCI: " + msg);
+  }
+
+  public static ImagePlus[] openImagePlus(String path)
+    throws FormatException, IOException
+  {
+    ImporterOptions options = new ImporterOptions();
+    options.setId(path);
+    return openImagePlus(options);
+  }
+
+  public static ImagePlus[] openImagePlus(ImporterOptions options)
+    throws FormatException, IOException
+  {
+    options.setQuiet(true);
+    options.showDialogs();
+    ImagePlusReader ipr = new ImagePlusReader(options);
+    return ipr.openImagePlus();
   }
 
 }
