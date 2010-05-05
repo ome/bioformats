@@ -105,8 +105,9 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
+      store.setImageID(createLSID("Image", i), i);
       if (doImageName) store.setImageName(r.getCurrentFile(), i);
-      String pixelsID = createLSID("Pixels", i, 0);
+      String pixelsID = createLSID("Pixels", 0);
       store.setPixelsID(pixelsID, i);
       store.setPixelsSizeX(new PositiveInteger(r.getSizeX()), i);
       store.setPixelsSizeY(new PositiveInteger(r.getSizeY()), i);
@@ -126,6 +127,7 @@ public final class MetadataTools {
       if (r.getSizeC() > 0) {
         Integer sampleCount = new Integer(r.getRGBChannelCount());
         for (int c=0; c<r.getEffectiveSizeC(); c++) {
+          store.setChannelID(createLSID("Channel", i, c), i, c);
           store.setChannelSamplesPerPixel(sampleCount, i, c);
         }
       }

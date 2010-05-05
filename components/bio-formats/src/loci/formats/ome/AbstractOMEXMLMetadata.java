@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import ome.xml.DOMUtil;
+import ome.xml.r201004.OME;
 import ome.xml.r201004.OMEModelObject;
 
 import org.w3c.dom.Document;
@@ -53,8 +54,13 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   // -- Constants --
 
-  /** Custom attribute for storing original metadata key/value pairs. */
-  private static final String ORIGINAL_METADATA = "OriginalMetadata";
+  /** XSI namespace. */
+  public static final String XSI_NS =
+    "http://www.w3.org/2001/XMLSchema-instance";
+
+  /** OME-XML schema location. */
+  public static final String SCHEMA =
+    "http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd";
 
   // -- Fields --
 
@@ -63,12 +69,6 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** DOM element that backs the first Image's CustomAttributes node. */
   private Element imageCA;
-
-  /** Whether OriginalMetadata semantic type definition has been created. */
-  private boolean omCreated;
-
-  /** Hashtable containing all OriginalMetadata objects. */
-  private Hashtable<String, String> originalMetadata;
 
   private DocumentBuilder builder;
 
@@ -97,6 +97,8 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       ByteArrayOutputStream os = new ByteArrayOutputStream();
       Document doc = builder.newDocument();
       Element r = root.asXMLElement(doc);
+      r.setAttribute("xmlns:xsi", XSI_NS);
+      r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
       DOMUtil.writeXML(os, doc);
       return os.toString();
@@ -104,24 +106,6 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
     catch (TransformerException exc) {
     }
     return null;
-  }
-
-  /** Adds the key/value pair as a new OriginalMetadata node. */
-  public void setOriginalMetadata(String key, String value) {
-    // TODO : deprecate and use a StringAnnotation instead
-  }
-
-  /** Gets the Hashtable containing all OriginalMetadata key/value pairs. */
-  public Hashtable<String, String> getOriginalMetadata() {
-    // TODO : deprecate and return StringAnnotations instead
-    if (originalMetadata != null) return originalMetadata;
-    originalMetadata = new Hashtable<String, String>();
-    return originalMetadata;
-  }
-
-  /** Gets the OriginalMetadata value corresponding to the given key. */
-  public String getOriginalMetadataValue(String key) {
-    return originalMetadata == null ? null : originalMetadata.get(key);
   }
 
   // -- MetadataRetrieve API methods --
@@ -136,7 +120,6 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
   public void setRoot(Object root) {
-    originalMetadata = null;
   }
 
   /* @see loci.formats.meta.MetadataStore#getRoot() */

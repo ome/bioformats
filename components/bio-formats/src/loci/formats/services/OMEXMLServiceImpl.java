@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerException;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.common.xml.XMLTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
@@ -40,6 +41,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import ome.xml.OMEXMLFactory;
 import ome.xml.OMEXMLNode;
+import ome.xml.r201004.StructuredAnnotations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +69,7 @@ public class OMEXMLServiceImpl extends AbstractService
   private static Templates reorderXSLT =
     XMLTools.getStylesheet("/loci/formats/meta/reorder-2008-09.xsl",
                            OMEXMLServiceImpl.class);
-  
+
   /**
    * Default constructor.
    */
@@ -75,7 +77,7 @@ public class OMEXMLServiceImpl extends AbstractService
     checkClassDependency(ome.xml.OMEXMLFactory.class);
     checkClassDependency(ome.xml.OMEXMLNode.class);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.services.OMEXMLService#getLatestVersion()
    */
@@ -289,7 +291,32 @@ public class OMEXMLServiceImpl extends AbstractService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     String key, String value)
   {
-    omexmlMeta.setOriginalMetadata(key, value);
+    int annotationIndex = 0;
+    try {
+      annotationIndex = omexmlMeta.getListAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    String listID = MetadataTools.createLSID("Annotation", annotationIndex * 3);
+    omexmlMeta.setListAnnotationID(listID, annotationIndex);
+    omexmlMeta.setListAnnotationNamespace(
+      StructuredAnnotations.NAMESPACE, annotationIndex);
+
+    int keyIndex = annotationIndex * 2;
+    int valueIndex = annotationIndex * 2 + 1;
+    String keyID =
+      MetadataTools.createLSID("Annotation", annotationIndex * 3 + 1);
+    String valueID =
+      MetadataTools.createLSID("Annotation", annotationIndex * 3 + 2);
+    omexmlMeta.setStringAnnotationID(keyID, keyIndex);
+    omexmlMeta.setStringAnnotationID(valueID, valueIndex);
+    omexmlMeta.setStringAnnotationValue(key, keyIndex);
+    omexmlMeta.setStringAnnotationValue(value, valueIndex);
+    omexmlMeta.setStringAnnotationNamespace(
+      StructuredAnnotations.NAMESPACE, keyIndex);
+    omexmlMeta.setStringAnnotationNamespace(
+      StructuredAnnotations.NAMESPACE, valueIndex);
+    omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
+    omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);
   }
 
   /* (non-Javadoc)

@@ -44,12 +44,4 @@ public interface OMEXMLMetadata extends IMetadata {
    */
   public String dumpXML();
 
-  /** Adds the key/value pair as a new OriginalMetadata node. */
-  public void setOriginalMetadata(String key, String value);
-
-  /** Gets the Hashtable containing all OriginalMetadata key/value pairs. */
-  public Hashtable<String, String> getOriginalMetadata();
-
-  /** Gets the OriginalMetadata value corresponding to the given key. */
-  public String getOriginalMetadataValue(String key);
 }
