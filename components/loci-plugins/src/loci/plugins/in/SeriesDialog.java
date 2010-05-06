@@ -40,7 +40,6 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import javax.swing.Box;
@@ -74,7 +73,6 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
 
   protected BufferedImageReader r;
   protected String[] seriesLabels;
-  protected boolean[] series;
 
   protected Checkbox[] boxes;
 
@@ -89,14 +87,13 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
    *   (populated by this method).
    */
   public SeriesDialog(ImporterOptions options,
-    IFormatReader r, String[] seriesLabels, boolean[] series)
+    IFormatReader r, String[] seriesLabels)
   {
     super(options);
     this.options = options;
     this.r = r instanceof BufferedImageReader ?
       (BufferedImageReader) r : new BufferedImageReader(r);
     this.seriesLabels = seriesLabels;
-    this.series = series;
   }
 
   // -- OptionsDialog methods --
@@ -115,12 +112,17 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
         if (seriesString.startsWith("[")) {
           seriesString = seriesString.substring(1, seriesString.length() - 2);
         }
-        Arrays.fill(series, false);
+
+        // default all series to false
+        int seriesCount = options.getSeriesCount();
+        for (int s=0; s<seriesCount; s++) options.setSeriesOn(s, false);
+
+        // extract enabled series values from series string
         StringTokenizer tokens = new StringTokenizer(seriesString, " ");
         while (tokens.hasMoreTokens()) {
           String token = tokens.nextToken().trim();
           int n = Integer.parseInt(token);
-          if (n < series.length) series[n] = true;
+          if (n < seriesCount) options.setSeriesOn(n, true);
         }
       }
       options.setSeries(seriesString);
@@ -179,7 +181,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
       boolean[] defaultValues = new boolean[nRows];
       for (int row=0; row<nRows; row++) {
         labels[row] = seriesLabels[nextSeries];
-        defaultValues[row] = series[nextSeries++];
+        defaultValues[row] = options.isSeriesOn(nextSeries++);
       }
       gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
     }
@@ -240,8 +242,9 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
 
     seriesString = "[";
     for (int i=0; i<seriesCount; i++) {
-      series[i] = gd.getNextBoolean();
-      if (series[i]) seriesString += i + " ";
+      boolean on = gd.getNextBoolean();
+      options.setSeriesOn(i, on);
+      if (on) seriesString += i + " ";
     }
     seriesString += "]";
 

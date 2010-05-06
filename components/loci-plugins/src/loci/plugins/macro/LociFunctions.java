@@ -28,7 +28,6 @@ package loci.plugins.macro;
 import ij.IJ;
 import ij.process.ImageProcessor;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 
 import loci.common.services.DependencyException;
@@ -160,11 +159,10 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
-    Double width, Double height) throws FormatException, IOException
+    Double w, Double h) throws FormatException, IOException
   {
-    Rectangle crop = new Rectangle(x.intValue(), y.intValue(),
-      width.intValue(), height.intValue());
-    ImageProcessor[] ip = r.openProcessors(no.intValue(), crop);
+    ImageProcessor[] ip = r.openProcessors(no.intValue(),
+      x.intValue(), y.intValue(), w.intValue(), h.intValue());
     ImagePlusTools.makeRGB(title, ip).show();
   }
 

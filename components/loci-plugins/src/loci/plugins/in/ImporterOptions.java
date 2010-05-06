@@ -27,18 +27,19 @@ package loci.plugins.in;
 
 import ij.IJ;
 
-import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Location;
+import loci.common.Region;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.meta.IMetadata;
+import loci.plugins.BF;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.prefs.OptionsList;
 import loci.plugins.prefs.StringOption;
-import loci.plugins.util.BF;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
 
@@ -121,17 +122,28 @@ public class ImporterOptions extends OptionsList {
 
   protected ImporterReader reader;
   protected ImporterMetadata metadata;
+  protected int[] cCount, zCount, tCount;
+
+  // -- Fields -- secondary values --
 
   // series options
-  protected boolean[] series;
+  protected List<Boolean> seriesOn = new ArrayList<Boolean>();
+
+  // TODO - swap options need to be programmatically settable
 
   // range options
-  protected int[] cBegin, cEnd, cStep, cCount;
-  protected int[] zBegin, zEnd, zStep, zCount;
-  protected int[] tBegin, tEnd, tStep, tCount;
+  protected List<Integer> cBegin = new ArrayList<Integer>();
+  protected List<Integer> cEnd = new ArrayList<Integer>();
+  protected List<Integer> cStep = new ArrayList<Integer>();
+  protected List<Integer> zBegin = new ArrayList<Integer>();
+  protected List<Integer> zEnd = new ArrayList<Integer>();
+  protected List<Integer> zStep = new ArrayList<Integer>();
+  protected List<Integer> tBegin = new ArrayList<Integer>();
+  protected List<Integer> tEnd = new ArrayList<Integer>();
+  protected List<Integer> tStep = new ArrayList<Integer>();
 
   // crop options
-  protected Rectangle[] cropRegion;
+  protected List<Region> cropRegion = new ArrayList<Region>();
 
   // -- Fields - internal --
 
@@ -414,6 +426,42 @@ public class ImporterOptions extends OptionsList {
   }
   public void setWindowless(boolean b) { setValue(KEY_WINDOWLESS, b); }
 
+  // -- ImporterOptions methods - secondary options accessors and mutators --
+
+  // series options
+  public boolean isSeriesOn(int s) { return get(seriesOn, s); }
+  public void setSeriesOn(int s, boolean value) {
+    set(seriesOn, s, value, false);
+  }
+
+  // TODO - swap options
+
+  // range options
+  public int getCBegin(int s) { return get(cBegin, s); }
+  public void setCBegin(int s, int value) { set(cBegin, s, value, 0); }
+  public int getCEnd(int s) { return get(cEnd, s); }
+  public void setCEnd(int s, int value) { set(cEnd, s, value, 0); }
+  public int getCStep(int s) { return get(cStep, s); }
+  public void setCStep(int s, int value) { set(cStep, s, value, 0); }
+
+  public int getZBegin(int s) { return get(zBegin, s); }
+  public void setZBegin(int s, int value) { set(zBegin, s, value, 0); }
+  public int getZEnd(int s) { return get(zEnd, s); }
+  public void setZEnd(int s, int value) { set(zEnd, s, value, 0); }
+  public int getZStep(int s) { return get(zStep, s); }
+  public void setZStep(int s, int value) { set(zStep, s, value, 0); }
+
+  public int getTBegin(int s) { return get(tBegin, s); }
+  public void setTBegin(int s, int value) { set(tBegin, s, value, 0); }
+  public int getTEnd(int s) { return get(tEnd, s); }
+  public void setTEnd(int s, int value) { set(tEnd, s, value, 0); }
+  public int getTStep(int s) { return get(tStep, s); }
+  public void setTStep(int s, int value) { set(tStep, s, value, 0); }
+
+  // crop options
+  public Region getCropRegion(int s) { return get(cropRegion, s); }
+  public void setCropRegion(int s, Region r) { set(cropRegion, s, r, null); }
+
   // -- ImporterOptions methods - derived values accessors --
 
   public String getIdName() { return reader.idName; }
@@ -422,26 +470,14 @@ public class ImporterOptions extends OptionsList {
   public ImageProcessorReader getReader() { return reader.r; }
   public IMetadata getOMEMetadata() { return reader.meta; }
   public ImporterMetadata getOriginalMetadata() { return metadata; }
+  public int getSeriesCount() { return reader.r.getSeriesCount(); }
 
   // series options
-  public int getCBegin(int s) { return cBegin[s]; }
-  public int getCEnd(int s) { return cEnd[s]; }
-  public int getCStep(int s) { return cStep[s]; }
   public int getCCount(int s) { return cCount[s]; }
-  public int getZBegin(int s) { return zBegin[s]; }
-  public int getZEnd(int s) { return zEnd[s]; }
-  public int getZStep(int s) { return zStep[s]; }
   public int getZCount(int s) { return zCount[s]; }
-  public int getTBegin(int s) { return tBegin[s]; }
-  public int getTEnd(int s) { return tEnd[s]; }
-  public int getTStep(int s) { return tStep[s]; }
   public int getTCount(int s) { return tCount[s]; }
-  public boolean isSeriesOn(int s) { return series[s]; }
 
-  // crop options
-  public Rectangle getCropRegion(int s) { return cropRegion[s]; }
-
-  // -- Helper methods --
+  // -- Helper methods - dialog prompts --
 
   private boolean promptUpgrade() {
     UpgradeDialog dialog = new UpgradeDialog(this);
@@ -484,25 +520,13 @@ public class ImporterOptions extends OptionsList {
     return true;
   }
 
-  /** Initializes the ImporterMetadata derived value. */
-  private void initializeMetadata() {
-    // only prepend a series name prefix to the metadata keys if multiple
-    // series are being opened
-    int seriesCount = 0;
-    for (int i=0; i<series.length; i++) {
-      if (series[i]) seriesCount++;
-    }
-    metadata = new ImporterMetadata(reader.r, this, seriesCount > 1);
-  }
-
   /** Prompts for which series to import, if necessary. */
   private boolean promptSeries() {
     // initialize series-related derived values
-    series = new boolean[reader.r.getSeriesCount()];
-    series[0] = true;
+    setSeriesOn(0, true);
 
     // build descriptive label for each series
-    int seriesCount = reader.r.getSeriesCount();
+    int seriesCount = getSeriesCount();
     seriesLabels = new String[seriesCount];
     for (int i=0; i<seriesCount; i++) {
       reader.r.setSeries(i);
@@ -553,13 +577,13 @@ public class ImporterOptions extends OptionsList {
     if (seriesCount > 1 && !openAllSeries() && !isViewNone()) {
       BF.debug("prompt for which series to import");
       SeriesDialog dialog = new SeriesDialog(this,
-        reader.r, seriesLabels, series);
+        reader.r, seriesLabels);
       if (dialog.showDialog() != OptionsDialog.STATUS_OK) return false;
     }
     else BF.debug("no need to prompt for series");
 
     if (openAllSeries() || isViewNone()) {
-      Arrays.fill(series, true);
+      for (int s=0; s<getSeriesCount(); s++) setSeriesOn(s, true);
     }
     return true;
   }
@@ -572,41 +596,35 @@ public class ImporterOptions extends OptionsList {
     }
     BF.debug("prompt for dimension swapping parameters");
 
-    SwapDialog dialog = new SwapDialog(this, reader.virtualReader, series);
+    SwapDialog dialog = new SwapDialog(this, reader.virtualReader);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for the range of planes to import, if necessary. */
   private boolean promptRange() {
-    // initialize range-related derived values
-    int seriesCount = reader.r.getSeriesCount();
-    cBegin = new int[seriesCount];
-    cEnd = new int[seriesCount];
-    cStep = new int[seriesCount];
-    zBegin = new int[seriesCount];
-    zEnd = new int[seriesCount];
-    zStep = new int[seriesCount];
-    tBegin = new int[seriesCount];
-    tEnd = new int[seriesCount];
-    tStep = new int[seriesCount];
+    // initialize range-related secondary values
+    int seriesCount = getSeriesCount();
 
-    for (int i=0; i<seriesCount; i++) {
-      reader.r.setSeries(i);
-      cBegin[i] = zBegin[i] = tBegin[i] = 0;
-      cEnd[i] = reader.r.getEffectiveSizeC() - 1;
-      zEnd[i] = reader.r.getSizeZ() - 1;
-      tEnd[i] = reader.r.getSizeT() - 1;
-      cStep[i] = zStep[i] = tStep[i] = 1;
+    for (int s=0; s<seriesCount; s++) {
+      reader.r.setSeries(s);
+      setCBegin(s, 0);
+      setZBegin(s, 0);
+      setTBegin(s, 0);
+      setCEnd(s, reader.r.getEffectiveSizeC() - 1);
+      setZEnd(s, reader.r.getSizeZ() - 1);
+      setTEnd(s, reader.r.getSizeT() - 1);
+      setCStep(s, 1);
+      setZStep(s, 1);
+      setTStep(s, 1);
     }
-
 
     if (!isSpecifyRanges()) {
       BF.debug("open all planes");
       return true;
     }
     boolean needRange = false;
-    for (int i=0; i<seriesCount; i++) {
-      if (series[i] && reader.r.getImageCount() > 1) needRange = true;
+    for (int s=0; s<seriesCount; s++) {
+      if (isSeriesOn(s) && reader.r.getImageCount() > 1) needRange = true;
     }
     if (!needRange) {
       BF.debug("no need to prompt for planar ranges");
@@ -615,18 +633,16 @@ public class ImporterOptions extends OptionsList {
     BF.debug("prompt for planar ranges");
     IJ.showStatus("");
 
-    RangeDialog dialog = new RangeDialog(this,
-      reader.r, series, seriesLabels, cBegin, cEnd, cStep,
-      zBegin, zEnd, zStep, tBegin, tEnd, tStep);
+    RangeDialog dialog = new RangeDialog(this, reader.r, seriesLabels);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for cropping details, if necessary. */
   private boolean promptCrop() {
-    // initialize crop-related derived values
-    cropRegion = new Rectangle[reader.r.getSeriesCount()];
-    for (int i=0; i<cropRegion.length; i++) {
-      if (series[i] && doCrop()) cropRegion[i] = new Rectangle();
+    // initialize crop-related secondary values
+    int seriesCount = getSeriesCount();
+    for (int s=0; s<seriesCount; s++) {
+      setCropRegion(s, new Region());
     }
 
     if (!doCrop()) {
@@ -635,26 +651,55 @@ public class ImporterOptions extends OptionsList {
     }
     BF.debug("prompt for cropping region");
 
-    CropDialog dialog = new CropDialog(this,
-      reader.r, seriesLabels, series, cropRegion);
+    CropDialog dialog = new CropDialog(this, reader.r, seriesLabels);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
+  }
+
+  // -- Helper methods - derived value computation --
+
+  /** Initializes the ImporterMetadata derived value. */
+  private void initializeMetadata() {
+    // only prepend a series name prefix to the metadata keys if multiple
+    // series are being opened
+    int seriesCount = getSeriesCount();
+    int numEnabled = 0;
+    for (int s=0; s<seriesCount; s++) {
+      if (isSeriesOn(s)) numEnabled++;
+    }
+    metadata = new ImporterMetadata(reader.r, this, numEnabled > 1);
   }
 
   /** Initializes the cCount, zCount and tCount derived values. */
   private void computeRangeCounts() {
-    int seriesCount = reader.r.getSeriesCount();
+    int seriesCount = getSeriesCount();
     cCount = new int[seriesCount];
     zCount = new int[seriesCount];
     tCount = new int[seriesCount];
-    for (int i=0; i<seriesCount; i++) {
-      if (!series[i]) cCount[i] = zCount[i] = tCount[i] = 0;
+    for (int s=0; s<seriesCount; s++) {
+      if (!isSeriesOn(s)) cCount[s] = zCount[s] = tCount[s] = 0;
       else {
-        if (isMergeChannels()) cCount[i] = 1;
-        else cCount[i] = (cEnd[i] - cBegin[i] + cStep[i]) / cStep[i];
-        zCount[i] = (zEnd[i] - zBegin[i] + zStep[i]) / zStep[i];
-        tCount[i] = (tEnd[i] - tBegin[i] + tStep[i]) / tStep[i];
+        if (isMergeChannels()) cCount[s] = 1;
+        else {
+          cCount[s] = (getCEnd(s) - getCBegin(s) + getCStep(s)) / getCStep(s);
+        }
+        zCount[s] = (getZEnd(s) - getZBegin(s) + getZStep(s)) / getZStep(s);
+        tCount[s] = (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
       }
     }
+  }
+  
+  // -- Helper methods - miscellaneous --
+  
+  private <T extends Object> void set(List<T> list,
+    int index, T value, T defaultValue)
+  {
+    while (list.size() <= index) list.add(defaultValue);
+    list.set(index, value);
+  }
+
+  private <T extends Object> T get(List<T> list, int index) {
+    if (list.size() <= index) return null;
+    return list.get(index);
   }
 
 }

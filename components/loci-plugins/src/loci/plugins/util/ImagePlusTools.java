@@ -224,12 +224,6 @@ public final class ImagePlusTools {
 
     int stackSize = s.getSize();
     for (int i=0; i<stackSize; i++) {
-      /*
-      int[] target =
-        FormatTools.getZCTCoords(newOrder, z, c, t, stackSize, i);
-      int ndx = FormatTools.getIndex(origOrder, z, c, t, stackSize,
-        target[0], target[1], target[2]);
-      */
       int ndx = FormatTools.getReorderedIndex(
         origOrder, newOrder, z, c, t, stackSize, i);
       newStack.addSlice(s.getSliceLabel(ndx + 1), s.getProcessor(ndx + 1));

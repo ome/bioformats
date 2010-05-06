@@ -27,8 +27,7 @@ package loci.plugins.in;
 
 import ij.gui.GenericDialog;
 
-import java.awt.Rectangle;
-
+import loci.common.Region;
 import loci.formats.IFormatReader;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
@@ -49,21 +48,15 @@ public class CropDialog extends OptionsDialog {
 
   protected IFormatReader r;
   protected String[] labels;
-  protected boolean[] series;
-  protected Rectangle[] box;
 
   // -- Constructor --
 
   /** Creates a crop options dialog for the Bio-Formats Importer. */
-  public CropDialog(ImporterOptions options, IFormatReader r,
-    String[] labels, boolean[] series, Rectangle[] box)
-  {
+  public CropDialog(ImporterOptions options, IFormatReader r, String[] labels) {
     super(options);
     this.options = options;
     this.r = r;
     this.labels = labels;
-    this.series = series;
-    this.box = box;
   }
 
   // -- OptionsDialog methods --
@@ -75,39 +68,44 @@ public class CropDialog extends OptionsDialog {
    */
   public int showDialog() {
     GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
-    for (int i=0; i<series.length; i++) {
-      if (!series[i]) continue;
-      r.setSeries(i);
-      gd.addMessage(labels[i].replaceAll("_", " "));
-      gd.addNumericField("X_Coordinate_" + (i + 1), 0, 0);
-      gd.addNumericField("Y_Coordinate_" + (i + 1), 0, 0);
-      gd.addNumericField("Width_" + (i + 1), r.getSizeX(), 0);
-      gd.addNumericField("Height_" + (i + 1), r.getSizeY(), 0);
+    for (int s=0; s<options.getSeriesCount(); s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
+      gd.addMessage(labels[s].replaceAll("_", " "));
+      gd.addNumericField("X_Coordinate_" + (s + 1), 0, 0);
+      gd.addNumericField("Y_Coordinate_" + (s + 1), 0, 0);
+      gd.addNumericField("Width_" + (s + 1), r.getSizeX(), 0);
+      gd.addNumericField("Height_" + (s + 1), r.getSizeY(), 0);
     }
     WindowTools.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
-    for (int i=0; i<series.length; i++) {
-      if (!series[i]) continue;
-      r.setSeries(i);
-      box[i].x = (int) gd.getNextNumber();
-      box[i].y = (int) gd.getNextNumber();
-      box[i].width = (int) gd.getNextNumber();
-      box[i].height = (int) gd.getNextNumber();
+    for (int s=0; s<options.getSeriesCount(); s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
 
-      if (box[i].x < 0) box[i].x = 0;
-      if (box[i].y < 0) box[i].y = 0;
-      if (box[i].x >= r.getSizeX()) box[i].x = r.getSizeX() - box[i].width - 1;
-      if (box[i].y >= r.getSizeY()) box[i].y = r.getSizeY() - box[i].height - 1;
-      if (box[i].width < 1) box[i].width = 1;
-      if (box[i].height < 1) box[i].height = 1;
-      if (box[i].width + box[i].x > r.getSizeX()) {
-        box[i].width = r.getSizeX() - box[i].x;
+      Region box = options.getCropRegion(s);
+
+      box.x = (int) gd.getNextNumber();
+      box.y = (int) gd.getNextNumber();
+      box.width = (int) gd.getNextNumber();
+      box.height = (int) gd.getNextNumber();
+
+      if (box.x < 0) box.x = 0;
+      if (box.y < 0) box.y = 0;
+      if (box.x >= r.getSizeX()) box.x = r.getSizeX() - box.width - 1;
+      if (box.y >= r.getSizeY()) box.y = r.getSizeY() - box.height - 1;
+      if (box.width < 1) box.width = 1;
+      if (box.height < 1) box.height = 1;
+      if (box.width + box.x > r.getSizeX()) {
+        box.width = r.getSizeX() - box.x;
       }
-      if (box[i].height + box[i].y > r.getSizeY()) {
-        box[i].height = r.getSizeY() - box[i].y;
+      if (box.height + box.y > r.getSizeY()) {
+        box.height = r.getSizeY() - box.y;
       }
+
+      options.setCropRegion(s, box); // in case we got a copy
     }
 
     return STATUS_OK;

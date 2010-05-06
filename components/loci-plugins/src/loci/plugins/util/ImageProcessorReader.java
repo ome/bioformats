@@ -30,7 +30,6 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
-import java.awt.Rectangle;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
@@ -81,7 +80,7 @@ public class ImageProcessorReader extends MinMaxCalculator {
   public ImageProcessor[] openProcessors(int no)
     throws FormatException, IOException
   {
-    return openProcessors(no, null);
+    return openProcessors(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /**
@@ -90,21 +89,18 @@ public class ImageProcessorReader extends MinMaxCalculator {
    * i.e., length of returned array == getRGBChannelCount().
    *
    * @param no Position of image plane.
-   * @param crop Image cropping specifications,
-   *   or null if no cropping is to be done.
    */
-  public ImageProcessor[] openProcessors(int no, Rectangle crop)
+  public ImageProcessor[] openProcessors(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     // read byte array
     byte[] b = null;
     boolean first = true;
-    if (crop == null) crop = new Rectangle(0, 0, getSizeX(), getSizeY());
     while (true) {
       // read LuraWave license code, if available
       String code = LuraWave.initLicenseCode();
       try {
-        b = openBytes(no, crop.x, crop.y, crop.width, crop.height);
+        b = openBytes(no, x, y, w, h); 
         break;
       }
       catch (FormatException exc) {
@@ -118,8 +114,6 @@ public class ImageProcessorReader extends MinMaxCalculator {
       }
     }
 
-    int w = crop.width;
-    int h = crop.height;
     int c = getRGBChannelCount();
     int type = getPixelType();
     int bpp = FormatTools.getBytesPerPixel(type);
@@ -230,7 +224,7 @@ public class ImageProcessorReader extends MinMaxCalculator {
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return openProcessors(no, new Rectangle(x, y, w, h));
+    return openProcessors(no, x, y, w, h);
   }
 
 }

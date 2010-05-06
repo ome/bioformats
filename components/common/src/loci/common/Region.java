@@ -43,6 +43,8 @@ public class Region {
 
   // -- Constructor --
 
+  public Region() { }
+
   public Region(int x, int y, int width, int height) {
     this.x = x;
     this.y = y;

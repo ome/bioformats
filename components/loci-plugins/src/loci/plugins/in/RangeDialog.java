@@ -45,11 +45,7 @@ public class RangeDialog extends OptionsDialog {
   protected ImporterOptions options;
 
   protected IFormatReader r;
-  protected boolean[] series;
   protected String[] seriesLabels;
-  protected int[] cBegin, cEnd, cStep;
-  protected int[] zBegin, zEnd, zStep;
-  protected int[] tBegin, tEnd, tStep;
 
   // -- Constructor --
 
@@ -57,39 +53,15 @@ public class RangeDialog extends OptionsDialog {
    * Creates a range chooser dialog for the Bio-Formats Importer.
    *
    * @param r The reader to use for extracting details of each series.
-   * @param series Boolean array indicating the series
-   *   for which ranges should be determined.
    * @param seriesLabels Label to display to user identifying each series
-   * @param cBegin First C index to include (populated by showDialog).
-   * @param cEnd Last C index to include (populated by showDialog).
-   * @param cStep C dimension step size (populated by showDialog).
-   * @param zBegin First Z index to include (populated by showDialog).
-   * @param zEnd Last Z index to include (populated by showDialog).
-   * @param zStep Z dimension step size (populated by showDialog).
-   * @param tBegin First T index to include (populated by showDialog).
-   * @param tEnd Last T index to include (populated by showDialog).
-   * @param tStep T dimension step size (populated by showDialog).
    */
-  public RangeDialog(ImporterOptions options, IFormatReader r,
-    boolean[] series, String[] seriesLabels,
-    int[] cBegin, int[] cEnd, int[] cStep,
-    int[] zBegin, int[] zEnd, int[] zStep,
-    int[] tBegin, int[] tEnd, int[] tStep)
+  public RangeDialog(ImporterOptions options,
+    IFormatReader r, String[] seriesLabels)
   {
     super(options);
     this.options = options;
     this.r = r;
-    this.series = series;
     this.seriesLabels = seriesLabels;
-    this.cBegin = cBegin;
-    this.cEnd = cEnd;
-    this.cStep = cStep;
-    this.zBegin = zBegin;
-    this.zEnd = zEnd;
-    this.zStep = zStep;
-    this.tBegin = tBegin;
-    this.tEnd = tEnd;
-    this.tStep = tStep;
   }
 
   // -- OptionsDialog methods --
@@ -105,84 +77,104 @@ public class RangeDialog extends OptionsDialog {
 
     // prompt user to specify series ranges (or grab from macro options)
     GenericDialog gd = new GenericDialog("Bio-Formats Range Options");
-    for (int i=0; i<seriesCount; i++) {
-      if (!series[i]) continue;
-      r.setSeries(i);
-      gd.addMessage(seriesLabels[i].replaceAll("_", " "));
-      String s = seriesCount > 1 ? "_" + (i + 1) : "";
+    for (int s=0; s<seriesCount; s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
+      gd.addMessage(seriesLabels[s].replaceAll("_", " "));
+      String suffix = seriesCount > 1 ? "_" + (s + 1) : "";
       //if (r.isOrderCertain()) {
       if (r.getEffectiveSizeC() > 1) {
-        gd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
-        gd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
-        gd.addNumericField("C_Step" + s, cStep[i], 0);
+        gd.addNumericField("C_Begin" + suffix, options.getCBegin(s) + 1, 0);
+        gd.addNumericField("C_End" + suffix, options.getCEnd(s) + 1, 0);
+        gd.addNumericField("C_Step" + suffix, options.getCStep(s), 0);
       }
       if (r.getSizeZ() > 1) {
-        gd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
-        gd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
-        gd.addNumericField("Z_Step" + s, zStep[i], 0);
+        gd.addNumericField("Z_Begin" + suffix, options.getZBegin(s) + 1, 0);
+        gd.addNumericField("Z_End" + suffix, options.getZEnd(s) + 1, 0);
+        gd.addNumericField("Z_Step" + suffix, options.getZStep(s), 0);
       }
       if (r.getSizeT() > 1) {
-        gd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
-        gd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
-        gd.addNumericField("T_Step" + s, tStep[i], 0);
+        gd.addNumericField("T_Begin" + suffix, options.getTBegin(s) + 1, 0);
+        gd.addNumericField("T_End" + suffix, options.getTEnd(s) + 1, 0);
+        gd.addNumericField("T_Step" + suffix, options.getTStep(s), 0);
       }
       //}
       //else {
-      //  gd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
-      //  gd.addNumericField("End" + s, cEnd[i] + 1, 0);
-      //  gd.addNumericField("Step" + s, cStep[i], 0);
+      //  gd.addNumericField("Begin" + suffix, options.getCBegin(s) + 1, 0);
+      //  gd.addNumericField("End" + suffix, options.getCEnd(s) + 1, 0);
+      //  gd.addNumericField("Step" + suffix, options.getCStep(s), 0);
       //}
     }
     WindowTools.addScrollBars(gd);
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
-    for (int i=0; i<seriesCount; i++) {
-      if (!series[i]) continue;
-      r.setSeries(i);
+    for (int s=0; s<seriesCount; s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
       int sizeC = r.getEffectiveSizeC();
       int sizeZ = r.getSizeZ();
       int sizeT = r.getSizeT();
       boolean certain = r.isOrderCertain();
+      
+      int cBegin = options.getCBegin(s);
+      int cEnd = options.getCEnd(s);
+      int cStep = options.getCStep(s);
+      int zBegin = options.getZBegin(s);
+      int zEnd = options.getZEnd(s);
+      int zStep = options.getZStep(s);
+      int tBegin = options.getTBegin(s);
+      int tEnd = options.getTEnd(s);
+      int tStep = options.getTStep(s);
 
       //if (certain) {
       if (r.getEffectiveSizeC() > 1) {
-        cBegin[i] = (int) gd.getNextNumber() - 1;
-        cEnd[i] = (int) gd.getNextNumber() - 1;
-        cStep[i] = (int) gd.getNextNumber();
+        cBegin = (int) gd.getNextNumber() - 1;
+        cEnd = (int) gd.getNextNumber() - 1;
+        cStep = (int) gd.getNextNumber();
       }
       if (r.getSizeZ() > 1) {
-        zBegin[i] = (int) gd.getNextNumber() - 1;
-        zEnd[i] = (int) gd.getNextNumber() - 1;
-        zStep[i] = (int) gd.getNextNumber();
+        zBegin = (int) gd.getNextNumber() - 1;
+        zEnd = (int) gd.getNextNumber() - 1;
+        zStep = (int) gd.getNextNumber();
       }
       if (r.getSizeT() > 1) {
-        tBegin[i] = (int) gd.getNextNumber() - 1;
-        tEnd[i] = (int) gd.getNextNumber() - 1;
-        tStep[i] = (int) gd.getNextNumber();
+        tBegin = (int) gd.getNextNumber() - 1;
+        tEnd = (int) gd.getNextNumber() - 1;
+        tStep = (int) gd.getNextNumber();
       }
       //}
       //else {
-      //  cBegin[i] = (int) gd.getNextNumber() - 1;
-      //  cEnd[i] = (int) gd.getNextNumber() - 1;
-      //  cStep[i] = (int) gd.getNextNumber();
+      //  cBegin = (int) gd.getNextNumber() - 1;
+      //  cEnd = (int) gd.getNextNumber() - 1;
+      //  cStep = (int) gd.getNextNumber();
       //}
       int maxC = certain ? sizeC : r.getImageCount();
-      if (cBegin[i] < 0) cBegin[i] = 0;
-      if (cBegin[i] >= maxC) cBegin[i] = maxC - 1;
-      if (cEnd[i] < cBegin[i]) cEnd[i] = cBegin[i];
-      if (cEnd[i] >= maxC) cEnd[i] = maxC - 1;
-      if (cStep[i] < 1) cStep[i] = 1;
-      if (zBegin[i] < 0) zBegin[i] = 0;
-      if (zBegin[i] >= sizeZ) zBegin[i] = sizeZ - 1;
-      if (zEnd[i] < zBegin[i]) zEnd[i] = zBegin[i];
-      if (zEnd[i] >= sizeZ) zEnd[i] = sizeZ - 1;
-      if (zStep[i] < 1) zStep[i] = 1;
-      if (tBegin[i] < 0) tBegin[i] = 0;
-      if (tBegin[i] >= sizeT) tBegin[i] = sizeT - 1;
-      if (tEnd[i] < tBegin[i]) tEnd[i] = tBegin[i];
-      if (tEnd[i] >= sizeT) tEnd[i] = sizeT - 1;
-      if (tStep[i] < 1) tStep[i] = 1;
+      if (cBegin < 0) cBegin = 0;
+      if (cBegin >= maxC) cBegin = maxC - 1;
+      if (cEnd < cBegin) cEnd = cBegin;
+      if (cEnd >= maxC) cEnd = maxC - 1;
+      if (cStep < 1) cStep = 1;
+      if (zBegin < 0) zBegin = 0;
+      if (zBegin >= sizeZ) zBegin = sizeZ - 1;
+      if (zEnd < zBegin) zEnd = zBegin;
+      if (zEnd >= sizeZ) zEnd = sizeZ - 1;
+      if (zStep < 1) zStep = 1;
+      if (tBegin < 0) tBegin = 0;
+      if (tBegin >= sizeT) tBegin = sizeT - 1;
+      if (tEnd < tBegin) tEnd = tBegin;
+      if (tEnd >= sizeT) tEnd = sizeT - 1;
+      if (tStep < 1) tStep = 1;
+      
+      options.setCBegin(s, cBegin);
+      options.setCEnd(s, cEnd);
+      options.setCStep(s, cStep);
+      options.setZBegin(s, zBegin);
+      options.setZEnd(s, zEnd);
+      options.setZStep(s, zStep);
+      options.setTBegin(s, tBegin);
+      options.setTEnd(s, tEnd);
+      options.setTStep(s, tStep);
     }
 
     return STATUS_OK;

@@ -31,8 +31,8 @@ import ij.ImagePlus;
 import java.io.IOException;
 
 import loci.formats.FormatException;
+import loci.plugins.BF;
 import loci.plugins.LociImporter;
-import loci.plugins.util.BF;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.WindowTools;
 

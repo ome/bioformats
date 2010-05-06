@@ -34,7 +34,6 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
-import java.awt.Rectangle;
 import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.Vector;
 
 import loci.common.Location;
+import loci.common.Region;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
@@ -188,9 +188,26 @@ public class ImagePlusReader implements StatusReporter {
       ImageStack stackF = null; // for floating point images (32-bit)
       ImageStack stackO = null; // for all other images (24-bit RGB)
 
-      Rectangle cropRegion = options.getCropRegion(s);
-      int w = options.doCrop() ? cropRegion.width : r.getSizeX();
-      int h = options.doCrop() ? cropRegion.height : r.getSizeY();
+      Region region = options.getCropRegion(s);
+      if (region == null) region = new Region();
+      int sizeX = r.getSizeX(), sizeY = r.getSizeY();
+      if (options.doCrop()) {
+        // bounds checking for cropped region
+        if (region.x < 0) region.x = 0;
+        if (region.y < 0) region.y = 0;
+        if (region.width <= 0 || region.x + region.width > sizeX) {
+          region.width = sizeX - region.x;
+        }
+        if (region.height <= 0 || region.y + region.height > sizeY) {
+          region.height = sizeX - region.y;
+        }
+      }
+      else {
+        // obtain entire image plane
+        region.x = region.y = 0;
+        region.width = sizeX;
+        region.height = sizeY;
+      }
 
       int q = 0;
       stackOrder = options.getStackOrder();
@@ -265,7 +282,9 @@ public class ImagePlusReader implements StatusReporter {
             options.getCCount(s), options.getTCount(s));
 
           // get image processor for ith plane
-          ImageProcessor[] p = r.openProcessors(i, cropRegion);
+          ImageProcessor[] p;
+          p = r.openProcessors(i, region.x, region.y,
+            region.width, region.height);
           ImageProcessor ip = p[0];
           if (p.length > 1) {
             ip = ImagePlusTools.makeRGB(p).getProcessor();
@@ -280,6 +299,7 @@ public class ImagePlusReader implements StatusReporter {
           }
 
           // add plane to image stack
+          int w = region.width, h = region.height;
           if (ip instanceof ByteProcessor) {
             if (stackB == null) stackB = new ImageStack(w, h);
             stackB.addSlice(label, ip);

@@ -46,18 +46,14 @@ public class SwapDialog extends OptionsDialog {
   protected ImporterOptions options;
 
   protected DimensionSwapper r;
-  protected boolean[] series;
 
   // -- Constructor --
 
   /** Creates a dimension swapper dialog for the Bio-Formats Importer. */
-  public SwapDialog(ImporterOptions options,
-    DimensionSwapper r, boolean[] series)
-  {
+  public SwapDialog(ImporterOptions options, DimensionSwapper r) {
     super(options);
     this.options = options;
     this.r = r;
-    this.series = series;
   }
 
   // -- OptionsDialog methods --
@@ -73,11 +69,11 @@ public class SwapDialog extends OptionsDialog {
     int oldSeries = r.getSeries();
     String[] labels = {"Z", "C", "T"};
     int[] sizes = new int[] {r.getSizeZ(), r.getSizeC(), r.getSizeT()};
-    for (int n=0; n<r.getSeriesCount(); n++) {
-      if (!series[n]) continue;
-      r.setSeries(n);
+    for (int s=0; s<r.getSeriesCount(); s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
 
-      gd.addMessage("Series " + (n + 1) + ":\n");
+      gd.addMessage("Series " + (s + 1) + ":\n");
 
       for (int i=0; i<labels.length; i++) {
         gd.addChoice(sizes[i] + "_planes", labels, labels[i]);
@@ -87,9 +83,9 @@ public class SwapDialog extends OptionsDialog {
     gd.showDialog();
     if (gd.wasCanceled()) return STATUS_CANCELED;
 
-    for (int n=0; n<r.getSeriesCount(); n++) {
-      if (!series[n]) continue;
-      r.setSeries(n);
+    for (int s=0; s<r.getSeriesCount(); s++) {
+      if (!options.isSeriesOn(s)) continue;
+      r.setSeries(s);
       String z = gd.getNextChoice();
       String c = gd.getNextChoice();
       String t = gd.getNextChoice();

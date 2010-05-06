@@ -7,9 +7,10 @@ import ij.ImagePlus;
 
 import java.io.IOException;
 
+import loci.common.Region;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.plugins.util.BF;
+import loci.plugins.BF;
 
 import org.junit.Test;
 
@@ -53,7 +54,7 @@ public class ImporterTest {
 	    final ImporterOptions options = new ImporterOptions();
       options.setId(path);
       options.setCrop(true);
-      // TODO: pass crop parameters to options somehow
+      options.setCropRegion(0, new Region(0, 0, cropSizeX, cropSizeY));
       imps = BF.openImagePlus(options);
     }
     catch (IOException e) {
@@ -64,7 +65,7 @@ public class ImporterTest {
     }
 
     assertNotNull(imps);
-    assertTrue(imps.length == 0);
+    assertTrue(imps.length == 1);
     assertNotNull(imps[0]);
     assertTrue(imps[0].getWidth() == cropSizeX);
     assertTrue(imps[0].getHeight() == cropSizeY);
@@ -85,7 +86,7 @@ public class ImporterTest {
   public static void main(String[] args) {
     ImporterTest test = new ImporterTest();
     test.testBasic();
-    //test.testCrop();
+    test.testCrop();
     System.exit(0);
   }
 
