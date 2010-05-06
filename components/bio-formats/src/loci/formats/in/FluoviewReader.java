@@ -74,7 +74,9 @@ public class FluoviewReader extends BaseTiffReader {
   private String dimensionOrder;
   private String date = null;
   private int timeIndex = -1;
-  private long[][] stamps = null;
+
+  /** Timestamps for each plane, in seconds. */
+  private double[][] stamps = null;
 
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
@@ -337,9 +339,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate timing data
     if (timeIndex >= 0) {
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneDeltaT(new Double(stamps[timeIndex][i] / 1000.0), 0, i);
+      for (int s=0; s<getSeriesCount(); s++) {
+        setSeries(s);
+        for (int i=0; i<getImageCount(); i++) {
+          int index = getImageIndex(i);
+          store.setPlaneDeltaT(stamps[timeIndex][index], s, i);
+        }
       }
+      setSeries(0);
     }
 
     // populate Dimensions
@@ -449,14 +456,22 @@ public class FluoviewReader extends BaseTiffReader {
   }
 
   private void readStamps() throws FormatException, IOException {
-    stamps = new long[8][ifds.size()];
+    stamps = new double[8][ifds.size()];
     for (int i=0; i<ifds.size(); i++) {
       byte[] stamp = shortArrayToBytes(ifds.get(i).getIFDShortArray(MMSTAMP));
       RandomAccessInputStream ras = new RandomAccessInputStream(stamp);
+      ras.order(isLittleEndian());
 
-      // each stamp is 8 longs, representing the position on dimensions 3-10
+      // each stamp is 8 doubles, representing the position on dimensions 3-10
       for (int j=0; j<8; j++) {
-        stamps[j][i] = ras.readLong() / 10000;
+        stamps[j][i] = ras.readDouble() / 1000;
+
+        // correct for clock skew?
+        int pow = -1;
+        while (Math.pow(2, pow) < stamps[j][i]) {
+          stamps[j][i] -= (0.032 * (Math.pow(2, pow < 0 ? 0 : pow)));
+          pow++;
+        }
       }
       ras.close();
     }
@@ -555,7 +570,7 @@ public class FluoviewReader extends BaseTiffReader {
             int[] zct = getZCTCoords(i);
             String key = String.format(
               "Timestamp for Z=%2s, C=%2s, T=%2s", zct[0], zct[1], zct[2]);
-            long stamp = ms + stamps[timeIndex][i];
+            long stamp = ms + (long) (stamps[timeIndex][i] * 1000);
             addGlobalMeta(key,
               DateTools.convertDate(stamp, DateTools.UNIX, DATE_FORMAT));
           }

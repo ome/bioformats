@@ -119,7 +119,7 @@ public final class XMLTools {
     throws ParserConfigurationException, SAXException, IOException
   {
     // Java XML factories are not declared to be thread safe
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); 
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder db = factory.newDocumentBuilder();
     return db.parse(is);
   }
