@@ -117,7 +117,7 @@ public class Importer {
   public void showOptionDialogs(ImporterOptions options)
     throws FormatException, IOException
   {
-    boolean success = options.showDialogs();
+    boolean success = new ImporterPrompter(options).showDialogs();
     if (!success) plugin.canceled = true;
   }
 

@@ -25,10 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import java.io.IOException;
+
 import ij.IJ;
 import ij.gui.GenericDialog;
 import loci.formats.DimensionSwapper;
-import loci.plugins.prefs.OptionsDialog;
+import loci.formats.FormatException;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -38,40 +40,49 @@ import loci.plugins.util.WindowTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/SwapDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/SwapDialog.java">SVN</a></dd></dl>
  */
-public class SwapDialog extends OptionsDialog {
+public class SwapDialog extends ImporterDialog {
 
   // -- Fields --
 
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
-
-  protected DimensionSwapper r;
+  protected DimensionSwapper dimSwap;
 
   // -- Constructor --
 
   /** Creates a dimension swapper dialog for the Bio-Formats Importer. */
-  public SwapDialog(ImporterOptions options, DimensionSwapper r) {
+  public SwapDialog(ImporterOptions options) {
     super(options);
-    this.options = options;
-    this.r = r;
+    try {
+      dimSwap = (DimensionSwapper)
+        options.getReader().unwrap(DimensionSwapper.class, null);
+    }
+    catch (FormatException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
-  // -- OptionsDialog methods --
-
-  /**
-   * Gets dimension order from macro options, or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
+  // -- ImporterDialog methods --
+  
+  @Override
+  protected boolean needPrompt() {
+    return !options.isWindowless() && options.isSwapDimensions();
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() {
     GenericDialog gd = new GenericDialog("Dimension swapping options");
 
-    int oldSeries = r.getSeries();
     String[] labels = {"Z", "C", "T"};
-    int[] sizes = new int[] {r.getSizeZ(), r.getSizeC(), r.getSizeT()};
-    for (int s=0; s<r.getSeriesCount(); s++) {
+    int[] sizes = new int[] {
+      dimSwap.getSizeZ(), dimSwap.getSizeC(), dimSwap.getSizeT()
+    };
+    for (int s=0; s<dimSwap.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
-      r.setSeries(s);
+      dimSwap.setSeries(s);
 
       gd.addMessage("Series " + (s + 1) + ":\n");
 
@@ -80,22 +91,25 @@ public class SwapDialog extends OptionsDialog {
       }
     }
     WindowTools.addScrollBars(gd);
-    gd.showDialog();
-    if (gd.wasCanceled()) return STATUS_CANCELED;
-
-    for (int s=0; s<r.getSeriesCount(); s++) {
+    
+    return gd;
+  }
+  
+  @Override
+  protected void harvestResults(GenericDialog gd) {
+    for (int s=0; s<dimSwap.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
-      r.setSeries(s);
+      dimSwap.setSeries(s);
       String z = gd.getNextChoice();
       String c = gd.getNextChoice();
       String t = gd.getNextChoice();
 
       if (z.equals(t) || z.equals(c) || c.equals(t)) {
         IJ.error("Invalid swapping options - each axis can be used only once.");
-        return showDialog(); // TODO: fix bad recursion
+        throw new IllegalStateException(); // CTR FIXME
       }
 
-      String originalOrder = r.getDimensionOrder();
+      String originalOrder = dimSwap.getDimensionOrder();
       StringBuffer sb = new StringBuffer();
       sb.append("XY");
       for (int i=2; i<originalOrder.length(); i++) {
@@ -104,11 +118,8 @@ public class SwapDialog extends OptionsDialog {
         else if (originalOrder.charAt(i) == 'T') sb.append(t);
       }
 
-      r.swapDimensions(sb.toString());
+      dimSwap.swapDimensions(sb.toString());
     }
-    r.setSeries(oldSeries);
-
-    return STATUS_OK;
   }
 
 }

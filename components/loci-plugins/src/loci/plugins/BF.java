@@ -33,6 +33,7 @@ import java.io.IOException;
 import loci.formats.FormatException;
 import loci.plugins.in.ImagePlusReader;
 import loci.plugins.in.ImporterOptions;
+import loci.plugins.in.ImporterPrompter;
 
 /**
  * Miscellaneous LOCI plugins utility methods.
@@ -65,7 +66,8 @@ public final class BF {
     throws FormatException, IOException
   {
     options.setQuiet(true);
-    options.showDialogs();
+    options.setWindowless(true);
+    new ImporterPrompter(options).showDialogs();
     ImagePlusReader reader = new ImagePlusReader(options);
     return reader.openImagePlus();
   }

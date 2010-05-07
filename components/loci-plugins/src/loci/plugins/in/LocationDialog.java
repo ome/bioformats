@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.in;
 
 import ij.gui.GenericDialog;
-import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer location chooser dialog box.
@@ -35,41 +34,34 @@ import loci.plugins.prefs.OptionsDialog;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/LocationDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/LocationDialog.java">SVN</a></dd></dl>
  */
-public class LocationDialog extends OptionsDialog {
-
-  // -- Fields --
-
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
+public class LocationDialog extends ImporterDialog {
 
   // -- Constructor --
 
   /** Creates a location chooser dialog for the Bio-Formats Importer. */
   public LocationDialog(ImporterOptions options) {
     super(options);
-    this.options = options;
   }
-
-  // -- OptionsDialog methods --
-
-  /**
-   * Gets the location (type of data source) from macro options,
-   * or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
-    if (options.getLocation() == null) {
-      // Open a dialog asking the user what kind of dataset to handle.
-      // Ask only if the location was not already specified somehow.
-      // ImageJ will grab the value from the macro options, when possible.
-      GenericDialog gd = new GenericDialog("Bio-Formats Dataset Location");
-      addChoice(gd, ImporterOptions.KEY_LOCATION);
-      gd.showDialog();
-      if (gd.wasCanceled()) return STATUS_CANCELED;
-      options.setLocation(gd.getNextChoice());
-    }
-    return STATUS_OK;
+  
+  // -- ImporterDialog methods --
+  
+  @Override
+  protected boolean needPrompt() {
+    // NB: Prompt only if location wasn't already specified.
+    return !options.isWindowless() && options.getLocation() == null;
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() {
+    GenericDialog gd = new GenericDialog("Bio-Formats Dataset Location");
+    addChoice(gd, ImporterOptions.KEY_LOCATION);
+    return gd;
+  }
+  
+  @Override
+  protected void harvestResults(GenericDialog gd) {
+    String location = gd.getNextChoice();
+    options.setLocation(location);
   }
 
 }

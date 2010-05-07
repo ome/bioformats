@@ -29,6 +29,7 @@ import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import loci.common.Location;
+import loci.plugins.BF;
 import loci.plugins.prefs.OptionsDialog;
 
 /**
@@ -42,7 +43,6 @@ public class IdDialog extends OptionsDialog {
 
   // -- Fields --
 
-  /** LOCI plugins configuration. */
   protected ImporterOptions options;
 
   // -- Constructor --
@@ -52,7 +52,7 @@ public class IdDialog extends OptionsDialog {
     super(options);
     this.options = options;
   }
-
+  
   // -- IdDialog methods --
 
   /**
@@ -80,18 +80,21 @@ public class IdDialog extends OptionsDialog {
           "Edit>Options>Input/Output...");
       }
     }
+
     String id = options.getId();
     if (id == null) {
-      // prompt user for the filename (or grab from macro options)
+      // construct and display dialog (or grab from macro options)
       String idLabel = options.getLabel(ImporterOptions.KEY_ID);
       OpenDialog od = new OpenDialog(idLabel, id);
+
+      // harvest results
       String dir = od.getDirectory();
       String name = od.getFileName();
       if (dir == null || name == null) return STATUS_CANCELED;
       id = dir + name;
     }
 
-    // verify that id is valid
+    // verify validity
     Location idLoc = new Location(id);
     if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
       if (!options.isQuiet()) {
@@ -100,8 +103,8 @@ public class IdDialog extends OptionsDialog {
       }
       return STATUS_FINISHED;
     }
-
     options.setId(id);
+
     return STATUS_OK;
   }
 
@@ -114,37 +117,24 @@ public class IdDialog extends OptionsDialog {
   public int showDialogHTTP() {
     String id = options.getId();
     if (id == null) {
-      // prompt user for the URL (or grab from macro options)
+      // construct dialog
       GenericDialog gd = new GenericDialog("Bio-Formats URL");
       gd.addStringField("URL: ", "http://", 30);
+
+      // display dialog (or grab from macro options)
       gd.showDialog();
       if (gd.wasCanceled()) return STATUS_CANCELED;
+
+      // harvest results
       id = gd.getNextString();
     }
 
-    // verify that id is valid
+    // verify validity
     if (id == null) {
       if (!options.isQuiet()) IJ.error("Bio-Formats", "No URL was specified.");
       return STATUS_FINISHED;
     }
-
     options.setId(id);
-    return STATUS_OK;
-  }
-
-  /**
-   * Gets the OME server and image (id) to open from macro options,
-   * or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialogOME() {
-    String id = options.getId();
-    if (id == null) {
-      // TODO: eliminate OMEPlugin kludge
-      IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
-      return STATUS_FINISHED;
-    }
 
     return STATUS_OK;
   }
@@ -157,9 +147,15 @@ public class IdDialog extends OptionsDialog {
    * @return status of operation
    */
   public int showDialog() {
+    // verify whether prompt is necessary
+    if (options.isWindowless()) {
+      BF.debug("IdDialog: skip");
+      return STATUS_OK;
+    }
+    BF.debug("IdDialog: prompt");
+
     if (options.isLocal()) return showDialogLocal();
-    else if (options.isHTTP()) return showDialogHTTP();
-    else return showDialogOME(); // options.isOME()
+    return showDialogHTTP(); // options.isHTTP()
   }
 
 }

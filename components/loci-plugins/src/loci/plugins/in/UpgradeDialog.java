@@ -27,6 +27,7 @@ package loci.plugins.in;
 
 import ij.IJ;
 import ij.gui.GenericDialog;
+import loci.plugins.BF;
 import loci.plugins.Updater;
 import loci.plugins.prefs.OptionsDialog;
 
@@ -61,9 +62,14 @@ public class UpgradeDialog extends OptionsDialog {
    * @return status of operation
    */
   public int showDialog() {
-    if (options.isQuiet()) return STATUS_OK;
+    // verify whether prompt is necessary
+    if (options.isQuiet() || options.isWindowless()) {
+      BF.debug("UpgradeDialog: skip");
+      return STATUS_OK;
+    }
+    BF.debug("UpgradeDialog: prompt");
 
-    if (options.isFirstTime()) {
+    if (!options.isQuiet() && options.isFirstTime()) {
       // present user with one-time dialog box
       GenericDialog gd = new GenericDialog("Bio-Formats Upgrade Checker");
       gd.addMessage("One-time notice: The LOCI plugins for ImageJ can " +

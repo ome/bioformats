@@ -29,7 +29,6 @@ import ij.gui.GenericDialog;
 
 import loci.common.Region;
 import loci.formats.IFormatReader;
-import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -39,76 +38,83 @@ import loci.plugins.util.WindowTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/CropDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/CropDialog.java">SVN</a></dd></dl>
  */
-public class CropDialog extends OptionsDialog {
-
-  // -- Fields --
-
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
-
-  protected IFormatReader r;
-  protected String[] labels;
+public class CropDialog extends ImporterDialog {
 
   // -- Constructor --
 
   /** Creates a crop options dialog for the Bio-Formats Importer. */
-  public CropDialog(ImporterOptions options, IFormatReader r, String[] labels) {
+  public CropDialog(ImporterOptions options) {
     super(options);
-    this.options = options;
-    this.r = r;
-    this.labels = labels;
   }
+  
+  // -- ImporterDialog methods --
 
-  // -- OptionsDialog methods --
+  @Override
+  protected boolean needPrompt() {
+    return !options.isWindowless() && options.doCrop();
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() {
+    // -- CTR TODO - refactor crop-related options into CropOptions class
+    // has a normalize(IFormatReader) method
+    // call both before and after the dialog here...
 
-  /**
-   * Gets crop settings from macro options, or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
+    int seriesCount = options.getSeriesCount();
+    IFormatReader r = options.getReader();
+    
+    // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
-    for (int s=0; s<options.getSeriesCount(); s++) {
+    for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
-      gd.addMessage(labels[s].replaceAll("_", " "));
+
+      Region region = options.getCropRegion(s);
+      if (region == null)
+
+      gd.addMessage(options.getSeriesLabel(s).replaceAll("_", " "));
       gd.addNumericField("X_Coordinate_" + (s + 1), 0, 0);
       gd.addNumericField("Y_Coordinate_" + (s + 1), 0, 0);
       gd.addNumericField("Width_" + (s + 1), r.getSizeX(), 0);
       gd.addNumericField("Height_" + (s + 1), r.getSizeY(), 0);
     }
     WindowTools.addScrollBars(gd);
-    gd.showDialog();
-    if (gd.wasCanceled()) return STATUS_CANCELED;
+ 
+    return gd;
+  }
+  
+  @Override
+  protected void harvestResults(GenericDialog gd) {
+    int seriesCount = options.getSeriesCount();
+    IFormatReader r = options.getReader();
 
-    for (int s=0; s<options.getSeriesCount(); s++) {
+    for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
 
-      Region box = options.getCropRegion(s);
+      Region region = options.getCropRegion(s);
+      if (region == null) region = new Region();
 
-      box.x = (int) gd.getNextNumber();
-      box.y = (int) gd.getNextNumber();
-      box.width = (int) gd.getNextNumber();
-      box.height = (int) gd.getNextNumber();
+      region.x = (int) gd.getNextNumber();
+      region.y = (int) gd.getNextNumber();
+      region.width = (int) gd.getNextNumber();
+      region.height = (int) gd.getNextNumber();
 
-      if (box.x < 0) box.x = 0;
-      if (box.y < 0) box.y = 0;
-      if (box.x >= r.getSizeX()) box.x = r.getSizeX() - box.width - 1;
-      if (box.y >= r.getSizeY()) box.y = r.getSizeY() - box.height - 1;
-      if (box.width < 1) box.width = 1;
-      if (box.height < 1) box.height = 1;
-      if (box.width + box.x > r.getSizeX()) {
-        box.width = r.getSizeX() - box.x;
+      if (region.x < 0) region.x = 0;
+      if (region.y < 0) region.y = 0;
+      if (region.x >= r.getSizeX()) region.x = r.getSizeX() - region.width - 1;
+      if (region.y >= r.getSizeY()) region.y = r.getSizeY() - region.height - 1;
+      if (region.width < 1) region.width = 1;
+      if (region.height < 1) region.height = 1;
+      if (region.width + region.x > r.getSizeX()) {
+        region.width = r.getSizeX() - region.x;
       }
-      if (box.height + box.y > r.getSizeY()) {
-        box.height = r.getSizeY() - box.y;
+      if (region.height + region.y > r.getSizeY()) {
+        region.height = r.getSizeY() - region.y;
       }
 
-      options.setCropRegion(s, box); // in case we got a copy
+      options.setCropRegion(s, region); // in case we got a copy
     }
-
-    return STATUS_OK;
   }
-
+  
 }

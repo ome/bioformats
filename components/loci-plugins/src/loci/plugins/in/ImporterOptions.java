@@ -36,8 +36,6 @@ import loci.common.Region;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.meta.IMetadata;
-import loci.plugins.BF;
-import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.prefs.OptionsList;
 import loci.plugins.prefs.StringOption;
 import loci.plugins.util.ImageProcessorReader;
@@ -45,9 +43,7 @@ import loci.plugins.util.LibraryChecker;
 
 /**
  * Helper class for managing Bio-Formats Importer options.
- * Gets parameter values through a variety of means, including
- * preferences from IJ_Prefs.txt, plugin argument string, macro options,
- * and user input from dialog boxes.
+ * Gets default parameter values from IJ_Prefs.txt.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImporterOptions.java">Trac</a>,
@@ -92,8 +88,7 @@ public class ImporterOptions extends OptionsList {
   // possible values for location
   public static final String LOCATION_LOCAL = "Local machine";
   public static final String LOCATION_HTTP  = "Internet";
-  public static final String LOCATION_OME   = "OME server";
-  public static final String LOCATION_OMERO = "OMERO server";
+  //public static final String LOCATION_OMERO = "OMERO server";
 
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
@@ -118,41 +113,40 @@ public class ImporterOptions extends OptionsList {
   public static final String ORDER_XYCTZ   = "XYCTZ";
   public static final String ORDER_XYTZC   = "XYTZC";
 
-  // -- Fields - derived values --
-
-  protected ImporterReader reader;
-  protected ImporterMetadata metadata;
-  protected int[] cCount, zCount, tCount;
-
   // -- Fields -- secondary values --
 
   // series options
-  protected List<Boolean> seriesOn = new ArrayList<Boolean>();
+  private List<Boolean> seriesOn = new ArrayList<Boolean>();
 
   // TODO - swap options need to be programmatically settable
 
   // range options
-  protected List<Integer> cBegin = new ArrayList<Integer>();
-  protected List<Integer> cEnd = new ArrayList<Integer>();
-  protected List<Integer> cStep = new ArrayList<Integer>();
-  protected List<Integer> zBegin = new ArrayList<Integer>();
-  protected List<Integer> zEnd = new ArrayList<Integer>();
-  protected List<Integer> zStep = new ArrayList<Integer>();
-  protected List<Integer> tBegin = new ArrayList<Integer>();
-  protected List<Integer> tEnd = new ArrayList<Integer>();
-  protected List<Integer> tStep = new ArrayList<Integer>();
+  private List<Integer> cBegin = new ArrayList<Integer>();
+  private List<Integer> cEnd = new ArrayList<Integer>();
+  private List<Integer> cStep = new ArrayList<Integer>();
+  private List<Integer> zBegin = new ArrayList<Integer>();
+  private List<Integer> zEnd = new ArrayList<Integer>();
+  private List<Integer> zStep = new ArrayList<Integer>();
+  private List<Integer> tBegin = new ArrayList<Integer>();
+  private List<Integer> tEnd = new ArrayList<Integer>();
+  private List<Integer> tStep = new ArrayList<Integer>();
 
   // crop options
-  protected List<Region> cropRegion = new ArrayList<Region>();
+  private List<Region> cropRegion = new ArrayList<Region>();
 
-  // -- Fields - internal --
+  // -- Fields - derived values --
 
+  private ImporterReader reader;
+  private ImporterMetadata metadata;
+
+  /** A descriptive label for each series. */
   private String[] seriesLabels;
 
   // -- Constructor --
 
   public ImporterOptions() throws IOException {
     super("importer-options.txt", ImporterOptions.class);
+
     // remove unavailable stack formats
     StringOption stackFormat = getStringOption(KEY_STACK_FORMAT);
     if (!LibraryChecker.checkClass(CLASS_VISBIO)) {
@@ -195,56 +189,6 @@ public class ImporterOptions extends OptionsList {
 
       parseOptions(arg);
     }
-  }
-
-  /**
-   * Displays dialog boxes prompting for additional configuration details.
-   *
-   * Which dialogs are shown depends on a variety of factors, including the
-   * current configuration (i.e., which options are enabled), whether quiet or
-   * windowless mode is set, and whether the method is being called from within
-   * a macro.
-   *
-   * After calling this method, derived field values will also be populated.
-   *
-   * @return true if harvesting went OK, or false if something went wrong
-   *   (e.g., the user canceled a dialog box)
-   *
-   * @see ij.gui.GenericDialog
-   */
-  public boolean showDialogs() throws FormatException, IOException {
-    reader = null;
-
-    if (!promptUpgrade()) return false;
-
-    if (!promptLocation()) return false;
-    if (!promptId()) return false;
-
-    reader = new ImporterReader(this);
-
-    if (!promptOptions()) return false;
-
-    // save options as new defaults
-    if (!isQuiet()) setFirstTime(false);
-    saveOptions();
-
-    IJ.showStatus("Analyzing " + getIdName());
-
-    reader.prepareStuff();
-
-    if (!promptFilePattern()) return false;
-
-    reader.initializeReader();
-
-    if (!promptSeries()) return false;
-    if (!promptSwap()) return false;
-    if (!promptRange()) return false;
-    if (!promptCrop()) return false;
-
-    initializeMetadata();
-    computeRangeCounts();
-
-    return true;
   }
 
   // -- ImporterOptions methods - base options accessors and mutators --
@@ -305,8 +249,7 @@ public class ImporterOptions extends OptionsList {
   public String[] getLocations() { return getPossible(KEY_LOCATION); }
   public boolean isLocal() { return LOCATION_LOCAL.equals(getLocation()); }
   public boolean isHTTP() { return LOCATION_HTTP.equals(getLocation()); }
-  public boolean isOME() { return LOCATION_OME.equals(getLocation()); }
-  public boolean isOMERO() { return LOCATION_OMERO.equals(getLocation()); }
+  //public boolean isOMERO() { return LOCATION_OMERO.equals(getLocation()); }
   public void setLocation(String s) { setValue(KEY_LOCATION, s); }
 
   // mergeChannels
@@ -429,7 +372,10 @@ public class ImporterOptions extends OptionsList {
   // -- ImporterOptions methods - secondary options accessors and mutators --
 
   // series options
-  public boolean isSeriesOn(int s) { return get(seriesOn, s); }
+  public boolean isSeriesOn(int s) {
+    if (openAllSeries() || isViewNone()) return true;
+    return get(seriesOn, s, s == 0);
+  }
   public void setSeriesOn(int s, boolean value) {
     set(seriesOn, s, value, false);
   }
@@ -437,29 +383,29 @@ public class ImporterOptions extends OptionsList {
   // TODO - swap options
 
   // range options
-  public int getCBegin(int s) { return get(cBegin, s); }
+  public int getCBegin(int s) { return get(cBegin, s, 0); }
   public void setCBegin(int s, int value) { set(cBegin, s, value, 0); }
-  public int getCEnd(int s) { return get(cEnd, s); }
+  public int getCEnd(int s) { return get(cEnd, s, -1); }
   public void setCEnd(int s, int value) { set(cEnd, s, value, 0); }
-  public int getCStep(int s) { return get(cStep, s); }
+  public int getCStep(int s) { return get(cStep, s, 1); }
   public void setCStep(int s, int value) { set(cStep, s, value, 0); }
 
-  public int getZBegin(int s) { return get(zBegin, s); }
+  public int getZBegin(int s) { return get(zBegin, s, 0); }
   public void setZBegin(int s, int value) { set(zBegin, s, value, 0); }
-  public int getZEnd(int s) { return get(zEnd, s); }
+  public int getZEnd(int s) { return get(zEnd, s, -1); }
   public void setZEnd(int s, int value) { set(zEnd, s, value, 0); }
-  public int getZStep(int s) { return get(zStep, s); }
+  public int getZStep(int s) { return get(zStep, s, 1); }
   public void setZStep(int s, int value) { set(zStep, s, value, 0); }
 
-  public int getTBegin(int s) { return get(tBegin, s); }
+  public int getTBegin(int s) { return get(tBegin, s, 0); }
   public void setTBegin(int s, int value) { set(tBegin, s, value, 0); }
-  public int getTEnd(int s) { return get(tEnd, s); }
+  public int getTEnd(int s) { return get(tEnd, s, -1); }
   public void setTEnd(int s, int value) { set(tEnd, s, value, 0); }
-  public int getTStep(int s) { return get(tStep, s); }
+  public int getTStep(int s) { return get(tStep, s, 1); }
   public void setTStep(int s, int value) { set(tStep, s, value, 0); }
 
   // crop options
-  public Region getCropRegion(int s) { return get(cropRegion, s); }
+  public Region getCropRegion(int s) { return get(cropRegion, s, null); }
   public void setCropRegion(int s, Region r) { set(cropRegion, s, r, null); }
 
   // -- ImporterOptions methods - derived values accessors --
@@ -473,59 +419,41 @@ public class ImporterOptions extends OptionsList {
   public int getSeriesCount() { return reader.r.getSeriesCount(); }
 
   // series options
-  public int getCCount(int s) { return cCount[s]; }
-  public int getZCount(int s) { return zCount[s]; }
-  public int getTCount(int s) { return tCount[s]; }
-
-  // -- Helper methods - dialog prompts --
-
-  private boolean promptUpgrade() {
-    UpgradeDialog dialog = new UpgradeDialog(this);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
+  public int getCCount(int s) {
+    if (!isSeriesOn(s)) return 0;
+    if (isMergeChannels()) return 1;
+    return (getCEnd(s) - getCBegin(s) + getCStep(s)) / getCStep(s);
+  }
+  public int getZCount(int s) {
+    if (!isSeriesOn(s)) return 0;
+    return (getZEnd(s) - getZBegin(s) + getZStep(s)) / getZStep(s);
+  }
+  public int getTCount(int s) {
+    if (!isSeriesOn(s)) return 0;
+    return (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
   }
 
-  private boolean promptLocation() {
-    LocationDialog dialog = new LocationDialog(this);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
+  public String getSeriesLabel(int s) {
+    if (seriesLabels == null) computeSeriesLabels();
+    return seriesLabels[s];
   }
 
-  private boolean promptId() {
-    IdDialog dialog = new IdDialog(this);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
-  }
+  // -- Helper methods - derived value computation --
 
-  private boolean promptOptions() {
-    if (isWindowless()) return true;
-
-    ImporterDialog dialog = new ImporterDialog(this);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
-  }
-
-  /** Prompts for the file pattern, if necessary. May override id value. */
-  private boolean promptFilePattern() {
-    if (!isGroupFiles()) {
-      BF.debug("no need to prompt for file pattern");
-      return true;
+  /** Initializes the ImporterMetadata derived value. */
+  protected void initializeMetadata() {
+    // only prepend a series name prefix to the metadata keys if multiple
+    // series are being opened
+    int seriesCount = getSeriesCount();
+    int numEnabled = 0;
+    for (int s=0; s<seriesCount; s++) {
+      if (isSeriesOn(s)) numEnabled++;
     }
-    BF.debug("prompt for the file pattern");
-
-    FilePatternDialog dialog = new FilePatternDialog(this);
-    if (dialog.showDialog() != OptionsDialog.STATUS_OK) return false;
-
-    String id = getId();
-    if (id == null) id = reader.currentFile;
-    FilePattern fp = new FilePattern(id);
-    if (!fp.isValid()) id = reader.currentFile;
-    setId(id); // overwrite base filename with file pattern
-    return true;
+    metadata = new ImporterMetadata(reader.r, this, numEnabled > 1);
   }
 
-  /** Prompts for which series to import, if necessary. */
-  private boolean promptSeries() {
-    // initialize series-related derived values
-    setSeriesOn(0, true);
-
-    // build descriptive label for each series
+  /** Initializes the seriesLabels derived value. */
+  private void computeSeriesLabels() {
     int seriesCount = getSeriesCount();
     seriesLabels = new String[seriesCount];
     for (int i=0; i<seriesCount; i++) {
@@ -573,133 +501,49 @@ public class ImporterOptions extends OptionsList {
       seriesLabels[i] = sb.toString();
       //seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
     }
-
-    if (seriesCount > 1 && !openAllSeries() && !isViewNone()) {
-      BF.debug("prompt for which series to import");
-      SeriesDialog dialog = new SeriesDialog(this,
-        reader.r, seriesLabels);
-      if (dialog.showDialog() != OptionsDialog.STATUS_OK) return false;
-    }
-    else BF.debug("no need to prompt for series");
-
-    if (openAllSeries() || isViewNone()) {
-      for (int s=0; s<getSeriesCount(); s++) setSeriesOn(s, true);
-    }
-    return true;
   }
 
-  /** Prompts for dimension swapping parameters, if necessary. */
-  private boolean promptSwap() {
-    if (!isSwapDimensions()) {
-      BF.debug("no need to prompt for dimension swapping");
-      return true;
-    }
-    BF.debug("prompt for dimension swapping parameters");
-
-    SwapDialog dialog = new SwapDialog(this, reader.virtualReader);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
-  }
-
-  /** Prompts for the range of planes to import, if necessary. */
-  private boolean promptRange() {
-    // initialize range-related secondary values
-    int seriesCount = getSeriesCount();
-
-    for (int s=0; s<seriesCount; s++) {
-      reader.r.setSeries(s);
-      setCBegin(s, 0);
-      setZBegin(s, 0);
-      setTBegin(s, 0);
-      setCEnd(s, reader.r.getEffectiveSizeC() - 1);
-      setZEnd(s, reader.r.getSizeZ() - 1);
-      setTEnd(s, reader.r.getSizeT() - 1);
-      setCStep(s, 1);
-      setZStep(s, 1);
-      setTStep(s, 1);
-    }
-
-    if (!isSpecifyRanges()) {
-      BF.debug("open all planes");
-      return true;
-    }
-    boolean needRange = false;
-    for (int s=0; s<seriesCount; s++) {
-      if (isSeriesOn(s) && reader.r.getImageCount() > 1) needRange = true;
-    }
-    if (!needRange) {
-      BF.debug("no need to prompt for planar ranges");
-      return true;
-    }
-    BF.debug("prompt for planar ranges");
-    IJ.showStatus("");
-
-    RangeDialog dialog = new RangeDialog(this, reader.r, seriesLabels);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
-  }
-
-  /** Prompts for cropping details, if necessary. */
-  private boolean promptCrop() {
-    // initialize crop-related secondary values
-    int seriesCount = getSeriesCount();
-    for (int s=0; s<seriesCount; s++) {
-      setCropRegion(s, new Region());
-    }
-
-    if (!doCrop()) {
-      BF.debug("no need to prompt for cropping region");
-      return true;
-    }
-    BF.debug("prompt for cropping region");
-
-    CropDialog dialog = new CropDialog(this, reader.r, seriesLabels);
-    return dialog.showDialog() == OptionsDialog.STATUS_OK;
-  }
-
-  // -- Helper methods - derived value computation --
-
-  /** Initializes the ImporterMetadata derived value. */
-  private void initializeMetadata() {
-    // only prepend a series name prefix to the metadata keys if multiple
-    // series are being opened
-    int seriesCount = getSeriesCount();
-    int numEnabled = 0;
-    for (int s=0; s<seriesCount; s++) {
-      if (isSeriesOn(s)) numEnabled++;
-    }
-    metadata = new ImporterMetadata(reader.r, this, numEnabled > 1);
-  }
-
-  /** Initializes the cCount, zCount and tCount derived values. */
-  private void computeRangeCounts() {
-    int seriesCount = getSeriesCount();
-    cCount = new int[seriesCount];
-    zCount = new int[seriesCount];
-    tCount = new int[seriesCount];
-    for (int s=0; s<seriesCount; s++) {
-      if (!isSeriesOn(s)) cCount[s] = zCount[s] = tCount[s] = 0;
-      else {
-        if (isMergeChannels()) cCount[s] = 1;
-        else {
-          cCount[s] = (getCEnd(s) - getCBegin(s) + getCStep(s)) / getCStep(s);
-        }
-        zCount[s] = (getZEnd(s) - getZBegin(s) + getZStep(s)) / getZStep(s);
-        tCount[s] = (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
-      }
-    }
-  }
-  
   // -- Helper methods - miscellaneous --
-  
+
   private <T extends Object> void set(List<T> list,
-    int index, T value, T defaultValue)
+    int index, T value, T fillValue)
   {
-    while (list.size() <= index) list.add(defaultValue);
+    while (list.size() <= index) list.add(fillValue);
     list.set(index, value);
   }
 
-  private <T extends Object> T get(List<T> list, int index) {
-    if (list.size() <= index) return null;
+  private <T extends Object> T get(List<T> list, int index, T defaultValue) {
+    if (list.size() <= index) return defaultValue;
     return list.get(index);
+  }
+
+  // -- CTR TEMP - methods to munge around with state --
+
+  public void createReader() {
+    reader = new ImporterReader(this);
+  }
+
+  public void saveDefaults() {
+    // save options as new defaults
+    if (!isQuiet()) setFirstTime(false);
+    saveOptions();
+  }
+
+  public void prepareStuff() throws FormatException, IOException {
+    IJ.showStatus("Analyzing " + getIdName());
+    reader.prepareStuff();
+  }
+
+  public void initializeReader() throws FormatException, IOException {
+    if (isGroupFiles()) {
+      // overwrite base filename with file pattern
+      String id = getId();
+      if (id == null) id = reader.currentFile;
+      FilePattern fp = new FilePattern(id);
+      if (!fp.isValid()) id = reader.currentFile;
+      setId(id);
+    }
+    reader.initializeReader();
   }
 
 }

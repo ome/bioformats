@@ -27,9 +27,9 @@ package loci.plugins.in;
 
 import ij.IJ;
 import ij.gui.GenericDialog;
+
 import loci.common.Location;
 import loci.formats.FilePattern;
-import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer file pattern dialog box.
@@ -38,62 +38,58 @@ import loci.plugins.prefs.OptionsDialog;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/FilePatternDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/FilePatternDialog.java">SVN</a></dd></dl>
  */
-public class FilePatternDialog extends OptionsDialog {
-
-  // -- Fields --
-
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
+public class FilePatternDialog extends ImporterDialog {
 
   // -- Constructor --
 
   /** Creates a file pattern dialog for the Bio-Formats Importer. */
   public FilePatternDialog(ImporterOptions options) {
     super(options);
-    this.options = options;
   }
+  
+  // -- ImporterDialog methods --
 
-  // -- OptionsDialog methods --
-
-  /**
-   * Gets file pattern from macro options, or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
-    if (options.isWindowless()) return STATUS_OK;
-
+  @Override
+  protected boolean needPrompt() {
+    return !options.isWindowless() && options.isGroupFiles();
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() {
+    // CTR - CHECK
     Location idLoc = new Location(options.getId());
     String id = FilePattern.findPattern(idLoc);
-    if (id == null && !options.isQuiet()) {
-      IJ.showMessage("Bio-Formats",
-        "Warning: Bio-Formats was unable to determine a grouping that\n" +
-        "includes the file you chose. The most common reason for this\n" +
-        "situation is that the folder contains extraneous files with " +
-        "similar\n" +
-        "names and numbers that confuse the detection algorithm.\n" +
-        " \n" +
-        "For example, if you have multiple datasets in the same folder\n" +
-        "named series1_z*_c*.tif, series2_z*_c*.tif, etc., Bio-Formats\n" +
-        "may try to group all such files into a single series.\n" +
-        " \n" +
-        "For best results, put each image series's files in their own " +
-        "folder,\n" +
-        "or type in a file pattern manually.\n");
+    if (id == null) {
+      if (!options.isQuiet()) {
+        IJ.showMessage("Bio-Formats",
+          "Warning: Bio-Formats was unable to determine a grouping that\n" +
+          "includes the file you chose. The most common reason for this\n" +
+          "situation is that the folder contains extraneous files with\n" +
+          "similar names and numbers that confuse the detection algorithm.\n" +
+          " \n" +
+          "For example, if you have multiple datasets in the same folder\n" +
+          "named series1_z*_c*.tif, series2_z*_c*.tif, etc., Bio-Formats\n" +
+          "may try to group all such files into a single series.\n" +
+          " \n" +
+          "For best results, put each image series's files in their own\n" +
+          "folder, or type in a file pattern manually.\n");
+      }
       id = idLoc.getAbsolutePath();
     }
 
-    // prompt user to confirm file pattern (or grab from macro options)
+    // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats File Stitching");
     int len = id.length() + 1;
     if (len > 80) len = 80;
     gd.addStringField("Pattern: ", id, len);
-    gd.showDialog();
-    if (gd.wasCanceled()) return STATUS_CANCELED;
-    id = gd.getNextString();
 
+    return gd;
+  }
+  
+  @Override
+  protected void harvestResults(GenericDialog gd) {
+    String id = gd.getNextString();
     options.setId(id);
-    return STATUS_OK;
   }
 
 }

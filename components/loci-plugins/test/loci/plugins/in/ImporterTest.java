@@ -40,7 +40,8 @@ public class ImporterTest {
     assertNotNull(imps[0]);
     assertTrue(imps[0].getWidth() == sizeX);
     assertTrue(imps[0].getHeight() == sizeY);
-    System.out.println("It worked!");//TEMP
+
+    System.out.println("Basic worked!");//TEMP
   }
 
   @Test
@@ -69,6 +70,8 @@ public class ImporterTest {
     assertNotNull(imps[0]);
     assertTrue(imps[0].getWidth() == cropSizeX);
     assertTrue(imps[0].getHeight() == cropSizeY);
+
+    System.out.println("Crop worked!");//TEMP
   }
   
   // -- Helper methods --

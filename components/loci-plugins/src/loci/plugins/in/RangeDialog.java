@@ -27,7 +27,6 @@ package loci.plugins.in;
 
 import ij.gui.GenericDialog;
 import loci.formats.IFormatReader;
-import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -37,50 +36,64 @@ import loci.plugins.util.WindowTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/RangeDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/RangeDialog.java">SVN</a></dd></dl>
  */
-public class RangeDialog extends OptionsDialog {
-
-  // -- Fields --
-
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
-
-  protected IFormatReader r;
-  protected String[] seriesLabels;
+public class RangeDialog extends ImporterDialog {
 
   // -- Constructor --
 
   /**
    * Creates a range chooser dialog for the Bio-Formats Importer.
    *
-   * @param r The reader to use for extracting details of each series.
-   * @param seriesLabels Label to display to user identifying each series
+   * @param dimSwap The reader to use for extracting details of each series.
    */
-  public RangeDialog(ImporterOptions options,
-    IFormatReader r, String[] seriesLabels)
-  {
+  public RangeDialog(ImporterOptions options) {
     super(options);
-    this.options = options;
-    this.r = r;
-    this.seriesLabels = seriesLabels;
   }
+  
+  // -- ImporterDialog methods --
 
-  // -- OptionsDialog methods --
+  protected boolean needPrompt() {
+    if (options.isWindowless() || !options.isSpecifyRanges()) return false;
+    
+    int seriesCount = options.getSeriesCount();
+    IFormatReader r = options.getReader();
 
-  /**
-   * Gets the range of image planes to open from macro options,
-   * or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
-    int seriesCount = r.getSeriesCount();
+    boolean needRange = false;
+    for (int s=0; s<seriesCount; s++) {
+      if (options.isSeriesOn(s) && r.getImageCount() > 1) {
+        needRange = true;
+        break;
+      }
+    }
+    return needRange;
+  }
+  
+  protected GenericDialog constructDialog() {
+    int seriesCount = options.getSeriesCount();
+    IFormatReader r = options.getReader();
 
-    // prompt user to specify series ranges (or grab from macro options)
+    // -- CTR TODO - refactor range-related options into RangeOptions class
+    // has a normalize(IFormatReader) method
+    // call both before and after the dialog here...
+
+    for (int s=0; s<seriesCount; s++) {
+      r.setSeries(s);
+      options.setCBegin(s, 0);
+      options.setZBegin(s, 0);
+      options.setTBegin(s, 0);
+      options.setCEnd(s, r.getEffectiveSizeC() - 1);
+      options.setZEnd(s, r.getSizeZ() - 1);
+      options.setTEnd(s, r.getSizeT() - 1);
+      options.setCStep(s, 1);
+      options.setZStep(s, 1);
+      options.setTStep(s, 1);
+    }
+
+    // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats Range Options");
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
-      gd.addMessage(seriesLabels[s].replaceAll("_", " "));
+      gd.addMessage(options.getSeriesLabel(s).replaceAll("_", " "));
       String suffix = seriesCount > 1 ? "_" + (s + 1) : "";
       //if (r.isOrderCertain()) {
       if (r.getEffectiveSizeC() > 1) {
@@ -106,8 +119,13 @@ public class RangeDialog extends OptionsDialog {
       //}
     }
     WindowTools.addScrollBars(gd);
-    gd.showDialog();
-    if (gd.wasCanceled()) return STATUS_CANCELED;
+
+    return gd;
+  }
+  
+  protected void harvestResults(GenericDialog gd) {
+    int seriesCount = options.getSeriesCount();
+    IFormatReader r = options.getReader();
 
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
@@ -116,7 +134,7 @@ public class RangeDialog extends OptionsDialog {
       int sizeZ = r.getSizeZ();
       int sizeT = r.getSizeT();
       boolean certain = r.isOrderCertain();
-      
+
       int cBegin = options.getCBegin(s);
       int cEnd = options.getCEnd(s);
       int cStep = options.getCStep(s);
@@ -165,7 +183,7 @@ public class RangeDialog extends OptionsDialog {
       if (tEnd < tBegin) tEnd = tBegin;
       if (tEnd >= sizeT) tEnd = sizeT - 1;
       if (tStep < 1) tStep = 1;
-      
+
       options.setCBegin(s, cBegin);
       options.setCEnd(s, cEnd);
       options.setCStep(s, cStep);
@@ -176,8 +194,6 @@ public class RangeDialog extends OptionsDialog {
       options.setTEnd(s, tEnd);
       options.setTStep(s, tStep);
     }
-
-    return STATUS_OK;
   }
-
+  
 }

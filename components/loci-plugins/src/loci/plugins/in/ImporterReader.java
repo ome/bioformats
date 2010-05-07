@@ -28,7 +28,6 @@ package loci.plugins.in;
 import ij.IJ;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.Location;
 import loci.common.services.DependencyException;
@@ -41,7 +40,6 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
-import loci.formats.services.OMEReaderWriterService;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImageProcessorReader;
@@ -132,23 +130,23 @@ public class ImporterReader {
       idLoc = new Location(id);
       idName = idLoc.getName();
     }
-    else if (options.isOME() || options.isOMERO()) {
-      // NB: strip out username and password when opening from OME/OMERO
-      StringTokenizer st = new StringTokenizer(id, "?&");
-      StringBuffer idBuf = new StringBuffer();
-      int tokenCount = 0;
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        if (token.startsWith("username=") || token.startsWith("password=")) {
-          continue;
-        }
-        if (tokenCount == 1) idBuf.append("?");
-        else if (tokenCount > 1) idBuf.append("&");
-        idBuf.append(token);
-        tokenCount++;
-      }
-      idName = idBuf.toString();
-    }
+//    else if (options.isOMERO()) {
+//      // NB: strip out username and password when opening from OMERO
+//      StringTokenizer st = new StringTokenizer(id, "?&");
+//      StringBuffer idBuf = new StringBuffer();
+//      int tokenCount = 0;
+//      while (st.hasMoreTokens()) {
+//        String token = st.nextToken();
+//        if (token.startsWith("username=") || token.startsWith("password=")) {
+//          continue;
+//        }
+//        if (tokenCount == 1) idBuf.append("?");
+//        else if (tokenCount > 1) idBuf.append("&");
+//        idBuf.append(token);
+//        tokenCount++;
+//      }
+//      idName = idBuf.toString();
+//    }
   }
 
   /**
@@ -171,34 +169,20 @@ public class ImporterReader {
         return;
       }
     }
-    else if (options.isOMERO()) {
-      // NB: avoid dependencies on optional loci.ome.io package
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        OMEReaderWriterService service =
-          factory.getInstance(OMEReaderWriterService.class);
-        baseReader = service.newOMEROReader();
-      }
-      catch (DependencyException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was a problem constructing the OMERO I/O engine");
-      }
-      if (baseReader == null) return;
-    }
-    else if (options.isOME()) {
-      // NB: avoid dependencies on optional loci.ome.io package
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        OMEReaderWriterService service =
-          factory.getInstance(OMEReaderWriterService.class);
-        baseReader = service.newOMEReader();
-      }
-      catch (DependencyException de) {
-        WindowTools.reportException(de, options.isQuiet(),
-          "Sorry, there was a problem constructing the OME I/O engine");
-      }
-      if (baseReader == null) return;
-    }
+//    else if (options.isOMERO()) {
+//      // NB: avoid dependencies on optional loci.ome.io package
+//      try {
+//        ServiceFactory factory = new ServiceFactory();
+//        OMEReaderWriterService service =
+//          factory.getInstance(OMEReaderWriterService.class);
+//        baseReader = service.newOMEROReader();
+//      }
+//      catch (DependencyException exc) {
+//        WindowTools.reportException(exc, options.isQuiet(),
+//          "Sorry, there was a problem constructing the OMERO I/O engine");
+//      }
+//      if (baseReader == null) return;
+//    }
     else {
       WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");

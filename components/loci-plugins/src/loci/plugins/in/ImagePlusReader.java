@@ -129,12 +129,13 @@ public class ImagePlusReader implements StatusReporter {
   private List<ImagePlus> readImages()
     throws FormatException, IOException
   {
+    List<ImagePlus> imps = new ArrayList<ImagePlus>();
+
     // beginning timing
     long startTime = System.currentTimeMillis();
     long time = startTime;
 
     ImageProcessorReader r = options.getReader();
-    List<ImagePlus> imps = new ArrayList<ImagePlus>();
     stackOrder = null;
     colorModels = null;
 
@@ -153,12 +154,15 @@ public class ImagePlusReader implements StatusReporter {
       boolean[] load = new boolean[r.getImageCount()];
       int cBegin = options.getCBegin(s);
       int cEnd = options.getCEnd(s);
+      if (cEnd < 0) cEnd = r.getEffectiveSizeC() - 1;
       int cStep = options.getCStep(s);
       int zBegin = options.getZBegin(s);
       int zEnd = options.getZEnd(s);
+      if (zEnd < 0) zEnd = r.getSizeZ() - 1;
       int zStep = options.getZStep(s);
       int tBegin = options.getTBegin(s);
       int tEnd = options.getTEnd(s);
+      if (tEnd < 0) tEnd = r.getSizeT() - 1;
       int tStep = options.getTStep(s);
       for (int c=cBegin; c<=cEnd; c+=cStep) {
         for (int z=zBegin; z<=zEnd; z+=zStep) {

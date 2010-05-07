@@ -50,7 +50,6 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
-import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -60,7 +59,7 @@ import loci.plugins.util.WindowTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/SeriesDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/SeriesDialog.java">SVN</a></dd></dl>
  */
-public class SeriesDialog extends OptionsDialog implements ActionListener {
+public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   // -- Constants --
 
@@ -68,13 +67,9 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
 
   // -- Fields --
 
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
-
-  protected BufferedImageReader r;
-  protected String[] seriesLabels;
-
-  protected Checkbox[] boxes;
+  private BufferedImageReader thumbReader;
+  private Panel[] p;
+  private Checkbox[] boxes;
 
   // -- Constructor --
 
@@ -82,31 +77,19 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
    * Creates a series chooser dialog for the Bio-Formats Importer.
    *
    * @param r The reader to use for extracting details of each series.
-   * @param seriesLabels Label to display to user identifying each series.
    * @param series Boolean array indicating which series to include
    *   (populated by this method).
    */
-  public SeriesDialog(ImporterOptions options,
-    IFormatReader r, String[] seriesLabels)
-  {
+  public SeriesDialog(ImporterOptions options) {
     super(options);
-    this.options = options;
-    this.r = r instanceof BufferedImageReader ?
-      (BufferedImageReader) r : new BufferedImageReader(r);
-    this.seriesLabels = seriesLabels;
   }
-
-  // -- OptionsDialog methods --
-
-  /**
-   * Gets which image series to open from macro options,
-   * or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
+  
+  // -- ImporterDialog methods --
+  
+  @Override
+  protected boolean needPrompt() {
+    // CTR TODO - eliminate weird handling of series string here
     String seriesString = options.getSeries();
-
     if (options.isWindowless()) {
       if (seriesString != null) {
         if (seriesString.startsWith("[")) {
@@ -126,34 +109,40 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
         }
       }
       options.setSeries(seriesString);
-      return STATUS_OK;
+      return false;
     }
-    int seriesCount = r.getSeriesCount();
 
-    // prompt user to specify series inclusion (or grab from macro options)
+    return options.getSeriesCount() > 1 &&
+      !options.openAllSeries() && !options.isViewNone();
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() {
+    // -- CTR TODO - refactor series-related options into SeriesOptions class
+    // has a normalize(IFormatReader) method
+    // call both before and after the dialog here...
+
     GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
 
-    GridBagLayout gdl = (GridBagLayout) gd.getLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.gridx = 2;
-
     // set up the thumbnail panels
-
-    Panel[] p = new Panel[seriesCount];
+    thumbReader = new BufferedImageReader(options.getReader());
+    int seriesCount = thumbReader.getSeriesCount();
+    p = new Panel[seriesCount];
     for (int i=0; i<seriesCount; i++) {
-      r.setSeries(i);
-      int sx = r.getThumbSizeX() + 10; // a little extra padding
-      int sy = r.getThumbSizeY();
+      thumbReader.setSeries(i);
+      int sx = thumbReader.getThumbSizeX() + 10; // a little extra padding
+      int sy = thumbReader.getThumbSizeY();
       p[i] = new Panel();
       p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
       if (options.isForceThumbnails()) {
         IJ.showStatus("Reading thumbnail for series #" + (i + 1));
-        int z = r.getSizeZ() / 2;
-        int t = r.getSizeT() / 2;
-        int ndx = r.getIndex(z, 0, t);
+        int z = thumbReader.getSizeZ() / 2;
+        int t = thumbReader.getSizeT() / 2;
+        int ndx = thumbReader.getIndex(z, 0, t);
         try {
-          BufferedImage img = r.openThumbImage(ndx);
-          if (options.isAutoscale() && r.getPixelType() != FormatTools.FLOAT) {
+          BufferedImage img = thumbReader.openThumbImage(ndx);
+          boolean isFloat = thumbReader.getPixelType() != FormatTools.FLOAT;
+          if (options.isAutoscale() && isFloat) {
             img = AWTImageTools.autoscale(img);
           }
           ImageIcon icon = new ImageIcon(img);
@@ -180,7 +169,7 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
       String[] labels = new String[nRows];
       boolean[] defaultValues = new boolean[nRows];
       for (int row=0; row<nRows; row++) {
-        labels[row] = seriesLabels[nextSeries];
+        labels[row] = options.getSeriesLabel(nextSeries);
         defaultValues[row] = options.isSeriesOn(nextSeries++);
       }
       gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
@@ -191,6 +180,61 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     // remove components and re-add everything so that the thumbnails and
     // checkboxes line up correctly
 
+    rebuildDialog(gd, nPanels);
+
+    return gd;
+  }
+  
+  @Override
+  protected boolean displayDialog(GenericDialog gd) {
+    ThumbLoader loader = null;
+    if (!options.isForceThumbnails()) {
+      // spawn background thumbnail loader
+      loader = new ThumbLoader(thumbReader, p, gd, options.isAutoscale());
+    }
+    gd.showDialog();
+    if (loader != null) loader.stop();
+    return !gd.wasCanceled();
+  }
+  
+  @Override
+  protected void harvestResults(GenericDialog gd) {
+    String seriesString = "[";
+    int seriesCount = options.getSeriesCount();
+    for (int i=0; i<seriesCount; i++) {
+      boolean on = gd.getNextBoolean();
+      options.setSeriesOn(i, on);
+      if (on) seriesString += i + " ";
+    }
+    seriesString += "]";
+    options.setSeries(seriesString);
+  }
+
+  // -- ActionListener methods --
+
+  public void actionPerformed(ActionEvent e) {
+    String cmd = e.getActionCommand();
+    if ("select".equals(cmd)) {
+      for (int i=0; i<boxes.length; i++) boxes[i].setState(true);
+      updateIfGlitched();
+    }
+    else if ("deselect".equals(cmd)) {
+      for (int i=0; i<boxes.length; i++) boxes[i].setState(false);
+      updateIfGlitched();
+    }
+  }
+
+  // -- Helper methods --
+
+  private void updateIfGlitched() {
+    if (IS_GLITCHED) {
+      // HACK - work around for Mac OS X AWT bug
+      sleep(200);
+      for (int i=0; i<boxes.length; i++) boxes[i].repaint();
+    }
+  }
+
+  private void rebuildDialog(GenericDialog gd, int nPanels) {
     gd.removeAll();
 
     Panel masterPanel = new Panel() {
@@ -198,12 +242,16 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
       // CTR TODO - there must be a better way
       protected void dispatchEventImpl(AWTEvent e) { }
     };
+    int seriesCount = options.getSeriesCount();
     masterPanel.setLayout(new GridLayout(seriesCount, 2));
 
     for (int i=0; i<seriesCount; i++) {
       masterPanel.add(boxes[i]);
       masterPanel.add(p[i]);
     }
+    
+    GridBagLayout gdl = (GridBagLayout) gd.getLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 0;
     gdl.setConstraints(masterPanel, gbc);
@@ -231,49 +279,6 @@ public class SeriesDialog extends OptionsDialog implements ActionListener {
     gbc.insets = new Insets(15, 0, 0, 0);
     gdl.setConstraints(buttons, gbc);
     gd.add(buttons);
-
-    if (options.isForceThumbnails()) gd.showDialog();
-    else {
-      ThumbLoader loader = new ThumbLoader(r, p, gd, options.isAutoscale());
-      gd.showDialog();
-      loader.stop();
-    }
-    if (gd.wasCanceled()) return STATUS_CANCELED;
-
-    seriesString = "[";
-    for (int i=0; i<seriesCount; i++) {
-      boolean on = gd.getNextBoolean();
-      options.setSeriesOn(i, on);
-      if (on) seriesString += i + " ";
-    }
-    seriesString += "]";
-
-    options.setSeries(seriesString);
-    return STATUS_OK;
-  }
-
-  // -- ActionListener methods --
-
-  public void actionPerformed(ActionEvent e) {
-    String cmd = e.getActionCommand();
-    if ("select".equals(cmd)) {
-      for (int i=0; i<boxes.length; i++) boxes[i].setState(true);
-      updateIfGlitched();
-    }
-    else if ("deselect".equals(cmd)) {
-      for (int i=0; i<boxes.length; i++) boxes[i].setState(false);
-      updateIfGlitched();
-    }
-  }
-
-  // -- Helper methods --
-
-  private void updateIfGlitched() {
-    if (IS_GLITCHED) {
-      // HACK - work around for Mac OS X AWT bug
-      sleep(200);
-      for (int i=0; i<boxes.length; i++) boxes[i].repaint();
-    }
   }
 
 }
