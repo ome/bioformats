@@ -31,6 +31,8 @@ import ij.WindowManager;
 
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -126,7 +128,7 @@ public class DisplayHandler implements StatusListener {
     }
     else if (options.isViewBrowser()) displayDataBrowser(imp, stackOrder, colorModels);
     else if (options.isViewImage5D()) displayImage5D(imp, stackOrder, colorModels);
-    else if (options.isViewView5D()) displayView5D(imp, stackOrder, colorModels);
+    else if (options.isViewView5D()) displayView5D(imp);
     else if (options.isViewVisBio()) displayVisBio(imp);
     else throw new IllegalStateException("Unknown display mode");
   }
@@ -232,11 +234,27 @@ public class DisplayHandler implements StatusListener {
     }
   }
 
-  public void displayView5D(ImagePlus imp, String stackOrder, IndexColorModel[] colorModels) {
-    displayNormal(imp, stackOrder, colorModels); //TEMP?
-
+  public void displayView5D(ImagePlus imp) {
     WindowManager.setTempCurrentImage(imp);
-    IJ.run("start viewer", "");
+    //new view5d.View5D_("");
+    Exception exc = null;
+    try {
+      Class<?> c = Class.forName("view5d.View5D_");
+      Constructor<?> con = c.getConstructor(new Class[] {String.class});
+      con.newInstance(new Object[] {""});
+    }
+    catch (ClassNotFoundException e) { exc = e; }
+    catch (SecurityException e) { exc = e; }
+    catch (NoSuchMethodException e) { exc = e; }
+    catch (IllegalArgumentException e) { exc = e; }
+    catch (InstantiationException e) { exc = e; }
+    catch (IllegalAccessException e) { exc = e; }
+    catch (InvocationTargetException e) { exc = e; }
+    if (exc != null) {
+      WindowTools.reportException(exc, options.isQuiet(),
+        "Sorry, there was a problem interfacing with View5D");
+      return;
+    }
   }
 
   public void displayVisBio(ImagePlus imp) {
