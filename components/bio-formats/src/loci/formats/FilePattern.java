@@ -25,8 +25,9 @@ package loci.formats;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.Location;
 
@@ -120,8 +121,8 @@ public class FilePattern {
 
     // locate numerical blocks
     int len = pattern.length();
-    Vector<Integer> lt = new Vector<Integer>(len);
-    Vector<Integer> gt = new Vector<Integer>(len);
+    List<Integer> lt = new ArrayList<Integer>(len);
+    List<Integer> gt = new ArrayList<Integer>(len);
     int left = -1;
     while (true) {
       left = pattern.indexOf("<", left + 1);
@@ -144,13 +145,13 @@ public class FilePattern {
     startIndex = new int[num];
     endIndex = new int[num];
     for (int i=0; i<num; i++) {
-      int val = ((Integer) lt.elementAt(i)).intValue();
+      int val = lt.get(i);
       if (i > 0 && val < endIndex[i - 1]) {
         msg = "Bad numerical block marker order.";
         return;
       }
       startIndex[i] = val;
-      val = ((Integer) gt.elementAt(i)).intValue();
+      val = gt.get(i);
       if (val <= startIndex[i]) {
         msg = "Bad numerical block marker order.";
         return;
@@ -213,10 +214,9 @@ public class FilePattern {
     }
 
     // build file listing
-    Vector<String> v = new Vector<String>();
-    buildFiles("", num, v);
-    files = new String[v.size()];
-    v.copyInto(files);
+    List<String> fileList = new ArrayList<String>();
+    buildFiles("", num, fileList);
+    files = fileList.toArray(new String[0]);
 
     valid = true;
   }
@@ -547,19 +547,17 @@ public class FilePattern {
 
   /** Filters the given list of filenames according to the specified filter. */
   private static String[] matchFiles(String[] inFiles, NumberFilter filter) {
-    Vector<String> v = new Vector<String>();
+    List<String> list = new ArrayList<String>();
     for (int i=0; i<inFiles.length; i++) {
-      if (filter.accept(inFiles[i])) v.add(inFiles[i]);
+      if (filter.accept(inFiles[i])) list.add(inFiles[i]);
     }
-    String[] s = new String[v.size()];
-    v.copyInto(s);
-    return s;
+    return list.toArray(new String[0]);
   }
 
   // -- Helper methods --
 
   /** Recursive method for building filenames for the file listing. */
-  private void buildFiles(String prefix, int ndx, Vector<String> fileList) {
+  private void buildFiles(String prefix, int ndx, List<String> fileList) {
     // compute bounds for constant (non-block) pattern fragment
     int num = startIndex.length;
     int n1 = ndx == 0 ? 0 : endIndex[ndx - 1];
