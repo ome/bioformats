@@ -1038,9 +1038,14 @@ public class FileStitcher implements IFormatReader {
     }
     for (int i=0; i<files.length; i++) {
       for (int j=0; j<files[i].length; j++) {
-        if (!new Location(files[i][j]).exists()) {
+        String file = files[i][j];
+
+        // HACK: skip file existence check for fake files
+        if (file.toLowerCase().endsWith(".fake")) continue;
+
+        if (!new Location(file).exists()) {
           throw new FormatException("File #" + i +
-            " (" + files[i][j] + ") does not exist.");
+            " (" + file + ") does not exist.");
         }
       }
     }
