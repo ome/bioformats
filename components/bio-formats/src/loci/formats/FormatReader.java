@@ -993,6 +993,7 @@ public abstract class FormatReader extends FormatHandler
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */
+  @Override
   public boolean isThisType(String name) {
     // if necessary, open the file for further analysis
     return isThisType(name, true);

@@ -84,7 +84,7 @@ public class ChannelSeparator extends ReaderWrapper {
    *   getImageCount()
    * @return the corresponding image number in the original (unseparated) data.
    */
-  public int getOriginalIndex(int no) throws FormatException, IOException {
+  public int getOriginalIndex(int no) {
     int imageCount = getImageCount();
     int originalCount = reader.getImageCount();
 

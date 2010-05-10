@@ -274,7 +274,7 @@ public class DimensionSwapper extends ReaderWrapper {
 
   // -- Helper methods --
 
-  protected int reorder(int no) throws FormatException {
+  protected int reorder(int no) {
     if (getInputOrder() == null) return no;
     return FormatTools.getReorderedIndex(getInputOrder(), getDimensionOrder(),
       getSizeZ(), getEffectiveSizeC(), getSizeT(), getImageCount(), no);

@@ -69,6 +69,7 @@ public class FakeReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -131,6 +132,7 @@ public class FakeReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -147,8 +149,6 @@ public class FakeReader extends FormatReader {
     int thumbSizeY = 128;
     int pixelType = FormatTools.UINT8;
     int rgb = 1;
-    int[] cLengths = null;
-    String[] cTypes = null;
     String dimOrder = "XYZCT";
     boolean orderCertain = true;
     boolean little = true;
