@@ -16,6 +16,7 @@ import ij.process.ImageProcessor;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import loci.common.Location;
 import loci.common.Region;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -24,11 +25,12 @@ import loci.plugins.BF;
 import org.junit.Test;
 
 // TODO
+//  - figure out what openIndiv is supposed to do and also where it fits in priorities
 //  - flesh out existing tests
-//      get reflection code working
-//      write test for open series code
-//      write tests for split options
-//      write tests for the color options
+//      groups files test needs to be written/debugged
+//      write test for open indiv files : getting dataset from Melissa. Priority may be wrong.
+//      write tests for split options : 3 cases
+//      write tests for the color options : 4 cases
 //      concat follows - see my test to see if sufficient
 //      lowest priority - record modifications
 //  - add some tests for combination of options
@@ -209,10 +211,10 @@ public class ImporterTest {
     assertEquals(y,ip.getHeight());
     /*
     assertEquals(z,ip.getNSlices());    // tricky - these last 3 getters have side effects that change their output.
-    assertEquals(c,ip.getNChannels());  // TODO - How to test?
+    assertEquals(c,ip.getNChannels());
     assertEquals(t,ip.getNFrames());
     */
-    if (z != getSizeZ(ip)) { new ij.ImageJ(); ip.show(); }//TEMP
+    //if (z != getSizeZ(ip)) { new ij.ImageJ(); ip.show(); }//TEMP
     assertEquals(z,getSizeZ(ip));
     assertEquals(t,getSizeT(ip));
     assertEquals(c,getEffectiveSizeC(ip));
@@ -302,9 +304,6 @@ public class ImporterTest {
     int numSlices = st.getSize();
     assertEquals(z*c*t,numSlices);
 
-    System.out.println("datasetSwapDimsTest()");
-    System.out.println("  Numslices == " + numSlices);
-    
     int maxZ = -1;
     int maxT = -1;
     int tmp;
@@ -321,9 +320,57 @@ public class ImporterTest {
     assertEquals(t,maxZ);
   }
 
-  private void datasetOpenAllSeriesTest()
+  private void datasetOpenAllSeriesTest(int x, int y, int z, int c, int t, int s)
   {
-    // TODO - fill me in
+    String path = constructFakeFilename("XYZCT", FormatTools.UINT32, x, y, z, c, t, s);
+    
+    // try it when false
+    
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setOpenAllSeries(false);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    // test results
+    
+    assertEquals(1,imps.length);
+    assertEquals(x,imps[0].getWidth());
+    assertEquals(y,imps[0].getHeight());
+    assertEquals(z*c*t, imps[0].getStack().getSize());
+    
+    // try it when true
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setOpenAllSeries(true);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // test results
+    
+    assertEquals(s,imps.length);
+    for (int i = 0; i < s; i++)
+    {
+      assertEquals(x,imps[i].getWidth());
+      assertEquals(y,imps[i].getHeight());
+      assertEquals(z*c*t, imps[i].getStack().getSize());
+    }
   }
   
   private void datasetConcatenateTest(int pixType, String order,
@@ -362,6 +409,7 @@ public class ImporterTest {
       ImageProcessor proc = st.getProcessor(i+1); 
       // printVals(proc);
       assertEquals(0,sIndex(proc));  // make sure we have one series only
+      // TODO - do we need to test something regarding order of images in series
     }
   }
   
@@ -502,13 +550,37 @@ public class ImporterTest {
   @Test
   public void testDatasetGroupFiles()
   {
-    String path = constructFakeFilename("group", FormatTools.INT16, 50, 50, 1, 1, 1, -1);
+    String[] files = {
+        "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C2_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C3_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C1_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C2_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C3_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C1_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C2_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C3_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C1_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C2_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C3_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C1_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C2_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "test_C3_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
+        "outlier.txt"
+      };
+    
+    for (String file : files)
+      Location.mapId(file, "iThinkI'mImportantButI'mNot");
+
+    String path = "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake";
+
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
       options.setGroupFiles(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
+      // TODO - assertEquals("test_C<1-3>_TP<1-5>&sizeX=50&sizeY=20&sizeZ=7.fake",options.getId());
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -517,14 +589,57 @@ public class ImporterTest {
       fail(e.getMessage());
       }
     
-    // TODO - flesh this out and add asserts
+    assertEquals(1,imps.length);
+    assertEquals(105,imps[0].getStack().getSize());
   }
 
   @Test
   public void testDatasetOpenFilesIndividually()
   {
-    // TODO - do something. Did Curtis say this did not need testing. I didn't have it.
-    //   May have been an oversight but maybe not.
+    // TODO - try to remove file dependency
+    
+    String path = "2channel_stack_raw01.pic";
+    
+    // try ungrouped
+    
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setUngroupFiles(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    // test results
+    
+    assertEquals(1,imps.length);
+    assertEquals(16,imps[0].getStack().getSize());
+    
+    // try grouped
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setUngroupFiles(false);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // test results
+    
+    assertEquals(1,imps.length);
+    assertEquals(32,imps[0].getStack().getSize());
   }
   
   @Test
@@ -546,8 +661,9 @@ public class ImporterTest {
   @Test
   public void testDatasetOpenAllSeries()
   {
-    // TODO - add cases
-    datasetOpenAllSeriesTest();
+    datasetOpenAllSeriesTest(73,107,1,1,1,1);  // one series
+    datasetOpenAllSeriesTest(73,107,1,1,1,2);  // two series
+    datasetOpenAllSeriesTest(73,107,5,3,4,4);  // multiple series with Z,C,T larger than 1
   }
   
   @Test
@@ -596,7 +712,7 @@ public class ImporterTest {
   @Test
   public void testMemoryRecordModifications()
   {
-    // TODO - how to test this?
+    // TODO - how to test this? lowest priority
   }
   
   @Test
@@ -913,8 +1029,12 @@ private void memorySpecifyTRangeTest()
    for (String used : usedFiles) System.out.println("\t" + used);
  }
 That's how you synthesize a virtual directory on disk, essentially, for the file grouping logic to use.
-The key is to register each fake filename with "Location.mapId(filename, dummy)" where "dummy" doesn't matter. As long as it's not null.
+The key is to register each fake filename with "Location.mapId(filename, dummy)" where "dummy" doesn't matter.
+As long as it's not null.
 
-Then below, I call "getUsedFiles" to get a list of the constituent filenames, which you can compare against your expectations.
+Then below, I call "getUsedFiles" to get a list of the constituent filenames, which you can compare against
+your expectations.
+
+Oh, forget about what I said about getUsedFiles—you don't have access to the API at that level.
 
  */
