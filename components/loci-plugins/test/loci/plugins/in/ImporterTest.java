@@ -6,6 +6,7 @@ import ij.ImageStack;
 import ij.process.ImageProcessor;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import loci.common.Region;
 import loci.formats.FormatException;
@@ -16,6 +17,12 @@ import org.junit.Test;
 
 // TODO
 //  - flesh out existing tests
+//      get reflection code working
+//      write test for open series code
+//      write tests for split options
+//      write tests for the color options
+//      concat follows - see my test to see if sufficient
+//      lowest priority - record modifications
 //  - add some tests for combination of options
 
 public class ImporterTest {
@@ -149,6 +156,28 @@ public class ImporterTest {
     return true;
   }
   
+  private int getField(ImagePlus imp, String fieldName) {
+    Exception exc = null;
+    try {
+      Field field = ImagePlus.class.getDeclaredField(fieldName);
+      field.setAccessible(true);
+      Object value = field.get(imp);
+      return (Integer) value;
+    }
+    catch (SecurityException e) { exc = e; }
+    catch (NoSuchFieldException e) { exc = e; }
+    catch (IllegalArgumentException e) { exc = e; }
+    catch (IllegalAccessException e) { exc = e; }
+    exc.printStackTrace();
+    return -1;
+  }
+  
+  private int getSizeZ(ImagePlus imp) { return getField(imp, "nSlices"); }
+  private int getSizeT(ImagePlus imp) { return getField(imp, "nFrames"); }
+  private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
+  
+  // ****** helper tests ****************************************************************************************
+  
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
   {
     String path = constructFakeFilename("default", pixType, x, y, z, c, t, -1);
@@ -170,9 +199,14 @@ public class ImporterTest {
     assertNotNull(ip);
     assertEquals(x,ip.getWidth());
     assertEquals(y,ip.getHeight());
+    /*
     assertEquals(z,ip.getNSlices());    // tricky - these last 3 getters have side effects that change their output.
     assertEquals(c,ip.getNChannels());  // TODO - How to test?
     assertEquals(t,ip.getNFrames());
+    */
+    assertEquals(z,getSizeZ(ip));
+    assertEquals(t,getSizeT(ip));
+    assertEquals(c,getEffectiveSizeC(ip));
   }
   
   private void outputStackOrderTest(int pixType, String order, int x, int y, int z, int c, int t)
@@ -278,6 +312,11 @@ public class ImporterTest {
     assertEquals(t,maxZ);
   }
 
+  private void datasetOpenAllSeriesTest()
+  {
+    // TODO - fill me in
+  }
+  
   private void datasetConcatenateTest(int pixType, String order,
       int x, int y, int z, int c, int t, int s)
   {
@@ -454,13 +493,31 @@ public class ImporterTest {
   @Test
   public void testDatasetGroupFiles()
   {
-    // TODO - need to enhance FakeFiles first I think
-    //   This option kicks in when you have similarly named files. all the files get loaded
-    //   as one dataset. This relies on the filename differing only by an index. Not sure
-    //   what an index in a fake filename would do. Tried adding -1 before .fake to see what
-    //   would happen and BF crashes with negArraySizeExcep  
+    String path = constructFakeFilename("group", FormatTools.INT16, 50, 50, 1, 1, 1, -1);
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setGroupFiles(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    // TODO - flesh this out and add asserts
   }
 
+  @Test
+  public void testDatasetOpenFilesIndividually()
+  {
+    // TODO - do something. Did Curtis say this did not need testing. I didn't have it.
+    //   May have been an oversight but maybe not.
+  }
+  
   @Test
   public void testDatasetSwapDims()
   {
@@ -475,6 +532,13 @@ public class ImporterTest {
     datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
     datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
     datasetSwapDimsTest(FormatTools.INT32, 44, 109, 4, 3);
+  }
+  
+  @Test
+  public void testDatasetOpenAllSeries()
+  {
+    // TODO - add cases
+    datasetOpenAllSeriesTest();
   }
   
   @Test
@@ -546,6 +610,10 @@ public class ImporterTest {
     // test a combination of zct's
     z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=6; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // TODO
+    //  1) more combos
+    //  2) noticed I am always setting from/to/by at the same time. test setting only one at a time (pass -1 to ignore)
   }
   
   @Test
@@ -587,7 +655,9 @@ public class ImporterTest {
     tester.testDefaultBehavior();
     tester.testOutputStackOrder();
     tester.testDatasetGroupFiles();
+    tester.testDatasetOpenFilesIndividually();
     tester.testDatasetSwapDims();
+    tester.testDatasetOpenAllSeries();
     tester.testDatasetConcatenate();
     tester.testColorMerge();
     tester.testColorRgbColorize();
@@ -788,3 +858,54 @@ private void memorySpecifyTRangeTest()
 }
 
 */
+
+/*  notes
+
+ public static void main(String[] args) throws FormatException, IOException {
+   String[] files = {
+     "test_C1_TP1&sizeZ=7.fake",
+     "test_C2_TP1&sizeZ=7.fake",
+     "test_C3_TP1&sizeZ=7.fake",
+     "test_C1_TP2&sizeZ=7.fake",
+     "test_C2_TP2&sizeZ=7.fake",
+     "test_C3_TP2&sizeZ=7.fake",
+     "test_C1_TP3&sizeZ=7.fake",
+     "test_C2_TP3&sizeZ=7.fake",
+     "test_C3_TP3&sizeZ=7.fake",
+     "test_C1_TP4&sizeZ=7.fake",
+     "test_C2_TP4&sizeZ=7.fake",
+     "test_C3_TP4&sizeZ=7.fake",
+     "test_C1_TP5&sizeZ=7.fake",
+     "test_C2_TP5&sizeZ=7.fake",
+     "test_C3_TP5&sizeZ=7.fake",
+     "outlier.txt"
+   };
+   for (String file : files) Location.mapId(file, "x"); // "x" is irrelevant
+
+   String id = files[0];
+   IFormatReader reader = new FileStitcher();
+   IMetadata meta = MetadataTools.createOMEXMLMetadata();
+   reader.setMetadataStore(meta);
+   reader.setId(id);
+   String[] usedFiles = reader.getUsedFiles();
+   int sizeX = reader.getSizeX();
+   int sizeY = reader.getSizeY();
+   int sizeZ = reader.getSizeZ();
+   int sizeC = reader.getSizeC();
+   int sizeT = reader.getSizeT();
+   reader.close();
+   System.out.println("Path = " + id);
+   System.out.println("X size = " + sizeX);
+   System.out.println("Y size = " + sizeY);
+   System.out.println("Z size = " + sizeZ);
+   System.out.println("C size = " + sizeC);
+   System.out.println("T size = " + sizeT);
+   System.out.println("Used files =");
+   for (String used : usedFiles) System.out.println("\t" + used);
+ }
+That's how you synthesize a virtual directory on disk, essentially, for the file grouping logic to use.
+The key is to register each fake filename with "Location.mapId(filename, dummy)" where "dummy" doesn't matter. As long as it's not null.
+
+Then below, I call "getUsedFiles" to get a list of the constituent filenames, which you can compare against your expectations.
+
+ */
