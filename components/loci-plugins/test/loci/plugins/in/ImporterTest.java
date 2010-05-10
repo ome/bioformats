@@ -32,6 +32,7 @@ import org.junit.Test;
 //      write tests for split options : 3 cases
 //      write tests for the color options : 4 cases
 //      concat follows - see my test to see if sufficient
+//      swap dims test needs to be changed after BF updated later
 //      lowest priority - record modifications
 //  - add some tests for combination of options
 
@@ -793,9 +794,16 @@ public class ImporterTest {
     
     assertEquals(3,imps.length);
     for (int i = 0; i < 3; i++)
-      assertEquals(35,imps[i].getStack().getSize());
-    
-    // TODO - test values in files
+    {
+      ImageStack st = imps[i].getStack();
+      assertEquals(35,st.getSize());
+      for (int j = 0; j < 35; j++)
+      {
+        ImageProcessor proc = st.getProcessor(j+1);
+        assertEquals(0,zIndex(proc));  // TODO - figure actual values
+        assertEquals(0,tIndex(proc));
+      }
+    }
   }
   
   @Test
@@ -821,9 +829,16 @@ public class ImporterTest {
     
     assertEquals(7,imps.length);
     for (int i = 0; i < 7; i++)
-      assertEquals(15,imps[0].getStack().getSize());
-
-    // TODO - test values in files
+    {
+      ImageStack st = imps[i].getStack();
+      assertEquals(15,st.getSize());
+      for (int j = 0; j < 15; j++)
+      {
+        ImageProcessor proc = st.getProcessor(j+1);
+        assertEquals(0,cIndex(proc));  // TODO - figure actual values
+        assertEquals(0,tIndex(proc));
+      }
+    }
   }
   
   @Test
@@ -849,9 +864,16 @@ public class ImporterTest {
     
     assertEquals(5,imps.length);
     for (int i = 0; i < 5; i++)
-      assertEquals(35,imps[i].getStack().getSize());
-
-    // TODO - test values in files
+    {
+      ImageStack st = imps[i].getStack();
+      assertEquals(21,st.getSize());
+      for (int j = 0; j < 21; j++)
+      {
+        ImageProcessor proc = st.getProcessor(j+1);
+        assertEquals(0,zIndex(proc));  // TODO - figure actual values
+        assertEquals(0,cIndex(proc));
+      }
+    }
   }
 
   // ** Main method *****************************************************************
@@ -888,187 +910,6 @@ public class ImporterTest {
   }
 }
 
-
-/*  old stuff - keep until replacement code tested
-
-  private int numPresent(ImageStack st, Axis axis)
-  {
-    List<Integer> indices = new ArrayList<Integer>();
-    
-    int count = 0;
-    for (int i = 0; i < st.getSize(); i++)
-    {
-      int currVal = this.index(axis, st.getProcessor(i+1));
-
-      //fails
-      // (!indices.contains(new Integer(currVal)))
-      //
-      //  indices.add(new Integer(currVal));
-      //  count++;
-      //}
-
-      boolean found = false;
-      for (int j = 0; j < indices.size(); j++)
-        if (currVal == indices.get(j))
-        {
-          found = true;
-          break;
-        }
-      if (!found)
-      {
-        count++;
-        indices.add(currVal);
-      }
-    }
-    return count;
-  }
-  
-private void memorySpecifyZRangeTest()
-{ 
-  int pixType = FormatTools.UINT8, x=30, y=30, z=6, c=2, t=4, s=-1;
-  int from = 1, to = 5, by = 2;
-  String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
-  ImagePlus[] imps = null;
-  try {
-    ImporterOptions options = new ImporterOptions();
-    options.setId(path);
-    options.setZBegin(0, from);
-    options.setZEnd(0, to);
-    options.setZStep(0, by);
-    imps = BF.openImagePlus(options);
-  }
-  catch (IOException e) {
-    fail(e.getMessage());
-  }
-  catch (FormatException e) {
-    fail(e.getMessage());
-  }
-  
-  // should have the data: one series, all t's, all c's, z's from 1 to 5 by 2
-  assertNotNull(imps);
-  assertTrue(imps.length == 1);
-  ImagePlus ip = imps[0];
-  assertNotNull(ip);
-  assertTrue(ip.getWidth() == x);
-  assertTrue(ip.getHeight() == y);
-  ImageStack st = ip.getStack();
-  int numSlices = st.getSize();
-  assertEquals(numInSeries(from,to,by)*c*t,numSlices);
-
-  System.out.println("SpecifyZRangeTest: slices below");
-  for (int i = 0; i < numSlices; i++)
-  {
-    ImageProcessor proc = st.getProcessor(i+1); 
-    printVals(proc);
-  }
-  
-  // all t's present
-  //assertEquals(numInSeries(1,t,1), numPresent(st,Axis.T));
-  
-  // all c's present
-  //assertEquals(numInSeries(1,c,1), numPresent(st,Axis.C));
-
-  // only specific z's present
-  //assertEquals(numInSeries(from,to,by), numPresent(st,Axis.Z));
-  
-  assertTrue(seriesInCorrectOrder(st,from,to,by,0,c-1,1,0,t-1,1));
-}
-
-private void memorySpecifyCRangeTest()
-{ 
-  int pixType = FormatTools.UINT8, x=30, y=30, z=4, c=11, t=4, s=-1;
-  int from = 3, to = 9, by = 3;
-  String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
-  ImagePlus[] imps = null;
-  try {
-    ImporterOptions options = new ImporterOptions();
-    options.setId(path);
-    options.setCBegin(0, from);
-    options.setCEnd(0, to);
-    options.setCStep(0, by);
-    imps = BF.openImagePlus(options);
-  }
-  catch (IOException e) {
-    fail(e.getMessage());
-  }
-  catch (FormatException e) {
-    fail(e.getMessage());
-  }
-  
-  // should have the data: one series, all t's, all z's, c's from 3 to 9 by 3
-  assertNotNull(imps);
-  assertTrue(imps.length == 1);
-  ImagePlus ip = imps[0];
-  assertNotNull(ip);
-  assertTrue(ip.getWidth() == x);
-  assertTrue(ip.getHeight() == y);
-  ImageStack st = ip.getStack();
-  int numSlices = st.getSize();
-  assertEquals(z*numInSeries(from,to,by)*t,numSlices);
-  //System.out.println("SpecifyCRangeTest: slices below");
-  //for (int i = 0; i < numSlices; i++)
-  //  printVals(st.getProcessor(i+1));
-      
-  // all t's present
-  //assertEquals(numInSeries(1,t,1), numPresent(st,Axis.T));
-  
-  // all z's present
-  //assertEquals(numInSeries(1,z,1), numPresent(st,Axis.Z));
-
-  // only specific c's present
-  //assertEquals(numInSeries(from,to,by), numPresent(st,Axis.C));
-
-  assertTrue(seriesInCorrectOrder(st,0,z-1,1,from,to,by,0,t-1,1));
-}
-
-private void memorySpecifyTRangeTest()
-{ 
-  int pixType = FormatTools.UINT8, x=30, y=30, z=3, c=2, t=12, s=-1;
-  int from = 1, to = 10, by = 4;
-  String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
-  ImagePlus[] imps = null;
-  try {
-    ImporterOptions options = new ImporterOptions();
-    options.setId(path);
-    options.setTBegin(0, from);
-    options.setTEnd(0, to);
-    options.setTStep(0, by);
-    imps = BF.openImagePlus(options);
-  }
-  catch (IOException e) {
-    fail(e.getMessage());
-  }
-  catch (FormatException e) {
-    fail(e.getMessage());
-  }
-  
-  // should have the data: one series, all z's, all c's, t's from 1 to 10 by 4
-  assertNotNull(imps);
-  assertTrue(imps.length == 1);
-  ImagePlus ip = imps[0];
-  assertNotNull(ip);
-  assertTrue(ip.getWidth() == x);
-  assertTrue(ip.getHeight() == y);
-  ImageStack st = ip.getStack();
-  int numSlices = st.getSize();
-  assertEquals(z*c*numInSeries(from,to,by),numSlices);
-  //System.out.println("SpecifyTRangeTest: slices below");
-  //for (int i = 0; i < numSlices; i++)
-  //  printVals(st.getProcessor(i+1));
-  
-  // all z's present
-  //assertEquals(numInSeries(1,z,1), numPresent(st,Axis.Z));
-  
-  // all c's present
-  //assertEquals(numInSeries(1,c,1), numPresent(st,Axis.C));
-
-  // only specific t's present
-  //assertEquals(numInSeries(from,to,by), numPresent(st,Axis.T));
-  
-  assertTrue(seriesInCorrectOrder(st,0,z-1,1,0,c-1,1,from,to,by));
-}
-
-*/
 
 /*  notes
 
