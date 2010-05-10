@@ -39,6 +39,8 @@ public class ImporterTest {
 
   private enum Axis {Z,C,T};
   
+  private boolean loaded = false;
+  
   // ** Helper methods *******************************************************************
 
   private String constructFakeFilename(String title,
@@ -186,6 +188,43 @@ public class ImporterTest {
   private int getSizeT(ImagePlus imp) { return getField(imp, "nFrames"); }
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
   
+  private void loadFakeFileSequenceIntoBF()
+  {
+    synchronized(this)
+    {
+      if (loaded) return;
+      
+      String[] files = {
+          "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C2_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C3_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C1_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C2_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C3_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C1_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C2_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C3_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C1_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C2_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C3_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C1_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C2_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "test_C3_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
+          "outlier.txt"
+        };
+      
+      for (String file : files)
+        Location.mapId(file, "iThinkI'mImportantButI'mNot");
+      
+      loaded = true;
+    }
+  }
+
+  private String getFirstFileInSequence()
+  {
+    return "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake";
+  }
+
   // ****** helper tests ****************************************************************************************
   
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
@@ -550,29 +589,10 @@ public class ImporterTest {
   @Test
   public void testDatasetGroupFiles()
   {
-    String[] files = {
-        "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C2_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C3_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C1_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C2_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C3_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C1_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C2_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C3_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C1_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C2_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C3_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C1_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C2_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "test_C3_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
-        "outlier.txt"
-      };
-    
-    for (String file : files)
-      Location.mapId(file, "iThinkI'mImportantButI'mNot");
 
-    String path = "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake";
+    loadFakeFileSequenceIntoBF();
+    
+    String path = getFirstFileInSequence();
 
     ImagePlus[] imps = null;
     try {
@@ -753,19 +773,85 @@ public class ImporterTest {
   @Test
   public void testSplitChannels()
   {
-    // TODO - Curtis says impl broken right now - will test later
+    loadFakeFileSequenceIntoBF();
+    
+    String path = getFirstFileInSequence();
+
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setSplitChannels(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    assertEquals(3,imps.length);
+    for (int i = 0; i < 3; i++)
+      assertEquals(35,imps[i].getStack().getSize());
+    
+    // TODO - test values in files
   }
   
   @Test
   public void testSplitFocalPlanes()
   {
-    // TODO - Curtis says impl broken right now - will test later
+    loadFakeFileSequenceIntoBF();
+    
+    String path = getFirstFileInSequence();
+
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setSplitFocalPlanes(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    assertEquals(7,imps.length);
+    for (int i = 0; i < 7; i++)
+      assertEquals(15,imps[0].getStack().getSize());
+
+    // TODO - test values in files
   }
   
   @Test
   public void testSplitTimepoints()
   {
-    // TODO - Curtis says impl broken right now - will test later
+    loadFakeFileSequenceIntoBF();
+    
+    String path = getFirstFileInSequence();
+
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setSplitTimepoints(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    assertEquals(5,imps.length);
+    for (int i = 0; i < 5; i++)
+      assertEquals(35,imps[i].getStack().getSize());
+
+    // TODO - test values in files
   }
 
   // ** Main method *****************************************************************
