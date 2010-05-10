@@ -283,6 +283,14 @@ public class FluoviewReader extends BaseTiffReader {
     core[0].imageCount = ifds.size() / seriesCount;
     if (getSizeZ() > getImageCount()) core[0].sizeZ = getImageCount();
     if (getSizeT() > getImageCount()) core[0].sizeT = getImageCount();
+    if (getSizeZ() * getSizeC() * getSizeT() > getImageCount()) {
+      int diff = getSizeZ() * getSizeC() * getSizeT() - getImageCount();
+      if (diff == getSizeC()) {
+        if (getSizeZ() > 1) core[0].sizeZ--;
+        else if (getSizeT() > 1) core[0].sizeT--;
+        else core[0].sizeC /= getSizeC();
+      }
+    }
 
     if (getImageCount() == 1 && (getSizeT() == getSizeY() ||
       getSizeZ() == getSizeY()) && (getSizeT() > getImageCount() ||
