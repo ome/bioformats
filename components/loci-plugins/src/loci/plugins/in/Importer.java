@@ -86,7 +86,7 @@ public class Importer {
       ImagePlus[] imps = readPixels(ipr, options, displayHandler);
 
       BF.debug("display pixels");
-      displayHandler.displayImages(imps, ipr.stackOrder, ipr.colorModels);
+      displayHandler.displayImages(imps);
 
       BF.debug("display ROIs");
       displayHandler.displayROIs(imps);

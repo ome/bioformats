@@ -1,6 +1,14 @@
+//
+// ImporterTest.java
+//
+
 package loci.plugins.in;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
@@ -204,6 +212,7 @@ public class ImporterTest {
     assertEquals(c,ip.getNChannels());  // TODO - How to test?
     assertEquals(t,ip.getNFrames());
     */
+    if (z != getSizeZ(ip)) { new ij.ImageJ(); ip.show(); }//TEMP
     assertEquals(z,getSizeZ(ip));
     assertEquals(t,getSizeT(ip));
     assertEquals(c,getEffectiveSizeC(ip));

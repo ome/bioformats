@@ -47,7 +47,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import loci.formats.FormatTools;
-import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.plugins.util.WindowTools;

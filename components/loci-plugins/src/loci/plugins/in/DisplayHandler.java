@@ -29,7 +29,6 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 
-import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +46,6 @@ import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.gui.XMLWindow;
 import loci.formats.services.OMEXMLService;
-import loci.plugins.colorize.Colorizer;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.WindowTools;
@@ -116,18 +114,18 @@ public class DisplayHandler implements StatusListener {
   }
 
   /** Displays the given images according to the configured options. */
-  public void displayImages(ImagePlus[] imps, String stackOrder, IndexColorModel[] colorModels) {
-    for (ImagePlus imp : imps) displayImage(imp, stackOrder, colorModels);
+  public void displayImages(ImagePlus[] imps) {
+    for (ImagePlus imp : imps) displayImage(imp);
   }
 
   /** Displays the given image according to the configured options. */
-  public void displayImage(ImagePlus imp, String stackOrder, IndexColorModel[] colorModels) {
+  public void displayImage(ImagePlus imp) {
     if (options.isViewNone()) return;
     else if (options.isViewStandard() || options.isViewHyperstack()) {
-      displayNormal(imp, stackOrder, colorModels);
+      displayNormal(imp);
     }
-    else if (options.isViewBrowser()) displayDataBrowser(imp, stackOrder, colorModels);
-    else if (options.isViewImage5D()) displayImage5D(imp, stackOrder, colorModels);
+    else if (options.isViewBrowser()) displayDataBrowser(imp);
+    else if (options.isViewImage5D()) displayImage5D(imp);
     else if (options.isViewView5D()) displayView5D(imp);
     else if (options.isViewVisBio()) displayVisBio(imp);
     else throw new IllegalStateException("Unknown display mode");
@@ -139,67 +137,64 @@ public class DisplayHandler implements StatusListener {
    * or as a hyperstack (up to 5D, with ZCT sliders) depending on whether
    * imp.setOpenAsHyperStack(true) has been called.
    */
-  public void displayNormal(ImagePlus imp, String stackOrder,
-    IndexColorModel[] colorModels)
-  {
-    IFormatReader r = options.getReader();
-    boolean windowless = options.isWindowless();
+  public void displayNormal(ImagePlus imp) {
+//    IFormatReader r = options.getReader();
+//    boolean windowless = options.isWindowless();
 
-    if (!options.isConcatenate() && options.isMergeChannels()) imp.show();
+//    if (!options.isConcatenate() && options.isMergeChannels()) imp.show();
 
-    if (imp.isVisible() && !options.isVirtual()) {
-      String mergeOptions = windowless ? options.getMergeOption() : null;
-      imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
-      // CTR TODO finish this
-      if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
-    }
+    // CTR CHECK
+    //if (imp.isVisible() && !options.isVirtual()) {
+    //  String mergeOptions = windowless ? options.getMergeOption() : null;
+    //  imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
+    //  // CTR TODO finish this
+    //  if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
+    //}
 
     // NB: ImageJ 1.39+ is required for hyperstacks
 
-    if (!options.isConcatenate()) {
-      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-
-      boolean splitC = options.isSplitChannels();
-      boolean splitZ = options.isSplitFocalPlanes();
-      boolean splitT = options.isSplitTimepoints();
-
-      boolean customColorize = options.isCustomColorize();
-      boolean browser = options.isViewBrowser();
-      boolean virtual = options.isVirtual();
-
-      if (options.isColorize() || customColorize) {
-        byte[][][] lut =
-          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
-        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
-      }
-      else if (colorModels != null && !browser && !virtual) {
-        byte[][][] lut = new byte[colorModels.length][][];
-        for (int channel=0; channel<lut.length; channel++) {
-          lut[channel] = new byte[3][256];
-          colorModels[channel].getReds(lut[channel][0]);
-          colorModels[channel].getGreens(lut[channel][1]);
-          colorModels[channel].getBlues(lut[channel][2]);
-        }
-        imp = Colorizer.colorize(imp, true,
-          stackOrder, lut, r.getSeries(), null, hyper);
-      }
-
-      // CTR FIXME
-      //if (splitC || splitZ || splitT) {
-      //  imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
-      //}
-    }
+//    if (!options.isConcatenate()) {
+//      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
+//
+//      boolean splitC = options.isSplitChannels();
+//      boolean splitZ = options.isSplitFocalPlanes();
+//      boolean splitT = options.isSplitTimepoints();
+//
+//      boolean customColorize = options.isCustomColorize();
+//      boolean browser = options.isViewBrowser();
+//      boolean virtual = options.isVirtual();
+//
+//      if (options.isColorize() || customColorize) {
+//        byte[][][] lut =
+//          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
+//        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
+//      }
+//      else if (colorModels != null && !browser && !virtual) {
+//        byte[][][] lut = new byte[colorModels.length][][];
+//        for (int channel=0; channel<lut.length; channel++) {
+//          lut[channel] = new byte[3][256];
+//          colorModels[channel].getReds(lut[channel][0]);
+//          colorModels[channel].getGreens(lut[channel][1]);
+//          colorModels[channel].getBlues(lut[channel][2]);
+//        }
+//        imp = Colorizer.colorize(imp, true,
+//          stackOrder, lut, r.getSeries(), null, hyper);
+//      }
+//
+//      // CTR FIXME
+//      if (splitC || splitZ || splitT) {
+//        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
+//      }
+//    }
 
     imp.show();
   }
 
-  public void displayDataBrowser(ImagePlus imp, String stackOrder,
-      IndexColorModel[] colorModels)
-  {
+  public void displayDataBrowser(ImagePlus imp) {
     // NB: Use regular hyperstack display for now, since
     // recent versions of ImageJ v1.43+ broke DataBrowser
     // by removing the sliceSelector field.
-    displayNormal(imp, stackOrder, colorModels);
+    displayNormal(imp);
 
 //    IFormatReader r = options.getReader();
 //    String[] dimTypes = r.getChannelDimTypes();
@@ -207,8 +202,8 @@ public class DisplayHandler implements StatusListener {
 //    new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
   }
 
-  public void displayImage5D(ImagePlus imp, String stackOrder, IndexColorModel[] colorModels) {
-    displayNormal(imp, stackOrder, colorModels); //TEMP?
+  public void displayImage5D(ImagePlus imp) {
+    WindowManager.setTempCurrentImage(imp);
 
     IFormatReader r = options.getReader();
     ReflectedUniverse ru = new ReflectedUniverse();

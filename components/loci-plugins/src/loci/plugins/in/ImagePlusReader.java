@@ -34,7 +34,6 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
-import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,9 +79,6 @@ public class ImagePlusReader implements StatusReporter {
   protected ImporterOptions options;
 
   protected List<StatusListener> listeners = new Vector<StatusListener>();
-
-  public String stackOrder;//TEMP!
-  public IndexColorModel[] colorModels;//TEMP!
 
   // -- Constructors --
 
@@ -136,8 +132,6 @@ public class ImagePlusReader implements StatusReporter {
     long time = startTime;
 
     ImageProcessorReader r = options.getReader();
-    stackOrder = null;
-    colorModels = null;
 
     if (options.isVirtual()) {
       int totalSeries = 0;
@@ -214,7 +208,7 @@ public class ImagePlusReader implements StatusReporter {
       }
 
       int q = 0;
-      stackOrder = options.getStackOrder();
+      String stackOrder = options.getStackOrder();
       if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
         stackOrder = r.getDimensionOrder();
       }
@@ -265,7 +259,8 @@ public class ImagePlusReader implements StatusReporter {
         }
       }
       else {
-        if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
+        // CTR CHECK
+        //if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
 
         for (int i=0; i<r.getImageCount(); i++) {
           if (!load[i]) continue;
@@ -297,10 +292,11 @@ public class ImagePlusReader implements StatusReporter {
             throw new FormatException("Cannot read ImageProcessor #" + i);
           }
 
-          int channel = r.getZCTCoords(i)[1];
-          if (colorModels != null && p.length == 1) {
-            colorModels[channel] = (IndexColorModel) ip.getColorModel();
-          }
+          // CTR CHECK
+          //int channel = r.getZCTCoords(i)[1];
+          //if (colorModels != null && p.length == 1) {
+          //  colorModels[channel] = (IndexColorModel) ip.getColorModel();
+          //}
 
           // add plane to image stack
           int w = region.width, h = region.height;
@@ -336,18 +332,19 @@ public class ImagePlusReader implements StatusReporter {
 
       notifyListeners(new StatusEvent(1, 1, "Creating image"));
 
-      ImagePlus impB = createImage(stackB, s, fi, stackOrder, colorModels);
-      ImagePlus impS = createImage(stackS, s, fi, stackOrder, colorModels);
-      ImagePlus impF = createImage(stackF, s, fi, stackOrder, colorModels);
-      ImagePlus impO = createImage(stackO, s, fi, stackOrder, colorModels);
+      ImagePlus impB = createImage(stackB, s, fi);
+      ImagePlus impS = createImage(stackS, s, fi);
+      ImagePlus impF = createImage(stackF, s, fi);
+      ImagePlus impO = createImage(stackO, s, fi);
       if (impB != null) imps.add(impB);
       if (impS != null) imps.add(impS);
       if (impF != null) imps.add(impF);
       if (impO != null) imps.add(impO);
     }
 
-    Concatenator concatenator = new Concatenator(options);
-    imps = concatenator.concatenate(imps, stackOrder);
+    // CTR CHECK
+    //Concatenator concatenator = new Concatenator(options);
+    //imps = concatenator.concatenate(imps, stackOrder);
 
     // end timing
     long endTime = System.currentTimeMillis();
@@ -368,9 +365,7 @@ public class ImagePlusReader implements StatusReporter {
    * Displays the given image stack according to
    * the specified parameters and import options.
    */
-  private ImagePlus createImage(ImageStack stack,
-    int series, FileInfo fi, String stackOrder, IndexColorModel[] colorModels)
-  {
+  private ImagePlus createImage(ImageStack stack, int series, FileInfo fi) {
     if (stack == null) return null;
 
     String seriesName = options.getOMEMetadata().getImageName(series);
@@ -380,6 +375,10 @@ public class ImagePlusReader implements StatusReporter {
     int zCount = options.getZCount(series);
     int tCount = options.getTCount(series);
     IFormatReader r = options.getReader();
+    
+    if (cCount == 0) cCount = r.getEffectiveSizeC();
+    if (zCount == 0) zCount = r.getSizeZ();
+    if (tCount == 0) tCount = r.getSizeT();
 
     String title = getTitle(r, file, seriesName, options.isGroupFiles());
     ImagePlus imp = null;
