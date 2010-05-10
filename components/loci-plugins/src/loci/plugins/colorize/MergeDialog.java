@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.colorize;
 
 import ij.gui.GenericDialog;
-
-import loci.plugins.prefs.OptionsDialog;
+import loci.plugins.in.ImportProcess;
+import loci.plugins.in.ImporterDialog;
 import loci.plugins.in.ImporterOptions;
 
 /**
@@ -37,54 +37,47 @@ import loci.plugins.in.ImporterOptions;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/importer/MergeDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/importer/MergeDialog.java">SVN</a></dd></dl>
  */
-public class MergeDialog extends OptionsDialog {
+public class MergeDialog extends ImporterDialog {
 
   // -- Fields --
 
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
-
-  protected int[] nums;
+  protected String[] mergeOptions;
 
   // -- Constructor --
 
   /** Creates a merge options dialog for the Bio-Formats Importer. */
-  public MergeDialog(ImporterOptions options, int[] nums) {
-    super(options);
-    this.options = options;
-    this.nums = nums;
+  public MergeDialog(ImportProcess process, int[] nums) {
+    super(process);
+    
+    mergeOptions = new String[7];
+    mergeOptions[6] = options.getDefaultValue(ImporterOptions.KEY_MERGE_OPTION);
+    for (int i=0; i<6; i++) {
+      mergeOptions[i] = nums[i] + " planes, " + (i + 2) + " channels per plane";
+    }
   }
 
-  // -- OptionsDialog methods --
+  // -- ImporterDialog methods --
 
-  /**
-   * Gets the merge settings from macro options, or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
-    if (options.isWindowless()) return STATUS_OK;
+  protected boolean needPrompt() {
+    return !process.isWindowless();
+  }
+
+  protected GenericDialog constructDialog() {
     GenericDialog gd = new GenericDialog("Merging Options...");
 
     String mergeOptionLabel =
       options.getLabel(ImporterOptions.KEY_MERGE_OPTION);
-    String mergeOptionDefault =
-      options.getDefaultValue(ImporterOptions.KEY_MERGE_OPTION);
-
-    String[] mergeOptions = new String[7];
-    mergeOptions[6] = mergeOptionDefault;
-    for (int i=0; i<6; i++) {
-      mergeOptions[i] = nums[i] + " planes, " + (i + 2) + " channels per plane";
-    }
 
     gd.addMessage("How would you like to merge this data?");
+    String mergeOptionDefault = mergeOptions[mergeOptions.length - 1];
     gd.addChoice(mergeOptionLabel, mergeOptions, mergeOptionDefault);
-    gd.showDialog();
-    if (gd.wasCanceled()) return STATUS_CANCELED;
 
+    return gd;
+  }
+  
+  protected boolean harvestResults(GenericDialog gd) {
     options.setMergeOption(mergeOptions[gd.getNextChoiceIndex()]);
-
-    return STATUS_OK;
+    return true;
   }
 
 }

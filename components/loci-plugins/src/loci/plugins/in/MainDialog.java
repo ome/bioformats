@@ -71,9 +71,6 @@ public class MainDialog extends ImporterDialog
 
   // -- Fields --
 
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
-
   protected Checkbox autoscaleBox;
   protected Checkbox colorizeBox;
   protected Checkbox concatenateBox;
@@ -102,16 +99,15 @@ public class MainDialog extends ImporterDialog
   // -- Constructor --
 
   /** Creates a general options dialog for the Bio-Formats Importer. */
-  public MainDialog(ImporterOptions options) {
-    super(options);
-    this.options = options;
+  public MainDialog(ImportProcess process) {
+    super(process);
   }
   
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
-    return !options.isWindowless();
+    return !process.isWindowless();
   }
   
   @Override
@@ -144,7 +140,7 @@ public class MainDialog extends ImporterDialog
   }
   
   @Override
-  protected void harvestResults(GenericDialog gd) {
+  protected boolean harvestResults(GenericDialog gd) {
     options.setAutoscale(gd.getNextBoolean());
     options.setColorize(gd.getNextBoolean());
     options.setConcatenate(gd.getNextBoolean());
@@ -167,6 +163,7 @@ public class MainDialog extends ImporterDialog
     options.setStackOrder(options.getStackOrders()[gd.getNextChoiceIndex()]);
     options.setSwapDimensions(gd.getNextBoolean());
     options.setVirtual(gd.getNextBoolean());
+    return true;
   }
   
   // -- FocusListener methods --

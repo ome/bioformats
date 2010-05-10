@@ -40,13 +40,15 @@ public abstract class ImporterDialog extends OptionsDialog {
 
   // -- Fields --
 
+  protected ImportProcess process;
   protected ImporterOptions options;
 
   // -- Constructor --
 
-  public ImporterDialog(ImporterOptions options) {
-    super(options);
-    this.options = options;
+  public ImporterDialog(ImportProcess process) {
+    super(process.getOptions());
+    this.process = process;
+    this.options = process.getOptions();
   }
 
   // -- ImporterDialog methods --
@@ -61,7 +63,7 @@ public abstract class ImporterDialog extends OptionsDialog {
     return !gd.wasCanceled();
   }
 
-  protected abstract void harvestResults(GenericDialog gd);
+  protected abstract boolean harvestResults(GenericDialog gd);
 
   // -- OptionsDialog methods --
 
@@ -76,7 +78,7 @@ public abstract class ImporterDialog extends OptionsDialog {
 
     GenericDialog gd = constructDialog();
     if (!displayDialog(gd)) return STATUS_CANCELED;
-    harvestResults(gd);
+    if (!harvestResults(gd)) return STATUS_CANCELED;
 
     return STATUS_OK;
   }

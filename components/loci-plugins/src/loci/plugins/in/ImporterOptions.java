@@ -25,20 +25,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import loci.common.Location;
 import loci.common.Region;
-import loci.formats.FilePattern;
-import loci.formats.FormatException;
-import loci.formats.meta.IMetadata;
 import loci.plugins.prefs.OptionsList;
 import loci.plugins.prefs.StringOption;
-import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
 
 /**
@@ -118,7 +112,8 @@ public class ImporterOptions extends OptionsList {
   // series options
   private List<Boolean> seriesOn = new ArrayList<Boolean>();
 
-  // TODO - swap options need to be programmatically settable
+  // swap options
+  private String inputOrder;
 
   // range options
   private List<Integer> cBegin = new ArrayList<Integer>();
@@ -133,14 +128,6 @@ public class ImporterOptions extends OptionsList {
 
   // crop options
   private List<Region> cropRegion = new ArrayList<Region>();
-
-  // -- Fields - derived values --
-
-  private ImporterReader reader;
-  private ImporterMetadata metadata;
-
-  /** A descriptive label for each series. */
-  private String[] seriesLabels;
 
   // -- Constructor --
 
@@ -363,10 +350,7 @@ public class ImporterOptions extends OptionsList {
 
   // windowless
   public String getWindowlessInfo() { return getInfo(KEY_WINDOWLESS); }
-  public boolean isWindowless() {
-    if (reader != null && reader.isWindowless()) return true;
-    return isSet(KEY_WINDOWLESS);
-  }
+  public boolean isWindowless() { return isSet(KEY_WINDOWLESS); }
   public void setWindowless(boolean b) { setValue(KEY_WINDOWLESS, b); }
 
   // -- ImporterOptions methods - secondary options accessors and mutators --
@@ -380,128 +364,48 @@ public class ImporterOptions extends OptionsList {
     set(seriesOn, s, value, false);
   }
 
-  // TODO - swap options
+  // swap options
+  public String getInputOrder() { return inputOrder; }
+  public void setInputOrder(String dimOrder) { inputOrder = dimOrder; }
 
   // range options
   public int getCBegin(int s) { return get(cBegin, s, 0); }
   public void setCBegin(int s, int value) { set(cBegin, s, value, 0); }
   public int getCEnd(int s) { return get(cEnd, s, -1); }
-  public void setCEnd(int s, int value) { set(cEnd, s, value, 0); }
+  public void setCEnd(int s, int value) { set(cEnd, s, value, -1); }
   public int getCStep(int s) { return get(cStep, s, 1); }
-  public void setCStep(int s, int value) { set(cStep, s, value, 0); }
-
-  public int getZBegin(int s) { return get(zBegin, s, 0); }
-  public void setZBegin(int s, int value) { set(zBegin, s, value, 0); }
-  public int getZEnd(int s) { return get(zEnd, s, -1); }
-  public void setZEnd(int s, int value) { set(zEnd, s, value, 0); }
-  public int getZStep(int s) { return get(zStep, s, 1); }
-  public void setZStep(int s, int value) { set(zStep, s, value, 0); }
-
-  public int getTBegin(int s) { return get(tBegin, s, 0); }
-  public void setTBegin(int s, int value) { set(tBegin, s, value, 0); }
-  public int getTEnd(int s) { return get(tEnd, s, -1); }
-  public void setTEnd(int s, int value) { set(tEnd, s, value, 0); }
-  public int getTStep(int s) { return get(tStep, s, 1); }
-  public void setTStep(int s, int value) { set(tStep, s, value, 0); }
-
-  // crop options
-  public Region getCropRegion(int s) { return get(cropRegion, s, null); }
-  public void setCropRegion(int s, Region r) { set(cropRegion, s, r, null); }
-
-  // -- ImporterOptions methods - derived values accessors --
-
-  public String getIdName() { return reader.idName; }
-  public Location getIdLocation() { return reader.idLoc; }
-  public String getCurrentFile() { return reader.currentFile; }
-  public ImageProcessorReader getReader() { return reader.r; }
-  public IMetadata getOMEMetadata() { return reader.meta; }
-  public ImporterMetadata getOriginalMetadata() { return metadata; }
-  public int getSeriesCount() { return reader.r.getSeriesCount(); }
-
-  // series options
+  public void setCStep(int s, int value) { set(cStep, s, value, 1); }
   public int getCCount(int s) {
     if (!isSeriesOn(s)) return 0;
     if (isMergeChannels()) return 1;
     return (getCEnd(s) - getCBegin(s) + getCStep(s)) / getCStep(s);
   }
+
+  public int getZBegin(int s) { return get(zBegin, s, 0); }
+  public void setZBegin(int s, int value) { set(zBegin, s, value, 0); }
+  public int getZEnd(int s) { return get(zEnd, s, -1); }
+  public void setZEnd(int s, int value) { set(zEnd, s, value, -1); }
+  public int getZStep(int s) { return get(zStep, s, 1); }
+  public void setZStep(int s, int value) { set(zStep, s, value, 1); }
   public int getZCount(int s) {
     if (!isSeriesOn(s)) return 0;
     return (getZEnd(s) - getZBegin(s) + getZStep(s)) / getZStep(s);
   }
+
+  public int getTBegin(int s) { return get(tBegin, s, 0); }
+  public void setTBegin(int s, int value) { set(tBegin, s, value, 0); }
+  public int getTEnd(int s) { return get(tEnd, s, -1); }
+  public void setTEnd(int s, int value) { set(tEnd, s, value, -1); }
+  public int getTStep(int s) { return get(tStep, s, 1); }
+  public void setTStep(int s, int value) { set(tStep, s, value, 1); }
   public int getTCount(int s) {
     if (!isSeriesOn(s)) return 0;
     return (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
   }
 
-  public String getSeriesLabel(int s) {
-    if (seriesLabels == null) computeSeriesLabels();
-    return seriesLabels[s];
-  }
-
-  // -- Helper methods - derived value computation --
-
-  /** Initializes the ImporterMetadata derived value. */
-  protected void initializeMetadata() {
-    // only prepend a series name prefix to the metadata keys if multiple
-    // series are being opened
-    int seriesCount = getSeriesCount();
-    int numEnabled = 0;
-    for (int s=0; s<seriesCount; s++) {
-      if (isSeriesOn(s)) numEnabled++;
-    }
-    metadata = new ImporterMetadata(reader.r, this, numEnabled > 1);
-  }
-
-  /** Initializes the seriesLabels derived value. */
-  private void computeSeriesLabels() {
-    int seriesCount = getSeriesCount();
-    seriesLabels = new String[seriesCount];
-    for (int i=0; i<seriesCount; i++) {
-      reader.r.setSeries(i);
-      StringBuffer sb = new StringBuffer();
-      sb.append("Series_");
-      sb.append((i + 1));
-      sb.append(": ");
-      String name = getOMEMetadata().getImageName(i);
-      if (name != null && name.length() > 0) {
-        sb.append(name);
-        sb.append(": ");
-      }
-      sb.append(reader.r.getSizeX());
-      sb.append(" x ");
-      sb.append(reader.r.getSizeY());
-      sb.append("; ");
-      sb.append(reader.r.getImageCount());
-      sb.append(" plane");
-      if (reader.r.getImageCount() > 1) {
-        sb.append("s");
-        if (reader.r.isOrderCertain()) {
-          sb.append(" (");
-          boolean first = true;
-          if (reader.r.getEffectiveSizeC() > 1) {
-            sb.append(reader.r.getEffectiveSizeC());
-            sb.append("C");
-            first = false;
-          }
-          if (reader.r.getSizeZ() > 1) {
-            if (!first) sb.append(" x ");
-            sb.append(reader.r.getSizeZ());
-            sb.append("Z");
-            first = false;
-          }
-          if (reader.r.getSizeT() > 1) {
-            if (!first) sb.append(" x ");
-            sb.append(reader.r.getSizeT());
-            sb.append("T");
-            first = false;
-          }
-          sb.append(")");
-        }
-      }
-      seriesLabels[i] = sb.toString();
-      //seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
-    }
-  }
+  // crop options
+  public Region getCropRegion(int s) { return get(cropRegion, s, null); }
+  public void setCropRegion(int s, Region r) { set(cropRegion, s, r, null); }
 
   // -- Helper methods - miscellaneous --
 
@@ -515,35 +419,6 @@ public class ImporterOptions extends OptionsList {
   private <T extends Object> T get(List<T> list, int index, T defaultValue) {
     if (list.size() <= index) return defaultValue;
     return list.get(index);
-  }
-
-  // -- CTR TEMP - methods to munge around with state --
-
-  public void createReader() {
-    reader = new ImporterReader(this);
-  }
-
-  public void saveDefaults() {
-    // save options as new defaults
-    if (!isQuiet()) setFirstTime(false);
-    saveOptions();
-  }
-
-  public void prepareStuff() throws FormatException, IOException {
-    IJ.showStatus("Analyzing " + getIdName());
-    reader.prepareStuff();
-  }
-
-  public void initializeReader() throws FormatException, IOException {
-    if (isGroupFiles()) {
-      // overwrite base filename with file pattern
-      String id = getId();
-      if (id == null) id = reader.currentFile;
-      FilePattern fp = new FilePattern(id);
-      if (!fp.isValid()) id = reader.currentFile;
-      setId(id);
-    }
-    reader.initializeReader();
   }
 
 }

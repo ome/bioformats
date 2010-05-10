@@ -49,11 +49,11 @@ public class SwapDialog extends ImporterDialog {
   // -- Constructor --
 
   /** Creates a dimension swapper dialog for the Bio-Formats Importer. */
-  public SwapDialog(ImporterOptions options) {
-    super(options);
+  public SwapDialog(ImportProcess process) {
+    super(process);
     try {
       dimSwap = (DimensionSwapper)
-        options.getReader().unwrap(DimensionSwapper.class, null);
+        process.getReader().unwrap(DimensionSwapper.class, null);
     }
     catch (FormatException e) {
       // TODO Auto-generated catch block
@@ -69,7 +69,7 @@ public class SwapDialog extends ImporterDialog {
   
   @Override
   protected boolean needPrompt() {
-    return !options.isWindowless() && options.isSwapDimensions();
+    return !process.isWindowless() && options.isSwapDimensions();
   }
   
   @Override
@@ -96,7 +96,7 @@ public class SwapDialog extends ImporterDialog {
   }
   
   @Override
-  protected void harvestResults(GenericDialog gd) {
+  protected boolean harvestResults(GenericDialog gd) {
     for (int s=0; s<dimSwap.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
       dimSwap.setSeries(s);
@@ -120,6 +120,7 @@ public class SwapDialog extends ImporterDialog {
 
       dimSwap.swapDimensions(sb.toString());
     }
+    return true;
   }
 
 }

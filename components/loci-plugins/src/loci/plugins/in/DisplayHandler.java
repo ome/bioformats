@@ -66,13 +66,15 @@ public class DisplayHandler implements StatusListener {
 
   // -- Fields --
 
+  protected ImportProcess process;
   protected ImporterOptions options;
   protected XMLWindow xmlWindow;
 
   // -- Constructor --
 
-  public DisplayHandler(ImporterOptions options) {
-    this.options = options;
+  public DisplayHandler(ImportProcess process) {
+    this.process = process;
+    options = process.getOptions();
   }
 
   // -- DisplayHandler API methods --
@@ -81,8 +83,8 @@ public class DisplayHandler implements StatusListener {
   public SearchableWindow displayOriginalMetadata() {
     if (!options.isShowMetadata()) return null;
 
-    String name = options.getIdName();
-    ImporterMetadata meta = options.getOriginalMetadata();
+    String name = process.getIdName();
+    ImporterMetadata meta = process.getOriginalMetadata();
     String metaString = meta.getMetadataString("\t");
     SearchableWindow metaWindow = new SearchableWindow(
       "Original Metadata - " + name, "Key\tValue", metaString, 400, 400);
@@ -95,12 +97,12 @@ public class DisplayHandler implements StatusListener {
     if (!options.isShowOMEXML()) return null;
 
     XMLWindow metaWindow = null;
-    metaWindow = new XMLWindow("OME Metadata - " + options.getIdName());
+    metaWindow = new XMLWindow("OME Metadata - " + process.getIdName());
     Exception exc = null;
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      metaWindow.setXML(service.getOMEXML(options.getOMEMetadata()));
+      metaWindow.setXML(service.getOMEXML(process.getOMEMetadata()));
       WindowTools.placeWindow(metaWindow);
       metaWindow.setVisible(true);
     }
@@ -138,55 +140,6 @@ public class DisplayHandler implements StatusListener {
    * imp.setOpenAsHyperStack(true) has been called.
    */
   public void displayNormal(ImagePlus imp) {
-//    IFormatReader r = options.getReader();
-//    boolean windowless = options.isWindowless();
-
-//    if (!options.isConcatenate() && options.isMergeChannels()) imp.show();
-
-    // CTR CHECK
-    //if (imp.isVisible() && !options.isVirtual()) {
-    //  String mergeOptions = windowless ? options.getMergeOption() : null;
-    //  imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
-    //  // CTR TODO finish this
-    //  if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
-    //}
-
-    // NB: ImageJ 1.39+ is required for hyperstacks
-
-//    if (!options.isConcatenate()) {
-//      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-//
-//      boolean splitC = options.isSplitChannels();
-//      boolean splitZ = options.isSplitFocalPlanes();
-//      boolean splitT = options.isSplitTimepoints();
-//
-//      boolean customColorize = options.isCustomColorize();
-//      boolean browser = options.isViewBrowser();
-//      boolean virtual = options.isVirtual();
-//
-//      if (options.isColorize() || customColorize) {
-//        byte[][][] lut =
-//          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
-//        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
-//      }
-//      else if (colorModels != null && !browser && !virtual) {
-//        byte[][][] lut = new byte[colorModels.length][][];
-//        for (int channel=0; channel<lut.length; channel++) {
-//          lut[channel] = new byte[3][256];
-//          colorModels[channel].getReds(lut[channel][0]);
-//          colorModels[channel].getGreens(lut[channel][1]);
-//          colorModels[channel].getBlues(lut[channel][2]);
-//        }
-//        imp = Colorizer.colorize(imp, true,
-//          stackOrder, lut, r.getSeries(), null, hyper);
-//      }
-//
-//      // CTR FIXME
-//      if (splitC || splitZ || splitT) {
-//        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
-//      }
-//    }
-
     imp.show();
   }
 
@@ -196,16 +149,18 @@ public class DisplayHandler implements StatusListener {
     // by removing the sliceSelector field.
     displayNormal(imp);
 
-//    IFormatReader r = options.getReader();
-//    String[] dimTypes = r.getChannelDimTypes();
-//    int[] dimLengths = r.getChannelDimLengths();
-//    new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
+    // CTR FIXME
+    
+    //IFormatReader r = options.getReader();
+    //String[] dimTypes = r.getChannelDimTypes();
+    //int[] dimLengths = r.getChannelDimLengths();
+    //new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
   }
 
   public void displayImage5D(ImagePlus imp) {
     WindowManager.setTempCurrentImage(imp);
 
-    IFormatReader r = options.getReader();
+    IFormatReader r = process.getReader();
     ReflectedUniverse ru = new ReflectedUniverse();
     try {
       ru.exec("import i5d.Image5D");
@@ -225,7 +180,6 @@ public class DisplayHandler implements StatusListener {
     catch (ReflectException exc) {
       WindowTools.reportException(exc, options.isQuiet(),
         "Sorry, there was a problem interfacing with Image5D");
-      return;
     }
   }
 
@@ -248,7 +202,6 @@ public class DisplayHandler implements StatusListener {
     if (exc != null) {
       WindowTools.reportException(exc, options.isQuiet(),
         "Sorry, there was a problem interfacing with View5D");
-      return;
     }
   }
 
@@ -261,18 +214,17 @@ public class DisplayHandler implements StatusListener {
       //ru.setVar("pattern", pattern);
       ru.exec("dataset = new Dataset(name, pattern)");
       ru.setVar("imp", imp);
-      // TODO: finish VisBio logic
+      // CTR TODO: finish VisBio logic
     }
     catch (ReflectException exc) {
       WindowTools.reportException(exc, options.isQuiet(),
         "Sorry, there was a problem interfacing with VisBio");
-      return;
     }
   }
 
   public void displayROIs(ImagePlus[] imps) {
     if (!options.showROIs()) return;
-    ROIHandler.openROIs(options.getOMEMetadata(), imps);
+    ROIHandler.openROIs(process.getOMEMetadata(), imps);
   }
 
   // -- StatusListener methods --

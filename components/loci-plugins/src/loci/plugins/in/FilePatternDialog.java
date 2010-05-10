@@ -43,15 +43,15 @@ public class FilePatternDialog extends ImporterDialog {
   // -- Constructor --
 
   /** Creates a file pattern dialog for the Bio-Formats Importer. */
-  public FilePatternDialog(ImporterOptions options) {
-    super(options);
+  public FilePatternDialog(ImportProcess process) {
+    super(process);
   }
   
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
-    return !options.isWindowless() && options.isGroupFiles();
+    return !process.isWindowless() && options.isGroupFiles();
   }
   
   @Override
@@ -87,9 +87,10 @@ public class FilePatternDialog extends ImporterDialog {
   }
   
   @Override
-  protected void harvestResults(GenericDialog gd) {
+  protected boolean harvestResults(GenericDialog gd) {
     String id = gd.getNextString();
     options.setId(id);
+    return true;
   }
 
 }

@@ -72,15 +72,9 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   // -- Constructor --
 
-  /**
-   * Creates a series chooser dialog for the Bio-Formats Importer.
-   *
-   * @param r The reader to use for extracting details of each series.
-   * @param series Boolean array indicating which series to include
-   *   (populated by this method).
-   */
-  public SeriesDialog(ImporterOptions options) {
-    super(options);
+  /** Creates a series chooser dialog for the Bio-Formats Importer. */
+  public SeriesDialog(ImportProcess process) {
+    super(process);
   }
   
   // -- ImporterDialog methods --
@@ -89,14 +83,14 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   protected boolean needPrompt() {
     // CTR TODO - eliminate weird handling of series string here
     String seriesString = options.getSeries();
-    if (options.isWindowless()) {
+    if (process.isWindowless()) {
       if (seriesString != null) {
         if (seriesString.startsWith("[")) {
           seriesString = seriesString.substring(1, seriesString.length() - 2);
         }
 
         // default all series to false
-        int seriesCount = options.getSeriesCount();
+        int seriesCount = process.getSeriesCount();
         for (int s=0; s<seriesCount; s++) options.setSeriesOn(s, false);
 
         // extract enabled series values from series string
@@ -111,7 +105,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
       return false;
     }
 
-    return options.getSeriesCount() > 1 &&
+    return process.getSeriesCount() > 1 &&
       !options.openAllSeries() && !options.isViewNone();
   }
   
@@ -124,7 +118,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
 
     // set up the thumbnail panels
-    thumbReader = new BufferedImageReader(options.getReader());
+    thumbReader = new BufferedImageReader(process.getReader());
     int seriesCount = thumbReader.getSeriesCount();
     p = new Panel[seriesCount];
     for (int i=0; i<seriesCount; i++) {
@@ -168,7 +162,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
       String[] labels = new String[nRows];
       boolean[] defaultValues = new boolean[nRows];
       for (int row=0; row<nRows; row++) {
-        labels[row] = options.getSeriesLabel(nextSeries);
+        labels[row] = process.getSeriesLabel(nextSeries);
         defaultValues[row] = options.isSeriesOn(nextSeries++);
       }
       gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
@@ -197,9 +191,9 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   }
   
   @Override
-  protected void harvestResults(GenericDialog gd) {
+  protected boolean harvestResults(GenericDialog gd) {
     String seriesString = "[";
-    int seriesCount = options.getSeriesCount();
+    int seriesCount = process.getSeriesCount();
     for (int i=0; i<seriesCount; i++) {
       boolean on = gd.getNextBoolean();
       options.setSeriesOn(i, on);
@@ -207,6 +201,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     }
     seriesString += "]";
     options.setSeries(seriesString);
+    return true;
   }
 
   // -- ActionListener methods --
@@ -241,7 +236,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
       // CTR TODO - there must be a better way
       protected void dispatchEventImpl(AWTEvent e) { }
     };
-    int seriesCount = options.getSeriesCount();
+    int seriesCount = process.getSeriesCount();
     masterPanel.setLayout(new GridLayout(seriesCount, 2));
 
     for (int i=0; i<seriesCount; i++) {

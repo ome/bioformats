@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import loci.formats.FormatException;
 import loci.plugins.in.ImagePlusReader;
+import loci.plugins.in.ImportProcess;
 import loci.plugins.in.ImporterOptions;
 import loci.plugins.in.ImporterPrompter;
 
@@ -67,8 +68,9 @@ public final class BF {
   {
     options.setQuiet(true);
     options.setWindowless(true);
-    new ImporterPrompter(options).showDialogs();
-    ImagePlusReader reader = new ImagePlusReader(options);
+    ImportProcess process = new ImportProcess(options);
+    new ImporterPrompter(process).showDialogs();//TEMP
+    ImagePlusReader reader = new ImagePlusReader(process);
     return reader.openImagePlus();
   }
 

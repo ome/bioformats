@@ -45,17 +45,17 @@ public class RangeDialog extends ImporterDialog {
    *
    * @param dimSwap The reader to use for extracting details of each series.
    */
-  public RangeDialog(ImporterOptions options) {
-    super(options);
+  public RangeDialog(ImportProcess process) {
+    super(process);
   }
   
   // -- ImporterDialog methods --
 
   protected boolean needPrompt() {
-    if (options.isWindowless() || !options.isSpecifyRanges()) return false;
+    if (process.isWindowless() || !options.isSpecifyRanges()) return false;
     
-    int seriesCount = options.getSeriesCount();
-    IFormatReader r = options.getReader();
+    int seriesCount = process.getSeriesCount();
+    IFormatReader r = process.getReader();
 
     boolean needRange = false;
     for (int s=0; s<seriesCount; s++) {
@@ -68,8 +68,8 @@ public class RangeDialog extends ImporterDialog {
   }
   
   protected GenericDialog constructDialog() {
-    int seriesCount = options.getSeriesCount();
-    IFormatReader r = options.getReader();
+    int seriesCount = process.getSeriesCount();
+    IFormatReader r = process.getReader();
 
     // -- CTR TODO - refactor range-related options into RangeOptions class
     // has a normalize(IFormatReader) method
@@ -93,7 +93,7 @@ public class RangeDialog extends ImporterDialog {
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
-      gd.addMessage(options.getSeriesLabel(s).replaceAll("_", " "));
+      gd.addMessage(process.getSeriesLabel(s).replaceAll("_", " "));
       String suffix = seriesCount > 1 ? "_" + (s + 1) : "";
       //if (r.isOrderCertain()) {
       if (r.getEffectiveSizeC() > 1) {
@@ -123,9 +123,9 @@ public class RangeDialog extends ImporterDialog {
     return gd;
   }
   
-  protected void harvestResults(GenericDialog gd) {
-    int seriesCount = options.getSeriesCount();
-    IFormatReader r = options.getReader();
+  protected boolean harvestResults(GenericDialog gd) {
+    int seriesCount = process.getSeriesCount();
+    IFormatReader r = process.getReader();
 
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
@@ -194,6 +194,8 @@ public class RangeDialog extends ImporterDialog {
       options.setTEnd(s, tEnd);
       options.setTStep(s, tStep);
     }
+
+    return true;
   }
   
 }

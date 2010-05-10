@@ -29,8 +29,6 @@ import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import loci.common.Location;
-import loci.plugins.BF;
-import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer id chooser dialog box.
@@ -39,123 +37,103 @@ import loci.plugins.prefs.OptionsDialog;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/IdDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/IdDialog.java">SVN</a></dd></dl>
  */
-public class IdDialog extends OptionsDialog {
-
+public class IdDialog extends ImporterDialog {
+  
   // -- Fields --
 
-  protected ImporterOptions options;
+  private OpenDialog od;
 
   // -- Constructor --
 
   /** Creates an id chooser dialog for the Bio-Formats Importer. */
-  public IdDialog(ImporterOptions options) {
-    super(options);
-    this.options = options;
+  public IdDialog(ImportProcess process) {
+    super(process);
   }
   
-  // -- IdDialog methods --
+  // -- ImporterDialog methods --
 
+  @Override
+  protected boolean needPrompt() {
+    return !process.isWindowless() && options.getId() == null;
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() {
+    GenericDialog gd = null;
+    if (options.isHTTP()) {
+      gd = new GenericDialog("Bio-Formats URL");
+      gd.addStringField("URL: ", "http://", 30);
+    }
+    return gd;
+  }
+  
   /**
-   * Gets the id (filename, URL, etc.) to open from macro options,
-   * or user prompt if necessary.
+   * Asks user whether Bio-Formats should automatically check for upgrades,
+   * and if so, checks for an upgrade and prompts user to install it.
    *
    * @return status of operation
    */
-  public int showDialogLocal() {
-    if (options.isFirstTime() && IJ.isMacOSX() && !options.isQuiet()) {
-      String osVersion = System.getProperty("os.version");
-      if (osVersion == null ||
-        osVersion.startsWith("10.4.") ||
-        osVersion.startsWith("10.3.") ||
-        osVersion.startsWith("10.2."))
-      {
-        // present user with one-time dialog box
-        IJ.showMessage("Bio-Formats",
-          "One-time warning: There is a bug in Java on Mac OS X with the " +
-          "native file chooser\nthat crashes ImageJ if you click on a file " +
-          "in CXD, IPW, OIB or ZVI format while in\ncolumn view mode. You " +
-          "can work around the problem in one of two ways:\n \n" +
-          "    1. Switch to list view (press Command+2)\n" +
-          "    2. Check \"Use JFileChooser to Open/Save\" under " +
-          "Edit>Options>Input/Output...");
+  @Override
+  protected boolean displayDialog(GenericDialog gd) {
+    if (options.isLocal()) {
+      if (options.isFirstTime() && IJ.isMacOSX() && !options.isQuiet()) {
+        String osVersion = System.getProperty("os.version");
+        if (osVersion == null ||
+          osVersion.startsWith("10.4.") ||
+          osVersion.startsWith("10.3.") ||
+          osVersion.startsWith("10.2."))
+        {
+          // present user with one-time dialog box
+          IJ.showMessage("Bio-Formats",
+            "One-time warning: There is a bug in Java on Mac OS X with the " +
+            "native file chooser\nthat crashes ImageJ if you click on a file " +
+            "in CXD, IPW, OIB or ZVI format while in\ncolumn view mode. You " +
+            "can work around the problem in one of two ways:\n \n" +
+            "    1. Switch to list view (press Command+2)\n" +
+            "    2. Check \"Use JFileChooser to Open/Save\" under " +
+            "Edit>Options>Input/Output...");
+        }
       }
-    }
 
-    String id = options.getId();
-    if (id == null) {
-      // construct and display dialog (or grab from macro options)
       String idLabel = options.getLabel(ImporterOptions.KEY_ID);
-      OpenDialog od = new OpenDialog(idLabel, id);
+      od = new OpenDialog(idLabel, options.getId());
+      if (od.getFileName() == null) return false;
+    }
+    else if (options.isHTTP()) {
+      gd.showDialog();
+      if (gd.wasCanceled()) return false;
+    }
+    return true;
+  }
 
-      // harvest results
+  @Override
+  protected boolean harvestResults(GenericDialog gd) {
+    String id = null;
+    if (options.isLocal()) {
       String dir = od.getDirectory();
       String name = od.getFileName();
-      if (dir == null || name == null) return STATUS_CANCELED;
+      if (dir != null || name == null) 
       id = dir + name;
-    }
-
-    // verify validity
-    Location idLoc = new Location(id);
-    if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
-      if (!options.isQuiet()) {
-        IJ.error("Bio-Formats",
-          "The specified file (" + id + ") does not exist.");
+      
+      // verify validity
+      Location idLoc = new Location(id);
+      if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
+        if (!options.isQuiet()) {
+          IJ.error("Bio-Formats",
+            "The specified file (" + id + ") does not exist.");
+        }
+        return false;
       }
-      return STATUS_FINISHED;
+    }
+    else if (options.isHTTP()) {
+	    id = gd.getNextString();
+      if (id == null) {
+        if (!options.isQuiet()) IJ.error("Bio-Formats", "No URL was specified.");
+        return false;
+      }
     }
     options.setId(id);
-
-    return STATUS_OK;
-  }
-
-  /**
-   * Gets the URL (id) to open from macro options,
-   * or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialogHTTP() {
-    String id = options.getId();
-    if (id == null) {
-      // construct dialog
-      GenericDialog gd = new GenericDialog("Bio-Formats URL");
-      gd.addStringField("URL: ", "http://", 30);
-
-      // display dialog (or grab from macro options)
-      gd.showDialog();
-      if (gd.wasCanceled()) return STATUS_CANCELED;
-
-      // harvest results
-      id = gd.getNextString();
-    }
-
-    // verify validity
-    if (id == null) {
-      if (!options.isQuiet()) IJ.error("Bio-Formats", "No URL was specified.");
-      return STATUS_FINISHED;
-    }
-    options.setId(id);
-
-    return STATUS_OK;
-  }
-
-  // -- OptionsDialog methods --
-
-  /**
-   * Gets the filename (id) from macro options, or user prompt if necessary.
-   *
-   * @return status of operation
-   */
-  public int showDialog() {
-    // verify whether prompt is necessary
-    if (options.isWindowless()) {
-      BF.debug("IdDialog: skip");
-      return STATUS_OK;
-    }
-    BF.debug("IdDialog: prompt");
-
-    if (options.isLocal()) return showDialogLocal();
-    return showDialogHTTP(); // options.isHTTP()
+    return true;
   }
 
 }

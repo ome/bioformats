@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import loci.formats.FormatTools;
-import loci.plugins.in.ImporterOptions;
+import loci.plugins.in.ImportProcess;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LibraryChecker;
@@ -216,20 +216,20 @@ public class Colorizer implements PlugInFilter {
           if (num[i] * (i + 2) < stack.getSize()) num[i]++;
         }
 
-        ImporterOptions options = null;
+        ImportProcess process = null;
         try {
           // TODO: remove dependency on importer package
-          options = new ImporterOptions();
+          process = new ImportProcess();
         }
         catch (IOException exc) {
           WindowTools.reportException(exc);
         }
 
         if (mergeOption == null) {
-          MergeDialog mergeDialog = new MergeDialog(options, num);
+          MergeDialog mergeDialog = new MergeDialog(process, num);
           int status = mergeDialog.showDialog();
           if (status == OptionsDialog.STATUS_OK) {
-            mergeOption = options.getMergeOption();
+            mergeOption = process.getOptions().getMergeOption();
           }
         }
 

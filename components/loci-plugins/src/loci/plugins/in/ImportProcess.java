@@ -34,6 +34,7 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ChannelSeparator;
+import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -51,13 +52,13 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * Helper class for reading image data.
+ * Helper class for managing Bio-Formats readers and associated metadata.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImporterReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImporterReader.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImporterPixels.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImporterPixels.java">SVN</a></dd></dl>
  */
-public class ImporterReader {
+public class ImportProcess {
 
   // -- Fields --
 
@@ -67,42 +68,62 @@ public class ImporterReader {
   protected String idName;
   protected Location idLoc;
 
-  protected String currentFile;
-
-  protected ImageProcessorReader r;
+  private IFormatReader baseReader;
+  protected ImageProcessorReader reader;
   protected VirtualReader virtualReader;
 
   protected IMetadata meta;
 
-  private IFormatReader baseReader;
+  private ImporterMetadata metadata;
+
+  /** A descriptive label for each series. */
+  private String[] seriesLabels;
 
   // -- Constructors --
 
-  public ImporterReader() throws IOException {
+  public ImportProcess() throws IOException {
     this(new ImporterOptions());
   }
 
-  public ImporterReader(ImporterOptions options) {
+  public ImportProcess(ImporterOptions options) {
     this.options = options;
+  }
+
+  // -- ImportProcess API methods --
+
+  public ImporterOptions getOptions() { return options; }
+
+  // CTR TEMP
+  public void go() {
     computeNameAndLocation();
     createBaseReader();
   }
 
-  // -- ImporterReader API methods --
-
   // CTR TEMP
   public void prepareStuff() throws FormatException, IOException {
+    if (!options.isQuiet()) IJ.showStatus("Analyzing " + getIdName());
     baseReader.setMetadataFiltered(true);
     baseReader.setOriginalMetadataPopulated(true);
     baseReader.setGroupFiles(!options.isUngroupFiles());
     baseReader.setId(options.getId());
-    currentFile = baseReader.getCurrentFile();
   }
 
   // CTR TEMP
-  /** Initializes the ImagePlusReader derived value. */
   public void initializeReader() throws FormatException, IOException {
-    if (options.isGroupFiles()) baseReader = new FileStitcher(baseReader, true);
+    if (options.isGroupFiles()) {
+      FileStitcher fileStitcher = new FileStitcher(baseReader);
+      baseReader = fileStitcher;
+
+      // overwrite base filename with file pattern
+      String id = options.getId();
+      if (id == null) id = getCurrentFile();
+      FilePattern fp = fileStitcher.findPattern(id);
+      if (fp.isValid()) id = fp.getPattern();
+      else id = getCurrentFile();
+      options.setId(id);
+      fileStitcher.setUsingPatternIds(true);
+    }
+
     baseReader.setId(options.getId());
     if (options.isVirtual() || !options.isMergeChannels() ||
       FormatTools.getBytesPerPixel(baseReader.getPixelType()) != 1)
@@ -110,11 +131,12 @@ public class ImporterReader {
       baseReader = new ChannelSeparator(baseReader);
     }
     virtualReader = new VirtualReader(baseReader);
-    r = new ImageProcessorReader(virtualReader);
-    r.setId(options.getId());
+    reader = new ImageProcessorReader(virtualReader);
+    reader.setId(options.getId());
   }
 
   public boolean isWindowless() {
+    if (options.isWindowless()) return true; // globally windowless
     return baseReader != null && LociPrefs.isWindowless(baseReader);
   }
 
@@ -201,6 +223,91 @@ public class ImporterReader {
     Logger root = Logger.getRootLogger();
     root.setLevel(Level.INFO);
     root.addAppender(new IJStatusEchoer());
+  }
+
+  // CTR TODO - refactor how ImportProcess works
+  public String getIdName() { return idName; }
+  public Location getIdLocation() { return idLoc; }
+  public String getCurrentFile() { return baseReader.getCurrentFile(); }
+  public ImageProcessorReader getReader() { return reader; }
+  public IMetadata getOMEMetadata() { return meta; }
+  public ImporterMetadata getOriginalMetadata() { return metadata; }
+  public int getSeriesCount() { return getReader().getSeriesCount(); }
+
+  public String getSeriesLabel(int s) {
+    if (seriesLabels == null) computeSeriesLabels();
+    return seriesLabels[s];
+  }
+
+  /** Initializes the seriesLabels derived value. */
+  private void computeSeriesLabels() {
+    int seriesCount = getSeriesCount();
+    seriesLabels = new String[seriesCount];
+    for (int i=0; i<seriesCount; i++) {
+      getReader().setSeries(i);
+      StringBuffer sb = new StringBuffer();
+      sb.append("Series_");
+      sb.append((i + 1));
+      sb.append(": ");
+      String name = getOMEMetadata().getImageName(i);
+      if (name != null && name.length() > 0) {
+        sb.append(name);
+        sb.append(": ");
+      }
+      sb.append(getReader().getSizeX());
+      sb.append(" x ");
+      sb.append(getReader().getSizeY());
+      sb.append("; ");
+      sb.append(getReader().getImageCount());
+      sb.append(" plane");
+      if (getReader().getImageCount() > 1) {
+        sb.append("s");
+        if (getReader().isOrderCertain()) {
+          sb.append(" (");
+          boolean first = true;
+          if (getReader().getEffectiveSizeC() > 1) {
+            sb.append(getReader().getEffectiveSizeC());
+            sb.append("C");
+            first = false;
+          }
+          if (getReader().getSizeZ() > 1) {
+            if (!first) sb.append(" x ");
+            sb.append(getReader().getSizeZ());
+            sb.append("Z");
+            first = false;
+          }
+          if (getReader().getSizeT() > 1) {
+            if (!first) sb.append(" x ");
+            sb.append(getReader().getSizeT());
+            sb.append("T");
+            first = false;
+          }
+          sb.append(")");
+        }
+      }
+      seriesLabels[i] = sb.toString();
+      //seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
+    }
+  }
+
+  // -- CTR TEMP - methods to munge around with state --
+
+  protected void saveDefaults() {
+    // save options as new defaults
+    if (!options.isQuiet()) options.setFirstTime(false);
+    options.saveOptions();
+  }
+
+  /** Initializes the ImporterMetadata derived value. */
+  protected void initializeMetadata() {
+    // only prepend a series name prefix to the metadata keys if multiple
+    // series are being opened
+    int seriesCount = getSeriesCount();
+    int numEnabled = 0;
+    for (int s=0; s<seriesCount; s++) {
+      if (options.isSeriesOn(s)) numEnabled++;
+    }
+    metadata = new ImporterMetadata(getReader(), this, numEnabled > 1);
   }
 
 }

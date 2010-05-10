@@ -75,8 +75,8 @@ public class ImagePlusReader implements StatusReporter {
 
   // -- Fields --
 
-  /** Importer options that control the reader's behavior. */
-  protected ImporterOptions options;
+  /** Import process managing Bio-Formats readers and other state. */
+  protected ImportProcess process;
 
   protected List<StatusListener> listeners = new Vector<StatusListener>();
 
@@ -87,12 +87,12 @@ public class ImagePlusReader implements StatusReporter {
    * @throws IOException if the default options cannot be determined.
    */
   public ImagePlusReader() throws IOException {
-    this(new ImporterOptions());
+    this(new ImportProcess());
   }
 
   /** Constructs an ImagePlusReader with the given reader. */
-  public ImagePlusReader(ImporterOptions options) {
-    this.options = options;
+  public ImagePlusReader(ImportProcess process) {
+    this.process = process;
   }
 
   // -- ImagePlusReader methods --
@@ -131,7 +131,8 @@ public class ImagePlusReader implements StatusReporter {
     long startTime = System.currentTimeMillis();
     long time = startTime;
 
-    ImageProcessorReader r = options.getReader();
+    ImageProcessorReader r = process.getReader();
+    ImporterOptions options = process.getOptions();
 
     if (options.isVirtual()) {
       int totalSeries = 0;
@@ -173,12 +174,12 @@ public class ImagePlusReader implements StatusReporter {
       FileInfo fi = new FileInfo();
 
       // populate other common FileInfo fields
-      String idDir = options.getIdLocation() == null ?
-        null : options.getIdLocation().getParent();
+      String idDir = process.getIdLocation() == null ?
+        null : process.getIdLocation().getParent();
       if (idDir != null && !idDir.endsWith(File.separator)) {
         idDir += File.separator;
       }
-      fi.fileName = options.getIdName();
+      fi.fileName = process.getIdName();
       fi.directory = idDir;
 
       ImageStack stackB = null; // for byte images (8-bit)
@@ -215,7 +216,7 @@ public class ImagePlusReader implements StatusReporter {
       ((VirtualReader) r.getReader()).setOutputOrder(stackOrder);
 
       try {
-        options.getOMEMetadata().setPixelsDimensionOrder(
+        process.getOMEMetadata().setPixelsDimensionOrder(
           DimensionOrder.fromString(stackOrder), s);
       }
       catch (EnumerationException e) { }
@@ -224,7 +225,7 @@ public class ImagePlusReader implements StatusReporter {
       try {
         ServiceFactory factory = new ServiceFactory();
         OMEXMLService service = factory.getInstance(OMEXMLService.class);
-        fi.description = service.getOMEXML(options.getOMEMetadata());
+        fi.description = service.getOMEXML(process.getOMEMetadata());
       }
       catch (DependencyException de) { }
       catch (ServiceException se) { }
@@ -243,7 +244,7 @@ public class ImagePlusReader implements StatusReporter {
             if (pos[1] > 0) continue;
             String label = constructSliceLabel(
               new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]),
-              new ChannelMerger(r), options.getOMEMetadata(), s,
+              new ChannelMerger(r), process.getOMEMetadata(), s,
               options.getZCount(s), options.getCCount(s),
               options.getTCount(s));
             virtualStackB.addSlice(label);
@@ -252,7 +253,7 @@ public class ImagePlusReader implements StatusReporter {
         else {
           for (int j=0; j<r.getImageCount(); j++) {
             String label = constructSliceLabel(j, r,
-              options.getOMEMetadata(), s, options.getZCount(s),
+              process.getOMEMetadata(), s, options.getZCount(s),
               options.getCCount(s), options.getTCount(s));
             virtualStackB.addSlice(label);
           }
@@ -277,7 +278,7 @@ public class ImagePlusReader implements StatusReporter {
           notifyListeners(new StatusEvent(q++, total, null));
 
           String label = constructSliceLabel(i, r,
-            options.getOMEMetadata(), s, options.getZCount(s),
+            process.getOMEMetadata(), s, options.getZCount(s),
             options.getCCount(s), options.getTCount(s));
 
           // get image processor for ith plane
@@ -368,13 +369,14 @@ public class ImagePlusReader implements StatusReporter {
   private ImagePlus createImage(ImageStack stack, int series, FileInfo fi) {
     if (stack == null) return null;
 
-    String seriesName = options.getOMEMetadata().getImageName(series);
-    String file = options.getCurrentFile();
-    IMetadata meta = options.getOMEMetadata();
+    ImporterOptions options = process.getOptions();
+    String seriesName = process.getOMEMetadata().getImageName(series);
+    String file = process.getCurrentFile();
+    IMetadata meta = process.getOMEMetadata();
     int cCount = options.getCCount(series);
     int zCount = options.getZCount(series);
     int tCount = options.getTCount(series);
-    IFormatReader r = options.getReader();
+    IFormatReader r = process.getReader();
     
     if (cCount == 0) cCount = r.getEffectiveSizeC();
     if (zCount == 0) zCount = r.getSizeZ();
@@ -389,7 +391,7 @@ public class ImagePlusReader implements StatusReporter {
     else imp = new ImagePlus(title, stack);
 
     // place metadata key/value pairs in ImageJ's info field
-    String metadata = options.getOriginalMetadata().toString();
+    String metadata = process.getOriginalMetadata().toString();
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
@@ -414,6 +416,53 @@ public class ImagePlusReader implements StatusReporter {
 
     imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
       nSlices, nFrames);
+
+//    IFormatReader r = options.getReader();
+//    boolean windowless = options.isWindowless();
+
+    // CTR CHECK
+    //if (imp.isVisible() && !options.isVirtual()) {
+    //  String mergeOptions = windowless ? options.getMergeOption() : null;
+    //  imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
+    //  // CTR TODO finish this
+    //  if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
+    //}
+
+    // NB: ImageJ 1.39+ is required for hyperstacks
+
+//    if (!options.isConcatenate()) {
+//      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
+//
+//      boolean splitC = options.isSplitChannels();
+//      boolean splitZ = options.isSplitFocalPlanes();
+//      boolean splitT = options.isSplitTimepoints();
+//
+//      boolean customColorize = options.isCustomColorize();
+//      boolean browser = options.isViewBrowser();
+//      boolean virtual = options.isVirtual();
+//
+//      if (options.isColorize() || customColorize) {
+//        byte[][][] lut =
+//          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
+//        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
+//      }
+//      else if (colorModels != null && !browser && !virtual) {
+//        byte[][][] lut = new byte[colorModels.length][][];
+//        for (int channel=0; channel<lut.length; channel++) {
+//          lut[channel] = new byte[3][256];
+//          colorModels[channel].getReds(lut[channel][0]);
+//          colorModels[channel].getGreens(lut[channel][1]);
+//          colorModels[channel].getBlues(lut[channel][2]);
+//        }
+//        imp = Colorizer.colorize(imp, true,
+//          stackOrder, lut, r.getSeries(), null, hyper);
+//      }
+//
+//      // CTR FIXME
+//      if (splitC || splitZ || splitT) {
+//        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
+//      }
+//    }
 
     return imp;
   }

@@ -27,9 +27,7 @@ package loci.plugins.in;
 
 import ij.IJ;
 import ij.gui.GenericDialog;
-import loci.plugins.BF;
 import loci.plugins.Updater;
-import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Bio-Formats Importer upgrade checker dialog box.
@@ -38,40 +36,36 @@ import loci.plugins.prefs.OptionsDialog;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">SVN</a></dd></dl>
  */
-public class UpgradeDialog extends OptionsDialog {
-
-  // -- Fields --
-
-  /** LOCI plugins configuration. */
-  protected ImporterOptions options;
+public class UpgradeDialog extends ImporterDialog {
 
   // -- Constructor --
 
   /** Creates an upgrade checker dialog for the Bio-Formats Importer. */
-  public UpgradeDialog(ImporterOptions options) {
-    super(options);
-    this.options = options;
+  public UpgradeDialog(ImportProcess process) {
+    super(process);
   }
 
-  // -- OptionsDialog methods --
+  // -- ImporterDialog methods --
 
+  @Override
+  protected boolean needPrompt() {
+    return !options.isQuiet() && !process.isWindowless();
+  }
+  
+  @Override
+  protected GenericDialog constructDialog() { return null; }
+  
   /**
    * Asks user whether Bio-Formats should automatically check for upgrades,
    * and if so, checks for an upgrade and prompts user to install it.
    *
    * @return status of operation
    */
-  public int showDialog() {
-    // verify whether prompt is necessary
-    if (options.isQuiet() || options.isWindowless()) {
-      BF.debug("UpgradeDialog: skip");
-      return STATUS_OK;
-    }
-    BF.debug("UpgradeDialog: prompt");
-
+  @Override
+  protected boolean displayDialog(GenericDialog gd) {
     if (!options.isQuiet() && options.isFirstTime()) {
       // present user with one-time dialog box
-      GenericDialog gd = new GenericDialog("Bio-Formats Upgrade Checker");
+      gd = new GenericDialog("Bio-Formats Upgrade Checker");
       gd.addMessage("One-time notice: The LOCI plugins for ImageJ can " +
         "automatically check for upgrades\neach time they are run. If you " +
         "wish to disable this feature, uncheck the box below.\nYou can " +
@@ -79,7 +73,7 @@ public class UpgradeDialog extends OptionsDialog {
         "\"Upgrade\" tab.");
       addCheckbox(gd, ImporterOptions.KEY_UPGRADE_CHECK);
       gd.showDialog();
-      if (gd.wasCanceled()) return STATUS_CANCELED;
+      if (gd.wasCanceled()) return false;
     }
 
     if (options.doUpgradeCheck()) {
@@ -91,8 +85,11 @@ public class UpgradeDialog extends OptionsDialog {
         if (doUpgrade) Updater.install(Updater.STABLE_BUILD);
       }
     }
-
-    return STATUS_OK;
+  
+    return true;
   }
+
+  @Override
+  protected boolean harvestResults(GenericDialog gd) { return true; }
 
 }

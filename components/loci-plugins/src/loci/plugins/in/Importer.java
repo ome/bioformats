@@ -33,7 +33,6 @@ import java.io.IOException;
 import loci.formats.FormatException;
 import loci.plugins.BF;
 import loci.plugins.LociImporter;
-import loci.plugins.util.ROIHandler;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -72,18 +71,20 @@ public class Importer {
       options = parseOptions(arg);
       if (plugin.canceled) return;
 
+      ImportProcess process = new ImportProcess(options);
+
       BF.debug("display option dialogs");
-      showOptionDialogs(options);
+      showDialogs(process);
       if (plugin.canceled) return;
 
       BF.debug("display metadata");
-      DisplayHandler displayHandler = new DisplayHandler(options);
+      DisplayHandler displayHandler = new DisplayHandler(process);
       displayHandler.displayOriginalMetadata();
       displayHandler.displayOMEXML();
 
       BF.debug("read pixel data");
-      ImagePlusReader ipr = new ImagePlusReader(options);
-      ImagePlus[] imps = readPixels(ipr, options, displayHandler);
+      ImagePlusReader reader = new ImagePlusReader(process);
+      ImagePlus[] imps = readPixels(reader, options, displayHandler);
 
       BF.debug("display pixels");
       displayHandler.displayImages(imps);
@@ -92,7 +93,7 @@ public class Importer {
       displayHandler.displayROIs(imps);
 
       BF.debug("finish");
-      finish(options);
+      finish(process);
     }
     catch (FormatException exc) {
       boolean quiet = options == null ? false : options.isQuiet();
@@ -114,45 +115,24 @@ public class Importer {
     return options;
   }
 
-  public void showOptionDialogs(ImporterOptions options)
+  public void showDialogs(ImportProcess process)
     throws FormatException, IOException
   {
-    boolean success = new ImporterPrompter(options).showDialogs();
+    boolean success = new ImporterPrompter(process).showDialogs();
     if (!success) plugin.canceled = true;
   }
 
-  /** Displays standard metadata in a table in its own window. */
-  public void displayOriginalMetadata(ImporterOptions options) {
-    DisplayHandler displayHandler = new DisplayHandler(options);
-    displayHandler.displayOriginalMetadata();
-  }
-
-  public void displayOMEXML(ImporterOptions options)
-    throws FormatException, IOException
-  {
-    DisplayHandler displayHandler = new DisplayHandler(options);
-    displayHandler.displayOMEXML();
-  }
-
-  public ImagePlus[] readPixels(ImagePlusReader ipr, ImporterOptions options,
+  public ImagePlus[] readPixels(ImagePlusReader reader, ImporterOptions options,
     DisplayHandler displayHandler) throws FormatException, IOException
   {
     if (options.isViewNone()) return null;
-    ipr.addStatusListener(displayHandler);
-    ImagePlus[] imps = ipr.openImagePlus();
+    if (!options.isQuiet()) reader.addStatusListener(displayHandler);
+    ImagePlus[] imps = reader.openImagePlus();
     return imps;
   }
 
-  public void displayROIs(ImporterOptions options, ImagePlus[] imps) {
-    if (options.showROIs()) {
-      BF.debug("display ROIs");
-      ROIHandler.openROIs(options.getOMEMetadata(), imps);
-    }
-    else BF.debug("skip ROIs");
-  }
-
-  public void finish(ImporterOptions options) throws IOException {
-    if (!options.isVirtual()) options.getReader().close();
+  public void finish(ImportProcess process) throws IOException {
+    if (!process.getOptions().isVirtual()) process.getReader().close();
     plugin.success = true;
   }
 

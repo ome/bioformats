@@ -45,17 +45,19 @@ import loci.plugins.colorize.Colorizer;
  */
 public class Concatenator {
 
-  protected ImporterOptions options;
+  protected ImportProcess process;
 
-  public Concatenator(ImporterOptions options) {
-    this.options = options;
+  public Concatenator(ImportProcess process) {
+    this.process = process;
   }
 
   /** Concatenates the list of images as appropriate. */
   public List<ImagePlus> concatenate(List<ImagePlus> imps, String stackOrder) {
+    ImporterOptions options = process.getOptions();
+
     if (!options.isConcatenate()) return imps;
 
-    IFormatReader r = options.getReader();
+    IFormatReader r = process.getReader();
 
     List<Integer> widths = new ArrayList<Integer>();
     List<Integer> heights = new ArrayList<Integer>();
@@ -95,9 +97,9 @@ public class Concatenator {
       }
     }
 
-    boolean splitC = options.isSplitChannels();
-    boolean splitZ = options.isSplitFocalPlanes();
-    boolean splitT = options.isSplitTimepoints();
+    //boolean splitC = options.isSplitChannels();
+    //boolean splitZ = options.isSplitFocalPlanes();
+    //boolean splitT = options.isSplitTimepoints();
 
     for (int j=0; j<newImps.size(); j++) {
       ImagePlus imp = newImps.get(j);

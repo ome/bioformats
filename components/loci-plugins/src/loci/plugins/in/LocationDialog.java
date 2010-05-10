@@ -39,8 +39,8 @@ public class LocationDialog extends ImporterDialog {
   // -- Constructor --
 
   /** Creates a location chooser dialog for the Bio-Formats Importer. */
-  public LocationDialog(ImporterOptions options) {
-    super(options);
+  public LocationDialog(ImportProcess process) {
+    super(process);
   }
   
   // -- ImporterDialog methods --
@@ -48,7 +48,7 @@ public class LocationDialog extends ImporterDialog {
   @Override
   protected boolean needPrompt() {
     // NB: Prompt only if location wasn't already specified.
-    return !options.isWindowless() && options.getLocation() == null;
+    return !process.isWindowless() && options.getLocation() == null;
   }
   
   @Override
@@ -59,9 +59,10 @@ public class LocationDialog extends ImporterDialog {
   }
   
   @Override
-  protected void harvestResults(GenericDialog gd) {
+  protected boolean harvestResults(GenericDialog gd) {
     String location = gd.getNextChoice();
     options.setLocation(location);
+    return true;
   }
 
 }

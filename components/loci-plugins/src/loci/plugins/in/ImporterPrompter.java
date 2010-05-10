@@ -45,12 +45,12 @@ public class ImporterPrompter {
 
   // -- Fields --
 
-  private ImporterOptions options;
+  private ImportProcess process;
 
   // -- Constructor --
 
-  public ImporterPrompter(ImporterOptions options) {
-    this.options = options;
+  public ImporterPrompter(ImportProcess process) {
+    this.process = process;
   }
 
   // -- ImporterPrompter methods --
@@ -76,24 +76,24 @@ public class ImporterPrompter {
     if (!promptLocation()) return false;
     if (!promptId()) return false;
 
-    options.createReader();
+    process.go();
 
     if (!promptMain()) return false;
 
-    options.saveDefaults();
+    process.saveDefaults();
 
-    options.prepareStuff();
+    process.prepareStuff();
 
     if (!promptFilePattern()) return false;
 
-    options.initializeReader();
+    process.initializeReader();
 
     if (!promptSeries()) return false;
     if (!promptSwap()) return false;
     if (!promptRange()) return false;
     if (!promptCrop()) return false;
 
-    options.initializeMetadata();
+    process.initializeMetadata();
 
     return true;
   }
@@ -101,52 +101,52 @@ public class ImporterPrompter {
   // -- Helper methods - dialog prompts --
 
   private boolean promptUpgrade() {
-    UpgradeDialog dialog = new UpgradeDialog(options);
+    UpgradeDialog dialog = new UpgradeDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   private boolean promptLocation() {
-    LocationDialog dialog = new LocationDialog(options);
+    LocationDialog dialog = new LocationDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   private boolean promptId() {
-    IdDialog dialog = new IdDialog(options);
+    IdDialog dialog = new IdDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   private boolean promptMain() {
-    MainDialog dialog = new MainDialog(options);
+    MainDialog dialog = new MainDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for the file pattern, if necessary. May override id value. */
   private boolean promptFilePattern() {
-    FilePatternDialog dialog = new FilePatternDialog(options);
+    FilePatternDialog dialog = new FilePatternDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for which series to import, if necessary. */
   private boolean promptSeries() {
-    SeriesDialog dialog = new SeriesDialog(options);
+    SeriesDialog dialog = new SeriesDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for dimension swapping parameters, if necessary. */
   private boolean promptSwap() {
-    SwapDialog dialog = new SwapDialog(options);
+    SwapDialog dialog = new SwapDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for the range of planes to import, if necessary. */
   private boolean promptRange() {
-    RangeDialog dialog = new RangeDialog(options);
+    RangeDialog dialog = new RangeDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 
   /** Prompts for cropping details, if necessary. */
   private boolean promptCrop() {
-    CropDialog dialog = new CropDialog(options);
+    CropDialog dialog = new CropDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
 

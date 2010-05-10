@@ -4,17 +4,14 @@
 
 package loci.plugins.in;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import junit.framework.TestCase;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -36,15 +33,44 @@ import org.junit.Test;
 //      lowest priority - record modifications
 //  - add some tests for combination of options
 
-public class ImporterTest {
+public class ImporterTest extends TestCase {
 
   private enum Axis {Z,C,T};
   
-  private boolean loaded = false;
+  private static final String[] FAKE_FILES;
+  private static final String FAKE_PATTERN;
+  static {
+    //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
+    String template = constructFakeFilename("test_C%s_TP%s",
+      FormatTools.UINT8, 50, 20, 7, 1, 1, -1);
+    FAKE_FILES = new String[] {
+      String.format(template, "1", "1"),
+      String.format(template, "2", "1"),
+      String.format(template, "3", "1"),
+      String.format(template, "1", "2"),
+      String.format(template, "2", "2"),
+      String.format(template, "3", "2"),
+      String.format(template, "1", "3"),
+      String.format(template, "2", "3"),
+      String.format(template, "3", "3"),
+      String.format(template, "1", "4"),
+      String.format(template, "2", "4"),
+      String.format(template, "3", "4"),
+      String.format(template, "1", "5"),
+      String.format(template, "2", "5"),
+      String.format(template, "3", "5"),
+      "outlier.txt" // optional
+    };
+    FAKE_PATTERN = String.format(template, "<1-3>", "<1-5>");
+
+    for (String file : FAKE_FILES) {
+      Location.mapId(file, "iThinkI'mImportantButI'mNot");
+    }
+  }
   
   // ** Helper methods *******************************************************************
 
-  private String constructFakeFilename(String title,
+  private static String constructFakeFilename(String title,
       int pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
   {
     // some tests rely on each image being large enough to get the s,i,z,t,c index pixels of a
@@ -189,43 +215,6 @@ public class ImporterTest {
   private int getSizeT(ImagePlus imp) { return getField(imp, "nFrames"); }
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
   
-  private void loadFakeFileSequenceIntoBF()
-  {
-    synchronized(this)
-    {
-      if (loaded) return;
-      
-      String[] files = {
-          "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C2_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C3_TP1&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C1_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C2_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C3_TP2&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C1_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C2_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C3_TP3&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C1_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C2_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C3_TP4&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C1_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C2_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "test_C3_TP5&sizeX=50&sizeY=20&sizeZ=7.fake",
-          "outlier.txt"
-        };
-      
-      for (String file : files)
-        Location.mapId(file, "iThinkI'mImportantButI'mNot");
-      
-      loaded = true;
-    }
-  }
-
-  private String getFirstFileInSequence()
-  {
-    return "test_C1_TP1&sizeX=50&sizeY=20&sizeZ=7.fake";
-  }
-
   // ****** helper tests ****************************************************************************************
   
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
@@ -321,13 +310,14 @@ public class ImporterTest {
   
   private void datasetSwapDimsTest(int pixType, int x, int y, int z, int t)
   {
-    int c = 3; String order = "XYZCT";
-    String path = constructFakeFilename(order, pixType, x, y, z, c, t, -1);
+    int c = 3; String origOrder = "XYZCT", swappedOrder = "XYTCZ";
+    String path = constructFakeFilename(origOrder, pixType, x, y, z, c, t, -1);
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
       options.setId(path);
       options.setSwapDimensions(true);
+      options.setInputOrder(swappedOrder);
       imps = BF.openImagePlus(options);
     }
     catch (IOException e) {
@@ -590,10 +580,7 @@ public class ImporterTest {
   @Test
   public void testDatasetGroupFiles()
   {
-
-    loadFakeFileSequenceIntoBF();
-    
-    String path = getFirstFileInSequence();
+    String path = FAKE_FILES[0];
 
     ImagePlus[] imps = null;
     try {
@@ -601,7 +588,7 @@ public class ImporterTest {
       options.setGroupFiles(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
-      // TODO - assertEquals("test_C<1-3>_TP<1-5>&sizeX=50&sizeY=20&sizeZ=7.fake",options.getId());
+      assertEquals(FAKE_PATTERN, options.getId());
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -774,9 +761,7 @@ public class ImporterTest {
   @Test
   public void testSplitChannels()
   {
-    loadFakeFileSequenceIntoBF();
-    
-    String path = getFirstFileInSequence();
+    String path = FAKE_FILES[0];
 
     ImagePlus[] imps = null;
     try {
@@ -809,9 +794,7 @@ public class ImporterTest {
   @Test
   public void testSplitFocalPlanes()
   {
-    loadFakeFileSequenceIntoBF();
-    
-    String path = getFirstFileInSequence();
+    String path = FAKE_FILES[0];
 
     ImagePlus[] imps = null;
     try {
@@ -844,9 +827,7 @@ public class ImporterTest {
   @Test
   public void testSplitTimepoints()
   {
-    loadFakeFileSequenceIntoBF();
-    
-    String path = getFirstFileInSequence();
+    String path = FAKE_FILES[0];
 
     ImagePlus[] imps = null;
     try {
@@ -880,21 +861,24 @@ public class ImporterTest {
 
   public static void main(String[] args)
   {
+    //TODO - run all test methods via JUnit
+    //TestSuite suite = new TestSuite(ImporterTest.class);
+    //TestResult result = new TestResult();
+    //suite.run(result);
+
     ImporterTest tester = new ImporterTest();
- 
-    //TODO - we could use reflection to discover all test methods, loop, and run them
   
     // tests of single features
     tester.testDefaultBehavior();
     tester.testOutputStackOrder();
-    tester.testDatasetGroupFiles();
-    tester.testDatasetOpenFilesIndividually();
-    tester.testDatasetSwapDims();
+    //tester.testDatasetGroupFiles();
+    //tester.testDatasetOpenFilesIndividually();
+    //tester.testDatasetSwapDims();
     tester.testDatasetOpenAllSeries();
-    tester.testDatasetConcatenate();
-    tester.testColorMerge();
-    tester.testColorRgbColorize();
-    tester.testColorCustomColorize();
+    //tester.testDatasetConcatenate();
+    //tester.testColorMerge();
+    //tester.testColorRgbColorize();
+    //tester.testColorCustomColorize();
     tester.testColorAutoscale();
     tester.testMemoryVirtualStack();
     tester.testMemoryRecordModifications();
@@ -909,59 +893,3 @@ public class ImporterTest {
     System.exit(0);
   }
 }
-
-
-/*  notes
-
- public static void main(String[] args) throws FormatException, IOException {
-   String[] files = {
-     "test_C1_TP1&sizeZ=7.fake",
-     "test_C2_TP1&sizeZ=7.fake",
-     "test_C3_TP1&sizeZ=7.fake",
-     "test_C1_TP2&sizeZ=7.fake",
-     "test_C2_TP2&sizeZ=7.fake",
-     "test_C3_TP2&sizeZ=7.fake",
-     "test_C1_TP3&sizeZ=7.fake",
-     "test_C2_TP3&sizeZ=7.fake",
-     "test_C3_TP3&sizeZ=7.fake",
-     "test_C1_TP4&sizeZ=7.fake",
-     "test_C2_TP4&sizeZ=7.fake",
-     "test_C3_TP4&sizeZ=7.fake",
-     "test_C1_TP5&sizeZ=7.fake",
-     "test_C2_TP5&sizeZ=7.fake",
-     "test_C3_TP5&sizeZ=7.fake",
-     "outlier.txt"
-   };
-   for (String file : files) Location.mapId(file, "x"); // "x" is irrelevant
-
-   String id = files[0];
-   IFormatReader reader = new FileStitcher();
-   IMetadata meta = MetadataTools.createOMEXMLMetadata();
-   reader.setMetadataStore(meta);
-   reader.setId(id);
-   String[] usedFiles = reader.getUsedFiles();
-   int sizeX = reader.getSizeX();
-   int sizeY = reader.getSizeY();
-   int sizeZ = reader.getSizeZ();
-   int sizeC = reader.getSizeC();
-   int sizeT = reader.getSizeT();
-   reader.close();
-   System.out.println("Path = " + id);
-   System.out.println("X size = " + sizeX);
-   System.out.println("Y size = " + sizeY);
-   System.out.println("Z size = " + sizeZ);
-   System.out.println("C size = " + sizeC);
-   System.out.println("T size = " + sizeT);
-   System.out.println("Used files =");
-   for (String used : usedFiles) System.out.println("\t" + used);
- }
-That's how you synthesize a virtual directory on disk, essentially, for the file grouping logic to use.
-The key is to register each fake filename with "Location.mapId(filename, dummy)" where "dummy" doesn't matter.
-As long as it's not null.
-
-Then below, I call "getUsedFiles" to get a list of the constituent filenames, which you can compare against
-your expectations.
-
-Oh, forget about what I said about getUsedFiles—you don't have access to the API at that level.
-
- */

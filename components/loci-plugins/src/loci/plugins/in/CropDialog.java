@@ -43,25 +43,21 @@ public class CropDialog extends ImporterDialog {
   // -- Constructor --
 
   /** Creates a crop options dialog for the Bio-Formats Importer. */
-  public CropDialog(ImporterOptions options) {
-    super(options);
+  public CropDialog(ImportProcess process) {
+    super(process);
   }
   
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
-    return !options.isWindowless() && options.doCrop();
+    return !process.isWindowless() && options.doCrop();
   }
   
   @Override
   protected GenericDialog constructDialog() {
-    // -- CTR TODO - refactor crop-related options into CropOptions class
-    // has a normalize(IFormatReader) method
-    // call both before and after the dialog here...
-
-    int seriesCount = options.getSeriesCount();
-    IFormatReader r = options.getReader();
+    int seriesCount = process.getSeriesCount();
+    IFormatReader r = process.getReader();
     
     // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
@@ -72,7 +68,7 @@ public class CropDialog extends ImporterDialog {
       Region region = options.getCropRegion(s);
       if (region == null)
 
-      gd.addMessage(options.getSeriesLabel(s).replaceAll("_", " "));
+      gd.addMessage(process.getSeriesLabel(s).replaceAll("_", " "));
       gd.addNumericField("X_Coordinate_" + (s + 1), 0, 0);
       gd.addNumericField("Y_Coordinate_" + (s + 1), 0, 0);
       gd.addNumericField("Width_" + (s + 1), r.getSizeX(), 0);
@@ -84,9 +80,9 @@ public class CropDialog extends ImporterDialog {
   }
   
   @Override
-  protected void harvestResults(GenericDialog gd) {
-    int seriesCount = options.getSeriesCount();
-    IFormatReader r = options.getReader();
+  protected boolean harvestResults(GenericDialog gd) {
+    int seriesCount = process.getSeriesCount();
+    IFormatReader r = process.getReader();
 
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
@@ -115,6 +111,8 @@ public class CropDialog extends ImporterDialog {
 
       options.setCropRegion(s, region); // in case we got a copy
     }
+
+    return true;
   }
   
 }

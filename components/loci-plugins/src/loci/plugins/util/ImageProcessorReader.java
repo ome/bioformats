@@ -38,7 +38,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
-import loci.formats.MinMaxCalculator;
+import loci.formats.ReaderWrapper;
 
 /**
  * A low-level reader for {@link ij.process.ImageProcessor} objects.
@@ -49,7 +49,7 @@ import loci.formats.MinMaxCalculator;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">SVN</a></dd></dl>
  */
-public class ImageProcessorReader extends MinMaxCalculator {
+public class ImageProcessorReader extends ReaderWrapper {
 
   // -- Utility methods --
 

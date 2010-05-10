@@ -45,15 +45,16 @@ public class ImporterMetadata extends HashMap<String, Object> {
 
   // -- Constructor --
 
-  public ImporterMetadata(IFormatReader r, ImporterOptions options,
+  public ImporterMetadata(IFormatReader r, ImportProcess process,
     boolean usePrefix)
   {
     // merge global metadata
     putAll(r.getGlobalMetadata());
 
     // merge location path
-    put("Location", options.getCurrentFile());
+    put("Location", process.getCurrentFile());
 
+    final ImporterOptions options = process.getOptions();
     final int oldSeries = r.getSeries();
     final int seriesCount = r.getSeriesCount();
     final int digits = digits(seriesCount);
@@ -64,7 +65,7 @@ public class ImporterMetadata extends HashMap<String, Object> {
       // build prefix from image name and/or series number
       String s = "";
       if (usePrefix) {
-        s = options.getOMEMetadata().getImageName(i);
+        s = process.getOMEMetadata().getImageName(i);
         if ((s == null || s.trim().length() == 0) && seriesCount > 1) {
           StringBuffer sb = new StringBuffer();
           sb.append("Series ");
