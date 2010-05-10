@@ -91,6 +91,7 @@ public class ImageInfo {
   private boolean minmax = false;
   private boolean merge = false;
   private boolean stitch = false;
+  private boolean group = true;
   private boolean separate = false;
   private boolean expand = false;
   private boolean omexml = false;
@@ -132,6 +133,7 @@ public class ImageInfo {
     minmax = false;
     merge = false;
     stitch = false;
+    group = true;
     separate = false;
     expand = false;
     omexml = false;
@@ -162,6 +164,7 @@ public class ImageInfo {
         else if (args[i].equals("-minmax")) minmax = true;
         else if (args[i].equals("-merge")) merge = true;
         else if (args[i].equals("-stitch")) stitch = true;
+        else if (args[i].equals("-nogroup")) group = false;
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
         else if (args[i].equals("-omexml")) omexml = true;
@@ -217,7 +220,7 @@ public class ImageInfo {
     String[] s = {
       "To test read a file in " + fmt + " format, run:",
       "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] [-minmax] ",
-      "    [-merge] [-stitch] [-separate] [-expand] [-omexml]",
+      "    [-merge] [-group] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
       "    [-xmlversion v] [-crop x,y,w,h] [-autoscale] [-format Format]",
@@ -231,6 +234,7 @@ public class ImageInfo {
       "    -thumbs: read thumbnails instead of normal pixels",
       "    -minmax: compute min/max statistics",
       "     -merge: combine separate channels into RGB image",
+      "     -group: force multi-file datasets to be read as individual files",
       "    -stitch: stitch files with similar names",
       "  -separate: split RGB image into separate channels",
       "    -expand: expand indexed color to RGB",
@@ -353,6 +357,7 @@ public class ImageInfo {
     reader.close();
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
+    reader.setGroupFiles(group);
     MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
       MetadataLevel.ALL : MetadataLevel.MINIMUM);
     reader.setMetadataOptions(metaOptions);
