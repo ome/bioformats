@@ -20,8 +20,6 @@ import org.junit.Test;
 
 public class ImporterTest {
 
-  private static final boolean debug = true;
-
   private enum Axis {Z,C,T};
   
   // ** Helper methods *******************************************************************
@@ -29,6 +27,12 @@ public class ImporterTest {
   private String constructFakeFilename(String title,
       int pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
   {
+    // some tests rely on each image being large enough to get the s,i,z,t,c index pixels of a
+    // FakeFile. This requires the x value of tested images to be somewhat large. Assert
+    // the input image fits the bill
+    if (sizeX < 41)
+      throw new IllegalArgumentException("constructFakeFilename() - width < 41 : can break some of our tests");
+    
     String fileName = "";
     
     fileName += title;
@@ -101,6 +105,50 @@ public class ImporterTest {
     throw new IllegalArgumentException("index() - unknown axis: "+axis);
   }
 
+  private int numInSeries(int from, int to, int by)
+  {
+    // could calc this but simple loop suffices for our purposes
+    int count = 0;
+    for (int i = from; i <= to; i += by)
+        count++;
+    return count;
+  }
+  
+  // note : for now assumes default ZCT ordering
+  
+  private boolean seriesInCorrectOrder(ImageStack st,
+      int zFrom, int zTo, int zBy,
+      int cFrom, int cTo, int cBy,
+      int tFrom, int tTo, int tBy)
+  {
+    int zs = numInSeries(zFrom,zTo,zBy);
+    int cs = numInSeries(cFrom,cTo,cBy);
+    int ts = numInSeries(tFrom,tTo,tBy);
+    
+    if ((zs * cs * ts) != st.getSize())
+    {
+      System.out.println("seriesInCorrectOrder() - slices don't add up: z"+zs+" X c"+cs+" X t"+ts+" != "+st.getSize());
+      return false;
+    }
+    
+    int procNum = 1;
+    for (int k = tFrom; k <= tTo; k += tBy)
+      for (int j = cFrom; j <= cTo; j += cBy)
+        for (int i = zFrom; i <= zTo; i += zBy)
+        {
+          ImageProcessor proc = st.getProcessor(procNum);
+          if ((zIndex(proc) != i) || (cIndex(proc) != j) || (tIndex(proc) != k))
+          {
+            System.out.println("seriesInCorrectOrder() - slices out of order: exp i"+i+" j"+j+" k"+k+" != act z"+
+                zIndex(proc)+" c"+cIndex(proc)+" t"+tIndex(proc)+" for proc number "+procNum);
+            return false;
+          }
+          procNum++;
+        }
+    
+    return true;
+  }
+  
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
   {
     String path = constructFakeFilename("default", pixType, x, y, z, c, t, -1);
@@ -149,13 +197,6 @@ public class ImporterTest {
     assertEquals(1,imps.length);
     
     ImagePlus ip = imps[0];
-    
-    // these tests rely on each image being large enough to get the siztc index pixels of a
-    // FakeFile. This requires the x value of tested images to be somewhat large. Assert
-    // the input image fits the bill
-    
-    assertTrue(ip.getWidth() >= 41);
-    assertTrue(ip.getHeight() >= 1);
     
     ImageStack st = ip.getStack();
     int numSlices = st.getSize();
@@ -303,61 +344,39 @@ public class ImporterTest {
   
       assertEquals(desireVirtual,ip.getStack().isVirtual());
   }
-  
-  private void memorySpecifyZRangeTest()
-  { 
-    int pixType = FormatTools.UINT8, x=30, y=30, z=6, c=2, t=4, s=-1;
-    String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
-    ImagePlus[] imps = null;
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setId(path);
-      options.setZBegin(0, 1);
-      options.setZEnd(0, 5);
-      options.setZStep(0, 2);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    // should have the data: one series, all t's, all c's, z's from 1 to 5 by 2
-    assertNotNull(imps);
-    assertTrue(imps.length == 1);
-    ImagePlus ip = imps[0];
-    assertNotNull(ip);
-    assertTrue(ip.getWidth() == x);
-    assertTrue(ip.getHeight() == y);
-    ImageStack st = ip.getStack();
-    int numSlices = st.getSize();
-    assertEquals(3*c*t,numSlices);
 
-    System.out.println("SpecifyZRangeTest: slices below");
-    for (int i = 0; i < numSlices; i++)
-      printVals(st.getProcessor(i+1));
-    
-    //TODO - some assertions
-    
-    // all t's present
-    // all c's present
-    // only specific z's present
-    
-  }
-  
-  private void memorySpecifyCRangeTest()
+  private void memorySpecifyRangeTest(int z, int c, int t,
+      int zFrom, int zTo, int zBy,
+      int cFrom, int cTo, int cBy,
+      int tFrom, int tTo, int tBy)
   { 
-    int pixType = FormatTools.UINT8, x=30, y=30, z=4, c=11, t=4, s=-1;
+    int pixType = FormatTools.UINT8, x=50, y=5, s=-1;
     String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
       options.setId(path);
-      options.setCBegin(0, 3);
-      options.setCEnd(0, 9);
-      options.setCStep(0, 3);
+      // only set z if nondefault behavior specified
+      if ((zFrom != 0) || (zTo != z-1) || (zBy != 1))
+      {
+        options.setZBegin(0, zFrom);
+        options.setZEnd(0, zTo);
+        options.setZStep(0, zBy);
+      }
+      // only set c if nondefault behavior specified
+      if ((cFrom != 0) || (cTo != c-1) || (cBy != 1))
+      {
+        options.setCBegin(0, cFrom);
+        options.setCEnd(0, cTo);
+        options.setCStep(0, cBy);
+      }
+      // only set t if nondefault behavior specified
+      if ((tFrom != 0) || (tTo != t-1) || (tBy != 1))
+      {
+        options.setTBegin(0, tFrom);
+        options.setTEnd(0, tTo);
+        options.setTStep(0, tBy);
+      }
       imps = BF.openImagePlus(options);
     }
     catch (IOException e) {
@@ -367,7 +386,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
-    // should have the data: one series, all t's, all z's, c's from 3 to 9 by 3
+    // should have the data in one series
     assertNotNull(imps);
     assertTrue(imps.length == 1);
     ImagePlus ip = imps[0];
@@ -375,60 +394,12 @@ public class ImporterTest {
     assertTrue(ip.getWidth() == x);
     assertTrue(ip.getHeight() == y);
     ImageStack st = ip.getStack();
-    int numSlices = st.getSize();
-    assertEquals(z*3*t,numSlices);
+    
     //System.out.println("SpecifyCRangeTest: slices below");
     //for (int i = 0; i < numSlices; i++)
     //  printVals(st.getProcessor(i+1));
-    
-    //TODO - some assertions
-    
-    // all z's present
-    // all t's present
-    // only specific c's present
-    
-  }
-  
-  private void memorySpecifyTRangeTest()
-  { 
-    int pixType = FormatTools.UINT8, x=30, y=30, z=3, c=2, t=12, s=-1;
-    String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
-    ImagePlus[] imps = null;
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setId(path);
-      options.setTBegin(0, 1);
-      options.setTEnd(0, 10);
-      options.setTStep(0, 4);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    // should have the data: one series, all z's, all c's, t's from 1 to 10 by 4
-    assertNotNull(imps);
-    assertTrue(imps.length == 1);
-    ImagePlus ip = imps[0];
-    assertNotNull(ip);
-    assertTrue(ip.getWidth() == x);
-    assertTrue(ip.getHeight() == y);
-    ImageStack st = ip.getStack();
-    int numSlices = st.getSize();
-    assertEquals(z*c*3,numSlices);
-    //System.out.println("SpecifyTRangeTest: slices below");
-    //for (int i = 0; i < numSlices; i++)
-    //  printVals(st.getProcessor(i+1));
-    
-    //TODO - some assertions
-    
-    // all z's present
-    // all c's present
-    // only specific t's present
-
+        
+    assertTrue(seriesInCorrectOrder(st,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy));
   }
   
   private void memoryCropTest(int pixType, int x, int y, int cx, int cy)
@@ -459,8 +430,8 @@ public class ImporterTest {
 // ** ImporterTest methods **************************************************************
 
   @Test
-  public void testDefaultBehavior() {
-
+  public void testDefaultBehavior()
+  {
     defaultBehaviorTest(FormatTools.UINT16, 400, 300, 1, 1, 1);
     defaultBehaviorTest(FormatTools.INT16, 107, 414, 1, 1, 1);
     defaultBehaviorTest(FormatTools.UINT32, 323, 206, 3, 2, 1);  // failure on last val = 1,5,
@@ -481,7 +452,8 @@ public class ImporterTest {
   }
     
   @Test
-  public void testDatasetGroupFiles() {
+  public void testDatasetGroupFiles()
+  {
     // TODO - need to enhance FakeFiles first I think
     //   This option kicks in when you have similarly named files. all the files get loaded
     //   as one dataset. This relies on the filename differing only by an index. Not sure
@@ -490,7 +462,8 @@ public class ImporterTest {
   }
 
   @Test
-  public void testDatasetSwapDims() {
+  public void testDatasetSwapDims()
+  {
     // TODO - can't really test this with fake files. It needs a series of files from grouping
     //   to reorder.
     
@@ -505,86 +478,112 @@ public class ImporterTest {
   }
   
   @Test
-  public void testDatasetConcatenate() {
+  public void testDatasetConcatenate()
+  {
     
     // TODO - Curtis says impl broken right now - will test later
 
-    // open a dataset that has multiple series
-      //   and should get back a single series
-      datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 1);
-      datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 17);
-      datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 4, 5, 2, 9);
+    // open a dataset that has multiple series and should get back a single series
+    datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 1);
+    datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 17);
+    datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 4, 5, 2, 9);
   }
   
   @Test
-  public void testColorMerge() {
+  public void testColorMerge()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
   
   @Test
-  public void testColorRgbColorize() {
+  public void testColorRgbColorize()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
   
   @Test
-  public void testColorCustomColorize() {
+  public void testColorCustomColorize()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
   
   @Test
-  public void testColorAutoscale() {
+  public void testColorAutoscale()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
   
   @Test
-  public void testMemoryVirtualStack() {
+  public void testMemoryVirtualStack()
+  {
     memoryVirtualStackTest(false);
     memoryVirtualStackTest(true);
   }
   
   @Test
-  public void testMemoryRecordModifications() {
+  public void testMemoryRecordModifications()
+  {
     // TODO - how to test this?
   }
   
   @Test
-  public void testMemorySpecifyRange() {
-    memorySpecifyZRangeTest();
-    memorySpecifyCRangeTest();
-    memorySpecifyTRangeTest();
-    //memorySpecifySRangeTest();
-    // TODO : generalize other methods and call here with varying params
-  }
-  
-  @Test
-  public void testMemoryCrop() {
+  public void testMemorySpecifyRange()
+  {
+    int z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy;
     
-    //TODO - more tests
+    // test z
+    z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test c
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test t
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test a combination of zct's
+    z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=6; tBy=2;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+  }
+  
+  @Test
+  public void testMemoryCrop()
+  {
     memoryCropTest(FormatTools.UINT8, 203, 409, 185, 104);
+    memoryCropTest(FormatTools.UINT8, 203, 409, 203, 409);
+    memoryCropTest(FormatTools.UINT8, 100, 30, 3, 3);
+    memoryCropTest(FormatTools.INT32, 100, 30, 3, 3);
   }
   
   @Test
-  public void testSplitChannels() {
+  public void testSplitChannels()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
   
   @Test
-  public void testSplitFocalPlanes() {
+  public void testSplitFocalPlanes()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
   
   @Test
-  public void testSplitTimepoints() {
+  public void testSplitTimepoints()
+  {
     // TODO - Curtis says impl broken right now - will test later
   }
 
   // ** Main method *****************************************************************
 
-  public static void main(String[] args) {
+  public static void main(String[] args)
+  {
     ImporterTest tester = new ImporterTest();
  
     //TODO - we could use reflection to discover all test methods, loop, and run them
-    
+  
+    // tests of single features
     tester.testDefaultBehavior();
     tester.testOutputStackOrder();
     tester.testDatasetGroupFiles();
@@ -602,8 +601,190 @@ public class ImporterTest {
     tester.testSplitFocalPlanes();
     tester.testSplitTimepoints();
     
-    // TODO - add combination tests
+    // TODO - add tests involving combinations of features
     
     System.exit(0);
   }
 }
+
+
+/*  old stuff - keep until replacement code tested
+
+  private int numPresent(ImageStack st, Axis axis)
+  {
+    List<Integer> indices = new ArrayList<Integer>();
+    
+    int count = 0;
+    for (int i = 0; i < st.getSize(); i++)
+    {
+      int currVal = this.index(axis, st.getProcessor(i+1));
+
+      //fails
+      // (!indices.contains(new Integer(currVal)))
+      //
+      //  indices.add(new Integer(currVal));
+      //  count++;
+      //}
+
+      boolean found = false;
+      for (int j = 0; j < indices.size(); j++)
+        if (currVal == indices.get(j))
+        {
+          found = true;
+          break;
+        }
+      if (!found)
+      {
+        count++;
+        indices.add(currVal);
+      }
+    }
+    return count;
+  }
+  
+private void memorySpecifyZRangeTest()
+{ 
+  int pixType = FormatTools.UINT8, x=30, y=30, z=6, c=2, t=4, s=-1;
+  int from = 1, to = 5, by = 2;
+  String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
+  ImagePlus[] imps = null;
+  try {
+    ImporterOptions options = new ImporterOptions();
+    options.setId(path);
+    options.setZBegin(0, from);
+    options.setZEnd(0, to);
+    options.setZStep(0, by);
+    imps = BF.openImagePlus(options);
+  }
+  catch (IOException e) {
+    fail(e.getMessage());
+  }
+  catch (FormatException e) {
+    fail(e.getMessage());
+  }
+  
+  // should have the data: one series, all t's, all c's, z's from 1 to 5 by 2
+  assertNotNull(imps);
+  assertTrue(imps.length == 1);
+  ImagePlus ip = imps[0];
+  assertNotNull(ip);
+  assertTrue(ip.getWidth() == x);
+  assertTrue(ip.getHeight() == y);
+  ImageStack st = ip.getStack();
+  int numSlices = st.getSize();
+  assertEquals(numInSeries(from,to,by)*c*t,numSlices);
+
+  System.out.println("SpecifyZRangeTest: slices below");
+  for (int i = 0; i < numSlices; i++)
+  {
+    ImageProcessor proc = st.getProcessor(i+1); 
+    printVals(proc);
+  }
+  
+  // all t's present
+  //assertEquals(numInSeries(1,t,1), numPresent(st,Axis.T));
+  
+  // all c's present
+  //assertEquals(numInSeries(1,c,1), numPresent(st,Axis.C));
+
+  // only specific z's present
+  //assertEquals(numInSeries(from,to,by), numPresent(st,Axis.Z));
+  
+  assertTrue(seriesInCorrectOrder(st,from,to,by,0,c-1,1,0,t-1,1));
+}
+
+private void memorySpecifyCRangeTest()
+{ 
+  int pixType = FormatTools.UINT8, x=30, y=30, z=4, c=11, t=4, s=-1;
+  int from = 3, to = 9, by = 3;
+  String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
+  ImagePlus[] imps = null;
+  try {
+    ImporterOptions options = new ImporterOptions();
+    options.setId(path);
+    options.setCBegin(0, from);
+    options.setCEnd(0, to);
+    options.setCStep(0, by);
+    imps = BF.openImagePlus(options);
+  }
+  catch (IOException e) {
+    fail(e.getMessage());
+  }
+  catch (FormatException e) {
+    fail(e.getMessage());
+  }
+  
+  // should have the data: one series, all t's, all z's, c's from 3 to 9 by 3
+  assertNotNull(imps);
+  assertTrue(imps.length == 1);
+  ImagePlus ip = imps[0];
+  assertNotNull(ip);
+  assertTrue(ip.getWidth() == x);
+  assertTrue(ip.getHeight() == y);
+  ImageStack st = ip.getStack();
+  int numSlices = st.getSize();
+  assertEquals(z*numInSeries(from,to,by)*t,numSlices);
+  //System.out.println("SpecifyCRangeTest: slices below");
+  //for (int i = 0; i < numSlices; i++)
+  //  printVals(st.getProcessor(i+1));
+      
+  // all t's present
+  //assertEquals(numInSeries(1,t,1), numPresent(st,Axis.T));
+  
+  // all z's present
+  //assertEquals(numInSeries(1,z,1), numPresent(st,Axis.Z));
+
+  // only specific c's present
+  //assertEquals(numInSeries(from,to,by), numPresent(st,Axis.C));
+
+  assertTrue(seriesInCorrectOrder(st,0,z-1,1,from,to,by,0,t-1,1));
+}
+
+private void memorySpecifyTRangeTest()
+{ 
+  int pixType = FormatTools.UINT8, x=30, y=30, z=3, c=2, t=12, s=-1;
+  int from = 1, to = 10, by = 4;
+  String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
+  ImagePlus[] imps = null;
+  try {
+    ImporterOptions options = new ImporterOptions();
+    options.setId(path);
+    options.setTBegin(0, from);
+    options.setTEnd(0, to);
+    options.setTStep(0, by);
+    imps = BF.openImagePlus(options);
+  }
+  catch (IOException e) {
+    fail(e.getMessage());
+  }
+  catch (FormatException e) {
+    fail(e.getMessage());
+  }
+  
+  // should have the data: one series, all z's, all c's, t's from 1 to 10 by 4
+  assertNotNull(imps);
+  assertTrue(imps.length == 1);
+  ImagePlus ip = imps[0];
+  assertNotNull(ip);
+  assertTrue(ip.getWidth() == x);
+  assertTrue(ip.getHeight() == y);
+  ImageStack st = ip.getStack();
+  int numSlices = st.getSize();
+  assertEquals(z*c*numInSeries(from,to,by),numSlices);
+  //System.out.println("SpecifyTRangeTest: slices below");
+  //for (int i = 0; i < numSlices; i++)
+  //  printVals(st.getProcessor(i+1));
+  
+  // all z's present
+  //assertEquals(numInSeries(1,z,1), numPresent(st,Axis.Z));
+  
+  // all c's present
+  //assertEquals(numInSeries(1,c,1), numPresent(st,Axis.C));
+
+  // only specific t's present
+  //assertEquals(numInSeries(from,to,by), numPresent(st,Axis.T));
+  
+  assertTrue(seriesInCorrectOrder(st,0,z-1,1,0,c-1,1,from,to,by));
+}
+
+*/
