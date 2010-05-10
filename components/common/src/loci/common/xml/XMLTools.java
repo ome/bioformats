@@ -40,6 +40,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -133,6 +134,7 @@ public final class XMLTools {
     Result result = new StreamResult(stringWriter);
     // Java XML factories are not declared to be thread safe
     TransformerFactory factory = TransformerFactory.newInstance();
+    factory.setErrorListener(new XMLListener());
     Transformer transformer = factory.newTransformer();
     transformer.transform(source, result);
     return stringWriter.getBuffer().toString();
@@ -315,6 +317,7 @@ public final class XMLTools {
       StreamSource xsltSource = new StreamSource(xsltStream);
       // Java XML factories are not declared to be thread safe
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      transformerFactory.setErrorListener(new XMLListener());
       return transformerFactory.newTemplates(xsltSource);
     }
     catch (TransformerConfigurationException exc) {
@@ -458,6 +461,23 @@ public final class XMLTools {
     }
     if (errorHandler.ok()) LOGGER.info("No validation errors found.");
     return errorHandler.ok();
+  }
+
+  // -- Helper class --
+
+  /** ErrorListener implementation that logs errors and warnings using SLF4J. */
+  static class XMLListener implements ErrorListener {
+    public void error(TransformerException e) {
+      LOGGER.warn("", e);
+    }
+
+    public void fatalError(TransformerException e) {
+      LOGGER.warn("", e);
+    }
+
+    public void warning(TransformerException e) {
+      LOGGER.debug("", e);
+    }
   }
 
 }
