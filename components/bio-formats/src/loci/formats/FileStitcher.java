@@ -143,13 +143,21 @@ public class FileStitcher implements IFormatReader {
    */
   public FileStitcher(IFormatReader r, boolean patternIds) {
     reader = DimensionSwapper.makeDimensionSwapper(r);
-    this.patternIds = patternIds;
+    setUsingPatternIds(patternIds);
   }
 
   // -- FileStitcher API methods --
 
   /** Gets the wrapped reader prototype. */
   public IFormatReader getReader() { return reader; }
+
+  /** Sets whether the reader is using file patterns for IDs. */
+  public void setUsingPatternIds(boolean patternIds) {
+    this.patternIds = patternIds;
+  }
+
+  /** Gets whether the reader is using file patterns for IDs. */
+  public boolean isUsingPatternIds() { return patternIds; }
 
   /** Gets the reader appropriate for use with the given image plane. */
   public IFormatReader getReader(int no) throws FormatException, IOException {
@@ -221,7 +229,6 @@ public class FileStitcher implements IFormatReader {
    * stitcher. Takes both ID map entries and the patternIds flag into account.
    */
   public FilePattern findPattern(String id) {
-    FormatTools.assertId(currentId, true, 2);
     if (!patternIds) {
       // find the containing pattern
       HashMap<String, Object> map = Location.getIdMap();
@@ -234,7 +241,6 @@ public class FileStitcher implements IFormatReader {
       }
       else {
         // id is an unmapped file path; look to similar files on disk
-
         pattern = FilePattern.findPattern(new Location(id));
       }
       if (pattern != null) id = pattern;
@@ -683,7 +689,7 @@ public class FileStitcher implements IFormatReader {
         v.add(files[i][j]);
       }
     }
-    return (String[]) v.toArray(new String[0]);
+    return v.toArray(new String[0]);
   }
 
   /* @see IFormatReader#getUsedFiles() */
@@ -974,8 +980,8 @@ public class FileStitcher implements IFormatReader {
         if (axes[i] == AxisGuesser.S_AXIS) sBlock.add(blockPrefixes[i]);
       }
 
-      seriesBlocks = (String[]) sBlock.toArray(new String[0]);
-      fileVector = new Vector();
+      seriesBlocks = sBlock.toArray(new String[0]);
+      fileVector = new Vector<String[]>();
       seriesNames = new Vector<String>();
 
       String file = fp.getFiles()[0];
@@ -993,14 +999,14 @@ public class FileStitcher implements IFormatReader {
         if (fs[i].endsWith(ext)) tmpFiles.add(fs[i]);
       }
 
-      setFiles((String[]) tmpFiles.toArray(new String[0]), seriesBlocks[0],
+      setFiles(tmpFiles.toArray(new String[0]), seriesBlocks[0],
         fp.getFirst()[0], fp.getLast()[0], fp.getStep()[0], dpath, 0);
 
       seriesCount = fileVector.size();
       files = new String[seriesCount][];
 
       for (int i=0; i<seriesCount; i++) {
-        files[i] = (String[]) fileVector.get(i);
+        files[i] = fileVector.get(i);
       }
     }
 
@@ -1337,7 +1343,7 @@ public class FileStitcher implements IFormatReader {
         v.add(f[i].substring(f[i].lastIndexOf(File.separator) + 1));
       }
     }
-    f = (String[]) v.toArray(new String[0]);
+    f = v.toArray(new String[0]);
     return new FilePattern(FilePattern.findPattern(f[0], dir, f));
   }
 
