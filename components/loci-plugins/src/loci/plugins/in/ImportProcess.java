@@ -54,11 +54,16 @@ import loci.plugins.util.LociPrefs;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
  * Manages the import preparation process.
+ * After calling {@link #execute()}, the process will be ready to feed to
+ * an {@link ImagePlusReader} to read in the actual {@link ImagePlus} objects.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
@@ -72,6 +77,9 @@ public class ImportProcess implements StatusReporter {
 
   /** Associated importer options. */
   private ImporterOptions options;
+  
+  /** Current step in the import preparation process. */
+  private ImportStep step;
 
   // reader stack, from bottom to top
   private IFormatReader baseReader;
@@ -114,39 +122,86 @@ public class ImportProcess implements StatusReporter {
   }
 
   /** Valid only after {@link ImportStep#READER}. */
-  public IFormatReader getBaseReader() { return baseReader; }
+  public IFormatReader getBaseReader() {
+    assertStep(ImportStep.READER);
+    return baseReader;
+  }
   /** Valid only after {@link ImportStep#READER}. */
-  public String getIdName() { return idName; }
+  public String getIdName() {
+    assertStep(ImportStep.READER);
+    return idName;
+  }
   /** Valid only after {@link ImportStep#READER}. */
-  public Location getIdLocation() { return idLoc; }
+  public Location getIdLocation() {
+    assertStep(ImportStep.READER);
+    return idLoc;
+  }
   /** Valid only after {@link ImportStep#READER}. */
-  public IMetadata getOMEMetadata() { return meta; }
+  public IMetadata getOMEMetadata() {
+    assertStep(ImportStep.READER);
+    return meta;
+  }
 
   /** Valid only after {@link ImportStep#STACK}. */
-  public FileStitcher getFileStitcher() { return fileStitcher; }
+  public FileStitcher getFileStitcher() {
+    assertStep(ImportStep.STACK);
+    return fileStitcher;
+  }
   /** Valid only after {@link ImportStep#STACK}. */
-  public ChannelSeparator getChannelSeparator() { return channelSeparator; }
+  public ChannelSeparator getChannelSeparator() {
+    assertStep(ImportStep.STACK);
+    return channelSeparator;
+  }
   /** Valid only after {@link ImportStep#STACK}. */
-  public DimensionSwapper getDimensionSwapper() { return dimensionSwapper; }
+  public DimensionSwapper getDimensionSwapper() {
+    assertStep(ImportStep.STACK);
+    return dimensionSwapper;
+  }
   /** Valid only after {@link ImportStep#STACK}. */
-  public VirtualReader getVirtualReader() { return virtualReader; }
+  public VirtualReader getVirtualReader() {
+    assertStep(ImportStep.STACK);
+    return virtualReader;
+  }
   /** Valid only after {@link ImportStep#STACK}. */
-  public ImageProcessorReader getReader() { return reader; }
+  public ImageProcessorReader getReader() {
+    assertStep(ImportStep.STACK);
+    return reader;
+  }
 
   /** Valid only after {@link ImportStep#STACK}. */
-  public String getCurrentFile() { return reader.getCurrentFile(); }
+  public String getCurrentFile() {
+    assertStep(ImportStep.STACK);
+    return reader.getCurrentFile();
+  }
   /** Valid only after {@link ImportStep#STACK}. */
-  public int getSeriesCount() { return getReader().getSeriesCount(); }
+  public int getSeriesCount() {
+    assertStep(ImportStep.STACK);
+    return getReader().getSeriesCount();
+  }
   /** Valid only after {@link ImportStep#STACK}. */
   public String getSeriesLabel(int s) {
-    if (seriesLabels == null || s >= seriesLabels.length) return null;
+    assertStep(ImportStep.STACK);
     return seriesLabels[s];
+  }
+  
+  // stackOrder
+  /** Valid only after {@link ImportStep#STACK}. */
+  public String getStackOrder() {
+    assertStep(ImportStep.STACK);
+    String stackOrder = options.getStackOrder();
+    if (stackOrder == null ||
+      stackOrder.equals(ImporterOptions.ORDER_DEFAULT))
+    {
+      stackOrder = reader.getDimensionOrder();
+    }
+    return stackOrder;
   }
   
   // series options
   public int getCBegin(int s) { return options.getCBegin(s); }
   /** Valid only after {@link ImportStep#STACK}. */
   public int getCEnd(int s) {
+    assertStep(ImportStep.STACK);
     int cEnd = options.getCEnd(s);
     if (cEnd >= 0) return cEnd;
     return reader.getEffectiveSizeC() - 1;
@@ -155,6 +210,7 @@ public class ImportProcess implements StatusReporter {
   public int getZBegin(int s) { return options.getZBegin(s); }
   /** Valid only after {@link ImportStep#STACK}. */
   public int getZEnd(int s) {
+    assertStep(ImportStep.STACK);
     int zEnd = options.getZEnd(s);
     if (zEnd >= 0) return zEnd;
     return reader.getSizeZ() - 1;
@@ -163,6 +219,7 @@ public class ImportProcess implements StatusReporter {
   public int getTBegin(int s) { return options.getTBegin(s); }
   /** Valid only after {@link ImportStep#STACK}. */
   public int getTEnd(int s) {
+    assertStep(ImportStep.STACK);
     int tEnd = options.getTEnd(s);
     if (tEnd >= 0) return tEnd;
     return reader.getSizeT() - 1;
@@ -172,6 +229,7 @@ public class ImportProcess implements StatusReporter {
   // crop options
   /** Valid only after {@link ImportStep#STACK}. */
   public Region getCropRegion(int s) {
+    assertStep(ImportStep.STACK);
     Region region = options.getCropRegion(s);
     if (region != null) return region;
     ImageProcessorReader r = getReader();
@@ -179,7 +237,10 @@ public class ImportProcess implements StatusReporter {
   }
 
   /** Valid only after {@link ImportStep#METADATA}. */
-  public ImporterMetadata getOriginalMetadata() { return metadata; }
+  public ImporterMetadata getOriginalMetadata() {
+    assertStep(ImportStep.METADATA);
+    return metadata;
+  }
 
   /**
    * Performs the import process, notifying status listeners at each step.
@@ -187,39 +248,39 @@ public class ImportProcess implements StatusReporter {
    * @return true if the process completed successfully.
    */
   public boolean execute() throws FormatException, IOException {
-    notifyListeners(ImportStep.READER);
+    step(ImportStep.READER);
     if (cancel) return false;
     initializeReader();
 
-    notifyListeners(ImportStep.FILE);
+    step(ImportStep.FILE);
     if (cancel) return false;
     initializeFile();
 
-    notifyListeners(ImportStep.STACK);
+    step(ImportStep.STACK);
     if (cancel) return false;
     initializeStack();
 
-    notifyListeners(ImportStep.SERIES);
+    step(ImportStep.SERIES);
     if (cancel) return false;
     initializeSeries();
 
-    notifyListeners(ImportStep.DIM_ORDER);
+    step(ImportStep.DIM_ORDER);
     if (cancel) return false;
     initializeDimOrder();
 
-    notifyListeners(ImportStep.RANGE);
+    step(ImportStep.RANGE);
     if (cancel) return false;
     initializeRange();
 
-    notifyListeners(ImportStep.CROP);
+    step(ImportStep.CROP);
     if (cancel) return false;
     initializeCrop();
 
-    notifyListeners(ImportStep.METADATA);
+    step(ImportStep.METADATA);
     if (cancel) return false;
     initializeMetadata();
 
-    notifyListeners(ImportStep.COMPLETE);
+    step(ImportStep.COMPLETE);
     return true;
   }
   
@@ -304,11 +365,23 @@ public class ImportProcess implements StatusReporter {
 
   /** Performed following ImportStep.DIM_ORDER notification. */
   private void initializeDimOrder() {
-    int seriesCount = getSeriesCount();
+    final int seriesCount = getSeriesCount();
+    final String stackOrder = getStackOrder();
+
     for (int s=0; s<seriesCount; s++) {
       reader.setSeries(s);
+
+      // set input order
       String dimOrder = options.getInputOrder(s);
       if (dimOrder != null) dimensionSwapper.swapDimensions(dimOrder);
+      
+      // set output order
+      getDimensionSwapper().setOutputOrder(stackOrder);
+      try {
+        DimensionOrder order = DimensionOrder.fromString(stackOrder);
+        getOMEMetadata().setPixelsDimensionOrder(order, s);
+      }
+      catch (EnumerationException e) { }
     }
   }
 
@@ -484,9 +557,17 @@ public class ImportProcess implements StatusReporter {
   
   // -- Helper methods - miscellaneous --
 
-  private void notifyListeners(ImportStep step) {
+  private void step(ImportStep step) {
+    this.step = step;
     notifyListeners(new StatusEvent(step.getStep(),
       ImportStep.COMPLETE.getStep(), step.getMessage()));
+  }
+  
+  private void assertStep(ImportStep importStep) {
+    if (step.getStep() < importStep.getStep()) {
+      throw new IllegalStateException("Too early in import process: " +
+        "current step is " + step + ", but minimum step is " + importStep);
+    }
   }
 
 }

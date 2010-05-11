@@ -55,13 +55,11 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
-
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
 
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
@@ -102,7 +100,7 @@ public class ImagePlusReader implements StatusReporter {
   // -- ImagePlusReader methods --
 
   /**
-   * Opens one or more {@link ij.ImagePlus} objects
+   * Opens one or more {@link ImagePlus} objects
    * corresponding to the reader's associated options.
    */
   public ImagePlus[] openImagePlus() throws FormatException, IOException {
@@ -209,17 +207,6 @@ public class ImagePlusReader implements StatusReporter {
       }
 
       int q = 0;
-      String stackOrder = options.getStackOrder();
-      if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
-        stackOrder = reader.getDimensionOrder();
-      }
-      process.getDimensionSwapper().setOutputOrder(stackOrder);
-
-      try {
-        process.getOMEMetadata().setPixelsDimensionOrder(
-          DimensionOrder.fromString(stackOrder), s);
-      }
-      catch (EnumerationException e) { }
 
       // dump OME-XML to ImageJ's description field, if available
       try {
@@ -343,9 +330,25 @@ public class ImagePlusReader implements StatusReporter {
       if (impO != null) imps.add(impO);
     }
 
-    // CTR CHECK
-    //Concatenator concatenator = new Concatenator(options);
-    //imps = concatenator.concatenate(imps, stackOrder);
+    // TODO - colorize
+
+    // concatenate compatible images
+    if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
+    
+    // split dimensions, as appropriate
+    boolean sliceC = options.isSplitChannels();
+    boolean sliceZ = options.isSplitFocalPlanes();
+    boolean sliceT = options.isSplitTimepoints();
+    if (sliceC || sliceZ || sliceT) {
+      String stackOrder = process.getStackOrder();
+      List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
+      for (ImagePlus imp : imps) {
+        ImagePlus[] results = new Slicer().reslice(imp,
+          sliceC, sliceZ, sliceT, stackOrder);
+        for (ImagePlus result : results) slicedImps.add(result);
+      }
+      imps = slicedImps;
+    }
 
     // end timing
     long endTime = System.currentTimeMillis();

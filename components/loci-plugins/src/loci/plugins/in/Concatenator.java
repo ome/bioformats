@@ -31,9 +31,6 @@ import ij.ImageStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import loci.formats.IFormatReader;
-import loci.plugins.colorize.Colorizer;
-
 /**
  * Logic for concatenating multiple images together.
  *
@@ -45,19 +42,8 @@ import loci.plugins.colorize.Colorizer;
  */
 public class Concatenator {
 
-  protected ImportProcess process;
-
-  public Concatenator(ImportProcess process) {
-    this.process = process;
-  }
-
   /** Concatenates the list of images as appropriate. */
-  public List<ImagePlus> concatenate(List<ImagePlus> imps, String stackOrder) {
-    ImporterOptions options = process.getOptions();
-
-    if (!options.isConcatenate()) return imps;
-
-    IFormatReader r = process.getReader();
+  public List<ImagePlus> concatenate(List<ImagePlus> imps) {
 
     List<Integer> widths = new ArrayList<Integer>();
     List<Integer> heights = new ArrayList<Integer>();
@@ -95,28 +81,6 @@ public class Concatenator {
         types.add(new Integer(tj));
         newImps.add(imp);
       }
-    }
-
-    //boolean splitC = options.isSplitChannels();
-    //boolean splitZ = options.isSplitFocalPlanes();
-    //boolean splitT = options.isSplitTimepoints();
-
-    for (int j=0; j<newImps.size(); j++) {
-      ImagePlus imp = newImps.get(j);
-      // CTR FIXME
-      //if (splitC || splitZ || splitT) {
-      //  imp = Slicer.reslice(imp, splitC, splitZ, splitT,
-      //    options.isViewHyperstack(), stackOrder);
-      //}
-      if (options.isMergeChannels() && options.isWindowless()) {
-        imp = Colorizer.colorize(imp, true, stackOrder, null,
-          r.getSeries(), options.getMergeOption(), options.isViewHyperstack());
-      }
-      else if (options.isMergeChannels()) {
-        imp = Colorizer.colorize(imp, true, stackOrder, null,
-          r.getSeries(), null, options.isViewHyperstack());
-      }
-      newImps.set(j, imp);
     }
 
     return newImps;

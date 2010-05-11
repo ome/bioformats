@@ -267,7 +267,7 @@ info = <b>Split channels</b> - \
   <br><br>This option is especially useful if you want to merge the \
   channels into a specific order, rather than automatically assign  \
   channels to the order of RGB. The bit depth is preserved.
-default = true
+default = false
 
 [stackFormat]
 type = string

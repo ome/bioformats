@@ -62,84 +62,15 @@ public class Slicer implements PlugInFilter {
 
   /** Current image stack. */
   private ImagePlus imp;
-
-  // -- PlugInFilter API methods --
-
-  public int setup(String arg, ImagePlus imp) {
-    this.arg = arg;
-    this.imp = imp;
-    return DOES_ALL + NO_CHANGES;
-  }
-
-  public void run(ImageProcessor ip) {
-    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
-
-    boolean sliceC = false;
-    boolean sliceZ = false;
-    boolean sliceT = false;
-    String stackOrder = null;
-    boolean keepOriginal = false;
-    boolean hyperstack = false;
-
-    if (arg == null || arg.trim().equals("")) {
-      // prompt for slicing options
-
-      GenericDialog gd = new GenericDialog("Slicing options...");
-      gd.addCheckbox("Split channels", false);
-      gd.addCheckbox("Split Z slices", false);
-      gd.addCheckbox("Split timepoints", false);
-      gd.addCheckbox("Keep original stack", false);
-      gd.addCheckbox("Open as hyperstack", true);
-      gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
-        "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
-      gd.showDialog();
-
-      if (gd.wasCanceled()) {
-        canceled = true;
-        return;
-      }
-
-      sliceC = gd.getNextBoolean();
-      sliceZ = gd.getNextBoolean();
-      sliceT = gd.getNextBoolean();
-      keepOriginal = gd.getNextBoolean();
-      hyperstack = gd.getNextBoolean();
-      stackOrder = gd.getNextChoice();
-    }
-    else {
-      sliceC = getBooleanValue("slice_c");
-      sliceZ = getBooleanValue("slice_z");
-      sliceT = getBooleanValue("slice_t");
-      keepOriginal = getBooleanValue("keep_original");
-      hyperstack = getBooleanValue("hyper_stack");
-      stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
-    }
-
-    if (imp.getImageStack().isVirtual()) {
-      IJ.error("Slicer plugin cannot be used with virtual stacks.\n" +
-      "Please convert the virtual stack using Image>Duplicate.");
-      return;
-    }
-    ImagePlus[] newImps = Slicer.reslice(imp,
-      sliceC, sliceZ, sliceT, hyperstack, stackOrder);
-    if (!keepOriginal) imp.close();
-    for (ImagePlus imp : newImps) imp.show();
-  }
-
-  // -- Helper methods --
-
-  /** Gets the value of the given macro key as a boolean. */
-  private boolean getBooleanValue(String key) {
-    return Boolean.valueOf(Macro.getValue(arg, key, "false"));
-  }
-
-  // -- Static utility methods --
-
-  public static ImagePlus[] reslice(ImagePlus imp,
+  
+  // -- Slicer methods --
+  
+  public ImagePlus[] reslice(ImagePlus imp,
     boolean sliceC, boolean sliceZ, boolean sliceT,
-    boolean hyperstack, String stackOrder)
+    String stackOrder)
   {
     ImageStack stack = imp.getImageStack();
+    boolean hyperstack = imp.isHyperStack();
 
     if (stack.isVirtual()) {
       throw new IllegalArgumentException("Cannot reslice virtual stacks");
@@ -207,6 +138,72 @@ public class Slicer implements PlugInFilter {
       else newImps[i] = p;
     }
     return newImps;
+  }
+
+  // -- PlugInFilter methods --
+
+  public int setup(String arg, ImagePlus imp) {
+    this.arg = arg;
+    this.imp = imp;
+    return DOES_ALL + NO_CHANGES;
+  }
+
+  public void run(ImageProcessor ip) {
+    if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
+
+    boolean sliceC = false;
+    boolean sliceZ = false;
+    boolean sliceT = false;
+    String stackOrder = null;
+    boolean keepOriginal = false;
+
+    if (arg == null || arg.trim().equals("")) {
+      // prompt for slicing options
+
+      GenericDialog gd = new GenericDialog("Slicing options...");
+      gd.addCheckbox("Split channels", false);
+      gd.addCheckbox("Split Z slices", false);
+      gd.addCheckbox("Split timepoints", false);
+      gd.addCheckbox("Keep original stack", false);
+      gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
+        "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
+      gd.showDialog();
+
+      if (gd.wasCanceled()) {
+        canceled = true;
+        return;
+      }
+
+      sliceC = gd.getNextBoolean();
+      sliceZ = gd.getNextBoolean();
+      sliceT = gd.getNextBoolean();
+      keepOriginal = gd.getNextBoolean();
+      stackOrder = gd.getNextChoice();
+    }
+    else {
+      sliceC = getBooleanValue("slice_c");
+      sliceZ = getBooleanValue("slice_z");
+      sliceT = getBooleanValue("slice_t");
+      keepOriginal = getBooleanValue("keep_original");
+      stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
+    }
+
+    if (imp.getImageStack().isVirtual()) {
+      IJ.error("Slicer plugin cannot be used with virtual stacks.\n" +
+      "Please convert the virtual stack using Image>Duplicate.");
+      return;
+    }
+    ImagePlus[] newImps = reslice(imp,
+      sliceC, sliceZ, sliceT, stackOrder);
+    if (!keepOriginal) imp.close();
+    for (ImagePlus imp : newImps) imp.show();
+  }
+
+  // -- Helper methods --
+
+  /** Gets the value of the given macro key as a boolean. */
+  private boolean getBooleanValue(String key) {
+    return Boolean.valueOf(Macro.getValue(arg, key, "false"));
   }
 
 }
