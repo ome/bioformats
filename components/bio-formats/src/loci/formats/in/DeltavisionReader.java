@@ -606,7 +606,9 @@ public class DeltavisionReader extends FormatReader {
     if (store instanceof IMinMaxStore) {
       IMinMaxStore minMaxStore = (IMinMaxStore) store;
       for (int i=0; i<minWave.length; i++) {
-        minMaxStore.setChannelGlobalMinMax(0, minWave[i], maxWave[i], i);
+        if (i < getEffectiveSizeC()) {
+          minMaxStore.setChannelGlobalMinMax(i, minWave[i], maxWave[i], 0);
+        }
       }
     }
 
@@ -1106,7 +1108,7 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Wavelength " + (channel + 1) + " min. intensity", min);
     addGlobalMeta("Wavelength " + (channel + 1) + " max. intensity", max);
     if (store instanceof IMinMaxStore) {
-      ((IMinMaxStore) store).setChannelGlobalMinMax(0, min, max, channel);
+      ((IMinMaxStore) store).setChannelGlobalMinMax(channel, min, max, 0);
     }
   }
 
