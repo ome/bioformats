@@ -46,7 +46,7 @@ public class ImporterTest {
   static {
     
     //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
-    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, 50, 20, 7, 1, 1, -1);
+    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.INT32, 50, 20, 7, 1, 1, -1);
                                                                         // BDZ - INT32 is desirable for the color tests
     
     FAKE_FILES = new String[] {
@@ -682,6 +682,7 @@ public class ImporterTest {
 
     datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 1, 3);
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 3, 1);
+    datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 5, 2);
     datasetSwapDimsTest(FormatTools.UINT32, 82, 47, 5, 2);
     datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
     datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
