@@ -151,7 +151,7 @@ public class ImportProcess implements StatusReporter {
    * 
    * @return true if the process completed successfully.
    */
-  public boolean process() throws FormatException, IOException {
+  public boolean execute() throws FormatException, IOException {
     notifyListeners(ImportStep.READER);
     if (cancel) return false;
     initializeReader();
@@ -269,8 +269,12 @@ public class ImportProcess implements StatusReporter {
 
   /** Performed following ImportStep.DIM_ORDER notification. */
   private void initializeDimOrder() {
-    String dimOrder = options.getInputOrder();
-    if (dimOrder != null) dimensionSwapper.swapDimensions(dimOrder);
+    int seriesCount = getSeriesCount();
+    for (int s=0; s<seriesCount; s++) {
+      reader.setSeries(s);
+      String dimOrder = options.getInputOrder(s);
+      if (dimOrder != null) dimensionSwapper.swapDimensions(dimOrder);
+    }
   }
 
   /** Performed following ImportStep.RANGE notification. */

@@ -113,7 +113,7 @@ public class ImporterOptions extends OptionsList {
   private List<Boolean> seriesOn = new ArrayList<Boolean>();
 
   // swap options
-  private String inputOrder;
+  private List<String> inputOrder = new ArrayList<String>();
 
   // range options
   private List<Integer> cBegin = new ArrayList<Integer>();
@@ -365,8 +365,10 @@ public class ImporterOptions extends OptionsList {
   }
 
   // swap options
-  public String getInputOrder() { return inputOrder; }
-  public void setInputOrder(String dimOrder) { inputOrder = dimOrder; }
+  public String getInputOrder(int s) { return get(inputOrder, s, null); }
+  public void setInputOrder(int s, String value) {
+    set(inputOrder, s, value, null);
+  }
 
   // range options
   public int getCBegin(int s) { return get(cBegin, s, 0); }

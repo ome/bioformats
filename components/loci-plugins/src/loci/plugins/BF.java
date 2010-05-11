@@ -70,7 +70,7 @@ public final class BF {
     options.setWindowless(true);//TEMP
     ImportProcess process = new ImportProcess(options);
     new ImporterPrompter(process);//TEMP
-    if (!process.process()) return null;
+    if (!process.execute()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
     return reader.openImagePlus();
   }

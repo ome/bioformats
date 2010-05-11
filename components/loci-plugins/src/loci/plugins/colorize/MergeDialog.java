@@ -76,7 +76,7 @@ public class MergeDialog extends ImporterDialog {
   }
   
   protected boolean harvestResults(GenericDialog gd) {
-    options.setMergeOption(mergeOptions[gd.getNextChoiceIndex()]);
+    options.setMergeOption("" + (gd.getNextChoiceIndex() + 2));
     return true;
   }
 

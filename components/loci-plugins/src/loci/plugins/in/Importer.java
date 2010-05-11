@@ -121,7 +121,7 @@ public class Importer {
     // attach dialog prompter to process
     new ImporterPrompter(process);
     // execute the preparation process
-    process.process();
+    process.execute();
     if (process.wasCanceled()) plugin.canceled = true;
   }
 

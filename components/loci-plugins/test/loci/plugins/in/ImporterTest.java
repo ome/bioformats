@@ -114,6 +114,7 @@ public class ImporterTest {
   private int cIndex(ImageProcessor proc) { return proc.get(30,0); }  // c
   private int tIndex(ImageProcessor proc) { return proc.get(40,0); }  // t
   
+  @SuppressWarnings("unused")
   private void printVals(ImageProcessor proc)
   {
     System.out.println(
@@ -320,7 +321,7 @@ public class ImporterTest {
       ImporterOptions options = new ImporterOptions();
       options.setId(path);
       options.setSwapDimensions(true);
-      options.setInputOrder(swappedOrder);
+      options.setInputOrder(0, swappedOrder);
       imps = BF.openImagePlus(options);
     }
     catch (IOException e) {
@@ -333,24 +334,18 @@ public class ImporterTest {
     assertNotNull(imps);
     assertEquals(1,imps.length);
 
-    ImageStack st = imps[0].getStack();
+    ImagePlus imp = imps[0];
+    ImageStack st = imp.getStack();
     int numSlices = st.getSize();
     assertEquals(z*c*t,numSlices);
 
-    int maxZ = -1;
-    int maxT = -1;
-    int tmp;
-    for (int i = 0; i < numSlices; i++)
-    {
-      ImageProcessor proc = st.getProcessor(i+1);
-      printVals(proc);
-      tmp = zIndex(proc)+1;
-      if (maxZ < tmp) maxZ = tmp;
-      tmp = tIndex(proc)+1;
-      if (maxT < tmp) maxT = tmp;
-    }
-    assertEquals(z,maxT);
-    assertEquals(t,maxZ);
+    int actualZ = getSizeZ(imp);
+    int actualT = getSizeT(imp);
+    assertEquals(z,actualT);
+    assertEquals(t,actualZ);
+
+    // TODO - Verify that actual order is correct, rather than just lengths.
+    // Can use zIndex and tIndex methods for this.
   }
 
   private void datasetOpenAllSeriesTest(int x, int y, int z, int c, int t, int s)

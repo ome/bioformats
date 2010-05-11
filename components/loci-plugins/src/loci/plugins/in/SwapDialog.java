@@ -106,8 +106,7 @@ public class SwapDialog extends ImporterDialog {
         else if (originalOrder.charAt(i) == 'T') sb.append(t);
       }
 
-      // CTR FIXME - need separate input order for each series...
-      options.setInputOrder(sb.toString());
+      options.setInputOrder(s, sb.toString());
     }
     return true;
   }
