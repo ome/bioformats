@@ -27,7 +27,6 @@ package loci.plugins.in;
 
 import ij.gui.GenericDialog;
 
-import java.awt.AWTEvent;
 import java.awt.Button;
 import java.awt.Checkbox;
 import java.awt.Dimension;
@@ -233,14 +232,11 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   }
 
   private void rebuildDialog(GenericDialog gd, int nPanels) {
+    int seriesCount = process.getSeriesCount();
+
     gd.removeAll();
 
-    Panel masterPanel = new Panel() {
-      // ClassCastException is thrown if dispatchEventImpl is not overridden
-      // CTR TODO - there must be a better way
-      protected void dispatchEventImpl(AWTEvent e) { }
-    };
-    int seriesCount = process.getSeriesCount();
+    Panel masterPanel = new Panel();
     masterPanel.setLayout(new GridLayout(seriesCount, 2));
 
     for (int i=0; i<seriesCount; i++) {
