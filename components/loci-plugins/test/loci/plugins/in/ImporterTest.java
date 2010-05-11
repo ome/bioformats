@@ -24,7 +24,7 @@ import org.junit.Test;
 // TODO
 //  - flesh out existing tests
 //      splits - see if for loops are in correct order by comparing to actual data
-//      write tests for the color options : 4 cases
+//      write tests for the color options : 4 cases - some mention that indexcolor an issue
 //      open individual files: try to come up with a way to test without a disk file as source
 //      concatenate - test order of images in stack?
 //      swapped dims test needs to test more cases
@@ -280,8 +280,7 @@ public class ImporterTest extends TestCase {
     assertEquals(z*c*t,numSlices);
 
     int count = 0;
-    //if (debug)
-    //  System.out.println(order);
+    //System.out.println(order);
     Axis fastest = axis(order,0);
     Axis middle = axis(order,1);
     Axis slowest = axis(order,2);
@@ -293,8 +292,7 @@ public class ImporterTest extends TestCase {
         for (int i = 0; i < maxI; i++)
         {
           ImageProcessor proc = st.getProcessor(count+1);
-          //if (debug)
-          //  printVals(proc);
+          //printVals(proc);
           assertNotNull(proc);
           assertEquals(x,proc.getWidth());
           assertEquals(y,proc.getHeight());
@@ -727,6 +725,13 @@ public class ImporterTest extends TestCase {
   public void testMemoryRecordModifications()
   {
     // TODO - how to test this? lowest priority
+    
+    // outline
+    //   open as virt stack
+    //   run plugin or macro that changes pixels in currently loaded frame (frame 0)
+    //   change curr frame to 1 and test that pixels are different from what we set
+    //   change curr frame back to 0 and see if pixel changes remembered
+    
     fail("to be implemented");
   }
   
@@ -870,7 +875,7 @@ public class ImporterTest extends TestCase {
           // these next three statements called more times than needed but simplifies for loop logic
           ImageStack st = imps[i].getStack();
           assertEquals(15,st.getSize());
-          ImageProcessor proc = st.getProcessor(j+1);
+          ImageProcessor proc = st.getProcessor(i+1);
           // test the values
           assertEquals(0,zIndex(proc));  // this one should always be 0
           assertEquals(j,cIndex(proc));
@@ -908,7 +913,7 @@ public class ImporterTest extends TestCase {
           // these next three statements called more times than needed but simplifies for loop logic
           ImageStack st = imps[k].getStack();
           assertEquals(21,st.getSize());
-          ImageProcessor proc = st.getProcessor(j+1);
+          ImageProcessor proc = st.getProcessor(k+1);
           // test the values
           assertEquals(i,zIndex(proc));
           assertEquals(j,cIndex(proc));
