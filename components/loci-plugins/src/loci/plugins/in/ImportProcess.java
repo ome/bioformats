@@ -25,13 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import loci.common.Location;
+import loci.common.Region;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
@@ -48,6 +47,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.plugins.BF;
 import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
@@ -142,6 +142,41 @@ public class ImportProcess implements StatusReporter {
     if (seriesLabels == null || s >= seriesLabels.length) return null;
     return seriesLabels[s];
   }
+  
+  // series options
+  public int getCBegin(int s) { return options.getCBegin(s); }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public int getCEnd(int s) {
+    int cEnd = options.getCEnd(s);
+    if (cEnd >= 0) return cEnd;
+    return reader.getEffectiveSizeC() - 1;
+  }
+  public int getCStep(int s) { return options.getCStep(s); }
+  public int getZBegin(int s) { return options.getZBegin(s); }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public int getZEnd(int s) {
+    int zEnd = options.getZEnd(s);
+    if (zEnd >= 0) return zEnd;
+    return reader.getSizeZ() - 1;
+  }
+  public int getZStep(int s) { return options.getZStep(s); }
+  public int getTBegin(int s) { return options.getTBegin(s); }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public int getTEnd(int s) {
+    int tEnd = options.getTEnd(s);
+    if (tEnd >= 0) return tEnd;
+    return reader.getSizeT() - 1;
+  }
+  public int getTStep(int s) { return options.getTStep(s); }
+  
+  // crop options
+  /** Valid only after {@link ImportStep#STACK}. */
+  public Region getCropRegion(int s) {
+    Region region = options.getCropRegion(s);
+    if (region != null) return region;
+    ImageProcessorReader r = getReader();
+    return new Region(0, 0, r.getSizeX(), r.getSizeY());
+  }
 
   /** Valid only after {@link ImportStep#METADATA}. */
   public ImporterMetadata getOriginalMetadata() { return metadata; }
@@ -226,7 +261,7 @@ public class ImportProcess implements StatusReporter {
   private void initializeFile() throws FormatException, IOException {
     saveDefaults();
 
-    if (!options.isQuiet()) IJ.showStatus("Analyzing " + getIdName());
+    BF.status(options.isQuiet(), "Analyzing " + getIdName());
     baseReader.setMetadataFiltered(true);
     baseReader.setOriginalMetadataPopulated(true);
     baseReader.setGroupFiles(!options.isUngroupFiles());
@@ -332,7 +367,7 @@ public class ImportProcess implements StatusReporter {
    */
   private void createBaseReader() {
     if (options.isLocal() || options.isHTTP()) {
-      if (!options.isQuiet()) IJ.showStatus("Identifying " + idName);
+      BF.status(options.isQuiet(), "Identifying " + idName);
       ImageReader reader = LociPrefs.makeImageReader();
       try { baseReader = reader.getReader(options.getId()); }
       catch (FormatException exc) {
@@ -378,7 +413,7 @@ public class ImportProcess implements StatusReporter {
     }
     baseReader.setMetadataStore(meta);
 
-    if (!options.isQuiet()) IJ.showStatus("");
+    BF.status(options.isQuiet(), "");
 
     Logger root = Logger.getRootLogger();
     root.setLevel(Level.INFO);

@@ -54,6 +54,16 @@ public final class BF {
   public static void debug(String msg) {
     if (IJ.debugMode) IJ.log("LOCI: " + msg);
   }
+  
+  public static void status(boolean quiet, String msg) {
+    if (quiet) return;
+    IJ.showStatus(msg);
+  }
+  
+  public static void progress(boolean quiet, int value, int max) {
+    if (quiet) return;
+    IJ.showProgress(value, max);
+  }
 
   public static ImagePlus[] openImagePlus(String path)
     throws FormatException, IOException

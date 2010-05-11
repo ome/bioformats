@@ -178,8 +178,8 @@ public class Updater implements PlugIn {
     File plugin = new File(downloadPath);
     if (plugin.exists()) {
       if (!plugin.delete()) {
-        IJ.showStatus("");
-        IJ.showProgress(1);
+        BF.status(false, "");
+        BF.progress(false, 1, 1);
         WindowTools.reportException(
           new IOException("Could not delete " + downloadPath), false,
           "An error occurred while downloading the LOCI plugins");
@@ -188,7 +188,7 @@ public class Updater implements PlugIn {
     }
 
     // download new version to plugins directory
-    IJ.showStatus("Connecting to download server...");
+    BF.status(false, "Connecting to download server...");
     try {
       URL url = new URL(urlPath);
       URLConnection urlConn = url.openConnection();
@@ -198,21 +198,21 @@ public class Updater implements PlugIn {
         new BufferedInputStream(urlConn.getInputStream()));
       int off = 0;
       while (off < total) {
-        IJ.showStatus("Downloading loci_tools.jar...");
-        IJ.showProgress((double) off / total);
+        BF.status(false, "Downloading loci_tools.jar...");
+        BF.progress(false, off, total);
         int len = CHUNK_SIZE;
         if (off + len > total) len = total - off;
         int r = in.read(buf, off, len);
         if (r <= 0) {
-          IJ.showStatus("");
+          BF.status(false, "");
           IJ.showMessage("Error downloading the LOCI plugins.");
           return;
         }
         off += r;
       }
       in.close();
-      IJ.showProgress(1);
-      IJ.showStatus("Saving loci_tools.jar...");
+      BF.progress(false, 1, 1);
+      BF.status(false, "Saving loci_tools.jar...");
 
       FileOutputStream out = new FileOutputStream(plugin);
       out.write(buf);
@@ -220,7 +220,7 @@ public class Updater implements PlugIn {
 
       boolean success = plugin.renameTo(new File(jarPath));
       if (!success) {
-        IJ.showStatus("");
+        BF.status(false, "");
         IJ.showMessage("The LOCI plugins have been downloaded to:\n" +
           downloadPath + "\n" +
           "The JAR file could not be renamed to loci_tools.jar.\n" +
@@ -230,13 +230,13 @@ public class Updater implements PlugIn {
       }
     }
     catch (IOException e) {
-      IJ.showStatus("");
-      IJ.showProgress(1);
+      BF.status(false, "");
+      BF.progress(false, 1, 1);
       WindowTools.reportException(e, false,
         "An error occurred while downloading the LOCI plugins");
       return;
     }
-    IJ.showStatus("");
+    BF.status(false, "");
     IJ.showMessage("The LOCI plugins have been downloaded.\n" +
       "Please restart ImageJ to complete the upgrade process.");
   }

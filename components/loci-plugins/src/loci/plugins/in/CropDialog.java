@@ -65,14 +65,13 @@ public class CropDialog extends ImporterDialog {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
 
-      Region region = options.getCropRegion(s);
-      if (region == null)
+      Region region = process.getCropRegion(s);
 
       gd.addMessage(process.getSeriesLabel(s).replaceAll("_", " "));
-      gd.addNumericField("X_Coordinate_" + (s + 1), 0, 0);
-      gd.addNumericField("Y_Coordinate_" + (s + 1), 0, 0);
-      gd.addNumericField("Width_" + (s + 1), r.getSizeX(), 0);
-      gd.addNumericField("Height_" + (s + 1), r.getSizeY(), 0);
+      gd.addNumericField("X_Coordinate_" + (s + 1), region.x, 0);
+      gd.addNumericField("Y_Coordinate_" + (s + 1), region.y, 0);
+      gd.addNumericField("Width_" + (s + 1), region.width, 0);
+      gd.addNumericField("Height_" + (s + 1), region.height, 0);
     }
     WindowTools.addScrollBars(gd);
  
@@ -88,9 +87,7 @@ public class CropDialog extends ImporterDialog {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
 
-      Region region = options.getCropRegion(s);
-      if (region == null) region = new Region();
-
+      Region region = new Region();
       region.x = (int) gd.getNextNumber();
       region.y = (int) gd.getNextNumber();
       region.width = (int) gd.getNextNumber();
@@ -109,7 +106,7 @@ public class CropDialog extends ImporterDialog {
         region.height = r.getSizeY() - region.y;
       }
 
-      options.setCropRegion(s, region); // in case we got a copy
+      options.setCropRegion(s, region);
     }
 
     return true;

@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.in;
 
 import ij.gui.GenericDialog;
-import loci.formats.IFormatReader;
+import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -54,39 +54,17 @@ public class RangeDialog extends ImporterDialog {
   protected boolean needPrompt() {
     if (process.isWindowless() || !options.isSpecifyRanges()) return false;
     
+    ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
-    IFormatReader r = process.getReader();
-
-    boolean needRange = false;
     for (int s=0; s<seriesCount; s++) {
-      if (options.isSeriesOn(s) && r.getImageCount() > 1) {
-        needRange = true;
-        break;
-      }
+      if (options.isSeriesOn(s) && r.getImageCount() > 1) return true;
     }
-    return needRange;
+    return false;
   }
   
   protected GenericDialog constructDialog() {
+    ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
-    IFormatReader r = process.getReader();
-
-    // -- CTR TODO - refactor range-related options into RangeOptions class
-    // has a normalize(IFormatReader) method
-    // call both before and after the dialog here...
-
-    for (int s=0; s<seriesCount; s++) {
-      r.setSeries(s);
-      options.setCBegin(s, 0);
-      options.setZBegin(s, 0);
-      options.setTBegin(s, 0);
-      options.setCEnd(s, r.getEffectiveSizeC() - 1);
-      options.setZEnd(s, r.getSizeZ() - 1);
-      options.setTEnd(s, r.getSizeT() - 1);
-      options.setCStep(s, 1);
-      options.setZStep(s, 1);
-      options.setTStep(s, 1);
-    }
 
     // construct dialog
     GenericDialog gd = new GenericDialog("Bio-Formats Range Options");
@@ -97,25 +75,25 @@ public class RangeDialog extends ImporterDialog {
       String suffix = seriesCount > 1 ? "_" + (s + 1) : "";
       //if (r.isOrderCertain()) {
       if (r.getEffectiveSizeC() > 1) {
-        gd.addNumericField("C_Begin" + suffix, options.getCBegin(s) + 1, 0);
-        gd.addNumericField("C_End" + suffix, options.getCEnd(s) + 1, 0);
-        gd.addNumericField("C_Step" + suffix, options.getCStep(s), 0);
+        gd.addNumericField("C_Begin" + suffix, process.getCBegin(s) + 1, 0);
+        gd.addNumericField("C_End" + suffix, process.getCEnd(s) + 1, 0);
+        gd.addNumericField("C_Step" + suffix, process.getCStep(s), 0);
       }
       if (r.getSizeZ() > 1) {
-        gd.addNumericField("Z_Begin" + suffix, options.getZBegin(s) + 1, 0);
-        gd.addNumericField("Z_End" + suffix, options.getZEnd(s) + 1, 0);
-        gd.addNumericField("Z_Step" + suffix, options.getZStep(s), 0);
+        gd.addNumericField("Z_Begin" + suffix, process.getZBegin(s) + 1, 0);
+        gd.addNumericField("Z_End" + suffix, process.getZEnd(s) + 1, 0);
+        gd.addNumericField("Z_Step" + suffix, process.getZStep(s), 0);
       }
       if (r.getSizeT() > 1) {
-        gd.addNumericField("T_Begin" + suffix, options.getTBegin(s) + 1, 0);
-        gd.addNumericField("T_End" + suffix, options.getTEnd(s) + 1, 0);
-        gd.addNumericField("T_Step" + suffix, options.getTStep(s), 0);
+        gd.addNumericField("T_Begin" + suffix, process.getTBegin(s) + 1, 0);
+        gd.addNumericField("T_End" + suffix, process.getTEnd(s) + 1, 0);
+        gd.addNumericField("T_Step" + suffix, process.getTStep(s), 0);
       }
       //}
       //else {
-      //  gd.addNumericField("Begin" + suffix, options.getCBegin(s) + 1, 0);
-      //  gd.addNumericField("End" + suffix, options.getCEnd(s) + 1, 0);
-      //  gd.addNumericField("Step" + suffix, options.getCStep(s), 0);
+      //  gd.addNumericField("Begin" + suffix, process.getCBegin(s) + 1, 0);
+      //  gd.addNumericField("End" + suffix, process.getCEnd(s) + 1, 0);
+      //  gd.addNumericField("Step" + suffix, process.getCStep(s), 0);
       //}
     }
     WindowTools.addScrollBars(gd);
@@ -124,8 +102,8 @@ public class RangeDialog extends ImporterDialog {
   }
   
   protected boolean harvestResults(GenericDialog gd) {
+    ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
-    IFormatReader r = process.getReader();
 
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
@@ -135,15 +113,15 @@ public class RangeDialog extends ImporterDialog {
       int sizeT = r.getSizeT();
       boolean certain = r.isOrderCertain();
 
-      int cBegin = options.getCBegin(s);
-      int cEnd = options.getCEnd(s);
-      int cStep = options.getCStep(s);
-      int zBegin = options.getZBegin(s);
-      int zEnd = options.getZEnd(s);
-      int zStep = options.getZStep(s);
-      int tBegin = options.getTBegin(s);
-      int tEnd = options.getTEnd(s);
-      int tStep = options.getTStep(s);
+      int cBegin = process.getCBegin(s);
+      int cEnd = process.getCEnd(s);
+      int cStep = process.getCStep(s);
+      int zBegin = process.getZBegin(s);
+      int zEnd = process.getZEnd(s);
+      int zStep = process.getZStep(s);
+      int tBegin = process.getTBegin(s);
+      int tEnd = process.getTEnd(s);
+      int tStep = process.getTStep(s);
 
       //if (certain) {
       if (r.getEffectiveSizeC() > 1) {

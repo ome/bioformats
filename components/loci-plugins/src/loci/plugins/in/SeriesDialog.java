@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
 import ij.gui.GenericDialog;
 
 import java.awt.AWTEvent;
@@ -49,6 +48,7 @@ import javax.swing.JLabel;
 import loci.formats.FormatTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
+import loci.plugins.BF;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -128,7 +128,8 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
       p[i] = new Panel();
       p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
       if (options.isForceThumbnails()) {
-        IJ.showStatus("Reading thumbnail for series #" + (i + 1));
+        BF.status(options.isQuiet(),
+          "Reading thumbnail for series #" + (i + 1));
         int z = thumbReader.getSizeZ() / 2;
         int t = thumbReader.getSizeT() / 2;
         int ndx = thumbReader.getIndex(z, 0, t);

@@ -151,18 +151,15 @@ public class ImagePlusReader implements StatusReporter {
       reader.setSeries(s);
 
       boolean[] load = new boolean[reader.getImageCount()];
-      int cBegin = options.getCBegin(s);
-      int cEnd = options.getCEnd(s);
-      if (cEnd < 0) cEnd = reader.getEffectiveSizeC() - 1;
-      int cStep = options.getCStep(s);
-      int zBegin = options.getZBegin(s);
-      int zEnd = options.getZEnd(s);
-      if (zEnd < 0) zEnd = reader.getSizeZ() - 1;
-      int zStep = options.getZStep(s);
-      int tBegin = options.getTBegin(s);
-      int tEnd = options.getTEnd(s);
-      if (tEnd < 0) tEnd = reader.getSizeT() - 1;
-      int tStep = options.getTStep(s);
+      int cBegin = process.getCBegin(s);
+      int cEnd = process.getCEnd(s);
+      int cStep = process.getCStep(s);
+      int zBegin = process.getZBegin(s);
+      int zEnd = process.getZEnd(s);
+      int zStep = process.getZStep(s);
+      int tBegin = process.getTBegin(s);
+      int tEnd = process.getTEnd(s);
+      int tStep = process.getTStep(s);
       for (int c=cBegin; c<=cEnd; c+=cStep) {
         for (int z=zBegin; z<=zEnd; z+=zStep) {
           for (int t=tBegin; t<=tEnd; t+=tStep) {
@@ -191,8 +188,7 @@ public class ImagePlusReader implements StatusReporter {
       ImageStack stackF = null; // for floating point images (32-bit)
       ImageStack stackO = null; // for all other images (24-bit RGB)
 
-      Region region = options.getCropRegion(s);
-      if (region == null) region = new Region();
+      Region region = process.getCropRegion(s);
       int sizeX = reader.getSizeX(), sizeY = reader.getSizeY();
       if (options.doCrop()) {
         // bounds checking for cropped region

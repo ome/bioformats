@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
-
 import java.awt.Dialog;
 import java.awt.Panel;
 import java.awt.image.BufferedImage;
@@ -41,6 +39,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
+import loci.plugins.BF;
 
 /**
  * Loads thumbnails for Bio-Formats Importer
@@ -85,7 +84,7 @@ public class ThumbLoader implements Runnable {
   public void stop() {
     if (loader == null) return;
     stop = true;
-    IJ.showStatus("Canceling thumbnail generation");
+    BF.status(false, "Canceling thumbnail generation");
     try {
       loader.join();
       loader = null;
@@ -93,7 +92,7 @@ public class ThumbLoader implements Runnable {
     catch (InterruptedException exc) {
       exc.printStackTrace();
     }
-    IJ.showStatus("");
+    BF.status(false, "");
   }
 
   // -- Runnable methods --
@@ -101,7 +100,7 @@ public class ThumbLoader implements Runnable {
   /** Does the work of loading the thumbnails. */
   public void run() {
     try {
-      IJ.showStatus("Gathering series information");
+      BF.status(false, "Gathering series information");
       int seriesCount = ir.getSeriesCount();
 
       // find image plane for each series and sort by size
@@ -118,7 +117,7 @@ public class ThumbLoader implements Runnable {
       for (int i=0; i<seriesCount; i++) {
         if (stop) return;
         final int ii = info[i].index;
-        IJ.showStatus("Reading thumbnail for series #" + (ii + 1));
+        BF.status(false, "Reading thumbnail for series #" + (ii + 1));
         ir.setSeries(ii);
         // open middle image thumbnail
         int z = ir.getSizeZ() / 2;

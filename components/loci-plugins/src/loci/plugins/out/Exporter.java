@@ -62,6 +62,7 @@ import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.plugins.BF;
 import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
@@ -343,13 +344,11 @@ public class Exporter {
       if (codecs != null && codecs.length > 1) {
         GenericDialog gd =
           new GenericDialog("Bio-Formats Exporter Options");
-        if (codecs != null) {
-          gd.addChoice("Compression type: ", codecs, codecs[0]);
-        }
+        gd.addChoice("Compression type: ", codecs, codecs[0]);
         gd.showDialog();
         if (gd.wasCanceled()) return;
 
-        if (codecs != null) w.setCompression(gd.getNextChoice());
+        w.setCompression(gd.getNextChoice());
       }
 
       // convert and save slices
@@ -375,10 +374,10 @@ public class Exporter {
 
       for (int i=start; i<end; i+=n) {
         if (doStack) {
-          IJ.showStatus("Saving plane " + (i + 1) + "/" + size);
-          IJ.showProgress((double) (i + 1) / size);
+          BF.status(false, "Saving plane " + (i + 1) + "/" + size);
+          BF.progress(false, i, size);
         }
-        else IJ.showStatus("Saving image");
+        else BF.status(false, "Saving image");
         proc = is.getProcessor(i + 1);
 
         if (proc instanceof RecordedImageProcessor) {

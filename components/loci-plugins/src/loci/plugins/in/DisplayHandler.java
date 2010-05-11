@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 
@@ -46,6 +45,7 @@ import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.gui.XMLWindow;
 import loci.formats.services.OMEXMLService;
+import loci.plugins.BF;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.WindowTools;
@@ -232,10 +232,10 @@ public class DisplayHandler implements StatusListener {
   /** Reports status updates via ImageJ's status bar mechanism. */
   public void statusUpdated(StatusEvent e) {
     String msg = e.getStatusMessage();
-    if (msg != null) IJ.showStatus(msg);
+    if (msg != null) BF.status(options.isQuiet(), msg);
     int value = e.getProgressValue();
     int max = e.getProgressMaximum();
-    if (value >= 0 && max >= 0) IJ.showProgress(value, max);
+    if (value >= 0 && max >= 0) BF.progress(options.isQuiet(), value, max);
   }
 
 }

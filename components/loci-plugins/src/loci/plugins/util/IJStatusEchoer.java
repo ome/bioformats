@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.IJ;
+import loci.plugins.BF;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
@@ -42,7 +42,7 @@ public class IJStatusEchoer extends AppenderSkeleton {
   // -- AppenderSkeleton API methods --
 
   protected void append(LoggingEvent event) {
-    IJ.showStatus(event.getMessage().toString());
+    BF.status(false, event.getMessage().toString());
   }
 
   public boolean requiresLayout() {

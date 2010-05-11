@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import loci.formats.FormatTools;
+import loci.plugins.BF;
 import loci.plugins.in.ImportProcess;
 import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.ImagePlusTools;
@@ -128,6 +129,10 @@ public class Colorizer implements PlugInFilter {
         Macro.getValue(arg, "hyper_stack", "false")).booleanValue();
     }
 
+    int nTimes = imp.getNFrames();
+    int nSlices = imp.getNSlices();
+    BF.status(false, "Running colorizer on " + (nTimes * nSlices) + " images");
+
     ImagePlus newImp = Colorizer.colorize(imp, color, stackOrder, lut, series, mergeOption, hyperstack);
 
     if (newImp != null) {
@@ -155,8 +160,6 @@ public class Colorizer implements PlugInFilter {
     int nChannels = imp.getNChannels();
     int nTimes = imp.getNFrames();
     int nSlices = imp.getNSlices();
-
-    IJ.showStatus("Running colorizer on " + (nTimes * nSlices) + " images");
 
     if (imp.isComposite() || stack.isRGB() || (nChannels == 1 && !color)) {
       return null;
@@ -316,7 +319,7 @@ public class Colorizer implements PlugInFilter {
     for (int i=0; i<indices[0].length; i++) {
       newStack.addSlice(s.getSliceLabel(indices[indices.length - 1][i]),
         ImagePlusTools.makeRGB(processors[i]).getProcessor());
-      IJ.showProgress((double) ((i + 1) / indices[0].length) * 100);
+      BF.progress(false, i, indices[0].length);
     }
 
     ip.setStack(ip.getTitle(), newStack);

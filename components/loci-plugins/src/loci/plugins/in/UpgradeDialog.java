@@ -27,6 +27,7 @@ package loci.plugins.in;
 
 import ij.IJ;
 import ij.gui.GenericDialog;
+import loci.plugins.BF;
 import loci.plugins.Updater;
 
 /**
@@ -77,7 +78,7 @@ public class UpgradeDialog extends ImporterDialog {
     }
 
     if (options.doUpgradeCheck()) {
-      IJ.showStatus("Checking for new version...");
+      BF.status(false, "Checking for new version...");
       if (Updater.newVersionAvailable()) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
           "A new stable version of Bio-Formats is available.\n" +

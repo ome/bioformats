@@ -25,10 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
-
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
+import loci.plugins.BF;
 import loci.plugins.prefs.OptionsDialog;
 
 /**
@@ -68,7 +67,7 @@ public class ImporterPrompter implements StatusListener {
     //final int max = e.getProgressMaximum();
     final ImportStep step = ImportStep.getStep(value);
 
-    if (!process.getOptions().isQuiet()) IJ.showStatus(message);
+    BF.status(!process.getOptions().isQuiet(), message);
 
     switch (step) {
       case READER:

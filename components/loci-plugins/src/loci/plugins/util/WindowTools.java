@@ -49,6 +49,8 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import loci.plugins.BF;
+
 /**
  * Utility methods for managing ImageJ dialogs and windows.
  *
@@ -180,17 +182,16 @@ public final class WindowTools {
 
   /** Reports the given exception with stack trace in an ImageJ error dialog. */
   public static void reportException(Throwable t, boolean quiet, String msg) {
-    IJ.showStatus("");
-    if (!quiet) {
-      if (t != null) {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        t.printStackTrace(new PrintStream(buf));
-        String s = new String(buf.toByteArray());
-        StringTokenizer st = new StringTokenizer(s, "\n\r");
-        while (st.hasMoreTokens()) IJ.write(st.nextToken());
-      }
-      if (msg != null) IJ.error("Bio-Formats Importer", msg);
+    if (quiet) return;
+    BF.status(quiet, "");
+    if (t != null) {
+      ByteArrayOutputStream buf = new ByteArrayOutputStream();
+      t.printStackTrace(new PrintStream(buf));
+      String s = new String(buf.toByteArray());
+      StringTokenizer st = new StringTokenizer(s, "\n\r");
+      while (st.hasMoreTokens()) IJ.write(st.nextToken());
     }
+    if (msg != null) IJ.error("Bio-Formats Importer", msg);
   }
 
   @SuppressWarnings("unchecked")
