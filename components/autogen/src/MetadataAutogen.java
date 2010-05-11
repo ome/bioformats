@@ -131,12 +131,15 @@ public class MetadataAutogen {
       VelocityTools.processTemplate(ve, context,
         "meta/MetadataConverter.vm", "meta/MetadataConverter.java");
 
+      // NB : these IMetadata implementations are no longer necessary
+      /*
       // generate version-specific OME-XML metadata implementations
       for (String versionKey : entityList.versions()) {
         entityList.setVersion(versionKey);
         VelocityTools.processTemplate(ve, context, "ome/OMEXMLMetadata.vm",
           "ome/OMEXML" + versionKey + "Metadata.java");
       }
+      */
     }
   }
 

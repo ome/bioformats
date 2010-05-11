@@ -29,7 +29,7 @@ import java.util.Vector;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
-//import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 
@@ -742,7 +742,7 @@ public final class FormatTools {
   {
     MetadataStore store = r.getMetadataStore();
     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
-      (MetadataRetrieve) store : /*new DummyMetadata()*/ null;
+      (MetadataRetrieve) store : new DummyMetadata();
 
     String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(series));
 

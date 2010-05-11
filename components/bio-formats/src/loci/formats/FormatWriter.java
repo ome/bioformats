@@ -26,7 +26,7 @@ package loci.formats;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
-//import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -65,7 +65,7 @@ public abstract class FormatWriter extends FormatHandler
    * directly as the semantics of {@link #getMetadataRetrieve()}
    * prevent "null" access.
    */
-  protected MetadataRetrieve metadataRetrieve = /*new DummyMetadata()*/ null;
+  protected MetadataRetrieve metadataRetrieve = new DummyMetadata();
 
   // -- Constructors --
 

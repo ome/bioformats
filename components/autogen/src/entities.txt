@@ -25,10 +25,9 @@
 # Path elements ending in plus (+) have maxOccurs > 1 and generate an
 # index parameter to allow differentiation between them.
 
-# Root/UUID
+# TODO add descriptions as appropriate
 
 [Arc]
-countable = true
 path = Instrument+/Arc+
 
 [Arc ID]
@@ -52,32 +51,6 @@ type = String
 [Arc Type]
 type = ArcType
 
-[FileAnnotationBinaryFile]
-countable = true
-path = FileAnnotationBinaryFile+
-
-[FileAnnotationBinaryFile FileName]
-type = String
-
-[FileAnnotationBinaryFile MIMEType]
-type = String
-
-[FileAnnotationBinaryFile FileSize]
-type = Integer
-
-[OTFBinaryFile]
-countable = true
-path = OTFBinaryFile+
-
-[OTFBinaryFile FileName]
-type = String
-
-[OTFBinaryFile MIMEType]
-type = String
-
-[OTFBinaryFile FileSize]
-type = Integer
-
 [BooleanAnnotation]
 countable = true
 path = BooleanAnnotation+
@@ -99,9 +72,9 @@ path = Image+/Channel+
 type = AcquisitionMode
 
 [Channel AnnotationRef]
-type = String
 countable = true
 path = Image+/Channel+/AnnotationRef+
+type = String
 
 [Channel Color]
 type = Integer
@@ -145,14 +118,23 @@ type = Integer
 [Channel SamplesPerPixel]
 type = Integer
 
+[Channel LightSourceSettingsAttenuation]
+type = PercentFraction
+
+[Channel LightSourceSettingsID]
+type = String
+
+[Channel LightSourceSettingsWavelength]
+type = PositiveInteger
+
 [Dataset]
 countable = true
 path = Dataset+
 
 [Dataset AnnotationRef]
 countable = true
-type = String
 path = Dataset+/AnnotationRef+
+type = String
 
 [Dataset Description]
 type = String
@@ -356,8 +338,8 @@ type = String
 
 [Experimenter GroupRef]
 countable = true
-type = String
 path = Experimenter+/GroupRef+
+type = String
 
 [Experimenter ID]
 type = String
@@ -375,7 +357,6 @@ type = String
 type = String
 
 [Filament]
-countable = true
 path = Instrument+/Filament+
 
 [Filament ID]
@@ -402,6 +383,15 @@ type = FilamentType
 [FileAnnotation]
 countable = true
 path = FileAnnotation+
+
+[FileAnnotation BinaryFileFileName]
+type = String
+
+[FileAnnotation BinaryFileMIMEType]
+type = String
+
+[FileAnnotation BinaryFileSize]
+type = Integer
 
 [FileAnnotation ID]
 type = String
@@ -435,7 +425,7 @@ type = String
 type = FilterType
 
 [FilterSet]
-countable= true
+countable = true
 path = Instrument+/FilterSet+
 
 [FilterSet DichroicRef]
@@ -533,6 +523,18 @@ countable = true
 path = Image+/ROIRef+
 type = String
 
+[Image ObjectiveSettingsCorrectionCollar]
+type = Double
+
+[Image ObjectiveSettingsID]
+type = String
+
+[Image ObjectiveSettingsMedium]
+type = Medium
+
+[Image ObjectiveSettingsRefractiveIndex]
+type = Double
+
 [ImagingEnvironment]
 countable = false
 path = Image+/ImagingEnvironment
@@ -557,7 +559,6 @@ path = Instrument+
 type = String
 
 [Laser]
-countable = true
 path = Instrument+/Laser+
 
 [Laser ID]
@@ -606,7 +607,6 @@ type = LaserType
 type = PositiveInteger
 
 [LightEmittingDiode]
-countable = true
 path = Instrument+/LightEmittingDiode+
 
 [LightEmittingDiode ID]
@@ -635,34 +635,14 @@ path = Image+/Channel+/LightPath
 type = String
 
 [LightPath EmissionFilterRef]
-type = String
 countable = true
 path = Image+/Channel+/LightPath/EmissionFilterRef+
+type = String
 
 [LightPath ExcitationFilterRef]
-type = String
 countable = true
 path = Image+/Channel+/LightPath/ExcitationFilterRef+
-
-[ChannelLightSourceSettings]
-countable = false
-path = Image+/Channel+/LightSourceSettings
-
-[ChannelLightSourceSettings ID]
 type = String
-
-[ChannelLightSourceSettings Wavelength]
-type = PositiveInteger
-
-[MicrobeamManipulationLightSourceSettings]
-countable = true
-path = Experiment+/MicrobeamManipulation+/LightSourceSettings+
-
-[MicrobeamManipulationLightSourceSettings ID]
-type = String
-
-[MicrobeamManipulationLightSourceSettings Wavelength]
-type = PositiveInteger
 
 [Line]
 countable = false
@@ -814,6 +794,19 @@ type = String
 [MicrobeamManipulation Type]
 type = MicrobeamManipulationType
 
+[MicrobeamManipulationLightSourceSettings]
+countable = true
+path = Experiment+/MicrobeamManipulation+/LightSourceSettings+
+
+[MicrobeamManipulationLightSourceSettings Attenuation]
+type = PercentFraction
+
+[MicrobeamManipulationLightSourceSettings ID]
+type = String
+
+[MicrobeamManipulationLightSourceSettings Wavelength]
+type = PositiveInteger
+
 [Microscope]
 countable = false
 path = Instrument+/Microscope
@@ -837,6 +830,15 @@ type = MicroscopeType
 countable = true
 path = Instrument+/OTF+
 
+[OTF BinaryFileFileName]
+type = String
+
+[OTF BinaryFileMIMEType]
+type = String
+
+[OTF BinaryFileSize]
+type = Integer
+
 [OTF FilterSetRef]
 type = String
 
@@ -854,6 +856,18 @@ type = PositiveInteger
 
 [OTF Type]
 type = PixelType
+
+[OTF ObjectiveSettingsCorrectionCollar]
+type = Double
+
+[OTF ObjectiveSettingsID]
+type = String
+
+[OTF ObjectiveSettingsMedium]
+type = Medium
+
+[OTF ObjectiveSettingsRefractiveIndex]
+type = Double
 
 [Objective]
 countable = true
@@ -893,38 +907,6 @@ type = Integer
 type = String
 
 [Objective WorkingDistance]
-type = Double
-
-[ImageObjectiveSettings]
-countable = false
-path = Image+/ObjectiveSettings
-
-[ImageObjectiveSettings CorrectionCollar]
-type = Double
-
-[ImageObjectiveSettings ID]
-type = String
-
-[ImageObjectiveSettings Medium]
-type = Medium
-
-[ImageObjectiveSettings RefractiveIndex]
-type = Double
-
-[OTFObjectiveSettings]
-countable = false
-path = Instrument+/OTF+/ObjectiveSettings
-
-[OTFObjectiveSettings CorrectionCollar]
-type = Double
-
-[OTFObjectiveSettings ID]
-type = String
-
-[OTFObjectiveSettings Medium]
-type = Medium
-
-[OTFObjectiveSettings RefractiveIndex]
 type = Double
 
 [Path]
@@ -968,17 +950,10 @@ type = Integer
 type = Integer
 
 [Path Transform]
-type = Strin
+type = String
 
 [Path Definition]
 type = String
-
-[PixelsBinData]
-countable = true
-path = Image+/Pixels/BinData+
-
-[PixelsBinData BigEndian]
-type = Boolean
 
 [Pixels]
 countable = false
@@ -1025,13 +1000,19 @@ type = Double
 [Pixels Type]
 type = PixelType
 
+[PixelsBinData]
+path = Image+/Pixels/BinData+
+
+[PixelsBinData BigEndian]
+type = Boolean
+
 [Plane]
 countable = true
-path = Image+/Plane+
+path = Image+/Pixels/Plane+
 
 [Plane AnnotationRef]
 countable = true
-path = Image+/Plane+/AnnotationRef+
+path = Image+/Pixels/Plane+/AnnotationRef+
 type = String
 
 [Plane DeltaT]
@@ -1114,7 +1095,7 @@ path = Plate+/PlateAcquisition+
 
 [PlateAcquisition AnnotationRef]
 countable = true
-path = Plate+/PlateAcquistion+/AnnotationRef+
+path = Plate+/PlateAcquisition+/AnnotationRef+
 type = String
 
 [PlateAcquisition Description]
@@ -1136,6 +1117,8 @@ type = String
 type = String
 
 [PlateAcquisition WellSampleRef]
+countable = true
+path = Plate+/PlateAcquisition+/WellSampleRef+
 type = String
 
 [Point]
@@ -1591,8 +1574,12 @@ type = Double
 [WellSample PositionY]
 type = Double
 
-[WellSample PositionZ]
-type = Double
+[WellSample Timepoint]
+type = Integer
+
+[WellSampleRef]
+countable = true
+path = Plate+/PlateAcquisition+/WellSampleRef+
 
 [XMLAnnotation]
 countable = true
@@ -1606,3 +1593,116 @@ type = String
 
 [XMLAnnotation Value]
 type = String
+
+[ScreenRef]
+countable = true
+path = Plate+/ScreenRef+
+type = String
+
+[MicrobeamManipulationROIRef]
+countable = true
+path = Experiment+/MicrobeamManipulation+/ROIRef+
+
+[ImageROIRef]
+countable = true
+path = Image+/ROIRef+
+
+[ProjectRef]
+countable = true
+path = Dataset+/ProjectRef+
+
+[PlateRef]
+countable = true
+path = Screen+/PlateRef+
+
+[MicrobeamManipulationRef]
+countable = true
+path = Image+/MicrobeamManipulationRef+
+
+[ExperimenterGroupRef]
+countable = true
+path = Experimenter+/GroupRef+
+
+[FilterSetExcitationFilterRef]
+countable = true
+path = Instrument+/FilterSet+/ExcitationFilterRef+
+
+[FilterSetEmissionFilterRef]
+countable = true
+path = Instrument+/FilterSet+/EmissionFilterRef+
+
+[LightPathExcitationFilterRef]
+countable = true
+path = Image+/Channel+/LightPath/ExcitationFilterRef+
+
+[LightPathEmissionFilterRef]
+countable = true
+path = Image+/Channel+/LightPath/EmissionFilterRef+
+
+[DatasetRef]
+countable = true
+path = Image+/DatasetRef+
+
+[ChannelAnnotationRef]
+countable = true
+path = Image+/Channel+/AnnotationRef+
+
+[DatasetAnnotationRef]
+countable = true
+path = Dataset+/AnnotationRef+
+
+[ExperimenterAnnotationRef]
+countable = true
+path = Experimenter+/AnnotationRef+
+
+[ImageAnnotationRef]
+countable = true
+path = Image+/AnnotationRef+
+
+[ListAnnotationAnnotationRef]
+countable = true
+path = ListAnnotation+/AnnotationRef+
+
+[PixelsAnnotationRef]
+countable = true
+path = Image+/Pixels/AnnotationRef+
+
+[PlaneAnnotationRef]
+countable = true
+path = Image+/Pixels/Plane+/AnnotationRef+
+
+[PlateAnnotationRef]
+countable = true
+path = Plate+/AnnotationRef+
+
+[PlateAcquisitionAnnotationRef]
+countable = true
+path = Plate+/PlateAcquisition+/AnnotationRef+
+
+[ProjectAnnotationRef]
+countable = true
+path = Project+/AnnotationRef+
+
+[ROIAnnotationRef]
+countable = true
+path = ROI+/AnnotationRef+
+
+[ReagentAnnotationRef]
+countable = true
+path = Screen+/Reagent+/AnnotationRef+
+
+[ScreenAnnotationRef]
+countable = true
+path = Screen+/AnnotationRef+
+
+[WellAnnotationRef]
+countable = true
+path = Plate+/Well+/AnnotationRef+
+
+[WellSampleAnnotationRef]
+countable = true
+path = Plate+/Well+/WellSample+/AnnotationRef+
+
+[ShapeAnnotationRef]
+countable = true
+path = ROI+/Shape+/AnnotationRef+

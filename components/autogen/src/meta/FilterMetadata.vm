@@ -93,8 +93,8 @@ public class FilterMetadata implements MetadataStore {
   /* @see MetadataStore#set$entity$prop($q.type(), $q.typesList()) */
   public void set$entity$prop($q.type() $q.var($prop), $q.argsList()) {
 #if ($q.type() == "String")
-    String value = filter ? DataTools.sanitize($q.var($prop)) : $q.var($prop);
-    store.set$entity$prop(value, $q.varsList());
+    String filteredValue = filter ? DataTools.sanitize($q.var($prop)) : $q.var($prop);
+    store.set$entity$prop(filteredValue, $q.varsList());
 #else
     store.set$entity$prop($q.var($prop), $q.varsList());
 #end

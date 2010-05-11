@@ -46,7 +46,7 @@ import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
-//import loci.formats.meta.DummyMetadata;
+import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
@@ -493,8 +493,7 @@ public class ZeissZVIReader extends FormatReader {
       if (name.indexOf("Scaling") == -1 && dirName.equals("Tags")) {
         int imageNum = getImageNumber(name, -1);
         if (imageNum == -1) {
-          // TODO
-          parseTags(imageNum, name, /*new DummyMetadata()*/null);
+          parseTags(imageNum, name, new DummyMetadata());
         }
         else tagsToParse.add(name);
       }
@@ -845,8 +844,7 @@ public class ZeissZVIReader extends FormatReader {
         if (cIndex != -1) key += " " + cIndex;
         addGlobalMeta(key, value);
 
-        // TODO
-        if (key.startsWith("ImageTile")/* && !(store instanceof DummyMetadata)*/ ) {
+        if (key.startsWith("ImageTile") && !(store instanceof DummyMetadata)) {
           if (!tiles.containsKey(new Integer(value))) {
             tiles.put(new Integer(value), new Integer(1));
           }
