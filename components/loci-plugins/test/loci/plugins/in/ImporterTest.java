@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
 import java.io.IOException;
@@ -109,11 +110,29 @@ public class ImporterTest {
     return fileName;
   }
 
-  private int sIndex(ImageProcessor proc) { return proc.get(0,0);  }  // series
-  private int iIndex(ImageProcessor proc) { return proc.get(10,0); }  // num in series
-  private int zIndex(ImageProcessor proc) { return proc.get(20,0); }  // z
-  private int cIndex(ImageProcessor proc) { return proc.get(30,0); }  // c
-  private int tIndex(ImageProcessor proc) { return proc.get(40,0); }  // t
+  /** Series number of the given image processor. */
+  private int sIndex(ImageProcessor proc) { return getPixel(proc, 0, 0);  }
+
+  /** Image number of the given image processor. */
+  private int iIndex(ImageProcessor proc) { return getPixel(proc, 10, 0); }
+
+  /** Slice number of the given image processor. */
+  private int zIndex(ImageProcessor proc) { return getPixel(proc, 20, 0); }
+
+  /** Channel number of the given image processor. */
+  private int cIndex(ImageProcessor proc) { return getPixel(proc, 30, 0); }
+
+  /** Frame number of the given image processor. */
+  private int tIndex(ImageProcessor proc) { return getPixel(proc, 40, 0); }
+
+  private int getPixel(ImageProcessor proc, int x, int y) {
+    // NB: FloatProcessor returns the raw int bits when get(int, int) is
+    // called; to get actual value, we must call getf(int, int) and cast.
+    if (proc instanceof FloatProcessor) {
+      return (int) ((FloatProcessor) proc).getf(x, y);
+    }
+    return proc.get(x, y);
+  }
   
   @SuppressWarnings("unused")
   private void printVals(ImageProcessor proc)
@@ -351,21 +370,21 @@ public class ImporterTest {
 
     int actualZ = getSizeZ(imp);
     int actualT = getSizeT(imp);
-    assertEquals(z,actualT);
-    assertEquals(t,actualZ);
+    assertEquals(z,actualT); // Z<->T swapped
+    assertEquals(t,actualZ); // Z<->T swapped
 
     // make sure the dimensions were swapped correctly
-    // notice I'm testing from inside out in ZCT order but using input z for T and the input t for Z
+    // notice I'm testing from inside out in ZCT order
+    // but using input z for T and the input t for Z
     int p = 1;
-    for (int k = 0; k < z; k++)
-      for (int j = 0; j < c; j++)
-        for (int i = 0; i < t; i++)
+    for (int zIndex = 0; zIndex < z; zIndex++)
+      for (int cIndex = 0; cIndex < c; cIndex++)
+        for (int tIndex = 0; tIndex < t; tIndex++)
         {
-          ImageProcessor proc = st.getProcessor(p);
-          assertEquals(i,zIndex(proc));
-          assertEquals(j,cIndex(proc));
-          assertEquals(k,tIndex(proc));
-          p++;
+          ImageProcessor proc = st.getProcessor(p++);
+          assertEquals(tIndex,zIndex(proc)); // Z<->T swapped
+          assertEquals(cIndex,cIndex(proc));
+          assertEquals(zIndex,tIndex(proc)); // Z<->T swapped
         }
   }
 
