@@ -1,5 +1,5 @@
 //
-// ImporterReader.java
+// ImportProcess.java
 //
 
 /*
@@ -28,12 +28,18 @@ package loci.plugins.in;
 import ij.IJ;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Location;
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
+import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
@@ -52,25 +58,34 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * Helper class for managing Bio-Formats readers and associated metadata.
+ * Manages the import preparation process.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImporterPixels.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImporterPixels.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">SVN</a></dd></dl>
  */
-public class ImportProcess {
+public class ImportProcess implements StatusReporter {
 
   // -- Fields --
 
+  private List<StatusListener> listeners = new ArrayList<StatusListener>();
+
   /** Associated importer options. */
-  protected ImporterOptions options;
+  private ImporterOptions options;
+
+  // reader stack, from bottom to top
+  private IFormatReader baseReader;
+  private FileStitcher fileStitcher;
+  private ChannelSeparator channelSeparator;
+  private DimensionSwapper dimensionSwapper;
+  private VirtualReader virtualReader;
+  private ImageProcessorReader reader;
+  
+  /** Whether the process has been canceled. */
+  private boolean cancel;
 
   protected String idName;
   protected Location idLoc;
-
-  private IFormatReader baseReader;
-  protected ImageProcessorReader reader;
-  protected VirtualReader virtualReader;
 
   protected IMetadata meta;
 
@@ -89,18 +104,128 @@ public class ImportProcess {
     this.options = options;
   }
 
-  // -- ImportProcess API methods --
+  // -- ImportProcess methods --
 
   public ImporterOptions getOptions() { return options; }
+  
+  public boolean isWindowless() {
+    if (options.isWindowless()) return true; // globally windowless
+    return baseReader != null && LociPrefs.isWindowless(baseReader);
+  }
 
-  // CTR TEMP
-  public void go() {
+  /** Valid only after {@link ImportStep#READER}. */
+  public IFormatReader getBaseReader() { return baseReader; }
+  /** Valid only after {@link ImportStep#READER}. */
+  public String getIdName() { return idName; }
+  /** Valid only after {@link ImportStep#READER}. */
+  public Location getIdLocation() { return idLoc; }
+  /** Valid only after {@link ImportStep#READER}. */
+  public IMetadata getOMEMetadata() { return meta; }
+
+  /** Valid only after {@link ImportStep#STACK}. */
+  public FileStitcher getFileStitcher() { return fileStitcher; }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public ChannelSeparator getChannelSeparator() { return channelSeparator; }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public DimensionSwapper getDimensionSwapper() { return dimensionSwapper; }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public VirtualReader getVirtualReader() { return virtualReader; }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public ImageProcessorReader getReader() { return reader; }
+
+  /** Valid only after {@link ImportStep#STACK}. */
+  public String getCurrentFile() { return reader.getCurrentFile(); }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public int getSeriesCount() { return getReader().getSeriesCount(); }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public String getSeriesLabel(int s) {
+    if (seriesLabels == null || s >= seriesLabels.length) return null;
+    return seriesLabels[s];
+  }
+
+  /** Valid only after {@link ImportStep#METADATA}. */
+  public ImporterMetadata getOriginalMetadata() { return metadata; }
+
+  /**
+   * Performs the import process, notifying status listeners at each step.
+   * 
+   * @return true if the process completed successfully.
+   */
+  public boolean process() throws FormatException, IOException {
+    notifyListeners(ImportStep.READER);
+    if (cancel) return false;
+    initializeReader();
+
+    notifyListeners(ImportStep.FILE);
+    if (cancel) return false;
+    initializeFile();
+
+    notifyListeners(ImportStep.STACK);
+    if (cancel) return false;
+    initializeStack();
+
+    notifyListeners(ImportStep.SERIES);
+    if (cancel) return false;
+    initializeSeries();
+
+    notifyListeners(ImportStep.DIM_ORDER);
+    if (cancel) return false;
+    initializeDimOrder();
+
+    notifyListeners(ImportStep.RANGE);
+    if (cancel) return false;
+    initializeRange();
+
+    notifyListeners(ImportStep.CROP);
+    if (cancel) return false;
+    initializeCrop();
+
+    notifyListeners(ImportStep.METADATA);
+    if (cancel) return false;
+    initializeMetadata();
+
+    notifyListeners(ImportStep.COMPLETE);
+    return true;
+  }
+  
+  /** Cancels the import process. */
+  public void cancel() { this.cancel = true; }
+  
+  /** Gets whether the import process was canceled. */
+  public boolean wasCanceled() { return cancel; }
+
+  // -- StatusReporter methods --
+
+  public void addStatusListener(StatusListener l) {
+    synchronized (listeners) {
+      listeners.add(l);
+    }
+  }
+
+  public void removeStatusListener(StatusListener l) {
+    synchronized (listeners) {
+      listeners.remove(l);
+    }
+  }
+
+  public void notifyListeners(StatusEvent e) {
+    synchronized (listeners) {
+      for (StatusListener l : listeners) l.statusUpdated(e);
+    }
+  }
+
+  // -- Helper methods - process steps --
+
+  /** Performed following ImportStep.READER notification. */
+  private void initializeReader() {
     computeNameAndLocation();
     createBaseReader();
   }
 
-  // CTR TEMP
-  public void prepareStuff() throws FormatException, IOException {
+  /** Performed following ImportStep.FILE notification. */
+  private void initializeFile() throws FormatException, IOException {
+    saveDefaults();
+
     if (!options.isQuiet()) IJ.showStatus("Analyzing " + getIdName());
     baseReader.setMetadataFiltered(true);
     baseReader.setOriginalMetadataPopulated(true);
@@ -108,11 +233,12 @@ public class ImportProcess {
     baseReader.setId(options.getId());
   }
 
-  // CTR TEMP
-  public void initializeReader() throws FormatException, IOException {
+  /** Performed following ImportStep.STACK notification. */
+  private void initializeStack() throws FormatException, IOException {
+    IFormatReader r = baseReader;
+
     if (options.isGroupFiles()) {
-      FileStitcher fileStitcher = new FileStitcher(baseReader);
-      baseReader = fileStitcher;
+      r = fileStitcher = new FileStitcher(baseReader);
 
       // overwrite base filename with file pattern
       String id = options.getId();
@@ -123,24 +249,49 @@ public class ImportProcess {
       options.setId(id);
       fileStitcher.setUsingPatternIds(true);
     }
+    r.setId(options.getId());
 
-    baseReader.setId(options.getId());
     if (options.isVirtual() || !options.isMergeChannels() ||
-      FormatTools.getBytesPerPixel(baseReader.getPixelType()) != 1)
+      FormatTools.getBytesPerPixel(r.getPixelType()) != 1)
     {
-      baseReader = new ChannelSeparator(baseReader);
+      r = channelSeparator = new ChannelSeparator(r);
     }
-    virtualReader = new VirtualReader(baseReader);
-    reader = new ImageProcessorReader(virtualReader);
+    r = dimensionSwapper = new DimensionSwapper(r);
+    r = virtualReader = new VirtualReader(r);
+    reader = new ImageProcessorReader(r);
     reader.setId(options.getId());
+    
+    computeSeriesLabels();
   }
 
-  public boolean isWindowless() {
-    if (options.isWindowless()) return true; // globally windowless
-    return baseReader != null && LociPrefs.isWindowless(baseReader);
+  /** Performed following ImportStep.SERIES notification. */
+  private void initializeSeries() { }
+
+  /** Performed following ImportStep.DIM_ORDER notification. */
+  private void initializeDimOrder() {
+    String dimOrder = options.getInputOrder();
+    if (dimOrder != null) dimensionSwapper.swapDimensions(dimOrder);
   }
 
-  // -- Helper methods --
+  /** Performed following ImportStep.RANGE notification. */
+  private void initializeRange() { }
+
+  /** Performed following ImportStep.CROP notification. */
+  private void initializeCrop() { }
+
+  /** Performed following ImportStep.METADATA notification. */
+  private void initializeMetadata() {
+    // only prepend a series name prefix to the metadata keys if multiple
+    // series are being opened
+    int seriesCount = getSeriesCount();
+    int numEnabled = 0;
+    for (int s=0; s<seriesCount; s++) {
+      if (options.isSeriesOn(s)) numEnabled++;
+    }
+    metadata = new ImporterMetadata(getReader(), this, numEnabled > 1);
+  }
+
+  // -- Helper methods - ImportStep.READER --
 
   /** Initializes the idName and idLoc derived values. */
   private void computeNameAndLocation() {
@@ -209,13 +360,18 @@ public class ImportProcess {
       WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
     }
+    Exception exc = null;
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
       meta = service.createOMEXMLMetadata();
     }
-    catch (DependencyException de) { }
-    catch (ServiceException se) { }
+    catch (DependencyException de) { exc = de; }
+    catch (ServiceException se) { exc = se; }
+    if (exc != null) {
+        WindowTools.reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem constructing the OME-XML metadata store");
+    }
     baseReader.setMetadataStore(meta);
 
     if (!options.isQuiet()) IJ.showStatus("");
@@ -224,21 +380,18 @@ public class ImportProcess {
     root.setLevel(Level.INFO);
     root.addAppender(new IJStatusEchoer());
   }
+  
+  // -- Helper methods - ImportStep.FILE --
 
-  // CTR TODO - refactor how ImportProcess works
-  public String getIdName() { return idName; }
-  public Location getIdLocation() { return idLoc; }
-  public String getCurrentFile() { return baseReader.getCurrentFile(); }
-  public ImageProcessorReader getReader() { return reader; }
-  public IMetadata getOMEMetadata() { return meta; }
-  public ImporterMetadata getOriginalMetadata() { return metadata; }
-  public int getSeriesCount() { return getReader().getSeriesCount(); }
-
-  public String getSeriesLabel(int s) {
-    if (seriesLabels == null) computeSeriesLabels();
-    return seriesLabels[s];
+  /** Performed following ImportStep.FILE notification. */
+  private void saveDefaults() {
+    // save options as new defaults
+    if (!options.isQuiet()) options.setFirstTime(false);
+    options.saveOptions();
   }
-
+  
+  // -- Helper methods -- ImportStep.STACK --
+  
   /** Initializes the seriesLabels derived value. */
   private void computeSeriesLabels() {
     int seriesCount = getSeriesCount();
@@ -289,25 +442,12 @@ public class ImportProcess {
       //seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
     }
   }
+  
+  // -- Helper methods - miscellaneous --
 
-  // -- CTR TEMP - methods to munge around with state --
-
-  protected void saveDefaults() {
-    // save options as new defaults
-    if (!options.isQuiet()) options.setFirstTime(false);
-    options.saveOptions();
-  }
-
-  /** Initializes the ImporterMetadata derived value. */
-  protected void initializeMetadata() {
-    // only prepend a series name prefix to the metadata keys if multiple
-    // series are being opened
-    int seriesCount = getSeriesCount();
-    int numEnabled = 0;
-    for (int s=0; s<seriesCount; s++) {
-      if (options.isSeriesOn(s)) numEnabled++;
-    }
-    metadata = new ImporterMetadata(getReader(), this, numEnabled > 1);
+  private void notifyListeners(ImportStep step) {
+    notifyListeners(new StatusEvent(step.getStep(),
+      ImportStep.COMPLETE.getStep(), step.getMessage()));
   }
 
 }

@@ -118,8 +118,11 @@ public class Importer {
   public void showDialogs(ImportProcess process)
     throws FormatException, IOException
   {
-    boolean success = new ImporterPrompter(process).showDialogs();
-    if (!success) plugin.canceled = true;
+    // attach dialog prompter to process
+    new ImporterPrompter(process);
+    // execute the preparation process
+    process.process();
+    if (process.wasCanceled()) plugin.canceled = true;
   }
 
   public ImagePlus[] readPixels(ImagePlusReader reader, ImporterOptions options,

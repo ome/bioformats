@@ -25,12 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import java.io.IOException;
-
 import ij.IJ;
 import ij.gui.GenericDialog;
-import loci.formats.DimensionSwapper;
-import loci.formats.FormatException;
+
+import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -42,27 +40,11 @@ import loci.plugins.util.WindowTools;
  */
 public class SwapDialog extends ImporterDialog {
 
-  // -- Fields --
-
-  protected DimensionSwapper dimSwap;
-
   // -- Constructor --
 
   /** Creates a dimension swapper dialog for the Bio-Formats Importer. */
   public SwapDialog(ImportProcess process) {
     super(process);
-    try {
-      dimSwap = (DimensionSwapper)
-        process.getReader().unwrap(DimensionSwapper.class, null);
-    }
-    catch (FormatException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
   }
 
   // -- ImporterDialog methods --
@@ -74,15 +56,18 @@ public class SwapDialog extends ImporterDialog {
   
   @Override
   protected GenericDialog constructDialog() {
+    ImageProcessorReader reader = process.getReader();
+    int seriesCount = process.getSeriesCount();
+
     GenericDialog gd = new GenericDialog("Dimension swapping options");
 
     String[] labels = {"Z", "C", "T"};
     int[] sizes = new int[] {
-      dimSwap.getSizeZ(), dimSwap.getSizeC(), dimSwap.getSizeT()
+      reader.getSizeZ(), reader.getSizeC(), reader.getSizeT()
     };
-    for (int s=0; s<dimSwap.getSeriesCount(); s++) {
+    for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
-      dimSwap.setSeries(s);
+      reader.setSeries(s);
 
       gd.addMessage("Series " + (s + 1) + ":\n");
 
@@ -91,15 +76,18 @@ public class SwapDialog extends ImporterDialog {
       }
     }
     WindowTools.addScrollBars(gd);
-    
+
     return gd;
   }
   
   @Override
   protected boolean harvestResults(GenericDialog gd) {
-    for (int s=0; s<dimSwap.getSeriesCount(); s++) {
+    ImageProcessorReader reader = process.getReader();
+    int seriesCount = process.getSeriesCount();
+
+    for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
-      dimSwap.setSeries(s);
+      reader.setSeries(s);
       String z = gd.getNextChoice();
       String c = gd.getNextChoice();
       String t = gd.getNextChoice();
@@ -109,7 +97,7 @@ public class SwapDialog extends ImporterDialog {
         throw new IllegalStateException(); // CTR FIXME
       }
 
-      String originalOrder = dimSwap.getDimensionOrder();
+      String originalOrder = reader.getDimensionOrder();
       StringBuffer sb = new StringBuffer();
       sb.append("XY");
       for (int i=2; i<originalOrder.length(); i++) {
@@ -118,7 +106,8 @@ public class SwapDialog extends ImporterDialog {
         else if (originalOrder.charAt(i) == 'T') sb.append(t);
       }
 
-      dimSwap.swapDimensions(sb.toString());
+      // CTR FIXME - need separate input order for each series...
+      options.setInputOrder(sb.toString());
     }
     return true;
   }

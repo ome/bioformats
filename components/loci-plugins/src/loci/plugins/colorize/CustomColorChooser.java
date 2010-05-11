@@ -36,7 +36,7 @@ import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
-import java.util.Vector;
+import java.util.List;
 
 import loci.plugins.util.WindowTools;
 
@@ -53,7 +53,7 @@ import loci.plugins.util.WindowTools;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class CustomColorChooser implements TextListener {
-  Vector<TextField> colors;
+  List<TextField> colors;
   Panel panel;
   Color initialColor;
   int red, green, blue;

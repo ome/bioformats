@@ -66,10 +66,11 @@ public final class BF {
   public static ImagePlus[] openImagePlus(ImporterOptions options)
     throws FormatException, IOException
   {
-    options.setQuiet(true);
-    options.setWindowless(true);
+    options.setQuiet(true);//TEMP
+    options.setWindowless(true);//TEMP
     ImportProcess process = new ImportProcess(options);
-    new ImporterPrompter(process).showDialogs();//TEMP
+    new ImporterPrompter(process);//TEMP
+    if (!process.process()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
     return reader.openImagePlus();
   }

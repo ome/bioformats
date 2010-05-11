@@ -46,8 +46,8 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * Utility methods for managing ImageJ dialogs and windows.
@@ -194,12 +194,12 @@ public final class WindowTools {
   }
 
   @SuppressWarnings("unchecked")
-  public static Vector<TextField> getNumericFields(GenericDialog gd) {
+  public static List<TextField> getNumericFields(GenericDialog gd) {
     return gd.getNumericFields();
   }
 
   @SuppressWarnings("unchecked")
-  public static Vector<Checkbox> getCheckboxes(GenericDialog gd) {
+  public static List<Checkbox> getCheckboxes(GenericDialog gd) {
     return gd.getCheckboxes();
   }
 

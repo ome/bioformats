@@ -25,23 +25,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import java.io.IOException;
+import ij.IJ;
 
-import loci.formats.FormatException;
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
 import loci.plugins.prefs.OptionsDialog;
 
 /**
  * Helper class for presenting the user with dialog boxes
  * for configuring importer options.
- *
+ * 
  * If running as a macro, gets parameter values from macro options;
  * if not, get parameter values from user input from dialog boxes.
+ *
+ * Which dialogs are shown depends on a variety of factors, including the
+ * current configuration (i.e., which options are enabled), whether quiet or
+ * windowless mode is set, and whether the method is being called from within
+ * a macro.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImporterPrompter.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImporterPrompter.java">SVN</a></dd></dl>
  */
-public class ImporterPrompter {
+public class ImporterPrompter implements StatusListener {
 
   // -- Fields --
 
@@ -51,51 +57,49 @@ public class ImporterPrompter {
 
   public ImporterPrompter(ImportProcess process) {
     this.process = process;
+    process.addStatusListener(this);
   }
 
-  // -- ImporterPrompter methods --
+  // -- StatusListener methods --
 
-  /**
-   * Displays dialog boxes prompting for additional configuration details.
-   *
-   * Which dialogs are shown depends on a variety of factors, including the
-   * current configuration (i.e., which options are enabled), whether quiet or
-   * windowless mode is set, and whether the method is being called from within
-   * a macro.
-   *
-   * After calling this method, derived field values will also be populated.
-   *
-   * @return true if harvesting went OK, or false if something went wrong
-   *   (e.g., the user canceled a dialog box)
-   *
-   * @see ij.gui.GenericDialog
-   */
-  public boolean showDialogs() throws FormatException, IOException {
-    if (!promptUpgrade()) return false;
+  public void statusUpdated(StatusEvent e) {
+    final String message = e.getStatusMessage();
+    final int value = e.getProgressValue();
+    //final int max = e.getProgressMaximum();
+    final ImportStep step = ImportStep.getStep(value);
 
-    if (!promptLocation()) return false;
-    if (!promptId()) return false;
+    if (!process.getOptions().isQuiet()) IJ.showStatus(message);
 
-    process.go();
-
-    if (!promptMain()) return false;
-
-    process.saveDefaults();
-
-    process.prepareStuff();
-
-    if (!promptFilePattern()) return false;
-
-    process.initializeReader();
-
-    if (!promptSeries()) return false;
-    if (!promptSwap()) return false;
-    if (!promptRange()) return false;
-    if (!promptCrop()) return false;
-
-    process.initializeMetadata();
-
-    return true;
+    switch (step) {
+      case READER:
+        if (!promptUpgrade()) { process.cancel(); break; }
+        if (!promptLocation()) { process.cancel(); break; }
+        if (!promptId()) { process.cancel(); break; }
+        break;
+      case FILE:
+        if (!promptMain()) process.cancel();
+        break;
+      case STACK:
+        if (!promptFilePattern()) process.cancel();
+        break;
+      case SERIES:
+        if (!promptSeries()) process.cancel();
+        break;
+      case DIM_ORDER:
+        if (!promptSwap()) process.cancel();
+        break;
+      case RANGE:
+        if (!promptRange()) process.cancel();
+        break;
+      case CROP:
+        if (!promptCrop()) process.cancel();
+        break;
+      case METADATA:
+        break;
+      case COMPLETE:
+        break;
+      default:
+    }
   }
 
   // -- Helper methods - dialog prompts --
@@ -149,5 +153,5 @@ public class ImporterPrompter {
     CropDialog dialog = new CropDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
-
+  
 }

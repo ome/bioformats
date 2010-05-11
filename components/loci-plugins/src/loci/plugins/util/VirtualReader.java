@@ -27,8 +27,8 @@ package loci.plugins.util;
 
 import java.io.IOException;
 
-import loci.formats.DimensionSwapper;
 import loci.formats.IFormatReader;
+import loci.formats.ReaderWrapper;
 
 /**
  * TODO
@@ -39,7 +39,7 @@ import loci.formats.IFormatReader;
  *
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class VirtualReader extends DimensionSwapper {
+public class VirtualReader extends ReaderWrapper {
 
   // -- Fields --
 

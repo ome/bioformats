@@ -59,7 +59,6 @@ import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
-import loci.plugins.util.VirtualReader;
 
 import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.EnumerationException;
@@ -75,7 +74,9 @@ public class ImagePlusReader implements StatusReporter {
 
   // -- Fields --
 
-  /** Import process managing Bio-Formats readers and other state. */
+  /**
+   * Import preparation process managing Bio-Formats readers and other state.
+   */
   protected ImportProcess process;
 
   protected List<StatusListener> listeners = new Vector<StatusListener>();
@@ -90,7 +91,10 @@ public class ImagePlusReader implements StatusReporter {
     this(new ImportProcess());
   }
 
-  /** Constructs an ImagePlusReader with the given reader. */
+  /**
+   * Constructs an ImagePlusReader with the
+   * given complete import preparation process.
+   */
   public ImagePlusReader(ImportProcess process) {
     this.process = process;
   }
@@ -131,45 +135,45 @@ public class ImagePlusReader implements StatusReporter {
     long startTime = System.currentTimeMillis();
     long time = startTime;
 
-    ImageProcessorReader r = process.getReader();
+    ImageProcessorReader reader = process.getReader();
     ImporterOptions options = process.getOptions();
 
     if (options.isVirtual()) {
       int totalSeries = 0;
-      for (int s=0; s<r.getSeriesCount(); s++) {
+      for (int s=0; s<reader.getSeriesCount(); s++) {
         if (options.isSeriesOn(s)) totalSeries++;
       }
-      ((VirtualReader) r.getReader()).setRefCount(totalSeries);
+      process.getVirtualReader().setRefCount(totalSeries);
     }
 
-    for (int s=0; s<r.getSeriesCount(); s++) {
+    for (int s=0; s<reader.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
-      r.setSeries(s);
+      reader.setSeries(s);
 
-      boolean[] load = new boolean[r.getImageCount()];
+      boolean[] load = new boolean[reader.getImageCount()];
       int cBegin = options.getCBegin(s);
       int cEnd = options.getCEnd(s);
-      if (cEnd < 0) cEnd = r.getEffectiveSizeC() - 1;
+      if (cEnd < 0) cEnd = reader.getEffectiveSizeC() - 1;
       int cStep = options.getCStep(s);
       int zBegin = options.getZBegin(s);
       int zEnd = options.getZEnd(s);
-      if (zEnd < 0) zEnd = r.getSizeZ() - 1;
+      if (zEnd < 0) zEnd = reader.getSizeZ() - 1;
       int zStep = options.getZStep(s);
       int tBegin = options.getTBegin(s);
       int tEnd = options.getTEnd(s);
-      if (tEnd < 0) tEnd = r.getSizeT() - 1;
+      if (tEnd < 0) tEnd = reader.getSizeT() - 1;
       int tStep = options.getTStep(s);
       for (int c=cBegin; c<=cEnd; c+=cStep) {
         for (int z=zBegin; z<=zEnd; z+=zStep) {
           for (int t=tBegin; t<=tEnd; t+=tStep) {
             //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
-            int index = r.getIndex(z, c, t);
+            int index = reader.getIndex(z, c, t);
             load[index] = true;
           }
         }
       }
       int total = 0;
-      for (int j=0; j<r.getImageCount(); j++) if (load[j]) total++;
+      for (int j=0; j<reader.getImageCount(); j++) if (load[j]) total++;
 
       FileInfo fi = new FileInfo();
 
@@ -189,7 +193,7 @@ public class ImagePlusReader implements StatusReporter {
 
       Region region = options.getCropRegion(s);
       if (region == null) region = new Region();
-      int sizeX = r.getSizeX(), sizeY = r.getSizeY();
+      int sizeX = reader.getSizeX(), sizeY = reader.getSizeY();
       if (options.doCrop()) {
         // bounds checking for cropped region
         if (region.x < 0) region.x = 0;
@@ -211,9 +215,9 @@ public class ImagePlusReader implements StatusReporter {
       int q = 0;
       String stackOrder = options.getStackOrder();
       if (stackOrder.equals(ImporterOptions.ORDER_DEFAULT)) {
-        stackOrder = r.getDimensionOrder();
+        stackOrder = reader.getDimensionOrder();
       }
-      ((VirtualReader) r.getReader()).setOutputOrder(stackOrder);
+      process.getDimensionSwapper().setOutputOrder(stackOrder);
 
       try {
         process.getOMEMetadata().setPixelsDimensionOrder(
@@ -233,26 +237,26 @@ public class ImagePlusReader implements StatusReporter {
       if (options.isVirtual()) {
         boolean doMerge = options.isMergeChannels();
 
-        r.setSeries(s);
+        reader.setSeries(s);
         // NB: ImageJ 1.39+ is required for VirtualStack
         BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
-          r, options.isColorize(), doMerge, options.isRecord());
+          reader, options.isColorize(), doMerge, options.isRecord());
         stackB = virtualStackB;
         if (doMerge) {
-          for (int j=0; j<r.getImageCount(); j++) {
-            int[] pos = r.getZCTCoords(j);
+          for (int j=0; j<reader.getImageCount(); j++) {
+            int[] pos = reader.getZCTCoords(j);
             if (pos[1] > 0) continue;
             String label = constructSliceLabel(
-              new ChannelMerger(r).getIndex(pos[0], pos[1], pos[2]),
-              new ChannelMerger(r), process.getOMEMetadata(), s,
+              new ChannelMerger(reader).getIndex(pos[0], pos[1], pos[2]),
+              new ChannelMerger(reader), process.getOMEMetadata(), s,
               options.getZCount(s), options.getCCount(s),
               options.getTCount(s));
             virtualStackB.addSlice(label);
           }
         }
         else {
-          for (int j=0; j<r.getImageCount(); j++) {
-            String label = constructSliceLabel(j, r,
+          for (int j=0; j<reader.getImageCount(); j++) {
+            String label = constructSliceLabel(j, reader,
               process.getOMEMetadata(), s, options.getZCount(s),
               options.getCCount(s), options.getTCount(s));
             virtualStackB.addSlice(label);
@@ -263,13 +267,13 @@ public class ImagePlusReader implements StatusReporter {
         // CTR CHECK
         //if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
 
-        for (int i=0; i<r.getImageCount(); i++) {
+        for (int i=0; i<reader.getImageCount(); i++) {
           if (!load[i]) continue;
 
           // limit message update rate
           long clock = System.currentTimeMillis();
           if (clock - time >= 100) {
-            String sLabel = r.getSeriesCount() > 1 ?
+            String sLabel = reader.getSeriesCount() > 1 ?
               ("series " + (s + 1) + ", ") : "";
             String pLabel = "plane " + (i + 1) + "/" + total;
             notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
@@ -277,13 +281,13 @@ public class ImagePlusReader implements StatusReporter {
           }
           notifyListeners(new StatusEvent(q++, total, null));
 
-          String label = constructSliceLabel(i, r,
+          String label = constructSliceLabel(i, reader,
             process.getOMEMetadata(), s, options.getZCount(s),
             options.getCCount(s), options.getTCount(s));
 
           // get image processor for ith plane
           ImageProcessor[] p;
-          p = r.openProcessors(i, region.x, region.y,
+          p = reader.openProcessors(i, region.x, region.y,
             region.width, region.height);
           ImageProcessor ip = p[0];
           if (p.length > 1) {
@@ -350,11 +354,11 @@ public class ImagePlusReader implements StatusReporter {
     // end timing
     long endTime = System.currentTimeMillis();
     double elapsed = (endTime - startTime) / 1000.0;
-    if (r.getImageCount() == 1) {
+    if (reader.getImageCount() == 1) {
       notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
     }
     else {
-      long average = (endTime - startTime) / r.getImageCount();
+      long average = (endTime - startTime) / reader.getImageCount();
       notifyListeners(new StatusEvent("Bio-Formats: " +
         elapsed + " seconds (" + average + " ms per plane)"));
     }
@@ -376,17 +380,17 @@ public class ImagePlusReader implements StatusReporter {
     int cCount = options.getCCount(series);
     int zCount = options.getZCount(series);
     int tCount = options.getTCount(series);
-    IFormatReader r = process.getReader();
+    IFormatReader reader = process.getReader();
     
-    if (cCount == 0) cCount = r.getEffectiveSizeC();
-    if (zCount == 0) zCount = r.getSizeZ();
-    if (tCount == 0) tCount = r.getSizeT();
+    if (cCount == 0) cCount = reader.getEffectiveSizeC();
+    if (zCount == 0) zCount = reader.getSizeZ();
+    if (tCount == 0) tCount = reader.getSizeT();
 
-    String title = getTitle(r, file, seriesName, options.isGroupFiles());
+    String title = getTitle(reader, file, seriesName, options.isGroupFiles());
     ImagePlus imp = null;
     if (options.isVirtual()) {
       imp = new VirtualImagePlus(title, stack);
-      ((VirtualImagePlus) imp).setReader(r);
+      ((VirtualImagePlus) imp).setReader(reader);
     }
     else imp = new ImagePlus(title, stack);
 
@@ -395,7 +399,7 @@ public class ImagePlusReader implements StatusReporter {
     imp.setProperty("Info", metadata);
 
     // retrieve the spatial calibration information, if available
-    ImagePlusTools.applyCalibration(meta, imp, r.getSeries());
+    ImagePlusTools.applyCalibration(meta, imp, reader.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
 
@@ -405,7 +409,7 @@ public class ImagePlusReader implements StatusReporter {
     int nFrames = imp.getNFrames();
 
     if (options.isAutoscale() && !options.isVirtual()) {
-      ImagePlusTools.adjustColorRange(imp, r);
+      ImagePlusTools.adjustColorRange(imp, reader);
     }
     else if (!(imp.getProcessor() instanceof ColorProcessor)) {
       // ImageJ may autoscale the images anyway, so we need to manually

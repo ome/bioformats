@@ -4,14 +4,17 @@
 
 package loci.plugins.in;
 
+import static org.junit.Assert.assertEquals; 
+import static org.junit.Assert.assertNotNull; 
+import static org.junit.Assert.assertTrue; 
+import static org.junit.Assert.fail; 
+
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-
-import junit.framework.TestCase;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -33,7 +36,7 @@ import org.junit.Test;
 //      range - more combos of ztc
 //  - add some tests for combination of options
 
-public class ImporterTest extends TestCase {
+public class ImporterTest {
 
   private enum Axis {Z,C,T};
   
@@ -655,12 +658,12 @@ public class ImporterTest extends TestCase {
     assertEquals(1,imps.length);
     assertEquals(32,imps[0].getStack().getSize());
   }
-  
+
   @Test
   public void testDatasetSwapDims()
   {
     // TODO: testing only swapping Z&T of XYZTC. Add more option testing
-    
+
     datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 1, 3);
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 3, 1);
     datasetSwapDimsTest(FormatTools.UINT32, 82, 47, 5, 2);
@@ -668,7 +671,7 @@ public class ImporterTest extends TestCase {
     datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
     datasetSwapDimsTest(FormatTools.INT32, 44, 109, 4, 3);
   }
-  
+
   @Test
   public void testDatasetOpenAllSeries()
   {
@@ -676,7 +679,7 @@ public class ImporterTest extends TestCase {
     datasetOpenAllSeriesTest(73,107,1,1,1,2);  // two series
     datasetOpenAllSeriesTest(73,107,5,3,4,4);  // multiple series with Z,C,T larger than 1
   }
-  
+
   @Test
   public void testDatasetConcatenate()
   {
@@ -685,42 +688,42 @@ public class ImporterTest extends TestCase {
     datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 17);
     datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 4, 5, 2, 9);
   }
-  
+
   @Test
   public void testColorMerge()
   {
     // TODO - Curtis says impl broken right now - will test later
     fail("to be implemented");
   }
-  
+
   @Test
   public void testColorRgbColorize()
   {
     // TODO - Curtis says impl broken right now - will test later
     fail("to be implemented");
   }
-  
+
   @Test
   public void testColorCustomColorize()
   {
     // TODO - Curtis says impl broken right now - will test later
     fail("to be implemented");
   }
-  
+
   @Test
   public void testColorAutoscale()
   {
     // TODO - Curtis says impl broken right now - will test later
     fail("to be implemented");
   }
-  
+
   @Test
   public void testMemoryVirtualStack()
   {
     memoryVirtualStackTest(false);
     memoryVirtualStackTest(true);
   }
-  
+
   @Test
   public void testMemoryRecordModifications()
   {
@@ -734,12 +737,12 @@ public class ImporterTest extends TestCase {
     
     fail("to be implemented");
   }
-  
+
   @Test
   public void testMemorySpecifyRange()
   {
     int z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy;
-    
+
     // test partial z: from
     z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
@@ -921,39 +924,4 @@ public class ImporterTest extends TestCase {
         }
   }
 
-  // ** Main method *****************************************************************
-
-  public static void main(String[] args)
-  {
-    //TODO - run all test methods via JUnit
-    //TestSuite suite = new TestSuite(ImporterTest.class);
-    //TestResult result = new TestResult();
-    //suite.run(result);
-
-    ImporterTest tester = new ImporterTest();
-  
-    // tests of single features
-    tester.testDefaultBehavior();
-    tester.testOutputStackOrder();
-    //tester.testDatasetGroupFiles();
-    //tester.testDatasetOpenFilesIndividually();
-    //tester.testDatasetSwapDims();
-    tester.testDatasetOpenAllSeries();
-    //tester.testDatasetConcatenate();
-    //tester.testColorMerge();
-    //tester.testColorRgbColorize();
-    //tester.testColorCustomColorize();
-    tester.testColorAutoscale();
-    tester.testMemoryVirtualStack();
-    tester.testMemoryRecordModifications();
-    tester.testMemorySpecifyRange();
-    tester.testMemoryCrop();
-    tester.testSplitChannels();
-    tester.testSplitFocalPlanes();
-    tester.testSplitTimepoints();
-    
-    // TODO - add tests involving combinations of features
-    
-    System.exit(0);
-  }
 }
