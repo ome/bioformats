@@ -29,9 +29,14 @@ import org.junit.Test;
 //  - flesh out existing tests
 //      splits - see if for loops are in correct order by comparing to actual data
 //      write tests for the color options : 4 cases - some mention was made that indexcolor is an issue in testing
+//        merge - basic test in place but not passing. need to flesh out mergeOptions when BF code in place.
+//        rgb colorize - 
+//        custom colorize - 
+//        autoscale - code stubbed out but tests not in place for histogram testing. Its possible the histogram won't
+//          change when base image is a fake file because the whole data range may already be in use.
 //      open individual files: try to come up with a way to test without a disk file as source
 //      concatenate - test order of images in stack?
-//      swapped dims test needs to test more cases
+//      swapped dims test needs to test cases other than from default swapping Z & T
 //      lowest priority - record modifications
 //      output stack order - testing of iIndex?
 //      range - more combos of ztc
@@ -703,8 +708,8 @@ public class ImporterTest {
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 3, 1);
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 5, 2);
     datasetSwapDimsTest(FormatTools.UINT32, 82, 47, 5, 2);
-    datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
-    datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
+    //128:datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
+    //32768:datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
     datasetSwapDimsTest(FormatTools.INT32, 44, 109, 4, 3);
     datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 3, 2);
   }
@@ -773,9 +778,9 @@ public class ImporterTest {
     
     assertEquals(1,imps.length);
     imp = imps[0];
-    assertEquals(1,getEffectiveSizeC(imp));
-    assertEquals(7,getSizeZ(imp));
-    assertEquals(5,getSizeT(imp));
+    assertEquals(1, getEffectiveSizeC(imp));
+    assertEquals(7, getSizeZ(imp));
+    assertEquals(5, getSizeT(imp));
     assertTrue(imp.getHeight() > 10);  // required for this test to work
     for (int i = 0; i < 10; i++)
       assertEquals(mergedPixel(i),imp.getProcessor().get(i,10));
@@ -785,25 +790,102 @@ public class ImporterTest {
     //   i.e. 6 channels can -> 123/456 or 12/34/56 or 1/2/3/4/5/6 (last one not merged ???)
     //        5 channels can -> 123/45b or 12/34/5b or 1/2/3/4/5 (last one not merged ???)
   }
-
+  
   @Test
   public void testColorRgbColorize()
   {
-    // TODO - Curtis says impl broken right now - will test later
+    // From BF: RGB colorize channels - Each channel is assigned an appropriate pseudocolor table rather than the normal
+    // grayscale.  The first channel is colorized red, the second channel is green, and the third channel is blue. This
+    // option is not available when Merge channels to RGB or Custom colorize channels are set.
     fail("to be implemented");
   }
 
   @Test
   public void testColorCustomColorize()
   {
-    // TODO - Curtis says impl broken right now - will test later
+    // From BF: Custom colorize channels - Each channel is assigned a pseudocolor table rather than the normal grayscale.
+    //   The color for each channel is chosen by the user. This option is not available when Merge channels to RGB or RGB
+    //   colorize channels are set.
     fail("to be implemented");
   }
 
   @Test
   public void testColorAutoscale()
   {
-    // TODO - Curtis says impl broken right now - will test later
+    // From BF:
+    // Autoscale - Stretches the histogram of the image planes to fit the data range. Does not alter underlying values in
+    // the image. If selected, histogram is stretched for each stack based upon the global minimum and maximum value
+    // throughout the stack.
+
+    // histogram stretched to match data vals that are present
+    // original image data unchanged
+
+    String path = FAKE_FILES[0];
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    int[] h;
+    
+    // test when autoscale false
+
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setAutoscale(false);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertEquals(3,getEffectiveSizeC(imp));
+    assertEquals(7,getSizeZ(imp));
+    assertEquals(5,getSizeT(imp));
+    
+    System.out.println("setAutoscale(false) results");
+    h = imp.getStatistics().histogram;
+    for (int i = 0; i < h.length/8; i++)
+      System.out.println(h[i*8+0]+" "+h[i*8+1]+" "+h[i*8+2]+" "+h[i*8+3]+" "+h[i*8+4]+" "+h[i*8+5]+" "+h[i*8+6]+" "+h[i*8+7]);
+    
+    // TODO - test histogram values
+    
+    ImagePlus baseImage = imp;
+    
+    // test when autoscale true
+
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setAutoscale(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertEquals(3,getEffectiveSizeC(imp));
+    assertEquals(7,getSizeZ(imp));
+    assertEquals(5,getSizeT(imp));
+    
+    System.out.println("setAutoscale(true) results");
+    h = imp.getStatistics().histogram;
+    for (int i = 0; i < h.length/8; i++)
+      System.out.println(h[i*8+0]+" "+h[i*8+1]+" "+h[i*8+2]+" "+h[i*8+3]+" "+h[i*8+4]+" "+h[i*8+5]+" "+h[i*8+6]+" "+h[i*8+7]);
+    
+    // TODO - test histogram values
+
+    // TODO - test that image data unchanged from baseImage
+    
     fail("to be implemented");
   }
 
@@ -892,6 +974,15 @@ public class ImporterTest {
     // test another combination of zct's
     z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
+    // test bad combination of zct's - choosing beyond end of z's
+    try {
+      z=7; c=7; t=7; zFrom=3; zTo=7; zBy=4; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=6; tBy=1;
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
   }
   
   @Test
@@ -940,7 +1031,6 @@ public class ImporterTest {
           assertEquals(k,tIndex(proc));
         }
   }
-
   
   @Test
   public void testSplitFocalPlanes()
