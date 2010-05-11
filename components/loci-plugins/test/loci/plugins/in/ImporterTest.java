@@ -27,7 +27,7 @@ import org.junit.Test;
 // TODO
 //  - flesh out existing tests
 //      splits - see if for loops are in correct order by comparing to actual data
-//      write tests for the color options : 4 cases - some mention that indexcolor an issue
+//      write tests for the color options : 4 cases - some mention was made that indexcolor is an issue in testing
 //      open individual files: try to come up with a way to test without a disk file as source
 //      concatenate - test order of images in stack?
 //      swapped dims test needs to test more cases
@@ -47,6 +47,7 @@ public class ImporterTest {
     
     //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
     String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, 50, 20, 7, 1, 1, -1);
+                                                                        // BDZ - INT32 is desirable for the color tests
     
     FAKE_FILES = new String[] {
       String.format(template, "1", "1"),
@@ -220,6 +221,15 @@ public class ImporterTest {
   private int getSizeZ(ImagePlus imp) { return getField(imp, "nSlices"); }
   private int getSizeT(ImagePlus imp) { return getField(imp, "nFrames"); }
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
+
+  // used by the color merge code. calcs a pixel value in our ramped data for a 3 channel merged image
+  private int mergedPixel(int i)
+  {
+    if ((i < 0) || (i > 15))
+      throw new IllegalArgumentException("mergedPixel() can only handle 1st 16 cases. Wants 0<=i<=15 but i = " + i);
+    
+    return i*65536 + i*256 + i;
+  }
   
   // ****** helper tests ****************************************************************************************
   
@@ -240,19 +250,19 @@ public class ImporterTest {
     
     assertNotNull(imps);
     assertEquals(1,imps.length);
-    ImagePlus ip = imps[0];
-    assertNotNull(ip);
-    assertEquals(x,ip.getWidth());
-    assertEquals(y,ip.getHeight());
+    ImagePlus imp = imps[0];
+    assertNotNull(imp);
+    assertEquals(x,imp.getWidth());
+    assertEquals(y,imp.getHeight());
     /*
     assertEquals(z,ip.getNSlices());    // tricky - these last 3 getters have side effects that change their output.
     assertEquals(c,ip.getNChannels());
     assertEquals(t,ip.getNFrames());
     */
     //if (z != getSizeZ(ip)) { new ij.ImageJ(); ip.show(); }//TEMP
-    assertEquals(z,getSizeZ(ip));
-    assertEquals(t,getSizeT(ip));
-    assertEquals(c,getEffectiveSizeC(ip));
+    assertEquals(z,getSizeZ(imp));
+    assertEquals(t,getSizeT(imp));
+    assertEquals(c,getEffectiveSizeC(imp));
   }
   
   private void outputStackOrderTest(int pixType, String order, int x, int y, int z, int c, int t)
@@ -276,9 +286,9 @@ public class ImporterTest {
     assertNotNull(imps);
     assertEquals(1,imps.length);
     
-    ImagePlus ip = imps[0];
+    ImagePlus imp = imps[0];
     
-    ImageStack st = ip.getStack();
+    ImageStack st = imp.getStack();
     int numSlices = st.getSize();
 
     assertEquals(z*c*t,numSlices);
@@ -344,8 +354,19 @@ public class ImporterTest {
     assertEquals(z,actualT);
     assertEquals(t,actualZ);
 
-    // TODO - Verify that actual order is correct, rather than just lengths.
-    // Can use zIndex and tIndex methods for this.
+    // make sure the dimensions were swapped correctly
+    // notice I'm testing from inside out in ZCT order but using input z for T and the input t for Z
+    int p = 1;
+    for (int k = 0; k < z; k++)
+      for (int j = 0; j < c; j++)
+        for (int i = 0; i < t; i++)
+        {
+          ImageProcessor proc = st.getProcessor(p);
+          assertEquals(i,zIndex(proc));
+          assertEquals(j,cIndex(proc));
+          assertEquals(k,tIndex(proc));
+          p++;
+        }
   }
 
   private void datasetOpenAllSeriesTest(int x, int y, int z, int c, int t, int s)
@@ -461,12 +482,12 @@ public class ImporterTest {
   
       assertNotNull(imps);
       assertEquals(1,imps.length);
-      ImagePlus ip = imps[0];
-      assertNotNull(ip);
-      assertEquals(x,ip.getWidth());
-      assertEquals(y,ip.getHeight());
+      ImagePlus imp = imps[0];
+      assertNotNull(imp);
+      assertEquals(x,imp.getWidth());
+      assertEquals(y,imp.getHeight());
   
-      assertEquals(desireVirtual,ip.getStack().isVirtual());
+      assertEquals(desireVirtual,imp.getStack().isVirtual());
   }
 
   private void memorySpecifyRangeTest(int z, int c, int t,
@@ -519,11 +540,11 @@ public class ImporterTest {
     // should have the data in one series
     assertNotNull(imps);
     assertEquals(1,imps.length);
-    ImagePlus ip = imps[0];
-    assertNotNull(ip);
-    assertEquals(x,ip.getWidth());
-    assertEquals(y,ip.getHeight());
-    ImageStack st = ip.getStack();
+    ImagePlus imp = imps[0];
+    assertNotNull(imp);
+    assertEquals(x,imp.getWidth());
+    assertEquals(y,imp.getHeight());
+    ImageStack st = imp.getStack();
     
     //System.out.println("SpecifyCRangeTest: slices below");
     //for (int i = 0; i < numSlices; i++)
@@ -665,6 +686,7 @@ public class ImporterTest {
     datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
     datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
     datasetSwapDimsTest(FormatTools.INT32, 44, 109, 4, 3);
+    datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 3, 2);
   }
 
   @Test
@@ -687,8 +709,61 @@ public class ImporterTest {
   @Test
   public void testColorMerge()
   {
-    // TODO - Curtis says impl broken right now - will test later
-    fail("to be implemented");
+    
+    String path = FAKE_FILES[0];
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    
+    // test when color merge false
+
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setMergeChannels(false);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertEquals(3,getEffectiveSizeC(imp));
+    assertEquals(7,getSizeZ(imp));
+    assertEquals(5,getSizeT(imp));
+    
+    // test when color merge true
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setMergeChannels(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertEquals(1,getEffectiveSizeC(imp));
+    assertEquals(7,getSizeZ(imp));
+    assertEquals(5,getSizeT(imp));
+    assertTrue(imp.getHeight() > 10);  // required for this test to work
+    for (int i = 0; i < 10; i++)
+      assertEquals(mergedPixel(i),imp.getProcessor().get(i,10));
+    
+    // TODO - also test mergeOptions when chans > 3. it will be an int == chans per plane. extra blank images are
+    //   added as needed to make multiple images each with same number of channels
+    //   i.e. 6 channels can -> 123/456 or 12/34/56 or 1/2/3/4/5/6 (last one not merged ???)
+    //        5 channels can -> 123/45b or 12/34/5b or 1/2/3/4/5 (last one not merged ???)
   }
 
   @Test
@@ -726,7 +801,7 @@ public class ImporterTest {
     
     // outline
     //   open as virt stack
-    //   run plugin or macro that changes pixels in currently loaded frame (frame 0)
+    //   run plugin (invert) or macro that changes pixels in currently loaded frame (frame 0)
     //   change curr frame to 1 and test that pixels are different from what we set
     //   change curr frame back to 0 and see if pixel changes remembered
     
@@ -786,13 +861,17 @@ public class ImporterTest {
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
+    // test edge case combo with an invalid by
+    z=2; c=2; t=2; zFrom=0; zTo=0; zBy=2; cFrom=1; cTo=1; cBy=1; tFrom=0; tTo=1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
     // test a combination of zct's
     z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=6; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
-    // TODO
-    //  1) more combos
-    //  2) noticed I am always setting from/to/by at the same time. test setting only one at a time (pass -1 to ignore)
+    // test another combination of zct's
+    z=7; c=7; t=7; zFrom=3; zTo=7; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
   }
   
   @Test
