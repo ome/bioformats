@@ -482,27 +482,33 @@ public class ImporterTest extends TestCase {
     try {
       ImporterOptions options = new ImporterOptions();
       options.setId(path);
-      // only set z if nondefault behavior specified
-      if ((zFrom != 0) || (zTo != z-1) || (zBy != 1))
-      {
+      
+      // only set values when nondefault behavior specified
+      
+      // z's
+      if (zFrom != 0)
         options.setZBegin(0, zFrom);
+      if (zTo != z-1)
         options.setZEnd(0, zTo);
+      if (zBy != 1)
         options.setZStep(0, zBy);
-      }
-      // only set c if nondefault behavior specified
-      if ((cFrom != 0) || (cTo != c-1) || (cBy != 1))
-      {
+      
+      // c's
+      if (cFrom != 0)
         options.setCBegin(0, cFrom);
+      if (cTo != c-1)
         options.setCEnd(0, cTo);
+      if (cBy != 1)
         options.setCStep(0, cBy);
-      }
-      // only set t if nondefault behavior specified
-      if ((tFrom != 0) || (tTo != t-1) || (tBy != 1))
-      {
+      
+      // t's
+      if (tFrom != 0)
         options.setTBegin(0, tFrom);
+      if (tTo != t-1)
         options.setTEnd(0, tTo);
+      if (tBy != 1)
         options.setTStep(0, tBy);
-      }
+        
       imps = BF.openImagePlus(options);
     }
     catch (IOException e) {
@@ -728,16 +734,52 @@ public class ImporterTest extends TestCase {
   {
     int z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy;
     
-    // test z
+    // test full z
     z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
-    // test c
+    // test full c
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
-    // test t
+    // test full t
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial z: from
+    z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial z: to
+    z=8; c=3; t=2; zFrom=0; zTo=4; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
+    // test partial z: by
+    z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
+    // test partial c: from
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial c: to
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial c: by
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial t: from
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial t: to
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=8; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial t: by
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test a combination of zct's
@@ -785,7 +827,8 @@ public class ImporterTest extends TestCase {
       for (int j = 0; j < 35; j++)
       {
         ImageProcessor proc = st.getProcessor(j+1);
-        assertEquals(0,zIndex(proc));  // TODO - figure actual values
+        assertEquals(0,cIndex(proc));  // this one should always be 0
+        assertEquals(0,zIndex(proc));  // TODO - figure actual values of others
         assertEquals(0,tIndex(proc));
       }
     }
@@ -818,7 +861,8 @@ public class ImporterTest extends TestCase {
       for (int j = 0; j < 15; j++)
       {
         ImageProcessor proc = st.getProcessor(j+1);
-        assertEquals(0,cIndex(proc));  // TODO - figure actual values
+        assertEquals(0,zIndex(proc));  // this one should always be 0
+        assertEquals(0,cIndex(proc));  // TODO - figure actual values of others
         assertEquals(0,tIndex(proc));
       }
     }
@@ -851,7 +895,8 @@ public class ImporterTest extends TestCase {
       for (int j = 0; j < 21; j++)
       {
         ImageProcessor proc = st.getProcessor(j+1);
-        assertEquals(0,zIndex(proc));  // TODO - figure actual values
+        assertEquals(0,tIndex(proc));  // this one should always be 0
+        assertEquals(0,zIndex(proc));  // TODO - figure actual values of others
         assertEquals(0,cIndex(proc));
       }
     }
