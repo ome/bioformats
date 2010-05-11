@@ -22,15 +22,15 @@ import loci.plugins.BF;
 import org.junit.Test;
 
 // TODO
-//  - figure out what openIndiv is supposed to do and also where it fits in priorities
 //  - flesh out existing tests
-//      groups files test needs to be written/debugged
-//      write test for open indiv files : getting dataset from Melissa. Priority may be wrong.
-//      write tests for split options : 3 cases
+//      splits - see if for loops are in correct order by comparing to actual data
 //      write tests for the color options : 4 cases
-//      concat follows - see my test to see if sufficient
-//      swap dims test needs to be changed after BF updated later
+//      open individual files: try to come up with a way to test without a disk file as source
+//      concatenate - test order of images in stack?
+//      swapped dims test needs to test more cases
 //      lowest priority - record modifications
+//      output stack order - testing of iIndex?
+//      range - more combos of ztc
 //  - add some tests for combination of options
 
 public class ImporterTest extends TestCase {
@@ -39,10 +39,12 @@ public class ImporterTest extends TestCase {
   
   private static final String[] FAKE_FILES;
   private static final String FAKE_PATTERN;
+ 
   static {
+    
     //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
-    String template = constructFakeFilename("test_C%s_TP%s",
-      FormatTools.UINT8, 50, 20, 7, 1, 1, -1);
+    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, 50, 20, 7, 1, 1, -1);
+    
     FAKE_FILES = new String[] {
       String.format(template, "1", "1"),
       String.format(template, "2", "1"),
@@ -297,7 +299,7 @@ public class ImporterTest extends TestCase {
           assertEquals(x,proc.getWidth());
           assertEquals(y,proc.getHeight());
           assertEquals(0,sIndex(proc));
-          //test iIndex too? : assertEquals(count,somethingOrOther(iIndex(proc)));
+          //TODO - test iIndex too? : assertEquals(count,somethingOrOther(iIndex(proc)));
           //System.out.println("iIndex " + iIndex(proc) + " calc " +
           //    ((maxJ*maxI*k) + (maxI*j) + i)
           //    );
@@ -462,11 +464,11 @@ public class ImporterTest extends TestCase {
       }
   
       assertNotNull(imps);
-      assertTrue(imps.length == 1);
+      assertEquals(1,imps.length);
       ImagePlus ip = imps[0];
       assertNotNull(ip);
-      assertTrue(ip.getWidth() == x);
-      assertTrue(ip.getHeight() == y);
+      assertEquals(x,ip.getWidth());
+      assertEquals(y,ip.getHeight());
   
       assertEquals(desireVirtual,ip.getStack().isVirtual());
   }
@@ -520,11 +522,11 @@ public class ImporterTest extends TestCase {
     
     // should have the data in one series
     assertNotNull(imps);
-    assertTrue(imps.length == 1);
+    assertEquals(1,imps.length);
     ImagePlus ip = imps[0];
     assertNotNull(ip);
-    assertTrue(ip.getWidth() == x);
-    assertTrue(ip.getHeight() == y);
+    assertEquals(x,ip.getWidth());
+    assertEquals(y,ip.getHeight());
     ImageStack st = ip.getStack();
     
     //System.out.println("SpecifyCRangeTest: slices below");
@@ -553,10 +555,10 @@ public class ImporterTest extends TestCase {
     }
 
     assertNotNull(imps);
-    assertTrue(imps.length == 1);
+    assertEquals(1,imps.length);
     assertNotNull(imps[0]);
-    assertTrue(imps[0].getWidth() == cx);
-    assertTrue(imps[0].getHeight() == cy);
+    assertEquals(cx,imps[0].getWidth());
+    assertEquals(cy,imps[0].getHeight());
   }
 
 // ** ImporterTest methods **************************************************************
@@ -659,10 +661,7 @@ public class ImporterTest extends TestCase {
   @Test
   public void testDatasetSwapDims()
   {
-    // TODO - can't really test this with fake files. It needs a series of files from grouping
-    //   to reorder.
-    
-    // TODO - Curtis says I should be able to test this without grouping
+    // TODO: testing only swapping Z&T of XYZTC. Add more option testing
     
     datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 1, 3);
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 3, 1);
@@ -683,9 +682,6 @@ public class ImporterTest extends TestCase {
   @Test
   public void testDatasetConcatenate()
   {
-    
-    // TODO - Curtis says impl broken right now - will test later
-
     // open a dataset that has multiple series and should get back a single series
     datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 1);
     datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 1, 1, 1, 17);
@@ -696,24 +692,28 @@ public class ImporterTest extends TestCase {
   public void testColorMerge()
   {
     // TODO - Curtis says impl broken right now - will test later
+    fail("to be implemented");
   }
   
   @Test
   public void testColorRgbColorize()
   {
     // TODO - Curtis says impl broken right now - will test later
+    fail("to be implemented");
   }
   
   @Test
   public void testColorCustomColorize()
   {
     // TODO - Curtis says impl broken right now - will test later
+    fail("to be implemented");
   }
   
   @Test
   public void testColorAutoscale()
   {
     // TODO - Curtis says impl broken right now - will test later
+    fail("to be implemented");
   }
   
   @Test
@@ -727,24 +727,13 @@ public class ImporterTest extends TestCase {
   public void testMemoryRecordModifications()
   {
     // TODO - how to test this? lowest priority
+    fail("to be implemented");
   }
   
   @Test
   public void testMemorySpecifyRange()
   {
     int z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy;
-    
-    // test full z
-    z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test full c
-    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test full t
-    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial z: from
     z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
@@ -758,6 +747,10 @@ public class ImporterTest extends TestCase {
     z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
 
+    // test full z
+    z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
     // test partial c: from
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
@@ -770,6 +763,10 @@ public class ImporterTest extends TestCase {
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
+    // test full c
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
     // test partial t: from
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
@@ -780,6 +777,10 @@ public class ImporterTest extends TestCase {
     
     // test partial t: by
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
+    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test full t
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test a combination of zct's
@@ -817,22 +818,27 @@ public class ImporterTest extends TestCase {
     }
     catch (FormatException e) {
       fail(e.getMessage());
-      }
-    
-    assertEquals(3,imps.length);
-    for (int i = 0; i < 3; i++)
-    {
-      ImageStack st = imps[i].getStack();
-      assertEquals(35,st.getSize());
-      for (int j = 0; j < 35; j++)
-      {
-        ImageProcessor proc = st.getProcessor(j+1);
-        assertEquals(0,cIndex(proc));  // this one should always be 0
-        assertEquals(0,zIndex(proc));  // TODO - figure actual values of others
-        assertEquals(0,tIndex(proc));
-      }
     }
+
+    // 3 channels goes to 3 images
+    assertEquals(3,imps.length);
+    
+    // TODO - order of for loops correct?
+    for (int k = 0; k < 5; k++)
+      for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 7; i++)
+        {
+          // these next three statements called more times than needed but simplifies for loop logic
+          ImageStack st = imps[j].getStack();
+          assertEquals(35,st.getSize());
+          ImageProcessor proc = st.getProcessor(j+1);
+          // test the values
+          assertEquals(i,zIndex(proc));
+          assertEquals(0,cIndex(proc));  // this one should always be 0
+          assertEquals(k,tIndex(proc));
+        }
   }
+
   
   @Test
   public void testSplitFocalPlanes()
@@ -853,19 +859,23 @@ public class ImporterTest extends TestCase {
       fail(e.getMessage());
       }
     
+    // 7 planes goes to 7 images
     assertEquals(7,imps.length);
-    for (int i = 0; i < 7; i++)
-    {
-      ImageStack st = imps[i].getStack();
-      assertEquals(15,st.getSize());
-      for (int j = 0; j < 15; j++)
-      {
-        ImageProcessor proc = st.getProcessor(j+1);
-        assertEquals(0,zIndex(proc));  // this one should always be 0
-        assertEquals(0,cIndex(proc));  // TODO - figure actual values of others
-        assertEquals(0,tIndex(proc));
-      }
-    }
+    
+    // TODO - order of for loops correct?
+    for (int k = 0; k < 5; k++)
+      for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 7; i++)
+        {
+          // these next three statements called more times than needed but simplifies for loop logic
+          ImageStack st = imps[i].getStack();
+          assertEquals(15,st.getSize());
+          ImageProcessor proc = st.getProcessor(j+1);
+          // test the values
+          assertEquals(0,zIndex(proc));  // this one should always be 0
+          assertEquals(j,cIndex(proc));
+          assertEquals(k,tIndex(proc));
+        }
   }
   
   @Test
@@ -887,19 +897,23 @@ public class ImporterTest extends TestCase {
       fail(e.getMessage());
       }
     
+    // 5 time points goes to 5 images
     assertEquals(5,imps.length);
-    for (int i = 0; i < 5; i++)
-    {
-      ImageStack st = imps[i].getStack();
-      assertEquals(21,st.getSize());
-      for (int j = 0; j < 21; j++)
-      {
-        ImageProcessor proc = st.getProcessor(j+1);
-        assertEquals(0,tIndex(proc));  // this one should always be 0
-        assertEquals(0,zIndex(proc));  // TODO - figure actual values of others
-        assertEquals(0,cIndex(proc));
-      }
-    }
+    
+    // TODO - order of for loops correct?
+    for (int k = 0; k < 5; k++)
+      for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 7; i++)
+        {
+          // these next three statements called more times than needed but simplifies for loop logic
+          ImageStack st = imps[k].getStack();
+          assertEquals(21,st.getSize());
+          ImageProcessor proc = st.getProcessor(j+1);
+          // test the values
+          assertEquals(i,zIndex(proc));
+          assertEquals(j,cIndex(proc));
+          assertEquals(0,tIndex(proc));  // this one should always be 0
+        }
   }
 
   // ** Main method *****************************************************************
