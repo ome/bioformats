@@ -307,9 +307,11 @@
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:apply-templates select="@*"/>
-			<xsl:attribute name="Power">
-				<xsl:value-of select="$power"/>
-			</xsl:attribute>
+      <xsl:if test="$power != ''">
+  			<xsl:attribute name="Power">
+			  	<xsl:value-of select="$power"/>
+			  </xsl:attribute>
+      </xsl:if>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>

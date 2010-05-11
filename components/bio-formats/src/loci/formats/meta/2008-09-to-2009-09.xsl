@@ -657,6 +657,12 @@
 			</xsl:choose>
 		</xsl:for-each>
 
+    <xsl:element name="BinData" namespace="{$newBINNS}">
+      <xsl:attribute name="BigEndian">
+        <xsl:value-of select="$bg"/>
+      </xsl:attribute>
+    </xsl:element>
+
 		<!-- Convert the logical Channels -->
 		<xsl:variable name="pixelsID" select="$pixels/@ID"/>
 		<xsl:for-each select="exsl:node-set($logicalChannels)/*">
@@ -1321,12 +1327,12 @@
 				<xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
 					<xsl:apply-templates select="@*|node()"/>
 				</xsl:element>
-			</xsl:otherwise>
+		  </xsl:otherwise>
 		</xsl:choose>
-	</xsl:template>
+  </xsl:template>
 
 	<!-- Screen Plate Well -->
-	
+
 	<!-- Add any SA links to Screen -->
 	<xsl:template match="SA:Screen">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
@@ -1569,10 +1575,10 @@
 	<xsl:template name="convertColorDomain">
 		<xsl:param name="cc"/>
 		<xsl:choose>
-			<xsl:when test="contains($cc,'red') or contains($cc,'r')">4278190335</xsl:when>
-			<xsl:when test="contains($cc,'green') or contains($cc,'g')">16711935</xsl:when>
-			<xsl:when test="contains($cc,'blue') or contains($cc,'b')">65535</xsl:when>
-			<xsl:otherwise>4294967295</xsl:otherwise>
+			<xsl:when test="contains($cc,'red') or contains($cc,'r')">16711680</xsl:when>
+			<xsl:when test="contains($cc,'green') or contains($cc,'g')">65280</xsl:when>
+			<xsl:when test="contains($cc,'blue') or contains($cc,'b')">255</xsl:when>
+			<xsl:otherwise>16777215</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 

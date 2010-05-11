@@ -357,6 +357,7 @@ public class OMEXMLReader extends FormatReader {
       if (currentQName.indexOf("BinData") != -1) {
         binDataChars += length;
       }
+      else xmlBuffer.append(new String(ch, start, length));
       nextBinDataOffset += length;
       hadCharData = true;
     }
