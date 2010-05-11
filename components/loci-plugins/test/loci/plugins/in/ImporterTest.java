@@ -9,13 +9,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue; 
 import static org.junit.Assert.fail; 
 
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ImageProcessor;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -116,29 +115,20 @@ public class ImporterTest {
   }
 
   /** Series number of the given image processor. */
-  private int sIndex(ImageProcessor proc) { return getPixel(proc, 0, 0);  }
+  private int sIndex(ImageProcessor proc) { return (int) proc.getPixelValue(0, 0);  }
 
   /** Image number of the given image processor. */
-  private int iIndex(ImageProcessor proc) { return getPixel(proc, 10, 0); }
+  private int iIndex(ImageProcessor proc) { return (int) proc.getPixelValue(10, 0); }
 
   /** Slice number of the given image processor. */
-  private int zIndex(ImageProcessor proc) { return getPixel(proc, 20, 0); }
+  private int zIndex(ImageProcessor proc) { return (int) proc.getPixelValue(20, 0); }
 
   /** Channel number of the given image processor. */
-  private int cIndex(ImageProcessor proc) { return getPixel(proc, 30, 0); }
+  private int cIndex(ImageProcessor proc) { return (int) proc.getPixelValue(30, 0); }
 
   /** Frame number of the given image processor. */
-  private int tIndex(ImageProcessor proc) { return getPixel(proc, 40, 0); }
+  private int tIndex(ImageProcessor proc) { return (int) proc.getPixelValue(40, 0); }
 
-  private int getPixel(ImageProcessor proc, int x, int y) {
-    // NB: FloatProcessor returns the raw int bits when get(int, int) is
-    // called; to get actual value, we must call getf(int, int) and cast.
-    if (proc instanceof FloatProcessor) {
-      return (int) ((FloatProcessor) proc).getf(x, y);
-    }
-    return proc.get(x, y);
-  }
-  
   @SuppressWarnings("unused")
   private void printVals(ImageProcessor proc)
   {
@@ -708,8 +698,8 @@ public class ImporterTest {
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 3, 1);
     datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 5, 2);
     datasetSwapDimsTest(FormatTools.UINT32, 82, 47, 5, 2);
-    //128:datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
-    //32768:datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
+    datasetSwapDimsTest(FormatTools.INT8, 44, 109, 1, 4);
+    datasetSwapDimsTest(FormatTools.INT16, 44, 109, 2, 1);
     datasetSwapDimsTest(FormatTools.INT32, 44, 109, 4, 3);
     datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 3, 2);
   }
