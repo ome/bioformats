@@ -41,6 +41,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import loci.plugins.util.WindowTools;
@@ -206,7 +207,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   /** Executes the plugin. */
   public void run(String arg) {
     JFrame frame = new JFrame("LOCI Plugins Shortcut Window");
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     frame.setContentPane(new ShortcutPanel());
     frame.pack();
     WindowTools.placeWindow(frame);

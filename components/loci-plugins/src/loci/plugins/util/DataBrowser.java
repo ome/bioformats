@@ -43,7 +43,6 @@ import java.awt.Panel;
 import java.awt.Rectangle;
 import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.io.IOException;
 
@@ -69,7 +68,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/DataBrowser.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/DataBrowser.java">SVN</a></dd></dl>
  */
-public class DataBrowser extends StackWindow implements ActionListener {
+public class DataBrowser extends StackWindow {
 
   // -- Constants --
 
@@ -182,7 +181,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
       if (ij != null) sliceSelector.addKeyListener(ij);
       sliceSelector.addAdjustmentListener(this);
       sliceSelector.setFocusable(false);
-      int blockIncrement = (int) Math.max(z / 10, 1);
+      int blockIncrement = Math.max(z / 10, 1);
       sliceSelector.setUnitIncrement(1);
       sliceSelector.setBlockIncrement(blockIncrement);
     }
@@ -192,7 +191,7 @@ public class DataBrowser extends StackWindow implements ActionListener {
       if (ij != null) frameSelector.addKeyListener(ij);
       frameSelector.addAdjustmentListener(this);
       frameSelector.setFocusable(false);
-      int blockIncrement = (int) Math.max(t / 10, 1);
+      int blockIncrement = Math.max(t / 10, 1);
       frameSelector.setUnitIncrement(1);
       frameSelector.setBlockIncrement(blockIncrement);
     }
@@ -387,8 +386,8 @@ public class DataBrowser extends StackWindow implements ActionListener {
     // center window and show
     Rectangle r = getBounds();
     Dimension w = optionsWindow.getSize();
-    int x = (int) Math.max(5, r.x + (r.width - w.width) / 2);
-    int y = (int) Math.max(5, r.y + (r.height - w.height) / 2);
+    int x = Math.max(5, r.x + (r.width - w.width) / 2);
+    int y = Math.max(5, r.y + (r.height - w.height) / 2);
     optionsWindow.setLocation(x, y);
     optionsWindow.setVisible(true);
   }

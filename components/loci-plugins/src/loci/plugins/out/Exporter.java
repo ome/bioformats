@@ -100,7 +100,7 @@ public class Exporter {
   // -- Exporter API methods --
 
   /** Executes the plugin. */
-  public void run(ImageProcessor ip) {
+  public void run() {
     String outfile = null;
 
     if (plugin.arg != null && plugin.arg.startsWith("outfile=")) {

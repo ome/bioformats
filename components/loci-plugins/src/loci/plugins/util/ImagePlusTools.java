@@ -137,11 +137,15 @@ public final class ImagePlusTools {
     Double td = retrieve.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 
-    if (xcal == xcal || ycal == ycal || zcal == zcal || tcal == tcal) {
+    boolean xcalMissing = Double.isNaN(xcal);
+    boolean ycalMissing = Double.isNaN(ycal);
+    boolean zcalMissing = Double.isNaN(zcal);
+    boolean tcalMissing = Double.isNaN(tcal);
+    if (xcalMissing || ycalMissing || zcalMissing || tcalMissing) {
       // if the physical width or physical height are missing, assume that
       // the width and height are equal
-      if (xcal != xcal) xcal = ycal;
-      if (ycal != ycal) ycal = xcal;
+      if (!xcalMissing) xcal = ycal;
+      if (!ycalMissing) ycal = xcal;
 
       Calibration cal = new Calibration();
       cal.setUnit("micron");

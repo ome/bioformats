@@ -506,7 +506,7 @@ public abstract class ReaderWrapper implements IFormatReader {
         c = reader.getClass();
       }
       try {
-        childCopy = (IFormatReader) c.newInstance();
+        childCopy = c.newInstance();
       }
       catch (IllegalAccessException exc) { throw new FormatException(exc); }
       catch (InstantiationException exc) { throw new FormatException(exc); }

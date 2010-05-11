@@ -70,7 +70,7 @@ public class LociExporter implements PlugInFilter {
     LibraryChecker.checkLibrary(LibraryChecker.Library.BIO_FORMATS, missing);
     LibraryChecker.checkLibrary(LibraryChecker.Library.OME_JAVA_XML, missing);
     if (!LibraryChecker.checkMissing(missing)) return;
-    if (exporter != null) exporter.run(ip);
+    if (exporter != null) exporter.run();
   }
 
 }

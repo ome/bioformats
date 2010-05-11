@@ -55,7 +55,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/SearchableWindow.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/SearchableWindow.java">SVN</a></dd></dl>
  */
-public class SearchableWindow extends TextWindow implements ActionListener {
+public class SearchableWindow extends TextWindow {
 
   protected TextPanel panel;
   protected int index;
@@ -89,9 +89,9 @@ public class SearchableWindow extends TextWindow implements ActionListener {
   // -- SearchableWindow API methods --
 
   public void selectLine(int index) {
-    int ys = panel.getFontMetrics(getFont()).getHeight() + 2;
-    int y = ys * (index + 1) + 2;  // absolute y coordinate
-    int totalHeight = ys * panel.getLineCount();
+    //int ys = panel.getFontMetrics(getFont()).getHeight() + 2;
+    //int y = ys * (index + 1) + 2;  // absolute y coordinate
+    //int totalHeight = ys * panel.getLineCount();
 
     Scrollbar ss = null;
     Component[] components = panel.getComponents();
@@ -104,7 +104,7 @@ public class SearchableWindow extends TextWindow implements ActionListener {
       }
     }
 
-    int height = panel.getHeight();
+    //int height = panel.getHeight();
 
     // convert absolute y value to scrollbar and relative y coordinates
     int min = ss.getMinimum();

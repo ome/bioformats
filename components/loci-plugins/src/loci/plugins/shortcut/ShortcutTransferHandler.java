@@ -73,15 +73,15 @@ public class ShortcutTransferHandler extends TransferHandler {
       int fileIndex = -1, stringIndex = -1, listIndex = -1;
       for (int i=0; i<flavors.length; i++) {
         if (fileIndex >= 0 && stringIndex >= 0 && listIndex >= 0) break;
-        Class c = flavors[i].getRepresentationClass();
+        Class<?> c = flavors[i].getRepresentationClass();
         if (fileIndex < 0 && c == File.class) fileIndex = i;
         if (stringIndex < 0 && c == String.class) stringIndex = i;
         if (listIndex < 0 && c == List.class) listIndex = i;
       }
       // convert data into list of objects
-      List list = null;
+      List<?> list = null;
       if (listIndex >= 0) {
-        list = (List) t.getTransferData(flavors[listIndex]);
+        list = (List<?>) t.getTransferData(flavors[listIndex]);
       }
       else if (fileIndex >= 0) {
         File f = (File) t.getTransferData(flavors[fileIndex]);

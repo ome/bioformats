@@ -46,7 +46,8 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.MemoryImageSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Image processor extension that records commands executed upon it.
@@ -65,28 +66,25 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   private ImageProcessor proc;
   private boolean doRecording;
-  private Vector<MethodEntry> methodStack;
-  private int sliceNumber;
+  private List<MethodEntry> methodStack;
 
   private int channelNumber;
   private ImageProcessor[] otherChannels;
 
   // -- Constructor --
 
-  public RecordedImageProcessor(ImageProcessor proc, int num) {
+  public RecordedImageProcessor(ImageProcessor proc) {
     this.proc = proc;
-    methodStack = new Vector<MethodEntry>();
+    methodStack = new ArrayList<MethodEntry>();
     doRecording = true;
-    sliceNumber = num;
   }
 
-  public RecordedImageProcessor(ImageProcessor proc, int num, int channelNum,
+  public RecordedImageProcessor(ImageProcessor proc, int channelNum,
     ImageProcessor[] otherChannels)
   {
     this.proc = proc;
-    methodStack = new Vector<MethodEntry>();
+    methodStack = new ArrayList<MethodEntry>();
     doRecording = true;
-    sliceNumber = num;
     this.channelNumber = channelNum;
     this.otherChannels = otherChannels;
   }
@@ -97,13 +95,13 @@ public class RecordedImageProcessor extends ImageProcessor {
     this.doRecording = doRecording;
   }
 
-  public Vector<MethodEntry> getMethodStack() {
+  public List<MethodEntry> getMethodStack() {
     return methodStack;
   }
 
-  public void applyMethodStack(Vector<MethodEntry> stack) {
+  public void applyMethodStack(List<MethodEntry> stack) {
     for (int i=0; i<stack.size(); i++) {
-      MethodEntry m = (MethodEntry) stack.get(i);
+      MethodEntry m = stack.get(i);
       try {
         m.method.invoke(proc, m.args);
       }

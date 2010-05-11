@@ -30,7 +30,8 @@ import ij.process.ImageProcessor;
 
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.formats.ChannelMerger;
 import loci.formats.FormatException;
@@ -40,6 +41,7 @@ import loci.formats.cache.Cache;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.CacheStrategy;
 import loci.formats.cache.CrosshairStrategy;
+import loci.plugins.util.RecordedImageProcessor.MethodEntry;
 
 /**
  * Subclass of VirtualStack that uses Bio-Formats to read planes on demand.
@@ -58,7 +60,7 @@ public class BFVirtualStack extends VirtualStack {
   protected String id;
   protected Cache cache;
 
-  private Vector[] methodStacks;
+  private List<List<MethodEntry>> methodStacks;
   private int currentSlice = -1;
   private RecordedImageProcessor currentProcessor;
 
@@ -113,9 +115,9 @@ public class BFVirtualStack extends VirtualStack {
 
     cache = new Cache(strategy, new ImageProcessorSource(r), true);
 
-    methodStacks = new Vector[r.getImageCount()];
-    for (int i=0; i<methodStacks.length; i++) {
-      methodStacks[i] = new Vector();
+    methodStacks = new ArrayList<List<MethodEntry>>();
+    for (int i=0; i<r.getImageCount(); i++) {
+      methodStacks.add(new ArrayList<MethodEntry>());
     }
   }
 
@@ -131,8 +133,8 @@ public class BFVirtualStack extends VirtualStack {
     return currentProcessor;
   }
 
-  public Vector getMethodStack() {
-    if (currentSlice >= 0) return methodStacks[currentSlice];
+  public List<MethodEntry> getMethodStack() {
+    if (currentSlice >= 0) return methodStacks.get(currentSlice);
     return null;
   }
 
@@ -143,9 +145,9 @@ public class BFVirtualStack extends VirtualStack {
 
     // check cache first
     if (currentSlice >= 0 && currentProcessor != null) {
-      Vector currentStack = currentProcessor.getMethodStack();
+      List<MethodEntry> currentStack = currentProcessor.getMethodStack();
       if (currentStack.size() > 1) {
-        methodStacks[currentSlice].addAll(currentStack);
+        methodStacks.get(currentSlice).addAll(currentStack);
       }
     }
     int[] pos = reader.getZCTCoords(n - 1);
@@ -218,15 +220,14 @@ public class BFVirtualStack extends VirtualStack {
           }
         }
       }
-      currentProcessor = new RecordedImageProcessor(ip, currentSlice, pos[1],
-        otherChannels);
+      currentProcessor = new RecordedImageProcessor(ip, pos[1], otherChannels);
       currentProcessor.setDoRecording(record);
       return currentProcessor;
     }
 
     if (ip != null) {
       currentSlice = n - 1;
-      currentProcessor = new RecordedImageProcessor(ip, currentSlice);
+      currentProcessor = new RecordedImageProcessor(ip);
       currentProcessor.setDoRecording(record);
       return currentProcessor;
     }

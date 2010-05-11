@@ -30,9 +30,10 @@ import ij.ImageStack;
 import ij.process.ImageStatistics;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 
 import loci.formats.IFormatReader;
+import loci.plugins.util.RecordedImageProcessor.MethodEntry;
 
 /**
  * Extension of {@link ij.ImagePlus} that supports
@@ -74,7 +75,7 @@ public class VirtualImagePlus extends ImagePlus {
     if (getStack() instanceof BFVirtualStack) {
       stack = (BFVirtualStack) getStack();
       RecordedImageProcessor proc = stack.getRecordedProcessor();
-      Vector methods = stack.getMethodStack();
+      List<MethodEntry> methods = stack.getMethodStack();
       if (methods != null) {
         proc.applyMethodStack(methods);
       }

@@ -131,44 +131,44 @@ public class ROIHandler {
   }
 
   /** Save ROIs in the ROI manager to the given MetadataStore. */
-  public static void saveROIs(MetadataStore store, int imageIndex) {
+  public static void saveROIs(MetadataStore store) {
     RoiManager manager = RoiManager.getInstance();
     if (manager == null) return;
 
     Roi[] rois = manager.getRoisAsArray();
     for (int i=0; i<rois.length; i++) {
       if (rois[i] instanceof Line) {
-        storeLine((Line) rois[i], store, imageIndex, i, 0);
+        storeLine((Line) rois[i], store, i, 0);
       }
       else if (rois[i] instanceof PolygonRoi) {
-        storePolygon((PolygonRoi) rois[i], store, imageIndex, i, 0);
+        storePolygon((PolygonRoi) rois[i], store, i, 0);
       }
       else if (rois[i] instanceof ShapeRoi) {
         Roi[] subRois = ((ShapeRoi) rois[i]).getRois();
         for (int q=0; q<subRois.length; q++) {
           if (subRois[q] instanceof Line) {
-            storeLine((Line) subRois[q], store, imageIndex, i, q);
+            storeLine((Line) subRois[q], store, i, q);
           }
           else if (subRois[q] instanceof PolygonRoi) {
-            storePolygon((PolygonRoi) subRois[q], store, imageIndex, i, q);
+            storePolygon((PolygonRoi) subRois[q], store, i, q);
           }
           else if (subRois[q] instanceof OvalRoi) {
-            storeOval((OvalRoi) subRois[q], store, imageIndex, i, q);
+            storeOval((OvalRoi) subRois[q], store, i, q);
           }
-          else storeRectangle(subRois[q], store, imageIndex, i, q);
+          else storeRectangle(subRois[q], store, i, q);
         }
       }
       else if (rois[i] instanceof OvalRoi) {
-        storeOval((OvalRoi) rois[i], store, imageIndex, i, 0);
+        storeOval((OvalRoi) rois[i], store, i, 0);
       }
-      else storeRectangle(rois[i], store, imageIndex, i, 0);
+      else storeRectangle(rois[i], store, i, 0);
     }
   }
 
   // -- Helper methods --
 
   /** Store a Line ROI in the given MetadataStore. */
-  private static void storeLine(Line roi, MetadataStore store, int image,
+  private static void storeLine(Line roi, MetadataStore store,
     int roiNum, int shape)
   {
     store.setLineX1(new Double(roi.x1), roiNum, shape);
@@ -178,7 +178,7 @@ public class ROIHandler {
   }
 
   /** Store an Roi (rectangle) in the given MetadataStore. */
-  private static void storeRectangle(Roi roi, MetadataStore store, int image,
+  private static void storeRectangle(Roi roi, MetadataStore store,
     int roiNum, int shape)
   {
     Rectangle bounds = roi.getBounds();
@@ -190,7 +190,7 @@ public class ROIHandler {
 
   /** Store a Polygon ROI in the given MetadataStore. */
   private static void storePolygon(PolygonRoi roi, MetadataStore store,
-    int image, int roiNum, int shape)
+    int roiNum, int shape)
   {
     Rectangle bounds = roi.getBounds();
     int[] xCoordinates = roi.getXCoordinates();
@@ -207,8 +207,9 @@ public class ROIHandler {
   }
 
   /** Store an Oval ROI in the given MetadataStore. */
-  private static void storeOval(OvalRoi roi, MetadataStore store, int image,
-    int roiNum, int shape)
+  @SuppressWarnings("unused")
+  private static void storeOval(OvalRoi roi,
+    MetadataStore store, int roiNum, int shape)
   {
     // TODO: storeOval
   }

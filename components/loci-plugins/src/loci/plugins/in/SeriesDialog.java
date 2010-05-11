@@ -39,12 +39,14 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -143,7 +145,8 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
           p[i].removeAll();
           p[i].add(new JLabel(icon));
         }
-        catch (Exception e) { }
+        catch (FormatException exc) { }
+        catch (IOException exc) { }
       }
     }
 

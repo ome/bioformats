@@ -176,7 +176,7 @@ public final class LibraryChecker {
     sb.append("The following librar");
     sb.append(num == 1 ? "y was" : "ies were");
     sb.append(" not found:");
-    Iterator iter = missing.iterator();
+    Iterator<String> iter = missing.iterator();
     for (int i=0; i<num; i++) sb.append("\n    " + iter.next());
     String them = num == 1 ? "it" : "them";
     sb.append("\nPlease download ");
