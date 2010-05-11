@@ -5,6 +5,7 @@
 package loci.plugins.in;
 
 import static org.junit.Assert.assertEquals; 
+import static org.junit.Assert.assertArrayEquals; 
 import static org.junit.Assert.assertNotNull; 
 import static org.junit.Assert.assertTrue; 
 import static org.junit.Assert.fail; 
@@ -874,7 +875,17 @@ public class ImporterTest {
     
     // TODO - test histogram values
 
-    // TODO - test that image data unchanged from baseImage
+    // test that image data unchanged by autoscale
+    
+    ImageStack st1 = baseImage.getStack();
+    ImageStack st2 = imp.getStack();
+    
+    int st1Size = st1.getSize();
+    assertEquals(st1Size,st2.getSize());
+    for (int i = 0; i < st1Size; i++)
+      assertEquals(st1.getProcessor(i+1).getPixels(), st2.getProcessor(i+1).getPixels());
+      // TODO - might need assertArrayEquals() and cast the returned pixels to the appropriate array type.
+      //    what is the file type for fakefiles when not specified? byte or int?
     
     fail("to be implemented");
   }
