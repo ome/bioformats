@@ -154,7 +154,7 @@ public class TiffPixelsTest {
     ByteArrayHandle savedData = new ByteArrayHandle();
     RandomAccessOutputStream out = new RandomAccessOutputStream(savedData);
     TiffSaver saver = new TiffSaver(out);
-    saver.writeImage(data, ifd, false, FormatTools.UINT16);
+    saver.writeImage(data, ifd, 0, FormatTools.UINT16, false);
     out.close();
     RandomAccessInputStream in = new RandomAccessInputStream(savedData);
     TiffParser parser = new TiffParser(in);

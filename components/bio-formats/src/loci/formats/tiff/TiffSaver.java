@@ -173,11 +173,11 @@ public class TiffSaver {
     int width = (int) ifd.getImageWidth();
     int height = (int) ifd.getImageLength();
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int plane = (int) (width * height * bytesPerPixel);
+    int plane = width * height * bytesPerPixel;
     int nChannels = buf.length / plane;
     boolean interleaved = ifd.getPlanarConfiguration() == 1;
 
-    boolean indexed = ifd.getIFDValue(IFD.COLOR_MAP) != null;
+    //boolean indexed = ifd.getIFDValue(IFD.COLOR_MAP) != null;
 
     makeValidIFD(ifd, pixelType, nChannels);
 
@@ -517,7 +517,7 @@ public class TiffSaver {
         int newCount;
         long newOffset;
         if (bigTiff) {
-          newCount = (int) (ifdBuf.readInt() & 0xffffffff);
+          newCount = ifdBuf.readInt() & 0xffffffff;
           newOffset = ifdBuf.readLong();
         }
         else {
