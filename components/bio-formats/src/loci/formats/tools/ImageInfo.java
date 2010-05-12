@@ -220,7 +220,7 @@ public class ImageInfo {
     String[] s = {
       "To test read a file in " + fmt + " format, run:",
       "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] [-minmax] ",
-      "    [-merge] [-group] [-stitch] [-separate] [-expand] [-omexml]",
+      "    [-merge] [-nogroup] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
       "    [-xmlversion v] [-crop x,y,w,h] [-autoscale] [-format Format]",
@@ -234,7 +234,7 @@ public class ImageInfo {
       "    -thumbs: read thumbnails instead of normal pixels",
       "    -minmax: compute min/max statistics",
       "     -merge: combine separate channels into RGB image",
-      "     -group: force multi-file datasets to be read as individual files",
+      "   -nogroup: force multi-file datasets to be read as individual files",
       "    -stitch: stitch files with similar names",
       "  -separate: split RGB image into separate channels",
       "    -expand: expand indexed color to RGB",
