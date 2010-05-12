@@ -45,6 +45,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.MinMaxCalculator;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -87,6 +88,7 @@ public class ImportProcess implements StatusReporter {
   private FileStitcher fileStitcher;
   private ChannelSeparator channelSeparator;
   private DimensionSwapper dimensionSwapper;
+  private MinMaxCalculator minMaxCalculator;
   private VirtualReader virtualReader;
   private ImageProcessorReader reader;
   
@@ -162,6 +164,11 @@ public class ImportProcess implements StatusReporter {
   public DimensionSwapper getDimensionSwapper() {
     assertStep(ImportStep.STACK);
     return dimensionSwapper;
+  }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public MinMaxCalculator getMinMaxCalculator() {
+    assertStep(ImportStep.STACK);
+    return minMaxCalculator;
   }
   /** Valid only after {@link ImportStep#STACK}. */
   public VirtualReader getVirtualReader() {
@@ -358,6 +365,7 @@ public class ImportProcess implements StatusReporter {
       r = channelSeparator = new ChannelSeparator(r);
     }
     r = dimensionSwapper = new DimensionSwapper(r);
+    r = minMaxCalculator = new MinMaxCalculator(r);
     r = virtualReader = new VirtualReader(r);
     reader = new ImageProcessorReader(r);
     reader.setId(options.getId());

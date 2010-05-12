@@ -173,19 +173,21 @@ public final class ImagePlusTools {
   }
 
   /**
-   * Adjusts the color range of the given image stack
+   * Autoscales the color range of the given image stack
    * to match its global minimum and maximum.
    */
-  public static void adjustColorRange(ImagePlus imp, IFormatReader r) {
-    ImageStack s = imp.getStack();
+  public static void adjustColorRange(ImagePlus imp,
+    MinMaxCalculator minMaxCalc)
+  {
     double min = Double.MAX_VALUE;
     double max = Double.MIN_VALUE;
 
-    if (r instanceof MinMaxCalculator) {
-      for (int c=0; c<r.getSizeC(); c++) {
+    // try to grab min and max values from the MinMaxCalculator
+    if (minMaxCalc != null) {
+      for (int c=0; c<minMaxCalc.getSizeC(); c++) {
         try {
-          Double cMin = ((MinMaxCalculator) r).getChannelGlobalMinimum(c);
-          Double cMax = ((MinMaxCalculator) r).getChannelGlobalMaximum(c);
+          Double cMin = minMaxCalc.getChannelGlobalMinimum(c);
+          Double cMax = minMaxCalc.getChannelGlobalMaximum(c);
 
           if (cMin != null && cMin.doubleValue() < min) {
             min = cMin.doubleValue();
@@ -198,21 +200,26 @@ public final class ImagePlusTools {
         catch (IOException e) { }
       }
     }
+
+    // couldn't find min and max values; determine manually
     if (min == Double.MAX_VALUE && max == Double.MIN_VALUE) {
-      for (int i=0; i<s.getSize(); i++) {
-        ImageProcessor p = s.getProcessor(i + 1);
+      ImageStack stack = imp.getStack();
+      for (int i=0; i<stack.getSize(); i++) {
+        ImageProcessor p = stack.getProcessor(i + 1);
         p.resetMinAndMax();
         if (p.getMin() < min) min = p.getMin();
         if (p.getMax() > max) max = p.getMax();
       }
     }
 
+    // assign min/max range to the active image processor
     ImageProcessor p = imp.getProcessor();
     if (p instanceof ColorProcessor) {
       ((ColorProcessor) p).setMinAndMax(min, max, 3);
     }
     else p.setMinAndMax(min, max);
-    imp.setProcessor(imp.getTitle(), p);
+    // HACK: refresh display
+    //imp.setProcessor(imp.getTitle(), p);
   }
 
   /** Reorder the given ImagePlus's stack. */

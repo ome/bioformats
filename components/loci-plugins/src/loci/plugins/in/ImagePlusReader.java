@@ -334,7 +334,7 @@ public class ImagePlusReader implements StatusReporter {
 
     // concatenate compatible images
     if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
-    
+
     // split dimensions, as appropriate
     boolean sliceC = options.isSplitChannels();
     boolean sliceZ = options.isSplitFocalPlanes();
@@ -380,7 +380,7 @@ public class ImagePlusReader implements StatusReporter {
     int zCount = options.getZCount(series);
     int tCount = options.getTCount(series);
     IFormatReader reader = process.getReader();
-    
+
     if (cCount == 0) cCount = reader.getEffectiveSizeC();
     if (zCount == 0) zCount = reader.getSizeZ();
     if (tCount == 0) tCount = reader.getSizeT();
@@ -404,11 +404,9 @@ public class ImagePlusReader implements StatusReporter {
 
     boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
     imp.setOpenAsHyperStack(hyper);
-    int nSlices = imp.getNSlices();
-    int nFrames = imp.getNFrames();
 
-    if (options.isAutoscale() && !options.isVirtual()) {
-      ImagePlusTools.adjustColorRange(imp, reader);
+    if (options.isAutoscale()) {
+      ImagePlusTools.adjustColorRange(imp, process.getMinMaxCalculator());
     }
     else if (!(imp.getProcessor() instanceof ColorProcessor)) {
       // ImageJ may autoscale the images anyway, so we need to manually
@@ -416,9 +414,6 @@ public class ImagePlusReader implements StatusReporter {
       // this pixel type
       imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
     }
-
-    imp.setDimensions(imp.getStackSize() / (nSlices * nFrames),
-      nSlices, nFrames);
 
 //    IFormatReader r = options.getReader();
 //    boolean windowless = options.isWindowless();
