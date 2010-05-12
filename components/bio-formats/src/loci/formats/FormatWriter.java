@@ -25,7 +25,10 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
+import java.util.HashMap;
 
+import loci.common.DataTools;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -54,11 +57,17 @@ public abstract class FormatWriter extends FormatHandler
   /** Current compression type. */
   protected String compression;
 
-  /** Whether the current file has been prepped for writing. */
-  protected boolean initialized;
+  /**
+   * Whether each plane in each series of the current file has been
+   * prepped for writing.
+   */
+  protected boolean[][] initialized;
 
   /** Whether the channels in an RGB image are interleaved. */
   protected boolean interleaved;
+
+  /** Current series. */
+  protected int series;
 
   /**
    * Current metadata retrieval object. Should <b>never</b> be accessed
@@ -66,6 +75,15 @@ public abstract class FormatWriter extends FormatHandler
    * prevent "null" access.
    */
   protected MetadataRetrieve metadataRetrieve = new DummyMetadata();
+
+  /**
+   * Next plane index for each series.  This is only used by deprecated methods.
+   */
+  private HashMap<Integer, Integer> planeIndices =
+    new HashMap<Integer, Integer>();
+
+  /** Current file. */
+  protected RandomAccessOutputStream out;
 
   // -- Constructors --
 
@@ -79,29 +97,48 @@ public abstract class FormatWriter extends FormatHandler
 
   // -- IFormatWriter API methods --
 
-  /* @see IFormatWriter#saveBytes(byte[], boolean) */
-  public void saveBytes(byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    saveBytes(bytes, 0, last, last);
+  /* @see IFormatWriter#changeOutputFile(String) */
+  public void changeOutputFile(String id) throws FormatException, IOException {
+    setId(id);
   }
 
-  /* @see IFormatWriter#savePlane(Object, boolean) */
-  public void savePlane(Object plane, boolean last)
-    throws FormatException, IOException
+  /* @see IFormatWriter#saveBytes(int, byte[]) */
+  public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
-    savePlane(plane, 0, last, last);
+    int width = metadataRetrieve.getPixelsSizeX(0).getValue();
+    int height = metadataRetrieve.getPixelsSizeY(0).getValue();
+    saveBytes(no, buf, 0, 0, width, height);
   }
 
-  /* @see IFormatWriter#savePlane(Object, int, boolean, boolean) */
-  public void savePlane(Object plane, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /* @see IFormatWriter#savePlane(int, Object) */
+  public void savePlane(int no, Object plane)
+    throws FormatException, IOException
+  {
+    int width = metadataRetrieve.getPixelsSizeX(0).getValue();
+    int height = metadataRetrieve.getPixelsSizeY(0).getValue();
+    savePlane(no, plane, 0, 0, width, height);
+  }
+
+  /* @see IFormatWriter#savePlane(int, Object, int, int, int, int) */
+  public void savePlane(int no, Object plane, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
     // NB: Writers use byte arrays by default as the native type.
     if (!(plane instanceof byte[])) {
       throw new IllegalArgumentException("Object to save must be a byte[]");
     }
-    saveBytes((byte[]) plane, series, lastInSeries, last);
+    saveBytes(no, (byte[]) plane, x, y, w, h);
+  }
+
+  /* @see IFormatWriter#setSeries(int) */
+  public void setSeries(int series) throws FormatException {
+    if (series < 0) throw new FormatException("Series must be > 0.");
+    if (series >= metadataRetrieve.getImageCount()) {
+      throw new FormatException("Series is '" + series +
+        "' but MetadataRetrieve only defines " +
+        metadataRetrieve.getImageCount() + " series.");
+    }
+    this.series = series;
   }
 
   /* @see IFormatWriter#setInterleaved(boolean) */
@@ -184,6 +221,57 @@ public abstract class FormatWriter extends FormatHandler
     return false;
   }
 
+  // -- Deprecated IFormatWriter API methods --
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#saveBytes(byte[], boolean)
+   */
+  public void saveBytes(byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    saveBytes(bytes, 0, last, last);
+  }
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#saveBytes(byte[], int, boolean, boolean)
+   */
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    setSeries(series);
+    Integer planeIndex = planeIndices.get(series);
+    if (planeIndex == null) planeIndex = 0;
+    saveBytes(planeIndex, bytes);
+    planeIndex++;
+    planeIndices.put(series, planeIndex);
+  }
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#savePlane(Object, boolean)
+   */
+  public void savePlane(Object plane, boolean last)
+    throws FormatException, IOException
+  {
+    savePlane(plane, 0, last, last);
+  }
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#savePlane(Object, int, boolean, boolean)
+   */
+  public void savePlane(Object plane, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    // NB: Writers use byte arrays by default as the native type.
+    if (!(plane instanceof byte[])) {
+      throw new IllegalArgumentException("Object to save must be a byte[]");
+    }
+    saveBytes((byte[]) plane, series, lastInSeries, last);
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
@@ -191,7 +279,132 @@ public abstract class FormatWriter extends FormatHandler
     if (id.equals(currentId)) return;
     close();
     currentId = id;
-    initialized = false;
+    out = new RandomAccessOutputStream(currentId);
+
+    MetadataRetrieve r = getMetadataRetrieve();
+    initialized = new boolean[r.getImageCount()][];
+    int oldSeries = series;
+    for (int i=0; i<r.getImageCount(); i++) {
+      setSeries(i);
+      initialized[i] = new boolean[getPlaneCount()];
+    }
+    setSeries(oldSeries);
+  }
+
+  /* @see IFormatHandler#close() */
+  public void close() throws IOException {
+    if (out != null) out.close();
+    out = null;
+    currentId = null;
+    initialized = null;
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Ensure that the arguments that are being passed to saveBytes(...) are
+   * valid.
+   * @throws FormatException if any of the arguments is invalid.
+   */
+  protected void checkParams(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException
+  {
+    MetadataRetrieve r = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(r, series);
+
+    if (buf == null) throw new FormatException("Buffer cannot be null.");
+    int z = r.getPixelsSizeZ(series).getValue().intValue();
+    int t = r.getPixelsSizeT(series).getValue().intValue();
+    int c = r.getChannelCount(series);
+    int planes = z * c * t;
+
+    if (no < 0) throw new FormatException("Plane index must be >= 0");
+    if (no >= planes) {
+      throw new FormatException("Plane index must be < " + planes);
+    }
+
+    int sizeX = r.getPixelsSizeX(series).getValue().intValue();
+    int sizeY = r.getPixelsSizeY(series).getValue().intValue();
+    if (x < 0) throw new FormatException("X coordinate must be >= 0");
+    if (y < 0) throw new FormatException("Y coordinate must be >= 0");
+    if (x >= sizeX) {
+      throw new FormatException("X coordinate must be < " + sizeX);
+    }
+    if (y >= sizeY) {
+      throw new FormatException("Y coordinate must be < " + sizeY);
+    }
+    if (w <= 0) throw new FormatException("Width must be > 0");
+    if (h <= 0) throw new FormatException("Height must be > 0");
+    if (x + w > sizeX) throw new FormatException("(w + x) must be <= " + sizeX);
+    if (y + h > sizeY) throw new FormatException("(h + y) must be <= " + sizeY);
+
+    int pixelType =
+      FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+    Integer samples = r.getChannelSamplesPerPixel(series, 0);
+    if (samples == null) samples = 1;
+    int minSize = bpp * w * h * samples;
+    if (buf.length < minSize) {
+      throw new FormatException("Buffer is too small; expected " + minSize +
+        " bytes, got " + buf.length + " bytes.");
+    }
+
+    if (!DataTools.containsValue(getPixelTypes(), pixelType)) {
+      throw new FormatException("Unsupported image type '" +
+        FormatTools.getPixelTypeString(pixelType) + "'.");
+    }
+  }
+
+  /**
+   * Seek to the given (x, y) coordinate of the image that starts at
+   * the given offset.
+   */
+  protected void seekToPlaneOffset(long baseOffset, int x, int y)
+    throws IOException
+  {
+    out.seek(baseOffset);
+
+    MetadataRetrieve r = getMetadataRetrieve();
+    int samples = getSamplesPerPixel();
+    int pixelType =
+      FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+
+    if (interleaved) bpp *= samples;
+
+    int sizeX = r.getPixelsSizeX(series).getValue().intValue();
+
+    out.skipBytes(bpp * (y * sizeX + x));
+  }
+
+  /**
+   * Returns true if the given rectangle coordinates correspond to a full
+   * image in the given series.
+   */
+  protected boolean isFullPlane(int x, int y, int w, int h) {
+    MetadataRetrieve r = getMetadataRetrieve();
+    int sizeX = r.getPixelsSizeX(series).getValue().intValue();
+    int sizeY = r.getPixelsSizeY(series).getValue().intValue();
+    return x == 0 && y == 0 && w == sizeX && h == sizeY;
+  }
+
+  /** Retrieve the number of samples per pixel for the current series. */
+  protected int getSamplesPerPixel() {
+    MetadataRetrieve r = getMetadataRetrieve();
+    Integer samples = r.getChannelSamplesPerPixel(series, 0);
+    if (samples == null) {
+      LOGGER.warn("SamplesPerPixel #0 is null. It is assumed to be 1.");
+    }
+    return samples == null ? 1 : samples.intValue();
+  }
+
+  /** Retrieve the total number of planes in the current series. */
+  protected int getPlaneCount() {
+    MetadataRetrieve r = getMetadataRetrieve();
+    int z = r.getPixelsSizeZ(series).getValue().intValue();
+    int t = r.getPixelsSizeT(series).getValue().intValue();
+    int c = r.getChannelCount(series);
+    return z * c * t;
   }
 
 }

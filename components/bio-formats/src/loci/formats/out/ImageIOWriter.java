@@ -51,7 +51,6 @@ public abstract class ImageIOWriter extends FormatWriter {
   // -- Fields --
 
   protected String kind;
-  protected RandomAccessOutputStream out;
 
   // -- Constructors --
 
@@ -74,36 +73,35 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve meta = getMetadataRetrieve();
     BufferedImage image = AWTImageTools.makeImage(buf,
       interleaved, meta, series);
-    savePlane(image, series, lastInSeries, last);
+    savePlane(no, image, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatWriter#savePlane(Object, int, boolean, boolean) */
-  public void savePlane(Object plane, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#savePlane(int, Object, int, int, int, int)
+   */
+  public void savePlane(int no, Object plane, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
     if (!(plane instanceof Image)) {
       throw new IllegalArgumentException(
         "Object to save must be a java.awt.Image");
     }
+    if (!isFullPlane(x, y, w, h)) {
+      throw new FormatException("ImageIOWriter does not support writing tiles");
+    }
 
     BufferedImage img = AWTImageTools.makeBuffered((Image) plane, cm);
-    int type = AWTImageTools.getPixelType(img);
-    int[] types = getPixelTypes();
-    for (int i=0; i<types.length; i++) {
-      if (types[i] == type) {
-        out = new RandomAccessOutputStream(currentId);
-        ImageIO.write(img, kind, out);
-        return;
-      }
-    }
-    throw new FormatException("Floating point data not supported.");
+    ImageIO.write(img, kind, out);
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes() */
@@ -116,14 +114,6 @@ public abstract class ImageIOWriter extends FormatWriter {
   /* @see loci.formats.IFormatHandler#getNativeDataType() */
   public Class<?> getNativeDataType() {
     return Image.class;
-  }
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
-    initialized = false;
   }
 
 }

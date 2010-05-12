@@ -61,7 +61,6 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Fields --
 
   private Vector<String> xmlFragments;
-  private RandomAccessOutputStream out;
   private String currentFragment;
 
   // -- Constructor --
@@ -75,87 +74,70 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- IFormatHandler API methods --
 
+  /* @see loci.formats.IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    String xml;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      xml = service.getOMEXML(retrieve);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+    }
+    catch (ServiceException se) {
+      throw new FormatException(se);
+    }
+
+    xmlFragments = new Vector<String>();
+    currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+    XMLTools.parseXML(xml, new OMEHandler());
+
+    xmlFragments.add(currentFragment);
+    if (out.length() == 0) {
+      out.writeBytes(xmlFragments.get(0));
+    }
+  }
+
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
+    super.close();
     xmlFragments = null;
-    initialized = false;
   }
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(retrieve, series);
-    if (!initialized) {
-      out = new RandomAccessOutputStream(currentId);
-
-      String xml;
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        OMEXMLService service = factory.getInstance(OMEXMLService.class);
-        xml = service.getOMEXML(retrieve);
-      }
-      catch (DependencyException de) {
-        throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
-      }
-      catch (ServiceException se) {
-        throw new FormatException(se);
-      }
-
-      xmlFragments = new Vector<String>();
-      currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-      XMLTools.parseXML(xml, new OMEHandler());
-
-      xmlFragments.add(currentFragment);
-
-      out.writeBytes(xmlFragments.get(0));
-      initialized = true;
-    }
-    boolean littleEndian =
-      !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
 
     String type = retrieve.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
-
-    CodecOptions options = new CodecOptions();
-    options.width = retrieve.getPixelsSizeX(series).getValue().intValue();
-    options.height = retrieve.getPixelsSizeY(series).getValue().intValue();
-    options.channels = 1;
-    options.interleaved = false;
-    options.littleEndian = littleEndian;
-    options.signed = FormatTools.isSigned(pixelType);
-
-    // TODO: Create a method compress to handle all compression methods
     int bytes = FormatTools.getBytesPerPixel(pixelType);
-    options.bitsPerSample = bytes * 8;
-
-    Integer channels = retrieve.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int nChannels = channels == null ? 1 : channels.intValue();
+    int nChannels = getSamplesPerPixel();
+    int sizeX = retrieve.getPixelsSizeX(series).getValue().intValue();
+    int sizeY = retrieve.getPixelsSizeY(series).getValue().intValue();
+    int planeSize = sizeX * sizeY * bytes;
+    boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
 
     for (int i=0; i<nChannels; i++) {
       byte[] b = ImageTools.splitChannels(buf, i, nChannels, bytes, false,
         interleaved);
-      if (compression.equals("J2K")) {
-        b = new JPEG2000Codec().compress(b, options);
-      }
-      else if (compression.equals("JPEG")) {
-        b = new JPEGCodec().compress(b, options);
-      }
-      else if (compression.equals("zlib")) {
-        b = new ZlibCodec().compress(b, options);
-      }
-      byte[] encodedPix = new Base64Codec().compress(b, options);
+      byte[] encodedPix = compress(b);
 
-      StringBuffer plane = new StringBuffer("\n<Bin:BinData Length=\"");
-      plane.append(encodedPix.length);
+      StringBuffer plane = new StringBuffer("\n<BinData Length=\"");
+      plane.append(planeSize);
+      plane.append("\"");
+      plane.append(" BigEndian=\"");
+      plane.append(bigEndian);
       plane.append("\"");
       if (compression != null && !compression.equals("Uncompressed")) {
         plane.append(" Compression=\"");
@@ -164,14 +146,13 @@ public class OMEXMLWriter extends FormatWriter {
       }
       plane.append(">");
       plane.append(new String(encodedPix));
-      plane.append("</Bin:BinData>");
+      plane.append("</BinData>");
       out.writeBytes(plane.toString());
     }
 
-    if (lastInSeries) {
-      out.writeBytes((String) xmlFragments.get(series + 1));
+    if (no == getPlaneCount() - 1) {
+      out.writeBytes(xmlFragments.get(series + 1));
     }
-    if (last) close();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -183,6 +164,40 @@ public class OMEXMLWriter extends FormatWriter {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
     }
     return getPixelTypes();
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Compress the given byte array using the current codec.
+   * The compressed data is then base64-encoded.
+   */
+  private byte[] compress(byte[] b) throws FormatException, IOException {
+    MetadataRetrieve r = getMetadataRetrieve();
+    String type = r.getPixelsType(series).toString();
+    int pixelType = FormatTools.pixelTypeFromString(type);
+    int bytes = FormatTools.getBytesPerPixel(pixelType);
+
+    CodecOptions options = new CodecOptions();
+    options.width = r.getPixelsSizeX(series).getValue().intValue();
+    options.height = r.getPixelsSizeY(series).getValue().intValue();
+    options.channels = 1;
+    options.interleaved = false;
+    options.signed = FormatTools.isSigned(pixelType);
+    options.littleEndian =
+      !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    options.bitsPerSample = bytes * 8;
+
+    if (compression.equals("J2K")) {
+      b = new JPEG2000Codec().compress(b, options);
+    }
+    else if (compression.equals("JPEG")) {
+      b = new JPEGCodec().compress(b, options);
+    }
+    else if (compression.equals("zlib")) {
+      b = new ZlibCodec().compress(b, options);
+    }
+    return new Base64Codec().compress(b, options);
   }
 
   // -- Helper class --

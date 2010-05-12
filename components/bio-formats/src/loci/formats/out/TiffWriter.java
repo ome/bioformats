@@ -57,9 +57,6 @@ public class TiffWriter extends FormatWriter {
 
   // -- Fields --
 
-  /** Current output stream. */
-  protected RandomAccessOutputStream out;
-
   /** Whether or not the output file is a BigTIFF file. */
   protected boolean isBigTiff;
 
@@ -92,10 +89,13 @@ public class TiffWriter extends FormatWriter {
    * depth, compression and units.  If this image is the last one in the file,
    * the last flag must be set.
    */
-  public void saveBytes(byte[] buf, IFD ifd, boolean last)
+  public void saveBytes(int no, byte[] buf, IFD ifd)
     throws IOException, FormatException
   {
-    saveBytes(buf, ifd, 0, last, last);
+    MetadataRetrieve r = getMetadataRetrieve();
+    int w = r.getPixelsSizeX(series).getValue().intValue();
+    int h = r.getPixelsSizeY(series).getValue().intValue();
+    saveBytes(no, buf, ifd, 0, 0, w, h);
   }
 
   /**
@@ -105,27 +105,21 @@ public class TiffWriter extends FormatWriter {
    * the lastInSeries flag must be set. If this image is the last one in the
    * file, the last flag must be set.
    */
-  public void saveBytes(byte[] buf, IFD ifd, int series,
-    boolean lastInSeries, boolean last) throws IOException, FormatException
+  public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
+    throws IOException, FormatException
   {
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(retrieve, series);
     Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    if (initialized) {
-      tiffSaver = new TiffSaver(out);
-      tiffSaver.setLittleEndian(littleEndian);
-      tiffSaver.setBigTiff(isBigTiff);
-    }
+    tiffSaver = new TiffSaver(out);
+    tiffSaver.setLittleEndian(littleEndian);
+    tiffSaver.setBigTiff(isBigTiff);
 
-    if (!initialized) {
-      initialized = true;
-      out = new RandomAccessOutputStream(currentId);
-      tiffSaver = new TiffSaver(out);
-      tiffSaver.setLittleEndian(littleEndian);
-      tiffSaver.setBigTiff(isBigTiff);
+    if (!initialized[series][no]) {
+      initialized[series][no] = true;
 
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       if (tmp.length() == 0) {
@@ -136,11 +130,7 @@ public class TiffWriter extends FormatWriter {
 
     int width = retrieve.getPixelsSizeX(series).getValue().intValue();
     int height = retrieve.getPixelsSizeY(series).getValue().intValue();
-    Integer channels = retrieve.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int c = channels == null ? 1 : channels.intValue();
+    int c = getSamplesPerPixel();
     int type = FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
@@ -157,8 +147,7 @@ public class TiffWriter extends FormatWriter {
         byte[] b = ImageTools.splitChannels(buf, i, c, bytesPerPixel,
           false, interleaved);
 
-        saveBytes(b, ifd, series, lastInSeries && i == c - 1,
-          last && i == c - 1);
+        saveBytes(no, b, ifd, x, y, w, h);
       }
       return;
     }
@@ -188,17 +177,19 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
-    tiffSaver.writeImage(buf, ifd, last, type);
-    if (last) close();
+    tiffSaver.writeImage(buf, ifd, no, type, x, y, w, h,
+      no == getPlaneCount() - 1);
   }
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    IFD h = new IFD();
+    IFD ifd = new IFD();
     if (compression == null) compression = "";
     TiffCompression compressType = TiffCompression.UNCOMPRESSED;
     if (compression.equals(COMPRESSION_LZW)) {
@@ -213,8 +204,8 @@ public class TiffWriter extends FormatWriter {
     else if (compression.equals(COMPRESSION_JPEG)) {
       compressType = TiffCompression.JPEG;
     }
-    h.put(new Integer(IFD.COMPRESSION), compressType.getCode());
-    saveBytes(buf, h, series, lastInSeries, last);
+    ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
+    saveBytes(no, buf, ifd, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
@@ -226,16 +217,6 @@ public class TiffWriter extends FormatWriter {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
     }
     return super.getPixelTypes(codec);
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
-    initialized = false;
   }
 
   // -- TiffWriter API methods --

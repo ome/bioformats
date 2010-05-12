@@ -139,28 +139,35 @@ public abstract class WriterWrapper implements IFormatWriter {
 
   // -- IFormatWriter API methods --
 
-  public void saveBytes(byte[] bytes, boolean last)
+  public void changeOutputFile(String id) throws FormatException, IOException {
+    writer.changeOutputFile(id);
+  }
+
+  public void saveBytes(int no, byte[] buf) throws FormatException, IOException
+  {
+    writer.saveBytes(no, buf);
+  }
+
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    writer.saveBytes(bytes, last);
+    writer.saveBytes(no, buf, x, y, w, h);
   }
 
-  public void saveBytes(byte[] bytes, int series,
-    boolean lastInSeries, boolean last) throws FormatException, IOException
-  {
-    writer.saveBytes(bytes, series, lastInSeries, last);
-  }
-
-  public void savePlane(Object plane, boolean last)
+  public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
-    writer.savePlane(plane, last);
+    writer.savePlane(no, plane);
   }
 
-  public void savePlane(Object plane, int series,
-    boolean lastInSeries, boolean last) throws FormatException, IOException
+  public void savePlane(int no, Object plane, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    writer.savePlane(plane, series, lastInSeries, last);
+    writer.savePlane(no, plane, x, y, w, h);
+  }
+
+  public void setSeries(int series) throws FormatException {
+    writer.setSeries(series);
   }
 
   public void setInterleaved(boolean interleaved) {
@@ -221,6 +228,36 @@ public abstract class WriterWrapper implements IFormatWriter {
 
   public String getCompression() {
     return writer.getCompression();
+  }
+
+  // -- Deprecated IFormatWriter methods --
+
+  /** @deprecated */
+  public void saveBytes(byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    writer.saveBytes(bytes, last);
+  }
+
+  /** @deprecated */
+  public void saveBytes(byte[] bytes, int series,
+    boolean lastInSeries, boolean last) throws FormatException, IOException
+  {
+    writer.saveBytes(bytes, series, lastInSeries, last);
+  }
+
+  /** @deprecated */
+  public void savePlane(Object plane, boolean last)
+    throws FormatException, IOException
+  {
+    writer.savePlane(plane, last);
+  }
+
+  /** @deprecated */
+  public void savePlane(Object plane, int series,
+    boolean lastInSeries, boolean last) throws FormatException, IOException
+  {
+    writer.savePlane(plane, series, lastInSeries, last);
   }
 
   // -- IFormatHandler API methods --

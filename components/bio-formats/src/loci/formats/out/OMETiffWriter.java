@@ -210,20 +210,23 @@ public class OMETiffWriter extends TiffWriter {
     super.close();
     seriesMap = null;
     wroteLast = false;
-    if (out != null) out.close();
-    out = null;
   }
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
     if (seriesMap == null) seriesMap = new ArrayList<Integer>();
     seriesMap.add(new Integer(series));
-    if (last) wroteLast = true;
-    super.saveBytes(buf, series, lastInSeries, last);
+
+    MetadataRetrieve r = getMetadataRetrieve();
+
+    wroteLast = series == r.getImageCount() - 1 && no == getPlaneCount() - 1;
+    super.saveBytes(no, buf, x, y, w, h);
   }
 
   // -- IFormatHandler API methods --

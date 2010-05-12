@@ -69,7 +69,7 @@ public class WriteRGBMovie {
     writer.setId(id);
     for (int t=0; t<numFrames; t++) {
       System.out.print(".");
-      writer.saveBytes(img[t], t == numFrames - 1);
+      writer.saveBytes(t, img[t]);
     }
     writer.close();
 

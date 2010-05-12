@@ -43,10 +43,6 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class JPEG2000Writer extends FormatWriter {
 
-  // -- Fields --
-
-  private RandomAccessOutputStream out;
-
   // -- Constructor --
 
   public JPEG2000Writer() {
@@ -55,12 +51,14 @@ public class JPEG2000Writer extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(retrieve, series);
     boolean littleEndian =
       !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
     int width = retrieve.getPixelsSizeX(series).getValue().intValue();
@@ -68,13 +66,7 @@ public class JPEG2000Writer extends FormatWriter {
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString()));
-    Integer channels = retrieve.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int nChannels = channels == null ? 1 : channels.intValue();
-
-    out = new RandomAccessOutputStream(currentId);
+    int nChannels = getSamplesPerPixel();
 
     CodecOptions options = new CodecOptions();
     options.width = width;
@@ -85,7 +77,6 @@ public class JPEG2000Writer extends FormatWriter {
     options.interleaved = interleaved;
 
     out.write(new JPEG2000Codec().compress(buf, options));
-    out.close();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -95,15 +86,6 @@ public class JPEG2000Writer extends FormatWriter {
   public int[] getPixelTypes() {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16};
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
   }
 
 }

@@ -62,6 +62,7 @@ public class BufferedImageWriter extends WriterWrapper {
   // -- BufferedImageWriter methods --
 
   /**
+   * @deprecated
    * Saves the given BufferedImage to the current file.
    * Note that this method will append the image plane to the file; it will not
    * overwrite previously saved image planes.
@@ -74,6 +75,7 @@ public class BufferedImageWriter extends WriterWrapper {
   }
 
   /**
+   * @deprecated
    * Saves the given BufferedImage to the given series in the current file.
    * Note that this method will append the image plane to the file; it will not
    * overwrite previously saved image planes.

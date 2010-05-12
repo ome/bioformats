@@ -229,6 +229,7 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+      writer.setSeries(q);
       writer.setInterleaved(reader.isInterleaved());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
       total += numImages;
@@ -245,8 +246,7 @@ public final class ImageConverter {
           writer.setColorModel(model);
         }
         long m = System.currentTimeMillis();
-        boolean lastInSeries = i == numImages - 1;
-        writer.saveBytes(buf, q, lastInSeries, q == last - 1 && lastInSeries);
+        writer.saveBytes(i, buf);
         long e = System.currentTimeMillis();
         read += m - s;
         write += e - m;

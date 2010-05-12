@@ -79,8 +79,6 @@ public class AVIWriter extends FormatWriter {
 
   // -- Fields --
 
-  private RandomAccessOutputStream out;
-
   private int planesWritten = 0;
 
   private int bytesPerPixel;
@@ -99,27 +97,18 @@ public class AVIWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    if (buf == null) {
-      throw new FormatException("Byte array is null");
-    }
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve meta = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(meta, series);
     int type =
       FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
-    if (!DataTools.containsValue(getPixelTypes(), type)) {
-      throw new FormatException("Unsupported image type '" +
-        FormatTools.getPixelTypeString(type) + "'.");
-    }
 
-    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int nChannels = channels == null ? 1 : channels.intValue();
+    int nChannels = getSamplesPerPixel();
 
     byte[][] lut = null;
 
@@ -132,12 +121,10 @@ public class AVIWriter extends FormatWriter {
       model.getAlphas(lut[3]);
     }
 
-    if (!initialized) {
-      initialized = true;
+    if (!initialized[series][no]) {
+      initialized[series][no] = true;
       bytesPerPixel = nChannels == 2 ? 3 : nChannels;
       savedbLength = new Vector<Long>();
-
-      out = new RandomAccessOutputStream(currentId);
 
       if (out.length() > 0) {
         RandomAccessInputStream in = new RandomAccessInputStream(currentId);
@@ -528,10 +515,6 @@ public class AVIWriter extends FormatWriter {
     out.writeInt(planesWritten);
     out.seek(FRAME_OFFSET_2);
     out.writeInt(planesWritten);
-
-    if (last) {
-      out.close();
-    }
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -540,16 +523,6 @@ public class AVIWriter extends FormatWriter {
   /* @see loci.formats.IFormatWriter#getPixelTypes() */
   public int[] getPixelTypes() {
     return new int[] {FormatTools.UINT8};
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
-    initialized = false;
   }
 
 }

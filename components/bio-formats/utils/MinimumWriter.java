@@ -62,7 +62,7 @@ public class MinimumWriter {
     IFormatWriter writer = new ImageWriter();
     writer.setMetadataRetrieve(meta);
     writer.setId(id);
-    writer.saveBytes(img, true);
+    writer.saveBytes(0, img);
     writer.close();
 
     System.out.println("Done.");

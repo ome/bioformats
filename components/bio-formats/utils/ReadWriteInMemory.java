@@ -99,7 +99,7 @@ public class ReadWriteInMemory {
         // reuse previously allocated byte array
         reader.openBytes(i, plane);
       }
-      writer.saveBytes(plane, i == imageCount - 1);
+      writer.saveBytes(i, plane);
       System.out.print(".");
     }
     reader.close();

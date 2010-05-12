@@ -252,7 +252,7 @@ public class LociUploader implements PlugIn {
           }
         }
 
-        ul.saveBytes(toUpload, i == is.getSize() - 1);
+        ul.saveBytes(i, toUpload);
       }
 
       IJ.showStatus("Sending data to server...");

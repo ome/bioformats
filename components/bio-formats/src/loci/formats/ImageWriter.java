@@ -179,32 +179,41 @@ public class ImageWriter implements IFormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see IFormatWriter#saveBytes(byte[], boolean) */
-  public void saveBytes(byte[] bytes, boolean last)
+  /* @see IFormatWriter#changeOutputFile(String) */
+  public void changeOutputFile(String id) throws FormatException, IOException {
+    getWriter().changeOutputFile(id);
+  }
+
+  /* @see IFormatWriter#saveBytes(int, byte[]) */
+  public void saveBytes(int no, byte[] buf) throws FormatException, IOException
+  {
+    getWriter().saveBytes(no, buf);
+  }
+
+  /* @see IFormatWriter#saveBytes(int, byte[], int, int, int, int) */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    getWriter().saveBytes(bytes, last);
+    getWriter().saveBytes(no, buf, x, y, w, h);
   }
 
-  /* @see IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    getWriter().saveBytes(bytes, series, lastInSeries, last);
-  }
-
-  /* @see IFormatWriter#savePlane(Object, boolean) */
-  public void savePlane(Object plane, boolean last)
+  /* @see IFormatWriter#savePlane(int, Object) */
+  public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
-    getWriter().savePlane(plane, last);
+    getWriter().savePlane(no, plane);
   }
 
-  /* @see IFormatWriter#savePlane(Object, int, boolean, boolean) */
-  public void savePlane(Object plane, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /* @see IFormatWriter#savePlane(int, Object, int, int, int, int) */
+  public void savePlane(int no, Object plane, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    getWriter().savePlane(plane, series, lastInSeries, last);
+    getWriter().savePlane(no, plane, x, y, w, h);
+  }
+
+  /* @see IFormatWriter#setSeries(int) */
+  public void setSeries(int series) throws FormatException {
+    getWriter().setSeries(series);
   }
 
   /* @see IFormatWriter#setInterleaved(boolean) */
@@ -307,6 +316,48 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatWriter#getCompression() */
   public String getCompression() {
     return getWriter().getCompression();
+  }
+
+  // -- Deprecated IFormatWriter API methods --
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#saveBytes(byte[], boolean)
+   */
+  public void saveBytes(byte[] bytes, boolean last)
+    throws FormatException, IOException
+  {
+    getWriter().saveBytes(bytes, last);
+  }
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#saveBytes(byte[], int, boolean, boolean)
+   */
+  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    getWriter().saveBytes(bytes, series, lastInSeries, last);
+  }
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#savePlane(Object, boolean)
+   */
+  public void savePlane(Object plane, boolean last)
+    throws FormatException, IOException
+  {
+    getWriter().savePlane(plane, last);
+  }
+
+  /**
+   * @deprecated
+   * @see IFormatWriter#savePlane(Object, int, boolean, boolean)
+   */
+  public void savePlane(Object plane, int series, boolean lastInSeries,
+    boolean last) throws FormatException, IOException
+  {
+    getWriter().savePlane(plane, series, lastInSeries, last);
   }
 
   // -- IFormatHandler API methods --

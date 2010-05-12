@@ -54,7 +54,6 @@ public class APNGWriter extends FormatWriter {
 
   // -- Fields --
 
-  private RandomAccessOutputStream out;
   private int numFrames = 0;
   private long numFramesPointer = 0;
   private int nextSequenceNumber;
@@ -68,32 +67,53 @@ public class APNGWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    if (buf == null) {
-      throw new FormatException("Byte array is null");
-    }
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve meta = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(meta, series);
-    int pixelType =
-      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
-    int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    boolean signed = FormatTools.isSigned(pixelType);
-    littleEndian = !meta.getPixelsBinDataBigEndian(0, 0);
 
-    boolean indexed = getColorModel() instanceof IndexColorModel;
-    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int nChannels = channels == null ? 1 : channels.intValue();
     int width = meta.getPixelsSizeX(series).getValue().intValue();
     int height = meta.getPixelsSizeY(series).getValue().intValue();
 
-    if (!initialized) {
-      out = new RandomAccessOutputStream(currentId);
+    if (!initialized[series][no]) {
+      writeFCTL(width, height);
+      if (no == 0) writePLTE();
+      initialized[series][no] = true;
+    }
+
+    writePixels(no == 0 ? "IDAT" : "fdAT", buf, x, y, w, h);
+
+    numFrames++;
+  }
+
+  /* @see loci.formats.IFormatWriter#canDoStacks() */
+  public boolean canDoStacks() { return true; }
+
+  /* @see loci.formats.IFormatWriter#getPixelTypes() */
+  public int[] getPixelTypes() {
+    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+      FormatTools.UINT16};
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+
+    if (out.length() == 0) {
+      MetadataRetrieve r = getMetadataRetrieve();
+      int width = r.getPixelsSizeX(series).getValue().intValue();
+      int height = r.getPixelsSizeY(series).getValue().intValue();
+      int bytesPerPixel =
+        FormatTools.getBytesPerPixel(r.getPixelsType(series).toString());
+      int nChannels = getSamplesPerPixel();
+      boolean indexed =
+        getColorModel() != null && (getColorModel() instanceof IndexColorModel);
 
       // write 8-byte PNG signature
       out.write(PNG_SIG);
@@ -131,65 +151,15 @@ public class APNGWriter extends FormatWriter {
       out.writeInt(0);
       out.writeInt(0);
       out.writeInt(0); // save a place for the CRC
-
-      // write fcTL chunk
-      writeFCTL(width, height);
-
-      // write PLTE chunk, if needed
-      writePLTE();
-
-      // write IDAT chunk
-      writePixels("IDAT", buf, width, height, nChannels, signed);
-      initialized = true;
-    }
-    else {
-      // write fcTL chunk
-      writeFCTL(width, height);
-
-      // write fdAT chunk
-      writePixels("fdAT", buf, width, height, nChannels, signed);
-    }
-
-    numFrames++;
-
-    if (last) {
-      // write IEND chunk
-      out.writeInt(0);
-      out.writeBytes("IEND");
-      out.writeInt(crc("IEND".getBytes()));
-
-      // update frame count
-      out.seek(numFramesPointer);
-      out.writeInt(numFrames);
-      out.skipBytes(4);
-      byte[] b = new byte[12];
-      b[0] = 'a';
-      b[1] = 'c';
-      b[2] = 'T';
-      b[3] = 'L';
-      DataTools.unpackBytes(numFrames, b, 4, 4, false);
-      DataTools.unpackBytes(0, b, 8, 4, false);
-      out.writeInt(crc(b));
     }
   }
-
-  /* @see loci.formats.IFormatWriter#canDoStacks() */
-  public boolean canDoStacks() { return true; }
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes() */
-  public int[] getPixelTypes() {
-    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-      FormatTools.UINT16};
-  }
-
-  // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
-    initialized = false;
+    if (out != null) {
+      writeFooter();
+    }
+    super.close();
     numFrames = 0;
   }
 
@@ -253,9 +223,19 @@ public class APNGWriter extends FormatWriter {
     out.writeInt(crc(b));
   }
 
-  private void writePixels(String chunk, byte[] stream, int width, int height,
-    int sizeC, boolean signed) throws IOException
+  private void writePixels(String chunk, byte[] stream, int x, int y,
+    int width, int height) throws FormatException, IOException
   {
+    MetadataRetrieve r = getMetadataRetrieve();
+    int sizeC = getSamplesPerPixel();
+    String type = r.getPixelsType(series).toString();
+    int pixelType = FormatTools.pixelTypeFromString(type);
+    boolean signed = FormatTools.isSigned(pixelType);
+
+    if (!isFullPlane(x, y, width, height)) {
+      throw new FormatException("APNGWriter does not support writing tiles.");
+    }
+
     ByteArrayOutputStream s = new ByteArrayOutputStream();
     s.write(chunk.getBytes());
     if (chunk.equals("fdAT")) {
@@ -297,6 +277,26 @@ public class APNGWriter extends FormatWriter {
     out.write(b);
 
     // write checksum
+    out.writeInt(crc(b));
+  }
+
+  private void writeFooter() throws IOException {
+    // write IEND chunk
+    out.writeInt(0);
+    out.writeBytes("IEND");
+    out.writeInt(crc("IEND".getBytes()));
+
+    // update frame count
+    out.seek(numFramesPointer);
+    out.writeInt(numFrames);
+    out.skipBytes(4);
+    byte[] b = new byte[12];
+    b[0] = 'a';
+    b[1] = 'c';
+    b[2] = 'T';
+    b[3] = 'L';
+    DataTools.unpackBytes(numFrames, b, 4, 4, false);
+    DataTools.unpackBytes(0, b, 8, 4, false);
     out.writeInt(crc(b));
   }
 

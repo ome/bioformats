@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -46,7 +48,7 @@ public class ICSWriter extends FormatWriter {
 
   // -- Fields --
 
-  private RandomAccessOutputStream out;
+  private long pixelOffset;
 
   // -- Constructor --
 
@@ -54,37 +56,85 @@ public class ICSWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    if (buf == null) {
-      throw new FormatException("Byte array is null");
-    }
+    checkParams(no, buf, x, y, w, h);
 
     MetadataRetrieve meta = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(meta, series);
-
+    int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
+    int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
     int pixelType =
       FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int rgbChannels = channels == null ? 1 : channels.intValue();
+    int rgbChannels = getSamplesPerPixel();
+    int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
-    if (!initialized) {
-      initialized = true;
-      out = new RandomAccessOutputStream(currentId);
+    if (!initialized[series][no]) {
+      initialized[series][no] = true;
+
+      if (!isFullPlane(x, y, w, h)) {
+        // write a dummy plane that will be overwritten in sections
+        out.seek(pixelOffset + (no + 1) * planeSize);
+      }
+    }
+
+    out.seek(pixelOffset + no * planeSize);
+    if (isFullPlane(x, y, w, h) && (interleaved || rgbChannels == 1)) {
+      out.write(buf);
+    }
+    else {
+      out.skipBytes(bytesPerPixel * rgbChannels * sizeX * y);
+      for (int row=0; row<h; row++) {
+        ByteArrayOutputStream strip = new ByteArrayOutputStream();
+        for (int col=0; col<w; col++) {
+          for (int c=0; c<rgbChannels; c++) {
+            int index = interleaved ? rgbChannels * (row * w + col) + c :
+              w * (c * h + row) + col;
+            strip.write(buf, index * bytesPerPixel, bytesPerPixel);
+          }
+        }
+        out.skipBytes(bytesPerPixel * rgbChannels * x);
+        out.write(strip.toByteArray());
+        out.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
+      }
+    }
+  }
+
+  /* @see loci.formats.IFormatWriter#canDoStacks() */
+  public boolean canDoStacks() { return true; }
+
+  /* @see loci.formats.IFormatWriter#getPixelTypes() */
+  public int[] getPixelTypes() {
+    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
+      FormatTools.FLOAT};
+  }
+
+  /* @see loci.formats.IFormatWriter#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+
+    if (out.length() == 0) {
       out.writeBytes("\t\n");
       out.writeBytes("ics_version\t2.0\n");
       out.writeBytes("filename\t" + currentId + "\n");
       out.writeBytes("layout\tparameters\t6\n");
 
+      MetadataRetrieve meta = getMetadataRetrieve();
+      MetadataTools.verifyMinimumPopulated(meta, series);
+
+      int pixelType =
+        FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
+      int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+      int rgbChannels = getSamplesPerPixel();
+
       String order = meta.getPixelsDimensionOrder(series).toString();
-      int x = meta.getPixelsSizeX(series).getValue().intValue();
-      int y = meta.getPixelsSizeY(series).getValue().intValue();
+      int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
+      int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
       int z = meta.getPixelsSizeZ(series).getValue().intValue();
       int c = meta.getPixelsSizeC(series).getValue().intValue();
       int t = meta.getPixelsSizeT(series).getValue().intValue();
@@ -100,8 +150,8 @@ public class ICSWriter extends FormatWriter {
       }
 
       for (int i=0; i<order.length(); i++) {
-        if (order.charAt(i) == 'X') sizes[nextSize++] = x;
-        else if (order.charAt(i) == 'Y') sizes[nextSize++] = y;
+        if (order.charAt(i) == 'X') sizes[nextSize++] = sizeX;
+        else if (order.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
         else if (order.charAt(i) == 'Z') sizes[nextSize++] = z;
         else if (order.charAt(i) == 'T') sizes[nextSize++] = t;
         else if (order.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
@@ -167,40 +217,14 @@ public class ICSWriter extends FormatWriter {
 
       out.writeBytes("\nparameter\tunits\tbits\t" + units.toString() + "\n");
       out.writeBytes("\nend\n");
+      pixelOffset = out.getFilePointer();
     }
-
-    out.seek(out.length());
-    if (interleaved || rgbChannels == 1) out.write(buf);
     else {
-      int planeSize = buf.length / rgbChannels;
-      for (int i=0; i<planeSize; i+=bytesPerPixel) {
-        for (int ch=0; ch<rgbChannels; ch++) {
-          out.write(buf, ch*planeSize + i, bytesPerPixel);
-        }
-      }
+      RandomAccessInputStream in = new RandomAccessInputStream(currentId);
+      in.findString("\nend\n");
+      pixelOffset = in.getFilePointer();
+      in.close();
     }
-
-    if (last) close();
-  }
-
-  /* @see loci.formats.IFormatWriter#canDoStacks() */
-  public boolean canDoStacks() { return true; }
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes() */
-  public int[] getPixelTypes() {
-    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
-      FormatTools.FLOAT};
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
-    initialized = false;
   }
 
 }

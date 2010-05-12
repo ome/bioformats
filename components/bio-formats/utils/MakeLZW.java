@@ -38,7 +38,7 @@ public class MakeLZW {
       for (int p=0; p<planeCount; p++) {
         System.out.print(".");
         byte[] plane = reader.openBytes(p);
-        writer.saveBytes(plane, p == planeCount - 1);
+        writer.saveBytes(p, plane);
       }
       System.out.println(" [done]");
     }

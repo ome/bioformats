@@ -113,9 +113,10 @@ public class OMEWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
-    boolean last)
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] bytes, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     if (!hasOMEJava) throw new FormatException(OMEUtils.NO_OME_MSG);
@@ -186,8 +187,8 @@ public class OMEWriter extends FormatWriter {
       LOGGER.debug("Original file upload failed", e);
     }
 
-    int x = metadataRetrieve.getPixelsSizeX(series).getValue().intValue();
-    int y = metadataRetrieve.getPixelsSizeY(series).getValue().intValue();
+    int sizeX = metadataRetrieve.getPixelsSizeX(series).getValue().intValue();
+    int sizeY = metadataRetrieve.getPixelsSizeY(series).getValue().intValue();
     int z = metadataRetrieve.getPixelsSizeZ(series).getValue().intValue();
     int c = metadataRetrieve.getPixelsSizeC(series).getValue().intValue();
     int t = metadataRetrieve.getPixelsSizeT(series).getValue().intValue();
@@ -202,8 +203,8 @@ public class OMEWriter extends FormatWriter {
       r.exec("sessionKey = rc.getSessionKey()");
       r.exec("is = ImageServer.getHTTPImageServer(omeis, sessionKey)");
       if (credentials.imageID == -1) {
-        r.setVar("x", x);
-        r.setVar("y", y);
+        r.setVar("x", sizeX);
+        r.setVar("y", sizeY);
         r.setVar("z", z);
         r.setVar("c", c);
         r.setVar("t", t);
@@ -220,7 +221,7 @@ public class OMEWriter extends FormatWriter {
     }
 
     try {
-      int planeLength = x * y * bpp;
+      int planeLength = sizeX * sizeY * bpp;
       int nChannels = bytes.length / planeLength;
 
       for (int ch=0; ch<nChannels; ch++) {
@@ -245,7 +246,7 @@ public class OMEWriter extends FormatWriter {
       throw new FormatException("Failed to upload plane.", e);
     }
 
-    if (lastInSeries) {
+    if (series == metadataRetrieve.getImageCount() - 1) {
       try {
         r.exec("pixelsId = is.finishPixels(pixelsId)");
         credentials.imageID = ((Long) r.getVar("pixelsId")).longValue();
@@ -372,8 +373,6 @@ public class OMEWriter extends FormatWriter {
       planesWritten = 0;
       credentials.imageID = -1;
     }
-
-    if (last) close();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
@@ -541,10 +540,9 @@ public class OMEWriter extends FormatWriter {
 
     for (int s=start; s<end; s++) {
       reader.setSeries(s);
+      uploader.setSeries(s);
       for (int i=0; i<reader.getImageCount(); i++) {
-        boolean last = i == reader.getImageCount() - 1;
-        uploader.saveBytes(reader.openBytes(i), s, last,
-          last && s == end - 1);
+        uploader.saveBytes(i, reader.openBytes(i));
       }
     }
     reader.close();

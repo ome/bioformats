@@ -38,43 +38,62 @@ import loci.formats.meta.MetadataRetrieve;
 public interface IFormatWriter extends IFormatHandler {
 
   /**
-   * Saves the given byte array to the current file.
-   * Note that this method will append the byte array to the file; it will not
-   * overwrite previously saved byte arrays.
-   * If this is the last array to be written, the last flag must be set.
+   * Saves the given image to the current series in the current file.
+   *
+   * @param no the image index, starting from 0.
+   * @param buf the byte array that represents the image.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
    */
-  void saveBytes(byte[] bytes, boolean last)
+  void saveBytes(int no, byte[] buf) throws FormatException, IOException;
+
+  /**
+   * Saves the given image tile to the current series in the current file.
+   *
+   * @param no the image index, starting from 0.
+   * @param buf the byte array that represents the image tile.
+   * @param x the X coordinate of the upper-left corner of the image tile.
+   * @param y the Y coordinate of the upper-left corner of the image tile.
+   * @param w the width (in pixels) of the image tile.
+   * @param h the height (in pixels) of the image tile.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
+   */
+  void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException;
 
   /**
-   * Saves the given byte array to the given series in the current file.
-   * Note that this method will append the byte array to the file; it will not
-   * overwrite previously saved byte arrays.
-   * If this is the last array in the series, the lastInSeries flag must be set.
-   * If this is the last array to be written, the last flag must be set.
+   * Saves the given image plane to the current series in the current file.
+   *
+   * @param no the image index, starting from 0.
+   * @param plane the image plane.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
    */
-  void saveBytes(byte[] bytes, int series, boolean lastInSeries, boolean last)
+  void savePlane(int no, Object plane) throws FormatException, IOException;
+
+  /**
+   * Saves the given image plane to the current series in the current file.
+   *
+   * @param no the image index, starting from 0.
+   * @param plane the image plane.
+   * @param x the X coordinate of the upper-left corner of the image tile.
+   * @param y the Y coordinate of the upper-left corner of the image tile.
+   * @param w the width (in pixels) of the image tile.
+   * @param h the height (in pixels) of the image tile.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
+   */
+  void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException;
 
   /**
-   * Saves the given image plane to the current file.
-   * Note that this method will append the image plane to the file; it will not
-   * overwrite previously saved image planes.
-   * If this image plane is the last one in the file, the last flag must be set.
+   * Sets the current series.
+   *
+   * @param series the series index, starting from 0.
+   * @throws FormatException if the specified series is invalid.
    */
-  void savePlane(Object plane, boolean last)
-    throws FormatException, IOException;
-
-  /**
-   * Saves the given image plane to the given series in the current file.
-   * Note that this method will append the image plane to the file; it will not
-   * overwrite previously saved image planes.
-   * If this image plane is the last one in the series, the lastInSeries flag
-   * must be set.
-   * If this image plane is the last one in the file, the last flag must be set.
-   */
-  void savePlane(Object plane, int series, boolean lastInSeries, boolean last)
-    throws FormatException, IOException;
+  void setSeries(int series) throws FormatException;
 
   /** Sets whether or not the channels in an image are interleaved. */
   void setInterleaved(boolean interleaved);
@@ -128,5 +147,30 @@ public interface IFormatWriter extends IFormatHandler {
 
   /** Gets the current compression type. */
   String getCompression();
+
+  /** Switch the output file for the current dataset. */
+  void changeOutputFile(String id) throws FormatException, IOException;
+
+  // -- Deprecated methods --
+
+  /** @deprecated Please use saveBytes(int, byte[]) instead. */
+  void saveBytes(byte[] bytes, boolean last)
+    throws FormatException, IOException;
+
+  /**
+   * @deprecated Please use saveBytes(int, byte[]) and setSeries(int) instead.
+   */
+  void saveBytes(byte[] bytes, int series, boolean lastInSeries, boolean last)
+    throws FormatException, IOException;
+
+  /** @deprecated Please use savePlane(int, Object) instead. */
+  void savePlane(Object plane, boolean last)
+    throws FormatException, IOException;
+
+  /**
+   * @deprecated Please use savePlane(int, Object) and setSeries(int) instead.
+   */
+  void savePlane(Object plane, int series, boolean lastInSeries, boolean last)
+    throws FormatException, IOException;
 
 }

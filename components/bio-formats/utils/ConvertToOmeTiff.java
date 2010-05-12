@@ -46,12 +46,12 @@ public class ConvertToOmeTiff {
       int seriesCount = reader.getSeriesCount();
       for (int s=0; s<seriesCount; s++) {
         reader.setSeries(s);
+        writer.setSeries(s);
         int planeCount = reader.getImageCount();
         for (int p=0; p<planeCount; p++) {
           byte[] plane = reader.openBytes(p);
           // write plane to output file
-          writer.saveBytes(plane, s, p == planeCount - 1,
-            (p == planeCount - 1) && (s == seriesCount - 1));
+          writer.saveBytes(p, plane);
           System.out.print(".");
         }
       }

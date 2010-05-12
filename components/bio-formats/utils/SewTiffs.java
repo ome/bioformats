@@ -76,14 +76,14 @@ public class SewTiffs {
           ifd = new IFD();
           ifd.putIFDValue(IFD.IMAGE_DESCRIPTION, desc);
           comment = true;
-          out.saveBytes(image, ifd, t == num - 1);
+          out.saveBytes(t, image, ifd);
           System.out.print(".");
           continue;
         }
       }
 
       // write image plane
-      out.saveBytes(image, t == num - 1);
+      out.saveBytes(t, image);
 
       // update status
       System.out.print(".");

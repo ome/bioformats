@@ -518,7 +518,7 @@ public class MetadataPane extends JPanel
         }
         // write plane to output file
         try {
-          writer.saveBytes(plane, ifd, i == imageCount - 1);
+          writer.saveBytes(i, plane, ifd);
         }
         catch (Exception exc) {
           if (exc instanceof RuntimeException) throw (RuntimeException) exc;
@@ -575,7 +575,7 @@ public class MetadataPane extends JPanel
 
       try {
         writer.setId(outId);
-        writer.saveBytes(plane, ifd, i == imageCount - 1);
+        writer.saveBytes(i, plane, ifd);
       }
       catch (Exception exc) {
         if (exc instanceof RuntimeException) throw (RuntimeException) exc;

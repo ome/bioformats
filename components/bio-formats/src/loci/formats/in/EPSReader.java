@@ -233,7 +233,7 @@ public class EPSReader extends FormatReader {
       }
       else if (line.startsWith("%%")) {
         if (line.startsWith("%%BoundingBox:")) {
-          line = line.substring(14);
+          line = line.substring(14).trim();
           String[] t = line.split(" ");
           int originX = Integer.parseInt(t[0].trim());
           int originY = Integer.parseInt(t[1].trim());

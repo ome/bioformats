@@ -548,6 +548,16 @@ public final class FormatTools {
   }
 
   /**
+   * Retrieves the number of bytes per pixel in the current plane.
+   * @param pixelType the pixel type, as a String.
+   * @return the number of bytes per pixel.
+   * @see #pixelTypeFromString(String), #getBytesPerPixel(int)
+   */
+  public static int getBytesPerPixel(String pixelType) {
+    return getBytesPerPixel(pixelTypeFromString(pixelType));
+  }
+
+  /**
    * Determines whether the given pixel type is floating point or integer.
    * @param pixelType the pixel type as retrieved from
    *   {@link IFormatReader#getPixelType()}.

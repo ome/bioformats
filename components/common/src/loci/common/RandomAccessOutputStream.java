@@ -95,6 +95,12 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
     return outputFile.getOrder() == ByteOrder.LITTLE_ENDIAN;
   }
 
+  /** Writes the given string followed by a newline character. */
+  public void writeLine(String s) throws IOException {
+    writeBytes(s);
+    writeBytes("\n");
+  }
+
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput#write(byte[]) */

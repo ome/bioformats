@@ -115,19 +115,24 @@ public class LegacyQTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve meta = getMetadataRetrieve();
     BufferedImage image = AWTImageTools.makeImage(buf,
       interleaved, meta, series);
-    savePlane(image, series, lastInSeries, last);
+    savePlane(no, image, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatWriter#savePlane(Image, int, boolean, boolean) */
-  public void savePlane(Object plane, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#savePlane(int, Image, int, int, int, int)
+   */
+  public void savePlane(int no, Object plane, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
     if (!(plane instanceof Image)) {
       throw new IllegalArgumentException(
@@ -142,8 +147,8 @@ public class LegacyQTWriter extends FormatWriter {
 
     BufferedImage img = AWTImageTools.makeBuffered((Image) plane);
 
-    if (!initialized) {
-      initialized = true;
+    if (!initialized[series][no]) {
+      initialized[series][no] = true;
 
       try {
         r.exec("QTSession.open()");
@@ -226,10 +231,10 @@ public class LegacyQTWriter extends FormatWriter {
         ((Boolean) r.getVar("nativeLittle")).booleanValue();
       if (nativeLittle) {
         int offset1, offset2;
-        for (int y=0; y<height; y++) {
-          offset1 = y * width;
-          offset2 = y * intsPerRow;
-          for (int x=0; x<width; x++) {
+        for (int row=0; row<height; row++) {
+          offset1 = row * width;
+          offset2 = row * intsPerRow;
+          for (int col=0; col<width; col++) {
             r.setVar("thisByte", pixels[offset1++]);
             r.exec("b = EndianOrder.flipBigEndianToNative32(thisByte)");
             pixels2[offset2++] = ((Integer) r.getVar("b")).intValue();
@@ -270,7 +275,8 @@ public class LegacyQTWriter extends FormatWriter {
       LOGGER.debug("", e);
       throw new FormatException("Legacy QuickTime writer failed", e);
     }
-    if (last) {
+
+    if (no == getPlaneCount() - 1) {
       try {
         r.exec("videoMedia.endEdits()");
         r.exec("duration = videoMedia.getDuration()");
@@ -302,13 +308,12 @@ public class LegacyQTWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
+    super.close();
     r = null;
     numWritten = 0;
     width = 0;
     height = 0;
     pixels2 = null;
-    currentId = null;
-    initialized = false;
   }
 
 }

@@ -140,14 +140,26 @@ public class TiffSaver {
   {
     for (int i=0; i<ifds.size(); i++) {
       if (i < buf.length) {
-        writeImage(buf[i], ifds.get(i), i == ifds.size() - 1, pixelType);
+        writeImage(buf[i], ifds.get(i), i, pixelType, i == ifds.size() - 1);
       }
     }
   }
 
   /**
    */
-  public void writeImage(byte[] buf, IFD ifd, boolean last, int pixelType)
+  public void writeImage(byte[] buf, IFD ifd, int no, int pixelType,
+    boolean last)
+    throws FormatException, IOException
+  {
+    int w = (int) ifd.getImageWidth();
+    int h = (int) ifd.getImageLength();
+    writeImage(buf, ifd, no, pixelType, 0, 0, w, h, last);
+  }
+
+  /**
+   */
+  public void writeImage(byte[] buf, IFD ifd, int no, int pixelType, int x,
+    int y, int w, int h, boolean last)
     throws FormatException, IOException
   {
     if (buf == null) {
@@ -196,10 +208,10 @@ public class TiffSaver {
     int[] bps = ifd.getBitsPerSample();
 
     // write pixel strips to output buffers
-    for (int y=0; y<height; y++) {
-      int strip = y / rowsPerStrip;
-      for (int x=0; x<width; x++) {
-        int ndx = y * width * bytesPerPixel + x * bytesPerPixel;
+    for (int row=0; row<height; row++) {
+      int strip = row / rowsPerStrip;
+      for (int col=0; col<width; col++) {
+        int ndx = row * width * bytesPerPixel + col * bytesPerPixel;
         for (int c=0; c<nChannels; c++) {
           for (int n=0; n<bps[c]/8; n++) {
             if (interleaved) {
@@ -245,10 +257,8 @@ public class TiffSaver {
       out.write(strips[i]);
     }
     long endFP = out.getFilePointer();
-    if (last) endFP = 0;
-
     out.seek(fp);
-    writeIFD(ifd, endFP);
+    writeIFD(ifd, last ? 0 : endFP);
   }
 
   public void writeIFD(IFD ifd, long nextOffset)

@@ -44,8 +44,13 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class EPSWriter extends FormatWriter {
 
-  /** Current file. */
-  protected RandomAccessOutputStream out;
+  // -- Constants --
+
+  private static final String DUMMY_PIXEL = "00";
+
+  // -- Fields --
+
+  private long planeOffset = 0;
 
   // -- Constructor --
 
@@ -55,34 +60,78 @@ public class EPSWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    if (buf == null) {
-      throw new FormatException("Byte array is null");
-    }
-
-    out = new RandomAccessOutputStream(currentId);
+    checkParams(no, buf, x, y, w, h);
 
     MetadataRetrieve meta = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(meta, series);
-    int width = meta.getPixelsSizeX(series).getValue().intValue();
-    int height = meta.getPixelsSizeY(series).getValue().intValue();
-    int type =
-      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
-    Integer channels = meta.getChannelSamplesPerPixel(series, 0);
-    if (channels == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int nChannels = channels == null ? 1 : channels.intValue();
+    int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
+    int nChannels = getSamplesPerPixel();
 
-    if (!DataTools.containsValue(getPixelTypes(), type)) {
-      throw new FormatException("Unsupported image type '" +
-        FormatTools.getPixelTypeString(type) + "'.");
+    // write pixel data
+    // for simplicity, write 80 char lines
+
+    if (!initialized[series][no]) {
+      initialized[series][no] = true;
+
+      writeHeader();
+
+      if (!isFullPlane(x, y, w, h)) {
+        // write a dummy plane that will be overwritten in sections
+        int planeSize = w * h * nChannels;
+        for (int i=0; i<planeSize; i++) {
+          out.writeBytes(DUMMY_PIXEL);
+        }
+      }
     }
 
-    // write the header
+    int planeSize = w * h;
+
+    StringBuffer buffer = new StringBuffer();
+
+    int offset = y * sizeX * nChannels * 2;
+    out.seek(planeOffset + offset);
+    for (int row=0; row<h; row++) {
+      out.skipBytes(nChannels * x * 2);
+      for (int col=0; col<w*nChannels; col++) {
+        int i = row * w * nChannels + col;
+        int index = interleaved || nChannels == 1 ? i :
+          (i % nChannels) * planeSize + (i / nChannels);
+        String s = Integer.toHexString(buf[index]);
+        // only want last 2 characters of s
+        if (s.length() > 1) buffer.append(s.substring(s.length() - 2));
+        else {
+          buffer.append("0");
+          buffer.append(s);
+        }
+      }
+      out.writeBytes(buffer.toString());
+      buffer.delete(0, buffer.length());
+      out.skipBytes(nChannels * (sizeX - w - x) * 2);
+    }
+
+    // write footer
+
+    out.seek(out.length());
+    out.writeBytes("\nshowpage\n");
+  }
+
+  /* @see loci.formats.IFormatWriter#getPixelTypes() */
+  public int[] getPixelTypes() {
+    return new int[] {FormatTools.UINT8};
+  }
+
+  // -- Helper methods --
+
+  private void writeHeader() throws IOException {
+    MetadataRetrieve r = getMetadataRetrieve();
+    int width = r.getPixelsSizeX(series).getValue().intValue();
+    int height = r.getPixelsSizeY(series).getValue().intValue();
+    int nChannels = getSamplesPerPixel();
 
     out.writeBytes("%!PS-Adobe-2.0 EPSF-1.2\n");
     out.writeBytes("%%Title: " + currentId + "\n");
@@ -98,56 +147,16 @@ public class EPSWriter extends FormatWriter {
     out.writeBytes("0 0 translate\n");
     out.writeBytes(((float) width) + " " + ((float) height) + " scale\n");
     out.writeBytes("/picstr 40 string def\n");
+    out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
+      (-1 * height) + " 0 " + height +
+      "] {currentfile picstr readhexstring pop} ");
     if (nChannels == 1) {
-      out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
-        (-1*height) + " 0 " + height + "] {currentfile picstr " +
-        "readhexstring pop} image\n");
+      out.writeBytes("image\n");
     }
     else {
-      out.writeBytes(width + " " + height + " 8 [" + width + " 0 0 " +
-        (-1*height) + " 0 " + height + "] {currentfile picstr " +
-        "readhexstring pop} false 3 colorimage\n");
+      out.writeBytes("false 3 colorimage\n");
     }
-
-    // write pixel data
-    // for simplicity, write 80 char lines
-
-    int planeSize = width * height;
-    int charCount = 0;
-    for (int i=0; i<buf.length; i++) {
-      int index = interleaved || nChannels == 1 ? i :
-        (i % nChannels) * planeSize + (i / nChannels);
-      String s = Integer.toHexString(buf[index]);
-      // only want last 2 characters of s
-      if (s.length() > 1) s = s.substring(s.length() - 2);
-      else s = "0" + s;
-      out.writeBytes(s);
-      charCount++;
-      if (charCount == 40) {
-        out.writeBytes("\n");
-        charCount = 0;
-      }
-    }
-
-    // write footer
-
-    out.writeBytes("showpage\n");
-    out.close();
-  }
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes() */
-  public int[] getPixelTypes() {
-    return new int[] {FormatTools.UINT8};
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    currentId = null;
-    initialized = false;
+    planeOffset = out.getFilePointer();
   }
 
 }

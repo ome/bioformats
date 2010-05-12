@@ -86,22 +86,16 @@ public class QTWriter extends FormatWriter {
   /** Value indicating Maximum quality. */
   public static final int QUALITY_MAXIMUM = 1023;
 
-  // -- Fields --
+  /** Seek to this offset to update the total number of pixel bytes. */
+  private static final long BYTE_COUNT_OFFSET = 8;
 
-  /** Current file. */
-  protected RandomAccessOutputStream out;
+  // -- Fields --
 
   /** The codec to use. */
   protected int codec = CODEC_RAW;
 
   /** The quality to use. */
   protected int quality = QUALITY_NORMAL;
-
-  /** Number of planes written. */
-  protected int numWritten;
-
-  /** Seek to this offset to update the total number of pixel bytes. */
-  protected long byteCountOffset;
 
   /** Total number of pixel bytes. */
   protected int numBytes;
@@ -111,6 +105,9 @@ public class QTWriter extends FormatWriter {
 
   /** Time the file was created. */
   protected int created;
+
+  /** Number of padding bytes in each row. */
+  protected int pad;
 
   /** Whether we need the legacy writer. */
   protected boolean needLegacy = false;
@@ -163,19 +160,19 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /* @see loci.formats.IFormatWriter#saveBytes(byte[], int, boolean, boolean) */
-  public void saveBytes(byte[] buf, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
-    if (legacy == null) legacy = new LegacyQTWriter();
-
+    checkParams(no, buf, x, y, w, h);
     if (needLegacy) {
-      legacy.saveBytes(buf, last);
+      legacy.saveBytes(no, buf, x, y, w, h);
       return;
     }
 
     MetadataRetrieve r = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(r, series);
 
     // get the width and height of the image
     int width = r.getPixelsSizeX(series).getValue().intValue();
@@ -185,88 +182,39 @@ public class QTWriter extends FormatWriter {
     // if it is, great; if not, we need to pad each scanline with enough
     // bytes to make the width a multiple of 8
 
-    int bytesPerPixel =
-      FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
-    Integer samples = r.getChannelSamplesPerPixel(series, 0);
-    if (samples == null) {
-      LOGGER.warn("SamplesPerPixel #0 is null.  It is assumed to be 1.");
-    }
-    int nChannels = samples == null ? 1 : samples.intValue();
-    int pad = nChannels > 1 ? 0 : (4 - (width % 4)) % 4;
+    int nChannels = getSamplesPerPixel();
+    int planeSize = width * height * nChannels;
 
-    if (!initialized) {
-      initialized = true;
+    if (!initialized[series][no]) {
+      initialized[series][no] = true;
       setCodec();
       if (codec != CODEC_RAW) {
         needLegacy = true;
-        legacy.setCodec(codec);
-        legacy.setMetadataRetrieve(getMetadataRetrieve());
         legacy.setId(currentId);
-        legacy.saveBytes(buf, series, lastInSeries, last);
+        legacy.saveBytes(no, buf, x, y, w, h);
         return;
       }
 
-      // -- write the header --
-
-      offsets = new Vector<Integer>();
-      out = new RandomAccessOutputStream(currentId);
-      created = (int) System.currentTimeMillis();
-      numWritten = 0;
-      numBytes = buf.length + pad * height;
-      byteCountOffset = 8;
-
-      if (out.length() == 0) {
-        // -- write the first header --
-
-        out.writeInt(8);
-        out.writeBytes("wide");
-
-        out.writeInt(numBytes + 8);
-        out.writeBytes("mdat");
-      }
-      else {
-        out.seek(byteCountOffset);
-
-        RandomAccessInputStream in = new RandomAccessInputStream(currentId);
-        in.seek(byteCountOffset);
-        numBytes = (int) (in.readInt() & 0xffffffff) - 8;
-        in.close();
-
-        numWritten = numBytes / (buf.length + pad * height);
-        numBytes += (buf.length + pad * height);
-
-        out.seek(byteCountOffset);
-        out.write(numBytes + 8);
-
-        for (int i=0; i<numWritten; i++) {
-          offsets.add(16 + i * (buf.length + pad * height));
-        }
-
-        out.seek(out.length());
-      }
-
-      // -- write the first plane of pixel data (mdat) --
-
-      offsets.add((int) out.length());
-    }
-    else {
       // update the number of pixel bytes written
       int planeOffset = numBytes;
-      numBytes += (buf.length + pad * height);
-      out.seek(byteCountOffset);
+      numBytes += (planeSize + pad * height);
+      out.seek(BYTE_COUNT_OFFSET);
       out.writeInt(numBytes + 8);
 
-      // write this plane's pixel data
-      out.seek(out.length());
+      out.seek(offsets.get(no));
 
-      offsets.add(planeOffset + 16);
+      if (!isFullPlane(x, y, w, h)) {
+        out.skipBytes(planeSize + pad * height);
+      }
     }
+
+    out.seek(offsets.get(no) + y * (nChannels * width + pad));
 
     // invert each pixel
     // this will makes the colors look right in other readers (e.g. xine),
     // but needs to be reversed in QTReader
 
-    if (nChannels == 1 && bytesPerPixel == 1 && !needLegacy) {
+    if (nChannels == 1 && !needLegacy) {
       for (int i=0; i<buf.length; i++) {
         buf[i] = (byte) (255 - buf[i]);
       }
@@ -277,306 +225,22 @@ public class QTWriter extends FormatWriter {
       byte[] tmp = new byte[buf.length];
       System.arraycopy(buf, 0, tmp, 0, buf.length);
       for (int i=0; i<buf.length; i++) {
-        int c = i / (width * height);
-        int index = i % (width * height);
+        int c = i / (w * h);
+        int index = i % (w * h);
         buf[index * nChannels + c] = tmp[i];
       }
     }
 
-    int rowLen = buf.length / height;
-    for (int row=0; row<height; row++) {
+    int rowLen = buf.length / h;
+    for (int row=0; row<h; row++) {
+      out.skipBytes(nChannels * x);
       out.write(buf, row * rowLen, rowLen);
       for (int i=0; i<pad; i++) {
         out.writeByte(0);
       }
-    }
-
-    numWritten++;
-
-    if (last) {
-      int timeScale = 100;
-      int duration = numWritten * (timeScale / fps);
-      int bitsPerPixel = (nChannels > 1) ? bytesPerPixel * 24 :
-        bytesPerPixel * 8 + 32;
-      if (bytesPerPixel == 2) {
-        bitsPerPixel = nChannels > 1 ? 16 : 40;
+      if (row < h - 1) {
+        out.skipBytes(nChannels * (width - w - x));
       }
-      int channels = (bitsPerPixel >= 40) ? 1 : 3;
-
-      // -- write moov atom --
-
-      int atomLength = 685 + 8*numWritten;
-      out.writeInt(atomLength);
-      out.writeBytes("moov");
-
-      // -- write mvhd atom --
-
-      out.writeInt(108);
-      out.writeBytes("mvhd");
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(created); // creation time
-      out.writeInt((int) System.currentTimeMillis());
-      out.writeInt(timeScale); // time scale
-      out.writeInt(duration); // duration
-      out.write(new byte[] {0, 1, 0, 0});  // preferred rate & volume
-      out.write(new byte[] {0, -1, 0, 0, 0, 0, 0, 0, 0, 0}); // reserved
-
-      // 3x3 matrix - tells reader how to rotate image
-
-      out.writeInt(1);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(1);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(16384);
-
-      out.writeShort(0); // not sure what this is
-      out.writeInt(0); // preview duration
-      out.writeInt(0); // preview time
-      out.writeInt(0); // poster time
-      out.writeInt(0); // selection time
-      out.writeInt(0); // selection duration
-      out.writeInt(0); // current time
-      out.writeInt(2); // next track's id
-
-      // -- write trak atom --
-
-      atomLength -= 116;
-      out.writeInt(atomLength);
-      out.writeBytes("trak");
-
-      // -- write tkhd atom --
-
-      out.writeInt(92);
-      out.writeBytes("tkhd");
-      out.writeShort(0); // version
-      out.writeShort(15); // flags
-
-      out.writeInt(created); // creation time
-      out.writeInt((int) System.currentTimeMillis());
-      out.writeInt(1); // track id
-      out.writeInt(0); // reserved
-
-      out.writeInt(duration); // duration
-      out.writeInt(0); // reserved
-      out.writeInt(0); // reserved
-      out.writeShort(0); // reserved
-
-      out.writeInt(0); // unknown
-
-      // 3x3 matrix - tells reader how to rotate the image
-
-      out.writeInt(1);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(1);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(0);
-      out.writeInt(16384);
-
-      out.writeInt(width); // image width
-      out.writeInt(height); // image height
-      out.writeShort(0); // reserved
-
-      // -- write edts atom --
-
-      out.writeInt(36);
-      out.writeBytes("edts");
-
-      // -- write elst atom --
-
-      out.writeInt(28);
-      out.writeBytes("elst");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(1); // number of entries in the table
-      out.writeInt(duration); // duration
-      out.writeShort(0); // time
-      out.writeInt(1); // rate
-      out.writeShort(0); // unknown
-
-      // -- write mdia atom --
-
-      atomLength -= 136;
-      out.writeInt(atomLength);
-      out.writeBytes("mdia");
-
-      // -- write mdhd atom --
-
-      out.writeInt(32);
-      out.writeBytes("mdhd");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(created); // creation time
-      out.writeInt((int) System.currentTimeMillis());
-      out.writeInt(timeScale); // time scale
-      out.writeInt(duration); // duration
-      out.writeShort(0); // language
-      out.writeShort(0); // quality
-
-      // -- write hdlr atom --
-
-      out.writeInt(58);
-      out.writeBytes("hdlr");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeBytes("mhlr");
-      out.writeBytes("vide");
-      out.writeBytes("appl");
-      out.write(new byte[] {16, 0, 0, 0, 0, 1, 1, 11, 25});
-      out.writeBytes("Apple Video Media Handler");
-
-      // -- write minf atom --
-
-      atomLength -= 98;
-      out.writeInt(atomLength);
-      out.writeBytes("minf");
-
-      // -- write vmhd atom --
-
-      out.writeInt(20);
-      out.writeBytes("vmhd");
-
-      out.writeShort(0); // version
-      out.writeShort(1); // flags
-      out.writeShort(64); // graphics mode
-      out.writeShort(32768);  // opcolor 1
-      out.writeShort(32768);  // opcolor 2
-      out.writeShort(32768);  // opcolor 3
-
-      // -- write hdlr atom --
-
-      out.writeInt(57);
-      out.writeBytes("hdlr");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeBytes("dhlr");
-      out.writeBytes("alis");
-      out.writeBytes("appl");
-      out.write(new byte[] {16, 0, 0, 1, 0, 1, 1, 31, 24});
-      out.writeBytes("Apple Alias Data Handler");
-
-      // -- write dinf atom --
-
-      out.writeInt(36);
-      out.writeBytes("dinf");
-
-      // -- write dref atom --
-
-      out.writeInt(28);
-      out.writeBytes("dref");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeShort(0); // version 2
-      out.writeShort(1); // flags 2
-      out.write(new byte[] {0, 0, 0, 12});
-      out.writeBytes("alis");
-      out.writeShort(0); // version 3
-      out.writeShort(1); // flags 3
-
-      // -- write stbl atom --
-
-      atomLength -= 121;
-      out.writeInt(atomLength);
-      out.writeBytes("stbl");
-
-      // -- write stsd atom --
-
-      out.writeInt(118);
-      out.writeBytes("stsd");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(1); // number of entries in the table
-      out.write(new byte[] {0, 0, 0, 102});
-      out.writeBytes("raw "); // codec
-      out.write(new byte[] {0, 0, 0, 0, 0, 0});  // reserved
-      out.writeShort(1); // data reference
-      out.writeShort(1); // version
-      out.writeShort(1); // revision
-      out.writeBytes("appl");
-      out.writeInt(0); // temporal quality
-      out.writeInt(768); // spatial quality
-      out.writeShort(width); // image width
-      out.writeShort(height); // image height
-      out.write(new byte[] {0, 72, 0, 0}); // horizontal dpi
-      out.write(new byte[] {0, 72, 0, 0}); // vertical dpi
-      out.writeInt(0); // data size
-      out.writeShort(1); // frames per sample
-      out.writeShort(12); // length of compressor name
-      out.writeBytes("Uncompressed"); // compressor name
-      out.writeInt(bitsPerPixel); // unknown
-      out.writeInt(bitsPerPixel); // unknown
-      out.writeInt(bitsPerPixel); // unknown
-      out.writeInt(bitsPerPixel); // unknown
-      out.writeInt(bitsPerPixel); // unknown
-      out.writeShort(bitsPerPixel); // bits per pixel
-      out.writeInt(65535); // ctab ID
-      out.write(new byte[] {12, 103, 97, 108}); // gamma
-      out.write(new byte[] {97, 1, -52, -52, 0, 0, 0, 0}); // unknown
-
-      // -- write stts atom --
-
-      out.writeInt(24);
-      out.writeBytes("stts");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(1); // number of entries in the table
-      out.writeInt(numWritten); // number of planes
-      out.writeInt(fps); // frames per second
-
-      // -- write stsc atom --
-
-      out.writeInt(28);
-      out.writeBytes("stsc");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(1); // number of entries in the table
-      out.writeInt(1); // chunk
-      out.writeInt(1); // samples
-      out.writeInt(1); // id
-
-      // -- write stsz atom --
-
-      out.writeInt(20 + 4*numWritten);
-      out.writeBytes("stsz");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(0); // sample size
-      out.writeInt(numWritten); // number of planes
-      for (int i=0; i<numWritten; i++) {
-        // sample size
-        out.writeInt(channels * height * (width + pad) * bytesPerPixel);
-      }
-
-      // -- write stco atom --
-
-      out.writeInt(16 + 4*numWritten);
-      out.writeBytes("stco");
-
-      out.writeShort(0); // version
-      out.writeShort(0); // flags
-      out.writeInt(numWritten); // number of planes
-      for (int i=0; i<numWritten; i++) {
-        // write the plane offset
-        out.writeInt(offsets.get(i));
-      }
-
-      out.close();
     }
   }
 
@@ -590,17 +254,56 @@ public class QTWriter extends FormatWriter {
 
   // -- IFormatHandler API methods --
 
+  /* @see loci.formats.IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    MetadataRetrieve r = getMetadataRetrieve();
+    MetadataTools.verifyMinimumPopulated(r, series);
+
+    int width = r.getPixelsSizeX(series).getValue().intValue();
+    int height = r.getPixelsSizeY(series).getValue().intValue();
+    int nChannels = getSamplesPerPixel();
+    int planeSize = width * height * nChannels;
+
+    pad = nChannels > 1 ? 0 : (4 - (width % 4)) % 4;
+
+    if (legacy == null) {
+      legacy = new LegacyQTWriter();
+      legacy.setCodec(codec);
+      legacy.setMetadataRetrieve(r);
+    }
+    offsets = new Vector<Integer>();
+    created = (int) System.currentTimeMillis();
+    numBytes = 0;
+
+    if (out.length() == 0) {
+      // -- write the first header --
+
+      writeAtom(8, "wide");
+      writeAtom(numBytes + 8, "mdat");
+    }
+    else {
+      out.seek(BYTE_COUNT_OFFSET);
+
+      RandomAccessInputStream in = new RandomAccessInputStream(currentId);
+      in.seek(BYTE_COUNT_OFFSET);
+      numBytes = (int) (in.readInt() & 0xffffffff) - 8;
+      in.close();
+    }
+
+    for (int i=0; i<getPlaneCount(); i++) {
+      offsets.add(16 + i * (planeSize + pad * height));
+    }
+  }
+
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    if (out != null) out.close();
-    out = null;
-    numWritten = 0;
-    byteCountOffset = 0;
+    if (out != null) writeFooter();
+    super.close();
     numBytes = 0;
     created = 0;
     offsets = null;
-    currentId = null;
-    initialized = false;
+    pad = 0;
   }
 
   // -- Helper methods --
@@ -616,6 +319,272 @@ public class QTWriter extends FormatWriter {
     else if (compression.equals("Sorenson")) codec = CODEC_SORENSON;
     else if (compression.equals("Sorenson 3")) codec = CODEC_SORENSON_3;
     else if (compression.equals("MPEG 4")) codec = CODEC_MPEG_4;
+  }
+
+  private void writeFooter() throws IOException {
+    out.seek(out.length());
+    int numWritten = getPlaneCount();
+    MetadataRetrieve r = getMetadataRetrieve();
+    int width = r.getPixelsSizeX(series).getValue().intValue();
+    int height = r.getPixelsSizeY(series).getValue().intValue();
+    int nChannels = getSamplesPerPixel();
+
+    int timeScale = 100;
+    int duration = numWritten * (timeScale / fps);
+    int bitsPerPixel = (nChannels > 1) ? 24 : 40;
+    int channels = (bitsPerPixel >= 40) ? 1 : 3;
+
+    // -- write moov atom --
+
+    int atomLength = 685 + 8*numWritten;
+    writeAtom(atomLength, "moov");
+
+    // -- write mvhd atom --
+
+    writeAtom(108, "mvhd");
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(created); // creation time
+    out.writeInt((int) System.currentTimeMillis());
+    out.writeInt(timeScale); // time scale
+    out.writeInt(duration); // duration
+    out.write(new byte[] {0, 1, 0, 0});  // preferred rate & volume
+    out.write(new byte[] {0, -1, 0, 0, 0, 0, 0, 0, 0, 0}); // reserved
+
+    writeRotationMatrix();
+
+    out.writeShort(0); // not sure what this is
+    out.writeInt(0); // preview duration
+    out.writeInt(0); // preview time
+    out.writeInt(0); // poster time
+    out.writeInt(0); // selection time
+    out.writeInt(0); // selection duration
+    out.writeInt(0); // current time
+    out.writeInt(2); // next track's id
+
+    // -- write trak atom --
+
+    atomLength -= 116;
+    writeAtom(atomLength, "trak");
+
+    // -- write tkhd atom --
+
+    writeAtom(92, "tkhd");
+    out.writeShort(0); // version
+    out.writeShort(15); // flags
+
+    out.writeInt(created); // creation time
+    out.writeInt((int) System.currentTimeMillis());
+    out.writeInt(1); // track id
+    out.writeInt(0); // reserved
+
+    out.writeInt(duration); // duration
+    out.writeInt(0); // reserved
+    out.writeInt(0); // reserved
+    out.writeShort(0); // reserved
+    out.writeInt(0); // unknown
+
+    writeRotationMatrix();
+
+    out.writeInt(width); // image width
+    out.writeInt(height); // image height
+    out.writeShort(0); // reserved
+
+    // -- write edts atom --
+
+    writeAtom(36, "edts");
+
+    // -- write elst atom --
+
+    writeAtom(28, "elst");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(1); // number of entries in the table
+    out.writeInt(duration); // duration
+    out.writeShort(0); // time
+    out.writeInt(1); // rate
+    out.writeShort(0); // unknown
+
+    // -- write mdia atom --
+
+    atomLength -= 136;
+    writeAtom(atomLength, "mdia");
+
+    // -- write mdhd atom --
+
+    writeAtom(32, "mdhd");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(created); // creation time
+    out.writeInt((int) System.currentTimeMillis());
+    out.writeInt(timeScale); // time scale
+    out.writeInt(duration); // duration
+    out.writeShort(0); // language
+    out.writeShort(0); // quality
+
+    // -- write hdlr atom --
+
+    writeAtom(58, "hdlr");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeBytes("mhlr");
+    out.writeBytes("vide");
+    out.writeBytes("appl");
+    out.write(new byte[] {16, 0, 0, 0, 0, 1, 1, 11, 25});
+    out.writeBytes("Apple Video Media Handler");
+
+    // -- write minf atom --
+
+    atomLength -= 98;
+    writeAtom(atomLength, "minf");
+
+    // -- write vmhd atom --
+
+    writeAtom(20, "vmhd");
+
+    out.writeShort(0); // version
+    out.writeShort(1); // flags
+    out.writeShort(64); // graphics mode
+    out.writeShort(32768);  // opcolor 1
+    out.writeShort(32768);  // opcolor 2
+    out.writeShort(32768);  // opcolor 3
+
+    // -- write hdlr atom --
+
+    writeAtom(57, "hdlr");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeBytes("dhlr");
+    out.writeBytes("alis");
+    out.writeBytes("appl");
+    out.write(new byte[] {16, 0, 0, 1, 0, 1, 1, 31, 24});
+    out.writeBytes("Apple Alias Data Handler");
+
+    // -- write dinf atom --
+
+    writeAtom(36, "dinf");
+
+    // -- write dref atom --
+
+    writeAtom(28, "dref");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeShort(0); // version 2
+    out.writeShort(1); // flags 2
+    out.write(new byte[] {0, 0, 0, 12});
+    out.writeBytes("alis");
+    out.writeShort(0); // version 3
+    out.writeShort(1); // flags 3
+
+    // -- write stbl atom --
+
+    atomLength -= 121;
+    writeAtom(atomLength, "stbl");
+
+    // -- write stsd atom --
+
+    writeAtom(118, "stsd");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(1); // number of entries in the table
+    out.write(new byte[] {0, 0, 0, 102});
+    out.writeBytes("raw "); // codec
+    out.write(new byte[] {0, 0, 0, 0, 0, 0});  // reserved
+    out.writeShort(1); // data reference
+    out.writeShort(1); // version
+    out.writeShort(1); // revision
+    out.writeBytes("appl");
+    out.writeInt(0); // temporal quality
+    out.writeInt(768); // spatial quality
+    out.writeShort(width); // image width
+    out.writeShort(height); // image height
+    byte[] dpi = new byte[] {0, 72, 0, 0};
+    out.write(dpi); // horizontal dpi
+    out.write(dpi); // vertical dpi
+    out.writeInt(0); // data size
+    out.writeShort(1); // frames per sample
+    out.writeShort(12); // length of compressor name
+    out.writeBytes("Uncompressed"); // compressor name
+    out.writeInt(bitsPerPixel); // unknown
+    out.writeInt(bitsPerPixel); // unknown
+    out.writeInt(bitsPerPixel); // unknown
+    out.writeInt(bitsPerPixel); // unknown
+    out.writeInt(bitsPerPixel); // unknown
+    out.writeShort(bitsPerPixel); // bits per pixel
+    out.writeInt(65535); // ctab ID
+    out.write(new byte[] {12, 103, 97, 108}); // gamma
+    out.write(new byte[] {97, 1, -52, -52, 0, 0, 0, 0}); // unknown
+
+    // -- write stts atom --
+
+    writeAtom(24, "stts");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(1); // number of entries in the table
+    out.writeInt(numWritten); // number of planes
+    out.writeInt(fps); // frames per second
+
+    // -- write stsc atom --
+
+    writeAtom(28, "stsc");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(1); // number of entries in the table
+    out.writeInt(1); // chunk
+    out.writeInt(1); // samples
+    out.writeInt(1); // id
+
+    // -- write stsz atom --
+
+    writeAtom(20 + 4 * numWritten, "stsz");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(0); // sample size
+    out.writeInt(numWritten); // number of planes
+    for (int i=0; i<numWritten; i++) {
+      // sample size
+      out.writeInt(channels * height * (width + pad));
+    }
+
+    // -- write stco atom --
+
+    writeAtom(16 + 4 * numWritten, "stco");
+
+    out.writeShort(0); // version
+    out.writeShort(0); // flags
+    out.writeInt(numWritten); // number of planes
+    for (int i=0; i<numWritten; i++) {
+      // write the plane offset
+      out.writeInt(offsets.get(i));
+    }
+  }
+
+  /** Write the 3x3 matrix that describes how to rotate the image. */
+  private void writeRotationMatrix() throws IOException {
+    out.writeInt(1);
+    out.writeInt(0);
+    out.writeInt(0);
+    out.writeInt(0);
+    out.writeInt(1);
+    out.writeInt(0);
+    out.writeInt(0);
+    out.writeInt(0);
+    out.writeInt(16384);
+  }
+
+  /** Write the atom length and type. */
+  private void writeAtom(int length, String type) throws IOException {
+    out.writeInt(length);
+    out.writeBytes(type);
   }
 
 }

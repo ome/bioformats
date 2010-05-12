@@ -196,12 +196,10 @@ public class FormatWriterTest {
 
       for (int series=0; series<seriesCount; series++) {
         reader.setSeries(series);
-        boolean lastSeries = series == seriesCount - 1;
+        writer.setSeries(series);
         int imageCount = writer.canDoStacks() ? reader.getImageCount() : 1;
         for (int image=0; image<imageCount; image++) {
-          boolean lastImage = image == imageCount - 1;
-          writer.saveBytes(reader.openBytes(image), series,
-            lastImage, lastImage && lastSeries);
+          writer.saveBytes(image, reader.openBytes(image));
         }
       }
       writer.close();
