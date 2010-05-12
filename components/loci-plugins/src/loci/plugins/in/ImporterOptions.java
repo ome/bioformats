@@ -85,7 +85,6 @@ public class ImporterOptions extends OptionsList {
 
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
-  public static final String VIEW_STANDARD   = "Standard ImageJ";
   public static final String VIEW_HYPERSTACK = "Hyperstack";
   public static final String VIEW_BROWSER    = "Data Browser";
   public static final String VIEW_VISBIO     = "VisBio";
@@ -307,9 +306,6 @@ public class ImporterOptions extends OptionsList {
   public String getStackFormat() { return getValue(KEY_STACK_FORMAT); }
   public String[] getStackFormats() { return getPossible(KEY_STACK_FORMAT); }
   public boolean isViewNone() { return VIEW_NONE.equals(getStackFormat()); }
-  public boolean isViewStandard() {
-    return VIEW_STANDARD.equals(getStackFormat());
-  }
   public boolean isViewHyperstack() {
     return VIEW_HYPERSTACK.equals(getStackFormat());
   }

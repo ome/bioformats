@@ -274,15 +274,11 @@ info = <b>View stack with</b> - \
   The type of image viewer to use when displaying the dataset.           \
   <br><br>Possible choices are:<ul>                                      \
   <li><b>Metadata only</b> - Display no pixels, only metadata.</li>      \
-  <li><b>Standard ImageJ</b> - Display the pixels in a standard          \
-  ImageJ window without multidimensional support.</li>                   \
   <li><b>Hyperstack</b> - Display the pixels in ImageJ's                 \
-  built-in 5D viewer. If you do not have this option, upgrade to a more  \
-  recent version of ImageJ.</li>                                         \
+  built-in 5D viewer.</li>                                               \
   <li><b>Data Browser</b> - Display the pixels in LOCI's                 \
   multidimensional Data Browser viewer. The Data Browser has some        \
-  additional features on top of the normal ImageJ hyperstack. If you do  \
-  not have this option, upgrade to a more recent version of ImageJ.</li> \
+  additional features on top of the normal ImageJ hyperstack.</li>       \
   <li><b>VisBio</b> - Not yet implemented.</li>                          \
   <li><b>Image5D</b> - Display the pixels in                             \
   Joachim Walter's Image5D viewer. Requires the Image5D plugin.</li>     \
@@ -292,7 +288,6 @@ info = <b>View stack with</b> - \
 default = Hyperstack
 values = \
   Metadata only,   \
-  Standard ImageJ, \
   Hyperstack,      \
   Data Browser,    \
   VisBio,          \
