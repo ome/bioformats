@@ -4,19 +4,17 @@
 
 package loci.plugins.in;
 
-import static org.junit.Assert.assertEquals; 
-import static org.junit.Assert.assertArrayEquals; 
-import static org.junit.Assert.assertNotNull; 
-import static org.junit.Assert.assertTrue; 
-import static org.junit.Assert.fail; 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -1159,7 +1157,9 @@ public class ImporterTest {
   @Test
   public void testSplitChannels()
   {
-    String path = FAKE_FILES[0];
+    final int sizeZ = 5, sizeC = 3, sizeT = 7;
+    final String path = constructFakeFilename("splitT",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
     ImagePlus[] imps = null;
     try {
@@ -1175,17 +1175,17 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    // 3 channels goes to 3 images
-    assertEquals(3,imps.length);
+    // one channel per image
+    assertEquals(sizeC,imps.length);
     
     // TODO - order of for loops correct?
-    for (int t = 0; t < 5; t++)
-      for (int c = 0; c < 3; c++)
-        for (int z = 0; z < 7; z++)
+    for (int t = 0; t < sizeT; t++)
+      for (int c = 0; c < sizeC; c++)
+        for (int z = 0; z < sizeT; z++)
         {
           // these next three statements called more times than needed but simplifies for loop logic
           ImageStack st = imps[c].getStack();
-          assertEquals(35,st.getSize());
+          assertEquals(sizeZ * sizeT,st.getSize());
           ImageProcessor proc = st.getProcessor(c+1);
           // test the values
           assertEquals(z,zIndex(proc));
@@ -1197,7 +1197,9 @@ public class ImporterTest {
   @Test
   public void testSplitFocalPlanes()
   {
-    String path = FAKE_FILES[0];
+    final int sizeZ = 5, sizeC = 3, sizeT = 7;
+    final String path = constructFakeFilename("splitT",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
     ImagePlus[] imps = null;
     try {
@@ -1213,17 +1215,17 @@ public class ImporterTest {
       fail(e.getMessage());
       }
     
-    // 7 planes goes to 7 images
-    assertEquals(7,imps.length);
+    // one focal plane per image
+    assertEquals(sizeZ,imps.length);
     
     // TODO - order of for loops correct?
-    for (int t = 0; t < 5; t++)
-      for (int c = 0; c < 3; c++)
-        for (int z = 0; z < 7; z++)
+    for (int t = 0; t < sizeT; t++)
+      for (int c = 0; c < sizeC; c++)
+        for (int z = 0; z < sizeZ; z++)
         {
           // these next three statements called more times than needed but simplifies for loop logic
           ImageStack st = imps[z].getStack();
-          assertEquals(15,st.getSize());
+          assertEquals(sizeC * sizeT,st.getSize());
           ImageProcessor proc = st.getProcessor(z+1);
           // test the values
           assertEquals(0,zIndex(proc));  // this one should always be 0
@@ -1235,7 +1237,9 @@ public class ImporterTest {
   @Test
   public void testSplitTimepoints()
   {
-    String path = FAKE_FILES[0];
+    final int sizeZ = 5, sizeC = 3, sizeT = 7;
+    final String path = constructFakeFilename("splitT",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
     ImagePlus[] imps = null;
     try {
@@ -1251,17 +1255,17 @@ public class ImporterTest {
       fail(e.getMessage());
       }
     
-    // 5 time points goes to 5 images
-    assertEquals(5,imps.length);
+    // one time point per image
+    assertEquals(sizeT,imps.length);
     
     // TODO - order of for loops correct?
-    for (int t = 0; t < 5; t++)
-      for (int c = 0; c < 3; c++)
-        for (int z = 0; z < 7; z++)
+    for (int t = 0; t < sizeT; t++)
+      for (int c = 0; c < sizeC; c++)
+        for (int z = 0; z < sizeZ; z++)
         {
           // these next three statements called more times than needed but simplifies for loop logic
           ImageStack st = imps[t].getStack();
-          assertEquals(21,st.getSize());
+          assertEquals(sizeZ * sizeC,st.getSize());
           ImageProcessor proc = st.getProcessor(t+1);
           // test the values
           assertEquals(z,zIndex(proc));
