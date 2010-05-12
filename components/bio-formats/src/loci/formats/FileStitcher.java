@@ -561,9 +561,11 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#setGroupFiles(boolean) */
   public void setGroupFiles(boolean group) {
     reader.setGroupFiles(group);
-    for (int i=0; i<readers.length; i++) {
-      for (int j=0; j<readers[i].length; j++) {
-        readers[i][j].setGroupFiles(group);
+    if (readers != null) {
+      for (int i=0; i<readers.length; i++) {
+        for (int j=0; j<readers[i].length; j++) {
+          readers[i][j].setGroupFiles(group);
+        }
       }
     }
   }
