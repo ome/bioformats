@@ -13,6 +13,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
@@ -37,9 +38,8 @@ import org.junit.Test;
 //      open individual files: try to come up with a way to test without a disk file as source
 //      concatenate - test order of images in stack?
 //      swapped dims test needs to test cases other than from default swapping Z & T
-//      lowest priority - record modifications
 //      output stack order - testing of iIndex?
-//      range - more combos of ztc
+//      range - more combos of ztc, more bad cases
 //  - add some tests for combination of options
 
 public class ImporterTest {
@@ -200,14 +200,14 @@ public class ImporterTest {
     }
     
     int procNum = 1;
-    for (int k = tFrom; k <= tTo; k += tBy)
-      for (int j = cFrom; j <= cTo; j += cBy)
-        for (int i = zFrom; i <= zTo; i += zBy)
+    for (int t = tFrom; t <= tTo; t += tBy)
+      for (int c = cFrom; c <= cTo; c += cBy)
+        for (int z = zFrom; z <= zTo; z += zBy)
         {
           ImageProcessor proc = st.getProcessor(procNum);
-          if ((zIndex(proc) != i) || (cIndex(proc) != j) || (tIndex(proc) != k))
+          if ((zIndex(proc) != z) || (cIndex(proc) != c) || (tIndex(proc) != t))
           {
-            System.out.println("seriesInCorrectOrder() - slices out of order: exp i"+i+" j"+j+" k"+k+" != act z"+
+            System.out.println("seriesInCorrectOrder() - slices out of order: exp z"+z+" c"+c+" t"+t+" != act z"+
                 zIndex(proc)+" c"+cIndex(proc)+" t"+tIndex(proc)+" for proc number "+procNum);
             return false;
           }
@@ -244,6 +244,19 @@ public class ImporterTest {
       throw new IllegalArgumentException("mergedPixel() can only handle 1st 16 cases. Wants 0<=i<=15 but i = " + i);
     
     return i*65536 + i*256 + i;
+  }
+
+  private boolean floatArraysEqual(float[] a, float[] b)
+  {
+    float tolerance = 0.00001f;
+    
+    if (a.length != b.length) return false;
+    
+    for (int i = 0; i < a.length; i++)
+      if (Math.abs(a[i]-b[i]) > tolerance)
+        return false;
+    
+    return true;
   }
   
   // ****** helper tests ****************************************************************************************
@@ -313,12 +326,12 @@ public class ImporterTest {
     Axis fastest = axis(order,0);
     Axis middle = axis(order,1);
     Axis slowest = axis(order,2);
-    int maxI = value(fastest,z,c,t);
+    int maxI = value(slowest,z,c,t);
     int maxJ = value(middle,z,c,t);
-    int maxK = value(slowest,z,c,t);
-    for (int k = 0; k < maxK; k++)
+    int maxK = value(fastest,z,c,t);
+    for (int i = 0; i < maxI; i++)
       for (int j = 0; j < maxJ; j++)
-        for (int i = 0; i < maxI; i++)
+        for (int k = 0; k < maxK; k++)
         {
           ImageProcessor proc = st.getProcessor(count+1);
           //printVals(proc);
@@ -330,9 +343,9 @@ public class ImporterTest {
           //System.out.println("iIndex " + iIndex(proc) + " calc " +
           //    ((maxJ*maxI*k) + (maxI*j) + i)
           //    );
-          assertEquals(i,index(fastest,proc));
+          assertEquals(i,index(slowest,proc));
           assertEquals(j,index(middle,proc));
-          assertEquals(k,index(slowest,proc));
+          assertEquals(k,index(fastest,proc));
           count++;
         }
   }
@@ -475,6 +488,7 @@ public class ImporterTest {
       assertEquals(0,sIndex(proc));  // make sure we have one series only
       // TODO - do we need to test something regarding order of images in series
     }
+    fail("unfinished implementation");
   }
   
   private void memoryVirtualStackTest(boolean desireVirtual)
@@ -780,6 +794,8 @@ public class ImporterTest {
     //   added as needed to make multiple images each with same number of channels
     //   i.e. 6 channels can -> 123/456 or 12/34/56 or 1/2/3/4/5/6 (last one not merged ???)
     //        5 channels can -> 123/45b or 12/34/5b or 1/2/3/4/5 (last one not merged ???)
+    
+    fail("unfinished implementation");
   }
   
   @Test
@@ -840,6 +856,7 @@ public class ImporterTest {
     
     System.out.println("setAutoscale(false) results");
     h = imp.getStatistics().histogram;
+    // or? h = imp.getProcessor().getHistogram();
     for (int i = 0; i < h.length/8; i++)
       System.out.println(h[i*8+0]+" "+h[i*8+1]+" "+h[i*8+2]+" "+h[i*8+3]+" "+h[i*8+4]+" "+h[i*8+5]+" "+h[i*8+6]+" "+h[i*8+7]);
     
@@ -870,10 +887,12 @@ public class ImporterTest {
     
     System.out.println("setAutoscale(true) results");
     h = imp.getStatistics().histogram;
+    // or? h = imp.getProcessor().getHistogram();
     for (int i = 0; i < h.length/8; i++)
       System.out.println(h[i*8+0]+" "+h[i*8+1]+" "+h[i*8+2]+" "+h[i*8+3]+" "+h[i*8+4]+" "+h[i*8+5]+" "+h[i*8+6]+" "+h[i*8+7]);
     
     // TODO - test histogram values
+    // question on hist testing - do I need to test specific values or just that it changed?
 
     // test that image data unchanged by autoscale
     
@@ -883,11 +902,9 @@ public class ImporterTest {
     int st1Size = st1.getSize();
     assertEquals(st1Size,st2.getSize());
     for (int i = 0; i < st1Size; i++)
-      assertEquals(st1.getProcessor(i+1).getPixels(), st2.getProcessor(i+1).getPixels());
-      // TODO - might need assertArrayEquals() and cast the returned pixels to the appropriate array type.
-      //    what is the file type for fakefiles when not specified? byte or int?
+      floatArraysEqual((float[])st1.getProcessor(i+1).getPixels(), (float[])st2.getProcessor(i+1).getPixels());
     
-    fail("to be implemented");
+    fail("unfinished implementation");
   }
 
   @Test
@@ -900,15 +917,82 @@ public class ImporterTest {
   @Test
   public void testMemoryRecordModifications()
   {
-    // TODO - how to test this? lowest priority
+    int x = 444, y = 387;
+    String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, 7, 1, 1, -1);
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
     
-    // outline
-    //   open as virt stack
-    //   run plugin (invert) or macro that changes pixels in currently loaded frame (frame 0)
-    //   change curr frame to 1 and test that pixels are different from what we set
-    //   change curr frame back to 0 and see if pixel changes remembered
+    assertTrue(y > 10);  // needed for this test
     
-    fail("to be implemented");
+    // first test the case where RECORD IS FALSE
+
+    // open file
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setVirtual(true);
+      options.setRecord(false);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // basic tests
+    assertNotNull(imps);
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertNotNull(imp);
+    assertEquals(x,imp.getWidth());
+    assertEquals(y,imp.getHeight());
+    
+    // change data in slice 1, swap to slice 2, swap back, see that data DOES revert
+    imp.setSlice(1);
+    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
+    imp.getProcessor().invert();
+    assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));
+    imp.setSlice(2);
+    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
+    imp.setSlice(1);
+    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));  // when record == false changes not remembered
+    
+    // then test case where RECORD IS TRUE
+    
+    // open file
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setVirtual(true);
+      options.setRecord(true);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // basic tests
+    assertNotNull(imps);
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertNotNull(imp);
+    assertEquals(x,imp.getWidth());
+    assertEquals(y,imp.getHeight());
+    
+    // change data in slice 1, swap to slice 2, swap back, see that data DOES NOT revert
+    imp.setSlice(1);
+    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
+    imp.getProcessor().invert();
+    assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));
+    imp.setSlice(2);
+    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
+    imp.setSlice(1);
+    assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));  // when record == true changes remembered
   }
 
   @Test
@@ -976,11 +1060,88 @@ public class ImporterTest {
     z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
 
-    // test bad combination of zct's - choosing beyond end of z's
+    // test bad combination of zct's - choosing beyond ends of ranges
+    
+    // z index before 0 begin
     try {
-      z=7; c=7; t=7; zFrom=3; zTo=7; zBy=4; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=6; tBy=1;
+      z=7; c=7; t=7; zFrom=-1; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
       memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // z index after z-1 end
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+    
+    // z by < 1
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      // TODO - enable post fix
+      //memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      //fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // c index before 0 begin
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=-1; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // c index after c-1 end
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // c by < 1
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
+      // TODO - enable post fix
+      //memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      //fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // t index before 0 begin
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=-1; tTo=t-1; tBy=1;
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // t index after t-1 end
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t; tBy=1;
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // t by < 1
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
+      // TODO - enable post fix
+      //memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      //fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
     }
@@ -1018,18 +1179,18 @@ public class ImporterTest {
     assertEquals(3,imps.length);
     
     // TODO - order of for loops correct?
-    for (int k = 0; k < 5; k++)
-      for (int j = 0; j < 3; j++)
-        for (int i = 0; i < 7; i++)
+    for (int t = 0; t < 5; t++)
+      for (int c = 0; c < 3; c++)
+        for (int z = 0; z < 7; z++)
         {
           // these next three statements called more times than needed but simplifies for loop logic
-          ImageStack st = imps[j].getStack();
+          ImageStack st = imps[c].getStack();
           assertEquals(35,st.getSize());
-          ImageProcessor proc = st.getProcessor(j+1);
+          ImageProcessor proc = st.getProcessor(c+1);
           // test the values
-          assertEquals(i,zIndex(proc));
+          assertEquals(z,zIndex(proc));
           assertEquals(0,cIndex(proc));  // this one should always be 0
-          assertEquals(k,tIndex(proc));
+          assertEquals(t,tIndex(proc));
         }
   }
   
@@ -1056,18 +1217,18 @@ public class ImporterTest {
     assertEquals(7,imps.length);
     
     // TODO - order of for loops correct?
-    for (int k = 0; k < 5; k++)
-      for (int j = 0; j < 3; j++)
-        for (int i = 0; i < 7; i++)
+    for (int t = 0; t < 5; t++)
+      for (int c = 0; c < 3; c++)
+        for (int z = 0; z < 7; z++)
         {
           // these next three statements called more times than needed but simplifies for loop logic
-          ImageStack st = imps[i].getStack();
+          ImageStack st = imps[z].getStack();
           assertEquals(15,st.getSize());
-          ImageProcessor proc = st.getProcessor(i+1);
+          ImageProcessor proc = st.getProcessor(z+1);
           // test the values
           assertEquals(0,zIndex(proc));  // this one should always be 0
-          assertEquals(j,cIndex(proc));
-          assertEquals(k,tIndex(proc));
+          assertEquals(c,cIndex(proc));
+          assertEquals(t,tIndex(proc));
         }
   }
   
@@ -1094,17 +1255,17 @@ public class ImporterTest {
     assertEquals(5,imps.length);
     
     // TODO - order of for loops correct?
-    for (int k = 0; k < 5; k++)
-      for (int j = 0; j < 3; j++)
-        for (int i = 0; i < 7; i++)
+    for (int t = 0; t < 5; t++)
+      for (int c = 0; c < 3; c++)
+        for (int z = 0; z < 7; z++)
         {
           // these next three statements called more times than needed but simplifies for loop logic
-          ImageStack st = imps[k].getStack();
+          ImageStack st = imps[t].getStack();
           assertEquals(21,st.getSize());
-          ImageProcessor proc = st.getProcessor(k+1);
+          ImageProcessor proc = st.getProcessor(t+1);
           // test the values
-          assertEquals(i,zIndex(proc));
-          assertEquals(j,cIndex(proc));
+          assertEquals(z,zIndex(proc));
+          assertEquals(c,cIndex(proc));
           assertEquals(0,tIndex(proc));  // this one should always be 0
         }
   }
