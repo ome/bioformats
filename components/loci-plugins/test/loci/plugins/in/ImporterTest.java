@@ -173,15 +173,25 @@ public class ImporterTest {
 
   private int numInSeries(int from, int to, int by)
   {
+    /*
+    int spread = from - to + 1;
+    
+    if (spread % by == 0)
+      return (spread / by);
+    else
+      return (spread / by) + 1;
+    */
     // could calc this but simple loop suffices for our purposes
     int count = 0;
     for (int i = from; i <= to; i += by)
         count++;
     return count;
+    /*
+    */
   }
   
   // note : for now assumes default ZCT ordering
-  
+  /** Tests that an ImageSTack is ordered according to specified from/to/by points of z/c/t */
   private boolean seriesInCorrectOrder(ImageStack st,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
@@ -215,6 +225,8 @@ public class ImporterTest {
     return true;
   }
   
+  // this next method useful to avoid changes to instance vars of ImagePlus by query functions
+  /** Gets values of private instance variable ints from an ImagePlus */
   private int getField(ImagePlus imp, String fieldName) {
     Exception exc = null;
     try {
@@ -231,8 +243,13 @@ public class ImporterTest {
     return -1;
   }
   
+  /** The number of Z slices in an ImagePlus */
   private int getSizeZ(ImagePlus imp) { return getField(imp, "nSlices"); }
+
+  /** The number of T slices in an ImagePlus */
   private int getSizeT(ImagePlus imp) { return getField(imp, "nFrames"); }
+
+  /** The number of effective C slices in an ImagePlus */
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
 
   // used by the color merge code. calcs a pixel value in our ramped data for a 3 channel merged image
@@ -244,6 +261,7 @@ public class ImporterTest {
     return i*65536 + i*256 + i;
   }
 
+  // test helper
   private boolean floatArraysEqual(float[] a, float[] b)
   {
     float tolerance = 0.00001f;
@@ -381,8 +399,6 @@ public class ImporterTest {
     assertEquals(t,actualZ); // Z<->T swapped
 
     // make sure the dimensions were swapped correctly
-    // notice I'm testing from inside out in ZCT order
-    // but using input z for T and the input t for Z
     int p = 1;
     for (int zIndex = 0; zIndex < z; zIndex++)
       for (int cIndex = 0; cIndex < c; cIndex++)
@@ -451,7 +467,9 @@ public class ImporterTest {
   private void datasetConcatenateTest(int pixType, String order,
       int x, int y, int z, int c, int t, int s)
   {
-    assertTrue(s >= 1);
+    assertTrue(s >= 1);  // necessary for this test
+    
+    // open all series as one
     
     String path = constructFakeFilename(order, pixType, x, y, z, c, t, s);
     ImagePlus[] imps = null;
@@ -468,17 +486,18 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
+    // test results
+    
     assertNotNull(imps);
     assertEquals(1,imps.length);
 
     ImageStack st = imps[0].getStack();
- 
+
     int numSlices = st.getSize();
     
     // make sure the number of slices in stack is a sum of all series
     assertEquals(z*c*t*s,numSlices);
     
-    // System.out.println("Numslices == " + numSlices);
     for (int i = 0; i < numSlices; i++)
     {
       ImageProcessor proc = st.getProcessor(i+1); 
@@ -492,12 +511,15 @@ public class ImporterTest {
   private void memoryVirtualStackTest(boolean desireVirtual)
   {
       int x = 604, y = 531;
+      
       String path = constructFakeFilename("vstack", FormatTools.UINT16, x, y, 7, 1, 1, -1);
+      
+      // open stack
       ImagePlus[] imps = null;
       try {
         ImporterOptions options = new ImporterOptions();
         options.setId(path);
-        options.setVirtual(desireVirtual);
+        options.setVirtual(desireVirtual);  // user specified value here
         imps = BF.openImagePlus(options);
       }
       catch (IOException e) {
@@ -507,6 +529,7 @@ public class ImporterTest {
         fail(e.getMessage());
       }
   
+      // test results
       assertNotNull(imps);
       assertEquals(1,imps.length);
       ImagePlus imp = imps[0];
@@ -583,6 +606,8 @@ public class ImporterTest {
   private void memoryCropTest(int pixType, int x, int y, int cx, int cy)
   {
     String path = constructFakeFilename("crop", pixType, x, y, 1, 1, 1, 1);
+    
+    // open image
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -598,10 +623,11 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
+    // test results
     assertNotNull(imps);
     assertEquals(1,imps.length);
     assertNotNull(imps[0]);
-    assertEquals(cx,imps[0].getWidth());
+    assertEquals(cx,imps[0].getWidth());  // here is where we make sure we get back a cropped image
     assertEquals(cy,imps[0].getHeight());
   }
 
@@ -802,7 +828,66 @@ public class ImporterTest {
     // From BF: RGB colorize channels - Each channel is assigned an appropriate pseudocolor table rather than the normal
     // grayscale.  The first channel is colorized red, the second channel is green, and the third channel is blue. This
     // option is not available when Merge channels to RGB or Custom colorize channels are set.
-    fail("to be implemented");
+    
+    String path = FAKE_FILES[0];
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+
+    // TODO - should not allow mergeChannels with rgb colorize
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorize(true);
+      options.setMergeChannels(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    // TODO - should not allow mergeChannels with custom colorize
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorize(true);
+      options.setCustomColorize(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // TODO - legitimate testing
+    // open file
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorize(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertEquals(7,getSizeZ(imp));
+    assertEquals(1,getEffectiveSizeC(imp));  // TODO : correct?
+    assertEquals(1,getSizeT(imp));  // TODO : huh?
+    
+    // TODO - actual tests of data
+    
+    fail("unfinished implementation");
   }
 
   @Test
@@ -1158,9 +1243,10 @@ public class ImporterTest {
   public void testSplitChannels()
   {
     final int sizeZ = 5, sizeC = 3, sizeT = 7;
-    final String path = constructFakeFilename("splitT",
+    final String path = constructFakeFilename("splitC",
       FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
+    // open image
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -1178,17 +1264,17 @@ public class ImporterTest {
     // one channel per image
     assertEquals(sizeC,imps.length);
     
+    // unwind ZCT loop : C pulled to front, ZT in order
     for (int c = 0; c < sizeC; c++) {
       ImageStack st = imps[c].getStack();
       assertEquals(sizeZ * sizeT,st.getSize());
       int index = 0;
       for (int t = 0; t < sizeT; t++) {
         for (int z = 0; z < sizeZ; z++) {
-          // these next three statements called more times than needed but simplifies for loop logic
           ImageProcessor proc = st.getProcessor(++index);
           // test the values
           assertEquals(z,zIndex(proc));
-          assertEquals(c,cIndex(proc));  // this one should always be 0
+          assertEquals(c,cIndex(proc));
           assertEquals(t,tIndex(proc));
         }
       }
@@ -1199,9 +1285,10 @@ public class ImporterTest {
   public void testSplitFocalPlanes()
   {
     final int sizeZ = 5, sizeC = 3, sizeT = 7;
-    final String path = constructFakeFilename("splitT",
+    final String path = constructFakeFilename("splitZ",
       FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
+    // open image
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -1218,21 +1305,22 @@ public class ImporterTest {
     
     // one focal plane per image
     assertEquals(sizeZ,imps.length);
-    
-    // TODO - order of for loops correct?
-    for (int t = 0; t < sizeT; t++)
-      for (int c = 0; c < sizeC; c++)
-        for (int z = 0; z < sizeZ; z++)
-        {
-          // these next three statements called more times than needed but simplifies for loop logic
-          ImageStack st = imps[z].getStack();
-          assertEquals(sizeC * sizeT,st.getSize());
-          ImageProcessor proc = st.getProcessor(z+1);
+
+    // unwind ZCT loop : Z pulled to front, CT in order
+    for (int z = 0; z < sizeZ; z++) {
+      ImageStack st = imps[z].getStack();
+      assertEquals(sizeC * sizeT,st.getSize());
+      int index = 0;
+      for (int t = 0; t < sizeT; t++) {
+        for (int c = 0; c < sizeC; c++) {
+          ImageProcessor proc = st.getProcessor(++index);
           // test the values
-          assertEquals(0,zIndex(proc));  // this one should always be 0
+          assertEquals(z,zIndex(proc));
           assertEquals(c,cIndex(proc));
           assertEquals(t,tIndex(proc));
         }
+      }
+    }
   }
   
   @Test
@@ -1242,6 +1330,7 @@ public class ImporterTest {
     final String path = constructFakeFilename("splitT",
       FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
+    // open image
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -1259,20 +1348,21 @@ public class ImporterTest {
     // one time point per image
     assertEquals(sizeT,imps.length);
     
-    // TODO - order of for loops correct?
-    for (int t = 0; t < sizeT; t++)
-      for (int c = 0; c < sizeC; c++)
-        for (int z = 0; z < sizeZ; z++)
-        {
-          // these next three statements called more times than needed but simplifies for loop logic
-          ImageStack st = imps[t].getStack();
-          assertEquals(sizeZ * sizeC,st.getSize());
-          ImageProcessor proc = st.getProcessor(t+1);
+    // unwind ZTC loop : T pulled to front, ZC in order
+    for (int t = 0; t < sizeT; t++) {
+      ImageStack st = imps[t].getStack();
+      assertEquals(sizeZ * sizeC,st.getSize());
+      int index = 0;
+      for (int c = 0; c < sizeC; c++) {
+        for (int z = 0; z < sizeZ; z++) {
+          ImageProcessor proc = st.getProcessor(++index);
           // test the values
           assertEquals(z,zIndex(proc));
           assertEquals(c,cIndex(proc));
-          assertEquals(0,tIndex(proc));  // this one should always be 0
+          assertEquals(t,tIndex(proc));
         }
+      }
+    }
   }
 
 }
