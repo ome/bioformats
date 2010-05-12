@@ -40,6 +40,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JEditorPane;
@@ -93,7 +94,7 @@ public class MainDialog extends ImporterDialog
   protected Checkbox swapDimsBox;
   protected Checkbox virtualBox;
 
-  protected HashMap<Component, String> infoTable;
+  protected Map<Component, String> infoTable;
   protected JEditorPane infoPane;
 
   // -- Constructor --
@@ -290,7 +291,9 @@ public class MainDialog extends ImporterDialog
       // first column
       "pref, 3dlu, pref:grow, " +
       // second column
-      "10dlu, pref";
+      "10dlu, pref, " +
+	    // third column
+      "10dlu, fill:150dlu";
 
     String rows =
       // Stack viewing        | Metadata viewing
@@ -299,9 +302,7 @@ public class MainDialog extends ImporterDialog
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       "3dlu, pref, " +
       // Color options        | Split into separate windows
-      "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
-      // Information
-      "9dlu, pref, 3dlu, fill:100dlu";
+      "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref";
 
     // TODO: change "Merge channels into RGB" checkbox to
     // "Channel merging" choice with options:
@@ -374,17 +375,17 @@ public class MainDialog extends ImporterDialog
     builder.add(splitZBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.add(splitTBox, xyw(cc, 5, row, 1));
-    row += 4;
+    //row += 4;
 
     // information section
-    builder.addSeparator("Information", cc.xyw(1, row, 5));
-    row += 2;
+    builder.addSeparator("Information", cc.xy(7, 1));
+    //row += 2;
     infoPane = new JEditorPane();
     infoPane.setContentType("text/html");
     infoPane.setEditable(false);
     infoPane.setText("<html>" + INFO_DEFAULT);
-    builder.add(new JScrollPane(infoPane), cc.xyw(1, row, 5));
-    row += 2;
+    builder.add(new JScrollPane(infoPane), cc.xywh(7, 3, 1, row));
+    //row += 2;
 
     gd.removeAll();
     gd.add(builder.getPanel());
@@ -497,9 +498,6 @@ public class MainDialog extends ImporterDialog
     // == Dataset organization ==
 
     // groupFilesBox
-    //groupFilesEnabled = !options.isOMERO();
-    //if (!groupFilesEnabled) isGroupFiles = false;
-    //else
     if (src == stackFormatChoice && isStackBrowser) isGroupFiles = true;
 
     // ungroupFilesBox
