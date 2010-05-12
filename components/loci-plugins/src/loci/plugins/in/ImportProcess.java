@@ -83,6 +83,7 @@ public class ImportProcess implements StatusReporter {
 
   // reader stack, from bottom to top
   private IFormatReader baseReader;
+  private ImageReader imageReader;
   private FileStitcher fileStitcher;
   private ChannelSeparator channelSeparator;
   private DimensionSwapper dimensionSwapper;
@@ -125,6 +126,11 @@ public class ImportProcess implements StatusReporter {
   public IFormatReader getBaseReader() {
     assertStep(ImportStep.READER);
     return baseReader;
+  }
+  /** Valid only after {@link ImportStep#READER}. */
+  public IFormatReader getImageReader() {
+    assertStep(ImportStep.READER);
+    return imageReader;
   }
   /** Valid only after {@link ImportStep#READER}. */
   public String getIdName() {
@@ -347,9 +353,8 @@ public class ImportProcess implements StatusReporter {
     }
     r.setId(options.getId());
 
-    if (options.isVirtual() || !options.isMergeChannels() ||
-      FormatTools.getBytesPerPixel(r.getPixelType()) != 1)
-    {
+    int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
+    if (options.isVirtual() || !options.isMergeChannels() || bpp != 1) {
       r = channelSeparator = new ChannelSeparator(r);
     }
     r = dimensionSwapper = new DimensionSwapper(r);
@@ -415,23 +420,6 @@ public class ImportProcess implements StatusReporter {
       idLoc = new Location(id);
       idName = idLoc.getName();
     }
-//    else if (options.isOMERO()) {
-//      // NB: strip out username and password when opening from OMERO
-//      StringTokenizer st = new StringTokenizer(id, "?&");
-//      StringBuffer idBuf = new StringBuffer();
-//      int tokenCount = 0;
-//      while (st.hasMoreTokens()) {
-//        String token = st.nextToken();
-//        if (token.startsWith("username=") || token.startsWith("password=")) {
-//          continue;
-//        }
-//        if (tokenCount == 1) idBuf.append("?");
-//        else if (tokenCount > 1) idBuf.append("&");
-//        idBuf.append(token);
-//        tokenCount++;
-//      }
-//      idName = idBuf.toString();
-//    }
   }
 
   /**
@@ -441,8 +429,8 @@ public class ImportProcess implements StatusReporter {
   private void createBaseReader() {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
-      ImageReader reader = LociPrefs.makeImageReader();
-      try { baseReader = reader.getReader(options.getId()); }
+      imageReader = LociPrefs.makeImageReader();
+      try { baseReader = imageReader.getReader(options.getId()); }
       catch (FormatException exc) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was an error reading the file.");
@@ -454,20 +442,6 @@ public class ImportProcess implements StatusReporter {
         return;
       }
     }
-//    else if (options.isOMERO()) {
-//      // NB: avoid dependencies on optional loci.ome.io package
-//      try {
-//        ServiceFactory factory = new ServiceFactory();
-//        OMEReaderWriterService service =
-//          factory.getInstance(OMEReaderWriterService.class);
-//        baseReader = service.newOMEROReader();
-//      }
-//      catch (DependencyException exc) {
-//        WindowTools.reportException(exc, options.isQuiet(),
-//          "Sorry, there was a problem constructing the OMERO I/O engine");
-//      }
-//      if (baseReader == null) return;
-//    }
     else {
       WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
@@ -504,7 +478,6 @@ public class ImportProcess implements StatusReporter {
   
   // -- Helper methods -- ImportStep.STACK --
   
-  /** Initializes the seriesLabels derived value. */
   private void computeSeriesLabels() {
     int seriesCount = getSeriesCount();
     seriesLabels = new String[seriesCount];

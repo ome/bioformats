@@ -127,9 +127,7 @@ save = false
 default = Local machine
 values = \
   Local machine, \
-  Internet,      \
-  OME server,    \
-  OMERO server
+  Internet
 
 [mergeChannels]
 type = boolean
