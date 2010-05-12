@@ -26,19 +26,18 @@ import org.junit.Test;
 
 // TODO
 //  - flesh out existing tests
-//      splits - see if for loops are in correct order by comparing to actual data
 //      write tests for the color options : 4 cases - some mention was made that indexcolor is an issue in testing
 //        merge - basic test in place but not passing. need to flesh out mergeOptions when BF code in place.
-//        rgb colorize - 
-//        custom colorize - 
+//        rgb colorize - need to do actual tests. see BF gui to get idea of how it works
+//        custom colorize - waiting for creation of API for setting r,g,b info
 //        autoscale - code stubbed out but tests not in place for histogram testing. Its possible the histogram won't
 //          change when base image is a fake file because the whole data range may already be in use.
 //      open individual files: try to come up with a way to test without a disk file as source
-//      concatenate - test order of images in stack?
 //      swapped dims test needs to test cases other than from default swapping Z & T
 //      output stack order - testing of iIndex?
-//      range - more combos of ztc, more bad cases
+//      range - more combos of ztc?
 //  - add some tests for combination of options
+//  - improve, comment, and generalize code for increased coverage
 
 public class ImporterTest {
 
@@ -173,20 +172,19 @@ public class ImporterTest {
 
   private int numInSeries(int from, int to, int by)
   {
-    /*
-    int spread = from - to + 1;
-    
-    if (spread % by == 0)
-      return (spread / by);
-    else
-      return (spread / by) + 1;
-    */
     // could calc this but simple loop suffices for our purposes
     int count = 0;
     for (int i = from; i <= to; i += by)
         count++;
     return count;
-    /*
+    
+    /* calc'ed version : less clear
+    int spread = to - from + 1;
+    
+    if (spread % by == 0)
+      return (spread / by);
+    else
+      return (spread / by) + 1;
     */
   }
   
@@ -357,8 +355,12 @@ public class ImporterTest {
           assertEquals(0,sIndex(proc));
           //TODO - test iIndex too? : assertEquals(count,somethingOrOther(iIndex(proc)));
           //System.out.println("iIndex " + iIndex(proc) + " calc " +
-          //    ((maxJ*maxI*k) + (maxI*j) + i)
-          //    );
+              // pre loop reorder ((maxJ*maxI*k) + (maxI*j) + i)
+              //((maxJ*maxK*i) + (maxK*j) + k)
+              //((value(middle,maxI,maxJ,maxK)*value(fastest,maxI,maxJ,maxK)*i) + (value(fastest,maxI,maxJ,maxK)*j) + (k))
+              //((value(middle,maxK,maxJ,maxI)*value(fastest,maxK,maxJ,maxI)*i) + (value(fastest,maxK,maxJ,maxI)*j) + (k))
+              //);
+          //System.out.println("maxI "+maxI+" maxJ "+maxJ+" maxK "+maxK+" number "+count+" (i"+i+" "+j+"j "+k+"k) = "+iIndex(proc));
           assertEquals(i,index(slowest,proc));
           assertEquals(j,index(middle,proc));
           assertEquals(k,index(fastest,proc));
@@ -491,13 +493,10 @@ public class ImporterTest {
     
     assertNotNull(imps);
     assertEquals(1,imps.length);
-
     ImageStack st = imps[0].getStack();
 
-    int numSlices = st.getSize();
-    
     // make sure the number of slices in stack is a sum of all series
-    assertEquals(z*c*t*s, numSlices);
+    assertEquals(z*c*t*s, st.getSize());
     
     int index = 0;
     for (int sIndex = 0; sIndex < s; sIndex++) {
@@ -602,11 +601,8 @@ public class ImporterTest {
     assertEquals(x,imp.getWidth());
     assertEquals(y,imp.getHeight());
     ImageStack st = imp.getStack();
-    
-    //System.out.println("SpecifyCRangeTest: slices below");
-    //for (int i = 0; i < numSlices; i++)
-    //  printVals(st.getProcessor(i+1));
-        
+
+    // should be in correct order
     assertTrue(seriesInCorrectOrder(st,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy));
   }
   
@@ -645,7 +641,7 @@ public class ImporterTest {
   {
     defaultBehaviorTest(FormatTools.UINT16, 400, 300, 1, 1, 1);
     defaultBehaviorTest(FormatTools.INT16, 107, 414, 1, 1, 1);
-    defaultBehaviorTest(FormatTools.UINT32, 323, 206, 3, 2, 1);  // failure on last val = 1,5,
+    defaultBehaviorTest(FormatTools.UINT32, 323, 206, 3, 2, 1);
     defaultBehaviorTest(FormatTools.UINT8, 57, 78, 5, 4, 3);
     defaultBehaviorTest(FormatTools.INT32, 158, 99, 2, 3, 4);
     defaultBehaviorTest(FormatTools.INT8, 232, 153, 3, 7, 5);
@@ -693,6 +689,9 @@ public class ImporterTest {
     
     String path = "2channel_stack_raw01.pic";
     
+    // there is a second file called "2channel_stack_raw02.pic" present in the same directory
+    // if open indiv true should only load one of them, otherwise both
+    
     // try ungrouped
     
     ImagePlus[] imps = null;
@@ -712,7 +711,7 @@ public class ImporterTest {
     // test results
     
     assertEquals(1,imps.length);
-    assertEquals(16,imps[0].getStack().getSize());
+    assertEquals(16,imps[0].getStack().getSize());  // one loaded as one set with 16 slices
     
     // try grouped
     
@@ -732,7 +731,7 @@ public class ImporterTest {
     // test results
     
     assertEquals(1,imps.length);
-    assertEquals(32,imps[0].getStack().getSize());
+    assertEquals(32,imps[0].getStack().getSize());  // both loaded as one set of 32 slices
   }
 
   @Test
@@ -778,6 +777,7 @@ public class ImporterTest {
     
     // test when color merge false
 
+    // open file
     try {
       ImporterOptions options = new ImporterOptions();
       options.setMergeChannels(false);
@@ -791,14 +791,16 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
+    // test results
     assertEquals(1,imps.length);
     imp = imps[0];
-    assertEquals(3,getEffectiveSizeC(imp));
+    assertEquals(3,getEffectiveSizeC(imp));  // unmerged
     assertEquals(7,getSizeZ(imp));
     assertEquals(5,getSizeT(imp));
     
     // test when color merge true
     
+    // open file
     try {
       ImporterOptions options = new ImporterOptions();
       options.setMergeChannels(true);
@@ -812,12 +814,13 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
+    // test results
     assertEquals(1,imps.length);
     imp = imps[0];
-    assertEquals(1, getEffectiveSizeC(imp));
+    assertTrue(imp.getHeight() > 10);  // required for this test to work
+    assertEquals(1, getEffectiveSizeC(imp));  // merged
     assertEquals(7, getSizeZ(imp));
     assertEquals(5, getSizeT(imp));
-    assertTrue(imp.getHeight() > 10);  // required for this test to work
     for (int i = 0; i < 10; i++)
       assertEquals(mergedPixel(i),imp.getProcessor().get(i,10));
     
@@ -848,6 +851,7 @@ public class ImporterTest {
       options.setMergeChannels(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
+      // TODO - eventually fail() here but need BF support first I think
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -863,6 +867,7 @@ public class ImporterTest {
       options.setCustomColorize(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
+      // TODO - eventually fail() here but need BF support first I think
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -903,59 +908,19 @@ public class ImporterTest {
     // From BF: Custom colorize channels - Each channel is assigned a pseudocolor table rather than the normal grayscale.
     //   The color for each channel is chosen by the user. This option is not available when Merge channels to RGB or RGB
     //   colorize channels are set.
+    
+    // TODO
     fail("to be implemented");
   }
 
-  @Test
-  public void testColorAutoscale()
+  private void autoscaleTrueTest(int pixType)
   {
-    // From BF:
-    // Autoscale - Stretches the histogram of the image planes to fit the data range. Does not alter underlying values in
-    // the image. If selected, histogram is stretched for each stack based upon the global minimum and maximum value
-    // throughout the stack.
-
-    // histogram stretched to match data vals that are present
-    // original image data unchanged
-
-    String path = FAKE_FILES[0];
+    final int sizeZ = 5, sizeC = 3, sizeT = 7, sizeX = 63, sizeY = 35;
+    final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
-    int[] h;
     
-    // test when autoscale false
-
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setAutoscale(false);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    assertEquals(1,imps.length);
-    imp = imps[0];
-    assertEquals(3,getEffectiveSizeC(imp));
-    assertEquals(7,getSizeZ(imp));
-    assertEquals(5,getSizeT(imp));
-    
-    System.out.println("setAutoscale(false) results");
-    h = imp.getStatistics().histogram;
-    // or? h = imp.getProcessor().getHistogram();
-    for (int i = 0; i < h.length/8; i++)
-      System.out.println(h[i*8+0]+" "+h[i*8+1]+" "+h[i*8+2]+" "+h[i*8+3]+" "+h[i*8+4]+" "+h[i*8+5]+" "+h[i*8+6]+" "+h[i*8+7]);
-    
-    // TODO - test histogram values
-    
-    ImagePlus baseImage = imp;
-    
-    // test when autoscale true
-
     try {
       ImporterOptions options = new ImporterOptions();
       options.setAutoscale(true);
@@ -971,30 +936,117 @@ public class ImporterTest {
     
     assertEquals(1,imps.length);
     imp = imps[0];
-    assertEquals(3,getEffectiveSizeC(imp));
-    assertEquals(7,getSizeZ(imp));
-    assertEquals(5,getSizeT(imp));
-    
-    System.out.println("setAutoscale(true) results");
-    h = imp.getStatistics().histogram;
-    // or? h = imp.getProcessor().getHistogram();
-    for (int i = 0; i < h.length/8; i++)
-      System.out.println(h[i*8+0]+" "+h[i*8+1]+" "+h[i*8+2]+" "+h[i*8+3]+" "+h[i*8+4]+" "+h[i*8+5]+" "+h[i*8+6]+" "+h[i*8+7]);
-    
-    // TODO - test histogram values
-    // question on hist testing - do I need to test specific values or just that it changed?
+    assertEquals(sizeX,imp.getWidth());
+    assertEquals(sizeY,imp.getHeight());
+    assertEquals(sizeZ,getSizeZ(imp));
+    assertEquals(sizeC,getEffectiveSizeC(imp));
+    assertEquals(sizeT,getSizeT(imp));
 
-    // test that image data unchanged by autoscale
+    ImageStack st = imp.getStack();
+    int numSlices = st.getSize();
+
+    for (int i = 0; i < numSlices; i++)
+    {
+      ImageProcessor proc = st.getProcessor(i+1);
+      assertEquals(sizeX,proc.getMax(),0.1);
+      assertEquals(0,proc.getMin(),0.1);
+    }
+  }
+
+  private double maxPixelValue(int pixType)
+  {
+    if (FormatTools.isFloatingPoint(pixType))
+      return Float.MAX_VALUE;
+ 
+    switch (pixType)
+    {
+      case FormatTools.INT8:    return Byte.MAX_VALUE; 
+      case FormatTools.INT16:   return Short.MAX_VALUE; 
+      case FormatTools.INT32:   return Integer.MAX_VALUE; 
+      case FormatTools.UINT8:   return 255; 
+      case FormatTools.UINT16:  return 65535; 
+      case FormatTools.UINT32:  return 4294967295.0; 
+
+      default:
+        throw new IllegalArgumentException("maxPixelValue() - unknown pixel type passed in: " + pixType);
+    }
+    /*
+    double maxUnsigned = Math.pow(2, FormatTools.getBytesPerPixel(pixType)*8) - 1;
     
-    ImageStack st1 = baseImage.getStack();
-    ImageStack st2 = imp.getStack();
+    // signed data type
+    if (FormatTools.isSigned(pixType))
+      
+      return Math.floor(maxUnsigned / 2);
     
-    int st1Size = st1.getSize();
-    assertEquals(st1Size,st2.getSize());
-    for (int i = 0; i < st1Size; i++)
-      floatArraysEqual((float[])st1.getProcessor(i+1).getPixels(), (float[])st2.getProcessor(i+1).getPixels());
+    else  // unsigned data type
+      
+      return maxUnsigned;
+    */
+  }
+  
+  private void autoscaleFalseTest(int pixType)
+  {
+    final int sizeZ = 5, sizeC = 3, sizeT = 7, sizeX = 63, sizeY = 35;
+    final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
     
-    fail("unfinished implementation");
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setAutoscale(false);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    assertEquals(1,imps.length);
+    imp = imps[0];
+    assertEquals(sizeX,imp.getWidth());
+    assertEquals(sizeY,imp.getHeight());
+    assertEquals(sizeZ,getSizeZ(imp));
+    assertEquals(sizeC,getEffectiveSizeC(imp));
+    assertEquals(sizeT,getSizeT(imp));
+
+    ImageStack st = imp.getStack();
+    int numSlices = st.getSize();
+
+    for (int i = 0; i < numSlices; i++)
+    {
+      ImageProcessor proc = st.getProcessor(i+1);
+      assertEquals(maxPixelValue(pixType),proc.getMax(),0.1);
+      assertEquals(0,proc.getMin(),0.1);
+    }
+  }
+  
+  @Test
+  public void testColorAutoscale()
+  {
+    // From BF:
+    // Autoscale - Stretches the histogram of the image planes to fit the data range. Does not alter underlying values in
+    // the image. If selected, histogram is stretched for each stack based upon the global minimum and maximum value
+    // throughout the stack.
+
+    // TODO : merge the two separate tests into one that takes passed boolean and tests it to determine correct test vals
+    
+    autoscaleFalseTest(FormatTools.UINT8);
+    autoscaleFalseTest(FormatTools.UINT16);
+    //TODO: failing - max calc wrong? autoscaleFalseTest(FormatTools.UINT32);
+    autoscaleFalseTest(FormatTools.INT8);
+    autoscaleFalseTest(FormatTools.INT16);
+    autoscaleFalseTest(FormatTools.INT32);
+ 
+    autoscaleTrueTest(FormatTools.UINT8);
+    autoscaleTrueTest(FormatTools.UINT16);
+    autoscaleTrueTest(FormatTools.UINT32);
+    autoscaleTrueTest(FormatTools.INT8);
+    autoscaleTrueTest(FormatTools.INT16);
+    autoscaleTrueTest(FormatTools.INT32);
   }
 
   @Test
