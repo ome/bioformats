@@ -476,6 +476,7 @@ public class ImporterTest {
     try {
       ImporterOptions options = new ImporterOptions();
       options.setId(path);
+      options.setOpenAllSeries(true);
       options.setConcatenate(true);
       imps = BF.openImagePlus(options);
     }
@@ -496,16 +497,22 @@ public class ImporterTest {
     int numSlices = st.getSize();
     
     // make sure the number of slices in stack is a sum of all series
-    assertEquals(z*c*t*s,numSlices);
+    assertEquals(z*c*t*s, numSlices);
     
-    for (int i = 0; i < numSlices; i++)
-    {
-      ImageProcessor proc = st.getProcessor(i+1); 
-      // printVals(proc);
-      assertEquals(0,sIndex(proc));  // make sure we have one series only
-      // TODO - do we need to test something regarding order of images in series
+    int index = 0;
+    for (int sIndex = 0; sIndex < s; sIndex++) {
+      for (int tIndex = 0; tIndex < t; tIndex++) {
+        for (int cIndex = 0; cIndex < c; cIndex++) {
+          for (int zIndex = 0; zIndex < z; zIndex++) {
+            ImageProcessor proc = st.getProcessor(++index); 
+            assertEquals(sIndex, sIndex(proc));
+            assertEquals(zIndex, zIndex(proc));
+            assertEquals(cIndex, cIndex(proc));
+            assertEquals(tIndex, tIndex(proc));
+          }
+        }
+      }
     }
-    fail("unfinished implementation");
   }
   
   private void memoryVirtualStackTest(boolean desireVirtual)
