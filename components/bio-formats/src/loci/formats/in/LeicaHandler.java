@@ -751,8 +751,10 @@ public class LeicaHandler extends DefaultHandler {
       l.id = MetadataTools.createLSID("LightSource", numDatasets, l.index);
       l.wavelength = new Integer(attributes.getValue("LaserLine"));
       store.setLaserID(l.id, numDatasets, l.index);
-      store.setLaserWavelength(
-        new PositiveInteger(l.wavelength), numDatasets, l.index);
+      if (l.wavelength > 0) {
+        store.setLaserWavelength(
+          new PositiveInteger(l.wavelength), numDatasets, l.index);
+      }
       store.setLaserType(LaserType.OTHER, numDatasets, l.index);
       store.setLaserLaserMedium(LaserMedium.OTHER, numDatasets, l.index);
 
