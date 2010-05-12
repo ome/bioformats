@@ -1178,20 +1178,21 @@ public class ImporterTest {
     // one channel per image
     assertEquals(sizeC,imps.length);
     
-    // TODO - order of for loops correct?
-    for (int t = 0; t < sizeT; t++)
-      for (int c = 0; c < sizeC; c++)
-        for (int z = 0; z < sizeT; z++)
-        {
+    for (int c = 0; c < sizeC; c++) {
+      ImageStack st = imps[c].getStack();
+      assertEquals(sizeZ * sizeT,st.getSize());
+      int index = 0;
+      for (int t = 0; t < sizeT; t++) {
+        for (int z = 0; z < sizeZ; z++) {
           // these next three statements called more times than needed but simplifies for loop logic
-          ImageStack st = imps[c].getStack();
-          assertEquals(sizeZ * sizeT,st.getSize());
-          ImageProcessor proc = st.getProcessor(c+1);
+          ImageProcessor proc = st.getProcessor(++index);
           // test the values
           assertEquals(z,zIndex(proc));
-          assertEquals(0,cIndex(proc));  // this one should always be 0
+          assertEquals(c,cIndex(proc));  // this one should always be 0
           assertEquals(t,tIndex(proc));
         }
+      }
+    }
   }
   
   @Test
