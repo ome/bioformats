@@ -477,13 +477,13 @@ public class ImageInfo {
       if (table8 != null) {
         sb.append(", 8-bit LUT: ");
         sb.append(table8.length);
-        sb.append("x ");
+        sb.append(" x ");
         sb.append(table8[0] == null ? "null" : "" + table8[0].length);
       }
       if (table16 != null) {
         sb.append(", 16-bit LUT: ");
         sb.append(table16.length);
-        sb.append("x ");
+        sb.append(" x ");
         sb.append(table16[0] == null ? "null" : "" + table16[0].length);
       }
       sb.append(")");

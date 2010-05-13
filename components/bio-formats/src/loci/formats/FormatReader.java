@@ -135,6 +135,9 @@ public abstract class FormatReader extends FormatHandler
    * Initializes the given file (parsing header information, etc.).
    * Most subclasses should override this method to perform
    * initialization operations such as parsing metadata.
+   *
+   * @throws FormatException if a parsing error occurs processing the file.
+   * @throws IOException if an I/O error occurs processing the file
    */
   protected void initFile(String id) throws FormatException, IOException {
     LOGGER.debug("{}.initFile({})", this.getClass().getName(), id);
@@ -162,12 +165,10 @@ public abstract class FormatReader extends FormatHandler
   /** Returns true if the given file name is in the used files list. */
   protected boolean isUsedFile(String file) {
     String[] usedFiles = getUsedFiles();
-    for (int i=0; i<usedFiles.length; i++) {
-      if (usedFiles[i].equals(file) ||
-        usedFiles[i].equals(new Location(file).getAbsolutePath()))
-      {
-        return true;
-      }
+    for (String used : usedFiles) {
+      if (used.equals(file)) return true;
+      String path = new Location(file).getAbsolutePath();
+      if (used.equals(path)) return true;
     }
     return false;
   }
