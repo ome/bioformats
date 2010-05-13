@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
@@ -25,13 +26,18 @@ import loci.plugins.BF;
 import org.junit.Test;
 
 // TODO
+//    waiting on BF implementations for
+//      range step by 0
+//      BF/imageJ returning wrong max num pixels for UINT32 - off by one
+//      memoryRecord failure needs BF code fix?
+//      mergeOptions BF api for finishing merge tests
+//      custom color BF api for doing that test
 //  - flesh out existing tests
 //      write tests for the color options : 4 cases - some mention was made that indexcolor is an issue in testing
 //        merge - basic test in place but not passing. need to flesh out mergeOptions when BF code in place.
 //        rgb colorize - need to do actual tests. see BF gui to get idea of how it works
 //        custom colorize - waiting for creation of API for setting r,g,b info
-//        autoscale - code stubbed out but tests not in place for histogram testing. Its possible the histogram won't
-//          change when base image is a fake file because the whole data range may already be in use.
+//        autoscale - code written but failing
 //      open individual files: try to come up with a way to test without a disk file as source
 //      swapped dims test needs to test cases other than from default swapping Z & T
 //      output stack order - testing of iIndex?
@@ -551,16 +557,17 @@ public class ImporterTest {
   
   private void autoscaleTest(int pixType, boolean wantAutoscale)
   {
-    //final int sizeZ = 5, sizeC = 3, sizeT = 7, sizeX = 123, sizeY = 74;
+    //TODO: reenable multidim when bug fixed - final int sizeZ = 5, sizeC = 3, sizeT = 7, sizeX = 123, sizeY = 74;
     final int sizeZ = 1, sizeC = 1, sizeT = 1, sizeX = 123, sizeY = 74;
-    final int cOriginX = 55, cOriginY = 15, cropSize = 20;
+    final int cOriginX = 55, cOriginY = 15, cropSize = 3;
     final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
     
     // needed for this test
     assertTrue(cOriginX >= 50);
-    assertTrue(cOriginY >= 10);
+    assertTrue(cOriginY >= 10); 
     assertTrue(cOriginX + cropSize < sizeX);
     assertTrue(cOriginY + cropSize < sizeY);
+    assertTrue(cOriginX + cropSize < maxPixelValue(pixType));
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -593,6 +600,8 @@ public class ImporterTest {
 
     long expectedMax = wantAutoscale ? cOriginX+cropSize-1 : maxPixelValue(pixType);
     long expectedMin = wantAutoscale ? cOriginX : 0;
+
+    // verify each slice? or just imp.getDisplayRangeMax/Min()?
     
     for (int i = 0; i < numSlices; i++)
     {
@@ -672,6 +681,7 @@ public class ImporterTest {
     imp.setSlice(1);
     assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
     imp.getProcessor().invert();
+    //IJ.runPlugIn(imp, "Invert", "");  // this makes no difference
     assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));
     imp.setSlice(2);
     assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
@@ -783,6 +793,32 @@ public class ImporterTest {
   
 
 // ** ImporterTest methods **************************************************************
+
+  @Test
+  public void testColorAutoscale()
+  {
+    // From BF:
+    // Autoscale - Stretches the histogram of the image planes to fit the data range. Does not alter underlying values in
+    // the image. If selected, histogram is stretched for each stack based upon the global minimum and maximum value
+    // throughout the stack.
+
+    autoscaleTest(FormatTools.UINT8,true);
+    
+    autoscaleTest(FormatTools.UINT8,false);
+    autoscaleTest(FormatTools.UINT16,false);
+    //TODO: UINT32 failing - bug in BF?
+    //autoscaleTest(FormatTools.UINT32,false);
+    //TODO: exp 127 act 255 autoscaleTest(FormatTools.INT8,false);
+    //TODO: exp 32767 act 65535 autoscaleTest(FormatTools.INT16,false);
+    //TODO: signed max broken here too autoscaleTest(FormatTools.INT32,false);
+ 
+    autoscaleTest(FormatTools.UINT8,true);
+    autoscaleTest(FormatTools.UINT16,true);
+    autoscaleTest(FormatTools.UINT32,true);
+    autoscaleTest(FormatTools.INT8,true);
+    autoscaleTest(FormatTools.INT16,true);
+    autoscaleTest(FormatTools.INT32,true);
+  }
 
   @Test
   public void testDefaultBehavior()
@@ -1061,31 +1097,6 @@ public class ImporterTest {
     fail("to be implemented");
   }
   
-  @Test
-  public void testColorAutoscale()
-  {
-    // From BF:
-    // Autoscale - Stretches the histogram of the image planes to fit the data range. Does not alter underlying values in
-    // the image. If selected, histogram is stretched for each stack based upon the global minimum and maximum value
-    // throughout the stack.
-
-    
-    autoscaleTest(FormatTools.UINT8,false);
-    autoscaleTest(FormatTools.UINT16,false);
-    //TODO: UINT32 failing - bug in BF?
-    //autoscaleTest(FormatTools.UINT32,false);
-    //TODO: exp 127 act 255 autoscaleTest(FormatTools.INT8,false);
-    //TODO: exp 32767 act 65535 autoscaleTest(FormatTools.INT16,false);
-    //TODO: signed max broken here too autoscaleTest(FormatTools.INT32,false);
- 
-    autoscaleTest(FormatTools.UINT8,true);
-    autoscaleTest(FormatTools.UINT16,true);
-    autoscaleTest(FormatTools.UINT32,true);
-    autoscaleTest(FormatTools.INT8,true);
-    autoscaleTest(FormatTools.INT16,true);
-    autoscaleTest(FormatTools.INT32,true);
-  }
-
   @Test
   public void testMemoryVirtualStack()
   {
