@@ -39,7 +39,6 @@ import java.io.IOException;
 
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.IFormatReader;
 import loci.formats.MinMaxCalculator;
 import loci.formats.meta.MetadataRetrieve;
 
