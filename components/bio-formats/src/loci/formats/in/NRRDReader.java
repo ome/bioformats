@@ -73,6 +73,7 @@ public class NRRDReader extends FormatReader {
   public NRRDReader() {
     super("NRRD", new String[] {"nrrd", "nhdr"});
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

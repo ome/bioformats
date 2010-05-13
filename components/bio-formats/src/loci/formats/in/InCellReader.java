@@ -103,6 +103,7 @@ public class InCellReader extends FormatReader {
     super("InCell 1000", new String[] {"xdce", "xml"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

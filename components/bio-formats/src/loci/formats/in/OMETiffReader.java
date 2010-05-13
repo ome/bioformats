@@ -84,6 +84,7 @@ public class OMETiffReader extends FormatReader {
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.ALL_DOMAINS;
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

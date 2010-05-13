@@ -61,6 +61,7 @@ public class APLReader extends FormatReader {
   public APLReader() {
     super("Olympus APL", new String[] {"apl", "tnb", "mtb"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

@@ -88,6 +88,7 @@ public class MicromanagerReader extends FormatReader {
   public MicromanagerReader() {
     super("Micro-Manager", new String[] {"tif", "tiff", "txt"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

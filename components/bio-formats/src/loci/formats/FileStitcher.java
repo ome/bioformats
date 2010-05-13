@@ -893,6 +893,11 @@ public class FileStitcher implements IFormatReader {
     return reader.isSingleFile(id);
   }
 
+  /* @see IFormatReader#hasCompanionFiles() */
+  public boolean hasCompanionFiles() {
+    return reader.hasCompanionFiles();
+  }
+
   /* @see IFormatReader#getPossibleDomains(String) */
   public String[] getPossibleDomains(String id)
     throws FormatException, IOException

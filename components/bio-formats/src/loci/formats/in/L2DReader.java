@@ -71,6 +71,7 @@ public class L2DReader extends FormatReader {
   public L2DReader() {
     super("Li-Cor L2D", new String[] {"l2d", "scn", "tif"});
     domains = new String[] {FormatTools.GEL_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

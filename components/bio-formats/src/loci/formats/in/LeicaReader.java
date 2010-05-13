@@ -165,6 +165,7 @@ public class LeicaReader extends FormatReader {
   public LeicaReader() {
     super("Leica", new String[] {"lei", "tif", "tiff"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

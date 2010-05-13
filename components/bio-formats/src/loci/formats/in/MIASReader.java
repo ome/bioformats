@@ -104,6 +104,7 @@ public class MIASReader extends FormatReader {
     super("MIAS", new String[] {"tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

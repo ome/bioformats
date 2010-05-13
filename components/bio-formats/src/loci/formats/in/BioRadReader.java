@@ -159,6 +159,7 @@ public class BioRadReader extends FormatReader {
   public BioRadReader() {
     super("Bio-Rad PIC", new String[] {"pic", "xml", "raw"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

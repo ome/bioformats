@@ -134,6 +134,7 @@ public class MetamorphReader extends BaseTiffReader {
   public MetamorphReader() {
     super("Metamorph STK", new String[] {"stk", "nd"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

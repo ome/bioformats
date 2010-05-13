@@ -80,6 +80,7 @@ public class NiftiReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN,
       FormatTools.GRAPHICS_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

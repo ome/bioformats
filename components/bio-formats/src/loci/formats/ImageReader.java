@@ -590,6 +590,11 @@ public class ImageReader implements IFormatReader {
     return getReader(id).isSingleFile(id);
   }
 
+  /* @see IFormatReader#hasCompanionFiles() */
+  public boolean hasCompanionFiles() {
+    return getReader().hasCompanionFiles();
+  }
+
   /* @see IFormatReader#getPossibleDomains(String) */
   public String[] getPossibleDomains(String id)
     throws FormatException, IOException

@@ -86,6 +86,9 @@ public abstract class FormatReader extends FormatHandler
    */
   protected boolean suffixSufficient = true;
 
+  /** Whether this format supports multi-file datasets. */
+  protected boolean hasCompanionFiles = false;
+
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
@@ -974,6 +977,11 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return true;
+  }
+
+  /* @see IFormatReader#hasCompanionFiles() */
+  public boolean hasCompanionFiles() {
+    return hasCompanionFiles;
   }
 
   /* @see IFormatReader#getPossibleDomains(String) */

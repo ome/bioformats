@@ -107,6 +107,7 @@ public class DeltavisionReader extends FormatReader {
     suffixSufficient = false;
     suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

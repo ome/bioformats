@@ -145,6 +145,7 @@ public class FlexReader extends FormatReader {
   public FlexReader() {
     super("Evotec Flex", SUFFIXES);
     domains = new String[] {FormatTools.HCS_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

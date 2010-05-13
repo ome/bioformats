@@ -87,6 +87,7 @@ public class TCSReader extends FormatReader {
   public TCSReader() {
     super("Leica TCS TIFF", new String[] {"tif", "tiff", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

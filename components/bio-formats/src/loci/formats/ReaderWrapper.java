@@ -449,6 +449,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isSingleFile(id);
   }
 
+  public boolean hasCompanionFiles() {
+    return reader.hasCompanionFiles();
+  }
+
   public String[] getPossibleDomains(String id)
     throws FormatException, IOException
   {

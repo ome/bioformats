@@ -60,6 +60,7 @@ public class AnalyzeReader extends FormatReader {
   public AnalyzeReader() {
     super("Analyze 7.5", new String[] {"img", "hdr"});
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

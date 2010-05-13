@@ -61,6 +61,7 @@ public class VisitechReader extends FormatReader {
     super("Visitech XYS", new String[] {"xys", "html"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

@@ -156,6 +156,7 @@ public class FV1000Reader extends FormatReader {
   public FV1000Reader() {
     super("Olympus FV1000", new String[] {"oib", "oif", "pty", "lut"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

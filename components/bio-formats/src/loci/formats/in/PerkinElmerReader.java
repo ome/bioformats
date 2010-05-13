@@ -96,6 +96,7 @@ public class PerkinElmerReader extends FormatReader {
     super("PerkinElmer", new String[] {
       "ano", "cfg", "csv", "htm", "rec", "tim", "zpo"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

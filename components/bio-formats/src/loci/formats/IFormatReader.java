@@ -462,4 +462,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Returns a list of scientific domains in which this format is used. */
   String[] getPossibleDomains(String id) throws FormatException, IOException;
 
+  /** Returns true if this format supports multi-file datasets. */
+  boolean hasCompanionFiles();
+
 }
