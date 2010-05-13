@@ -834,7 +834,7 @@ public class IFD extends HashMap<Integer, Object> {
 
   /** Prints the contents of this IFD. */
   public void printIFD() {
-    LOGGER.debug("IFD directory entry values:");
+    LOGGER.trace("IFD directory entry values:");
 
     for (Integer tag : keySet()) {
       Object value = get(tag);
@@ -844,14 +844,14 @@ public class IFD extends HashMap<Integer, Object> {
         (value instanceof TiffCompression))
       {
         v = value.toString();
-        LOGGER.debug("\t{}={}", getIFDTagName(tag.intValue()), v);
+        LOGGER.trace("\t{}={}", getIFDTagName(tag.intValue()), v);
       }
       else {
         // this is an array of primitive types, Strings, or TiffRationals
-        LOGGER.debug("\t{}=", getIFDTagName(tag.intValue()));
+        LOGGER.trace("\t{}=", getIFDTagName(tag.intValue()));
         int nElements = Array.getLength(value);
         for (int i=0; i<nElements; i++) {
-          LOGGER.debug("\t\t{}", Array.get(value, i));
+          LOGGER.trace("\t\t{}", Array.get(value, i));
         }
       }
     }
