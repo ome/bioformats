@@ -63,7 +63,7 @@ public class FakeReader extends FormatReader {
   public static final int BOX_SIZE = 10;
   private static final String TOKEN_SEPARATOR = "&";
   private static final long SEED = 0xcafebabe;
-  
+
   // -- Fields --
 
   /** 8-bit lookup table, if indexed color. */
@@ -86,13 +86,13 @@ public class FakeReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return lut8;
   }
-  
+
   /* @see IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     return lut16;
   }
-  
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -140,7 +140,7 @@ public class FakeReader extends FormatReader {
               break;
           }
         }
-        
+
         // if indexed color with non-null LUT, convert value to index
         if (indexed) {
           if (lut8 != null) pixel = valueToIndex[(int) (pixel % 256)];
@@ -299,7 +299,7 @@ public class FakeReader extends FormatReader {
       store.setImageName(imageName, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
     }
-    
+
     // for indexed color images, create lookup tables
     if (indexed) {
       if (pixelType == FormatTools.UINT8) {
@@ -329,7 +329,7 @@ public class FakeReader extends FormatReader {
       // NB: Other pixel types will have null LUTs.
     }
   }
-  
+
   // -- Helper methods --
 
   /** Creates an index map from 0 */
@@ -338,7 +338,7 @@ public class FakeReader extends FormatReader {
     indexToValue = new int[num];
     for (int index = 0; index < num; index++) indexToValue[index] = index;
     shuffle(indexToValue);
-    
+
     // create inverse mapping: values to indices
     valueToIndex = new int[num];
     for (int index = 0; index < num; index++) {
