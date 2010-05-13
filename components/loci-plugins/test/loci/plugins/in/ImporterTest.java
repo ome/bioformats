@@ -953,11 +953,12 @@ public class ImporterTest {
     }
   }
 
-  private double maxPixelValue(int pixType)
+  private long maxPixelValue(int pixType)
   {
     if (FormatTools.isFloatingPoint(pixType))
-      return Float.MAX_VALUE;
+      return (long)Float.MAX_VALUE;
  
+    /*
     switch (pixType)
     {
       case FormatTools.INT8:    return Byte.MAX_VALUE; 
@@ -970,18 +971,19 @@ public class ImporterTest {
       default:
         throw new IllegalArgumentException("maxPixelValue() - unknown pixel type passed in: " + pixType);
     }
-    /*
-    double maxUnsigned = Math.pow(2, FormatTools.getBytesPerPixel(pixType)*8) - 1;
+    */
+    
+    long maxUnsigned = (1L << FormatTools.getBytesPerPixel(pixType)*8) - 1;
     
     // signed data type
     if (FormatTools.isSigned(pixType))
       
-      return Math.floor(maxUnsigned / 2);
+      return maxUnsigned / 2;
     
     else  // unsigned data type
       
       return maxUnsigned;
-    */
+
   }
   
   private void autoscaleFalseTest(int pixType)
@@ -1036,7 +1038,8 @@ public class ImporterTest {
     
     autoscaleFalseTest(FormatTools.UINT8);
     autoscaleFalseTest(FormatTools.UINT16);
-    //TODO: failing - max calc wrong? autoscaleFalseTest(FormatTools.UINT32);
+    //TODO: UINT32 failing - max calc wrong? bug in BF?
+    autoscaleFalseTest(FormatTools.UINT32);
     autoscaleFalseTest(FormatTools.INT8);
     autoscaleFalseTest(FormatTools.INT16);
     autoscaleFalseTest(FormatTools.INT32);
@@ -1056,8 +1059,7 @@ public class ImporterTest {
     memoryVirtualStackTest(true);
   }
 
-  @Test
-  public void testMemoryRecordModifications()
+  private void memoryRecordModificationsTest(boolean wantToRemember)
   {
     int x = 444, y = 387;
     String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, 7, 1, 1, -1);
@@ -1066,14 +1068,12 @@ public class ImporterTest {
     
     assertTrue(y > 10);  // needed for this test
     
-    // first test the case where RECORD IS FALSE
-
     // open file
     try {
       ImporterOptions options = new ImporterOptions();
       options.setId(path);
       options.setVirtual(true);
-      options.setRecord(false);
+      options.setRecord(wantToRemember);
       imps = BF.openImagePlus(options);
     }
     catch (IOException e) {
@@ -1091,7 +1091,7 @@ public class ImporterTest {
     assertEquals(x,imp.getWidth());
     assertEquals(y,imp.getHeight());
     
-    // change data in slice 1, swap to slice 2, swap back, see that data DOES revert
+    // change data in slice 1, swap to slice 2, swap back, see whether data reverts
     imp.setSlice(1);
     assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
     imp.getProcessor().invert();
@@ -1099,42 +1099,15 @@ public class ImporterTest {
     imp.setSlice(2);
     assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
     imp.setSlice(1);
-    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));  // when record == false changes not remembered
-    
-    // then test case where RECORD IS TRUE
-    
-    // open file
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setId(path);
-      options.setVirtual(true);
-      options.setRecord(true);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    // basic tests
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
-    imp = imps[0];
-    assertNotNull(imp);
-    assertEquals(x,imp.getWidth());
-    assertEquals(y,imp.getHeight());
-    
-    // change data in slice 1, swap to slice 2, swap back, see that data DOES NOT revert
-    imp.setSlice(1);
-    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
-    imp.getProcessor().invert();
-    assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));
-    imp.setSlice(2);
-    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
-    imp.setSlice(1);
-    assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));  // when record == true changes remembered
+    int expectedVal = wantToRemember ? 255 : 0;
+    assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(0,10));
+  }
+  
+  @Test
+  public void testMemoryRecordModifications()
+  {
+    memoryRecordModificationsTest(false);
+    memoryRecordModificationsTest(true);
   }
 
   @Test
