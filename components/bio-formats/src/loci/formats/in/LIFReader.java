@@ -156,7 +156,7 @@ public class LIFReader extends FormatReader {
   private Vector<Long> offsets;
 
   private int[][] realChannel;
-  private int lastChannel = -1;
+  private int lastChannel = 0;
 
   // -- Constructor --
 
@@ -178,14 +178,14 @@ public class LIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    if (getPixelType() != FormatTools.UINT8 || lastChannel == -1) return null;
+    if (getPixelType() != FormatTools.UINT8) return null;
     return lastChannel < BYTE_LUTS.length ? BYTE_LUTS[lastChannel] : null;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    if (getPixelType() != FormatTools.UINT16 || lastChannel == -1) return null;
+    if (getPixelType() != FormatTools.UINT16) return null;
     return lastChannel < SHORT_LUTS.length ? SHORT_LUTS[lastChannel] : null;
   }
 
@@ -243,7 +243,7 @@ public class LIFReader extends FormatReader {
     if (!fileOnly) {
       offsets = null;
       realChannel = null;
-      lastChannel = -1;
+      lastChannel = 0;
     }
   }
 
