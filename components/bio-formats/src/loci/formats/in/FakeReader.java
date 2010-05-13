@@ -34,6 +34,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+
 /**
  * FakeReader is the file format reader for faking input data.
  * It is mainly useful for testing.
@@ -231,6 +234,35 @@ public class FakeReader extends FormatReader {
       else if (key.equals("metadataComplete")) metadataComplete = bool;
       else if (key.equals("thumbnail")) thumbnail = bool;
       else if (key.equals("series")) seriesCount = num;
+    }
+
+    // do some sanity checks
+    if (sizeX < 1) throw new FormatException("Invalid sizeX: " + sizeX);
+    if (sizeY < 1) throw new FormatException("Invalid sizeY: " + sizeY);
+    if (sizeZ < 1) throw new FormatException("Invalid sizeZ: " + sizeZ);
+    if (sizeC < 1) throw new FormatException("Invalid sizeC: " + sizeC);
+    if (sizeT < 1) throw new FormatException("Invalid sizeT: " + sizeT);
+    if (thumbSizeX < 0) {
+      throw new FormatException("Invalid thumbSizeX: " + thumbSizeX);
+    }
+    if (thumbSizeY < 0) {
+      throw new FormatException("Invalid thumbSizeY: " + thumbSizeY);
+    }
+    if (rgb < 1 || rgb > sizeC || sizeC % rgb != 0) {
+      throw new FormatException("Invalid sizeC/rgb combination: " +
+        sizeC + "/" + rgb);
+    }
+    try {
+      DimensionOrder.fromString(dimOrder);
+    }
+    catch (EnumerationException exc) {
+      throw new FormatException("Invalid dimOrder: " + dimOrder, exc);
+    }
+    if (falseColor && !indexed) {
+      throw new FormatException("False color images must be indexed");
+    }
+    if (seriesCount < 1) {
+      throw new FormatException("Invalid seriesCount: " + seriesCount);
     }
 
     // populate core metadata
