@@ -34,6 +34,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BandedSampleModel;
@@ -754,8 +755,12 @@ public final class AWTImageTools {
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
         byte[][] table = r.get8BitLookupTable();
         if (table != null && table.length > 0 && table[0] != null) {
-          model = new IndexColorModel(8, table[0].length,
-            table[0], table[1], table[2]);
+          int len = table[0].length;
+          byte[] dummy = table.length < 3 ? new byte[len] : null;
+          byte[] red = table.length >= 1 ? table[0] : dummy;
+          byte[] green = table.length >= 2 ? table[1] : dummy;
+          byte[] blue = table.length >= 3 ? table[2] : dummy;
+          model = new IndexColorModel(8, len, red, green, blue);
         }
       }
       else if (pixelType == FormatTools.UINT16 ||
@@ -801,7 +806,7 @@ public final class AWTImageTools {
   /** Extracts pixel data as arrays of unsigned bytes, one per channel. */
   public static byte[][] getBytes(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    if (canUseBankDataDirectly(image, 1,
+    if (canUseBankDataDirectly(image,
       DataBuffer.TYPE_BYTE, DataBufferByte.class))
     {
       return ((DataBufferByte) r.getDataBuffer()).getBankData();
@@ -820,7 +825,7 @@ public final class AWTImageTools {
   /** Extracts pixel data as arrays of unsigned shorts, one per channel. */
   public static short[][] getShorts(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    if (canUseBankDataDirectly(image, 2,
+    if (canUseBankDataDirectly(image,
       DataBuffer.TYPE_USHORT, DataBufferUShort.class))
     {
       return ((DataBufferUShort) r.getDataBuffer()).getBankData();
@@ -839,7 +844,7 @@ public final class AWTImageTools {
   /** Extracts pixel data as arrays of signed integers, one per channel. */
   public static int[][] getInts(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    if (canUseBankDataDirectly(image, 4,
+    if (canUseBankDataDirectly(image,
       DataBuffer.TYPE_INT, DataBufferInt.class))
     {
       return ((DataBufferInt) r.getDataBuffer()).getBankData();
@@ -854,7 +859,7 @@ public final class AWTImageTools {
   /** Extracts pixel data as arrays of floats, one per channel. */
   public static float[][] getFloats(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    if (canUseBankDataDirectly(image, 4,
+    if (canUseBankDataDirectly(image,
       DataBuffer.TYPE_FLOAT, DataBufferFloat.class))
     {
       return ((DataBufferFloat) r.getDataBuffer()).getBankData();
@@ -869,7 +874,7 @@ public final class AWTImageTools {
   /** Extracts pixel data as arrays of doubles, one per channel. */
   public static double[][] getDoubles(BufferedImage image) {
     WritableRaster r = image.getRaster();
-    if (canUseBankDataDirectly(image, 8,
+    if (canUseBankDataDirectly(image,
       DataBuffer.TYPE_DOUBLE, DataBufferDouble.class))
     {
       return ((DataBufferDouble) r.getDataBuffer()).getBankData();
@@ -886,7 +891,7 @@ public final class AWTImageTools {
    * without performing any copy or conversion operations.
    */
   private static boolean canUseBankDataDirectly(BufferedImage image,
-    int bytesPerPixel, int transferType, Class dataBufferClass)
+    int transferType, Class<? extends DataBuffer> dataBufferClass)
   {
     WritableRaster r = image.getRaster();
     int tt = r.getTransferType();
@@ -1101,7 +1106,7 @@ public final class AWTImageTools {
     int height = img.getHeight();
     WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
     boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-    Hashtable properties = new Hashtable();
+    Hashtable<String, Object> properties = new Hashtable<String, Object>();
     String[] keys = img.getPropertyNames();
     if (keys != null) {
       for (int i=0; i<keys.length; i++) {
@@ -1118,13 +1123,12 @@ public final class AWTImageTools {
   public static byte[] getBytes(BufferedImage img, boolean separated) {
     byte[][] p = getBytes(img);
     if (separated || p.length == 1) return p[0];
-    else {
-      byte[] rtn = new byte[p.length * p[0].length];
-      for (int i=0; i<p.length; i++) {
-        System.arraycopy(p[i], 0, rtn, i * p[0].length, p[i].length);
-      }
-      return rtn;
+
+    byte[] rtn = new byte[p.length * p[0].length];
+    for (int i=0; i<p.length; i++) {
+      System.arraycopy(p[i], 0, rtn, i * p[0].length, p[i].length);
     }
+    return rtn;
   }
 
   /**
@@ -1382,7 +1386,7 @@ public final class AWTImageTools {
         for (int j=0; j<out[i].length; j++) {
           if (shorts[i][j] < 0) shorts[i][j] += 32767;
 
-          float diff = (float) max - (float) min;
+          int diff = max - min;
           float dist = (float) (shorts[i][j] - min) / diff;
 
           if (shorts[i][j] >= max) out[i][j] = (byte) 255;
@@ -1688,7 +1692,7 @@ public final class AWTImageTools {
   public static ColorModel makeColorModel(int c, int dataType) {
     ColorSpace cs = makeColorSpace(c);
     return cs == null ? null : new ComponentColorModel(cs,
-      c == 4, false, ColorModel.TRANSLUCENT, dataType);
+      c == 4, false, Transparency.TRANSLUCENT, dataType);
   }
 
   // -- Indexed color conversion --
