@@ -88,6 +88,7 @@ public class OMEXMLReader extends FormatReader {
   private Vector<Long> binDataOffsets;
   private Vector<Long> binDataLengths;
   private Vector<String> compression;
+  private Vector<Boolean> bigEndian;
 
   private String omexml;
   private boolean hasSPW = false;
@@ -242,6 +243,7 @@ public class OMEXMLReader extends FormatReader {
       compression = null;
       binDataOffsets = null;
       binDataLengths = null;
+      bigEndian = null;
       omexml = null;
       hasSPW = false;
     }
@@ -259,6 +261,7 @@ public class OMEXMLReader extends FormatReader {
     binDataOffsets = new Vector<Long>();
     binDataLengths = new Vector<Long>();
     compression = new Vector<String>();
+    bigEndian = new Vector<Boolean>();
 
     DefaultHandler handler = new OMEXMLHandler();
     try {
@@ -300,6 +303,7 @@ public class OMEXMLReader extends FormatReader {
 
     int oldSeries = getSeries();
 
+    int imageIndex = 0;
     for (int i=0; i<numDatasets; i++) {
       setSeries(i);
 
@@ -313,7 +317,8 @@ public class OMEXMLReader extends FormatReader {
       if (w == null || h == null || t == null || z == null | c == null) {
         throw new FormatException("Image dimensions not found");
       }
-      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+
+      Boolean endian = bigEndian.get(imageIndex);
       String pixType = omexmlMeta.getPixelsType(i).toString();
       core[i].dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       core[i].sizeX = w.intValue();
@@ -329,6 +334,7 @@ public class OMEXMLReader extends FormatReader {
       core[i].falseColor = true;
       core[i].pixelType = FormatTools.pixelTypeFromString(pixType);
       core[i].orderCertain = true;
+      imageIndex += core[i].imageCount;
     }
     setSeries(oldSeries);
 
@@ -411,6 +417,8 @@ public class OMEXMLReader extends FormatReader {
         String compress = attributes.getValue("Compression");
         compression.add(compress == null ? "" : compress);
         binDataChars = 0;
+        String endian = attributes.getValue("BigEndian");
+        bigEndian.add(new Boolean(endian));
       }
 
       nextBinDataOffset += 2 + qName.length() + 4*attributes.getLength();
