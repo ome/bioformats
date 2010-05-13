@@ -81,7 +81,7 @@ public class Jar2Lib {
 		String dependencyFile,
 		String jarFileName) {
 
-		this.headerFileName = headerFileName;
+		this.headerFileName = "out/src/" + headerFileName;
 		this.headerInputPath = headerInputPath;
 		this.sourceInputPath = sourceInputPath;
 		this.headerOutputPath = headerOutputPath;
@@ -199,8 +199,8 @@ public class Jar2Lib {
 
 		AutoProxy ap =
 			new AutoProxy(
-				headerInputPath,
-				sourceInputPath,
+				headerOutputPath,
+				sourceOutputPath,
 				headerOutputPath,
 				sourceOutputPath,
 				classPath,
@@ -208,6 +208,11 @@ public class Jar2Lib {
 				dependencyList,
 				exportSymbols);
 		System.out.println("Beginning Proxy generation.");
+		System.out.println(headerInputPath);
+		System.out.println(sourceInputPath);
+		System.out.println(headerOutputPath);
+		System.out.println(sourceOutputPath);
+		System.out.println(classPath);
 		try {
 			ap.generateProxies();
 		} catch (Exception e) {

@@ -1,12 +1,28 @@
-rm -rf fred.h out/header/* out/source/* out/src/*
+rm -rf /Users/bselinsky/SVN/trunk/components/native/j2l2/out
+mkdir /Users/bselinsky/SVN/trunk/components/native/j2l2/out
+mkdir /Users/bselinsky/SVN/trunk/components/native/j2l2/out/header
+mkdir /Users/bselinsky/SVN/trunk/components/native/j2l2/out/source
+mkdir /Users/bselinsky/SVN/trunk/components/native/j2l2/out/src
+
 echo $1
 java \
-	-cp .:/Users/bselinsky/autogen:/Users/bselinsky/bioFormats_src/trunk/components/autogen/build/classes:/Users/bselinsky/autogen/velocity-tools-1.4/lib/velocity-1.5.jar:/Users/bselinsky/autogen/velocity-tools-1.4/lib/commons-collections-3.2.jar:/Users/bselinsky/autogen/velocity-tools-1.4/lib/commons-lang-2.2.jar:/Users/bselinsky/bioFormats_src/trunk/components/bio-formats/build/classes:/Users/bselinsky/jace/lib/jace1.1.1/source/java/classes:/Users/bselinsky/jace \
+	-cp \
+.:\
+/Users/bselinsky/tst/code:\
+/Users/bselinsky/testHead/loci/components/autogen:\
+/Users/bselinsky/autogen:\
+/Users/bselinsky/jace/lib/jace1.1.1/source/java/classes:\
+/Users/bselinsky/May7/loci/components/autogen/build/classes:\
+/Users/bselinsky/autogen/velocity-tools-1.4/lib/velocity-1.5.jar:\
+/Users/bselinsky/autogen/velocity-tools-1.4/lib/commons-collections-3.2.jar:\
+/Users/bselinsky/autogen/velocity-tools-1.4/lib/commons-lang-2.2.jar:\
+/Users/bselinsky/May7/jace/source/java/lib/retroweaver/retroweaver-rt-2.0.7.jar:\
+/Users/bselinsky/autogen \
 	Jar2Lib \
 	-f fred \
 	-s $1 \
 	-h $1 \
-	-H out/src \
-	-S out/src \
-	-C /Users/bselinsky/src/bioformats/components/bio-formats/build/classes:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:/Users/bselinsky/javaProjects/components/common/build/classes:/Users/bselinsky/bioFormats_src/trunk/components/flow-cytometry/build/classes:/Users/bselinsky/gitCode/imagej/build-eclipse:/Users/bselinsky/bioFormats_src/trunk/jar/visad-lite.jar:/Users/bselinsky/jace/lib/jace1.1.1/source/java/classes:/Users/bselinsky/jace \
+	-H /Users/bselinsky/SVN/trunk/components/native/j2l2/out/src \
+	-S /Users/bselinsky/SVN/trunk/components/native/j2l2/out/src \
+	-C /Users/bselinsky/src/bioformats/components/bio-formats/build/classes:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:/Users/bselinsky/javaProjects/components/common/build/classes:/Users/bselinsky/bioFormats_src/trunk/components/flow-cytometry/build/classes:/Users/bselinsky/gitCode/imagej/build-eclipse:/Users/bselinsky/bioFormats_src/trunk/jar/visad-lite.jar:/Users/bselinsky/jace/lib/jace1.1.1/source/java/classes:/Users/bselinsky/jace:/Users/bselinsky/May7/jace/source/java/lib/retroweaver/retroweaver-rt-2.0.7.jar:/Users/bselinsky/bioFormats_src/trunk/components/bio-formats/src:/Users/bselinsky/May7/loci/components/common/build/classes \
 	-D stuff
