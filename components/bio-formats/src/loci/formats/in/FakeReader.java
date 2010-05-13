@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Random;
 
 import loci.common.DataTools;
 import loci.formats.CoreMetadata;
@@ -56,8 +57,19 @@ public class FakeReader extends FormatReader {
 
   // -- Constants --
 
+  public static final int BOX_SIZE = 10;
   private static final String TOKEN_SEPARATOR = "&";
-  private static final int BOX_SIZE = 10;
+  private static final long SEED = 0xcafebabe;
+  
+  // -- Fields --
+
+  /** 8-bit lookup table, if indexed color. */
+  private byte[][] lut8 = null;
+
+  /** 16-bit lookup table, if indexed color. */
+  private short[][] lut16 = null;
+
+  private int[] indexToValue = null, valueToIndex = null;
 
   // -- Constructor --
 
@@ -66,6 +78,18 @@ public class FakeReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#get8BitLookupTable() */
+  @Override
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    return lut8;
+  }
+  
+  /* @see IFormatReader#get16BitLookupTable() */
+  @Override
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    return lut16;
+  }
+  
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -80,6 +104,7 @@ public class FakeReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(pixelType);
     boolean signed = FormatTools.isSigned(pixelType);
     boolean little = isLittleEndian();
+    boolean indexed = isIndexed();
 
     int[] zct = getZCTCoords(no);
     int zIndex = zct[0], cIndex = zct[1], tIndex = zct[2];
@@ -112,8 +137,14 @@ public class FakeReader extends FormatReader {
               break;
           }
         }
+        
+        // if indexed color with non-null LUT, convert value to index
+        if (indexed) {
+          if (lut8 != null) pixel = valueToIndex[(int) (pixel % 256)];
+          if (lut16 != null) pixel = valueToIndex[(int) (pixel % 65536)];
+        }
 
-        // if applicable, convert value to raw IEEE floating point bits
+        // if floating point, convert value to raw IEEE floating point bits
         switch (pixelType) {
           case FormatTools.FLOAT:
             pixel = Float.floatToIntBits(pixel);
@@ -145,8 +176,8 @@ public class FakeReader extends FormatReader {
     int sizeZ = 1;
     int sizeC = 1;
     int sizeT = 1;
-    int thumbSizeX = 128;
-    int thumbSizeY = 128;
+    int thumbSizeX = 0; // default
+    int thumbSizeY = 0; // default
     int pixelType = FormatTools.UINT8;
     int rgb = 1;
     String dimOrder = "XYZCT";
@@ -160,6 +191,7 @@ public class FakeReader extends FormatReader {
 
     int seriesCount = 1;
 
+    // parse tokens from filename
     for (String token : tokens) {
       if (name == null) {
         // first token is the image name
@@ -201,8 +233,8 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = num;
     }
 
+    // populate core metadata
     int effSizeC = sizeC / rgb;
-
     core = new CoreMetadata[seriesCount];
     for (int s=0; s<seriesCount; s++) {
       core[s] = new CoreMetadata();
@@ -227,12 +259,70 @@ public class FakeReader extends FormatReader {
       core[s].thumbnail = thumbnail;
     }
 
+    // populate OME metadata
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
       MetadataTools.setDefaultCreationDate(store, id, s);
+    }
+    
+    // for indexed color images, create lookup tables
+    if (indexed) {
+      if (pixelType == FormatTools.UINT8) {
+        // create 8-bit LUT
+        final int num = 256;
+        createIndexMap(num);
+        lut8 = new byte[rgb][num];
+        // linear ramp
+        for (int c=0; c<rgb; c++) {
+          for (int index = 0; index < num; index++) {
+            lut8[c][index] = (byte) indexToValue[index];
+          }
+        }
+      }
+      else if (pixelType == FormatTools.UINT16) {
+        // create 16-bit LUT
+        final int num = 65536;
+        createIndexMap(num);
+        lut16 = new short[rgb][num];
+        // linear ramp
+        for (int c=0; c<rgb; c++) {
+          for (int index = 0; index < num; index++) {
+            lut16[c][index] = (short) indexToValue[index];
+          }
+        }
+      }
+      // NB: Other pixel types will have null LUTs.
+    }
+  }
+  
+  // -- Helper methods --
+
+  /** Creates an index map from 0 */
+  private void createIndexMap(int num) {
+    // create random mapping from indices to values
+    indexToValue = new int[num];
+    for (int index = 0; index < num; index++) indexToValue[index] = index;
+    shuffle(indexToValue);
+    
+    // create inverse mapping: values to indices
+    valueToIndex = new int[num];
+    for (int index = 0; index < num; index++) {
+      int value = indexToValue[index];
+      valueToIndex[value] = index;
+    }
+  }
+
+  /** Fisher-Yates shuffle with constant seed to ensure reproducibility. */
+  private static void shuffle(int[] array) {
+    Random r = new Random(SEED);
+    for (int i = array.length; i > 1; i--) {
+      int j = r.nextInt(i);
+      int tmp = array[j];
+      array[j] = array[i - 1];
+      array[i - 1] = tmp;
     }
   }
 
