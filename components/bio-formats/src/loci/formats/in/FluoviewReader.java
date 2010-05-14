@@ -319,6 +319,7 @@ public class FluoviewReader extends BaseTiffReader {
       channelNames = new String[getSizeC()];
       lensNA = new String[getSizeC()];
 
+      parsePageName();
       parseComment();
       addGlobalMeta("Comment", comment);
     }
@@ -492,6 +493,25 @@ public class FluoviewReader extends BaseTiffReader {
       if (b[i] < 0) b[i]++;
     }
     return b;
+  }
+
+  private void parsePageName() {
+    String pageName = ifds.get(0).getIFDTextValue(IFD.PAGE_NAME);
+    if (pageName == null) return;
+    String[] lines = pageName.split("\n");
+    for (String line : lines) {
+      if (line.startsWith("Resolution")) {
+        String[] resolutions = line.split("\t");
+        if (resolutions.length > 1) {
+          voxelX = Double.parseDouble(resolutions[1].trim());
+        }
+        if (resolutions.length > 2) {
+          voxelY = Double.parseDouble(resolutions[2].trim());
+        }
+
+        break;
+      }
+    }
   }
 
   private void parseComment() {
