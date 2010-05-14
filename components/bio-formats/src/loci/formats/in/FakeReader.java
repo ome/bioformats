@@ -106,20 +106,25 @@ public class FakeReader extends FormatReader {
     int pixelType = getPixelType();
     int bpp = FormatTools.getBytesPerPixel(pixelType);
     boolean signed = FormatTools.isSigned(pixelType);
+    boolean floating = FormatTools.isFloatingPoint(pixelType);
     boolean little = isLittleEndian();
     boolean indexed = isIndexed();
 
     int[] zct = getZCTCoords(no);
     int zIndex = zct[0], cIndex = zct[1], tIndex = zct[2];
 
-    for (int r=0; r<h; r++) {
-      int yy = y + r;
-      for (int c=0; c<w; c++) {
-        int index = bpp * (w * r + c);
-        int xx = x + c;
+    // integer types start gradient at the smallest value
+    long min = signed ? (long) -Math.pow(2, 8 * bpp - 1) : 0;
+    if (floating) min = 0; // floating point types always start at 0
+
+    for (int row=0; row<h; row++) {
+      int yy = y + row;
+      for (int col=0; col<w; col++) {
+        int index = bpp * (w * row + col);
+        int xx = x + col;
 
         // encode various information into the image plane
-        long pixel = signed ? -xx : xx;
+        long pixel = min + xx;
         if (yy < BOX_SIZE) {
           int grid = xx / BOX_SIZE;
           switch (grid) {
