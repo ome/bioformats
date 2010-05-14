@@ -70,6 +70,7 @@ public class ScanrReader extends FormatReader {
   private Vector<String> metadataFiles = new Vector<String>();
   private int wellRows, wellColumns;
   private int fieldRows, fieldColumns;
+  private int wellCount = 0;
   private Vector<String> channelNames = new Vector<String>();
   private Hashtable<String, Integer> wellLabels =
     new Hashtable<String, Integer>();
@@ -260,14 +261,14 @@ public class ScanrReader extends FormatReader {
     wellColumns = uniqueColumns.size();
 
     if (wellRows * wellColumns == 0) {
-      if (wellLabels.size() <= 96) {
+      if (wellCount <= 96) {
         wellColumns = 12;
       }
-      else if (wellLabels.size() <= 384) {
+      else if (wellCount <= 384) {
         wellColumns = 24;
       }
-      wellRows = wellLabels.size() / wellColumns;
-      if (wellRows * wellColumns < wellLabels.size()) wellRows++;
+      wellRows = wellCount / wellColumns;
+      if (wellRows * wellColumns < wellCount) wellRows++;
     }
 
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
@@ -298,7 +299,7 @@ public class ScanrReader extends FormatReader {
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
-      Integer w = wellLabels.get(keys[well]);
+      Integer w = keys.length > 0 ? wellLabels.get(keys[well]) : null;
       int wellIndex = w == null ? well + 1 : w.intValue();
 
       String wellPos = getBlock(wellIndex, "W");
@@ -334,7 +335,7 @@ public class ScanrReader extends FormatReader {
       }
     }
 
-    if (wellLabels.size() != nWells) {
+    if (wellLabels.size() > 0 && wellLabels.size() != nWells) {
       uniqueRows.clear();
       uniqueColumns.clear();
       for (String well : wellLabels.keySet()) {
@@ -501,6 +502,7 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("well selection table + cDNA")) {
           if (Character.isDigit(value.charAt(0))) {
             wellIndex = value;
+            wellCount++;
           }
           else {
             wellLabels.put(value, new Integer(wellIndex));
