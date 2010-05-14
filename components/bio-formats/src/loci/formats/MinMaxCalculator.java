@@ -97,6 +97,8 @@ public class MinMaxCalculator extends ReaderWrapper {
   /**
    * Retrieves a specified channel's global minimum.
    * Returns null if some of the image planes have not been read.
+   *
+   * @throws IOException Not actually thrown.
    */
   public Double getChannelGlobalMinimum(int theC)
     throws FormatException, IOException
@@ -118,6 +120,7 @@ public class MinMaxCalculator extends ReaderWrapper {
   /**
    * Retrieves a specified channel's global maximum.
    * Returns null if some of the image planes have not been read.
+   * @throws IOException Not actually thrown.
    */
   public Double getChannelGlobalMaximum(int theC)
     throws FormatException, IOException
@@ -139,6 +142,9 @@ public class MinMaxCalculator extends ReaderWrapper {
   /**
    * Retrieves the specified channel's minimum based on the images that have
    * been read.  Returns null if no image planes have been read yet.
+   *
+   * @throws FormatException Not actually thrown.
+   * @throws IOException Not actually thrown.
    */
   public Double getChannelKnownMinimum(int theC)
     throws FormatException, IOException
@@ -150,6 +156,9 @@ public class MinMaxCalculator extends ReaderWrapper {
   /**
    * Retrieves the specified channel's maximum based on the images that
    * have been read.  Returns null if no image planes have been read yet.
+   *
+   * @throws FormatException Not actually thrown.
+   * @throws IOException Not actually thrown.
    */
   public Double getChannelKnownMaximum(int theC)
     throws FormatException, IOException
@@ -163,6 +172,9 @@ public class MinMaxCalculator extends ReaderWrapper {
    * If each image plane contains more than one channel (i.e.,
    * {@link #getRGBChannelCount()} &gt; 1), returns the maximum value for each
    * embedded channel. Returns null if the plane has not already been read.
+   *
+   * @throws FormatException Not actually thrown.
+   * @throws IOException Not actually thrown.
    */
   public Double[] getPlaneMinimum(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -171,9 +183,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
     int series = getSeries();
-    if (planeMin[series][pBase] != planeMin[series][pBase]) {
-      return null;
-    }
+    if (Double.isNaN(planeMin[series][pBase])) return null;
 
     Double[] min = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
@@ -187,6 +197,9 @@ public class MinMaxCalculator extends ReaderWrapper {
    * If each image plane contains more than one channel (i.e.,
    * {@link #getRGBChannelCount()} &gt; 1), returns the maximum value for each
    * embedded channel. Returns null if the plane has not already been read.
+   *
+   * @throws FormatException Not actually thrown.
+   * @throws IOException Not actually thrown.
    */
   public Double[] getPlaneMaximum(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -195,9 +208,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     int numRGB = getRGBChannelCount();
     int pBase = no * numRGB;
     int series = getSeries();
-    if (planeMax[series][pBase] != planeMax[series][pBase]) {
-      return null;
-    }
+    if (Double.isNaN(planeMax[series][pBase])) return null;
 
     Double[] max = new Double[numRGB];
     for (int c=0; c<numRGB; c++) {
@@ -209,6 +220,9 @@ public class MinMaxCalculator extends ReaderWrapper {
   /**
    * Returns true if the values returned by
    * getChannelGlobalMinimum/Maximum can be trusted.
+   *
+   * @throws FormatException Not actually thrown.
+   * @throws IOException Not actually thrown.
    */
   public boolean isMinMaxPopulated() throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
@@ -272,9 +286,7 @@ public class MinMaxCalculator extends ReaderWrapper {
     int numRGB = getRGBChannelCount();
     int series = getSeries();
     // check whether min/max values have already been computed for this plane
-    if (planeMin[series][ndx * numRGB] == planeMin[series][ndx * numRGB]) {
-      return;
-    }
+    if (!Double.isNaN(planeMin[series][ndx * numRGB])) return;
 
     boolean little = isLittleEndian();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -301,7 +313,7 @@ public class MinMaxCalculator extends ReaderWrapper {
         if (signed) {
           if (bits >= threshold) bits -= 2*threshold;
         }
-        double v = (double) bits;
+        double v = bits;
         if (pixelType == FormatTools.FLOAT) {
           v = Float.intBitsToFloat((int) bits);
         }
@@ -336,7 +348,12 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
   }
 
-  /** Ensures internal min/max variables are initialized properly. */
+  /**
+   * Ensures internal min/max variables are initialized properly. 
+   *
+   * @throws FormatException Not actually thrown.
+   * @throws IOException Not actually thrown.
+   */
   protected void initMinMax() throws FormatException, IOException {
     int seriesCount = getSeriesCount();
     int oldSeries = getSeries();
