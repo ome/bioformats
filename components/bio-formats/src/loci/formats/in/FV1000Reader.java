@@ -878,7 +878,6 @@ public class FV1000Reader extends FormatReader {
       store.setDetectorType(DetectorType.PMT, 0, channelIndex);
 
       // populate LogicalChannel data
-      String filterSet = MetadataTools.createLSID("FilterSet", 0, channelIndex);
 
       store.setChannelName(channel.name, 0, channelIndex);
       String lightSourceID =
@@ -895,7 +894,6 @@ public class FV1000Reader extends FormatReader {
         store.setChannelLightSourceSettingsWavelength(
           new PositiveInteger(channel.exWave), 0, channelIndex);
       }
-      store.setChannelFilterSetRef(filterSet, 0, channelIndex);
 
       // populate Filter data
       if (channel.barrierFilter != null) {
@@ -916,9 +914,7 @@ public class FV1000Reader extends FormatReader {
           }
           catch (NumberFormatException e) { }
         }
-        // TODO
-        //store.setLogicalChannelSecondaryEmissionFilter(
-        //  filterID, 0, channelIndex);
+        store.setLightPathEmissionFilterRef(filterID, 0, channelIndex, 0);
       }
 
       // populate FilterSet data
@@ -927,8 +923,7 @@ public class FV1000Reader extends FormatReader {
       String emFilter = MetadataTools.createLSID("Dichroic", 0, emIndex);
       String exFilter = MetadataTools.createLSID("Dichroic", 0, exIndex);
 
-      store.setFilterSetID(filterSet, 0, channelIndex);
-      store.setFilterSetDichroicRef(exFilter, 0, channelIndex);
+      store.setLightPathDichroicRef(exFilter, 0, channelIndex);
 
       // populate Dichroic data
       store.setDichroicID(emFilter, 0, emIndex);

@@ -119,7 +119,7 @@ public class FlexReader extends FormatReader {
   private Vector<String> cameraRefs, binnings, objectiveRefs;
   private Vector<String> lightSourceCombinationRefs;
   private Vector<String> filterSets;
-  private HashMap<String, String> filterSetMap;
+  private HashMap<String, FilterGroup> filterSetMap;
 
   private Vector<String> measurementFiles;
 
@@ -507,8 +507,10 @@ public class FlexReader extends FormatReader {
               store.setChannelLightSourceSettingsID(lightSources.get(0), i, c);
             }
             if (index < filterSets.size()) {
-              String filterSetID = filterSetMap.get(filterSets.get(index));
-              store.setChannelFilterSetRef(filterSetID, i, c);
+              FilterGroup group = filterSetMap.get(filterSets.get(index));
+              store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
+              store.setLightPathExcitationFilterRef(group.excitation, i, c, 0);
+              store.setLightPathDichroicRef(group.dichroic, i, c);
             }
           }
         }
@@ -608,7 +610,7 @@ public class FlexReader extends FormatReader {
     if (objectiveRefs == null) objectiveRefs = new Vector<String>();
     if (binnings == null) binnings = new Vector<String>();
     if (filterSets == null) filterSets = new Vector<String>();
-    if (filterSetMap == null) filterSetMap = new HashMap<String, String>();
+    if (filterSetMap == null) filterSetMap = new HashMap<String, FilterGroup>();
 
     // parse factors from XML
     LOGGER.debug("Parsing XML from {}", flexFiles[wellRow][wellCol]);
@@ -1091,6 +1093,8 @@ public class FlexReader extends FormatReader {
     private HashMap<String, String> dichroicMap;
     private MetadataLevel level;
 
+    private String filterSet;
+
     private StringBuffer charData = new StringBuffer();
 
     public FlexHandler(Vector<String> names, Vector<String> factors,
@@ -1369,29 +1373,27 @@ public class FlexReader extends FormatReader {
       }
       else if (qName.equals("FilterCombination") && level == MetadataLevel.ALL)
       {
-        String filterSetID =
-          MetadataTools.createLSID("FilterSet", 0, nextFilterSet);
-        store.setFilterSetID(filterSetID, 0, nextFilterSet);
-        filterSetMap.put("FilterSet:" + attributes.getValue("ID"), filterSetID);
+        filterSet = "FilterSet:" + attributes.getValue("ID");
+        filterSetMap.put(filterSet, new FilterGroup());
       }
       else if (qName.equals("SliderRef") && level == MetadataLevel.ALL) {
         String filterName = attributes.getValue("Filter");
-        String filterID = filterMap.get(filterName);
-        String dichroicID = dichroicMap.get(filterName);
         String slider = attributes.getValue("ID");
+        FilterGroup group = filterSetMap.get(filterSet);
         if (nextSliderRef == 0 && slider.startsWith("Camera")) {
-          store.setFilterSetEmissionFilterRef(filterID, 0, nextFilterSet, 0);
+          group.emission = filterMap.get(filterName);
         }
         else if (nextSliderRef == 1 && slider.startsWith("Camera")) {
-          store.setFilterSetExcitationFilterRef(filterID, 0, nextFilterSet, 0);
+          group.excitation = filterMap.get(filterName);
         }
         else if (slider.equals("Primary_Dichro")) {
-          store.setFilterSetDichroicRef(dichroicID, 0, nextFilterSet);
+          group.dichroic = dichroicMap.get(filterName);
         }
         String lname = filterName.toLowerCase();
         if (!lname.startsWith("empty") && !lname.startsWith("blocked")) {
           nextSliderRef++;
         }
+        filterSetMap.put(filterSet, group);
       }
     }
   }
@@ -1445,6 +1447,14 @@ public class FlexReader extends FormatReader {
         }
       }
     }
+  }
+
+  /** Stores a grouping of filters. */
+  class FilterGroup {
+    public String emission;
+    public String excitation;
+    public String dichroic;
+    public String id;
   }
 
   // -- FlexReader API methods --

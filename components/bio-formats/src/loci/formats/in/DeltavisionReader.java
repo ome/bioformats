@@ -1123,8 +1123,6 @@ public class DeltavisionReader extends FormatReader {
 
     private int offsetWithInts;
 
-    private float oDFilter;
-
     /** Photosensor reading. Typically in mV. */
     public float photosensorReading;
 

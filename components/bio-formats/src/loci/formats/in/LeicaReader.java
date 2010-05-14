@@ -1198,9 +1198,7 @@ public class LeicaReader extends FormatReader {
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
           if (index >= 0 && index < core[series].sizeC) {
-            // TODO
-            //store.setLogicalChannelSecondaryEmissionFilter(filterID, series,
-            //  index);
+            store.setLightPathEmissionFilterRef(filterID, series, index, 0);
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
               store.setTransmittanceRangeCutIn(wavelength, series, channel);

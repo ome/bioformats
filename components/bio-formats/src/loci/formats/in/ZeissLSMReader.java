@@ -165,7 +165,7 @@ public class ZeissLSMReader extends FormatReader {
   private TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
-  private int nextFilter = 0, nextFilterSet = 0;
+  private int nextFilter = 0, nextDichroicChannel = 0;
   private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
   private double zoom;
@@ -206,7 +206,7 @@ public class ZeissLSMReader extends FormatReader {
       ifdsList = null;
       tiffParser = null;
       nextLaser = nextDetector = 0;
-      nextFilter = nextFilterSet = 0;
+      nextFilter = nextDichroicChannel = 0;
       nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
       splitPlanes = false;
       zoom = 0;
@@ -761,7 +761,7 @@ public class ZeissLSMReader extends FormatReader {
         in.seek(scanInformationOffset);
 
         nextLaser = nextDetector = 0;
-        nextFilter = nextFilterSet = 0;
+        nextFilter = nextDichroicChannel = 0;
         nextDataChannel = nextDetectChannel = nextIllumChannel = 0;
 
         Vector<SubBlock> blocks = new Vector<SubBlock>();
@@ -979,9 +979,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.filter != null) {
         String id = MetadataTools.createLSID("Filter", series, nextFilter);
         if (channel.acquire && nextDetectChannel < getSizeC()) {
-          // TODO
-          //store.setLogicalChannelSecondaryEmissionFilter(
-          //  id, series, nextDetectChannel);
+          store.setLightPathEmissionFilterRef(id, series, nextDetectChannel, 0);
         }
         store.setFilterID(id, series, nextFilter);
         store.setFilterModel(channel.filter, series, nextFilter);
@@ -1044,17 +1042,14 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof BeamSplitter) {
       BeamSplitter beamSplitter = (BeamSplitter) block;
       if (beamSplitter.filterSet != null) {
-        String filterSetID =
-          MetadataTools.createLSID("FilterSet", series, nextFilterSet);
-        store.setFilterSetID(filterSetID, series, nextFilterSet);
         if (beamSplitter.filter != null) {
           String id = MetadataTools.createLSID("Dichroic", series, nextFilter);
           store.setDichroicID(id, series, nextFilter);
           store.setDichroicModel(beamSplitter.filter, series, nextFilter);
-          store.setFilterSetDichroicRef(id, series, nextFilterSet);
+          store.setLightPathDichroicRef(id, series, nextDichroicChannel);
           nextFilter++;
         }
-        nextFilterSet++;
+        nextDichroicChannel++;
       }
     }
   }

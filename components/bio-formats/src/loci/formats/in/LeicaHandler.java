@@ -323,9 +323,7 @@ public class LeicaHandler extends DefaultHandler {
           if (filter >= detectors.size() || filter >= nextFilter) break;
           String id = MetadataTools.createLSID("Filter", numDatasets, filter);
           if (i < numChannels && detectors.get(filter).active) {
-            // TODO
-            //store.setLogicalChannelSecondaryEmissionFilter(
-            //  id, numDatasets, i);
+            store.setLightPathEmissionFilterRef(id, numDatasets, i, 0);
           }
           filter++;
         }
@@ -699,9 +697,8 @@ public class LeicaHandler extends DefaultHandler {
           store.setFilterID(filter, numDatasets, nextFilter);
           store.setTransmittanceRangeCutIn(m.cutIn, numDatasets, nextFilter);
           store.setTransmittanceRangeCutOut(m.cutOut, numDatasets, nextFilter);
-          // TODO
-          //store.setLogicalChannelSecondaryEmissionFilter(filter, numDatasets,
-          //  nextChannel);
+          store.setLightPathEmissionFilterRef(
+            filter, numDatasets, nextChannel, 0);
           nextFilter++;
 
           store.setDetectorID(id, numDatasets, nextChannel);
