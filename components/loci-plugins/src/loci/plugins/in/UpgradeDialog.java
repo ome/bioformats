@@ -52,10 +52,10 @@ public class UpgradeDialog extends ImporterDialog {
   protected boolean needPrompt() {
     return !options.isQuiet() && !process.isWindowless();
   }
-  
+
   @Override
   protected GenericDialog constructDialog() { return null; }
-  
+
   /**
    * Asks user whether Bio-Formats should automatically check for upgrades,
    * and if so, checks for an upgrade and prompts user to install it.

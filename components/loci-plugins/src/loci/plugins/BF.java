@@ -60,6 +60,11 @@ public final class BF {
     IJ.showStatus(msg);
   }
   
+  public static void warn(boolean quiet, String msg) {
+    if (quiet) return;
+    IJ.log("Warning: " + msg);
+  }
+  
   public static void progress(boolean quiet, int value, int max) {
     if (quiet) return;
     IJ.showProgress(value, max);

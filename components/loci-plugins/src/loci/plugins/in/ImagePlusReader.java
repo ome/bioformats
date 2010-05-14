@@ -218,30 +218,31 @@ public class ImagePlusReader implements StatusReporter {
       catch (ServiceException se) { }
 
       if (options.isVirtual()) {
-        boolean doMerge = options.isMergeChannels();
+        boolean doMerge = false; //options.isMergeChannels();
+        boolean doColorize = false; //options.isColorize();
 
         reader.setSeries(s);
         // NB: ImageJ 1.39+ is required for VirtualStack
         BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
-          reader, options.isColorize(), doMerge, options.isRecord());
+          reader, doColorize, doMerge, options.isRecord());
         stackB = virtualStackB;
         if (doMerge) {
           for (int j=0; j<reader.getImageCount(); j++) {
-            int[] pos = reader.getZCTCoords(j);
-            if (pos[1] > 0) continue;
-            String label = constructSliceLabel(
-              new ChannelMerger(reader).getIndex(pos[0], pos[1], pos[2]),
-              new ChannelMerger(reader), process.getOMEMetadata(), s,
-              options.getZCount(s), options.getCCount(s),
-              options.getTCount(s));
+            int[] zct = reader.getZCTCoords(j);
+            if (zct[1] > 0) continue;
+            ChannelMerger channelMerger = new ChannelMerger(reader);
+            int index = channelMerger.getIndex(zct[0], zct[1], zct[2]);
+            String label = constructSliceLabel(index,
+              channelMerger, process.getOMEMetadata(), s,
+              process.getZCount(s), process.getCCount(s), process.getTCount(s));
             virtualStackB.addSlice(label);
           }
         }
         else {
           for (int j=0; j<reader.getImageCount(); j++) {
-            String label = constructSliceLabel(j, reader,
-              process.getOMEMetadata(), s, options.getZCount(s),
-              options.getCCount(s), options.getTCount(s));
+            String label = constructSliceLabel(j,
+              reader, process.getOMEMetadata(), s,
+              process.getZCount(s), process.getCCount(s), process.getTCount(s));
             virtualStackB.addSlice(label);
           }
         }
@@ -264,9 +265,9 @@ public class ImagePlusReader implements StatusReporter {
           }
           notifyListeners(new StatusEvent(q++, total, null));
 
-          String label = constructSliceLabel(i, reader,
-            process.getOMEMetadata(), s, options.getZCount(s),
-            options.getCCount(s), options.getTCount(s));
+          String label = constructSliceLabel(i,
+            reader, process.getOMEMetadata(), s,
+            process.getZCount(s), process.getCCount(s), process.getTCount(s));
 
           // get image processor for ith plane
           ImageProcessor[] p;
@@ -376,14 +377,10 @@ public class ImagePlusReader implements StatusReporter {
     String seriesName = process.getOMEMetadata().getImageName(series);
     String file = process.getCurrentFile();
     IMetadata meta = process.getOMEMetadata();
-    int cCount = options.getCCount(series);
-    int zCount = options.getZCount(series);
-    int tCount = options.getTCount(series);
+    int cCount = process.getCCount(series);
+    int zCount = process.getZCount(series);
+    int tCount = process.getTCount(series);
     IFormatReader reader = process.getReader();
-
-    if (cCount == 0) cCount = reader.getEffectiveSizeC();
-    if (zCount == 0) zCount = reader.getSizeZ();
-    if (tCount == 0) tCount = reader.getSizeT();
 
     String title = getTitle(reader, file, seriesName, options.isGroupFiles());
     ImagePlus imp = null;

@@ -73,13 +73,11 @@ public class MainDialog extends ImporterDialog
   // -- Fields --
 
   protected Checkbox autoscaleBox;
-  protected Checkbox colorizeBox;
+  protected Choice colorModeChoice;
   protected Checkbox concatenateBox;
   protected Checkbox cropBox;
-  protected Checkbox customColorizeBox;
   protected Checkbox groupFilesBox;
   protected Checkbox ungroupFilesBox;
-  protected Checkbox mergeChannelsBox;
   protected Checkbox openAllSeriesBox;
   protected Checkbox recordBox;
   protected Checkbox showMetadataBox;
@@ -115,13 +113,11 @@ public class MainDialog extends ImporterDialog
   protected GenericDialog constructDialog() {
     GenericDialog gd = new GenericDialog("Bio-Formats Import Options");
     addCheckbox(gd, ImporterOptions.KEY_AUTOSCALE);
-    addCheckbox(gd, ImporterOptions.KEY_COLORIZE);
+    addChoice(gd, ImporterOptions.KEY_COLOR_MODE);
     addCheckbox(gd, ImporterOptions.KEY_CONCATENATE);
     addCheckbox(gd, ImporterOptions.KEY_CROP);
-    addCheckbox(gd, ImporterOptions.KEY_CUSTOM_COLORIZE);
     addCheckbox(gd, ImporterOptions.KEY_GROUP_FILES);
     addCheckbox(gd, ImporterOptions.KEY_UNGROUP_FILES);
-    addCheckbox(gd, ImporterOptions.KEY_MERGE_CHANNELS);
     addCheckbox(gd, ImporterOptions.KEY_OPEN_ALL_SERIES);
     addCheckbox(gd, ImporterOptions.KEY_QUIET); // NB: invisible
     addCheckbox(gd, ImporterOptions.KEY_RECORD);
@@ -143,13 +139,11 @@ public class MainDialog extends ImporterDialog
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     options.setAutoscale(gd.getNextBoolean());
-    options.setColorize(gd.getNextBoolean());
+    options.setColorMode(options.getColorModes()[gd.getNextChoiceIndex()]);
     options.setConcatenate(gd.getNextBoolean());
     options.setCrop(gd.getNextBoolean());
-    options.setCustomColorize(gd.getNextBoolean());
     options.setGroupFiles(gd.getNextBoolean());
     options.setUngroupFiles(gd.getNextBoolean());
-    options.setMergeChannels(gd.getNextBoolean());
     options.setOpenAllSeries(gd.getNextBoolean());
     options.setQuiet(gd.getNextBoolean()); // NB: invisible
     options.setRecord(gd.getNextBoolean());
@@ -209,7 +203,9 @@ public class MainDialog extends ImporterDialog
     Vector<Checkbox> boxes = null;
     Vector<Choice> choices = null;
     Vector<Label> labels = null;
-    Label stackFormatLabel = null, stackOrderLabel = null;
+    Label colorModeLabel = null;
+    Label stackFormatLabel = null;
+    Label stackOrderLabel = null;
     Component[] c = gd.getComponents();
     if (c != null) {
       boxes = new Vector<Checkbox>();
@@ -232,43 +228,42 @@ public class MainDialog extends ImporterDialog
         }
         else if (c[i] instanceof Label) labels.add((Label) c[i]);
       }
-      autoscaleBox      = boxes.get(0);
-      colorizeBox       = boxes.get(1);
-      concatenateBox    = boxes.get(2);
-      cropBox           = boxes.get(3);
-      customColorizeBox = boxes.get(4);
-      groupFilesBox     = boxes.get(5);
-      ungroupFilesBox   = boxes.get(6);
-      mergeChannelsBox  = boxes.get(7);
-      openAllSeriesBox  = boxes.get(8);
-      //quietBox        = boxes.get(9);
-      recordBox         = boxes.get(10);
-      showMetadataBox   = boxes.get(11);
-      showOMEXMLBox     = boxes.get(12);
-      showROIsBox       = boxes.get(13);
-      specifyRangesBox  = boxes.get(14);
-      splitZBox         = boxes.get(15);
-      splitTBox         = boxes.get(16);
-      splitCBox         = boxes.get(17);
-      stackFormatChoice = choices.get(0);
-      stackFormatLabel  = labels.get(0);
-      stackOrderChoice  = choices.get(1);
-      stackOrderLabel   = labels.get(1);
-      swapDimsBox       = boxes.get(18);
-      virtualBox        = boxes.get(19);
+      int boxIndex = 0, choiceIndex = 0, labelIndex = 0;
+      autoscaleBox      = boxes.get(boxIndex++);
+      colorModeChoice   = choices.get(choiceIndex++);
+      colorModeLabel    = labels.get(labelIndex++);
+      concatenateBox    = boxes.get(boxIndex++);
+      cropBox           = boxes.get(boxIndex++);
+      groupFilesBox     = boxes.get(boxIndex++);
+      ungroupFilesBox   = boxes.get(boxIndex++);
+      openAllSeriesBox  = boxes.get(boxIndex++);
+      boxIndex++; // quiet
+      recordBox         = boxes.get(boxIndex++);
+      showMetadataBox   = boxes.get(boxIndex++);
+      showOMEXMLBox     = boxes.get(boxIndex++);
+      showROIsBox       = boxes.get(boxIndex++);
+      specifyRangesBox  = boxes.get(boxIndex++);
+      splitZBox         = boxes.get(boxIndex++);
+      splitTBox         = boxes.get(boxIndex++);
+      splitCBox         = boxes.get(boxIndex++);
+      stackFormatChoice = choices.get(choiceIndex++);
+      stackFormatLabel  = labels.get(labelIndex++);
+      stackOrderChoice  = choices.get(choiceIndex++);
+      stackOrderLabel   = labels.get(labelIndex++);
+      swapDimsBox       = boxes.get(boxIndex++);
+      virtualBox        = boxes.get(boxIndex++);
     }
     verifyOptions(null);
 
     // associate information for each option
     infoTable = new HashMap<Component, String>();
     infoTable.put(autoscaleBox, options.getAutoscaleInfo());
-    infoTable.put(colorizeBox, options.getColorizeInfo());
+    infoTable.put(colorModeChoice, options.getColorModeInfo());
+    infoTable.put(colorModeLabel, options.getColorModeInfo());
     infoTable.put(concatenateBox, options.getConcatenateInfo());
     infoTable.put(cropBox, options.getCropInfo());
-    infoTable.put(customColorizeBox, options.getCustomColorizeInfo());
     infoTable.put(groupFilesBox, options.getGroupFilesInfo());
     infoTable.put(ungroupFilesBox, options.getUngroupFilesInfo());
-    infoTable.put(mergeChannelsBox, options.getMergeChannelsInfo());
     infoTable.put(openAllSeriesBox, options.getOpenAllSeriesInfo());
     infoTable.put(recordBox, options.getRecordInfo());
     infoTable.put(showMetadataBox, options.getShowMetadataInfo());
@@ -304,10 +299,6 @@ public class MainDialog extends ImporterDialog
       // Color options        | Split into separate windows
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref";
 
-    // TODO: change "Merge channels into RGB" checkbox to
-    // "Channel merging" choice with options:
-    //   "Default", "Merge channels" or "Separate channels"
-
     // TODO: change "Use virtual stack" and "Record modifications to virtual
     // stack" checkboxes to "Stack type" choice with options:
     //   "Normal", "Virtual" or "Smart virtual"
@@ -339,11 +330,8 @@ public class MainDialog extends ImporterDialog
     row += 2;
     builder.addSeparator("Color options", cc.xyw(1, row, 3));
     row += 2;
-    builder.add(mergeChannelsBox, xyw(cc, 1, row, 3));
-    row += 2;
-    builder.add(colorizeBox, xyw(cc, 1, row, 3));
-    row += 2;
-    builder.add(customColorizeBox, xyw(cc, 1, row, 3));
+    builder.add(colorModeLabel, cc.xy(1, row));
+    builder.add(colorModeChoice, cc.xy(3, row));
     row += 2;
     builder.add(autoscaleBox, xyw(cc, 1, row, 3));
     row += 2;
@@ -407,13 +395,11 @@ public class MainDialog extends ImporterDialog
     // record GUI state
 
     boolean autoscaleEnabled = autoscaleBox.isEnabled();
-    boolean colorizeEnabled = colorizeBox.isEnabled();
+    boolean colorModeEnabled = colorModeChoice.isEnabled();
     boolean concatenateEnabled = concatenateBox.isEnabled();
     boolean cropEnabled = cropBox.isEnabled();
-    boolean customColorizeEnabled = customColorizeBox.isEnabled();
     boolean groupFilesEnabled = groupFilesBox.isEnabled();
     boolean ungroupFilesEnabled = ungroupFilesBox.isEnabled();
-    boolean mergeChannelsEnabled = mergeChannelsBox.isEnabled();
     boolean openAllSeriesEnabled = openAllSeriesBox.isEnabled();
     boolean recordEnabled = recordBox.isEnabled();
     boolean showMetadataEnabled = showMetadataBox.isEnabled();
@@ -428,13 +414,11 @@ public class MainDialog extends ImporterDialog
     boolean virtualEnabled = virtualBox.isEnabled();
 
     boolean isAutoscale = autoscaleBox.getState();
-    boolean isColorize = colorizeBox.getState();
+    String colorModeValue = colorModeChoice.getSelectedItem();
     boolean isConcatenate = concatenateBox.getState();
     boolean isCrop = cropBox.getState();
-    boolean isCustomColorize = customColorizeBox.getState();
     boolean isGroupFiles = groupFilesBox.getState();
     boolean isUngroupFiles = ungroupFilesBox.getState();
-    boolean isMergeChannels = mergeChannelsBox.getState();
     boolean isOpenAllSeries = openAllSeriesBox.getState();
     boolean isRecord = recordBox.getState();
     boolean isShowMetadata = showMetadataBox.getState();
@@ -531,19 +515,9 @@ public class MainDialog extends ImporterDialog
 
     // == Color options ==
 
-    // mergeChannelsBox
-    mergeChannelsEnabled = !isStackImage5D;
-    if (!mergeChannelsEnabled) isMergeChannels = false;
-
-    // colorizeBox
-    colorizeEnabled = !isMergeChannels && !isStackBrowser &&
-      !isStackImage5D && !isStackView5D && !isCustomColorize;
-    if (!colorizeEnabled) isColorize = false;
-
-    // customColorizeBox
-    customColorizeEnabled = !isMergeChannels && !isStackBrowser &&
-      !isStackImage5D && !isStackView5D && !isColorize;
-    if (!customColorizeEnabled) isCustomColorize = false;
+    // colorModeChoice
+    colorModeEnabled = !isStackImage5D && !isStackView5D && !isStackVisBio;
+    if (!colorModeEnabled) colorModeValue = ImporterOptions.COLOR_MODE_DEFAULT;
 
     // autoscaleBox
     autoscaleEnabled = !isVirtual;
@@ -556,7 +530,7 @@ public class MainDialog extends ImporterDialog
     // TODO: make splitting work with Data Browser & virtual stacks
 
     // splitCBox
-    splitCEnabled = splitEnabled && !isMergeChannels;
+    splitCEnabled = splitEnabled;
     if (!splitCEnabled) isSplitC = false;
 
     // splitZBox
@@ -570,13 +544,11 @@ public class MainDialog extends ImporterDialog
     // update state of each option, in case anything changed
 
     autoscaleBox.setEnabled(autoscaleEnabled);
-    colorizeBox.setEnabled(colorizeEnabled);
+    colorModeChoice.setEnabled(colorModeEnabled);
     concatenateBox.setEnabled(concatenateEnabled);
     cropBox.setEnabled(cropEnabled);
-    customColorizeBox.setEnabled(customColorizeEnabled);
     groupFilesBox.setEnabled(groupFilesEnabled);
     ungroupFilesBox.setEnabled(ungroupFilesEnabled);
-    mergeChannelsBox.setEnabled(mergeChannelsEnabled);
     openAllSeriesBox.setEnabled(openAllSeriesEnabled);
     recordBox.setEnabled(recordEnabled);
     showMetadataBox.setEnabled(showMetadataEnabled);
@@ -591,13 +563,11 @@ public class MainDialog extends ImporterDialog
     virtualBox.setEnabled(virtualEnabled);
 
     autoscaleBox.setState(isAutoscale);
-    colorizeBox.setState(isColorize);
+    colorModeChoice.select(colorModeValue);
     concatenateBox.setState(isConcatenate);
     cropBox.setState(isCrop);
-    customColorizeBox.setState(isCustomColorize);
     groupFilesBox.setState(isGroupFiles);
     ungroupFilesBox.setState(isUngroupFiles);
-    mergeChannelsBox.setState(isMergeChannels);
     openAllSeriesBox.setState(isOpenAllSeries);
     recordBox.setState(isRecord);
     showMetadataBox.setState(isShowMetadata);
@@ -617,13 +587,11 @@ public class MainDialog extends ImporterDialog
       // list of affected components
       Component[] c = {
         autoscaleBox,
-        colorizeBox,
+        colorModeChoice,
         concatenateBox,
         cropBox,
-        customColorizeBox,
         groupFilesBox,
         ungroupFilesBox,
-        mergeChannelsBox,
         openAllSeriesBox,
         recordBox,
         showMetadataBox,

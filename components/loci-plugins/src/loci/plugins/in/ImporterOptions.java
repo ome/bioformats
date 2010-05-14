@@ -49,18 +49,15 @@ public class ImporterOptions extends OptionsList {
 
   // option keys
   public static final String KEY_AUTOSCALE       = "autoscale";
-  public static final String KEY_COLORIZE        = "colorize";
+  public static final String KEY_COLOR_MODE      = "colorMode";
   public static final String KEY_CONCATENATE     = "concatenate";
   public static final String KEY_CROP            = "crop";
-  public static final String KEY_CUSTOM_COLORIZE = "customColorize";
   public static final String KEY_FIRST           = "firstTime";
   public static final String KEY_FORCE_THUMBS    = "forceThumbnails";
   public static final String KEY_GROUP_FILES     = "groupFiles";
   public static final String KEY_UNGROUP_FILES   = "ungroupFiles";
   public static final String KEY_ID              = "id";
   public static final String KEY_LOCATION        = "location";
-  public static final String KEY_MERGE_CHANNELS  = "mergeChannels";
-  public static final String KEY_MERGE_OPTION    = "mergeOption";
   public static final String KEY_OPEN_ALL_SERIES = "openAllSeries";
   public static final String KEY_QUIET           = "quiet";
   public static final String KEY_RECORD          = "record";
@@ -78,6 +75,13 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_UPGRADE_CHECK   = "upgradeCheck";
   public static final String KEY_VIRTUAL         = "virtual";
   public static final String KEY_WINDOWLESS      = "windowless";
+
+  // possible values for colorMode
+  public static final String COLOR_MODE_DEFAULT = "Default";
+  public static final String COLOR_MODE_COMPOSITE = "Composite";
+  public static final String COLOR_MODE_COLORIZED = "Colorized";
+  public static final String COLOR_MODE_GRAYSCALE = "Grayscale";
+  public static final String COLOR_MODE_CUSTOM = "Custom";
 
   // possible values for location
   public static final String LOCATION_LOCAL = "Local machine";
@@ -183,10 +187,26 @@ public class ImporterOptions extends OptionsList {
   public boolean isAutoscale() { return isSet(KEY_AUTOSCALE); }
   public void setAutoscale(boolean b) { setValue(KEY_AUTOSCALE, b); }
 
-  // colorize
-  public String getColorizeInfo() { return getInfo(KEY_COLORIZE); }
-  public boolean isColorize() { return isSet(KEY_COLORIZE); }
-  public void setColorize(boolean b) { setValue(KEY_COLORIZE, b); }
+  // colorMode
+  public String getColorModeInfo() { return getInfo(KEY_COLOR_MODE); }
+  public String getColorMode() { return getValue(KEY_COLOR_MODE); }
+  public String[] getColorModes() { return getPossible(KEY_COLOR_MODE); }
+  public boolean isColorModeDefault() {
+    return COLOR_MODE_DEFAULT.equals(getColorMode());
+  }
+  public boolean isColorModeComposite() {
+    return COLOR_MODE_COMPOSITE.equals(getColorMode());
+  }
+  public boolean isColorModeColorized() {
+    return COLOR_MODE_COLORIZED.equals(getColorMode());
+  }
+  public boolean isColorModeGrayscale() {
+    return COLOR_MODE_GRAYSCALE.equals(getColorMode());
+  }
+  public boolean isColorModeCustom() {
+    return COLOR_MODE_CUSTOM.equals(getColorMode());
+  }
+  public void setColorMode(String s) { setValue(KEY_COLOR_MODE, s); }
 
   // concatenate
   public String getConcatenateInfo() { return getInfo(KEY_CONCATENATE); }
@@ -197,11 +217,6 @@ public class ImporterOptions extends OptionsList {
   public String getCropInfo() { return getInfo(KEY_CROP); }
   public boolean doCrop() { return isSet(KEY_CROP); }
   public void setCrop(boolean b) { setValue(KEY_CROP, b); }
-
-  // customColorize
-  public String getCustomColorizeInfo() { return getInfo(KEY_CUSTOM_COLORIZE); }
-  public boolean isCustomColorize() { return isSet(KEY_CUSTOM_COLORIZE); }
-  public void setCustomColorize(boolean b) { setValue(KEY_CUSTOM_COLORIZE, b); }
 
   // firstTime
   public String getFirstTimeInfo() { return getInfo(KEY_FIRST); }
@@ -235,16 +250,6 @@ public class ImporterOptions extends OptionsList {
   public boolean isLocal() { return LOCATION_LOCAL.equals(getLocation()); }
   public boolean isHTTP() { return LOCATION_HTTP.equals(getLocation()); }
   public void setLocation(String s) { setValue(KEY_LOCATION, s); }
-
-  // mergeChannels
-  public String getMergeChannelsInfo() { return getInfo(KEY_MERGE_CHANNELS); }
-  public boolean isMergeChannels() { return isSet(KEY_MERGE_CHANNELS); }
-  public void setMergeChannels(boolean b) { setValue(KEY_MERGE_CHANNELS, b); }
-
-  // mergeOption
-  public String getMergeOptionInfo() { return getInfo(KEY_MERGE_OPTION); }
-  public String getMergeOption() { return getValue(KEY_MERGE_OPTION); }
-  public void setMergeOption(String s) { setValue(KEY_MERGE_OPTION, s); }
 
   // openAllSeries
   public String getOpenAllSeriesInfo() { return getInfo(KEY_OPEN_ALL_SERIES); }
@@ -371,11 +376,6 @@ public class ImporterOptions extends OptionsList {
   public void setCEnd(int s, int value) { set(cEnd, s, value, -1); }
   public int getCStep(int s) { return get(cStep, s, 1); }
   public void setCStep(int s, int value) { set(cStep, s, value, 1); }
-  public int getCCount(int s) {
-    if (!isSeriesOn(s)) return 0;
-    if (isMergeChannels()) return 1;
-    return (getCEnd(s) - getCBegin(s) + getCStep(s)) / getCStep(s);
-  }
 
   public int getZBegin(int s) { return get(zBegin, s, 0); }
   public void setZBegin(int s, int value) { set(zBegin, s, value, 0); }
@@ -383,10 +383,6 @@ public class ImporterOptions extends OptionsList {
   public void setZEnd(int s, int value) { set(zEnd, s, value, -1); }
   public int getZStep(int s) { return get(zStep, s, 1); }
   public void setZStep(int s, int value) { set(zStep, s, value, 1); }
-  public int getZCount(int s) {
-    if (!isSeriesOn(s)) return 0;
-    return (getZEnd(s) - getZBegin(s) + getZStep(s)) / getZStep(s);
-  }
 
   public int getTBegin(int s) { return get(tBegin, s, 0); }
   public void setTBegin(int s, int value) { set(tBegin, s, value, 0); }
@@ -394,10 +390,6 @@ public class ImporterOptions extends OptionsList {
   public void setTEnd(int s, int value) { set(tEnd, s, value, -1); }
   public int getTStep(int s) { return get(tStep, s, 1); }
   public void setTStep(int s, int value) { set(tStep, s, value, 1); }
-  public int getTCount(int s) {
-    if (!isSeriesOn(s)) return 0;
-    return (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
-  }
 
   // crop options
   public Region getCropRegion(int s) { return get(cropRegion, s, null); }

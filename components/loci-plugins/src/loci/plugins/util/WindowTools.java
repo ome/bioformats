@@ -44,11 +44,10 @@ import java.awt.ScrollPane;
 import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import loci.common.DebugTools;
 import loci.plugins.BF;
 
 /**
@@ -185,9 +184,7 @@ public final class WindowTools {
     if (quiet) return;
     BF.status(quiet, "");
     if (t != null) {
-      ByteArrayOutputStream buf = new ByteArrayOutputStream();
-      t.printStackTrace(new PrintStream(buf));
-      String s = new String(buf.toByteArray());
+      String s = DebugTools.getStackTrace(t);
       StringTokenizer st = new StringTokenizer(s, "\n\r");
       while (st.hasMoreTokens()) IJ.write(st.nextToken());
     }

@@ -38,16 +38,12 @@ import ij.process.LUT;
 
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
-import java.io.IOException;
 import java.util.Arrays;
 
 import loci.formats.FormatTools;
 import loci.plugins.BF;
-import loci.plugins.in.ImportProcess;
-import loci.plugins.prefs.OptionsDialog;
 import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LibraryChecker;
-import loci.plugins.util.WindowTools;
 
 /**
  * A plugin for merging, colorizing and reordering image stacks.
@@ -219,6 +215,7 @@ public class Colorizer implements PlugInFilter {
           if (num[i] * (i + 2) < stack.getSize()) num[i]++;
         }
 
+        /*
         ImportProcess process = null;
         try {
           // TODO: remove dependency on importer package
@@ -235,6 +232,7 @@ public class Colorizer implements PlugInFilter {
             mergeOption = process.getOptions().getMergeOption();
           }
         }
+        */
 
         if (mergeOption != null) {
           int ndx = mergeOption.indexOf("channels");

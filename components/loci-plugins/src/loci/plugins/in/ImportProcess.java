@@ -37,6 +37,7 @@ import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
@@ -78,7 +79,7 @@ public class ImportProcess implements StatusReporter {
 
   /** Associated importer options. */
   private ImporterOptions options;
-  
+
   /** Current step in the import preparation process. */
   private ImportStep step;
 
@@ -86,12 +87,13 @@ public class ImportProcess implements StatusReporter {
   private IFormatReader baseReader;
   private ImageReader imageReader;
   private FileStitcher fileStitcher;
+  private ChannelFiller channelFiller;
   private ChannelSeparator channelSeparator;
   private DimensionSwapper dimensionSwapper;
   private MinMaxCalculator minMaxCalculator;
   private VirtualReader virtualReader;
   private ImageProcessorReader reader;
-  
+
   /** Whether the process has been canceled. */
   private boolean cancel;
 
@@ -117,12 +119,62 @@ public class ImportProcess implements StatusReporter {
 
   // -- ImportProcess methods --
 
+  /**
+   * Performs the import process, notifying status listeners at each step.
+   *
+   * @return true if the process completed successfully.
+   */
+  public boolean execute() throws FormatException, IOException {
+    step(ImportStep.READER);
+    if (cancel) return false;
+    initializeReader();
+
+    step(ImportStep.FILE);
+    if (cancel) return false;
+    initializeFile();
+
+    step(ImportStep.STACK);
+    if (cancel) return false;
+    initializeStack();
+
+    step(ImportStep.SERIES);
+    if (cancel) return false;
+    initializeSeries();
+
+    step(ImportStep.DIM_ORDER);
+    if (cancel) return false;
+    initializeDimOrder();
+
+    step(ImportStep.RANGE);
+    if (cancel) return false;
+    initializeRange();
+
+    step(ImportStep.CROP);
+    if (cancel) return false;
+    initializeCrop();
+
+    step(ImportStep.METADATA);
+    if (cancel) return false;
+    initializeMetadata();
+
+    step(ImportStep.COMPLETE);
+    return true;
+  }
+
+  /** Cancels the import process. */
+  public void cancel() { this.cancel = true; }
+
+  /** Gets whether the import process was canceled. */
+  public boolean wasCanceled() { return cancel; }
+
   public ImporterOptions getOptions() { return options; }
-  
+
   public boolean isWindowless() {
     if (options.isWindowless()) return true; // globally windowless
     return baseReader != null && LociPrefs.isWindowless(baseReader);
   }
+
+  // -- ImportProcess methods - post-READER --
 
   /** Valid only after {@link ImportStep#READER}. */
   public IFormatReader getBaseReader() {
@@ -150,10 +202,17 @@ public class ImportProcess implements StatusReporter {
     return meta;
   }
 
+  // -- ImportProcess methods - post-STACK --
+
   /** Valid only after {@link ImportStep#STACK}. */
   public FileStitcher getFileStitcher() {
     assertStep(ImportStep.STACK);
     return fileStitcher;
+  }
+  /** Valid only after {@link ImportStep#STACK}. */
+  public ChannelFiller getChannelFiller() {
+    assertStep(ImportStep.STACK);
+    return channelFiller;
   }
   /** Valid only after {@link ImportStep#STACK}. */
   public ChannelSeparator getChannelSeparator() {
@@ -196,7 +255,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     return seriesLabels[s];
   }
-  
+
   // stackOrder
   /** Valid only after {@link ImportStep#STACK}. */
   public String getStackOrder() {
@@ -209,8 +268,8 @@ public class ImportProcess implements StatusReporter {
     }
     return stackOrder;
   }
-  
-  // series options
+
+  // range options
   public int getCBegin(int s) { return options.getCBegin(s); }
   /** Valid only after {@link ImportStep#STACK}. */
   public int getCEnd(int s) {
@@ -220,6 +279,7 @@ public class ImportProcess implements StatusReporter {
     return reader.getEffectiveSizeC() - 1;
   }
   public int getCStep(int s) { return options.getCStep(s); }
+
   public int getZBegin(int s) { return options.getZBegin(s); }
   /** Valid only after {@link ImportStep#STACK}. */
   public int getZEnd(int s) {
@@ -229,6 +289,7 @@ public class ImportProcess implements StatusReporter {
     return reader.getSizeZ() - 1;
   }
   public int getZStep(int s) { return options.getZStep(s); }
+
   public int getTBegin(int s) { return options.getTBegin(s); }
   /** Valid only after {@link ImportStep#STACK}. */
   public int getTEnd(int s) {
@@ -238,7 +299,7 @@ public class ImportProcess implements StatusReporter {
     return reader.getSizeT() - 1;
   }
   public int getTStep(int s) { return options.getTStep(s); }
-  
+
   // crop options
   /** Valid only after {@link ImportStep#STACK}. */
   public Region getCropRegion(int s) {
@@ -249,59 +310,34 @@ public class ImportProcess implements StatusReporter {
     return new Region(0, 0, r.getSizeX(), r.getSizeY());
   }
 
+  // -- ImportProcess methods - post-SERIES --
+
+  /** Valid only after {@link ImportStep#SERIES}. */
+  public int getCCount(int s) {
+    assertStep(ImportStep.SERIES);
+    if (!options.isSeriesOn(s)) return 0;
+    return (getCEnd(s) - getCBegin(s) + getCStep(s)) / getCStep(s);
+  }
+  /** Valid only after {@link ImportStep#SERIES}. */
+  public int getZCount(int s) {
+    assertStep(ImportStep.SERIES);
+    if (!options.isSeriesOn(s)) return 0;
+    return (getZEnd(s) - getZBegin(s) + getZStep(s)) / getZStep(s);
+  }
+  /** Valid only after {@link ImportStep#SERIES}. */
+  public int getTCount(int s) {
+    assertStep(ImportStep.SERIES);
+    if (!options.isSeriesOn(s)) return 0;
+    return (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
+  }
+
+  // -- ImportProcess methods - post-METADATA --
+
   /** Valid only after {@link ImportStep#METADATA}. */
   public ImporterMetadata getOriginalMetadata() {
     assertStep(ImportStep.METADATA);
     return metadata;
   }
-
-  /**
-   * Performs the import process, notifying status listeners at each step.
-   * 
-   * @return true if the process completed successfully.
-   */
-  public boolean execute() throws FormatException, IOException {
-    step(ImportStep.READER);
-    if (cancel) return false;
-    initializeReader();
-
-    step(ImportStep.FILE);
-    if (cancel) return false;
-    initializeFile();
-
-    step(ImportStep.STACK);
-    if (cancel) return false;
-    initializeStack();
-
-    step(ImportStep.SERIES);
-    if (cancel) return false;
-    initializeSeries();
-
-    step(ImportStep.DIM_ORDER);
-    if (cancel) return false;
-    initializeDimOrder();
-
-    step(ImportStep.RANGE);
-    if (cancel) return false;
-    initializeRange();
-
-    step(ImportStep.CROP);
-    if (cancel) return false;
-    initializeCrop();
-
-    step(ImportStep.METADATA);
-    if (cancel) return false;
-    initializeMetadata();
-
-    step(ImportStep.COMPLETE);
-    return true;
-  }
-  
-  /** Cancels the import process. */
-  public void cancel() { this.cancel = true; }
-  
-  /** Gets whether the import process was canceled. */
-  public boolean wasCanceled() { return cancel; }
 
   // -- StatusReporter methods --
 
@@ -360,17 +396,34 @@ public class ImportProcess implements StatusReporter {
     }
     r.setId(options.getId());
 
-    int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
-    if (options.isVirtual() || !options.isMergeChannels() || bpp != 1) {
-      r = channelSeparator = new ChannelSeparator(r);
+    boolean fillIndexed;
+    if (r.isIndexed()) {
+      if (r.isFalseColor()) {
+        // false color; never fill indices
+        fillIndexed = false;
+      }
+      else {
+        // true color; fill indices unless 8-bit RGB with default color mode
+        int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
+        byte[][] lut8 = r.get8BitLookupTable();
+        boolean defaultColorMode = options.isColorModeDefault();
+        fillIndexed = !defaultColorMode || bpp > 1 || lut8 == null || lut8[0].length > 3;
+      }
     }
+    else fillIndexed = false; // no need to fill non-indexed data
+    if (fillIndexed) {
+      r = channelFiller = new ChannelFiller(r);
+      BF.warn(options.isQuiet(), "Index values will be lost");
+    }
+
+    r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
     r = minMaxCalculator = new MinMaxCalculator(r);
     r = virtualReader = new VirtualReader(r);
     reader = new ImageProcessorReader(r);
     reader.setId(options.getId());
-    
-    computeSeriesLabels();
+
+    computeSeriesLabels(reader);
   }
 
   /** Performed following ImportStep.SERIES notification. */
@@ -387,7 +440,7 @@ public class ImportProcess implements StatusReporter {
       // set input order
       String dimOrder = options.getInputOrder(s);
       if (dimOrder != null) dimensionSwapper.swapDimensions(dimOrder);
-      
+
       // set output order
       getDimensionSwapper().setOutputOrder(stackOrder);
       try {
@@ -408,7 +461,7 @@ public class ImportProcess implements StatusReporter {
   private void initializeMetadata() {
     // only prepend a series name prefix to the metadata keys if multiple
     // series are being opened
-    int seriesCount = getSeriesCount();
+    final int seriesCount = getSeriesCount();
     int numEnabled = 0;
     for (int s=0; s<seriesCount; s++) {
       if (options.isSeriesOn(s)) numEnabled++;
@@ -474,7 +527,7 @@ public class ImportProcess implements StatusReporter {
     root.setLevel(Level.INFO);
     root.addAppender(new IJStatusEchoer());
   }
-  
+
   // -- Helper methods - ImportStep.FILE --
 
   /** Performed following ImportStep.FILE notification. */
@@ -483,14 +536,14 @@ public class ImportProcess implements StatusReporter {
     if (!options.isQuiet()) options.setFirstTime(false);
     options.saveOptions();
   }
-  
+
   // -- Helper methods -- ImportStep.STACK --
-  
-  private void computeSeriesLabels() {
-    int seriesCount = getSeriesCount();
+
+  private void computeSeriesLabels(IFormatReader r) {
+    final int seriesCount = r.getSeriesCount();
     seriesLabels = new String[seriesCount];
     for (int i=0; i<seriesCount; i++) {
-      getReader().setSeries(i);
+      r.setSeries(i);
       StringBuffer sb = new StringBuffer();
       sb.append("Series_");
       sb.append((i + 1));
@@ -500,31 +553,31 @@ public class ImportProcess implements StatusReporter {
         sb.append(name);
         sb.append(": ");
       }
-      sb.append(getReader().getSizeX());
+      sb.append(r.getSizeX());
       sb.append(" x ");
-      sb.append(getReader().getSizeY());
+      sb.append(r.getSizeY());
       sb.append("; ");
-      sb.append(getReader().getImageCount());
+      sb.append(r.getImageCount());
       sb.append(" plane");
-      if (getReader().getImageCount() > 1) {
+      if (r.getImageCount() > 1) {
         sb.append("s");
-        if (getReader().isOrderCertain()) {
+        if (r.isOrderCertain()) {
           sb.append(" (");
           boolean first = true;
-          if (getReader().getEffectiveSizeC() > 1) {
-            sb.append(getReader().getEffectiveSizeC());
+          if (r.getEffectiveSizeC() > 1) {
+            sb.append(r.getEffectiveSizeC());
             sb.append("C");
             first = false;
           }
-          if (getReader().getSizeZ() > 1) {
+          if (r.getSizeZ() > 1) {
             if (!first) sb.append(" x ");
-            sb.append(getReader().getSizeZ());
+            sb.append(r.getSizeZ());
             sb.append("Z");
             first = false;
           }
-          if (getReader().getSizeT() > 1) {
+          if (r.getSizeT() > 1) {
             if (!first) sb.append(" x ");
-            sb.append(getReader().getSizeT());
+            sb.append(r.getSizeT());
             sb.append("T");
             first = false;
           }
@@ -535,7 +588,7 @@ public class ImportProcess implements StatusReporter {
       //seriesLabels[i] = seriesLabels[i].replaceAll(" ", "_");
     }
   }
-  
+
   // -- Helper methods - miscellaneous --
 
   private void step(ImportStep step) {
@@ -543,11 +596,11 @@ public class ImportProcess implements StatusReporter {
     notifyListeners(new StatusEvent(step.getStep(),
       ImportStep.COMPLETE.getStep(), step.getMessage()));
   }
-  
+
   private void assertStep(ImportStep importStep) {
-    if (step.getStep() < importStep.getStep()) {
+    if (step.getStep() <= importStep.getStep()) {
       throw new IllegalStateException("Too early in import process: " +
-        "current step is " + step + ", but minimum step is " + importStep);
+        "current step is " + step + ", but must be after " + importStep);
     }
   }
 

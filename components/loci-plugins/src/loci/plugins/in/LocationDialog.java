@@ -42,22 +42,22 @@ public class LocationDialog extends ImporterDialog {
   public LocationDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
-  
+
   @Override
   protected boolean needPrompt() {
     // NB: Prompt only if location wasn't already specified.
     return !process.isWindowless() && options.getLocation() == null;
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
     GenericDialog gd = new GenericDialog("Bio-Formats Dataset Location");
     addChoice(gd, ImporterOptions.KEY_LOCATION);
     return gd;
   }
-  
+
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     String location = gd.getNextChoice();

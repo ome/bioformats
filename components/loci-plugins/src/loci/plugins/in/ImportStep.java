@@ -47,7 +47,7 @@ public enum ImportStep {
   CROP      (6, "Confirming crop region"),
   METADATA  (7, "Initializing metadata"),
   COMPLETE  (8, "Import preparations complete");
-  
+
   // -- Static fields --
 
   private static final HashMap<Integer, ImportStep> STEP_TABLE;
@@ -60,7 +60,7 @@ public enum ImportStep {
   public static ImportStep getStep(int step) {
     return STEP_TABLE.get(step);
   }
-  
+
   // -- Fields --
 
   private int step;
@@ -72,10 +72,10 @@ public enum ImportStep {
     this.step = step;
     this.message = message;
   }
-  
+
   // -- ImportStep methods --
-  
+
   public int getStep() { return step; }
   public String getMessage() { return message; }
-  
+
 }
