@@ -69,6 +69,7 @@ public class PCIReader extends FormatReader {
   private HashMap<Integer, Double> timestamps;
   private String creationDate;
   private int binning;
+  private boolean hasZ = false;
 
   // -- Constructor --
 
@@ -95,7 +96,8 @@ public class PCIReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    RandomAccessInputStream s = poi.getDocumentStream(imageFiles.get(no));
+    String file = imageFiles.get(no);
+    RandomAccessInputStream s = poi.getDocumentStream(file);
     TiffParser tp = new TiffParser(s);
 
     // can be raw pixel data or an embedded TIFF file
@@ -125,6 +127,7 @@ public class PCIReader extends FormatReader {
       poi = null;
       binning = 0;
       creationDate = null;
+      hasZ = false;
     }
   }
 
@@ -172,9 +175,7 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.startsWith("Bitmap") || relativePath.equals("Data"))
       {
-        Integer index = getImageIndex(parent);
-        if (index == null) continue;
-        imageFiles.put(index, name);
+        imageFiles.put(imageFiles.size(), name);
 
         if (getSizeX() != 0 && getSizeY() != 0) {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -206,9 +207,10 @@ public class PCIReader extends FormatReader {
         core[0].sizeX = (int) stream.readDouble();
       }
       else if (relativePath.indexOf("Time_From_Start") != -1) {
-        Integer index = getImageIndex(parent);
-        if (index == null) continue;
-        timestamps.put(index, stream.readDouble());
+        timestamps.put(getTimestampIndex(parent), stream.readDouble());
+      }
+      else if (relativePath.indexOf("Position_Z") != -1) {
+        hasZ = true;
       }
       else if (relativePath.equals("First Field Date & Time")) {
         long date = (long) stream.readDouble() * 1000;
@@ -243,21 +245,38 @@ public class PCIReader extends FormatReader {
 
     if (getSizeC() == 0) core[0].sizeC = 1;
 
-    if (timestamps.size() > 0) {
-      core[0].sizeZ = getImageCount() / timestamps.size();
-      core[0].sizeT = timestamps.size();
-    }
-    if (timestamps.size() == 0 || getSizeZ() * getSizeT() != getImageCount()) {
-      core[0].sizeZ = getImageCount();
-      core[0].sizeT = 1;
-    }
+    core[0].sizeZ = getImageCount();
+    core[0].sizeT = 1;
     core[0].rgb = getSizeC() > 1;
+    if (imageFiles.size() > getImageCount() && getSizeC() == 1) {
+      core[0].sizeC = imageFiles.size() / getImageCount();
+      core[0].imageCount *= getSizeC();
+    }
     core[0].interleaved = false;
     core[0].dimensionOrder = "XYCTZ";
     core[0].littleEndian = true;
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
+
+    // re-index image files
+    String[] files = imageFiles.values().toArray(new String[imageFiles.size()]);
+    for (String file : files) {
+      int separator = file.lastIndexOf(File.separator);
+      String parent = file.substring(0, separator);
+      imageFiles.put(getImageIndex(parent), file);
+    }
+
+    if (timestamps.size() >= 3 && !hasZ) {
+      double one = timestamps.get(0);
+      double two = timestamps.get(1);
+      double three = timestamps.get(2);
+
+      if ((int) (three - two) == (int) (two - one)) {
+        core[0].sizeT = getSizeZ();
+        core[0].sizeZ = 1;
+      }
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
@@ -308,8 +327,27 @@ public class PCIReader extends FormatReader {
     int space = path.lastIndexOf(" ") + 1;
     if (space >= path.length()) return null;
     int end = path.indexOf(File.separator, space);
-    String s = path.substring(space, end);
-    return Integer.parseInt(s) - 1;
+    String field = path.substring(space, end);
+    String image = "1";
+    int imageIndex = path.indexOf("Image") + 5;
+    if (imageIndex >= 0) {
+      end = path.indexOf(File.separator, imageIndex);
+      if (end < 0) end = path.length();
+      image = path.substring(imageIndex, end);
+    }
+    try {
+      int channel = Integer.parseInt(image) - 1;
+      return getEffectiveSizeC() * (Integer.parseInt(field) - 1) + channel;
+    }
+    catch (NumberFormatException e) { }
+    return null;
+  }
+
+  private Integer getTimestampIndex(String path) {
+    int space = path.lastIndexOf(" ") + 1;
+    if (space >= path.length()) return null;
+    int end = path.indexOf(File.separator, space);
+    return Integer.parseInt(path.substring(space , end)) - 1;
   }
 
 }
