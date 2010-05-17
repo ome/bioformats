@@ -254,7 +254,7 @@
 						represent the 3 by 3 matrix.
 						--       --
 						| a, c, e |
-						| b, c, f |
+						| b, d, f |
 						| 0, 0, 1 |
 						--       --
 					</xsd:documentation>
