@@ -194,7 +194,7 @@ public class NetCDFServiceImpl extends AbstractService
    * @see loci.formats.NetCDFService#close()
    */
   public void close() throws IOException {
-    netCDFFile.close();
+    if (netCDFFile != null) netCDFFile.close();
     currentFile = null;
     attributeList = null;
     variableList = null;
