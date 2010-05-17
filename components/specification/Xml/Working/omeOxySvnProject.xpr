@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="11.1">
+<project version="11.2">
     <meta>
         <filters directoryPatterns="" filePatterns=""
             positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized version="11.1">
+            <serialized version="11.2">
                 <map>
                     <entry>
                         <String xml:space="preserve">allow.dt.page.setting.to.override.general.settings</String>

@@ -72,9 +72,11 @@
 				<xsd:element ref="ListAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LongAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="DoubleAnnotation" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="StringAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="CommentAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="BooleanAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="TimestampAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="TagAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="TermAnnotation" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
@@ -100,6 +102,23 @@
 				An annotation from which the other are derived.
 			</xsd:documentation>
 		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation>
+						A description for the annotation. [plane text multi-line string]
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:whiteSpace value="preserve"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:sequence>
+				<xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:sequence>
 		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
 		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 	</xsd:complexType>
@@ -149,23 +168,20 @@
 	<xsd:element name="ListAnnotation">  <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				This annotation is a list of other annotations
+				This annotation is a grouping object. It uses the sequence of 
+				annotation refs from the base Annotation to form the list.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="Annotation">
-					<xsd:sequence>
-						<xsd:element ref="AnnotationRef" minOccurs="1" maxOccurs="unbounded"/>
-					</xsd:sequence>
-				</xsd:extension>
+				<xsd:extension base="Annotation"/>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="StringAnnotation"> <!-- top level definition -->
+	<xsd:element name="CommentAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				A simple string annotation
+				A simple comment annotation
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -237,6 +253,38 @@
 				<xsd:extension base="Annotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TagAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				A tag annotation (represents a tag or a tagset)
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Annotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TermAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				A ontology term annotation
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Annotation">
+					<xsd:sequence>
+						<xsd:element name="Value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
