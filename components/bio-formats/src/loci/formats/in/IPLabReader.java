@@ -201,7 +201,9 @@ public class IPLabReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void parseTags(MetadataStore store) throws FormatException, IOException {
+  private void parseTags(MetadataStore store)
+    throws FormatException, IOException
+  {
     LOGGER.info("Reading tags");
 
     String tag = in.readString(4);

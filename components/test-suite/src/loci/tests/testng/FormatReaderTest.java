@@ -424,16 +424,25 @@ public class FormatReaderTest {
         // total number of ChannelComponents should match SizeC
         int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
         int nChannelComponents = retrieve.getChannelCount(i);
+        int samplesPerPixel = retrieve.getChannelSamplesPerPixel(i, 0);
 
-        if (sizeC != nChannelComponents) msg = "ChannelComponent";
+        if (sizeC != nChannelComponents * samplesPerPixel) {
+          msg = "ChannelComponent";
+        }
 
         // Z, C and T indices should be populated if PlaneTiming is present
 
-        Double deltaT = retrieve.getPlaneDeltaT(i, 0);
-        Double exposure = retrieve.getPlaneExposureTime(i, 0);
-        Integer z = retrieve.getPlaneTheZ(i, 0);
-        Integer c = retrieve.getPlaneTheC(i, 0);
-        Integer t = retrieve.getPlaneTheT(i, 0);
+        Double deltaT = null;
+        Double exposure = null;
+        Integer z = null, c = null, t = null;
+
+        if (retrieve.getPlaneCount(i) > 0) {
+          deltaT = retrieve.getPlaneDeltaT(i, 0);
+          exposure = retrieve.getPlaneExposureTime(i, 0);
+          z = retrieve.getPlaneTheZ(i, 0);
+          c = retrieve.getPlaneTheC(i, 0);
+          t = retrieve.getPlaneTheT(i, 0);
+        }
 
         if ((deltaT != null || exposure != null) &&
           (z == null || c == null || t == null))
@@ -611,7 +620,8 @@ public class FormatReaderTest {
           reader.setSeries(i);
           int imageCount = reader.getImageCount();
           totalPlanes += imageCount;
-          for (int j=0; j<imageCount; j++) reader.openImage(j);
+          byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
+          for (int j=0; j<imageCount; j++) reader.openBytes(j, buf);
         }
         long t2 = System.currentTimeMillis();
         long m2 = r.totalMemory() - r.freeMemory();

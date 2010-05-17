@@ -218,12 +218,15 @@ public class IvisionReader extends FormatReader {
       // look for block of XML data
       LOGGER.info("Looking for XML metadata");
       in.findString(false, "<?xml");
-      in.seek(in.getFilePointer() - 5);
+      if (in.getFilePointer() < in.length()) {
+        in.seek(in.getFilePointer() - 5);
 
-      String xml = in.readString((int) (in.length() - in.getFilePointer()));
-      xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf(">") + 1);
-      IvisionHandler handler = new IvisionHandler();
-      XMLTools.parseXML(xml, handler);
+        String xml = in.readString((int) (in.length() - in.getFilePointer()));
+        xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf(">") + 1);
+        IvisionHandler handler = new IvisionHandler();
+        XMLTools.parseXML(xml, handler);
+      }
+      else LOGGER.debug("XML metadata not found");
     }
 
     LOGGER.info("Populating core metadata");
