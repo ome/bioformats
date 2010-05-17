@@ -45,8 +45,9 @@ public enum ImportStep {
   DIM_ORDER (4, "Confirming dimension order"),
   RANGE     (5, "Confirming planar ranges"),
   CROP      (6, "Confirming crop region"),
-  METADATA  (7, "Initializing metadata"),
-  COMPLETE  (8, "Import preparations complete");
+  COLORS    (7, "Confirming colorization"),
+  METADATA  (8, "Initializing metadata"),
+  COMPLETE  (9, "Import preparations complete");
 
   // -- Static fields --
 

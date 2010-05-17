@@ -325,10 +325,13 @@ public class Colorizer implements PlugInFilter {
   }
 
   private static byte[][] promptForColor(int channel, int series) {
+    /*
     CustomColorChooser chooser = new CustomColorChooser(
       "Color Chooser - Channel " + channel, null, series, channel);
 
     Color color = chooser.getColor();
+    */
+    Color color = null; // CTR TEMP
     if (color == null) return null;
     double redIncrement = ((double) color.getRed()) / 255;
     double greenIncrement = ((double) color.getGreen()) / 255;

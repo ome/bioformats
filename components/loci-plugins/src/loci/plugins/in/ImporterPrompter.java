@@ -93,6 +93,9 @@ public class ImporterPrompter implements StatusListener {
       case CROP:
         if (!promptCrop()) process.cancel();
         break;
+      case COLORS:
+        if (!promptColors()) process.cancel();
+        break;
       case METADATA:
         break;
       case COMPLETE:
@@ -152,5 +155,10 @@ public class ImporterPrompter implements StatusListener {
     CropDialog dialog = new CropDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
-  
+
+  /** Prompts for color details, if necessary. */
+  private boolean promptColors() {
+    ColorDialog dialog = new ColorDialog(process);
+    return dialog.showDialog() == OptionsDialog.STATUS_OK;
+  }
 }

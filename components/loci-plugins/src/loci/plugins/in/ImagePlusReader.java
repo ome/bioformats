@@ -130,8 +130,7 @@ public class ImagePlusReader implements StatusReporter {
     List<ImagePlus> imps = new ArrayList<ImagePlus>();
 
     // beginning timing
-    long startTime = System.currentTimeMillis();
-    long time = startTime;
+    startTiming();
 
     ImageProcessorReader reader = process.getReader();
     ImporterOptions options = process.getOptions();
@@ -146,189 +145,7 @@ public class ImagePlusReader implements StatusReporter {
 
     for (int s=0; s<reader.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
-      reader.setSeries(s);
-
-      boolean[] load = new boolean[reader.getImageCount()];
-      int cBegin = process.getCBegin(s);
-      int cEnd = process.getCEnd(s);
-      int cStep = process.getCStep(s);
-      int zBegin = process.getZBegin(s);
-      int zEnd = process.getZEnd(s);
-      int zStep = process.getZStep(s);
-      int tBegin = process.getTBegin(s);
-      int tEnd = process.getTEnd(s);
-      int tStep = process.getTStep(s);
-      for (int c=cBegin; c<=cEnd; c+=cStep) {
-        for (int z=zBegin; z<=zEnd; z+=zStep) {
-          for (int t=tBegin; t<=tEnd; t+=tStep) {
-            //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
-            int index = reader.getIndex(z, c, t);
-            load[index] = true;
-          }
-        }
-      }
-      int total = 0;
-      for (int j=0; j<reader.getImageCount(); j++) if (load[j]) total++;
-
-      FileInfo fi = new FileInfo();
-
-      // populate other common FileInfo fields
-      String idDir = process.getIdLocation() == null ?
-        null : process.getIdLocation().getParent();
-      if (idDir != null && !idDir.endsWith(File.separator)) {
-        idDir += File.separator;
-      }
-      fi.fileName = process.getIdName();
-      fi.directory = idDir;
-
-      ImageStack stackB = null; // for byte images (8-bit)
-      ImageStack stackS = null; // for short images (16-bit)
-      ImageStack stackF = null; // for floating point images (32-bit)
-      ImageStack stackO = null; // for all other images (24-bit RGB)
-
-      Region region = process.getCropRegion(s);
-      int sizeX = reader.getSizeX(), sizeY = reader.getSizeY();
-      if (options.doCrop()) {
-        // bounds checking for cropped region
-        if (region.x < 0) region.x = 0;
-        if (region.y < 0) region.y = 0;
-        if (region.width <= 0 || region.x + region.width > sizeX) {
-          region.width = sizeX - region.x;
-        }
-        if (region.height <= 0 || region.y + region.height > sizeY) {
-          region.height = sizeX - region.y;
-        }
-      }
-      else {
-        // obtain entire image plane
-        region.x = region.y = 0;
-        region.width = sizeX;
-        region.height = sizeY;
-      }
-
-      int q = 0;
-
-      // dump OME-XML to ImageJ's description field, if available
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        OMEXMLService service = factory.getInstance(OMEXMLService.class);
-        fi.description = service.getOMEXML(process.getOMEMetadata());
-      }
-      catch (DependencyException de) { }
-      catch (ServiceException se) { }
-
-      if (options.isVirtual()) {
-        boolean doMerge = false; //options.isMergeChannels();
-        boolean doColorize = false; //options.isColorize();
-
-        reader.setSeries(s);
-        // NB: ImageJ 1.39+ is required for VirtualStack
-        BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
-          reader, doColorize, doMerge, options.isRecord());
-        stackB = virtualStackB;
-        if (doMerge) {
-          for (int j=0; j<reader.getImageCount(); j++) {
-            int[] zct = reader.getZCTCoords(j);
-            if (zct[1] > 0) continue;
-            ChannelMerger channelMerger = new ChannelMerger(reader);
-            int index = channelMerger.getIndex(zct[0], zct[1], zct[2]);
-            String label = constructSliceLabel(index,
-              channelMerger, process.getOMEMetadata(), s,
-              process.getZCount(s), process.getCCount(s), process.getTCount(s));
-            virtualStackB.addSlice(label);
-          }
-        }
-        else {
-          for (int j=0; j<reader.getImageCount(); j++) {
-            String label = constructSliceLabel(j,
-              reader, process.getOMEMetadata(), s,
-              process.getZCount(s), process.getCCount(s), process.getTCount(s));
-            virtualStackB.addSlice(label);
-          }
-        }
-      }
-      else {
-        // CTR CHECK
-        //if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
-
-        for (int i=0; i<reader.getImageCount(); i++) {
-          if (!load[i]) continue;
-
-          // limit message update rate
-          long clock = System.currentTimeMillis();
-          if (clock - time >= 100) {
-            String sLabel = reader.getSeriesCount() > 1 ?
-              ("series " + (s + 1) + ", ") : "";
-            String pLabel = "plane " + (i + 1) + "/" + total;
-            notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
-            time = clock;
-          }
-          notifyListeners(new StatusEvent(q++, total, null));
-
-          String label = constructSliceLabel(i,
-            reader, process.getOMEMetadata(), s,
-            process.getZCount(s), process.getCCount(s), process.getTCount(s));
-
-          // get image processor for ith plane
-          ImageProcessor[] p;
-          p = reader.openProcessors(i, region.x, region.y,
-            region.width, region.height);
-          ImageProcessor ip = p[0];
-          if (p.length > 1) {
-            ip = ImagePlusTools.makeRGB(p).getProcessor();
-          }
-          if (ip == null) {
-            throw new FormatException("Cannot read ImageProcessor #" + i);
-          }
-
-          // CTR CHECK
-          //int channel = r.getZCTCoords(i)[1];
-          //if (colorModels != null && p.length == 1) {
-          //  colorModels[channel] = (IndexColorModel) ip.getColorModel();
-          //}
-
-          // add plane to image stack
-          int w = region.width, h = region.height;
-          if (ip instanceof ByteProcessor) {
-            if (stackB == null) stackB = new ImageStack(w, h);
-            stackB.addSlice(label, ip);
-          }
-          else if (ip instanceof ShortProcessor) {
-            if (stackS == null) stackS = new ImageStack(w, h);
-            stackS.addSlice(label, ip);
-          }
-          else if (ip instanceof FloatProcessor) {
-            // merge image plane into existing stack if possible
-            if (stackB != null) {
-              ip = ip.convertToByte(true);
-              stackB.addSlice(label, ip);
-            }
-            else if (stackS != null) {
-              ip = ip.convertToShort(true);
-              stackS.addSlice(label, ip);
-            }
-            else {
-              if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(label, ip);
-            }
-          }
-          else if (ip instanceof ColorProcessor) {
-            if (stackO == null) stackO = new ImageStack(w, h);
-            stackO.addSlice(label, ip);
-          }
-        }
-      }
-
-      notifyListeners(new StatusEvent(1, 1, "Creating image"));
-
-      ImagePlus impB = createImage(stackB, s, fi);
-      ImagePlus impS = createImage(stackS, s, fi);
-      ImagePlus impF = createImage(stackF, s, fi);
-      ImagePlus impO = createImage(stackO, s, fi);
-      if (impB != null) imps.add(impB);
-      if (impS != null) imps.add(impS);
-      if (impF != null) imps.add(impF);
-      if (impO != null) imps.add(impO);
+      readSeries(s, imps);
     }
 
     // TODO - colorize
@@ -364,6 +181,197 @@ public class ImagePlusReader implements StatusReporter {
     }
 
     return imps;
+  }
+
+  private long startTime, time;
+  private void startTiming() {
+    startTime = time = System.currentTimeMillis();
+  }
+  private void updateTiming(int s, int i, int current, int total) {
+    ImageProcessorReader reader = process.getReader();
+    long clock = System.currentTimeMillis();
+    if (clock - time >= 100) {
+      String sLabel = reader.getSeriesCount() > 1 ?
+        ("series " + (s + 1) + ", ") : "";
+      String pLabel = "plane " + (i + 1) + "/" + total;
+      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
+      time = clock;
+    }
+    notifyListeners(new StatusEvent(current, total, null));
+  }
+
+  private FileInfo createFileInfo() {
+    FileInfo fi = new FileInfo();
+
+    // populate common FileInfo fields
+    String idDir = process.getIdLocation() == null ?
+      null : process.getIdLocation().getParent();
+    if (idDir != null && !idDir.endsWith(File.separator)) {
+      idDir += File.separator;
+    }
+    fi.fileName = process.getIdName();
+    fi.directory = idDir;
+
+    // dump OME-XML to ImageJ's description field, if available
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      fi.description = service.getOMEXML(process.getOMEMetadata());
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
+
+    return fi;
+  }
+
+  private void readSeries(int s, List<ImagePlus> imps)
+    throws FormatException, IOException
+  {
+    ImageProcessorReader reader = process.getReader();
+    ImporterOptions options = process.getOptions();
+    reader.setSeries(s);
+
+    boolean[] load = getPlanesToLoad(s);
+    int current = 0, total = 0;
+    for (int j=0; j<reader.getImageCount(); j++) if (load[j]) total++;
+
+    FileInfo fi = createFileInfo();
+
+    ImageStack stackB = null; // for byte images (8-bit)
+    ImageStack stackS = null; // for short images (16-bit)
+    ImageStack stackF = null; // for floating point images (32-bit)
+    ImageStack stackO = null; // for all other images (24-bit RGB)
+
+    Region region = process.getCropRegion(s);
+
+    if (options.isVirtual()) {
+      boolean doMerge = false; //options.isMergeChannels();
+      boolean doColorize = false; //options.isColorize();
+
+      reader.setSeries(s);
+      // NB: ImageJ 1.39+ is required for VirtualStack
+      BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
+        reader, doColorize, doMerge, options.isRecord());
+      stackB = virtualStackB;
+      if (doMerge) {
+        for (int j=0; j<reader.getImageCount(); j++) {
+          int[] zct = reader.getZCTCoords(j);
+          if (zct[1] > 0) continue;
+          ChannelMerger channelMerger = new ChannelMerger(reader);
+          int index = channelMerger.getIndex(zct[0], zct[1], zct[2]);
+          String label = constructSliceLabel(index,
+            channelMerger, process.getOMEMetadata(), s,
+            process.getZCount(s), process.getCCount(s), process.getTCount(s));
+          virtualStackB.addSlice(label);
+        }
+      }
+      else {
+        for (int j=0; j<reader.getImageCount(); j++) {
+          String label = constructSliceLabel(j,
+            reader, process.getOMEMetadata(), s,
+            process.getZCount(s), process.getCCount(s), process.getTCount(s));
+          virtualStackB.addSlice(label);
+        }
+      }
+    }
+    else {
+      // CTR CHECK
+      //if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
+
+      for (int i=0; i<reader.getImageCount(); i++) {
+        if (!load[i]) continue;
+
+        // limit message update rate
+        updateTiming(s, i, current++, total);
+
+        String label = constructSliceLabel(i,
+          reader, process.getOMEMetadata(), s,
+          process.getZCount(s), process.getCCount(s), process.getTCount(s));
+
+        // get image processor for ith plane
+        ImageProcessor[] p;
+        p = reader.openProcessors(i, region.x, region.y,
+          region.width, region.height);
+        ImageProcessor ip = p[0];
+        if (p.length > 1) {
+          ip = ImagePlusTools.makeRGB(p).getProcessor();
+        }
+        if (ip == null) {
+          throw new FormatException("Cannot read ImageProcessor #" + i);
+        }
+
+        // CTR CHECK
+        //int channel = r.getZCTCoords(i)[1];
+        //if (colorModels != null && p.length == 1) {
+        //  colorModels[channel] = (IndexColorModel) ip.getColorModel();
+        //}
+
+        // add plane to image stack
+        int w = region.width, h = region.height;
+        if (ip instanceof ByteProcessor) {
+          if (stackB == null) stackB = new ImageStack(w, h);
+          stackB.addSlice(label, ip);
+        }
+        else if (ip instanceof ShortProcessor) {
+          if (stackS == null) stackS = new ImageStack(w, h);
+          stackS.addSlice(label, ip);
+        }
+        else if (ip instanceof FloatProcessor) {
+          // merge image plane into existing stack if possible
+          if (stackB != null) {
+            ip = ip.convertToByte(true);
+            stackB.addSlice(label, ip);
+          }
+          else if (stackS != null) {
+            ip = ip.convertToShort(true);
+            stackS.addSlice(label, ip);
+          }
+          else {
+            if (stackF == null) stackF = new ImageStack(w, h);
+            stackF.addSlice(label, ip);
+          }
+        }
+        else if (ip instanceof ColorProcessor) {
+          if (stackO == null) stackO = new ImageStack(w, h);
+          stackO.addSlice(label, ip);
+        }
+      }
+    }
+
+    notifyListeners(new StatusEvent(1, 1, "Creating image"));
+
+    ImagePlus impB = createImage(stackB, s, fi);
+    ImagePlus impS = createImage(stackS, s, fi);
+    ImagePlus impF = createImage(stackF, s, fi);
+    ImagePlus impO = createImage(stackO, s, fi);
+    if (impB != null) imps.add(impB);
+    if (impS != null) imps.add(impS);
+    if (impF != null) imps.add(impF);
+    if (impO != null) imps.add(impO);
+  }
+
+  private boolean[] getPlanesToLoad(int s) {
+    ImageProcessorReader reader = process.getReader();
+    boolean[] load = new boolean[reader.getImageCount()];
+    int cBegin = process.getCBegin(s);
+    int cEnd = process.getCEnd(s);
+    int cStep = process.getCStep(s);
+    int zBegin = process.getZBegin(s);
+    int zEnd = process.getZEnd(s);
+    int zStep = process.getZStep(s);
+    int tBegin = process.getTBegin(s);
+    int tEnd = process.getTEnd(s);
+    int tStep = process.getTStep(s);
+    for (int c=cBegin; c<=cEnd; c+=cStep) {
+      for (int z=zBegin; z<=zEnd; z+=zStep) {
+        for (int t=tBegin; t<=tEnd; t+=tStep) {
+          //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
+          int index = reader.getIndex(z, c, t);
+          load[index] = true;
+        }
+      }
+    }
+    return load;
   }
 
   /**
@@ -452,11 +460,6 @@ public class ImagePlusReader implements StatusReporter {
 //        imp = Colorizer.colorize(imp, true,
 //          stackOrder, lut, r.getSeries(), null, hyper);
 //      }
-//
-//      // CTR FIXME
-//      if (splitC || splitZ || splitT) {
-//        imp = Slicer.reslice(imp, splitC, splitZ, splitT, hyper, stackOrder);
-//      }
 //    }
 
     return imp;
@@ -492,7 +495,6 @@ public class ImagePlusReader implements StatusReporter {
     return title;
   }
 
-  /** Constructs slice label. */
   private String constructSliceLabel(int ndx, IFormatReader r,
     IMetadata meta, int series, int zCount, int cCount, int tCount)
   {

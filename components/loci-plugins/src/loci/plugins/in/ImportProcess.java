@@ -153,6 +153,10 @@ public class ImportProcess implements StatusReporter {
     if (cancel) return false;
     initializeCrop();
 
+    step(ImportStep.COLORS);
+    if (cancel) return false;
+    initializeColors();
+
     step(ImportStep.METADATA);
     if (cancel) return false;
     initializeMetadata();
@@ -304,10 +308,25 @@ public class ImportProcess implements StatusReporter {
   /** Valid only after {@link ImportStep#STACK}. */
   public Region getCropRegion(int s) {
     assertStep(ImportStep.STACK);
-    Region region = options.getCropRegion(s);
-    if (region != null) return region;
+    Region region = options.doCrop() ? options.getCropRegion(s) : null;
     ImageProcessorReader r = getReader();
-    return new Region(0, 0, r.getSizeX(), r.getSizeY());
+    int sizeX = r.getSizeX(), sizeY = r.getSizeY();
+    if (region == null) {
+      // entire image plane is the default region
+      region = new Region(0, 0, sizeX, sizeY);
+    }
+    else {
+      // bounds checking for cropped region
+      if (region.x < 0) region.x = 0;
+      if (region.y < 0) region.y = 0;
+      if (region.width <= 0 || region.x + region.width > sizeX) {
+        region.width = sizeX - region.x;
+      }
+      if (region.height <= 0 || region.y + region.height > sizeY) {
+        region.height = sizeX - region.y;
+      }
+    }
+    return region;
   }
 
   // -- ImportProcess methods - post-SERIES --
@@ -456,6 +475,9 @@ public class ImportProcess implements StatusReporter {
 
   /** Performed following ImportStep.CROP notification. */
   private void initializeCrop() { }
+
+  /** Performed following ImportStep.COLORS notification. */
+  private void initializeColors() { }
 
   /** Performed following ImportStep.METADATA notification. */
   private void initializeMetadata() {

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +131,9 @@ public class ImporterOptions extends OptionsList {
 
   // crop options
   private List<Region> cropRegion = new ArrayList<Region>();
+
+  // color mode options
+  private List<List<Color>> customColors = new ArrayList<List<Color>>();
 
   // -- Constructor --
 
@@ -394,6 +398,21 @@ public class ImporterOptions extends OptionsList {
   // crop options
   public Region getCropRegion(int s) { return get(cropRegion, s, null); }
   public void setCropRegion(int s, Region r) { set(cropRegion, s, r, null); }
+
+  // color mode options
+  public Color getCustomColor(int s, int c) {
+    List<Color> list = get(customColors, s, null);
+    if (list == null) return null;
+    return get(list, c, null);
+  }
+  public void setCustomColor(int s, int c, Color color) {
+    List<Color> list = get(customColors, s, null);
+    if (list == null) {
+      list = new ArrayList<Color>();
+      set(customColors, s, list, null);
+    }
+    set(list, c, color, null);
+  }
 
   // -- Helper methods - miscellaneous --
 
