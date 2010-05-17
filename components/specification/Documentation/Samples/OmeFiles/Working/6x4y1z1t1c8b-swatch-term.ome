@@ -20,13 +20,26 @@
 	<SA:StructuredAnnotations>
 		<!-- First Term -->
 		<SA:TermAnnotation ID="Annotation:1" Namespace="http://www.geneontology.org/">
-			<SA:Description>This is the description of the sample term A</SA:Description>
-			<SA:Value>GO:12345</SA:Value>
+			<SA:Description>
+				Any process in an organism that results in the killing of its own
+				cells or those of another organism, including in some cases the 
+				death of the other organism. Killing here refers to the induction
+				of death in one cell by another cell, not cell-autonomous death 
+				due to internal or other environmental conditions. 
+				[source: GOC:add]
+			</SA:Description>
+			<SA:Value>GO:0001906</SA:Value>
 		</SA:TermAnnotation>
 		<!-- Second Term -->
 		<SA:TermAnnotation ID="Annotation:4" Namespace="http://www.geneontology.org/">
-			<SA:Description>This is the description of the sample term B</SA:Description>
-			<SA:Value>GO:54321</SA:Value>
+			<SA:Description>
+				A mature high-density lipoprotein (HDL) particle, converted from 
+				discoidal HDL particles following the esterification of cholesterol
+				in the particle by phosphatidylcholine-sterol O-acyltransferase 
+				(lecithin cholesterol acyltransferase; LCAT). 
+				[source: GOC:BHF, GOC:expert_pt, GOC:mah, GOC:rl]
+			</SA:Description>
+			<SA:Value>GO:0034366</SA:Value>
 		</SA:TermAnnotation>
 	</SA:StructuredAnnotations>
 </OME>
