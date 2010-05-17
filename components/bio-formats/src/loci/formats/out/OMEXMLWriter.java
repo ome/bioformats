@@ -104,6 +104,9 @@ public class OMEXMLWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
+    if (out != null) {
+      out.writeBytes(xmlFragments.get(series + 1));
+    }
     super.close();
     xmlFragments = null;
   }
@@ -148,10 +151,6 @@ public class OMEXMLWriter extends FormatWriter {
       plane.append(new String(encodedPix));
       plane.append("</BinData>");
       out.writeBytes(plane.toString());
-    }
-
-    if (no == getPlaneCount() - 1) {
-      out.writeBytes(xmlFragments.get(series + 1));
     }
   }
 

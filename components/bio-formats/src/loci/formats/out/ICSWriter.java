@@ -48,7 +48,10 @@ public class ICSWriter extends FormatWriter {
 
   // -- Fields --
 
+  private long dimensionOffset;
+  private int dimensionLength;
   private long pixelOffset;
+  private int lastPlane = -1;
 
   // -- Constructor --
 
@@ -102,6 +105,7 @@ public class ICSWriter extends FormatWriter {
         out.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
+    lastPlane = no;
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -114,7 +118,9 @@ public class ICSWriter extends FormatWriter {
       FormatTools.FLOAT};
   }
 
-  /* @see loci.formats.IFormatWriter#setId(String) */
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -129,46 +135,10 @@ public class ICSWriter extends FormatWriter {
 
       int pixelType =
         FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
-      int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-      int rgbChannels = getSamplesPerPixel();
 
-      String order = meta.getPixelsDimensionOrder(series).toString();
-      int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
-      int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
-      int z = meta.getPixelsSizeZ(series).getValue().intValue();
-      int c = meta.getPixelsSizeC(series).getValue().intValue();
-      int t = meta.getPixelsSizeT(series).getValue().intValue();
-
-      StringBuffer dimOrder = new StringBuffer();
-      int[] sizes = new int[6];
-      int nextSize = 0;
-      sizes[nextSize++] = 8 * bytesPerPixel;
-
-      if (rgbChannels > 1) {
-        dimOrder.append("ch\t");
-        sizes[nextSize++] = c;
-      }
-
-      for (int i=0; i<order.length(); i++) {
-        if (order.charAt(i) == 'X') sizes[nextSize++] = sizeX;
-        else if (order.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
-        else if (order.charAt(i) == 'Z') sizes[nextSize++] = z;
-        else if (order.charAt(i) == 'T') sizes[nextSize++] = t;
-        else if (order.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
-          sizes[nextSize++] = c;
-          dimOrder.append("ch");
-        }
-        if (order.charAt(i) != 'C') {
-          dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
-        }
-        dimOrder.append("\t");
-      }
-      out.writeBytes("layout\torder\tbits\t" + dimOrder.toString() + "\n");
-      out.writeBytes("layout\tsizes\t");
-      for (int i=0; i<sizes.length; i++) {
-        out.writeBytes(sizes[i] + "\t");
-        if (i == sizes.length - 1) out.writeBytes("\n");
-      }
+      dimensionOffset = out.getFilePointer();
+      int[] sizes = overwriteDimensions(meta);
+      dimensionLength = (int) (out.getFilePointer() - dimensionOffset);
 
       boolean signed = FormatTools.isSigned(pixelType);
       boolean littleEndian =
@@ -190,29 +160,28 @@ public class ICSWriter extends FormatWriter {
       }
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
-      StringTokenizer st = new StringTokenizer(dimOrder.toString(), "\t");
+      String order = meta.getPixelsDimensionOrder(series).toString();
       StringBuffer units = new StringBuffer();
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        Number value = null;
-        if (token.equals("x")) {
+      for (int i=0; i<order.length(); i++) {
+        char dim = order.charAt(i);
+        Number value = 1.0;
+        if (dim == 'x') {
           value = meta.getPixelsPhysicalSizeX(0);
           units.append("micrometers\t");
         }
-        else if (token.equals("y")) {
+        else if (dim == 'y') {
           value = meta.getPixelsPhysicalSizeY(0);
           units.append("micrometers\t");
         }
-        else if (token.equals("z")) {
+        else if (dim == 'z') {
           value = meta.getPixelsPhysicalSizeZ(0);
           units.append("micrometers\t");
         }
-        else if (token.equals("t")) {
+        else if (dim == 't') {
           value = meta.getPixelsTimeIncrement(0);
           units.append("seconds\t");
         }
-        if (value == null) out.writeBytes("1.000000\t");
-        else out.writeBytes(value + "\t");
+        out.writeBytes(value + "\t");
       }
 
       out.writeBytes("\nparameter\tunits\tbits\t" + units.toString() + "\n");
@@ -225,6 +194,75 @@ public class ICSWriter extends FormatWriter {
       pixelOffset = in.getFilePointer();
       in.close();
     }
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    if (lastPlane != getPlaneCount() - 1 && out != null) {
+      overwriteDimensions(getMetadataRetrieve());
+    }
+
+    super.close();
+    pixelOffset = 0;
+    lastPlane = -1;
+    dimensionOffset = 0;
+    dimensionLength = 0;
+  }
+
+  // -- Helper methods --
+
+  private int[] overwriteDimensions(MetadataRetrieve meta) throws IOException {
+    out.seek(dimensionOffset);
+    String order = meta.getPixelsDimensionOrder(series).toString();
+    int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
+    int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
+    int z = meta.getPixelsSizeZ(series).getValue().intValue();
+    int c = meta.getPixelsSizeC(series).getValue().intValue();
+    int t = meta.getPixelsSizeT(series).getValue().intValue();
+    int pixelType =
+      FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
+    int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+    int rgbChannels = getSamplesPerPixel();
+
+    if (lastPlane < 0) lastPlane = z * c * t - 1;
+    int[] pos = FormatTools.getZCTCoords(order, z, c, t, z * c * t, lastPlane);
+    lastPlane = -1;
+
+    StringBuffer dimOrder = new StringBuffer();
+    int[] sizes = new int[6];
+    int nextSize = 0;
+    sizes[nextSize++] = 8 * bytesPerPixel;
+
+    if (rgbChannels > 1) {
+      dimOrder.append("ch\t");
+      sizes[nextSize++] = pos[1] + 1;
+    }
+
+    for (int i=0; i<order.length(); i++) {
+      if (order.charAt(i) == 'X') sizes[nextSize++] = sizeX;
+      else if (order.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
+      else if (order.charAt(i) == 'Z') sizes[nextSize++] = pos[0] + 1;
+      else if (order.charAt(i) == 'T') sizes[nextSize++] = pos[2] + 1;
+      else if (order.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
+        sizes[nextSize++] = pos[1] + 1;
+        dimOrder.append("ch");
+      }
+      if (order.charAt(i) != 'C') {
+        dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
+      }
+      dimOrder.append("\t");
+    }
+    out.writeBytes("layout\torder\tbits\t" + dimOrder.toString() + "\n");
+    out.writeBytes("layout\tsizes\t");
+    for (int i=0; i<sizes.length; i++) {
+      out.writeBytes(sizes[i] + "\t");
+    }
+    while ((out.getFilePointer() - dimensionOffset) < dimensionLength - 1) {
+      out.writeBytes(" ");
+    }
+    out.writeBytes("\n");
+
+    return sizes;
   }
 
 }

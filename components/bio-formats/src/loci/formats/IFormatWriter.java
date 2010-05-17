@@ -40,7 +40,7 @@ public interface IFormatWriter extends IFormatHandler {
   /**
    * Saves the given image to the current series in the current file.
    *
-   * @param no the image index, starting from 0.
+   * @param no the image index within the current file, starting from 0.
    * @param buf the byte array that represents the image.
    * @throws FormatException if one of the parameters is invalid.
    * @throws IOException if there was a problem writing to the file.
@@ -50,7 +50,7 @@ public interface IFormatWriter extends IFormatHandler {
   /**
    * Saves the given image tile to the current series in the current file.
    *
-   * @param no the image index, starting from 0.
+   * @param no the image index within the current file, starting from 0.
    * @param buf the byte array that represents the image tile.
    * @param x the X coordinate of the upper-left corner of the image tile.
    * @param y the Y coordinate of the upper-left corner of the image tile.
@@ -65,7 +65,7 @@ public interface IFormatWriter extends IFormatHandler {
   /**
    * Saves the given image plane to the current series in the current file.
    *
-   * @param no the image index, starting from 0.
+   * @param no the image index within the current file, starting from 0.
    * @param plane the image plane.
    * @throws FormatException if one of the parameters is invalid.
    * @throws IOException if there was a problem writing to the file.
@@ -75,7 +75,7 @@ public interface IFormatWriter extends IFormatHandler {
   /**
    * Saves the given image plane to the current series in the current file.
    *
-   * @param no the image index, starting from 0.
+   * @param no the image index within the current file, starting from 0.
    * @param plane the image plane.
    * @param x the X coordinate of the upper-left corner of the image tile.
    * @param y the Y coordinate of the upper-left corner of the image tile.

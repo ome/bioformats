@@ -96,8 +96,6 @@ public class JavaWriter extends FormatWriter {
     else if (array instanceof double[]) {
       writePlane(varName, (double[]) array, w, h);
     }
-
-    if (no == getPlaneCount() - 1) writeFooter();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -122,6 +120,12 @@ public class JavaWriter extends FormatWriter {
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     if (out.length() == 0) writeHeader();
+  }
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    if (out != null) writeFooter();
+    super.close();
   }
 
   // -- Helper methods --

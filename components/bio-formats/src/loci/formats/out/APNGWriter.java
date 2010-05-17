@@ -85,8 +85,7 @@ public class APNGWriter extends FormatWriter {
       initialized[series][no] = true;
     }
 
-    writePixels(no == 0 ? "IDAT" : "fdAT", buf, x, y, w, h);
-
+    writePixels(numFrames == 0 ? "IDAT" : "fdAT", buf, x, y, w, h);
     numFrames++;
   }
 
@@ -161,6 +160,9 @@ public class APNGWriter extends FormatWriter {
     }
     super.close();
     numFrames = 0;
+    numFramesPointer = 0;
+    nextSequenceNumber = 0;
+    littleEndian = false;
   }
 
   // -- Helper methods --

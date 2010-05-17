@@ -115,6 +115,8 @@ public class QTWriter extends FormatWriter {
   /** Legacy QuickTime writer. */
   protected LegacyQTWriter legacy;
 
+  private int numWritten = 0;
+
   // -- Constructor --
 
   public QTWriter() {
@@ -242,6 +244,7 @@ public class QTWriter extends FormatWriter {
         out.skipBytes(nChannels * (width - w - x));
       }
     }
+    numWritten++;
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -304,6 +307,7 @@ public class QTWriter extends FormatWriter {
     created = 0;
     offsets = null;
     pad = 0;
+    numWritten = 0;
   }
 
   // -- Helper methods --
@@ -323,7 +327,6 @@ public class QTWriter extends FormatWriter {
 
   private void writeFooter() throws IOException {
     out.seek(out.length());
-    int numWritten = getPlaneCount();
     MetadataRetrieve r = getMetadataRetrieve();
     int width = r.getPixelsSizeX(series).getValue().intValue();
     int height = r.getPixelsSizeY(series).getValue().intValue();
