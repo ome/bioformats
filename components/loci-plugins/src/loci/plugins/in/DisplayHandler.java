@@ -127,7 +127,6 @@ public class DisplayHandler implements StatusListener {
     else if (options.isViewBrowser()) displayDataBrowser(imp);
     else if (options.isViewImage5D()) displayImage5D(imp);
     else if (options.isViewView5D()) displayView5D(imp);
-    else if (options.isViewVisBio()) displayVisBio(imp);
     else throw new IllegalStateException("Unknown display mode");
   }
 
@@ -200,23 +199,6 @@ public class DisplayHandler implements StatusListener {
     if (exc != null) {
       WindowTools.reportException(exc, options.isQuiet(),
         "Sorry, there was a problem interfacing with View5D");
-    }
-  }
-
-  public void displayVisBio(ImagePlus imp) {
-    // NB: avoid dependency on optional loci.visbio packages
-    ReflectedUniverse ru = new ReflectedUniverse();
-    try {
-      ru.exec("import loci.visbio.data.Dataset");
-      //ru.setVar("name", name);
-      //ru.setVar("pattern", pattern);
-      ru.exec("dataset = new Dataset(name, pattern)");
-      ru.setVar("imp", imp);
-      // CTR TODO: finish VisBio logic
-    }
-    catch (ReflectException exc) {
-      WindowTools.reportException(exc, options.isQuiet(),
-        "Sorry, there was a problem interfacing with VisBio");
     }
   }
 

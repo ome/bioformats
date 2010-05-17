@@ -433,8 +433,6 @@ public class MainDialog extends ImporterDialog
       stackFormatValue.equals(ImporterOptions.VIEW_HYPERSTACK);
     boolean isStackBrowser =
       stackFormatValue.equals(ImporterOptions.VIEW_BROWSER);
-    boolean isStackVisBio =
-      stackFormatValue.equals(ImporterOptions.VIEW_VISBIO);
     boolean isStackImage5D =
       stackFormatValue.equals(ImporterOptions.VIEW_IMAGE_5D);
     boolean isStackView5D =
@@ -459,7 +457,7 @@ public class MainDialog extends ImporterDialog
     // == Stack viewing ==
 
     // stackOrderChoice
-    stackOrderEnabled = isStackVisBio;
+    stackOrderEnabled = false;
     if (src == stackFormatChoice) {
       if (isStackHyperstack || isStackBrowser || isStackImage5D) {
         stackOrderValue = ImporterOptions.ORDER_XYCZT;
@@ -516,7 +514,7 @@ public class MainDialog extends ImporterDialog
     // == Color options ==
 
     // colorModeChoice
-    colorModeEnabled = !isStackImage5D && !isStackView5D && !isStackVisBio;
+    colorModeEnabled = !isStackImage5D && !isStackView5D;
     if (!colorModeEnabled) colorModeValue = ImporterOptions.COLOR_MODE_DEFAULT;
 
     // autoscaleBox
@@ -526,7 +524,7 @@ public class MainDialog extends ImporterDialog
     // == Split into separate windows ==
 
     boolean splitEnabled = !isStackNone && !isStackBrowser &&
-      !isStackVisBio && !isStackImage5D && !isStackView5D && !isVirtual;
+      !isStackImage5D && !isStackView5D && !isVirtual;
     // TODO: make splitting work with Data Browser & virtual stacks
 
     // splitCBox

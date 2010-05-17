@@ -272,7 +272,6 @@ info = <b>View stack with</b> - \
   <li><b>Data Browser</b> - Display the pixels in LOCI's              \
   multidimensional Data Browser viewer. The Data Browser has some     \
   additional features on top of the normal ImageJ hyperstack.</li>    \
-  <li><b>VisBio</b> - Not yet implemented.</li>                       \
   <li><b>Image5D</b> - Display the pixels in                          \
   Joachim Walter's Image5D viewer. Requires the Image5D plugin.</li>  \
   <li><b>View5D</b> - Display the pixels in                           \
@@ -283,7 +282,6 @@ values = \
   Metadata only,   \
   Hyperstack,      \
   Data Browser,    \
-  VisBio,          \
   Image5D,         \
   View5D
 

@@ -92,12 +92,10 @@ public class ImporterOptions extends OptionsList {
   public static final String VIEW_NONE       = "Metadata only";
   public static final String VIEW_HYPERSTACK = "Hyperstack";
   public static final String VIEW_BROWSER    = "Data Browser";
-  public static final String VIEW_VISBIO     = "VisBio";
   public static final String VIEW_IMAGE_5D   = "Image5D";
   public static final String VIEW_VIEW_5D    = "View5D";
 
   // class to check for each stackFormat value
-  private static final String CLASS_VISBIO   = "loci.visbio.VisBio";
   private static final String CLASS_IMAGE_5D = "i5d.Image5D";
   private static final String CLASS_VIEW_5D  = "view5d.View5D_";
 
@@ -142,9 +140,6 @@ public class ImporterOptions extends OptionsList {
 
     // remove unavailable stack formats
     StringOption stackFormat = getStringOption(KEY_STACK_FORMAT);
-    if (!LibraryChecker.checkClass(CLASS_VISBIO)) {
-      stackFormat.removePossible(VIEW_VISBIO);
-    }
     if (!LibraryChecker.checkClass(CLASS_IMAGE_5D)) {
       stackFormat.removePossible(VIEW_IMAGE_5D);
     }
@@ -321,7 +316,6 @@ public class ImporterOptions extends OptionsList {
   public boolean isViewBrowser() {
     return VIEW_BROWSER.equals(getStackFormat());
   }
-  public boolean isViewVisBio() { return VIEW_VISBIO.equals(getStackFormat()); }
   public boolean isViewImage5D() {
     return VIEW_IMAGE_5D.equals(getStackFormat());
   }
