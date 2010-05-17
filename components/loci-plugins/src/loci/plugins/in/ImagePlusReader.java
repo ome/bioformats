@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileInfo;
@@ -32,6 +33,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import ij.process.ShortProcessor;
 
 import java.io.File;
@@ -148,10 +150,26 @@ public class ImagePlusReader implements StatusReporter {
       readSeries(s, imps);
     }
 
-    // TODO - colorize
-
     // concatenate compatible images
     if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
+
+    // colorize images, as appropriate
+    // CTR FIXME - various problems with color mode
+    int mode = -1;
+    LUT[] luts = null;
+    if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
+    else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
+    else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
+    else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
+    if (mode != -1) {
+      List<ImagePlus> compositeImps = new ArrayList<ImagePlus>();
+      for (ImagePlus imp : imps) {
+        CompositeImage compImage = new CompositeImage(imp, mode);
+        if (luts != null) compImage.setLuts(luts);
+        compositeImps.add(compImage);
+      }
+      imps = compositeImps;
+    }
 
     // split dimensions, as appropriate
     boolean sliceC = options.isSplitChannels();
@@ -427,7 +445,7 @@ public class ImagePlusReader implements StatusReporter {
     //if (imp.isVisible() && !options.isVirtual()) {
     //  String mergeOptions = windowless ? options.getMergeOption() : null;
     //  imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
-    //  // CTR TODO finish this
+    //  // CTR FIXME finish this
     //  if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
     //}
 

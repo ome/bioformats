@@ -94,7 +94,7 @@ public class ColorDialog extends ImporterDialog {
   protected GenericDialog constructDialog() {
     GenericDialog gd = new GenericDialog("Bio-Formats Custom Colorization");
 
-    // CTR TODO - avoid problem with MAX_SLIDERS in GenericDialog
+    // CTR FIXME - avoid problem with MAX_SLIDERS in GenericDialog
     final ImageProcessorReader reader = process.getReader();
     final List<Panel> swatches = new ArrayList<Panel>();
     for (int s=0; s<process.getSeriesCount(); s++) {

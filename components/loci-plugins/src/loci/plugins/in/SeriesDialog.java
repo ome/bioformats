@@ -77,12 +77,12 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   public SeriesDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
-  
+
   @Override
   protected boolean needPrompt() {
-    // CTR TODO - eliminate weird handling of series string here
+    // CTR FIXME - eliminate weird handling of series string here
     String seriesString = options.getSeries();
     if (process.isWindowless()) {
       if (seriesString != null) {
@@ -109,10 +109,10 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     return process.getSeriesCount() > 1 &&
       !options.openAllSeries() && !options.isViewNone();
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
-    // -- CTR TODO - refactor series-related options into SeriesOptions class
+    // -- CTR FIXME - refactor series-related options into SeriesOptions class
     // has a normalize(IFormatReader) method
     // call both before and after the dialog here...
 
@@ -180,7 +180,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
     return gd;
   }
-  
+
   @Override
   protected boolean displayDialog(GenericDialog gd) {
     ThumbLoader loader = null;
@@ -192,7 +192,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     if (loader != null) loader.stop();
     return !gd.wasCanceled();
   }
-  
+
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     String seriesString = "[";
@@ -243,7 +243,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
       masterPanel.add(boxes[i]);
       masterPanel.add(p[i]);
     }
-    
+
     GridBagLayout gdl = (GridBagLayout) gd.getLayout();
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
