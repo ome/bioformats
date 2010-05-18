@@ -101,6 +101,8 @@ public class FV1000Reader extends FormatReader {
   private static final int COLOR_BAR = 13;
   private static final int SCALE = 15;
 
+  private static final String ROTATION = "rotate(%d %f %f)";
+
   // -- Fields --
 
   private IniParser parser = new IniParser();
@@ -1070,7 +1072,7 @@ public class FV1000Reader extends FormatReader {
                 double centerX = realX + (width / 2);
                 double centerY = realY + (height / 2);
 
-                store.setRectangleTransform(String.format("rotate(%d %d %d)",
+                store.setRectangleTransform(String.format(ROTATION,
                   angle, centerX, centerY), nextROI, shape);
 
                 if (row < divide - 1 || col < divide - 1) shape++;
@@ -1091,7 +1093,7 @@ public class FV1000Reader extends FormatReader {
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
 
-            store.setLineTransform(String.format("rotate(%d %d %d)",
+            store.setLineTransform(String.format(ROTATION,
               angle, centerX, centerY), nextROI, shape);
           }
           else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
@@ -1106,7 +1108,7 @@ public class FV1000Reader extends FormatReader {
             store.setEllipseTheT(tIndex, nextROI, shape);
             store.setEllipseFontSize(fontSize, nextROI, shape);
             store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
-            store.setEllipseTransform(String.format("rotate(%d %d %d)",
+            store.setEllipseTransform(String.format(ROTATION,
               angle, x + rx, y + ry), nextROI, shape);
           }
           else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
