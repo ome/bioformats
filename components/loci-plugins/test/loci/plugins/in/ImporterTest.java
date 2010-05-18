@@ -4,17 +4,21 @@
 
 package loci.plugins.in;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import ij.CompositeImage;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.WindowManager;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -26,7 +30,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.plugins.BF;
 
-import org.junit.Test;
 
 // TODO
 //    waiting on BF implementations for
@@ -69,7 +72,7 @@ public class ImporterTest {
   static {
 
     //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
-    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.INT32, 50, 20, 7, 1, 1, -1);
+    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.INT32, 50, 20, 7, 1, 1, -1, false, -1, false);
                                                                         // BDZ - INT32 is desirable for the color tests
     
     FAKE_FILES = new String[] {
@@ -100,7 +103,8 @@ public class ImporterTest {
   // ** Helper methods *******************************************************************
 
   private static String constructFakeFilename(String title,
-      int pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
+      int pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries,
+      boolean indexed, int rgb, boolean falseColor)
   {
     // some tests rely on each image being large enough to get the s,i,z,t,c index pixels of a
     // FakeFile. This requires the x value of tested images to be somewhat large. Assert
@@ -118,6 +122,9 @@ public class ImporterTest {
     fileName += "&sizeC=" + sizeC;
     fileName += "&sizeT=" + sizeT;
     if (numSeries > 0) fileName += "&series=" + numSeries;
+    if (indexed) fileName += "&indexed=true";
+    if (rgb != -1) fileName += "&rgb=" + rgb;
+    if (falseColor) fileName += "&falseColor=true";
     fileName += ".fake";
     
     return fileName;
@@ -347,7 +354,7 @@ public class ImporterTest {
   
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
   {
-    String path = constructFakeFilename("default", pixType, x, y, z, c, t, -1);
+    String path = constructFakeFilename("default", pixType, x, y, z, c, t, -1, false, -1, false);
     ImagePlus[] imps = null;
     
     try {
@@ -369,7 +376,7 @@ public class ImporterTest {
   
   private void outputStackOrderTest(int pixType, String order, int x, int y, int z, int c, int t)
   {
-    String path = constructFakeFilename(order, pixType, x, y, z, c, t, -1);
+    String path = constructFakeFilename(order, pixType, x, y, z, c, t, -1, false, -1, false);
     
     ImagePlus[] imps = null;
     try {
@@ -425,7 +432,7 @@ public class ImporterTest {
   private void datasetSwapDimsTest(int pixType, int x, int y, int z, int t)
   {
     int c = 3; String origOrder = "XYZCT", swappedOrder = "XYTCZ";
-    String path = constructFakeFilename("swapDims", pixType, x, y, z, c, t, -1);
+    String path = constructFakeFilename("swapDims", pixType, x, y, z, c, t, -1, false, -1, false);
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -467,7 +474,7 @@ public class ImporterTest {
 
   private void datasetOpenAllSeriesTest(int x, int y, int z, int c, int t, int s)
   {
-    String path = constructFakeFilename("XYZCT", FormatTools.UINT32, x, y, z, c, t, s);
+    String path = constructFakeFilename("XYZCT", FormatTools.UINT32, x, y, z, c, t, s, false, -1, false);
     
     // try it when false
     
@@ -524,7 +531,7 @@ public class ImporterTest {
     
     // open all series as one
     
-    String path = constructFakeFilename(order, pixType, x, y, z, c, t, s);
+    String path = constructFakeFilename(order, pixType, x, y, z, c, t, s, false, -1, false);
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -568,7 +575,7 @@ public class ImporterTest {
   private void autoscaleTest(int pixType, boolean wantAutoscale)
   {
     final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
-    final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
+    final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -621,7 +628,7 @@ public class ImporterTest {
   private void cropAndAutoscaleTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries,
       int originCropX, int originCropY, int sizeCrop)
   {
-    final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     // needed for this test
     assertTrue(originCropX >= 50);
@@ -671,7 +678,7 @@ public class ImporterTest {
   {
       int x = 604, y = 531, z = 7, c = 1, t = 1;
       
-      String path = constructFakeFilename("vstack", FormatTools.UINT16, x, y, z, c, t, -1);
+      String path = constructFakeFilename("vstack", FormatTools.UINT16, x, y, z, c, t, -1, false, -1, false);
       
       // open stack
       ImagePlus[] imps = null;
@@ -700,8 +707,8 @@ public class ImporterTest {
 
   private void memoryRecordModificationsTest(boolean wantToRemember)
   {
-    int x = 444, y = 387, z = 7, c = 1, t = 1;
-    String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, z, c, t, -1);
+    int x = 50, y = 40, z = 3, c = 1, t = 1;
+    String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, z, c, t, -1, false, -1, false);
     ImagePlus[] imps = null;
     ImagePlus imp = null;
     
@@ -726,35 +733,23 @@ public class ImporterTest {
     assertNotNull(imps);
     assertEquals(1,imps.length);
     imp = imps[0];
-    assertNotNull(imp);
     xyzctTest(imp,x,y,z,c,t);
 
     // change data in slice 1, swap to slice 2, swap back, see whether data reverts
 
-    // original way - looks correct
     imp.setSlice(1);
-    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
-    imp.getProcessor().invert();
-    //IJ.runPlugIn(imp, "Invert", "");  // this makes no difference
-    assertEquals(255,(int)imp.getProcessor().getPixelValue(0,10));
+    assertEquals(10,(int)imp.getProcessor().getPixelValue(10,25));
+
+    // run a plugin whose changes are recorded
+    WindowManager.setTempCurrentImage(imp);
+    IJ.run("Flip Horizontally","slice");
+
+    assertEquals(39,(int)imp.getProcessor().getPixelValue(10,25));
     imp.setSlice(2);
-    assertEquals(0,(int)imp.getProcessor().getPixelValue(0,10));
+    assertEquals(10,(int)imp.getProcessor().getPixelValue(10,25));
     imp.setSlice(1);
-    int expectedVal = wantToRemember ? 255 : 0;
-    assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(0,10));
-    
-    /*
-    // alternative way - should be equivalent but testing to be sure
-    imp.setSlice(1);
-    assertEquals(0,(int)imp.getStack().getProcessor(1).getPixelValue(0,10));
-    imp.getStack().getProcessor(1).invert();
-    assertEquals(255,(int)imp.getStack().getProcessor(1).getPixelValue(0,10));
-    imp.setSlice(2);
-    assertEquals(0,(int)imp.getStack().getProcessor(2).getPixelValue(0,10));
-    imp.setSlice(1);
-    int expectedVal = wantToRemember ? 255 : 0;
-    assertEquals(expectedVal,(int)imp.getStack().getProcessor(1).getPixelValue(0,10));
-    */
+    int expectedVal = wantToRemember ? 39 : 10;
+    assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(10,25));
   }
   
   private void memorySpecifyRangeTest(int z, int c, int t,
@@ -763,7 +758,7 @@ public class ImporterTest {
       int tFrom, int tTo, int tBy)
   { 
     int pixType = FormatTools.UINT8, x=50, y=5, s=-1;
-    String path = constructFakeFilename("range", pixType, x, y, z, c, t, s);
+    String path = constructFakeFilename("range", pixType, x, y, z, c, t, s, false, -1, false);
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -817,7 +812,7 @@ public class ImporterTest {
   
   private void memoryCropTest(int pixType, int x, int y, int cx, int cy)
   {
-    String path = constructFakeFilename("crop", pixType, x, y, 1, 1, 1, 1);
+    String path = constructFakeFilename("crop", pixType, x, y, 1, 1, 1, 1, false, -1, false);
     
     // open image
     ImagePlus[] imps = null;
@@ -975,7 +970,7 @@ public class ImporterTest {
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
     
-    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    String path = constructFakeFilename("colorDefault", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -1000,8 +995,32 @@ public class ImporterTest {
     xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
     
     assertFalse(imp.isComposite());
+
+    // TODO - not a composite - need to determine what to test
     
     fail("unfinished");
+  }
+  
+  // channel is 0-based
+  private void lutTest(CompositeImage ci, int channel, int minR, int minG, int minB, int maxR, int maxG, int maxB)
+  {
+    LUT lut = null;
+    
+    byte[] reds = new byte[256];
+    byte[] blues = new byte[256];
+    byte[] greens = new byte[256];
+    
+    lut = ci.getChannelLut(channel+1);  // IJ is 1-based
+    lut.getReds(reds);
+    lut.getGreens(greens);
+    lut.getBlues(blues);
+    
+    assertEquals((byte)minR,reds[0]);
+    assertEquals((byte)maxR,reds[255]);
+    assertEquals((byte)minG,greens[0]);
+    assertEquals((byte)maxG,greens[255]);
+    assertEquals((byte)minB,blues[0]);
+    assertEquals((byte)maxB,blues[255]);
   }
   
   @Test
@@ -1009,7 +1028,7 @@ public class ImporterTest {
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
     
-    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    String path = constructFakeFilename("colorComposite", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -1039,8 +1058,24 @@ public class ImporterTest {
     ci = (CompositeImage)imp;
     
     assertFalse(ci.hasCustomLuts());
-    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
-    fail("unfinished");
+
+    assertEquals(CompositeImage.COMPOSITE, ci.getMode());
+    
+    lutTest(ci,0,0,0,0,255,0,0);
+    if (sizeC > 1)
+      lutTest(ci,1,0,0,0,0,255,0);
+    if (sizeC > 2)
+      lutTest(ci,2,0,0,0,0,0,255);
+    if (sizeC > 3)
+      lutTest(ci,3,0,0,0,255,255,255);
+    if (sizeC > 4)
+      lutTest(ci,4,0,0,0,0,255,255);
+    if (sizeC > 5)
+      lutTest(ci,5,0,0,0,255,0,255);
+    if (sizeC > 6)
+      lutTest(ci,6,0,0,0,255,255,0);
+    
+    fail("partial impl");
   }
   
   @Test
@@ -1048,7 +1083,7 @@ public class ImporterTest {
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
     
-    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    String path = constructFakeFilename("colorColorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -1078,7 +1113,23 @@ public class ImporterTest {
     ci = (CompositeImage)imp;
     
     assertFalse(ci.hasCustomLuts());
-    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+
+    assertEquals(CompositeImage.COLOR, ci.getMode());
+    
+    lutTest(ci,0,0,0,0,255,0,0);
+    if (sizeC > 1)
+      lutTest(ci,1,0,0,0,0,255,0);
+    if (sizeC > 2)
+      lutTest(ci,2,0,0,0,0,0,255);
+    if (sizeC > 3)
+      lutTest(ci,3,0,0,0,255,255,255);
+    if (sizeC > 4)
+      lutTest(ci,4,0,0,0,0,255,255);
+    if (sizeC > 5)
+      lutTest(ci,5,0,0,0,255,0,255);
+    if (sizeC > 6)
+      lutTest(ci,6,0,0,0,255,255,0);
+
     fail("unfinished");
   }
   
@@ -1087,7 +1138,7 @@ public class ImporterTest {
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
     
-    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    String path = constructFakeFilename("colorGrayscale", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -1117,7 +1168,23 @@ public class ImporterTest {
     ci = (CompositeImage)imp;
     
     assertFalse(ci.hasCustomLuts());
-    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+
+    assertEquals(CompositeImage.GRAYSCALE, ci.getMode());
+
+    lutTest(ci,0,0,0,0,255,0,0);
+    if (sizeC > 1)
+      lutTest(ci,1,0,0,0,0,255,0);
+    if (sizeC > 2)
+      lutTest(ci,2,0,0,0,0,0,255);
+    if (sizeC > 3)
+      lutTest(ci,3,0,0,0,255,255,255);
+    if (sizeC > 4)
+      lutTest(ci,4,0,0,0,0,255,255);
+    if (sizeC > 5)
+      lutTest(ci,5,0,0,0,255,0,255);
+    if (sizeC > 6)
+      lutTest(ci,6,0,0,0,255,255,0);
+
     fail("unfinished");
   }
   
@@ -1126,7 +1193,7 @@ public class ImporterTest {
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
     
-    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    String path = constructFakeFilename("colorCustom", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -1135,8 +1202,22 @@ public class ImporterTest {
     try {
       ImporterOptions options = new ImporterOptions();
       options.setColorMode(ImporterOptions.COLOR_MODE_CUSTOM);
-      int series = 0; int channel = 0;
-      options.setCustomColor(series, channel, Color.BLUE);
+      for (int s = 0; s < numSeries; s++)
+      {
+        options.setCustomColor(s, 0, Color.BLUE);
+        if (sizeC > 1)
+          options.setCustomColor(s, 1, Color.RED);
+        if (sizeC > 2)
+          options.setCustomColor(s, 2, Color.GREEN);
+        if (sizeC > 3)
+          options.setCustomColor(s, 3, Color.MAGENTA);
+        if (sizeC > 4)
+          options.setCustomColor(s, 4, Color.CYAN);
+        if (sizeC > 5)
+          options.setCustomColor(s, 5, Color.YELLOW);
+        if (sizeC > 6)
+          options.setCustomColor(s, 6, Color.GRAY);
+      }
       options.setId(path);
       imps = BF.openImagePlus(options);
     }
@@ -1158,7 +1239,23 @@ public class ImporterTest {
     ci = (CompositeImage)imp;
     
     assertFalse(ci.hasCustomLuts());
-    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+
+    assertEquals(CompositeImage.COLOR, ci.getMode());
+
+    lutTest(ci,0,0,0,0,0,0,255);        // blue
+    if (sizeC >= 2)
+      lutTest(ci,1,0,0,0,255,0,0);      // red
+    if (sizeC >= 3)
+      lutTest(ci,2,0,0,0,0,255,0);      // green
+    if (sizeC >= 4)
+      lutTest(ci,3,0,0,0,255,0,255);    // magenta
+    if (sizeC >= 5)
+      lutTest(ci,4,0,0,0,0,255,255);    // cyan
+    if (sizeC >= 7)
+      lutTest(ci,5,0,0,0,255,255,0);    // yellow
+    if (sizeC >= 7)
+      lutTest(ci,6,0,0,0,255,255,255);  // gray
+
     fail("unfinished");
   }
   
@@ -1569,7 +1666,7 @@ public class ImporterTest {
   {
     final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
     final String path = constructFakeFilename("splitC",
-      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false);
 
     // open image
     ImagePlus[] imps = null;
@@ -1613,7 +1710,7 @@ public class ImporterTest {
   {
     final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
     final String path = constructFakeFilename("splitZ",
-      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false);
 
     // open image
     ImagePlus[] imps = null;
@@ -1657,7 +1754,7 @@ public class ImporterTest {
   {
     final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
     final String path = constructFakeFilename("splitT",
-      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1, false, -1, false);
 
     // open image
     ImagePlus[] imps = null;
