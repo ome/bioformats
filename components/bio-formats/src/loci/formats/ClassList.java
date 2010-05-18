@@ -154,7 +154,7 @@ public class ClassList<T> {
   }
 
   /** Removes the given class from the list. */
-  public void removeClass(Class<T> c) {
+  public void removeClass(Class<? extends T> c) {
     classes.remove(c);
   }
 
