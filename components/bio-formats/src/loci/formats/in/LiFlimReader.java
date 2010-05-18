@@ -451,8 +451,8 @@ public class LiFlimReader extends FormatReader {
       ROI r = rois.get(roiIndices[roi]);
       store.setPolylinePoints(r.pointsToString(), roi, 0);
       store.setPolylineClosed(Boolean.TRUE, roi, 0);
-      String roiID = MetadataTools.createLSID("Polyline", roi, 0);
-      store.setPolylineID(roiID, roi, 0);
+      String roiID = MetadataTools.createLSID("ROI", roi);
+      store.setROIID(roiID, roi);
       store.setImageROIRef(roiID, 0, roi);
     }
   }
