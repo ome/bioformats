@@ -142,12 +142,6 @@ public class DisplayHandler implements StatusListener {
   }
 
   public void displayDataBrowser(ImagePlus imp) {
-    // NB: Use regular hyperstack display for now, since
-    // recent versions of ImageJ v1.43+ broke DataBrowser
-    // by removing the sliceSelector field.
-    //displayNormal(imp);
-
-    // CTR FIXME
     IFormatReader r = process.getReader();
     String[] dimTypes = r.getChannelDimTypes();
     int[] dimLengths = r.getChannelDimLengths();
