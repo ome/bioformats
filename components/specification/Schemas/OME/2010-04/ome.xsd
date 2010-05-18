@@ -424,7 +424,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						The number of samples the detector takes to form each pixel value.
-						The SamplesPerPixel attribute is the number of channel components in the logical channel. [units none]
+						The SamplesPerPixel attribute is the number of channel components in the logical channel. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -535,7 +535,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
-						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by. [units none]
+						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -597,7 +597,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
-						Default is 0 (the first IFD). [units none]
+						Default is 0 (the first IFD). [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -605,7 +605,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
-						Default is 0 (the first Z position). [units none]
+						Default is 0 (the first Z position). [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -613,7 +613,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the T position of the image plane at the specified IFD. Indexed from 0.
-						Default is 0 (the first T position). [units none]
+						Default is 0 (the first T position). [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -621,7 +621,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
-						Default is 0 (the first C position). [units none]
+						Default is 0 (the first C position). [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -630,7 +630,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
 						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
-						file, unless an IFD is specified, in which case the default is 1. [units none]
+						file, unless an IFD is specified, in which case the default is 1. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -804,14 +804,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						The width of the OTF. [units none]
+						The width of the OTF. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						The height of the OTF. [units none]
+						The height of the OTF. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -844,14 +844,16 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Humidity" use="optional" type="PercentFraction">
 				<xsd:annotation>
 					<xsd:documentation>
-						Humidity as a percent-fraction from 0.0 to 1.0 [%].
+						Humidity around the sample [units:none]
+						A fraction, as a value from 0.0 to 1.0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CO2Percent" use="optional" type="PercentFraction">
 				<xsd:annotation>
 					<xsd:documentation>
-						CO2Percent as a percent-fractions from 0.0 to 1.0 [%].
+						Carbon Dioxide concentration around the sample [units:none]
+						A fraction, as a value from 0.0 to 1.0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1283,21 +1285,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								The numerical aperture of the lens expressed as a floating point (real) number.
-								Expected range 0.02 - 1.5 [units none]
+								Expected range 0.02 - 1.5 [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:integer">
 						<xsd:annotation>
 							<xsd:documentation>
-								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units none]
+								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="CalibratedMagnification" use="optional"  type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens. [units none]
+								The magnification of the lens as measured by a calibration process- i.e. '59.987' for a 60X lens. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1332,7 +1334,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Gain for this detector, as a float. [units none]
+								The Detector Gain for this detector, as a float. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1346,14 +1348,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Offset. [units none]
+								The Detector Offset. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units none]
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1361,7 +1363,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								Gain applied to the detector signal. 
-								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units none]
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1507,7 +1509,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" >
 				<xsd:annotation>
 					<xsd:documentation>
-						The amount of light the filter transmits at a maximum as a percentage. [%]
+						The amount of light the filter transmits at a maximum [units:none]
+						A fraction, as a value from 0.0 to 1.0.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1698,7 +1701,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="FrequencyMultiplication" use="optional" type="xsd:positiveInteger">
 				<xsd:annotation>
 					<xsd:documentation>
-						FrequencyMultiplication that may be specified. [units none]
+						FrequencyMultiplication that may be specified. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -2002,7 +2005,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Attenuation" use="optional" type="PercentFraction">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Attenuation of the light source. [%]
+								The Attenuation of the light source [units:none]
+								A fraction, as a value from 0.0 to 1.0.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2039,7 +2043,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Gain of the detector. [units none]
+								The Gain of the detector. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2096,7 +2100,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							<xsd:documentation>
 								The CorrectionCollar is it normal an adjustable ring on the 
 								objective. Each has an arbitrary scale on it so the values 
-								is unit-less. [units none]
+								is unit-less. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2121,7 +2125,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								The RefractiveIndex is that of the immersion medium. This is
-								a ratio so it also unit-less. [units none]
+								a ratio so it also unit-less. [units:none]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
