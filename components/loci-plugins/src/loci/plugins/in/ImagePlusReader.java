@@ -36,6 +36,7 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 import ij.process.ShortProcessor;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -151,95 +152,18 @@ public class ImagePlusReader implements StatusReporter {
     }
 
     // concatenate compatible images
-    if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
+    imps = concatenate(imps);
 
     // colorize images, as appropriate
-    // CTR FIXME - various problems with color mode
-    int mode = -1;
-    LUT[] luts = null;
-    if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
-    else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
-    else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
-    else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
-    if (mode != -1) {
-      List<ImagePlus> compositeImps = new ArrayList<ImagePlus>();
-      for (ImagePlus imp : imps) {
-        CompositeImage compImage = new CompositeImage(imp, mode);
-        if (luts != null) compImage.setLuts(luts);
-        compositeImps.add(compImage);
-      }
-      imps = compositeImps;
-    }
+    imps = applyColors(imps);
 
     // split dimensions, as appropriate
-    boolean sliceC = options.isSplitChannels();
-    boolean sliceZ = options.isSplitFocalPlanes();
-    boolean sliceT = options.isSplitTimepoints();
-    if (sliceC || sliceZ || sliceT) {
-      String stackOrder = process.getStackOrder();
-      List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
-      for (ImagePlus imp : imps) {
-        ImagePlus[] results = new Slicer().reslice(imp,
-          sliceC, sliceZ, sliceT, stackOrder);
-        for (ImagePlus result : results) slicedImps.add(result);
-      }
-      imps = slicedImps;
-    }
+    imps = splitDims(imps);
 
     // end timing
-    long endTime = System.currentTimeMillis();
-    double elapsed = (endTime - startTime) / 1000.0;
-    if (reader.getImageCount() == 1) {
-      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
-    }
-    else {
-      long average = (endTime - startTime) / reader.getImageCount();
-      notifyListeners(new StatusEvent("Bio-Formats: " +
-        elapsed + " seconds (" + average + " ms per plane)"));
-    }
+    finishTiming();
 
     return imps;
-  }
-
-  private long startTime, time;
-  private void startTiming() {
-    startTime = time = System.currentTimeMillis();
-  }
-  private void updateTiming(int s, int i, int current, int total) {
-    ImageProcessorReader reader = process.getReader();
-    long clock = System.currentTimeMillis();
-    if (clock - time >= 100) {
-      String sLabel = reader.getSeriesCount() > 1 ?
-        ("series " + (s + 1) + ", ") : "";
-      String pLabel = "plane " + (i + 1) + "/" + total;
-      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
-      time = clock;
-    }
-    notifyListeners(new StatusEvent(current, total, null));
-  }
-
-  private FileInfo createFileInfo() {
-    FileInfo fi = new FileInfo();
-
-    // populate common FileInfo fields
-    String idDir = process.getIdLocation() == null ?
-      null : process.getIdLocation().getParent();
-    if (idDir != null && !idDir.endsWith(File.separator)) {
-      idDir += File.separator;
-    }
-    fi.fileName = process.getIdName();
-    fi.directory = idDir;
-
-    // dump OME-XML to ImageJ's description field, if available
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      fi.description = service.getOMEXML(process.getOMEMetadata());
-    }
-    catch (DependencyException de) { }
-    catch (ServiceException se) { }
-
-    return fi;
   }
 
   private void readSeries(int s, List<ImagePlus> imps)
@@ -368,6 +292,113 @@ public class ImagePlusReader implements StatusReporter {
     if (impO != null) imps.add(impO);
   }
 
+  private List<ImagePlus> concatenate(List<ImagePlus> imps) {
+    final ImporterOptions options = process.getOptions();
+    if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
+    return imps;
+  }
+
+  private List<ImagePlus> applyColors(List<ImagePlus> imps) {
+    final ImporterOptions options = process.getOptions();
+
+    // CTR FIXME - problems with single channel data
+    // CTR FIXME - problems with sizeC > 7
+    // CTR FIXME - problems with default color mode
+    int mode = -1;
+    if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
+    else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
+    else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
+    else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
+    if (mode != -1) {
+      List<ImagePlus> compositeImps = new ArrayList<ImagePlus>();
+      for (ImagePlus imp : imps) {
+        CompositeImage compImage = new CompositeImage(imp, mode);
+        LUT[] luts = null;
+        int series = (Integer) imp.getProperty("Series");
+        if (options.isColorModeCustom()) luts = makeLUTs(series);
+        if (luts != null) compImage.setLuts(luts);
+        compositeImps.add(compImage);
+      }
+      imps = compositeImps;
+    }
+    return imps;
+  }
+
+  private List<ImagePlus> splitDims(List<ImagePlus> imps) {
+    final ImporterOptions options = process.getOptions();
+
+    boolean sliceC = options.isSplitChannels();
+    boolean sliceZ = options.isSplitFocalPlanes();
+    boolean sliceT = options.isSplitTimepoints();
+    if (sliceC || sliceZ || sliceT) {
+      String stackOrder = process.getStackOrder();
+      List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
+      for (ImagePlus imp : imps) {
+        ImagePlus[] results = new Slicer().reslice(imp,
+          sliceC, sliceZ, sliceT, stackOrder);
+        for (ImagePlus result : results) slicedImps.add(result);
+      }
+      imps = slicedImps;
+    }
+    return imps;
+  }
+  
+
+  private LUT[] makeLUTs(int series) {
+    final ImageProcessorReader reader = process.getReader();
+    reader.setSeries(series);
+    LUT[] luts = new LUT[reader.getSizeC()];
+    for (int c=0; c<luts.length; c++) luts[c] = makeLUT(series, c);
+    return luts;
+  }
+  
+  private LUT makeLUT(int series, int channel) {
+    final ImporterOptions options = process.getOptions();
+    Color color = options.getCustomColor(series, channel);
+    if (color == null) color = options.getDefaultCustomColor(channel);
+    return makeLUT(color);
+  }
+  
+  private LUT makeLUT(Color color) {
+    final int red = color.getRed();
+    final int green = color.getGreen();
+    final int blue = color.getBlue();
+    final int lutLength = 256;
+    byte[] r = new byte[lutLength];
+    byte[] g = new byte[lutLength];
+    byte[] b = new byte[lutLength];
+    for (int i=0; i<lutLength; i++) {
+      r[i] = (byte) (i * red / lutLength);
+      g[i] = (byte) (i * green / lutLength);
+      b[i] = (byte) (i * blue / lutLength);
+    }
+    return new LUT(r, g, b);
+  }
+    
+  private FileInfo createFileInfo() {
+    FileInfo fi = new FileInfo();
+
+    // populate common FileInfo fields
+    String idDir = process.getIdLocation() == null ?
+      null : process.getIdLocation().getParent();
+    if (idDir != null && !idDir.endsWith(File.separator)) {
+      idDir += File.separator;
+    }
+    fi.fileName = process.getIdName();
+    fi.directory = idDir;
+
+    // dump OME-XML to ImageJ's description field, if available
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      fi.description = service.getOMEXML(process.getOMEMetadata());
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
+
+    return fi;
+  }
+
   private boolean[] getPlanesToLoad(int s) {
     ImageProcessorReader reader = process.getReader();
     boolean[] load = new boolean[reader.getImageCount()];
@@ -411,22 +442,23 @@ public class ImagePlusReader implements StatusReporter {
     String title = getTitle(reader, file, seriesName, options.isGroupFiles());
     ImagePlus imp = null;
     if (options.isVirtual()) {
-      imp = new VirtualImagePlus(title, stack);
-      ((VirtualImagePlus) imp).setReader(reader);
+      VirtualImagePlus vip = new VirtualImagePlus(title, stack);
+      vip.setReader(reader);
+      imp = vip;
     }
     else imp = new ImagePlus(title, stack);
 
     // place metadata key/value pairs in ImageJ's info field
     String metadata = process.getOriginalMetadata().toString();
     imp.setProperty("Info", metadata);
+    imp.setProperty("Series", series);
 
     // retrieve the spatial calibration information, if available
     ImagePlusTools.applyCalibration(meta, imp, reader.getSeries());
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
 
-    boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-    imp.setOpenAsHyperStack(hyper);
+    imp.setOpenAsHyperStack(true);
 
     if (options.isAutoscale()) {
       ImagePlusTools.adjustColorRange(imp, process.getMinMaxCalculator());
@@ -441,17 +473,9 @@ public class ImagePlusReader implements StatusReporter {
 //    IFormatReader r = options.getReader();
 //    boolean windowless = options.isWindowless();
 
-    // CTR CHECK
-    //if (imp.isVisible() && !options.isVirtual()) {
-    //  String mergeOptions = windowless ? options.getMergeOption() : null;
-    //  imp = Colorizer.colorize(imp, true, stackOrder, null, r.getSeries(), mergeOptions, options.isViewHyperstack());
-    //  // CTR FIXME finish this
-    //  if (WindowManager.getCurrentImage().getID() != imp.getID()) imp.close();
-    //}
 
     // NB: ImageJ 1.39+ is required for hyperstacks
 
-//    if (!options.isConcatenate()) {
 //      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
 //
 //      boolean splitC = options.isSplitChannels();
@@ -559,6 +583,43 @@ public class ImagePlusReader implements StatusReporter {
       sb.append(imageName);
     }
     return sb.toString();
+  }
+
+  // -- Helper methods - timing --
+
+  private long startTime, time;
+
+  private void startTiming() {
+    startTime = time = System.currentTimeMillis();
+  }
+
+  private void updateTiming(int s, int i, int current, int total) {
+    final ImageProcessorReader reader = process.getReader();
+
+    long clock = System.currentTimeMillis();
+    if (clock - time >= 100) {
+      String sLabel = reader.getSeriesCount() > 1 ?
+        ("series " + (s + 1) + ", ") : "";
+      String pLabel = "plane " + (i + 1) + "/" + total;
+      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
+      time = clock;
+    }
+    notifyListeners(new StatusEvent(current, total, null));
+  }
+
+  private void finishTiming() {
+    final ImageProcessorReader reader = process.getReader();
+
+    long endTime = System.currentTimeMillis();
+    double elapsed = (endTime - startTime) / 1000.0;
+    if (reader.getImageCount() == 1) {
+      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
+    }
+    else {
+      long average = (endTime - startTime) / reader.getImageCount();
+      notifyListeners(new StatusEvent("Bio-Formats: " +
+        elapsed + " seconds (" + average + " ms per plane)"));
+    }
   }
 
 }

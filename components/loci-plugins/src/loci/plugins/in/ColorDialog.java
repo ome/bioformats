@@ -60,16 +60,6 @@ public class ColorDialog extends ImporterDialog {
 
   // -- Constants --
 
-  /** Default custom colors for each channel. */
-  private static final Color[] DEFAULT_COLORS = {
-    Color.red,
-    Color.green,
-    Color.blue,
-    Color.white,
-    Color.cyan,
-    Color.magenta,
-    Color.yellow
-  };
   private static final Dimension SWATCH_SIZE = new Dimension(100, 50);
 
   // -- Constructor --
@@ -97,7 +87,7 @@ public class ColorDialog extends ImporterDialog {
       reader.setSeries(s);
       for (int c=0; c<reader.getSizeC(); c++) {
         Color color = options.getCustomColor(s, c);
-        if (color == null) color = DEFAULT_COLORS[c % DEFAULT_COLORS.length];
+        if (color == null) color = options.getDefaultCustomColor(c);
         gd.addSlider(makeLabel("Red:", s, c), 0, 255, color.getRed());
         gd.addSlider(makeLabel("Green:", s, c), 0, 255, color.getGreen());
         gd.addSlider(makeLabel("Blue:", s, c), 0, 255, color.getBlue());
