@@ -220,7 +220,6 @@ public class MNGReader extends BIFormatReader {
       core[i].sizeC = Integer.parseInt(tokens[2]);
       core[i].pixelType = Integer.parseInt(tokens[3]);
       core[i].rgb = core[i].sizeC > 1;
-      core[i].sizeT = core[i].imageCount;
       core[i].sizeZ = 1;
       core[i].dimensionOrder = "XYCZT";
       core[i].interleaved = false;
@@ -235,6 +234,7 @@ public class MNGReader extends BIFormatReader {
       seriesInfo.add(inf);
 
       core[i].imageCount = inf.offsets.size();
+      core[i].sizeT = core[i].imageCount;
     }
 
     MetadataStore store = makeFilterMetadata();
