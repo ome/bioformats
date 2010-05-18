@@ -165,7 +165,7 @@ public class ZeissLSMReader extends FormatReader {
   private TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
-  private int nextFilter = 0, nextDichroicChannel = 0;
+  private int nextFilter = 0, nextDichroicChannel, nextDichroic = 0;
   private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
   private double zoom;
@@ -206,7 +206,7 @@ public class ZeissLSMReader extends FormatReader {
       ifdsList = null;
       tiffParser = null;
       nextLaser = nextDetector = 0;
-      nextFilter = nextDichroicChannel = 0;
+      nextFilter = nextDichroicChannel = nextDichroic = 0;
       nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
       splitPlanes = false;
       zoom = 0;
@@ -466,6 +466,7 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     // link Instrument and Image
+    store.setImageID(MetadataTools.createLSID("Image", series), series);
     String instrumentID = MetadataTools.createLSID("Instrument", series);
     store.setInstrumentID(instrumentID, series);
     store.setImageInstrumentRef(instrumentID, series);
@@ -632,6 +633,14 @@ public class ZeissLSMReader extends FormatReader {
     if (getSizeT() == 0) core[series].sizeT = getImageCount() / getSizeZ();
 
     MetadataTools.setDefaultCreationDate(store, getCurrentFile(), series);
+    int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
+    if (nLogicalChannels == getSizeC() || nextDataChannel == 0) {
+      if (!splitPlanes) splitPlanes = isRGB();
+      core[series].rgb = false;
+      if (splitPlanes) core[series].imageCount *= getSizeC();
+    }
+
+    MetadataTools.populatePixels(store, this, true);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       int spectralScan = ras.readShort();
@@ -761,7 +770,7 @@ public class ZeissLSMReader extends FormatReader {
         in.seek(scanInformationOffset);
 
         nextLaser = nextDetector = 0;
-        nextFilter = nextDichroicChannel = 0;
+        nextFilter = nextDichroicChannel = nextDichroic = 0;
         nextDataChannel = nextDetectChannel = nextIllumChannel = 0;
 
         Vector<SubBlock> blocks = new Vector<SubBlock>();
@@ -855,14 +864,6 @@ public class ZeissLSMReader extends FormatReader {
         }
       }
     }
-    int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
-    if (nLogicalChannels == getSizeC() || nextDataChannel == 0) {
-      if (!splitPlanes) splitPlanes = isRGB();
-      core[series].rgb = false;
-      if (splitPlanes) core[series].imageCount *= getSizeC();
-    }
-
-    MetadataTools.populatePixels(store, this, true);
 
     imageNames.add(imageName);
 
@@ -1043,11 +1044,14 @@ public class ZeissLSMReader extends FormatReader {
       BeamSplitter beamSplitter = (BeamSplitter) block;
       if (beamSplitter.filterSet != null) {
         if (beamSplitter.filter != null) {
-          String id = MetadataTools.createLSID("Dichroic", series, nextFilter);
-          store.setDichroicID(id, series, nextFilter);
-          store.setDichroicModel(beamSplitter.filter, series, nextFilter);
-          store.setLightPathDichroicRef(id, series, nextDichroicChannel);
-          nextFilter++;
+          String id =
+            MetadataTools.createLSID("Dichroic", series, nextDichroic);
+          store.setDichroicID(id, series, nextDichroic);
+          store.setDichroicModel(beamSplitter.filter, series, nextDichroic);
+          if (nextDichroicChannel < getSizeC()) {
+            store.setLightPathDichroicRef(id, series, nextDichroicChannel);
+          }
+          nextDichroic++;
         }
         nextDichroicChannel++;
       }
