@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.in;
 
 import ij.gui.GenericDialog;
-import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -73,10 +72,6 @@ public class ColorDialog extends ImporterDialog {
   };
   private static final Dimension SWATCH_SIZE = new Dimension(100, 50);
 
-  // -- Fields --
-
-  private List<TextField> colors;
-
   // -- Constructor --
 
   public ColorDialog(ImportProcess process) {
@@ -114,7 +109,7 @@ public class ColorDialog extends ImporterDialog {
     }
 
     // change swatch colors when sliders move
-    List<TextField> colorFields = gd.getNumericFields();
+    List<TextField> colorFields = getNumericFields(gd);
     attachListeners(colorFields, swatches);
 
     WindowTools.addScrollBars(gd);
@@ -185,6 +180,11 @@ public class ColorDialog extends ImporterDialog {
     if (color < 0) color = 0;
     if (color > 255) color = 255;
     return color;
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<TextField> getNumericFields(GenericDialog gd) {
+    return gd.getNumericFields();
   }
 
 }
