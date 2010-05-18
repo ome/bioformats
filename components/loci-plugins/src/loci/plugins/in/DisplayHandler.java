@@ -46,6 +46,7 @@ import loci.formats.IFormatReader;
 import loci.formats.gui.XMLWindow;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
+import loci.plugins.util.DataBrowser;
 import loci.plugins.util.ROIHandler;
 import loci.plugins.util.SearchableWindow;
 import loci.plugins.util.WindowTools;
@@ -141,17 +142,10 @@ public class DisplayHandler implements StatusListener {
   }
 
   public void displayDataBrowser(ImagePlus imp) {
-    // NB: Use regular hyperstack display for now, since
-    // recent versions of ImageJ v1.43+ broke DataBrowser
-    // by removing the sliceSelector field.
-    displayNormal(imp);
-
-    // CTR FIXME
-    
-    //IFormatReader r = options.getReader();
-    //String[] dimTypes = r.getChannelDimTypes();
-    //int[] dimLengths = r.getChannelDimLengths();
-    //new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
+    IFormatReader r = process.getReader();
+    String[] dimTypes = r.getChannelDimTypes();
+    int[] dimLengths = r.getChannelDimLengths();
+    new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
   }
 
   public void displayImage5D(ImagePlus imp) {

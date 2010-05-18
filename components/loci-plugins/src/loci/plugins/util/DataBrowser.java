@@ -44,6 +44,7 @@ import java.awt.Rectangle;
 import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
+import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 
 import javax.swing.JSpinner;
@@ -76,7 +77,7 @@ public class DataBrowser extends StackWindow {
 
   // -- Fields --
 
-  protected volatile boolean done;
+//  protected volatile boolean done;
 
   protected JSpinner fpsSpin;
   protected Button animate, options, metadata;
@@ -87,12 +88,13 @@ public class DataBrowser extends StackWindow {
   protected BrowserOptionsWindow optionsWindow;
   protected String xml;
 
+  protected Scrollbar zScroll, cScroll, tScroll;
   protected Scrollbar[] cSliders;
 
   protected int[] cLengths;
   protected int[] cIndex;
 
-  private int slice;
+  //private int slice;
 
   // -- Constructors --
 
@@ -159,41 +161,43 @@ public class DataBrowser extends StackWindow {
     boolean hasC = c > 1;
     boolean hasT = t > 1;
 
-    if (sliceSelector != null) remove(sliceSelector);
-    if (frameSelector != null) remove(frameSelector);
-    if (channelSelector != null) remove(channelSelector);
+    // remove everything except the image canvas
+    Component[] comps = getComponents();
+    for (Component comp : comps) {
+      if (!(comp instanceof ImageCanvas)) remove(comp);
+    }
 
     ImageJ ij = IJ.getInstance();
 
     if (hasC) {
-      channelSelector = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, c + 1);
-      add(channelSelector);
-      if (ij != null) channelSelector.addKeyListener(ij);
-      channelSelector.addAdjustmentListener(this);
+      cScroll = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, c + 1);
+      add(cScroll);
+      if (ij != null) cScroll.addKeyListener(ij);
+      cScroll.addAdjustmentListener(this);
       // prevents scroll bar from blinking on Windows
-      channelSelector.setFocusable(false);
-      channelSelector.setUnitIncrement(1);
-      channelSelector.setBlockIncrement(1);
+      cScroll.setFocusable(false);
+      cScroll.setUnitIncrement(1);
+      cScroll.setBlockIncrement(1);
     }
     if (hasZ) {
-      sliceSelector = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, z + 1);
-      add(sliceSelector);
-      if (ij != null) sliceSelector.addKeyListener(ij);
-      sliceSelector.addAdjustmentListener(this);
-      sliceSelector.setFocusable(false);
+      zScroll = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, z + 1);
+      add(zScroll);
+      if (ij != null) zScroll.addKeyListener(ij);
+      zScroll.addAdjustmentListener(this);
+      zScroll.setFocusable(false);
       int blockIncrement = Math.max(z / 10, 1);
-      sliceSelector.setUnitIncrement(1);
-      sliceSelector.setBlockIncrement(blockIncrement);
+      zScroll.setUnitIncrement(1);
+      zScroll.setBlockIncrement(blockIncrement);
     }
     if (hasT) {
-      frameSelector = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, t + 1);
-      add(frameSelector);
-      if (ij != null) frameSelector.addKeyListener(ij);
-      frameSelector.addAdjustmentListener(this);
-      frameSelector.setFocusable(false);
+      tScroll = new Scrollbar(Scrollbar.HORIZONTAL, 1, 1, 1, t + 1);
+      add(tScroll);
+      if (ij != null) tScroll.addKeyListener(ij);
+      tScroll.addAdjustmentListener(this);
+      tScroll.setFocusable(false);
       int blockIncrement = Math.max(t / 10, 1);
-      frameSelector.setUnitIncrement(1);
-      frameSelector.setBlockIncrement(blockIncrement);
+      tScroll.setUnitIncrement(1);
+      tScroll.setBlockIncrement(blockIncrement);
     }
 
     Label zLabel = new Label("Z-depth");
@@ -207,14 +211,14 @@ public class DataBrowser extends StackWindow {
       cLabels[i].setEnabled(hasC);
     }
 
-    final Scrollbar zSlider = hasZ ? sliceSelector : makeDummySlider();
-    final Scrollbar tSlider = hasT ? frameSelector : makeDummySlider();
+    final Scrollbar zSlider = hasZ ? zScroll : makeDummySlider();
+    final Scrollbar tSlider = hasT ? tScroll : makeDummySlider();
 
     cSliders = new Scrollbar[channels.length];
     Panel[] cPanels = new Panel[channels.length];
     for (int i=0; i<channels.length; i++) {
       if (channels.length == 1) {
-        cSliders[i] = hasC ? channelSelector : makeDummySlider();
+        cSliders[i] = hasC ? cScroll : makeDummySlider();
       }
       else if (cLengths[i] == 1) {
         cSliders[i] = makeDummySlider();
@@ -339,7 +343,8 @@ public class DataBrowser extends StackWindow {
               if (t > sizeT) t = 1;
               setPosition(c, z, t);
               imp.setPosition(c, z, t);
-              updateSlice();
+              syncSliders();
+//              updateSlice();
               int fps = ((Number) fpsSpin.getValue()).intValue();
               ms = 1000 / fps;
             }
@@ -353,7 +358,7 @@ public class DataBrowser extends StackWindow {
     }
   }
 
-  // -- DataBrowser API methods --
+  // -- DataBrowser methods --
 
   /**
    * Sets XML block associated with this window. This information will be
@@ -405,63 +410,53 @@ public class DataBrowser extends StackWindow {
     metaWindow.setVisible(true);
   }
 
-  // -- Window API methods --
-
-  public void dispose() {
-    super.dispose();
-  }
+  // -- Window methods --
 
   /** Overridden pack method to allow us to delay initial window sizing. */
+  @Override
   public void pack() {
     if (allowShow) super.pack();
   }
 
-  // -- Component API methods --
+  // -- Component methods --
 
   /** Overridden show method to allow us to delay initial window display. */
+  @Override
   public void setVisible(boolean b) {
     if (allowShow) super.setVisible(b);
   }
 
-  // -- ActionListener API methods --
+  // -- ActionListener methods --
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == animate) {
-      toggleAnimation();
-    }
-    else if (src == options) {
-      showOptionsWindow();
-    }
-    else if (src == metadata) {
-      showMetadataWindow();
-    }
+    if (src == animate) toggleAnimation();
+    else if (src == options) showOptionsWindow();
+    else if (src == metadata) showMetadataWindow();
     // NB: Do not eat superclass events. Om nom nom nom. :-)
     else super.actionPerformed(e);
   }
 
-  // -- AdjustmentListener API methods --
+  // -- AdjustmentListener methods --
 
+  @Override
   public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
-    Object src = e.getSource();
-    for (int i=0; i<cSliders.length; i++) {
-      if (src == cSliders[i]) {
-        cIndex[i] = cSliders[i].getValue() - 1;
-        int channel = FormatTools.positionToRaster(cLengths, cIndex) + 1;
-        if (channelSelector != null) {
-          channelSelector.setValue(channel);
-          super.adjustmentValueChanged(new AdjustmentEvent(channelSelector,
-            AdjustmentEvent.ADJUSTMENT_VALUE_CHANGED, AdjustmentEvent.TRACK,
-            channel));
-          updateSlice();
-        }
-        return;
-      }
-    }
     super.adjustmentValueChanged(e);
-    updateSlice();
+    syncPlane();
+  }
+  
+  // -- MouseWheelListener methods --
+   
+  public void mouseWheelMoved(MouseWheelEvent event) {
+    super.mouseWheelMoved(event);
+    syncSliders();
   }
 
+  /*
+  // -- Runnable methods --
+
+  @Override
   public void run() {
     while (!done) {
       synchronized (this) {
@@ -477,15 +472,44 @@ public class DataBrowser extends StackWindow {
       }
     }
   }
+  */
 
   // -- Helper methods --
 
+  /*
   private void updateSlice() {
-    int[] dims =
-      new int[] {imp.getNChannels(), imp.getNSlices(), imp.getNFrames()};
-    int[] pos =
-      new int[] {imp.getChannel() - 1, imp.getSlice() - 1, imp.getFrame() - 1};
+    int sizeZ = imp.getNSlices();
+    int sizeC = imp.getNChannels();
+    int sizeT = imp.getNFrames();
+    int[] dims = new int[] {sizeZ, sizeC, sizeT};
+    int z = imp.getSlice() - 1;
+    int c = imp.getChannel() - 1;
+    int t = imp.getFrame() - 1;
+    int[] pos = new int[] {z, c, t};
     slice = FormatTools.positionToRaster(dims, pos) + 1;
+  }
+  */
+  
+  /** Updates the ImagePlus's displayed plane to match the slider values. */
+  private void syncPlane() {
+    for (int i=0; i<cSliders.length; i++) {
+      cIndex[i] = cSliders[i].getValue() - 1;
+    }
+    int c = FormatTools.positionToRaster(cLengths, cIndex) + 1;
+    int z = zScroll == null ? 1 : zScroll.getValue();
+    int t = tScroll == null ? 1 : tScroll.getValue();
+    setPosition(c, z, t);
+//    updateSlice();
+  }
+
+  /** Updates the slider values to match the ImagePlus's displayed plane. */
+  private void syncSliders() {
+    cIndex = FormatTools.rasterToPosition(cLengths, imp.getChannel() - 1);
+    for (int i=0; i<cSliders.length; i++) {
+      cSliders[i].setValue(cIndex[i] + 1);
+    }
+    if (zScroll != null) zScroll.setValue(imp.getSlice());
+    if (tScroll != null) tScroll.setValue(imp.getFrame());
   }
 
   protected static Scrollbar makeDummySlider() {
