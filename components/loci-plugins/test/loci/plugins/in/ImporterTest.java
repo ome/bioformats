@@ -5,14 +5,18 @@
 package loci.plugins.in;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -31,12 +35,13 @@ import org.junit.Test;
 //      memoryRecord failure needs BF code fix?
 //      mergeOptions BF api for finishing merge tests
 //      custom color BF api for doing that test
+//      coboCropAutoscale() - autoscale of a cropped image returning min of whole image
 //  - flesh out existing tests
 //      write tests for the color options : 4 cases - some mention was made that indexcolor is an issue in testing
 //        merge - basic test in place but not passing. need to flesh out mergeOptions when BF code in place.
 //        rgb colorize - need to do actual tests. see BF gui to get idea of how it works
 //        custom colorize - waiting for creation of API for setting r,g,b info
-//        autoscale - code written but failing
+//        autoscale - working
 //      open individual files: try to come up with a way to test without a disk file as source
 //      swapped dims test needs to test cases other than from default swapping Z & T
 //      output stack order - testing of iIndex?
@@ -144,18 +149,23 @@ public class ImporterTest {
         " T=" + tIndex(proc));
   }
 
-  private Axis axis(String order, int d)
+  private char axisChar(String order, int d)
   {
     if ((d < 0) || (d > 2))
-      throw new IllegalArgumentException("axis() - index out of bounds [0..2]: "+d);
+      throw new IllegalArgumentException("axisChar() - index out of bounds [0..2]: "+d);
     
-    char dim = order.charAt(2+d);
+    return order.charAt(2+d);
+  }
+  
+  private Axis axis(String order, int d)
+  {
+    char dimChar = axisChar(order,d);
     
-    if (dim == 'Z') return Axis.Z;
-    if (dim == 'C') return Axis.C;
-    if (dim == 'T') return Axis.T;
+    if (dimChar == 'Z') return Axis.Z;
+    if (dimChar == 'C') return Axis.C;
+    if (dimChar == 'T') return Axis.T;
 
-    throw new IllegalArgumentException("axis() - invalid image order specified: "+order);
+    throw new IllegalArgumentException("axis() - unknown dimension specified: ("+dimChar+")");
   }
 
   private int value(Axis axis, int z, int c, int t)
@@ -183,15 +193,6 @@ public class ImporterTest {
     for (int i = from; i <= to; i += by)
         count++;
     return count;
-    
-    /* calc'ed version : less clear
-    int spread = to - from + 1;
-    
-    if (spread % by == 0)
-      return (spread / by);
-    else
-      return (spread / by) + 1;
-    */
   }
   
   // note : for now assumes default ZCT ordering
@@ -299,7 +300,6 @@ public class ImporterTest {
 
   }
   
-  
   private long minPixelValue(int pixType)
   {
     if (FormatTools.isFloatingPoint(pixType))
@@ -332,6 +332,16 @@ public class ImporterTest {
       return 0;
     */
   }
+
+  private void xyzctTest(ImagePlus imp, int x, int y, int z, int c, int t)
+  {
+    assertNotNull(imp);
+    assertEquals(x,imp.getWidth());
+    assertEquals(y,imp.getHeight());
+    assertEquals(z,getSizeZ(imp));
+    assertEquals(c,getEffectiveSizeC(imp));
+    assertEquals(t,getSizeT(imp));
+  }
   
   // ****** helper tests ****************************************************************************************
   
@@ -353,18 +363,8 @@ public class ImporterTest {
     assertNotNull(imps);
     assertEquals(1,imps.length);
     ImagePlus imp = imps[0];
-    assertNotNull(imp);
-    assertEquals(x,imp.getWidth());
-    assertEquals(y,imp.getHeight());
-    /*
-    assertEquals(z,ip.getNSlices());    // tricky - these last 3 getters have side effects that change their output.
-    assertEquals(c,ip.getNChannels());
-    assertEquals(t,ip.getNFrames());
-    */
-    //if (z != getSizeZ(ip)) { new ij.ImageJ(); ip.show(); }//TEMP
-    assertEquals(z,getSizeZ(imp));
-    assertEquals(t,getSizeT(imp));
-    assertEquals(c,getEffectiveSizeC(imp));
+    
+    xyzctTest(imp,x,y,z,c,t);
   }
   
   private void outputStackOrderTest(int pixType, String order, int x, int y, int z, int c, int t)
@@ -390,6 +390,8 @@ public class ImporterTest {
     
     ImagePlus imp = imps[0];
     
+    xyzctTest(imp,x,y,z,c,t);
+
     ImageStack st = imp.getStack();
     int numSlices = st.getSize();
 
@@ -413,14 +415,6 @@ public class ImporterTest {
           assertEquals(x,proc.getWidth());
           assertEquals(y,proc.getHeight());
           assertEquals(0,sIndex(proc));
-          //TODO - test iIndex too? : assertEquals(count,somethingOrOther(iIndex(proc)));
-          //System.out.println("iIndex " + iIndex(proc) + " calc " +
-              // pre loop reorder ((maxJ*maxI*k) + (maxI*j) + i)
-              //((maxJ*maxK*i) + (maxK*j) + k)
-              //((value(middle,maxI,maxJ,maxK)*value(fastest,maxI,maxJ,maxK)*i) + (value(fastest,maxI,maxJ,maxK)*j) + (k))
-              //((value(middle,maxK,maxJ,maxI)*value(fastest,maxK,maxJ,maxI)*i) + (value(fastest,maxK,maxJ,maxI)*j) + (k))
-              //);
-          //System.out.println("maxI "+maxI+" maxJ "+maxJ+" maxK "+maxK+" number "+count+" (i"+i+" "+j+"j "+k+"k) = "+iIndex(proc));
           assertEquals(i,index(slowest,proc));
           assertEquals(j,index(middle,proc));
           assertEquals(k,index(fastest,proc));
@@ -431,7 +425,7 @@ public class ImporterTest {
   private void datasetSwapDimsTest(int pixType, int x, int y, int z, int t)
   {
     int c = 3; String origOrder = "XYZCT", swappedOrder = "XYTCZ";
-    String path = constructFakeFilename(origOrder, pixType, x, y, z, c, t, -1);
+    String path = constructFakeFilename("swapDims", pixType, x, y, z, c, t, -1);
     ImagePlus[] imps = null;
     try {
       ImporterOptions options = new ImporterOptions();
@@ -451,14 +445,12 @@ public class ImporterTest {
     assertEquals(1,imps.length);
 
     ImagePlus imp = imps[0];
+    
+    xyzctTest(imp,x,y,t,c,z); // Z<->T swapped
+
     ImageStack st = imp.getStack();
     int numSlices = st.getSize();
     assertEquals(z*c*t,numSlices);
-
-    int actualZ = getSizeZ(imp);
-    int actualT = getSizeT(imp);
-    assertEquals(z,actualT); // Z<->T swapped
-    assertEquals(t,actualZ); // Z<->T swapped
 
     // make sure the dimensions were swapped correctly
     int p = 1;
@@ -496,8 +488,7 @@ public class ImporterTest {
     // test results
     
     assertEquals(1,imps.length);
-    assertEquals(x,imps[0].getWidth());
-    assertEquals(y,imps[0].getHeight());
+    xyzctTest(imps[0],x,y,z,c,t);
     assertEquals(z*c*t, imps[0].getStack().getSize());
     
     // try it when true
@@ -596,12 +587,10 @@ public class ImporterTest {
     }
     
     assertEquals(1,imps.length);
+    
     imp = imps[0];
-    assertEquals(sizeX,imp.getWidth());
-    assertEquals(sizeY,imp.getHeight());
-    assertEquals(sizeZ,getSizeZ(imp));
-    assertEquals(sizeC,getEffectiveSizeC(imp));
-    assertEquals(sizeT,getSizeT(imp));
+
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
 
     ImageStack st = imp.getStack();
     int numSlices = st.getSize();
@@ -610,7 +599,7 @@ public class ImporterTest {
     
     if (wantAutoscale)
     {
-      expectedMax = Math.max( minPixelValue(pixType)+sizeX-1, sizeZ*sizeC*sizeT - 1 );
+      expectedMax = Math.max( minPixelValue(pixType)+sizeX-1, sizeZ*sizeC*sizeT - 1 );  // series size always 1 so ignore
       expectedMin = minPixelValue(pixType);
     }
     else // not autoscaling - get min/max of pixel type
@@ -619,13 +608,9 @@ public class ImporterTest {
       expectedMin = 0;
     }
 
-    // TODO : verify each slice? or just imp.getDisplayRangeMax/Min()?
-    
     for (int i = 0; i < numSlices; i++)
     {
       ImageProcessor proc = st.getProcessor(i+1);
-      //if ((int)expectedMax != (int)proc.getMax())
-      //  System.out.println(FormatTools.getPixelTypeString(pixType) + " failed for proc #"+i+" exp "+expectedMax+" act "+(int)proc.getMax());
       assertEquals(expectedMax,proc.getMax(),0.1);
       assertEquals(expectedMin,proc.getMin(),0.1);
     }
@@ -633,21 +618,18 @@ public class ImporterTest {
   
   // note - this test needs to rely on crop() to get predictable nonzero minimums
   
-  private void cropAndAutoscaleTest(int pixType)
+  private void cropAndAutoscaleTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries,
+      int originCropX, int originCropY, int sizeCrop)
   {
-    //TODO - this code set aside until crop/minMax stuff changed in BF. May be in a partially correct state
-    
-    //TODO: test more stringently final int sizeZ = 5, sizeC = 3, sizeT = 7, sizeX = 123, sizeY = 74;
-    final int sizeZ = 1, sizeC = 1, sizeT = 1, sizeX = 123, sizeY = 74;
-    final int cOriginX = 55, cOriginY = 15, cropSize = 24;
-    final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
+    final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
     
     // needed for this test
-    assertTrue(cOriginX >= 50);
-    assertTrue(cOriginY >= 10); 
-    assertTrue(cOriginX + cropSize < sizeX);
-    assertTrue(cOriginY + cropSize < sizeY);
-    assertTrue(cOriginX + cropSize < 255);
+    assertTrue(originCropX >= 50);
+    assertTrue(originCropY >= 10); 
+    assertTrue(sizeCrop > 0);
+    assertTrue(originCropX + sizeCrop < sizeX);
+    assertTrue(originCropY + sizeCrop < sizeY);
+    assertTrue(originCropX + sizeCrop < 255);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -656,7 +638,7 @@ public class ImporterTest {
       ImporterOptions options = new ImporterOptions();
       options.setAutoscale(true);
       options.setCrop(true);
-      options.setCropRegion(0,new Region(cOriginX,cOriginY,cropSize,cropSize));
+      options.setCropRegion(0,new Region(originCropX,originCropY,sizeCrop,sizeCrop));
       options.setId(path);
       imps = BF.openImagePlus(options);
     }
@@ -669,20 +651,14 @@ public class ImporterTest {
     
     assertEquals(1,imps.length);
     imp = imps[0];
-    assertEquals(cropSize,imp.getWidth());
-    assertEquals(cropSize,imp.getHeight());
-    assertEquals(sizeZ,getSizeZ(imp));
-    assertEquals(sizeC,getEffectiveSizeC(imp));
-    assertEquals(sizeT,getSizeT(imp));
+    xyzctTest(imps[0],sizeCrop,sizeCrop,sizeZ,sizeC,sizeT);
 
     ImageStack st = imp.getStack();
     int numSlices = st.getSize();
 
-    long expectedMax = cOriginX+cropSize-1;
-    long expectedMin = cOriginX;
+    long expectedMax = originCropX+sizeCrop-1;
+    long expectedMin = originCropX;
 
-    // TODO : verify each slice? or just imp.getDisplayRangeMax/Min()?
-    
     for (int i = 0; i < numSlices; i++)
     {
       ImageProcessor proc = st.getProcessor(i+1);
@@ -693,9 +669,9 @@ public class ImporterTest {
   
   private void memoryVirtualStackTest(boolean desireVirtual)
   {
-      int x = 604, y = 531;
+      int x = 604, y = 531, z = 7, c = 1, t = 1;
       
-      String path = constructFakeFilename("vstack", FormatTools.UINT16, x, y, 7, 1, 1, -1);
+      String path = constructFakeFilename("vstack", FormatTools.UINT16, x, y, z, c, t, -1);
       
       // open stack
       ImagePlus[] imps = null;
@@ -717,16 +693,15 @@ public class ImporterTest {
       assertEquals(1,imps.length);
       ImagePlus imp = imps[0];
       assertNotNull(imp);
-      assertEquals(x,imp.getWidth());
-      assertEquals(y,imp.getHeight());
+      xyzctTest(imp,x,y,z,c,t);
   
       assertEquals(desireVirtual,imp.getStack().isVirtual());
   }
 
   private void memoryRecordModificationsTest(boolean wantToRemember)
   {
-    int x = 444, y = 387;
-    String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, 7, 1, 1, -1);
+    int x = 444, y = 387, z = 7, c = 1, t = 1;
+    String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, z, c, t, -1);
     ImagePlus[] imps = null;
     ImagePlus imp = null;
     
@@ -752,8 +727,7 @@ public class ImporterTest {
     assertEquals(1,imps.length);
     imp = imps[0];
     assertNotNull(imp);
-    assertEquals(x,imp.getWidth());
-    assertEquals(y,imp.getHeight());
+    xyzctTest(imp,x,y,z,c,t);
 
     // change data in slice 1, swap to slice 2, swap back, see whether data reverts
 
@@ -834,9 +808,7 @@ public class ImporterTest {
     assertNotNull(imps);
     assertEquals(1,imps.length);
     ImagePlus imp = imps[0];
-    assertNotNull(imp);
-    assertEquals(x,imp.getWidth());
-    assertEquals(y,imp.getHeight());
+    xyzctTest(imp,x,y,numInSeries(zFrom,zTo,zBy),numInSeries(cFrom,cTo,cBy),numInSeries(tFrom,tTo,tBy));
     ImageStack st = imp.getStack();
 
     // should be in correct order
@@ -866,9 +838,7 @@ public class ImporterTest {
     // test results
     assertNotNull(imps);
     assertEquals(1,imps.length);
-    assertNotNull(imps[0]);
-    assertEquals(cx,imps[0].getWidth());  // here is where we make sure we get back a cropped image
-    assertEquals(cy,imps[0].getHeight());
+    xyzctTest(imps[0],cx,cy,1,1,1);
   }
   
 
@@ -1000,6 +970,198 @@ public class ImporterTest {
     datasetConcatenateTest(FormatTools.UINT8, "XYZCT", 82, 47, 4, 5, 2, 9);
   }
 
+  @Test
+  public void testColorDefault()
+  {
+    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    
+    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_DEFAULT);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    assertEquals(1,imps.length);
+    
+    imp = imps[0];
+
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertFalse(imp.isComposite());
+    
+    fail("unfinished");
+  }
+  
+  @Test
+  public void testColorComposite()
+  {
+    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    
+    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    assertEquals(1,imps.length);
+    
+    imp = imps[0];
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertTrue(imp.isComposite());
+    
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+    fail("unfinished");
+  }
+  
+  @Test
+  public void testColorColorized()
+  {
+    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    
+    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_COLORIZED);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    assertEquals(1,imps.length);
+    
+    imp = imps[0];
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertTrue(imp.isComposite());
+    
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+    fail("unfinished");
+  }
+  
+  @Test
+  public void testColorGrayscale()
+  {
+    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    
+    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_GRAYSCALE);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    assertEquals(1,imps.length);
+    
+    imp = imps[0];
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertTrue(imp.isComposite());
+    
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+    fail("unfinished");
+  }
+  
+  @Test
+  public void testColorCustom()
+  {
+    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    
+    String path = constructFakeFilename("colorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries);
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_CUSTOM);
+      int series = 0; int channel = 0;
+      options.setCustomColor(series, channel, Color.BLUE);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    assertEquals(1,imps.length);
+    
+    imp = imps[0];
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertTrue(imp.isComposite());
+    
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+    assertArrayEquals(new int[]{0,0,0,0}, ci.getPixel(55,22));
+    fail("unfinished");
+  }
+  
   /*
   @Test
   public void testColorMerge()
@@ -1268,43 +1430,6 @@ public class ImporterTest {
     z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
     memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
-    /* TODO - enable when step by 0 code fixed and remove extra tests above and below
-    // uber combo test
-    z = 6; c = 5; t = 4;
-    for (int zStart = -1; zStart < z+2; zStart++)
-      for (int zEnd = -1; zEnd < z+2; zEnd++)
-        for (int zInc = -1; zInc < z+2; zInc++)
-          for (int cStart = -1; cStart < c+2; cStart++)
-            for (int cEnd = -1; cEnd < c+2; cEnd++)
-              for (int cInc = -1; cInc < c+2; cInc++)
-                for (int tStart = -1; tStart < t+2; tStart++)
-                  for (int tEnd = -1; tEnd < t+2; tEnd++)
-                    for (int tInc = -1; tInc < t+2; tInc++)
-                      if ((zStart < 0) || (zStart >= z) ||
-                          (zEnd < 0) || (zEnd >= z) || (zEnd < zStart) ||
-                          (zInc < 1) ||
-                          (cStart < 0) || (cStart >= c) ||
-                          (cEnd < 0) || (cEnd >= c) || (cEnd < cStart) ||
-                          (cInc < 1) ||
-                          (tStart < 0) || (tStart >= t) ||
-                          (tEnd < 0) || (tEnd >= z) || (tEnd < tStart) ||
-                          (tInc < 1))
-                      {
-                        try {
-                          memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-                          System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
-                            " z vals "+zFrom+" "+zTo+" "+zBy+
-                            " c vals "+cFrom+" "+cTo+" "+cBy+
-                            " t vals "+tFrom+" "+tTo+" "+tBy);
-                          fail("BF did not catch bad indexing code");
-                        } catch (IllegalArgumentException e) {
-                          assertTrue(true);
-                        }
-                      }
-                      else
-                        memorySpecifyRangeTest(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
-    */
-    
     // test bad combination of zct's - choosing beyond ends of ranges
     
     // z index before 0 begin
@@ -1390,6 +1515,44 @@ public class ImporterTest {
     } catch (IllegalArgumentException e) {
       assertTrue(true);
     }
+    
+    /* TODO - enable when step by 0 code fixed and remove extra tests above
+    // uber combo test
+    z = 6; c = 5; t = 4;
+    for (int zStart = -1; zStart < z+2; zStart++)
+      for (int zEnd = -1; zEnd < z+2; zEnd++)
+        for (int zInc = -1; zInc < z+2; zInc++)
+          for (int cStart = -1; cStart < c+2; cStart++)
+            for (int cEnd = -1; cEnd < c+2; cEnd++)
+              for (int cInc = -1; cInc < c+2; cInc++)
+                for (int tStart = -1; tStart < t+2; tStart++)
+                  for (int tEnd = -1; tEnd < t+2; tEnd++)
+                    for (int tInc = -1; tInc < t+2; tInc++)
+                      if ((zStart < 0) || (zStart >= z) ||
+                          (zEnd < 0) || (zEnd >= z) || (zEnd < zStart) ||
+                          (zInc < 1) ||
+                          (cStart < 0) || (cStart >= c) ||
+                          (cEnd < 0) || (cEnd >= c) || (cEnd < cStart) ||
+                          (cInc < 1) ||
+                          (tStart < 0) || (tStart >= t) ||
+                          (tEnd < 0) || (tEnd >= z) || (tEnd < tStart) ||
+                          (tInc < 1))
+                      {
+                        try {
+                          memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+                          System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
+                            " z vals "+zFrom+" "+zTo+" "+zBy+
+                            " c vals "+cFrom+" "+cTo+" "+cBy+
+                            " t vals "+tFrom+" "+tTo+" "+tBy);
+                          fail("BF did not catch bad indexing code");
+                        } catch (IllegalArgumentException e) {
+                          assertTrue(true);
+                        }
+                      }
+                      else
+                        memorySpecifyRangeTest(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
+    */
+    
   }
   
   @Test
@@ -1404,9 +1567,9 @@ public class ImporterTest {
   @Test
   public void testSplitChannels()
   {
-    final int sizeZ = 5, sizeC = 3, sizeT = 7;
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
     final String path = constructFakeFilename("splitC",
-      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
 
     // open image
     ImagePlus[] imps = null;
@@ -1426,9 +1589,11 @@ public class ImporterTest {
     // one channel per image
     assertEquals(sizeC,imps.length);
     
-    // unwind ZCT loop : C pulled to front, ZT in order
+    // unwind ZCT loop : C pulled outside, ZT in order
     for (int c = 0; c < sizeC; c++) {
-      ImageStack st = imps[c].getStack();
+      ImagePlus imp = imps[c];
+      xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
+      ImageStack st = imp.getStack();
       assertEquals(sizeZ * sizeT,st.getSize());
       int index = 0;
       for (int t = 0; t < sizeT; t++) {
@@ -1446,9 +1611,9 @@ public class ImporterTest {
   @Test
   public void testSplitFocalPlanes()
   {
-    final int sizeZ = 5, sizeC = 3, sizeT = 7;
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
     final String path = constructFakeFilename("splitZ",
-      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1);
 
     // open image
     ImagePlus[] imps = null;
@@ -1468,9 +1633,11 @@ public class ImporterTest {
     // one focal plane per image
     assertEquals(sizeZ,imps.length);
 
-    // unwind ZCT loop : Z pulled to front, CT in order
+    // unwind ZCT loop : Z pulled outside, CT in order
     for (int z = 0; z < sizeZ; z++) {
-      ImageStack st = imps[z].getStack();
+      ImagePlus imp = imps[z];
+      xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
+      ImageStack st = imp.getStack();
       assertEquals(sizeC * sizeT,st.getSize());
       int index = 0;
       for (int t = 0; t < sizeT; t++) {
@@ -1488,7 +1655,7 @@ public class ImporterTest {
   @Test
   public void testSplitTimepoints()
   {
-    final int sizeZ = 5, sizeC = 3, sizeT = 7;
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
     final String path = constructFakeFilename("splitT",
       FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1);
 
@@ -1510,9 +1677,11 @@ public class ImporterTest {
     // one time point per image
     assertEquals(sizeT,imps.length);
     
-    // unwind ZTC loop : T pulled to front, ZC in order
+    // unwind ZTC loop : T pulled outside, ZC in order
     for (int t = 0; t < sizeT; t++) {
-      ImageStack st = imps[t].getStack();
+      ImagePlus imp = imps[t];
+      xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
+      ImageStack st = imp.getStack();
       assertEquals(sizeZ * sizeC,st.getSize());
       int index = 0;
       for (int c = 0; c < sizeC; c++) {
@@ -1530,25 +1699,15 @@ public class ImporterTest {
   @Test
   public void testComboCropAutoscale()
   {
-    cropAndAutoscaleTest(FormatTools.UINT8);
+    // try a simple test: single small byte type image 
+    cropAndAutoscaleTest(FormatTools.UINT8,100,80,1,1,1,1,70,40,25);
     
-    cropAndAutoscaleTest(FormatTools.UINT8);
-    cropAndAutoscaleTest(FormatTools.UINT16);
-    //TODO: UINT32 failing - bug in BF?
-    cropAndAutoscaleTest(FormatTools.UINT32);
-    //TODO: exp 127 act 255 
-    cropAndAutoscaleTest(FormatTools.INT8);
-    //TODO: exp 32767 act 65535
-    cropAndAutoscaleTest(FormatTools.INT16);
-    //TODO: signed max broken here too
-    cropAndAutoscaleTest(FormatTools.INT32);
- 
-    cropAndAutoscaleTest(FormatTools.UINT8);
-    cropAndAutoscaleTest(FormatTools.UINT16);
-    cropAndAutoscaleTest(FormatTools.UINT32);
-    cropAndAutoscaleTest(FormatTools.INT8);
-    cropAndAutoscaleTest(FormatTools.INT16);
-    cropAndAutoscaleTest(FormatTools.INT32);
+    // try multiple dimensions
+    cropAndAutoscaleTest(FormatTools.UINT8,84,63,4,3,2,5,51,8,13);
+    
+    // try various pixTypes
+    for (int pixType : PixelTypes)
+      cropAndAutoscaleTest(pixType,96,96,2,2,2,2,70,60,10);
   }
   
 }
