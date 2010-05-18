@@ -285,8 +285,10 @@ public class PictReader extends FormatReader {
       int pixelsPerInchX = in.readInt();
       int pixelsPerInchY = in.readInt();
       in.skipBytes(4);
-      core[0].sizeY = in.readShort();
-      core[0].sizeX = in.readShort();
+      int y = in.readShort();
+      int x = in.readShort();
+      if (y > 0) core[0].sizeY = y;
+      if (x > 0) core[0].sizeX = x;
       in.skipBytes(4);
     }
     else throw new FormatException("Invalid PICT file");
@@ -385,8 +387,8 @@ public class PictReader extends FormatReader {
     int brY = in.readShort();
     int brX = in.readShort();
 
-    core[0].sizeX = brX - tlX;
-    core[0].sizeY = brY - tlY;
+    if (brX - tlX > 0) core[0].sizeX = brX - tlX;
+    if (brY - tlY > 0) core[0].sizeY = brY - tlY;
 
     in.skipBytes(18);
   }
