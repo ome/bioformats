@@ -23,15 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.ClassList;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -159,7 +159,10 @@ public class NRRDReader extends FormatReader {
     }
 
     in = new RandomAccessInputStream(id);
-    helper = new ImageReader();
+
+    ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+    classes.removeClass(getClass());
+    helper = new ImageReader(classes);
 
     String key, v;
 
@@ -202,10 +205,9 @@ public class NRRDReader extends FormatReader {
           numDimensions = Integer.parseInt(v);
         }
         else if (key.equals("sizes")) {
-          StringTokenizer tokens = new StringTokenizer(v, " ");
+          String[] tokens = v.split(" ");
           for (int i=0; i<numDimensions; i++) {
-            String t = tokens.nextToken();
-            int size = Integer.parseInt(t);
+            int size = Integer.parseInt(tokens[i]);
 
             if (numDimensions >= 3 && i == 0 && size > 1 && size <= 4) {
               core[0].sizeC = size;
@@ -252,11 +254,7 @@ public class NRRDReader extends FormatReader {
       if (f.exists() && parent != null) {
         dataFile = new Location(parent, dataFile).getAbsolutePath();
       }
-      // calling setId on dataFile will cause this reader to pick up
-      // the data file
-      String name = dataFile.substring(dataFile.lastIndexOf(File.separator));
-      Location.mapId(name, dataFile);
-      helper.setId(name);
+      helper.setId(dataFile);
     }
 
     core[0].rgb = getSizeC() > 1;
