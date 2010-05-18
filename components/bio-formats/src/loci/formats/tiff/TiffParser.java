@@ -235,7 +235,7 @@ public class TiffParser {
     while (offset > 0 && offset < in.length()) {
       in.seek(offset);
       offsets.add(offset);
-      int nEntries = in.readShort();
+      int nEntries = bigTiff ? (int) in.readLong() : in.readUnsignedShort();
       in.skipBytes(nEntries * bytesPerEntry);
       offset = getNextOffset(offset);
     }
