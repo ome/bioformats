@@ -120,7 +120,15 @@
 			</xsd:sequence>
 		</xsd:sequence>
 		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
-		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
+		<xsd:attribute name="Namespace" use="optional" type="xsd:anyURI">
+			<xsd:annotation>
+				<xsd:documentation>
+					We recommend the inclusion of a namespace for annotations you 
+					define. If it is absent then we assume the annotation is to 
+					use our (OME's) default interpretation for this type.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:simpleType name="AnnotationID">
 		<xsd:restriction base="OME:LSID">
