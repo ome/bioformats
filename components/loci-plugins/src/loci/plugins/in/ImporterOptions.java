@@ -108,6 +108,17 @@ public class ImporterOptions extends OptionsList {
   public static final String ORDER_XYCTZ   = "XYCTZ";
   public static final String ORDER_XYTZC   = "XYTZC";
 
+  /** Default custom colors for each channel. */
+  private static final Color[] DEFAULT_COLORS = {
+    Color.red,
+    Color.green,
+    Color.blue,
+    Color.white,
+    Color.cyan,
+    Color.magenta,
+    Color.yellow
+  };
+
   // -- Fields -- secondary values --
 
   // series options
@@ -406,6 +417,9 @@ public class ImporterOptions extends OptionsList {
       set(customColors, s, list, null);
     }
     set(list, c, color, null);
+  }
+  public Color getDefaultCustomColor(int c) {
+    return DEFAULT_COLORS[c % DEFAULT_COLORS.length];
   }
 
   // -- Helper methods - miscellaneous --
