@@ -187,6 +187,7 @@ public class ImagePlusReader implements StatusReporter {
     Region region = process.getCropRegion(s);
 
     if (options.isVirtual()) {
+      // CTR FIXME - clean up this part
       boolean doMerge = false; //options.isMergeChannels();
       boolean doColorize = false; //options.isColorize();
 
@@ -463,46 +464,12 @@ public class ImagePlusReader implements StatusReporter {
     if (options.isAutoscale()) {
       ImagePlusTools.adjustColorRange(imp, process.getMinMaxCalculator());
     }
-    else if (!(imp.getProcessor() instanceof ColorProcessor)) {
+    else if (!(imp.getProcessor() instanceof FloatProcessor)) {
       // ImageJ may autoscale the images anyway, so we need to manually
       // set the display range to the min/max values allowed for
       // this pixel type
       imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
     }
-
-//    IFormatReader r = options.getReader();
-//    boolean windowless = options.isWindowless();
-
-
-    // NB: ImageJ 1.39+ is required for hyperstacks
-
-//      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-//
-//      boolean splitC = options.isSplitChannels();
-//      boolean splitZ = options.isSplitFocalPlanes();
-//      boolean splitT = options.isSplitTimepoints();
-//
-//      boolean customColorize = options.isCustomColorize();
-//      boolean browser = options.isViewBrowser();
-//      boolean virtual = options.isVirtual();
-//
-//      if (options.isColorize() || customColorize) {
-//        byte[][][] lut =
-//          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
-//        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
-//      }
-//      else if (colorModels != null && !browser && !virtual) {
-//        byte[][][] lut = new byte[colorModels.length][][];
-//        for (int channel=0; channel<lut.length; channel++) {
-//          lut[channel] = new byte[3][256];
-//          colorModels[channel].getReds(lut[channel][0]);
-//          colorModels[channel].getGreens(lut[channel][1]);
-//          colorModels[channel].getBlues(lut[channel][2]);
-//        }
-//        imp = Colorizer.colorize(imp, true,
-//          stackOrder, lut, r.getSeries(), null, hyper);
-//      }
-//    }
 
     return imp;
   }
