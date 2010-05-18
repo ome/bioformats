@@ -477,11 +477,11 @@ public class OpenlabReader extends FormatReader {
       tmpOffsets.clear();
       names.clear();
     }
-    setSeries(0);
 
     // populate core metadata
 
     for (int i=0; i<nSeries; i++) {
+      setSeries(i);
       core[i].indexed = false;
       core[i].sizeX = planes[planeOffsets[i][0]].width;
       core[i].sizeY = planes[planeOffsets[i][0]].height;
@@ -539,12 +539,13 @@ public class OpenlabReader extends FormatReader {
       core[i].rgb = getSizeC() > 1;
       core[i].interleaved = isRGB() && version == 5;
       core[i].sizeT = 1;
-      core[i].sizeZ = core[i].imageCount;
+      core[i].sizeZ = getImageCount();
       core[i].dimensionOrder = "XYCZT";
       core[i].littleEndian = false;
       core[i].falseColor = false;
       core[i].metadataComplete = true;
     }
+    setSeries(0);
 
     for (int s=0; s<getSeriesCount(); s++) {
       parseImageNames(s);
