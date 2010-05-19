@@ -35,7 +35,7 @@ import loci.plugins.BF;
 //    waiting on BF implementations for
 //      range step by 0
 //      BF/imageJ returning wrong max num pixels for UINT32 - off by one
-//      memoryRecord failure needs BF code fix?
+//      memoryRecord failure needs BF code fix
 //      mergeOptions BF api for finishing merge tests
 //      custom color BF api for doing that test
 //      coboCropAutoscale() - autoscale of a cropped image returning min of whole image
@@ -707,7 +707,7 @@ public class ImporterTest {
 
   private void memoryRecordModificationsTest(boolean wantToRemember)
   {
-    int x = 50, y = 40, z = 3, c = 1, t = 1;
+    int x = 50, y = 15, z = 3, c = 1, t = 1;
     String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, z, c, t, -1, false, -1, false);
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -738,18 +738,18 @@ public class ImporterTest {
     // change data in slice 1, swap to slice 2, swap back, see whether data reverts
 
     imp.setSlice(1);
-    assertEquals(10,(int)imp.getProcessor().getPixelValue(10,25));
+    assertEquals(1,(int)imp.getProcessor().getPixelValue(1,10));
 
     // run a plugin whose changes are recorded
     WindowManager.setTempCurrentImage(imp);
     IJ.run("Flip Horizontally","slice");
 
-    assertEquals(39,(int)imp.getProcessor().getPixelValue(10,25));
+    assertEquals(48,(int)imp.getProcessor().getPixelValue(1,10));
     imp.setSlice(2);
-    assertEquals(10,(int)imp.getProcessor().getPixelValue(10,25));
+    assertEquals(1,(int)imp.getProcessor().getPixelValue(1,10));
     imp.setSlice(1);
-    int expectedVal = wantToRemember ? 39 : 10;
-    assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(10,25));
+    int expectedVal = wantToRemember ? 48 : 1;
+    assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(1,10));
   }
   
   private void memorySpecifyRangeTest(int z, int c, int t,
