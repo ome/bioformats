@@ -713,6 +713,7 @@ public class ImporterTest {
     ImagePlus imp = null;
     
     assertTrue(y > 10);  // needed for this test
+    assertTrue(z > 1);
     
     // open file
     try {
@@ -743,12 +744,13 @@ public class ImporterTest {
     // run a plugin whose changes are recorded
     WindowManager.setTempCurrentImage(imp);
     IJ.run("Flip Horizontally","slice");
-
-    assertEquals(48,(int)imp.getProcessor().getPixelValue(1,10));
+    assertEquals(x-2,(int)imp.getProcessor().getPixelValue(1,10));
+    
     imp.setSlice(2);
     assertEquals(1,(int)imp.getProcessor().getPixelValue(1,10));
+    
     imp.setSlice(1);
-    int expectedVal = wantToRemember ? 48 : 1;
+    int expectedVal = wantToRemember ? x-2 : 1;
     assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(1,10));
   }
   
