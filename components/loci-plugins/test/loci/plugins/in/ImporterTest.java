@@ -36,19 +36,18 @@ import loci.plugins.BF;
 //      range step by 0
 //      BF/imageJ returning wrong max num pixels for UINT32 - off by one
 //      memoryRecord failure needs BF code fix
-//      mergeOptions BF api for finishing merge tests
-//      custom color BF api for doing that test
-//      coboCropAutoscale() - autoscale of a cropped image returning min of whole image
+//      comboCropAutoscale() - autoscale of a cropped image returning min of whole image
 //  - flesh out existing tests
-//      write tests for the color options : 4 cases - some mention was made that indexcolor is an issue in testing
-//        merge - basic test in place but not passing. need to flesh out mergeOptions when BF code in place.
+//      write tests for the color options : some mention was made that indexcolor is an issue in testing
+//        default
+//        custom
 //        rgb colorize - need to do actual tests. see BF gui to get idea of how it works
 //        custom colorize - waiting for creation of API for setting r,g,b info
 //        autoscale - working
 //      open individual files: try to come up with a way to test without a disk file as source
 //      swapped dims test needs to test cases other than from default swapping Z & T
 //      output stack order - testing of iIndex?
-//      range - more combos of ztc? uncomment the by 0 tests
+//      range - uncomment the by 0 tests when BF fixed
 //  - add some tests for combination of options
 //  - improve, comment, and generalize code for increased coverage
 
@@ -56,7 +55,7 @@ public class ImporterTest {
 
   private enum Axis {Z,C,T};
   
-  private enum ChannelOrder {XYZTC, XYZCT, XYTZC, XYTCZ, XYCTZ, XYCZT};
+  private enum ChannelOrder {XYZTC, XYZCT, XYCZT, XYCTZ, XYTZC, XYTCZ};
   
   private static final boolean[] BooleanStates = new boolean[] {false, true};
   
@@ -340,6 +339,14 @@ public class ImporterTest {
     */
   }
 
+  // ****** helper tests ****************************************************************************************
+  
+  private void impsTest(ImagePlus[] imps, int numExpected)
+  {
+    assertNotNull(imps);
+    assertEquals(numExpected,imps.length);
+  }
+  
   private void xyzctTest(ImagePlus imp, int x, int y, int z, int c, int t)
   {
     assertNotNull(imp);
@@ -350,7 +357,27 @@ public class ImporterTest {
     assertEquals(t,getSizeT(imp));
   }
   
-  // ****** helper tests ****************************************************************************************
+  // channel is 0-based
+  private void lutTest(CompositeImage ci, int channel, int minR, int minG, int minB, int maxR, int maxG, int maxB)
+  {
+    LUT lut = null;
+    
+    byte[] reds = new byte[256];
+    byte[] blues = new byte[256];
+    byte[] greens = new byte[256];
+    
+    lut = ci.getChannelLut(channel+1);  // IJ is 1-based
+    lut.getReds(reds);
+    lut.getGreens(greens);
+    lut.getBlues(blues);
+    
+    assertEquals((byte)minR,reds[0]);
+    assertEquals((byte)maxR,reds[255]);
+    assertEquals((byte)minG,greens[0]);
+    assertEquals((byte)maxG,greens[255]);
+    assertEquals((byte)minB,blues[0]);
+    assertEquals((byte)maxB,blues[255]);
+  }
   
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
   {
@@ -367,8 +394,8 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
+
     ImagePlus imp = imps[0];
     
     xyzctTest(imp,x,y,z,c,t);
@@ -392,8 +419,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     ImagePlus imp = imps[0];
     
@@ -448,8 +474,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
 
     ImagePlus imp = imps[0];
     
@@ -494,7 +519,7 @@ public class ImporterTest {
     
     // test results
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     xyzctTest(imps[0],x,y,z,c,t);
     assertEquals(z*c*t, imps[0].getStack().getSize());
     
@@ -549,8 +574,7 @@ public class ImporterTest {
 
     // test results
     
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     ImageStack st = imps[0].getStack();
 
     // make sure the number of slices in stack is a sum of all series
@@ -593,7 +617,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     imp = imps[0];
 
@@ -615,8 +639,10 @@ public class ImporterTest {
       expectedMin = 0;
     }
 
+    //System.out.println("Checking max/min of each processor");
     for (int i = 0; i < numSlices; i++)
     {
+      //System.out.println("Trying proc #"+i+" of "+numSlices);
       ImageProcessor proc = st.getProcessor(i+1);
       assertEquals(expectedMax,proc.getMax(),0.1);
       assertEquals(expectedMin,proc.getMin(),0.1);
@@ -656,7 +682,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     imp = imps[0];
     xyzctTest(imps[0],sizeCrop,sizeCrop,sizeZ,sizeC,sizeT);
 
@@ -696,10 +722,8 @@ public class ImporterTest {
       }
   
       // test results
-      assertNotNull(imps);
-      assertEquals(1,imps.length);
+      impsTest(imps,1);
       ImagePlus imp = imps[0];
-      assertNotNull(imp);
       xyzctTest(imp,x,y,z,c,t);
   
       assertEquals(desireVirtual,imp.getStack().isVirtual());
@@ -731,8 +755,7 @@ public class ImporterTest {
     }
 
     // basic tests
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     imp = imps[0];
     xyzctTest(imp,x,y,z,c,t);
 
@@ -802,8 +825,7 @@ public class ImporterTest {
     }
     
     // should have the data in one series
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     ImagePlus imp = imps[0];
     xyzctTest(imp,x,y,numInSeries(zFrom,zTo,zBy),numInSeries(cFrom,cTo,cBy),numInSeries(tFrom,tTo,tBy));
     ImageStack st = imp.getStack();
@@ -833,8 +855,7 @@ public class ImporterTest {
     }
 
     // test results
-    assertNotNull(imps);
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     xyzctTest(imps[0],cx,cy,1,1,1);
   }
   
@@ -879,7 +900,7 @@ public class ImporterTest {
       fail(e.getMessage());
       }
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     assertEquals(105,imps[0].getStack().getSize());
   }
 
@@ -911,7 +932,7 @@ public class ImporterTest {
     
     // test results
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     assertEquals(16,imps[0].getStack().getSize());  // one loaded as one set with 16 slices
     
     // try grouped
@@ -931,7 +952,7 @@ public class ImporterTest {
 
     // test results
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     assertEquals(32,imps[0].getStack().getSize());  // both loaded as one set of 32 slices
   }
 
@@ -990,7 +1011,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     imp = imps[0];
 
@@ -1001,28 +1022,6 @@ public class ImporterTest {
     // TODO - not a composite - need to determine what to test
     
     fail("unfinished");
-  }
-  
-  // channel is 0-based
-  private void lutTest(CompositeImage ci, int channel, int minR, int minG, int minB, int maxR, int maxG, int maxB)
-  {
-    LUT lut = null;
-    
-    byte[] reds = new byte[256];
-    byte[] blues = new byte[256];
-    byte[] greens = new byte[256];
-    
-    lut = ci.getChannelLut(channel+1);  // IJ is 1-based
-    lut.getReds(reds);
-    lut.getGreens(greens);
-    lut.getBlues(blues);
-    
-    assertEquals((byte)minR,reds[0]);
-    assertEquals((byte)maxR,reds[255]);
-    assertEquals((byte)minG,greens[0]);
-    assertEquals((byte)maxG,greens[255]);
-    assertEquals((byte)minB,blues[0]);
-    assertEquals((byte)maxB,blues[255]);
   }
   
   @Test
@@ -1049,7 +1048,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     imp = imps[0];
     
@@ -1104,7 +1103,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     imp = imps[0];
     
@@ -1159,7 +1158,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     imp = imps[0];
     
@@ -1230,7 +1229,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     
     imp = imps[0];
     
@@ -1244,19 +1243,19 @@ public class ImporterTest {
 
     assertEquals(CompositeImage.COLOR, ci.getMode());
 
-    lutTest(ci,0,0,0,0,0,0,255);        // blue
+    lutTest(ci,0,0,0,0,0,0,254);        // blue
     if (sizeC >= 2)
-      lutTest(ci,1,0,0,0,255,0,0);      // red
+      lutTest(ci,1,0,0,0,254,0,0);      // red
     if (sizeC >= 3)
-      lutTest(ci,2,0,0,0,0,255,0);      // green
+      lutTest(ci,2,0,0,0,0,254,0);      // green
     if (sizeC >= 4)
-      lutTest(ci,3,0,0,0,255,0,255);    // magenta
+      lutTest(ci,3,0,0,0,254,0,254);    // magenta
     if (sizeC >= 5)
-      lutTest(ci,4,0,0,0,0,255,255);    // cyan
+      lutTest(ci,4,0,0,0,0,254,254);    // cyan
     if (sizeC >= 7)
-      lutTest(ci,5,0,0,0,255,255,0);    // yellow
+      lutTest(ci,5,0,0,0,254,254,0);    // yellow
     if (sizeC >= 7)
-      lutTest(ci,6,0,0,0,255,255,255);  // gray
+      lutTest(ci,6,0,0,0,127,127,127);  // gray
 
     fail("unfinished");
   }
@@ -1288,7 +1287,7 @@ public class ImporterTest {
     }
     
     // test results
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     imp = imps[0];
     assertEquals(3,getEffectiveSizeC(imp));  // unmerged
     assertEquals(7,getSizeZ(imp));
@@ -1311,7 +1310,7 @@ public class ImporterTest {
     }
     
     // test results
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     imp = imps[0];
     assertTrue(imp.getHeight() > 10);  // required for this test to work
     assertEquals(1, getEffectiveSizeC(imp));  // merged
@@ -1387,7 +1386,7 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
-    assertEquals(1,imps.length);
+    impsTest(imps,1);
     imp = imps[0];
     assertEquals(7,getSizeZ(imp));
     assertEquals(1,getEffectiveSizeC(imp));  // TODO : correct?
@@ -1627,16 +1626,18 @@ public class ImporterTest {
                 for (int tStart = -1; tStart < t+2; tStart++)
                   for (int tEnd = -1; tEnd < t+2; tEnd++)
                     for (int tInc = -1; tInc < t+2; tInc++)
+                      // if an invalid index of some kind
                       if ((zStart < 0) || (zStart >= z) ||
-                          (zEnd < 0) || (zEnd >= z) || (zEnd < zStart) ||
+                          (zEnd < 0) || (zEnd >= z) || // ignored by BF (zEnd < zStart) ||
                           (zInc < 1) ||
                           (cStart < 0) || (cStart >= c) ||
-                          (cEnd < 0) || (cEnd >= c) || (cEnd < cStart) ||
+                          (cEnd < 0) || (cEnd >= c) || // ignored by BF (cEnd < cStart) ||
                           (cInc < 1) ||
                           (tStart < 0) || (tStart >= t) ||
-                          (tEnd < 0) || (tEnd >= z) || (tEnd < tStart) ||
+                          (tEnd < 0) || (tEnd >= t) || // ignored by BF (tEnd < tStart) ||
                           (tInc < 1))
                       {
+                        // expect failure
                         try {
                           memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
                           System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
@@ -1649,6 +1650,7 @@ public class ImporterTest {
                         }
                       }
                       else
+                        // expect success
                         memorySpecifyRangeTest(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
     */
     
@@ -1686,7 +1688,7 @@ public class ImporterTest {
     }
 
     // one channel per image
-    assertEquals(sizeC,imps.length);
+    impsTest(imps,sizeC);
     
     // unwind ZCT loop : C pulled outside, ZT in order
     for (int c = 0; c < sizeC; c++) {
@@ -1730,7 +1732,7 @@ public class ImporterTest {
       }
     
     // one focal plane per image
-    assertEquals(sizeZ,imps.length);
+    impsTest(imps,sizeZ);
 
     // unwind ZCT loop : Z pulled outside, CT in order
     for (int z = 0; z < sizeZ; z++) {
@@ -1774,7 +1776,7 @@ public class ImporterTest {
       }
     
     // one time point per image
-    assertEquals(sizeT,imps.length);
+    impsTest(imps,sizeT);
     
     // unwind ZTC loop : T pulled outside, ZC in order
     for (int t = 0; t < sizeT; t++) {
@@ -1809,4 +1811,27 @@ public class ImporterTest {
       cropAndAutoscaleTest(pixType,96,96,2,2,2,2,70,60,10);
   }
   
+  @Test
+  public void testComboConcatColorize()
+  {
+    fail("unimplemented");
+  }
+
+  @Test
+  public void testComboConcatSplit()
+  {
+    fail("unimplemented");
+  }
+
+  @Test
+  public void testComboColorizeSplit()
+  {
+    fail("unimplemented");
+  }
+  
+  @Test
+  public void testComboConcatColorizeSplit()
+  {
+    fail("unimplemented");
+  }
 }
