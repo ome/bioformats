@@ -226,6 +226,11 @@ public class ConfigurationTree {
 
   // - Convenience methods for accessing specific key values -
 
+  public boolean noStitching() {
+    String noStitch = getValue("no_stitch");
+    return noStitch != null && noStitch.equals("true");
+  }
+
   public int getNumSeries() { return toInt(getValue("total_series")); }
 
   public int getX() { return toInt(getSeriesValue("x")); }

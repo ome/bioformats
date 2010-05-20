@@ -545,11 +545,12 @@ public class OpenlabReader extends FormatReader {
       core[i].falseColor = false;
       core[i].metadataComplete = true;
     }
-    setSeries(0);
 
     for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
       parseImageNames(s);
     }
+    setSeries(0);
 
     MetadataStore store = makeFilterMetadata();
 
@@ -703,6 +704,11 @@ public class OpenlabReader extends FormatReader {
           }
         }
       }
+    }
+
+    if (core[s].rgb && uniqueC.size() <= 1) {
+      core[s].dimensionOrder = core[s].dimensionOrder.replaceAll("C", "");
+      core[s].dimensionOrder = "XYC" + core[s].dimensionOrder.substring(2);
     }
 
     for (String axis : axes) {
