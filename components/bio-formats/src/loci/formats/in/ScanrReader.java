@@ -155,6 +155,7 @@ public class ScanrReader extends FormatReader {
       wellRows = wellColumns = 0;
       metadataFiles.clear();
       wellLabels.clear();
+      wellCount = 0;
     }
   }
 
@@ -181,6 +182,10 @@ public class ScanrReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    if (metadataFiles.size() > 0) {
+      // this dataset has already been initialized
+      return;
+    }
 
     // make sure we have the .xml file
     if (!checkSuffix(id, "xml") && isGroupFiles()) {

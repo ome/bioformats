@@ -135,8 +135,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testBufferedImageDimensions() {
-    if (!initFile()) return;
     String testName = "testBufferedImageDimensions";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -191,8 +191,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testByteArrayDimensions() {
-    if (!initFile()) return;
     String testName = "testByteArrayDimensions";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -229,8 +229,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testThumbnailImageDimensions() {
-    if (!initFile()) return;
     String testName = "testThumbnailImageDimensions";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -289,8 +289,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testThumbnailByteArrayDimensions() {
-    if (!initFile()) return;
     String testName = "testThumbnailByteArrayDimensions";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -321,8 +321,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testImageCount() {
-    if (!initFile()) return;
     String testName = "testImageCount";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -348,8 +348,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all xml fast"
    */
   public void testOMEXML() {
-    if (!initFile()) return;
     String testName = "testOMEXML";
+    if (!initFile()) result(testName, false, "initFile");
     String msg = null;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
@@ -412,8 +412,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all xml"
    */
   public void testSaneOMEXML() {
-    if (!initFile()) return;
     String testName = "testSaneOMEXML";
+    if (!initFile()) result(testName, false, "initFile");
     String msg = null;
     try {
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
@@ -471,9 +471,9 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testConsistent() {
-    if (!initFile()) return;
     if (config == null) throw new SkipException("No config tree");
     String testName = "testConsistent";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -597,9 +597,9 @@ public class FormatReaderTest {
    * @testng.test groups = "all"
    */
   public void testPerformance() {
-    if (!initFile()) return;
     if (config == null) throw new SkipException("No config tree");
     String testName = "testPerformance";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -624,6 +624,7 @@ public class FormatReaderTest {
           for (int j=0; j<imageCount; j++) reader.openBytes(j, buf);
         }
         long t2 = System.currentTimeMillis();
+        System.gc();
         long m2 = r.totalMemory() - r.freeMemory();
         double actualTime = (double) (t2 - t1) / totalPlanes;
         int actualMem = (int) ((m2 - m1) >> 20);
@@ -664,7 +665,8 @@ public class FormatReaderTest {
       }
       else {
         Arrays.sort(base);
-        IFormatReader r = new FileStitcher();
+        IFormatReader r =
+          config.noStitching() ? new ImageReader() : new FileStitcher();
         for (int i=0; i<base.length && success; i++) {
           r.setId(base[i]);
           String[] comp = r.getUsedFiles();
@@ -693,8 +695,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all xml fast"
    */
   public void testValidXML() {
-    if (!initFile()) return;
     String testName = "testValidXML";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     try {
       MetadataStore store = reader.getMetadataStore();
@@ -713,9 +715,9 @@ public class FormatReaderTest {
    * @testng.test groups = "all pixels"
    */
   public void testPixelsHashes() {
-    if (!initFile()) return;
     if (config == null) throw new SkipException("No config tree");
     String testName = "testPixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -744,8 +746,8 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testIsThisType() {
-    if (!initFile()) return;
     String testName = "testIsThisType";
+    if (!initFile()) result(testName, false, "initFile");
     boolean success = true;
     String msg = null;
     try {
@@ -816,6 +818,8 @@ public class FormatReaderTest {
    * @testng.test groups = "config"
    */
   public void writeConfigFile() {
+    reader = new BufferedImageReader();
+    setupReader();
     if (!initFile()) return;
     String file = reader.getCurrentFile();
     LOGGER.info("Generating configuration: {}", file);
@@ -848,6 +852,7 @@ public class FormatReaderTest {
         line.append(" md5=" + TestTools.md5(reader.openBytes(0)));
         line.append("]");
       }
+      line.append(" no_stitch=true");
 
       // evaluate performance
       Runtime r = Runtime.getRuntime();
@@ -899,23 +904,26 @@ public class FormatReaderTest {
 
   // -- Helper methods --
 
+  /** Sets up the current IFormatReader. */
+  private void setupReader() {
+    reader.setNormalized(true);
+    reader.setOriginalMetadataPopulated(true);
+    reader.setMetadataFiltered(true);
+    MetadataStore store = null;
+    try {
+      store = omexmlService.createOMEXMLMetadata();
+    }
+    catch (ServiceException e) {
+      LOGGER.warn("Could not parse OME-XML", e);
+    }
+    reader.setMetadataStore(store);
+  }
+
   /** Initializes the reader and configuration tree. */
   private boolean initFile() {
     if (skip) throw new SkipException(SKIP_MESSAGE);
-    if (reader == null) {
-      reader = new BufferedImageReader(new FileStitcher());
-      reader.setNormalized(true);
-      reader.setOriginalMetadataPopulated(true);
-      reader.setMetadataFiltered(true);
-      MetadataStore store = null;
-      try {
-        store = omexmlService.createOMEXMLMetadata();
-      }
-      catch (ServiceException e) {
-        LOGGER.warn("Could not parse OME-XML", e);
-      }
-      reader.setMetadataStore(store);
-    }
+    reader = new BufferedImageReader(new FileStitcher());
+    setupReader();
     if (id.equals(reader.getCurrentFile())) return true; // already initialized
 
     // skip files that were already tested as part of another file's dataset
@@ -929,6 +937,13 @@ public class FormatReaderTest {
 
     LOGGER.info("Initializing {}: ", id);
     try {
+      // initialize configuration tree
+      if (config != null) config.setId(id);
+      if (config != null && config.noStitching()) {
+        reader = new BufferedImageReader();
+        setupReader();
+      }
+
       reader.setId(id);
       // remove used files
       String[] used = reader.getUsedFiles();
@@ -946,9 +961,6 @@ public class FormatReaderTest {
       if (!base) {
         LOGGER.error("Used files list does not include base file");
       }
-
-      // initialize configuration tree
-      if (config != null) config.setId(id);
     }
     catch (Throwable t) {
       LOGGER.error("", t);

@@ -617,8 +617,11 @@ public class NativeQTReader extends FormatReader {
 
   /** Cut off header bytes from a resource fork file. */
   private void stripHeader() throws IOException {
-    in.findString("moov");
-    in.seek(in.getFilePointer() - 4);
+    in.seek(0);
+    while (!in.readString(4).equals("moov")) {
+      in.seek(in.getFilePointer() - 2);
+    }
+    in.seek(in.getFilePointer() - 8);
   }
 
 }

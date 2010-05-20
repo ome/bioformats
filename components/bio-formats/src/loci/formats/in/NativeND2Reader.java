@@ -1088,10 +1088,10 @@ public class NativeND2Reader extends FormatReader {
           points[i] = Double.parseDouble(p[i]);
         }
 
-        store.setRectangleX(points[0], r, 0);
-        store.setRectangleY(points[1], r, 0);
-        store.setRectangleWidth(points[2] - points[0], r, 0);
-        store.setRectangleHeight(points[3] - points[1], r, 0);
+        store.setRectangleX(points[0], r, 1);
+        store.setRectangleY(points[1], r, 1);
+        store.setRectangleWidth(points[2] - points[0], r, 1);
+        store.setRectangleHeight(points[3] - points[1], r, 1);
       }
       else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
         String segments = roi.get("segments");

@@ -104,7 +104,7 @@ public class MJPBCodec extends BaseCodec {
         int sos = in.readInt() + extra;
         int sod = in.readInt() + extra;
 
-        if (quantOffset != 0) {
+        if (quantOffset != 0 && quantOffset + fp < in.length()) {
           in.seek(fp + quantOffset);
           in.skipBytes(3);
           quant = new byte[64];
@@ -119,7 +119,7 @@ public class MJPBCodec extends BaseCodec {
           };
         }
 
-        if (huffmanOffset != 0) {
+        if (huffmanOffset != 0 && huffmanOffset + fp < in.length()) {
           in.seek(fp + huffmanOffset);
           in.skipBytes(3);
           lumDcBits = new byte[16];
