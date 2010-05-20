@@ -398,10 +398,11 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       initMetadata(series);
-      store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
+    MetadataTools.populatePixels(store, this, true);
     for (int series=0; series<ifdsList.size(); series++) {
       store.setImageName(imageNames.get(series), series);
+      store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
     setSeries(0);
   }
@@ -639,8 +640,6 @@ public class ZeissLSMReader extends FormatReader {
       core[series].rgb = false;
       if (splitPlanes) core[series].imageCount *= getSizeC();
     }
-
-    MetadataTools.populatePixels(store, this, true);
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       int spectralScan = ras.readShort();
