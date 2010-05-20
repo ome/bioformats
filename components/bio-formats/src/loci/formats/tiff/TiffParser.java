@@ -544,11 +544,13 @@ public class TiffParser {
     {
       stripByteCounts[tileNumber] *= pixel;
     }
+    int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
+    if (buf == null) buf = new byte[size];
+    if (stripByteCounts[tileNumber] == 0) return buf;
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
-    int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
     options.maxBytes = size;
 
     if (jpegTable != null) {
@@ -560,7 +562,6 @@ public class TiffParser {
     else tile = compression.decompress(tile, options);
 
     TiffCompression.undifference(tile, ifd);
-    if (buf == null) buf = new byte[size];
     unpackBytes(buf, 0, tile, ifd);
 
     return buf;
