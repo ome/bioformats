@@ -508,7 +508,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Timepoint" use="optional" type="xsd:integer">
+			<xsd:attribute name="Timepoint" use="optional" type="xsd:dateTime">
 				<xsd:annotation>
 					<xsd:documentation>
 						The time-point at which the image started to be collected

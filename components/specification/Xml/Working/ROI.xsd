@@ -312,23 +312,37 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
-					</xsd:sequence>
-					<xsd:attribute name="X" use="required" type="xsd:float">
-						<xsd:annotation>
-							<xsd:documentation>
-								The X coordinate of the left side of the image. [units pixels]
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="Y" use="required" type="xsd:float">
-						<xsd:annotation>
-							<xsd:documentation>
-								The Y coordinate of the top side of the image. [units pixels]
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
+			<xsd:sequence>
+				<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="X" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation> 
+						The X coordinate of the left side of the image. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Y" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Y coordinate of the top side of the image. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Width" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The width of the mask. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Height" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation> 
+						The height of the mask. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
