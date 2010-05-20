@@ -830,7 +830,9 @@ public class TiffParser {
               photoInterp != PhotoInterp.RGB_PALETTE))
             {
               value = bb.getBits(bps0) & 0xffff;
-              if (littleEndian) value = DataTools.swap(value) >> (32 - bps0);
+              if (littleEndian && bps0 > 8) {
+                value = DataTools.swap(value) >> (64 - bps0);
+              }
               if ((ndx % imageWidth) == imageWidth - 1 && bps0 < 8) {
                 bb.skipBits(skipBits);
               }
