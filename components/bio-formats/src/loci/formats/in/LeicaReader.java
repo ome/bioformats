@@ -575,6 +575,8 @@ public class LeicaReader extends FormatReader {
       count[i] = core[i].imageCount;
     }
 
+    boolean littleEndian = isLittleEndian();
+
     Vector[] tempFiles = files;
     IFDList tempIFDs = headerIFDs;
     core = new CoreMetadata[numSeries];
@@ -586,6 +588,7 @@ public class LeicaReader extends FormatReader {
       core[i] = new CoreMetadata();
       while (!valid[index]) index++;
       core[i].imageCount = count[index];
+      core[i].littleEndian = littleEndian;
       files[i] = tempFiles[index];
       Object[] sorted = files[i].toArray();
       Arrays.sort(sorted);
