@@ -854,7 +854,13 @@ public class MetamorphReader extends BaseTiffReader {
             catch (NumberFormatException e) { }
           }
           else if (key.equals("Bit Depth")) {
-            core[0].bitsPerPixel = Integer.parseInt(value);
+            if (value.indexOf("-") != -1) {
+              value = value.substring(0, value.indexOf("-"));
+            }
+            try {
+              core[0].bitsPerPixel = Integer.parseInt(value);
+            }
+            catch (NumberFormatException e) { }
           }
         }
       }
