@@ -443,6 +443,9 @@ public class FlexReader extends FormatReader {
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
+        int well = row * wellColumns + col;
+        store.setWellRow(new NonNegativeInteger(row), 0, well);
+        store.setWellColumn(new NonNegativeInteger(col), 0, well);
       }
     }
 
@@ -456,10 +459,16 @@ public class FlexReader extends FormatReader {
       char wellRow = (char) ('A' + wellNumber[pos[1]][0]);
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
+
+      if (wellRows == 0 && wellColumns == 0) {
+        well = pos[1];
+        store.setWellRow(
+          new NonNegativeInteger(wellNumber[well][0]), pos[2], well);
+        store.setWellColumn(
+          new NonNegativeInteger(wellNumber[well][1]), pos[2], well);
+      }
       store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
-      store.setWellRow(new NonNegativeInteger(wellNumber[pos[1]][0]), 0, i);
-      store.setWellColumn(new NonNegativeInteger(wellNumber[pos[1]][1]), 0, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
