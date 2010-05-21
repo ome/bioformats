@@ -155,9 +155,14 @@ public class BDReader extends FormatReader {
     }
   }
 
-  /* @see IFormatReader#fileGroupOption(String) */
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
+  }
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
   }
 
   /**

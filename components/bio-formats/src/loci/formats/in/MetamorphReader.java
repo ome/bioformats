@@ -60,16 +60,6 @@ import ome.xml.r201004.primitives.PositiveInteger;
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java">SVN</a></dd></dl>
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
-import ome.xml.r201004.primitives.PositiveInteger;
-
-/**
- * Reader is the file format reader for Metamorph STK files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu

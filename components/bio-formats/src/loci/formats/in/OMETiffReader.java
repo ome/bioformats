@@ -95,9 +95,10 @@ public class OMETiffReader extends FormatReader {
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     TiffParser tp = new TiffParser(ras);
-    IFDList ifds = tp.getIFDs();
+    IFD ifd = tp.getFirstIFD();
+    long[] ifdOffsets = tp.getIFDOffsets();
     ras.close();
-    String xml = ifds.get(0).getComment();
+    String xml = ifd.getComment();
 
     OMEXMLMetadata meta;
     try {
@@ -124,7 +125,7 @@ public class OMETiffReader extends FormatReader {
       int t = meta.getPixelsSizeT(i).getValue().intValue();
       nImages += z * t * nChannels;
     }
-    return nImages <= ifds.size();
+    return nImages <= ifdOffsets.length;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */

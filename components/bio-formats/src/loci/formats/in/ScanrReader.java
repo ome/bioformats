@@ -90,6 +90,22 @@ public class ScanrReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    Location file = new Location(id).getAbsoluteFile();
+    String name = file.getName();
+    if (name.equals(XML_FILE) || name.equals(EXPERIMENT_FILE) ||
+      name.equals(ACQUISITION_FILE))
+    {
+      return true;
+    }
+    Location parent = file.getParentFile();
+    if (parent != null) {
+      parent = parent.getParentFile();
+    }
+    return new Location(parent, XML_FILE).exists();
+  }
+
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;

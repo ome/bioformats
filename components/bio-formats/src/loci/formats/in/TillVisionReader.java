@@ -70,6 +70,7 @@ public class TillVisionReader extends FormatReader {
 
   // -- Fields --
 
+  private String[] pixelsFiles;
   private RandomAccessInputStream[] pixelsStream;
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
@@ -119,6 +120,7 @@ public class TillVisionReader extends FormatReader {
           if (stream != null) stream.close();
         }
       }
+      pixelsFiles = null;
       pixelsStream = null;
       embeddedOffset = 0;
       embeddedImages = false;
@@ -127,6 +129,30 @@ public class TillVisionReader extends FormatReader {
       types.clear();
       dates.clear();
     }
+  }
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return !new Location(id.replaceAll(".vws", ".pst")).exists();
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+
+    Vector<String> files = new Vector<String>();
+    files.add(currentId);
+    if (!noPixels) {
+      for (String file : pixelsFiles) {
+        if (file != null) files.add(file);
+      }
+    }
+    return files.toArray(new String[files.size()]);
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
   }
 
   // -- Internal FormatReader API methods --
@@ -309,6 +335,7 @@ public class TillVisionReader extends FormatReader {
     Arrays.sort(pixelsFile);
 
     pixelsStream = new RandomAccessInputStream[getSeriesCount()];
+    pixelsFiles = new String[getSeriesCount()];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
@@ -338,6 +365,7 @@ public class TillVisionReader extends FormatReader {
 
         file = f.getAbsolutePath();
         pixelsStream[i] = new RandomAccessInputStream(file);
+        pixelsFiles[i] = file;
 
         // read key/value pairs from .inf files
 
