@@ -53,6 +53,9 @@ import ome.xml.r201004.enums.EnumerationException;
 import ome.xml.r201004.enums.Immersion;
 import ome.xml.r201004.primitives.PositiveInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * LeicaReader is the file format reader for Leica files.
  *
@@ -65,6 +68,9 @@ import ome.xml.r201004.primitives.PositiveInteger;
 public class LeicaReader extends FormatReader {
 
   // -- Constants -
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(LeicaReader.class);
 
   public static final String[] LEI_SUFFIX = {"lei"};
 
@@ -1032,12 +1038,21 @@ public class LeicaReader extends FormatReader {
     int nElements = in.readInt();
     in.skipBytes(4);
 
+    long initialOffset = in.getFilePointer();
+    long elementOffset = 0;
+
+    LOGGER.trace("Element LOOP; series {} at offset", series, initialOffset);
     for (int j=0; j<nElements; j++) {
-      in.seek(24 + j * cbElements);
+      elementOffset = initialOffset + j * cbElements;
+      LOGGER.trace("Seeking to: {}", elementOffset);
+      in.seek(elementOffset);
       String contentID = getString(128);
+      LOGGER.trace("contentID: {}", contentID);
       String description = getString(64);
+      LOGGER.trace("description: {}", description);
       String data = getString(64);
       int dataType = in.readShort();
+      LOGGER.trace("dataType: {}", dataType);
       in.skipBytes(6);
 
       // read data
@@ -1063,10 +1078,15 @@ public class LeicaReader extends FormatReader {
           break;
       }
 
-      if (data.trim().length() == 0) continue;
+      LOGGER.trace("data: {}", data);
+      if (data.trim().length() == 0) {
+        LOGGER.trace("Zero length dat string, continuing...");
+        continue;
+      }
 
       String[] tokens = contentID.split("\\|");
 
+      LOGGER.trace("Parsing tokens: {}", tokens);
       if (tokens[0].startsWith("CDetectionUnit")) {
         // detector information
 
