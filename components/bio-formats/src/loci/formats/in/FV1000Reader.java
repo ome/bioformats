@@ -490,7 +490,7 @@ public class FV1000Reader extends FormatReader {
       index = 1;
       IniTable channel = f.getTable("Channel " + index + " Parameters");
       while (channel != null) {
-        String illumination = channel.get("LightType");
+        String illumination = channel.get("LightType").toLowerCase();
         if (illumination == null) {
           // Ignored
         }
