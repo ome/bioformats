@@ -342,6 +342,9 @@ public class LeicaReader extends FormatReader {
 
     super.initFile(leiFile);
 
+    leiFilename = 
+      new File(leiFile).exists()? new Location(leiFile).getAbsolutePath() : id;
+
     in = new RandomAccessInputStream(leiFile);
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
 
