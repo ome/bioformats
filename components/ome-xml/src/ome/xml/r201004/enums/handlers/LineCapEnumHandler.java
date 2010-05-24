@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.LaserMediumHandler
+ * ome.xml.r201004.enums.handlers.LineCapHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,69 +31,39 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LineCap;
 
 /**
- * Enumeration handler for LaserMedium.
+ * Enumeration handler for LineCap.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserMediumHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserMediumHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/LineCapHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/LineCapHandler.java">SVN</a></dd></dl>
  */
-public class LaserMediumEnumHandler implements IEnumerationHandler {
+public class LineCapEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every LaserMedium value must match one of these patterns. */
+  /** Every LineCap value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Cu\\s*", "Cu");
-    p.put("^\\s*Ag\\s*", "Ag");
-    p.put("^\\s*ArFl\\s*", "ArFl");
-    p.put("^\\s*ArCl\\s*", "ArCl");
-    p.put("^\\s*KrFl\\s*", "KrFl");
-    p.put("^\\s*KrCl\\s*", "KrCl");
-    p.put("^\\s*XeFl\\s*", "XeFl");
-    p.put("^\\s*XeCl\\s*", "XeCl");
-    p.put("^\\s*XeBr\\s*", "XeBr");
-    p.put("^\\s*N\\s*", "N");
-    p.put("^\\s*Ar\\s*", "Ar");
-    p.put("^\\s*Kr\\s*", "Kr");
-    p.put("^\\s*Xe\\s*", "Xe");
-    p.put("^\\s*HeNe\\s*", "HeNe");
-    p.put("^\\s*HeCd\\s*", "HeCd");
-    p.put("^\\s*CO\\s*", "CO");
-    p.put("^\\s*CO2\\s*", "CO2");
-    p.put("^\\s*H2O\\s*", "H2O");
-    p.put("^\\s*HFl\\s*", "HFl");
-    p.put("^\\s*NdGlass\\s*", "NdGlass");
-    p.put("^\\s*NdYAG\\s*", "NdYAG");
-    p.put("^\\s*ErGlass\\s*", "ErGlass");
-    p.put("^\\s*ErYAG\\s*", "ErYAG");
-    p.put("^\\s*HoYLF\\s*", "HoYLF");
-    p.put("^\\s*HoYAG\\s*", "HoYAG");
-    p.put("^\\s*Ruby\\s*", "Ruby");
-    p.put("^\\s*TiSapphire\\s*", "TiSapphire");
-    p.put("^\\s*Alexandrite\\s*", "Alexandrite");
-    p.put("^\\s*Rhodamine6G\\s*", "Rhodamine6G");
-    p.put("^\\s*CoumarinC30\\s*", "CoumarinC30");
-    p.put("^\\s*GaAs\\s*", "GaAs");
-    p.put("^\\s*GaAlAs\\s*", "GaAlAs");
-    p.put("^\\s*EMinus\\s*", "EMinus");
-    p.put("^\\s*Other\\s*", "Other");
+    p.put("^\\s*Butt\\s*", "Butt");
+    p.put("^\\s*Line\\s*", "Line");
+    p.put("^\\s*Square\\s*", "Square");
     return p;
   }
 
@@ -106,7 +76,7 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return LaserMedium.fromString(v);
+        return LineCap.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -115,7 +85,7 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return LaserMedium.class;
+    return LineCap.class;
   }
 
 }

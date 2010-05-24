@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.MicrobeamManipulationTypeHandler
+ * ome.xml.r201004.enums.handlers.CompressionHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,41 +31,39 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.MicrobeamManipulationType;
+import ome.xml.r201004.enums.Compression;
 
 /**
- * Enumeration handler for MicrobeamManipulationType.
+ * Enumeration handler for Compression.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/MicrobeamManipulationTypeHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/MicrobeamManipulationTypeHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/CompressionHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/CompressionHandler.java">SVN</a></dd></dl>
  */
-public class MicrobeamManipulationTypeEnumHandler implements IEnumerationHandler {
+public class CompressionEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every MicrobeamManipulationType value must match one of these patterns. */
+  /** Every Compression value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*FRAP\\s*", "FRAP");
-    p.put("^\\s*Photoablation\\s*", "Photoablation");
-    p.put("^\\s*Photoactivation\\s*", "Photoactivation");
-    p.put("^\\s*Uncaging\\s*", "Uncaging");
-    p.put("^\\s*OpticalTrapping\\s*", "OpticalTrapping");
-    p.put("^\\s*Other\\s*", "Other");
+    p.put("^\\s*zlib\\s*", "zlib");
+    p.put("^\\s*bzip2\\s*", "bzip2");
+    p.put("^\\s*none\\s*", "none");
     return p;
   }
 
@@ -78,7 +76,7 @@ public class MicrobeamManipulationTypeEnumHandler implements IEnumerationHandler
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return MicrobeamManipulationType.fromString(v);
+        return Compression.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -87,7 +85,7 @@ public class MicrobeamManipulationTypeEnumHandler implements IEnumerationHandler
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return MicrobeamManipulationType.class;
+    return Compression.class;
   }
 
 }

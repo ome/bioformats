@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.FilterTypeHandler
+ * ome.xml.r201004.enums.handlers.DetectorTypeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,39 +31,49 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.FilterType;
+import ome.xml.r201004.enums.DetectorType;
 
 /**
- * Enumeration handler for FilterType.
+ * Enumeration handler for DetectorType.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/FilterTypeHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/FilterTypeHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/DetectorTypeHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/DetectorTypeHandler.java">SVN</a></dd></dl>
  */
-public class FilterTypeEnumHandler implements IEnumerationHandler {
+public class DetectorTypeEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every FilterType value must match one of these patterns. */
+  /** Every DetectorType value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*LongPass\\s*", "LongPass");
-    p.put("^\\s*ShortPass\\s*", "ShortPass");
-    p.put("^\\s*BandPass\\s*", "BandPass");
-    p.put("^\\s*MultiPass\\s*", "MultiPass");
+    p.put("^\\s*CCD\\s*", "CCD");
+    p.put("^\\s*IntensifiedCCD\\s*", "IntensifiedCCD");
+    p.put("^\\s*AnalogVideo\\s*", "AnalogVideo");
+    p.put("^\\s*PMT\\s*", "PMT");
+    p.put("^\\s*Photodiode\\s*", "Photodiode");
+    p.put("^\\s*Spectroscopy\\s*", "Spectroscopy");
+    p.put("^\\s*LifetimeImaging\\s*", "LifetimeImaging");
+    p.put("^\\s*CorrelationSpectroscopy\\s*", "CorrelationSpectroscopy");
+    p.put("^\\s*FTIR\\s*", "FTIR");
+    p.put("^\\s*EMCCD\\s*", "EMCCD");
+    p.put("^\\s*APD\\s*", "APD");
+    p.put("^\\s*CMOS\\s*", "CMOS");
+    p.put("^\\s*EBCCD\\s*", "EBCCD");
     p.put("^\\s*Other\\s*", "Other");
     return p;
   }
@@ -77,7 +87,7 @@ public class FilterTypeEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return FilterType.fromString(v);
+        return DetectorType.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -86,7 +96,7 @@ public class FilterTypeEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return FilterType.class;
+    return DetectorType.class;
   }
 
 }

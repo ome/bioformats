@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.AcquisitionModeHandler
+ * ome.xml.r201004.enums.handlers.AcquisitionModeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,18 +31,19 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
-import ome.xml.r201004.enums.AcquisitionMode;
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.AcquisitionMode;
 
 /**
  * Enumeration handler for AcquisitionMode.
@@ -61,8 +62,7 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
     p.put("^\\s*WideField\\s*", "WideField");
-    p.put("^\\s*LaserScanningMicroscopy\\s*", "LaserScanningMicroscopy");
-    p.put("^\\s*LaserScanningConfocal\\s*", "LaserScanningConfocal");
+    p.put("^\\s*LaserScanningConfocalMicroscopy\\s*", "LaserScanningConfocalMicroscopy");
     p.put("^\\s*SpinningDiskConfocal\\s*", "SpinningDiskConfocal");
     p.put("^\\s*SlitScanConfocal\\s*", "SlitScanConfocal");
     p.put("^\\s*MultiPhotonMicroscopy\\s*", "MultiPhotonMicroscopy");
@@ -74,6 +74,12 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*FluorescenceCorrelationSpectroscopy\\s*", "FluorescenceCorrelationSpectroscopy");
     p.put("^\\s*NearFieldScanningOpticalMicroscopy\\s*", "NearFieldScanningOpticalMicroscopy");
     p.put("^\\s*SecondHarmonicGenerationImaging\\s*", "SecondHarmonicGenerationImaging");
+    p.put("^\\s*PALM\\s*", "PALM");
+    p.put("^\\s*STORM\\s*", "STORM");
+    p.put("^\\s*STED\\s*", "STED");
+    p.put("^\\s*TIRF\\s*", "TIRF");
+    p.put("^\\s*FSM\\s*", "FSM");
+    p.put("^\\s*LCM\\s*", "LCM");
     p.put("^\\s*Other\\s*", "Other");
     return p;
   }

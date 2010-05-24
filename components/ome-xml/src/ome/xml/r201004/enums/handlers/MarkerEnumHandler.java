@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.FontFamilyHandler
+ * ome.xml.r201004.enums.handlers.MarkerHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,39 +31,39 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.FontFamily;
+import ome.xml.r201004.enums.Marker;
 
 /**
- * Enumeration handler for FontFamily.
+ * Enumeration handler for Marker.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/FontFamilyHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/FontFamilyHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/MarkerHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/MarkerHandler.java">SVN</a></dd></dl>
  */
-public class FontFamilyEnumHandler implements IEnumerationHandler {
+public class MarkerEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every FontFamily value must match one of these patterns. */
+  /** Every Marker value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Arial", "Arial");
-    p.put("^\\s*Courier", "Courier");
-    p.put("^\\s*Helvetica", "Helvetica");
-    p.put("^\\s*TimesNewRoman", "TimesNewRoman");
+    p.put("^\\s*Arrow\\s*", "Arrow");
+    p.put("^\\s*Circle\\s*", "Circle");
+    p.put("^\\s*Square\\s*", "Square");
     return p;
   }
 
@@ -74,9 +74,9 @@ public class FontFamilyEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return FontFamily.fromString(v);
+        return Marker.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -85,7 +85,7 @@ public class FontFamilyEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return FontFamily.class;
+    return Marker.class;
   }
 
 }

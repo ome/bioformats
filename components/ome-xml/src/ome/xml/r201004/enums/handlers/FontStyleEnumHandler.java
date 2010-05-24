@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.IlluminationTypeHandler
+ * ome.xml.r201004.enums.handlers.FontStyleHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,40 +31,40 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.IlluminationType;
+import ome.xml.r201004.enums.FontStyle;
 
 /**
- * Enumeration handler for IlluminationType.
+ * Enumeration handler for FontStyle.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/IlluminationTypeHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/IlluminationTypeHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/FontStyleHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/FontStyleHandler.java">SVN</a></dd></dl>
  */
-public class IlluminationTypeEnumHandler implements IEnumerationHandler {
+public class FontStyleEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every IlluminationType value must match one of these patterns. */
+  /** Every FontStyle value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Transmitted\\s*", "Transmitted");
-    p.put("^\\s*Epifluorescence\\s*", "Epifluorescence");
-    p.put("^\\s*Oblique\\s*", "Oblique");
-    p.put("^\\s*NonLinear\\s*", "NonLinear");
-    p.put("^\\s*Other\\s*", "Other");
+    p.put("^\\s*Bold\\s*", "Bold");
+    p.put("^\\s*BoldItalic\\s*", "BoldItalic");
+    p.put("^\\s*Italic\\s*", "Italic");
+    p.put("^\\s*Regular\\s*", "Regular");
     return p;
   }
 
@@ -77,7 +77,7 @@ public class IlluminationTypeEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return IlluminationType.fromString(v);
+        return FontStyle.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -86,7 +86,7 @@ public class IlluminationTypeEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return IlluminationType.class;
+    return FontStyle.class;
   }
 
 }

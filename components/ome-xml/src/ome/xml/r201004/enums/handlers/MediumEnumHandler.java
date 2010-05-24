@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.DimensionOrderHandler
+ * ome.xml.r201004.enums.handlers.MediumHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,41 +31,41 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
-import ome.xml.r201004.enums.DimensionOrder;
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.Medium;
 
 /**
- * Enumeration handler for DimensionOrder.
+ * Enumeration handler for Medium.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/DimensionOrderHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/DimensionOrderHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/MediumHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/MediumHandler.java">SVN</a></dd></dl>
  */
-public class DimensionOrderEnumHandler implements IEnumerationHandler {
+public class MediumEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every DimensionOrder value must match one of these patterns. */
+  /** Every Medium value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*XYZCT\\s*", "XYZCT");
-    p.put("^\\s*XYZTC\\s*", "XYZTC");
-    p.put("^\\s*XYCTZ\\s*", "XYCTZ");
-    p.put("^\\s*XYCZT\\s*", "XYCZT");
-    p.put("^\\s*XYTCZ\\s*", "XYTCZ");
-    p.put("^\\s*XYTZC\\s*", "XYTZC");
+    p.put("^\\s*Air\\s*", "Air");
+    p.put("^\\s*Oil\\s*", "Oil");
+    p.put("^\\s*Water\\s*", "Water");
+    p.put("^\\s*Glycerol\\s*", "Glycerol");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -78,7 +78,7 @@ public class DimensionOrderEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return DimensionOrder.fromString(v);
+        return Medium.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -87,7 +87,7 @@ public class DimensionOrderEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return DimensionOrder.class;
+    return Medium.class;
   }
 
 }

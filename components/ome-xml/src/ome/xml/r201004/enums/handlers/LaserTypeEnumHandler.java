@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.FilamentTypeHandler
+ * ome.xml.r201004.enums.handlers.LaserTypeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,37 +31,43 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.FilamentType;
+import ome.xml.r201004.enums.LaserType;
 
 /**
- * Enumeration handler for FilamentType.
+ * Enumeration handler for LaserType.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/FilamentTypeHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/FilamentTypeHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserTypeHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserTypeHandler.java">SVN</a></dd></dl>
  */
-public class FilamentTypeEnumHandler implements IEnumerationHandler {
+public class LaserTypeEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every FilamentType value must match one of these patterns. */
+  /** Every LaserType value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Incandescent\\s*", "Incandescent");
-    p.put("^\\s*Halogen\\s*", "Halogen");
+    p.put("^\\s*Excimer\\s*", "Excimer");
+    p.put("^\\s*Gas\\s*", "Gas");
+    p.put("^\\s*MetalVapor\\s*", "MetalVapor");
+    p.put("^\\s*SolidState\\s*", "SolidState");
+    p.put("^\\s*Dye\\s*", "Dye");
+    p.put("^\\s*Semiconductor\\s*", "Semiconductor");
+    p.put("^\\s*FreeElectron\\s*", "FreeElectron");
     p.put("^\\s*Other\\s*", "Other");
     return p;
   }
@@ -75,7 +81,7 @@ public class FilamentTypeEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return FilamentType.fromString(v);
+        return LaserType.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -84,7 +90,7 @@ public class FilamentTypeEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return FilamentType.class;
+    return LaserType.class;
   }
 
 }

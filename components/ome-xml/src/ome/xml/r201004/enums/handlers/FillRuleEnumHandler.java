@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.NamingConventionHandler
+ * ome.xml.r201004.enums.handlers.FillRuleHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,37 +31,38 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.NamingConvention;
+import ome.xml.r201004.enums.FillRule;
 
 /**
- * Enumeration handler for NamingConvention.
+ * Enumeration handler for FillRule.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/NamingConventionHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/NamingConventionHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/FillRuleHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/FillRuleHandler.java">SVN</a></dd></dl>
  */
-public class NamingConventionEnumHandler implements IEnumerationHandler {
+public class FillRuleEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every NamingConvention value must match one of these patterns. */
+  /** Every FillRule value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*letter", "letter");
-    p.put("^\\s*number", "number");
+    p.put("^\\s*EvenOdd\\s*", "EvenOdd");
+    p.put("^\\s*NonZero\\s*", "NonZero");
     return p;
   }
 
@@ -72,9 +73,9 @@ public class NamingConventionEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return NamingConvention.fromString(v);
+        return FillRule.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -83,7 +84,7 @@ public class NamingConventionEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return NamingConvention.class;
+    return FillRule.class;
   }
 
 }
