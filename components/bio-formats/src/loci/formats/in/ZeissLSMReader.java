@@ -279,6 +279,14 @@ public class ZeissLSMReader extends FormatReader {
     return s;
   }
 
+  /* @see loci.formats.IFormatReader#setSeries(int) */
+  public void setSeries(int series) {
+    if (series != getSeries()) {
+      prevBuf = null;
+    }
+    super.setSeries(series);
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -352,8 +360,10 @@ public class ZeissLSMReader extends FormatReader {
       TiffParser tp = new TiffParser(s);
       long[] ifdOffsets = tp.getIFDOffsets();
       IFDList ifds = new IFDList();
-      for (int offset=0; offset<ifdOffsets.length; offset+=2) {
+      for (int offset=0; offset<ifdOffsets.length;) {
         ifds.add(tp.getIFD(ifdOffsets[offset]));
+        if (ifds.get(0).containsKey(ZEISS_ID)) offset += 2;
+        else offset++;
       }
       ifdsList.set(i, ifds);
       s.close();
@@ -383,6 +393,7 @@ public class ZeissLSMReader extends FormatReader {
 
         boolean neededAdjustment = false;
         for (int j=0; j<stripOffsets.length; j++) {
+          if (j >= previousStripOffsets.length) break;
           if (stripOffsets[j] < previousStripOffsets[j]) {
             stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
               (stripOffsets[j] & 0xffffffffL);
@@ -603,7 +614,6 @@ public class ZeissLSMReader extends FormatReader {
       core[series].dimensionOrder = getDimensionOrder().replaceAll("XY", "XYC");
     }
 
-    if (isIndexed()) core[series].rgb = false;
     if (getEffectiveSizeC() == 0) {
       core[series].imageCount = getSizeZ() * getSizeT();
     }
@@ -634,8 +644,7 @@ public class ZeissLSMReader extends FormatReader {
     if (getSizeT() == 0) core[series].sizeT = getImageCount() / getSizeZ();
 
     MetadataTools.setDefaultCreationDate(store, getCurrentFile(), series);
-    int nLogicalChannels = nextDataChannel == 0 ? 1 : nextDataChannel;
-    if (nLogicalChannels == getSizeC() || nextDataChannel == 0) {
+    if (getSizeC() > 1) {
       if (!splitPlanes) splitPlanes = isRGB();
       core[series].rgb = false;
       if (splitPlanes) core[series].imageCount *= getSizeC();

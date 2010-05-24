@@ -879,6 +879,7 @@ public class Data
           row_stop = mdb.fmt.pg_size - 1;
         }
         row_start = file.mdb_get_int16(mdb, 10 + ole_row * 2);
+        if (row_start > row_stop) row_start = 0;
 //#if MDB_DEBUG_OLE
 //  printf("row num %d row start %d row stop %d\n", ole_row, row_start, row_stop);
 //#endif
