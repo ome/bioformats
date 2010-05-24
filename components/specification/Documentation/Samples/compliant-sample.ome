@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME:OME xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 
+	http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">		
+	<OME:Image ID="Image:0" Name="compliant-sample-0">
+		<OME:AcquiredDate>2010-02-23T12:51:30</OME:AcquiredDate>
+		<OME:Description>Description0</OME:Description>
+		<OME:ImagingEnvironment Temperature="0" AirPressure="0" Humidity="0.5" CO2Percent="0.5"/>
+		<OME:StageLabel Name="Name1" X="0" Y="0" Z="0"/>
+		<OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+			PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6"
+			SizeY="4" SizeZ="1" TimeIncrement="0">
+			<OME:Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="4294967295"
+				ID="Channel:0"
+				Name="Name2" SamplesPerPixel="0"
+				IlluminationType="Transmitted" PinholeSize="0" 
+				ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
+				Fluor="Fluor0" NDFilter="0" PockelCellSetting="0"
+			/>
+			<OME:Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="4294967295"
+				ID="Channel:1"
+				Name="Name2" SamplesPerPixel="0"
+				IlluminationType="Transmitted" PinholeSize="0" 
+				ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
+				Fluor="Fluor0" NDFilter="0" PockelCellSetting="0"
+			/>
+			<OME:Channel AcquisitionMode="MultiPhotonMicroscopy" Color="4294967295" 
+				ID="Channel:2"
+				Name="Name2" SamplesPerPixel="0"
+				IlluminationType="Transmitted" PinholeSize="0" 
+				ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
+				Fluor="Fluor0" NDFilter="0" PockelCellSetting="0"
+			/>
+			<BIN:BinData BigEndian="false" Length="32" Compression="none"
+				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BIN:BinData>
+			<BIN:BinData BigEndian="false" Length="32" Compression="none"
+				>AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</BIN:BinData>
+			<BIN:BinData BigEndian="false" Length="32" Compression="none"
+				>//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BIN:BinData>
+			<OME:Plane TheZ="0" TheT="0" TheC="0" DeltaT="0" ExposureTime="0.001" PositionX="0"
+				PositionY="0" PositionZ="0">
+				<OME:HashSHA1>3031323334353637383930313233343536373839</OME:HashSHA1>
+			</OME:Plane>
+			<OME:Plane TheZ="0" TheT="0" TheC="1" DeltaT="0" ExposureTime="0.001" PositionX="0"
+				PositionY="0" PositionZ="0">
+				<OME:HashSHA1>3031323334353637383930313233343536373839</OME:HashSHA1>
+			</OME:Plane>
+			<OME:Plane TheZ="0" TheT="0" TheC="2" DeltaT="0" ExposureTime="0.001" PositionX="0"
+				PositionY="0" PositionZ="0">
+				<OME:HashSHA1>3031323334353637383930313233343536373839</OME:HashSHA1>
+			</OME:Plane>
+		</OME:Pixels>
+		</OME:Image>
+</OME:OME>
