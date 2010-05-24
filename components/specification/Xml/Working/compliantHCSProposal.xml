@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
+	xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-04"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
+	
+	<!--
+		Work in progress!
+		Proposal 1 - 20th May 2009
+	-->
+	<SPW:Plate 
+		ID="Plate:1" 
+		Name="Control Plate" 
+		ColumnNamingConvention="letter" 
+		RowNamingConvention="number" 
+		Columns="12" 
+		Rows="8"
+		>
+		<SPW:Description></SPW:Description>
+		<SPW:ScreenRef ID="Screen:1"/>
+		
+		<!-- repeat SPW:Well for # of wells in the plate -->
+		<SPW:Well ID="Well:1" Column="0" Row="0">
+			<!-- repeat SPW:WellSample for # of images taken in the well -->
+			<SPW:WellSample ID="WellSample:1" Index="0">
+				<SPW:ImageRef ID="Image:1"/>
+			</SPW:WellSample>
+		</SPW:Well>
+	</SPW:Plate>
+	<!-- plus one more Plate for each Plate in this set -->
+		
+	<SPW:Screen ID="Screen:1" Name="">
+		<SPW:Description></SPW:Description>
+		<SPW:PlateRef ID="Plate:1"/>
+		<!-- plus one more PlateRef for each Plate in the file
+		<SPW:PlateRef ID="Plate:#"/>
+		-->
+	</SPW:Screen>
+	<ome:Instrument ID="Instrument:1">
+		<!-- Possible?
+		<ome:Microscope 
+			Type="Inverted"/>
+		-->
+		<!-- Possible?
+		<ome:LightSource ID="LightSource:1">
+			<!- - ONE OF: Arc, Laser, Filament, LightEmittingDiode - ->
+			<!- -
+			<ome:Arc Type="Hg"/> 
+			- ->
+			<!- -
+			<ome:Filament Type="Halogen"/>
+			- ->
+			<!- -
+			<ome:LightEmittingDiode/>
+			- ->
+			<ome:Laser Type="Dye"/>
+		</ome:LightSource>
+		-->
+		<ome:Detector 
+			ID="Detector:1" 
+			Type="CCD"/>
+		<ome:Objective 
+			ID="Objective:1" 
+			Correction="Apo" 
+			Immersion="Air" 
+			LensNA="0.8" 
+			Model="Super MarkII" 
+			NominalMagnification="60" />
+	</ome:Instrument>
+	<!-- repeat ome:Image for # of images in the file -->
+	<ome:Image ID="Image:1" Name="Name92">
+		<ome:AcquiredDate>2009-03-16T15:41:51.0Z</ome:AcquiredDate>
+		<ome:Description>  </ome:Description>
+		<ome:InstrumentRef ID="Instrument:1"/>
+		<ome:ObjectiveSettings ID="Objective:1"/>
+		<ome:Pixels 
+			ID="Pixels:1" 
+			DimensionOrder="XYZCT" 
+			Type="int8" 
+			SizeX="2" 
+			SizeY="2" 
+			SizeZ="2"
+			SizeC="2" 
+			SizeT="2"
+			PhysicalSizeX="1"
+			PhysicalSizeY="1"
+			PhysicalSizeZ="1"
+			TimeIncrement="1"
+			>
+			<ome:Channel 
+				ID="Channel:1" 
+				Name="Transmittance" 
+				SamplesPerPixel="1" 
+				>
+				<!-- if florescence also:
+				EmissionWavelength="340" 
+				ExcitationWavelength="520" 
+				-->
+				<!-- Possible ?
+				<ome:LightSourceSettings ID="LightSource:1"/>
+				-->
+				<ome:DetectorSettings ID="Detector:1"/>
+			</ome:Channel>
+			<bf:BinData BigEndian="false" Compression="none" Length="12">ZGVmYXVsdA==</bf:BinData>
+		</ome:Pixels>
+	</ome:Image>
+</ome:OME>
