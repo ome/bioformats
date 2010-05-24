@@ -641,6 +641,11 @@ public class ZeissLSMReader extends FormatReader {
       if (splitPlanes) core[series].imageCount *= getSizeC();
     }
 
+    for (int c=0; c<getEffectiveSizeC(); c++) {
+      String lsid = MetadataTools.createLSID("Channel", series, c);
+      store.setChannelID(lsid, series, c);
+    }
+
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       int spectralScan = ras.readShort();
       if (spectralScan != 1) {
@@ -1047,7 +1052,7 @@ public class ZeissLSMReader extends FormatReader {
             MetadataTools.createLSID("Dichroic", series, nextDichroic);
           store.setDichroicID(id, series, nextDichroic);
           store.setDichroicModel(beamSplitter.filter, series, nextDichroic);
-          if (nextDichroicChannel < getSizeC()) {
+          if (nextDichroicChannel < getEffectiveSizeC()) {
             store.setLightPathDichroicRef(id, series, nextDichroicChannel);
           }
           nextDichroic++;

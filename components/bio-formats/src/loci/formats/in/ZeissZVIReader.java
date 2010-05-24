@@ -571,12 +571,11 @@ public class ZeissZVIReader extends FormatReader {
         imageFiles[imageNum] = name;
         s.close();
       }
-      else if (dirName.equals("RectangleSetup")) {
+      else if (dirName.equals("Mosaic")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
-        s.seek(88);
-        short magic = s.readShort();
-        isMeanderScan = magic < 5;
+        s.seek(60);
+        isMeanderScan = s.readShort() != 0;
         s.close();
       }
     }
@@ -1028,6 +1027,7 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
 
+    int shapeIndex = 0;
     for (int shape=0; shape<roiOffsets.size(); shape++) {
       s.seek(roiOffsets.get(shape).longValue() + 18);
 
@@ -1080,10 +1080,10 @@ public class ZeissZVIReader extends FormatReader {
       s.skipBytes(6);
 
       if (roiType == ELLIPSE) {
-        store.setEllipseX(new Double(x + (w / 2)), imageNum, shape);
-        store.setEllipseY(new Double(y + (h / 2)), imageNum, shape);
-        store.setEllipseRadiusX(new Double(w / 2), imageNum, shape);
-        store.setEllipseRadiusY(new Double(h / 2), imageNum, shape);
+        store.setEllipseX(new Double(x + (w / 2)), imageNum, shapeIndex);
+        store.setEllipseY(new Double(y + (h / 2)), imageNum, shapeIndex);
+        store.setEllipseRadiusX(new Double(w / 2), imageNum, shapeIndex);
+        store.setEllipseRadiusY(new Double(h / 2), imageNum, shapeIndex);
       }
       else if (roiType == CURVE || roiType == OUTLINE ||
         roiType == OUTLINE_SPLINE)
@@ -1098,24 +1098,24 @@ public class ZeissZVIReader extends FormatReader {
           if (p < nPoints - 1) points.append(" ");
         }
 
-        store.setPolylinePoints(points.toString(), imageNum, shape);
-        store.setPolylineClosed(roiType != CURVE, imageNum, shape);
+        store.setPolylinePoints(points.toString(), imageNum, shapeIndex);
+        store.setPolylineClosed(roiType != CURVE, imageNum, shapeIndex);
       }
       else if (roiType == RECTANGLE || roiType == TEXT) {
-        store.setRectangleX(new Double(x), imageNum, shape);
-        store.setRectangleY(new Double(y), imageNum, shape);
-        store.setRectangleWidth(new Double(w), imageNum, shape);
-        store.setRectangleHeight(new Double(h), imageNum, shape);
+        store.setRectangleX(new Double(x), imageNum, shapeIndex);
+        store.setRectangleY(new Double(y), imageNum, shapeIndex);
+        store.setRectangleWidth(new Double(w), imageNum, shapeIndex);
+        store.setRectangleHeight(new Double(h), imageNum, shapeIndex);
       }
       else if (roiType == LINE || roiType == SCALE_BAR) {
         double x1 = s.readDouble();
         double y1 = s.readDouble();
         double x2 = s.readDouble();
         double y2 = s.readDouble();
-        store.setLineX1(x1, imageNum, shape);
-        store.setLineY1(y1, imageNum, shape);
-        store.setLineX2(x2, imageNum, shape);
-        store.setLineY2(y2, imageNum, shape);
+        store.setLineX1(x1, imageNum, shapeIndex);
+        store.setLineY1(y1, imageNum, shapeIndex);
+        store.setLineX2(x2, imageNum, shapeIndex);
+        store.setLineY2(y2, imageNum, shapeIndex);
       }
     }
     s.close();

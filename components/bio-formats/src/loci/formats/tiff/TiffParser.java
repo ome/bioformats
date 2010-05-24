@@ -900,7 +900,11 @@ public class TiffParser {
       return in.readLong();
     }
     long offset = (previous & ~0xffffffffL) | (in.readInt() & 0xffffffffL);
-    if (offset < previous && offset != 0) {
+
+    // Only adjust the offset if we know that the file is too large for 32-bit
+    // offsets to be accurate; otherwise, we're making the incorrect assumption
+    // that IFDs are stored sequentially.
+    if (offset < previous && offset != 0 && in.length() > Integer.MAX_VALUE) {
       offset += 0x100000000L;
     }
     return offset;
