@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.MediumHandler
+ * ome.xml.r201004.enums.handlers.NamingConventionHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,40 +31,38 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Medium;
+import ome.xml.r201004.enums.NamingConvention;
 
 /**
- * Enumeration handler for Medium.
+ * Enumeration handler for NamingConvention.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/MediumHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/MediumHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/NamingConventionHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/NamingConventionHandler.java">SVN</a></dd></dl>
  */
-public class MediumEnumHandler implements IEnumerationHandler {
+public class NamingConventionEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every Medium value must match one of these patterns. */
+  /** Every NamingConvention value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Air\\s*", "Air");
-    p.put("^\\s*Oil\\s*", "Oil");
-    p.put("^\\s*Water\\s*", "Water");
-    p.put("^\\s*Glycerol\\s*", "Glycerol");
-    p.put("^\\s*Other\\s*", "Other");
+    p.put("^\\s*letter\\s*", "letter");
+    p.put("^\\s*number\\s*", "number");
     return p;
   }
 
@@ -77,7 +75,7 @@ public class MediumEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return Medium.fromString(v);
+        return NamingConvention.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -86,7 +84,7 @@ public class MediumEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return Medium.class;
+    return NamingConvention.class;
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.MarkerHandler
+ * ome.xml.r201004.enums.handlers.MicroscopeTypeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,38 +31,41 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2009-10-28 16:52:37+0000
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Marker;
+import ome.xml.r201004.enums.MicroscopeType;
 
 /**
- * Enumeration handler for Marker.
+ * Enumeration handler for MicroscopeType.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/MarkerHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/MarkerHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/MicroscopeTypeHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/MicroscopeTypeHandler.java">SVN</a></dd></dl>
  */
-public class MarkerEnumHandler implements IEnumerationHandler {
+public class MicroscopeTypeEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every Marker value must match one of these patterns. */
+  /** Every MicroscopeType value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Arrow", "Arrow");
-    p.put("^\\s*Circle", "Circle");
-    p.put("^\\s*Square", "Square");
+    p.put("^\\s*Upright\\s*", "Upright");
+    p.put("^\\s*Inverted\\s*", "Inverted");
+    p.put("^\\s*Dissection\\s*", "Dissection");
+    p.put("^\\s*Electrophysiology\\s*", "Electrophysiology");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -73,9 +76,9 @@ public class MarkerEnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     for (String pattern : patterns.keySet()) {
-      if (value.matches(pattern)) {
+      if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return Marker.fromString(v);
+        return MicroscopeType.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -84,7 +87,7 @@ public class MarkerEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return Marker.class;
+    return MicroscopeType.class;
   }
 
 }

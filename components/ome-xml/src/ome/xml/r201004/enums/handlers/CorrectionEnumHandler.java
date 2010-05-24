@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.PulseHandler
+ * ome.xml.r201004.enums.handlers.CorrectionHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,40 +31,50 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Pulse;
+import ome.xml.r201004.enums.Correction;
 
 /**
- * Enumeration handler for Pulse.
+ * Enumeration handler for Correction.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/PulseHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/PulseHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/CorrectionHandler.java">SVN</a></dd></dl>
  */
-public class PulseEnumHandler implements IEnumerationHandler {
+public class CorrectionEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every Pulse value must match one of these patterns. */
+  /** Every Correction value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*CW\\s*", "CW");
-    p.put("^\\s*Single\\s*", "Single");
-    p.put("^\\s*QSwitched\\s*", "QSwitched");
-    p.put("^\\s*Repetitive\\s*", "Repetitive");
-    p.put("^\\s*ModeLocked\\s*", "ModeLocked");
+    p.put("^\\s*UV\\s*", "UV");
+    p.put("^\\s*PlanApo\\s*", "PlanApo");
+    p.put("^\\s*PlanFluor\\s*", "PlanFluor");
+    p.put("^\\s*SuperFluor\\s*", "SuperFluor");
+    p.put("^\\s*VioletCorrected\\s*", "VioletCorrected");
+    p.put("^\\s*Achro\\s*", "Achro");
+    p.put("^\\s*Achromat\\s*", "Achromat");
+    p.put("^\\s*Fluor\\s*", "Fluor");
+    p.put("^\\s*Fl\\s*", "Fl");
+    p.put("^\\s*Fluar\\s*", "Fluar");
+    p.put("^\\s*Neofluar\\s*", "Neofluar");
+    p.put("^\\s*Fluotar\\s*", "Fluotar");
+    p.put("^\\s*Apo\\s*", "Apo");
+    p.put("^\\s*PlanNeofluar\\s*", "PlanNeofluar");
     p.put("^\\s*Other\\s*", "Other");
     return p;
   }
@@ -78,7 +88,7 @@ public class PulseEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return Pulse.fromString(v);
+        return Correction.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -87,7 +97,7 @@ public class PulseEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return Pulse.class;
+    return Correction.class;
   }
 
 }

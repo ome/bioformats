@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.ArcTypeHandler
+ * ome.xml.r201004.enums.handlers.DimensionOrderHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,39 +31,42 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
-import ome.xml.r201004.enums.ArcType;
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.DimensionOrder;
 
 /**
- * Enumeration handler for ArcType.
+ * Enumeration handler for DimensionOrder.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/ArcTypeHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/ArcTypeHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/DimensionOrderHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/DimensionOrderHandler.java">SVN</a></dd></dl>
  */
-public class ArcTypeEnumHandler implements IEnumerationHandler {
+public class DimensionOrderEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every ArcType value must match one of these patterns. */
+  /** Every DimensionOrder value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Hg\\s*", "Hg");
-    p.put("^\\s*Xe\\s*", "Xe");
-    p.put("^\\s*HgXe\\s*", "HgXe");
-    p.put("^\\s*Other\\s*", "Other");
+    p.put("^\\s*XYZCT\\s*", "XYZCT");
+    p.put("^\\s*XYZTC\\s*", "XYZTC");
+    p.put("^\\s*XYCTZ\\s*", "XYCTZ");
+    p.put("^\\s*XYCZT\\s*", "XYCZT");
+    p.put("^\\s*XYTCZ\\s*", "XYTCZ");
+    p.put("^\\s*XYTZC\\s*", "XYTZC");
     return p;
   }
 
@@ -76,7 +79,7 @@ public class ArcTypeEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return ArcType.fromString(v);
+        return DimensionOrder.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -85,7 +88,7 @@ public class ArcTypeEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return ArcType.class;
+    return DimensionOrder.class;
   }
 
 }

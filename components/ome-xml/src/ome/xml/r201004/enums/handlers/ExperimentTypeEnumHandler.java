@@ -1,5 +1,5 @@
 /*
- * loci.formats.enums.handler.LaserTypeHandler
+ * ome.xml.r201004.enums.handlers.ExperimentTypeHandler
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,42 +31,51 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2009-10-28 13:34:08.990768
+ * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
  *
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.enums.handler;
+package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.enums.ExperimentType;
 
 /**
- * Enumeration handler for LaserType.
+ * Enumeration handler for ExperimentType.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserTypeHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/LaserTypeHandler.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/enums/handler/ExperimentTypeHandler.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/ExperimentTypeHandler.java">SVN</a></dd></dl>
  */
-public class LaserTypeEnumHandler implements IEnumerationHandler {
+public class ExperimentTypeEnumHandler implements IEnumerationHandler {
 
   // -- Fields --
 
-  /** Every LaserType value must match one of these patterns. */
+  /** Every ExperimentType value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
-    p.put("^\\s*Excimer\\s*", "Excimer");
-    p.put("^\\s*Gas\\s*", "Gas");
-    p.put("^\\s*MetalVapor\\s*", "MetalVapor");
-    p.put("^\\s*SolidState\\s*", "SolidState");
-    p.put("^\\s*Dye\\s*", "Dye");
-    p.put("^\\s*Semiconductor\\s*", "Semiconductor");
-    p.put("^\\s*FreeElectron\\s*", "FreeElectron");
+    p.put("^\\s*FP\\s*", "FP");
+    p.put("^\\s*FRET\\s*", "FRET");
+    p.put("^\\s*TimeLapse\\s*", "TimeLapse");
+    p.put("^\\s*FourDPlus\\s*", "FourDPlus");
+    p.put("^\\s*Screen\\s*", "Screen");
+    p.put("^\\s*Immunocytochemistry\\s*", "Immunocytochemistry");
+    p.put("^\\s*Immunofluorescence\\s*", "Immunofluorescence");
+    p.put("^\\s*FISH\\s*", "FISH");
+    p.put("^\\s*Electrophysiology\\s*", "Electrophysiology");
+    p.put("^\\s*IonImaging\\s*", "IonImaging");
+    p.put("^\\s*Colocalization\\s*", "Colocalization");
+    p.put("^\\s*PGIDocumentation\\s*", "PGIDocumentation");
+    p.put("^\\s*FluorescenceLifetime\\s*", "FluorescenceLifetime");
+    p.put("^\\s*SpectralImaging\\s*", "SpectralImaging");
+    p.put("^\\s*Photobleaching\\s*", "Photobleaching");
     p.put("^\\s*Other\\s*", "Other");
     return p;
   }
@@ -80,7 +89,7 @@ public class LaserTypeEnumHandler implements IEnumerationHandler {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
-        return LaserType.fromString(v);
+        return ExperimentType.fromString(v);
       }
     }
     throw new EnumerationException(this.getClass().getName() +
@@ -89,7 +98,7 @@ public class LaserTypeEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return LaserType.class;
+    return ExperimentType.class;
   }
 
 }
