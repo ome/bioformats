@@ -546,7 +546,11 @@ public class TiffParser {
     }
     int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
     if (buf == null) buf = new byte[size];
-    if (stripByteCounts[tileNumber] == 0) return buf;
+    if (stripByteCounts[tileNumber] == 0 ||
+      stripOffsets[tileNumber] >= in.length())
+    {
+      return buf;
+    }
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
