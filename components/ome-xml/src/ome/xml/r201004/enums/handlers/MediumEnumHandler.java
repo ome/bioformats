@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-24 15:35:56.591722
+ * Created by callan via xsd-fu on 2010-05-24 16:13:00.333355
  *
  *-----------------------------------------------------------------------------
  */
@@ -73,8 +73,7 @@ public class MediumEnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
-    throws EnumerationException
-  {
+    throws EnumerationException {
     for (String pattern : patterns.keySet()) {
       if (value.toLowerCase().matches(pattern.toLowerCase())) {
         String v = patterns.get(pattern);
