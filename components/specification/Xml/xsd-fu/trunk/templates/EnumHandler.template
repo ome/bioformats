@@ -78,11 +78,11 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
         return ${klass.javaType}.fromString(v);
       }
     }
-{% if 'other' in klass.possibleValues %}\
+{% if 'Other' in klass.possibleValues %}\
     System.err.println("WARN: Could not find enumeration for " + value);
     return ${klass.javaType}.OTHER;
 {% end %}\
-{% if 'other' not in klass.possibleValues %}\
+{% if 'Other' not in klass.possibleValues %}\
     throw new EnumerationException(this.getClass().getName() +
      " could not find enumeration for " + value);
 {% end %}\
