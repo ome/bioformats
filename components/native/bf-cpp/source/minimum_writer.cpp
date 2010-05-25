@@ -53,6 +53,10 @@ using jace::proxy::loci::formats::FormatTools;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::IMetadata;
+#include "ome-xml.h"
+using jace::proxy::ome::xml::r201004::enums::DimensionOrder;
+using jace::proxy::ome::xml::r201004::enums::PixelType;
+using jace::proxy::ome::xml::r201004::primitives::PositiveInteger;
 
 #include <iostream>
 using std::cout;
@@ -117,15 +121,16 @@ bool minWrite(int argc, const char *argv[]) {
   cout << "Populating metadata..." << endl;
   IMetadata meta = MetadataTools::createOMEXMLMetadata();
   meta.createRoot();
-  meta.setPixelsBigEndian(Boolean(1), 0, 0);
-  meta.setPixelsDimensionOrder("XYZCT", 0, 0);
-  meta.setPixelsPixelType(FormatTools::getPixelTypeString(pixelType), 0, 0);
-  meta.setPixelsSizeX(Integer(w), 0, 0);
-  meta.setPixelsSizeY(Integer(h), 0, 0);
-  meta.setPixelsSizeZ(Integer(1), 0, 0);
-  meta.setPixelsSizeC(Integer(1), 0, 0);
-  meta.setPixelsSizeT(Integer(1), 0, 0);
-  meta.setLogicalChannelSamplesPerPixel(Integer(1), 0, 0);
+  meta.setPixelsBinDataBigEndian(Boolean(1), 0, 0);
+  meta.setPixelsDimensionOrder(DimensionOrder::XYZCT(), 0);
+  meta.setPixelsType(
+    PixelType::fromString(FormatTools::getPixelTypeString(pixelType)), 0);
+  meta.setPixelsSizeX(PositiveInteger(Integer(w)), 0);
+  meta.setPixelsSizeY(PositiveInteger(Integer(h)), 0);
+  meta.setPixelsSizeZ(PositiveInteger(Integer(1)), 0);
+  meta.setPixelsSizeC(PositiveInteger(Integer(1)), 0);
+  meta.setPixelsSizeT(PositiveInteger(Integer(1)), 0);
+  meta.setChannelSamplesPerPixel(Integer(1), 0, 0);
 
   // write image plane to disk
   cout << "Writing image to '" << id << "'..." << endl;
