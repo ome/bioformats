@@ -44,6 +44,60 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.r201004.enums.AcquisitionMode;
+import ome.xml.r201004.enums.ArcType;
+import ome.xml.r201004.enums.Binning;
+import ome.xml.r201004.enums.Compression;
+import ome.xml.r201004.enums.ContrastMethod;
+import ome.xml.r201004.enums.Correction;
+import ome.xml.r201004.enums.DetectorType;
+import ome.xml.r201004.enums.DimensionOrder;
+import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.r201004.enums.ExperimentType;
+import ome.xml.r201004.enums.FilamentType;
+import ome.xml.r201004.enums.FillRule;
+import ome.xml.r201004.enums.FilterType;
+import ome.xml.r201004.enums.FontFamily;
+import ome.xml.r201004.enums.FontStyle;
+import ome.xml.r201004.enums.IlluminationType;
+import ome.xml.r201004.enums.Immersion;
+import ome.xml.r201004.enums.LaserMedium;
+import ome.xml.r201004.enums.LaserType;
+import ome.xml.r201004.enums.LineCap;
+import ome.xml.r201004.enums.Marker;
+import ome.xml.r201004.enums.Medium;
+import ome.xml.r201004.enums.MicrobeamManipulationType;
+import ome.xml.r201004.enums.MicroscopeType;
+import ome.xml.r201004.enums.NamingConvention;
+import ome.xml.r201004.enums.PixelType;
+import ome.xml.r201004.enums.Pulse;
+import ome.xml.r201004.enums.handlers.AcquisitionModeEnumHandler;
+import ome.xml.r201004.enums.handlers.ArcTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.BinningEnumHandler;
+import ome.xml.r201004.enums.handlers.CompressionEnumHandler;
+import ome.xml.r201004.enums.handlers.ContrastMethodEnumHandler;
+import ome.xml.r201004.enums.handlers.CorrectionEnumHandler;
+import ome.xml.r201004.enums.handlers.DetectorTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.DimensionOrderEnumHandler;
+import ome.xml.r201004.enums.handlers.ExperimentTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.FilamentTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.FillRuleEnumHandler;
+import ome.xml.r201004.enums.handlers.FilterTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.FontFamilyEnumHandler;
+import ome.xml.r201004.enums.handlers.FontStyleEnumHandler;
+import ome.xml.r201004.enums.handlers.IlluminationTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.ImmersionEnumHandler;
+import ome.xml.r201004.enums.handlers.LaserMediumEnumHandler;
+import ome.xml.r201004.enums.handlers.LaserTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.LineCapEnumHandler;
+import ome.xml.r201004.enums.handlers.MarkerEnumHandler;
+import ome.xml.r201004.enums.handlers.MediumEnumHandler;
+import ome.xml.r201004.enums.handlers.MicrobeamManipulationTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.MicroscopeTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.NamingConventionEnumHandler;
+import ome.xml.r201004.enums.handlers.PixelTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.PulseEnumHandler;
+
 /**
  * Abstract superclass of all biological file format readers.
  *
@@ -1015,6 +1069,444 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatHandler#close() */
   public void close() throws IOException {
     close(false);
+  }
+
+  // -- Metadata enumeration convenience methods --
+
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.AcquisitionMode} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected AcquisitionMode getAcquisitionMode(String value)
+    throws FormatException
+  {
+    AcquisitionModeEnumHandler handler = new AcquisitionModeEnumHandler();
+    try {
+      return (AcquisitionMode) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("AcquisitionMode creation failed", e);
+    }
+  }
+
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.ArcType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected ArcType getArcType(String value) throws FormatException {
+    ArcTypeEnumHandler handler = new ArcTypeEnumHandler();
+    try {
+      return (ArcType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("ArcType creation failed", e);
+    }
+  }
+
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Binning} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Binning getBinning(String value) throws FormatException {
+    BinningEnumHandler handler = new BinningEnumHandler();
+    try {
+      return (Binning) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Binning creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Compression} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Compression getCompression(String value) throws FormatException {
+    CompressionEnumHandler handler = new CompressionEnumHandler();
+    try {
+      return (Compression) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Compression creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.ContrastMethod} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected ContrastMethod getContrastMethod(String value)
+    throws FormatException
+  {
+    ContrastMethodEnumHandler handler = new ContrastMethodEnumHandler();
+    try {
+      return (ContrastMethod) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("ContrastMethod creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Correction} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Correction getCorrection(String value) throws FormatException {
+    CorrectionEnumHandler handler = new CorrectionEnumHandler();
+    try {
+      return (Correction) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Correction creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.DetectorType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected DetectorType getDetectorType(String value) throws FormatException {
+    DetectorTypeEnumHandler handler = new DetectorTypeEnumHandler();
+    try {
+      return (DetectorType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("DetectorType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.DimensionOrder} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected DimensionOrder getDimensionOrder(String value)
+    throws FormatException
+  {
+    DimensionOrderEnumHandler handler = new DimensionOrderEnumHandler();
+    try {
+      return (DimensionOrder) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("DimensionOrder creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.ExperimentType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected ExperimentType getExperimentType(String value)
+    throws FormatException
+  {
+    ExperimentTypeEnumHandler handler = new ExperimentTypeEnumHandler();
+    try {
+      return (ExperimentType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("ExperimentType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.FilamentType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected FilamentType getFilamentType(String value) throws FormatException {
+    FilamentTypeEnumHandler handler = new FilamentTypeEnumHandler();
+    try {
+      return (FilamentType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("FilamentType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.FillRule} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected FillRule getFillRule(String value) throws FormatException {
+    FillRuleEnumHandler handler = new FillRuleEnumHandler();
+    try {
+      return (FillRule) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("FillRule creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.FilterType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected FilterType getFilterType(String value) throws FormatException {
+    FilterTypeEnumHandler handler = new FilterTypeEnumHandler();
+    try {
+      return (FilterType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("FilterType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.FontFamily} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected FontFamily getFontFamily(String value) throws FormatException {
+    FontFamilyEnumHandler handler = new FontFamilyEnumHandler();
+    try {
+      return (FontFamily) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("FontFamily creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.FontStyle} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected FontStyle getFontStyle(String value) throws FormatException {
+    FontStyleEnumHandler handler = new FontStyleEnumHandler();
+    try {
+      return (FontStyle) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("FontStyle creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.IlluminationType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected IlluminationType getIlluminationType(String value)
+    throws FormatException
+  {
+    IlluminationTypeEnumHandler handler = new IlluminationTypeEnumHandler();
+    try {
+      return (IlluminationType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("IlluminationType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Immersion} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Immersion getImmersion(String value) throws FormatException {
+    ImmersionEnumHandler handler = new ImmersionEnumHandler();
+    try {
+      return (Immersion) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Immersion creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.LaserMedium} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected LaserMedium getLaserMedium(String value) throws FormatException {
+    LaserMediumEnumHandler handler = new LaserMediumEnumHandler();
+    try {
+      return (LaserMedium) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("LaserMedium creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.LaserType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected LaserType getLaserType(String value) throws FormatException {
+    LaserTypeEnumHandler handler = new LaserTypeEnumHandler();
+    try {
+      return (LaserType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("LaserType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.LineCap} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected LineCap getLineCap(String value) throws FormatException {
+    LineCapEnumHandler handler = new LineCapEnumHandler();
+    try {
+      return (LineCap) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("LineCap creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Marker} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Marker getMarker(String value) throws FormatException {
+    MarkerEnumHandler handler = new MarkerEnumHandler();
+    try {
+      return (Marker) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Marker creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Medium} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Medium getMedium(String value) throws FormatException {
+    MediumEnumHandler handler = new MediumEnumHandler();
+    try {
+      return (Medium) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Medium creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.MicrobeamManipulationType}
+   * enumeration value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected MicrobeamManipulationType getMicrobeamManipulationType(String value)
+    throws FormatException
+  {
+    MicrobeamManipulationTypeEnumHandler handler =
+      new MicrobeamManipulationTypeEnumHandler();
+    try {
+      return (MicrobeamManipulationType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("MicrobeamManipulationType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.MicroscopeType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected MicroscopeType getMicroscopeType(String value)
+    throws FormatException
+  {
+    MicroscopeTypeEnumHandler handler = new MicroscopeTypeEnumHandler();
+    try {
+      return (MicroscopeType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("MicroscopeType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.NamingConvention} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected NamingConvention getNamingConvention(String value)
+    throws FormatException
+  {
+    NamingConventionEnumHandler handler = new NamingConventionEnumHandler();
+    try {
+      return (NamingConvention) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("NamingConvention creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.PixelType} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected PixelType getPixelType(String value) throws FormatException {
+    PixelTypeEnumHandler handler = new PixelTypeEnumHandler();
+    try {
+      return (PixelType) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("PixelType creation failed", e);
+    }
+  }
+  /**
+   * Retrieves an {@link ome.xml.r201004.enums.Pulse} enumeration
+   * value for the given String.
+   *
+   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   *  enumeration value is not found.
+   */
+  protected Pulse getPulse(String value) throws FormatException {
+    PulseEnumHandler handler = new PulseEnumHandler();
+    try {
+      return (Pulse) handler.getEnumeration(value);
+    }
+    catch (EnumerationException e) {
+      throw new FormatException("Pulse creation failed", e);
+    }
   }
 
 }

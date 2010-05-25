@@ -46,15 +46,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
-
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
-import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.primitives.NonNegativeInteger;
 import ome.xml.r201004.primitives.PositiveInteger;
 
@@ -433,7 +424,8 @@ public class FlexReader extends FormatReader {
     populateMetadataStore(store);
   }
 
-  private void populateMetadataStore(MetadataStore store) {
+  private void populateMetadataStore(MetadataStore store) throws FormatException
+  {
     LOGGER.info("Populating MetadataStore");
     MetadataTools.populatePixels(store, this, true);
 
@@ -462,10 +454,10 @@ public class FlexReader extends FormatReader {
 
       if (wellRows == 0 && wellColumns == 0) {
         well = pos[1];
-        store.setWellRow(
-          new NonNegativeInteger(wellNumber[well][0]), pos[2], well);
-        store.setWellColumn(
-          new NonNegativeInteger(wellNumber[well][1]), pos[2], well);
+        NonNegativeInteger row = new NonNegativeInteger(wellNumber[pos[1]][0]);
+        NonNegativeInteger col = new NonNegativeInteger(wellNumber[pos[1]][1]);
+        store.setWellRow(row, pos[2], pos[1]);
+        store.setWellColumn(col, pos[2], pos[1]);
       }
       store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
@@ -478,8 +470,8 @@ public class FlexReader extends FormatReader {
       if (plateName == null) plateName = currentFile.getParentFile().getName();
       if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
       store.setPlateName(plateName, 0);
-      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
-      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         int[] pos = FormatTools.rasterToPosition(lengths, i);
@@ -502,11 +494,8 @@ public class FlexReader extends FormatReader {
               store.setDetectorSettingsID(cameraRefs.get(index), i, c);
             }
             if (index < binnings.size()) {
-              try {
-                store.setDetectorSettingsBinning(
-                  Binning.fromString(binnings.get(index)), i, c);
-              }
-              catch (EnumerationException e) { }
+              store.setDetectorSettingsBinning(
+                getBinning(binnings.get(index)), i, c);
             }
             if (lightSources != null && c < lightSources.size()) {
               store.setChannelLightSourceSettingsID(lightSources.get(c), i, c);
@@ -1169,8 +1158,13 @@ public class FlexReader extends FormatReader {
         store.setLaserID(lsid, 0, nextLaser);
         store.setLaserWavelength(
           new PositiveInteger(new Integer(value)), 0, nextLaser);
-        store.setLaserType(LaserType.OTHER, 0, nextLaser);
-        store.setLaserLaserMedium(LaserMedium.OTHER, 0, nextLaser);
+        try {
+          store.setLaserType(getLaserType("Other"), 0, nextLaser);
+          store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);
+        }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
       }
       else if (qName.equals("Magnification")) {
         store.setObjectiveCalibratedMagnification(new Double(value), 0,
@@ -1180,11 +1174,17 @@ public class FlexReader extends FormatReader {
         store.setObjectiveLensNA(new Double(value), 0, nextObjective);
       }
       else if (qName.equals("Immersion")) {
-        Immersion immersion = Immersion.OTHER;
-        if (value.equals("1.33")) immersion = Immersion.WATER;
-        else if (value.equals("1.00")) immersion = Immersion.AIR;
+        String immersion = "Other";
+        if (value.equals("1.33")) immersion = "Water";
+        else if (value.equals("1.00")) immersion = "Air";
         else LOGGER.warn("Unknown immersion medium: {}", value);
-        store.setObjectiveImmersion(immersion, 0, nextObjective);
+        try {
+          store.setObjectiveImmersion(
+            getImmersion(immersion), 0, nextObjective);
+        }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
       }
       else if (qName.equals("OffsetX") || qName.equals("OffsetY")) {
         Double offset = new Double(Double.parseDouble(value) * 1000000);
@@ -1301,10 +1301,12 @@ public class FlexReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
         try {
-          store.setDetectorType(DetectorType.fromString(
+          store.setDetectorType(getDetectorType(
             attributes.getValue("CameraType")), 0, nextCamera);
         }
-        catch (EnumerationException e) { }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
       }
@@ -1315,7 +1317,13 @@ public class FlexReader extends FormatReader {
         String objectiveID =
           MetadataTools.createLSID("Objective", 0, nextObjective);
         store.setObjectiveID(objectiveID, 0, nextObjective);
-        store.setObjectiveCorrection(Correction.OTHER, 0, nextObjective);
+        try {
+          store.setObjectiveCorrection(
+            getCorrection("Other"), 0, nextObjective);
+        }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
         objectiveIDs.add(attributes.getValue("ID"));
       }
       else if (qName.equals("Field")) {

@@ -372,7 +372,7 @@ public class LiFlimReader extends FormatReader {
     core[0].rgb = getSizeC() > 1;
     core[0].indexed = false;
     core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = getPixelType(datatype);
+    core[0].pixelType = getPixelTypeFromString(datatype);
     core[0].littleEndian = true;
     core[0].interleaved = true;
     core[0].falseColor = false;
@@ -387,7 +387,7 @@ public class LiFlimReader extends FormatReader {
       core[1].rgb = core[1].sizeC > 1;
       core[1].indexed = false;
       core[1].dimensionOrder = "XYCZT";
-      core[1].pixelType = getPixelType(backgroundDatatype);
+      core[1].pixelType = getPixelTypeFromString(backgroundDatatype);
       core[1].littleEndian = true;
       core[1].interleaved = true;
       core[1].falseColor = false;
@@ -457,7 +457,7 @@ public class LiFlimReader extends FormatReader {
     }
   }
 
-  private int getPixelType(String type) throws FormatException {
+  private int getPixelTypeFromString(String type) throws FormatException {
     // check data type
     if (DATATYPE_UINT8.equals(type)) return FormatTools.UINT8;
     else if (DATATYPE_INT8.equals(type)) return FormatTools.INT8;

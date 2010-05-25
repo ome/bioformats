@@ -37,11 +37,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -757,7 +752,9 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /** Extract metadata from associated log file, if it exists. */
-  private boolean parseLogFile(MetadataStore store) throws IOException {
+  private boolean parseLogFile(MetadataStore store)
+    throws FormatException, IOException
+  {
     if (logFile == null || !new Location(logFile).exists()) {
       logFile = null;
       return false;
@@ -819,11 +816,7 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse N.A. '{}'", na);
             }
             if (tokens.length >= 2) {
-              try {
-                store.setObjectiveCorrection(
-                  Correction.fromString(tokens[1]), 0, 0);
-              }
-              catch (EnumerationException e) { }
+              store.setObjectiveCorrection(getCorrection(tokens[1]), 0, 0);
             }
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
@@ -836,8 +829,8 @@ public class DeltavisionReader extends FormatReader {
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
           store.setImageObjectiveSettingsID(objectiveID, 0);
-          store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-          store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+          store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+          store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
         }
         // Image properties
         else if (key.equals("Pixel Size")) {
@@ -858,14 +851,11 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equals("Binning")) {
-          store.setDetectorType(DetectorType.OTHER, 0, 0);
+          store.setDetectorType(getDetectorType("Other"), 0, 0);
           String detectorID = MetadataTools.createLSID("Detector", 0, 0);
           store.setDetectorID(detectorID, 0, 0);
           for (int c=0; c<getSizeC(); c++) {
-            try {
-              store.setDetectorSettingsBinning(Binning.fromString(value), 0, c);
-            }
-            catch (EnumerationException e) { }
+            store.setDetectorSettingsBinning(getBinning(value), 0, c);
             // link DetectorSettings to an actual Detector
             store.setDetectorSettingsID(detectorID, 0, c);
           }
