@@ -162,43 +162,23 @@ public class PCIReader extends FormatReader {
           throw new FormatException("This file does not contain image data.");
         }
       }
-      else if (relativePath.equals("Comments")) {
-        String comments = new String(poi.getDocumentBytes(name));
-        String[] lines = comments.split("\n");
-        for (String line : lines) {
-          int eq = line.indexOf("=");
-          if (eq != -1) {
-            String key = line.substring(0, eq).trim();
-            String value = line.substring(eq + 1).trim();
-            addGlobalMeta(key, value);
-
-            if (key.equals("factor")) {
-              if (value.indexOf(";") != -1) {
-                value = value.substring(0, value.indexOf(";"));
-              }
-              scaleFactor = Float.parseFloat(value.trim());
-            }
-          }
-        }
-      }
-      else if (relativePath.startsWith("Bitmap") || relativePath.equals("Data"))
+      else if (relativePath.startsWith("Bitmap") ||
+        (relativePath.equals("Data") && parent.indexOf("Image") != -1))
       {
         imageFiles.put(imageFiles.size(), name);
 
         if (getSizeX() != 0 && getSizeY() != 0) {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
           int plane = getSizeX() * getSizeY() * bpp;
-          core[0].sizeC = poi.getFileSize(name) / plane;
           if (getSizeC() == 0) {
-            core[0].sizeX /= 16;
-            core[0].sizeY /= 16;
             core[0].sizeC = poi.getFileSize(name) / plane;
           }
         }
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
-        byte[] b = poi.getDocumentBytes(name, 8);
-        int bits = (int) DataTools.bytesToDouble(b, true);
+        boolean firstBits = core[0].bitsPerPixel == 0;
+        int bits = (int) stream.readDouble();
+        core[0].bitsPerPixel = bits;
         while (bits % 8 != 0 || bits == 0) bits++;
         switch (bits) {
           case 8:
@@ -215,6 +195,11 @@ public class PCIReader extends FormatReader {
             break;
           default:
             throw new FormatException("Unsupported bits per pixel : " + bits);
+        }
+        bits /= 8;
+        core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
+        if (getSizeC() > 1 && firstBits) {
+          core[0].sizeC /= bits;
         }
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
