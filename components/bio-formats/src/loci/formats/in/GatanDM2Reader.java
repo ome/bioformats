@@ -34,9 +34,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.EnumerationException;
-
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
  *
@@ -196,11 +193,7 @@ public class GatanDM2Reader extends FormatReader {
         time = value.toString();
       }
       else if (label.equals("Binning")) {
-        try {
-          store.setDetectorSettingsBinning(
-            Binning.fromString(value + "x" + value), 0, 0);
-        }
-        catch (EnumerationException e) { }
+        store.setDetectorSettingsBinning(getBinning(value + "x" + value), 0, 0);
         String detectorID = MetadataTools.createLSID("Detector", 0);
         store.setDetectorID(detectorID, 0, 0);
         store.setDetectorSettingsID(detectorID, 0, 0);

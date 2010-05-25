@@ -32,10 +32,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.Immersion;
-
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
  *
@@ -219,7 +215,7 @@ public class AliconaReader extends FormatReader {
         store.setDetectorSettingsID(detectorID, 0, 0);
 
         // set required Detector type
-        store.setDetectorType(DetectorType.OTHER, 0, 0);
+        store.setDetectorType(getDetectorType("Other"), 0, 0);
       }
 
       // populate Objective data
@@ -233,8 +229,8 @@ public class AliconaReader extends FormatReader {
         store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
       }
 
-      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       // link Objective to an Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

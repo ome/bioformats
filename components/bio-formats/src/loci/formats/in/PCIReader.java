@@ -43,10 +43,6 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
  *
@@ -307,16 +303,13 @@ public class PCIReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0);
         store.setInstrumentID(instrumentID, 0);
         store.setDetectorID(detectorID, 0, 0);
-        store.setDetectorType(DetectorType.OTHER, 0, 0);
+        store.setDetectorType(getDetectorType("Other"), 0, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsID(detectorID, 0, c);
-          try {
-            store.setDetectorSettingsBinning(
-              Binning.fromString(binning + "x" + binning), 0, c);
-          }
-          catch (EnumerationException e) { }
+          store.setDetectorSettingsBinning(
+            getBinning(binning + "x" + binning), 0, c);
         }
       }
     }

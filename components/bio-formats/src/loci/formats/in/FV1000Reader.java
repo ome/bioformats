@@ -52,13 +52,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.IlluminationType;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -856,11 +849,8 @@ public class FV1000Reader extends FormatReader {
 
       for (int c=0; c<core[i].sizeC; c++) {
         if (c < illuminations.size()) {
-          try {
-            store.setChannelIlluminationType(
-              IlluminationType.fromString(illuminations.get(c)), i, c);
-          }
-          catch (EnumerationException e) { }
+          store.setChannelIlluminationType(
+            getIlluminationType(illuminations.get(c)), i, c);
         }
       }
     }
@@ -877,7 +867,7 @@ public class FV1000Reader extends FormatReader {
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
       store.setDetectorVoltage(channel.voltage, 0, channelIndex);
-      store.setDetectorType(DetectorType.PMT, 0, channelIndex);
+      store.setDetectorType(getDetectorType("PMT"), 0, channelIndex);
 
       // populate LogicalChannel data
 
@@ -936,16 +926,13 @@ public class FV1000Reader extends FormatReader {
 
       // populate Laser data
       store.setLaserID(lightSourceID, 0, channelIndex);
-      try {
-        store.setLaserLaserMedium(LaserMedium.fromString(channel.dyeName),
-          0, channelIndex);
-      }
-      catch (EnumerationException e) { }
+      store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
+        0, channelIndex);
       if (channelIndex < wavelengths.size()) {
         store.setLaserWavelength(
           new PositiveInteger(wavelengths.get(channelIndex)), 0, channelIndex);
       }
-      store.setLaserType(LaserType.OTHER, 0, channelIndex);
+      store.setLaserType(getLaserType("Other"), 0, channelIndex);
 
       channelIndex++;
     }
@@ -961,8 +948,8 @@ public class FV1000Reader extends FormatReader {
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     }
-    store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-    store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+    store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+    store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

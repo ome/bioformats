@@ -47,9 +47,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.ExperimentType;
-
 /**
  * TillVisionReader is the file format reader for TillVision files.
  *
@@ -120,8 +117,8 @@ public class TillVisionReader extends FormatReader {
           if (stream != null) stream.close();
         }
       }
-      pixelsFiles = null;
       pixelsStream = null;
+      pixelsFiles = null;
       embeddedOffset = 0;
       embeddedImages = false;
       exposureTimes = null;
@@ -412,7 +409,7 @@ public class TillVisionReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void populateMetadataStore() {
+  private void populateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
@@ -439,10 +436,7 @@ public class TillVisionReader extends FormatReader {
         // populate Experiment data
 
         if (i < types.size()) {
-          try {
-            store.setExperimentType(ExperimentType.fromString(types.get(i)), i);
-          }
-          catch (EnumerationException e) { }
+          store.setExperimentType(getExperimentType(types.get(i)), i);
         }
       }
     }

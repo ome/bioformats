@@ -37,13 +37,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.ExperimentType;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.primitives.NonNegativeInteger;
 import ome.xml.r201004.primitives.PositiveInteger;
 
@@ -469,13 +462,13 @@ public class InCellReader extends FormatReader {
 
       // populate Plate data
 
-      NamingConvention rowNaming = Character.isDigit(rowName.charAt(0)) ?
-        NamingConvention.NUMBER : NamingConvention.LETTER;
-      NamingConvention colNaming = Character.isDigit(colName.charAt(0)) ?
-        NamingConvention.NUMBER : NamingConvention.LETTER;
+      String rowNaming =
+        Character.isDigit(rowName.charAt(0)) ? "Number" : "Letter";
+      String colNaming =
+        Character.isDigit(colName.charAt(0)) ? "Number" : "Letter";
 
-      store.setPlateRowNamingConvention(rowNaming, 0);
-      store.setPlateColumnNamingConvention(colNaming, 0);
+      store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
+      store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
       store.setPlateWellOriginX(0.5, 0);
       store.setPlateWellOriginY(0.5, 0);
 
@@ -711,9 +704,11 @@ public class InCellReader extends FormatReader {
         store.setExperimentID(experimentID, 0);
         try {
           store.setExperimentType(
-            ExperimentType.fromString(attributes.getValue("type")), 0);
+            getExperimentType(attributes.getValue("type")), 0);
         }
-        catch (EnumerationException e) { }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
       }
       else if (qName.equals("Image")) {
         openImage = true;
@@ -745,20 +740,24 @@ public class InCellReader extends FormatReader {
           Double.parseDouble(attributes.getValue("magnification")), 0, 0);
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
-        store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+        try {
+         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+        }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
 
         String objective = attributes.getValue("objective_name");
         String[] tokens = objective.split("_");
 
         store.setObjectiveManufacturer(tokens[0], 0, 0);
-        if (tokens.length > 2) {
-          try {
-            store.setObjectiveCorrection(
-              Correction.fromString(tokens[2]), 0, 0);
-          }
-          catch (EnumerationException e) { }
+        String correction = tokens.length > 2 ? tokens[2] : "Other";
+        try {
+          store.setObjectiveCorrection(getCorrection(correction), 0, 0);
         }
-        else store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
 
         Double pixelSizeX = new Double(attributes.getValue("pixel_width"));
         Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
@@ -786,7 +785,12 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
-        store.setDetectorType(DetectorType.OTHER, 0, 0);
+        try {
+          store.setDetectorType(getDetectorType("Other"), 0, 0);
+        }
+        catch (FormatException e) {
+          LOGGER.warn("", e);
+        }
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
         store.setDetectorID(detectorID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
@@ -799,16 +803,15 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Binning")) {
         String binning = attributes.getValue("value");
-        try {
-          Binning b = Binning.fromString(binning);
-          for (int i=0; i<getSeriesCount(); i++) {
-            setSeries(i);
-            for (int q=0; q<getSizeC(); q++) {
-              store.setDetectorSettingsBinning(b, i, q);
+        for (int i=0; i<getSeriesCount(); i++) {
+          setSeries(i);
+          for (int q=0; q<getSizeC(); q++) {
+            try {
+              store.setDetectorSettingsBinning(getBinning(binning), i, q);
             }
+            catch (FormatException e) { }
           }
         }
-        catch (EnumerationException e) { }
         setSeries(0);
       }
       else if (qName.equals("Gain")) {

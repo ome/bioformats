@@ -44,12 +44,6 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.AcquisitionMode;
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -900,7 +894,7 @@ public class NativeND2Reader extends FormatReader {
 
   // -- Helper methods --
 
-  private void populateMetadataStore() {
+  private void populateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
@@ -973,7 +967,7 @@ public class NativeND2Reader extends FormatReader {
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
     store.setDetectorModel(cameraModel, 0, 0);
-    store.setDetectorType(DetectorType.OTHER, 0, 0);
+    store.setDetectorType(getDetectorType("Other"), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -985,11 +979,8 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelName(channelNames.get(index), i, c);
         }
         if (index < modality.size()) {
-          try {
-            store.setChannelAcquisitionMode(
-              AcquisitionMode.fromString(modality.get(index)), i, c);
-          }
-          catch (EnumerationException e) { }
+          store.setChannelAcquisitionMode(
+            getAcquisitionMode(modality.get(index)), i, c);
         }
         if (index < emWave.size()) {
           store.setChannelEmissionWavelength(
@@ -1000,11 +991,8 @@ public class NativeND2Reader extends FormatReader {
             new PositiveInteger(exWave.get(index)), i, c);
         }
         if (index < binning.size()) {
-          try {
-            store.setDetectorSettingsBinning(
-              Binning.fromString(binning.get(index)), i, c);
-          }
-          catch (EnumerationException e) { }
+          store.setDetectorSettingsBinning(
+            getBinning(binning.get(index)), i, c);
         }
         if (index < gain.size()) {
           store.setDetectorSettingsGain(gain.get(index), i, c);
@@ -1042,15 +1030,9 @@ public class NativeND2Reader extends FormatReader {
       store.setObjectiveModel(objectiveModel, 0, 0);
     }
     if (immersion == null) immersion = "Other";
-    try {
-      store.setObjectiveImmersion(Immersion.fromString(immersion), 0, 0);
-    }
-    catch (EnumerationException e) { }
+    store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
     if (correction == null || correction.length() == 0) correction = "Other";
-    try {
-      store.setObjectiveCorrection(Correction.fromString(correction), 0, 0);
-    }
-    catch (EnumerationException e) { }
+    store.setObjectiveCorrection(getCorrection(correction), 0, 0);
 
     // link Objective to Image
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

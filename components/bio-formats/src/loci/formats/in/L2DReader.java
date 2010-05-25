@@ -37,9 +37,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
-import ome.xml.r201004.enums.MicroscopeType;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -295,15 +292,15 @@ public class L2DReader extends FormatReader {
             store.setLaserID(laser, 0, q);
             Integer wave = new Integer(waves[q].trim());
             store.setLaserWavelength(new PositiveInteger(wave), 0, q);
-            store.setLaserType(LaserType.OTHER, 0, q);
-            store.setLaserLaserMedium(LaserMedium.OTHER, 0, q);
+            store.setLaserType(getLaserType("Other"), 0, q);
+            store.setLaserLaserMedium(getLaserMedium("Other"), 0, q);
             store.setChannelLightSourceSettingsID(laser, i, q);
           }
         }
       }
 
       store.setMicroscopeModel(model, 0);
-      store.setMicroscopeType(MicroscopeType.OTHER, 0);
+      store.setMicroscopeType(getMicroscopeType("Other"), 0);
     }
   }
 

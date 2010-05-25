@@ -36,10 +36,6 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-
 /**
  * HISReader is the file format reader for Hamamatsu .his files.
  *
@@ -248,13 +244,9 @@ public class HISReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
         store.setDetectorOffset(offset[i], 0, i);
-        store.setDetectorType(DetectorType.OTHER, 0, i);
+        store.setDetectorType(getDetectorType("Other"), 0, i);
         store.setDetectorSettingsID(detectorID, i, 0);
-        try {
-          store.setDetectorSettingsBinning(
-            Binning.fromString(binning[i]), i, 0);
-        }
-        catch (EnumerationException e) { }
+        store.setDetectorSettingsBinning(getBinning(binning[i]), i, 0);
       }
     }
   }

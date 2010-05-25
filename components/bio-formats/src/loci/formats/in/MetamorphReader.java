@@ -47,11 +47,6 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -543,11 +538,7 @@ public class MetamorphReader extends BaseTiffReader {
           store.setChannelName(waveNames.get(waveIndex), i, c);
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
-        try {
-          Binning b = Binning.fromString(binning);
-          store.setDetectorSettingsBinning(b, i, c);
-        }
-        catch (EnumerationException e) { }
+        store.setDetectorSettingsBinning(getBinning(binning), i, c);
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
@@ -563,8 +554,8 @@ public class MetamorphReader extends BaseTiffReader {
           String lightSourceID = MetadataTools.createLSID("LightSource", i, c);
           store.setLaserID(lightSourceID, i, c);
           store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-          store.setLaserType(LaserType.OTHER, i, c);
-          store.setLaserLaserMedium(LaserMedium.OTHER, i, c);
+          store.setLaserType(getLaserType("Other"), i, c);
+          store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
         }
         waveIndex++;
       }
@@ -663,7 +654,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (handler != null && handler.getZoom() != 0) {
         store.setDetectorZoom(handler.getZoom(), 0, 0);
       }
-      store.setDetectorType(DetectorType.OTHER, 0, 0);
+      store.setDetectorType(getDetectorType("Other"), 0, 0);
     }
   }
 

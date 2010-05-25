@@ -40,9 +40,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.primitives.NonNegativeInteger;
 
 import org.xml.sax.Attributes;
@@ -461,14 +458,11 @@ public class ScanrReader extends FormatReader {
         }
       }
 
-      if (wellRows > 26) {
-        store.setPlateRowNamingConvention(NamingConvention.NUMBER, 0);
-        store.setPlateColumnNamingConvention(NamingConvention.LETTER, 0);
-      }
-      else {
-        store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
-        store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
-      }
+      String row = wellRows > 26 ? "Number" : "Letter";
+      String col = wellRows > 26 ? "Letter" : "Number";
+
+      store.setPlateRowNamingConvention(getNamingConvention(row), 0);
+      store.setPlateColumnNamingConvention(getNamingConvention(col), 0);
       store.setPlateName(plateName, 0);
     }
   }

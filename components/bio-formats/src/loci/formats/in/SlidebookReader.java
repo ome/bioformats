@@ -37,9 +37,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.Immersion;
-
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
  * The strategies employed by this reader are highly suboptimal, as we
@@ -531,8 +528,8 @@ public class SlidebookReader extends FormatReader {
 
       // populate Objective data
       store.setObjectiveModel(objective, 0, 0);
-      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);

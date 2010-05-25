@@ -34,9 +34,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
-
 /**
  * FakeReader is the file format reader for faking input data.
  * It is mainly useful for testing.
@@ -257,12 +254,7 @@ public class FakeReader extends FormatReader {
       throw new FormatException("Invalid sizeC/rgb combination: " +
         sizeC + "/" + rgb);
     }
-    try {
-      DimensionOrder.fromString(dimOrder);
-    }
-    catch (EnumerationException exc) {
-      throw new FormatException("Invalid dimOrder: " + dimOrder, exc);
-    }
+    getDimensionOrder(dimOrder);
     if (falseColor && !indexed) {
       throw new FormatException("False color images must be indexed");
     }

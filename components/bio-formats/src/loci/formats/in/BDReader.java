@@ -46,9 +46,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.primitives.NonNegativeInteger;
 import ome.xml.r201004.primitives.PositiveInteger;
 
@@ -160,7 +157,7 @@ public class BDReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  /* see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -334,10 +331,7 @@ public class BDReader extends FormatReader {
           store.setDetectorSettingsID(detectorID, i, c);
           store.setDetectorSettingsGain(gain[c], i, c);
           store.setDetectorSettingsOffset(offset[c], i, c);
-          try {
-            store.setDetectorSettingsBinning(Binning.fromString(binning), i, c);
-          }
-          catch (EnumerationException e) { }
+          store.setDetectorSettingsBinning(getBinning(binning), i, c);
         }
 
         for (int p=0; p<getImageCount(); p++) {
@@ -346,8 +340,8 @@ public class BDReader extends FormatReader {
         }
       }
 
-      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
-      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
       store.setPlateName(plateName, 0);
       store.setPlateDescription(plateDescription, 0);
 

@@ -42,8 +42,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.DetectorType;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -305,7 +303,7 @@ public class PrairieReader extends FormatReader {
             String detectorID = MetadataTools.createLSID("Detector", 0, i);
             store.setDetectorID(detectorID, 0, i);
             store.setDetectorSettingsID(detectorID, 0, i);
-            store.setDetectorType(DetectorType.OTHER, 0, i);
+            store.setDetectorType(getDetectorType("Other"), 0, i);
           }
 
           /* TODO : check if this is correct

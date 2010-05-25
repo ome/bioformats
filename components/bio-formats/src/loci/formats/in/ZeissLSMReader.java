@@ -49,15 +49,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.FilterType;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
-
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
  *
@@ -165,7 +156,7 @@ public class ZeissLSMReader extends FormatReader {
   private TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
-  private int nextFilter = 0, nextDichroicChannel, nextDichroic = 0;
+  private int nextFilter = 0, nextDichroicChannel = 0, nextDichroic = 0;
   private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
   private double zoom;
@@ -916,6 +907,7 @@ public class ZeissLSMReader extends FormatReader {
 
   protected void populateMetadataStore(SubBlock block, MetadataStore store,
     int series)
+    throws FormatException
   {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
       return;
@@ -932,16 +924,9 @@ public class ZeissLSMReader extends FormatReader {
         store.setImageObjectiveSettingsID(objectiveID, series);
         binning = recording.binning;
       }
-      try {
-        store.setObjectiveCorrection(
-          Correction.fromString(recording.correction), series, 0);
-      }
-      catch (EnumerationException e) { }
-      try {
-        store.setObjectiveImmersion(
-          Immersion.fromString(recording.immersion), series, 0);
-      }
-      catch (EnumerationException e) { }
+      store.setObjectiveCorrection(
+        getCorrection(recording.correction), series, 0);
+      store.setObjectiveImmersion(getImmersion(recording.immersion), series, 0);
       store.setObjectiveNominalMagnification(recording.magnification,
         series, 0);
       store.setObjectiveLensNA(recording.lensNA, series, 0);
@@ -951,18 +936,11 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
       if (laser.medium != null) {
-        try {
-          store.setLaserLaserMedium(LaserMedium.fromString(laser.medium),
-            series, nextLaser);
-        }
-        catch (EnumerationException e) { }
+        store.setLaserLaserMedium(getLaserMedium(laser.medium),
+          series, nextLaser);
       }
       if (laser.type != null) {
-        try {
-          store.setLaserType(
-            LaserType.fromString(laser.type), series, nextLaser);
-        }
-        catch (EnumerationException e) { }
+        store.setLaserType(getLaserType(laser.type), series, nextLaser);
       }
       String lightSourceID =
         MetadataTools.createLSID("LightSource", series, nextLaser);
@@ -1004,11 +982,7 @@ public class ZeissLSMReader extends FormatReader {
           if (type.equals("BP")) type = "BandPass";
           else if (type.equals("LP")) type = "LongPass";
 
-          try {
-            store.setFilterType(
-              FilterType.fromString(type), series, nextFilter);
-          }
-          catch (EnumerationException e) { }
+          store.setFilterType(getFilterType(type), series, nextFilter);
 
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
@@ -1034,11 +1008,8 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorID(detectorID, series, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
           store.setDetectorSettingsID(detectorID, series, nextDetector);
-          try {
-            store.setDetectorSettingsBinning(
-              Binning.fromString(binning), series, nextDetector);
-          }
-          catch (EnumerationException e) { }
+          store.setDetectorSettingsBinning(
+            getBinning(binning), series, nextDetector);
         }
       }
       if (channel.amplificationGain != null) {
@@ -1048,7 +1019,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.gain != null) {
         store.setDetectorGain(channel.gain, series, nextDetector);
       }
-      store.setDetectorType(DetectorType.PMT, series, nextDetector);
+      store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
       store.setDetectorZoom(zoom, series, nextDetector);
       nextDetectChannel++;
       nextDetector++;

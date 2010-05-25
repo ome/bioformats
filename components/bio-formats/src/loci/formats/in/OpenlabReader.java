@@ -40,8 +40,6 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.DetectorType;
-
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
  *
@@ -590,7 +588,7 @@ public class OpenlabReader extends FormatReader {
       store.setDetectorID(detectorID, 0, 0);
       store.setDetectorSettingsID(detectorID, 0, 0);
 
-      store.setDetectorType(DetectorType.OTHER, 0, 0);
+      store.setDetectorType(getDetectorType("Other"), 0, 0);
 
       Double stageX = xPos == null ? null : new Double(xPos);
       Double stageY = yPos == null ? null : new Double(yPos);
