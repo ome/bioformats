@@ -34,12 +34,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -261,8 +255,8 @@ public class IvisionReader extends FormatReader {
       store.setObjectiveID(objectiveID, 0, 0);
       store.setImageObjectiveSettingsID(objectiveID, 0);
 
-      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (magnification != null) {
@@ -276,13 +270,9 @@ public class IvisionReader extends FormatReader {
       store.setDetectorID(detectorID, 0, 0);
       store.setDetectorSettingsID(detectorID, 0, 0);
 
-      store.setDetectorType(DetectorType.OTHER, 0, 0);
+      store.setDetectorType(getDetectorType("Other"), 0, 0);
 
-      try {
-        store.setDetectorSettingsBinning(
-          Binning.fromString(binX + "x" + binY), 0, 0);
-      }
-      catch (EnumerationException e) { }
+      store.setDetectorSettingsBinning(getBinning(binX + "x" + binY), 0, 0);
       if (gain != null) {
         store.setDetectorSettingsGain(new Double(gain), 0, 0);
       }

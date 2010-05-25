@@ -40,12 +40,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -829,18 +823,15 @@ public class ICSReader extends FormatReader {
       for (Integer laser : lasers) {
         store.setLaserWavelength(
           new PositiveInteger(wavelengths.get(laser)), 0, laser.intValue());
-        store.setLaserType(LaserType.OTHER, 0, laser.intValue());
-        store.setLaserLaserMedium(LaserMedium.OTHER, 0, laser.intValue());
+        store.setLaserType(getLaserType("Other"), 0, laser.intValue());
+        store.setLaserLaserMedium(getLaserMedium("Other"), 0, laser.intValue());
       }
 
       // populate Objective data
 
       if (objectiveModel != null) store.setObjectiveModel(objectiveModel, 0, 0);
       if (immersion == null) immersion = "Other";
-      try {
-        store.setObjectiveImmersion(Immersion.fromString(immersion), 0, 0);
-      }
-      catch (EnumerationException e) { }
+      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
         store.setObjectiveWorkingDistance(workingDistance, 0, 0);
@@ -848,7 +839,7 @@ public class ICSReader extends FormatReader {
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);
       }
-      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -859,7 +850,7 @@ public class ICSReader extends FormatReader {
         int index = key.intValue();
         if (index < getEffectiveSizeC()) {
           store.setDetectorSettingsGain(gains.get(key), 0, index);
-          store.setDetectorType(DetectorType.OTHER, 0, index);
+          store.setDetectorType(getDetectorType("Other"), 0, index);
           String detectorID = MetadataTools.createLSID("Detector", 0, index);
           store.setDetectorID(detectorID, 0, index);
           store.setDetectorSettingsID(detectorID, 0, index);

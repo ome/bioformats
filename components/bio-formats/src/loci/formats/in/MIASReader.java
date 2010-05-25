@@ -48,8 +48,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.ExperimentType;
-import ome.xml.r201004.enums.NamingConvention;
 import ome.xml.r201004.primitives.NonNegativeInteger;
 
 /**
@@ -693,11 +691,11 @@ public class MIASReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
       store.setExperimentID("Experiment:" + experiment.getName(), 0);
-      store.setExperimentType(ExperimentType.OTHER, 0);
+      store.setExperimentType(getExperimentType("Other"), 0);
 
       // populate SPW metadata
-      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
-      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
 
       parseTemplateFile(store);
 

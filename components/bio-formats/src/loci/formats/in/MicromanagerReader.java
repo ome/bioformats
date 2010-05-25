@@ -39,10 +39,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
  *
@@ -446,11 +442,7 @@ public class MicromanagerReader extends FormatReader {
       }
 
       for (int i=0; i<channels.length; i++) {
-        try {
-          Binning realBinning = Binning.fromString(binning);
-          store.setDetectorSettingsBinning(realBinning, 0, i);
-        }
-        catch (EnumerationException e) { }
+        store.setDetectorSettingsBinning(getBinning(binning), 0, i);
         store.setDetectorSettingsGain(new Double(gain), 0, i);
         if (i < voltage.size()) {
           store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
@@ -468,11 +460,7 @@ public class MicromanagerReader extends FormatReader {
       }
 
       if (cameraMode == null) cameraMode = "Other";
-      try {
-        store.setDetectorType(DetectorType.fromString(cameraMode), 0, 0);
-      }
-      catch (EnumerationException e) { }
-
+      store.setDetectorType(getDetectorType(cameraMode), 0, 0);
       store.setImagingEnvironmentTemperature(temperature, 0);
     }
   }

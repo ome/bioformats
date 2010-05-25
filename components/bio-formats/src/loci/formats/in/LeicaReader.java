@@ -47,10 +47,6 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -1030,7 +1026,7 @@ public class LeicaReader extends FormatReader {
   }
 
   private void parseInstrumentData(MetadataStore store, int blockNum)
-    throws IOException
+    throws FormatException, IOException
   {
     int series = getSeries();
 
@@ -1103,7 +1099,8 @@ public class LeicaReader extends FormatReader {
               nextDetector++;
             }
             else if (tokens[2].equals("State")) {
-              store.setDetectorType(DetectorType.PMT, series, nextDetector);
+              store.setDetectorType(
+                getDetectorType("PMT"), series, nextDetector);
               // link Detector to Image, if the detector was actually used
               if (data.equals("Active")) {
                 String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
@@ -1177,16 +1174,10 @@ public class LeicaReader extends FormatReader {
           }
           if (correction == null) correction = "Unknown";
 
-          try {
-            store.setObjectiveImmersion(
-              Immersion.fromString(immersion), series, objective);
-          }
-          catch (EnumerationException e) { }
-          try {
-            store.setObjectiveCorrection(
-              Correction.fromString(correction.trim()), series, objective);
-          }
-          catch (EnumerationException e) { }
+          store.setObjectiveImmersion(
+            getImmersion(immersion), series, objective);
+          store.setObjectiveCorrection(
+            getCorrection(correction.trim()), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
           store.setObjectiveNominalMagnification((int)

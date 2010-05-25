@@ -34,12 +34,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -233,30 +227,24 @@ public class NikonTiffReader extends BaseTiffReader {
       store.setObjectiveNominalMagnification(magnification, 0, 0);
 
       if (correction == null) correction = "Other";
-      try {
-        store.setObjectiveCorrection(Correction.fromString(correction), 0, 0);
-      }
-      catch (EnumerationException e) { }
+      store.setObjectiveCorrection(getCorrection(correction), 0, 0);
       store.setObjectiveLensNA(lensNA, 0, 0);
       store.setObjectiveWorkingDistance(workingDistance, 0, 0);
       if (immersion == null) immersion = "Other";
-      try {
-        store.setObjectiveImmersion(Immersion.fromString(immersion), 0, 0);
-      }
-      catch (EnumerationException e) { }
+      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
       for (int i=0; i<wavelength.size(); i++) {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
         store.setLaserWavelength(new PositiveInteger(wavelength.get(i)), 0, i);
-        store.setLaserType(LaserType.OTHER, 0, i);
-        store.setLaserLaserMedium(LaserMedium.OTHER, 0, i);
+        store.setLaserType(getLaserType("Other"), 0, i);
+        store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
       }
 
       for (int i=0; i<gain.size(); i++) {
         store.setDetectorGain(gain.get(i), 0, i);
-        store.setDetectorType(DetectorType.OTHER, 0, i);
+        store.setDetectorType(getDetectorType("Other"), 0, i);
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {

@@ -34,9 +34,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.AcquisitionMode;
-import ome.xml.r201004.enums.EnumerationException;
-
 /**
  * GatanReader is the file format reader for Gatan files.
  *
@@ -217,11 +214,7 @@ public class GatanReader extends FormatReader {
           token = token.substring(token.indexOf(" ")).trim();
           String mode = token.substring(0, token.indexOf(" ")).trim();
           if (mode.equals("TEM")) mode = "Other";
-          try {
-            store.setChannelAcquisitionMode(
-              AcquisitionMode.fromString(mode), 0, 0);
-          }
-          catch (EnumerationException e) { }
+          store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
         }
       }
     }

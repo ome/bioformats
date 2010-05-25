@@ -50,10 +50,6 @@ import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
 import ome.xml.r201004.primitives.PositiveInteger;
 
 /**
@@ -722,15 +718,15 @@ public class ZeissZVIReader extends FormatReader {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
         store.setDetectorSettingsID(detectorID, 0, i);
-        store.setDetectorType(DetectorType.OTHER, 0, i);
+        store.setDetectorType(getDetectorType("Other"), 0, i);
       }
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
       store.setImageObjectiveSettingsID(objectiveID, 0);
-      store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-      store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
     }
   }
 
@@ -792,7 +788,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Parse all of the tags in a stream. */
   private void parseTags(int image, String file, MetadataStore store)
-    throws IOException
+    throws FormatException, IOException
   {
     RandomAccessInputStream s = poi.getDocumentStream(file);
     s.order(true);
@@ -926,8 +922,8 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
-          store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-          store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+          store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+          store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
         }
         else if (key.startsWith("Objective N.A.")) {
           store.setObjectiveLensNA(new Double(value), 0, 0);
@@ -942,11 +938,7 @@ public class ZeissZVIReader extends FormatReader {
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(mag, 0, 0);
               store.setObjectiveLensNA(new Double(na), 0, 0);
-              try {
-                store.setObjectiveCorrection(
-                  Correction.fromString(tokens[q - 1]), 0, 0);
-              }
-              catch (EnumerationException e) { }
+              store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
               break;
             }
           }
@@ -955,19 +947,17 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveWorkingDistance(new Double(value), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
-          Immersion immersion = null;
+          String immersion = "Other";
           switch (Integer.parseInt(value)) {
             // case 1: no immersion
             case 2:
-              immersion = Immersion.OIL;
+              immersion = "Oil";
               break;
             case 3:
-              immersion = Immersion.WATER;
+              immersion = "Water";
               break;
-            default:
-              immersion = Immersion.OTHER;
           }
-          store.setObjectiveImmersion(immersion, 0, 0);
+          store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
         else if (key.indexOf("Stage Position X") != -1) {
           stageX = Double.parseDouble(value);

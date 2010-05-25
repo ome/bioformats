@@ -42,6 +42,12 @@ import ome.xml.r201004.enums.Immersion;
 import ome.xml.r201004.enums.LaserMedium;
 import ome.xml.r201004.enums.LaserType;
 import ome.xml.r201004.enums.MicroscopeType;
+import ome.xml.r201004.enums.handlers.CorrectionEnumHandler;
+import ome.xml.r201004.enums.handlers.DetectorTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.ImmersionEnumHandler;
+import ome.xml.r201004.enums.handlers.LaserMediumEnumHandler;
+import ome.xml.r201004.enums.handlers.LaserTypeEnumHandler;
+import ome.xml.r201004.enums.handlers.MicroscopeTypeEnumHandler;
 import ome.xml.r201004.primitives.PercentFraction;
 import ome.xml.r201004.primitives.PositiveInteger;
 
@@ -296,7 +302,8 @@ public class LeicaHandler extends DefaultHandler {
             "Detector", numDatasets, detectorChannel);
           store.setDetectorID(id, numDatasets, detectorChannel);
           try {
-            store.setDetectorType(DetectorType.fromString(d.type),
+            DetectorTypeEnumHandler handler = new DetectorTypeEnumHandler();
+            store.setDetectorType((DetectorType) handler.getEnumeration(d.type),
               numDatasets, detectorChannel);
           }
           catch (EnumerationException e) { }
@@ -571,8 +578,9 @@ public class LeicaHandler extends DefaultHandler {
           }
         }
         try {
+          ImmersionEnumHandler handler = new ImmersionEnumHandler();
           store.setObjectiveImmersion(
-            Immersion.fromString(immersion), numDatasets, 0);
+            (Immersion) handler.getEnumeration(immersion), numDatasets, 0);
         }
         catch (EnumerationException e) { }
 
@@ -584,8 +592,9 @@ public class LeicaHandler extends DefaultHandler {
           }
         }
         try {
+          CorrectionEnumHandler handler = new CorrectionEnumHandler();
           store.setObjectiveCorrection(
-            Correction.fromString(correction), numDatasets, 0);
+            (Correction) handler.getEnumeration(correction), numDatasets, 0);
         }
         catch (EnumerationException e) { }
 
@@ -714,8 +723,10 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
           store.setDetectorSettingsID(id, numDatasets, nextChannel);
           try {
+            DetectorTypeEnumHandler handler = new DetectorTypeEnumHandler();
             store.setDetectorType(
-              DetectorType.fromString(detector.type), numDatasets, nextChannel);
+              (DetectorType) handler.getEnumeration(detector.type),
+              numDatasets, nextChannel);
           }
           catch (EnumerationException e) { }
           store.setDetectorModel(detector.model, numDatasets, nextChannel);

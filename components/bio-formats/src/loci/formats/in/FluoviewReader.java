@@ -35,11 +35,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.Immersion;
-
 /**
  * FluoviewReader is the file format reader for
  * Olympus Fluoview TIFF files AND Andor Bio-imaging Division (ABD) TIFF files.
@@ -387,7 +382,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (offsets[i] != null) {
         store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
       }
-      store.setDetectorType(DetectorType.OTHER, 0, i);
+      store.setDetectorType(getDetectorType("Other"), 0, i);
 
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
@@ -402,18 +397,14 @@ public class FluoviewReader extends BaseTiffReader {
     }
     else if (mag == null) mag = "1";
 
-    store.setObjectiveCorrection(Correction.OTHER, 0, 0);
-    store.setObjectiveImmersion(Immersion.OTHER, 0, 0);
+    store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+    store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
     if (objectiveManufacturer != null) {
       String[] objectiveData = objectiveManufacturer.split(" ");
       store.setObjectiveModel(objectiveData[0], 0, 0);
       if (objectiveData.length > 2) {
-        try {
-          store.setObjectiveImmersion(
-            Immersion.fromString(objectiveData[2]), 0, 0);
-        }
-        catch (EnumerationException e) { }
+        store.setObjectiveImmersion(getImmersion(objectiveData[2]), 0, 0);
       }
     }
 

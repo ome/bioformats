@@ -32,8 +32,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.enums.DetectorType;
-
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
  * Specifications available at
@@ -234,7 +232,7 @@ public class ImarisReader extends FormatReader {
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
-        store.setDetectorType(DetectorType.OTHER, 0, i);
+        store.setDetectorType(getDetectorType("Other"), 0, i);
         store.setDetectorSettingsID(detectorID, 0, i);
       }
     }
