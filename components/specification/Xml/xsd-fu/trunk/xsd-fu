@@ -32,6 +32,7 @@ from fu import *
 from util import odict
 
 from genshi.template import NewTextTemplate
+from configobj import ConfigObj
 from getopt import getopt, GetoptError
 from xml import sax
 
@@ -240,6 +241,8 @@ def enumHandlersMain(args):
 
 	model = parseXmlSchema(args, namespace)
 	fu = TemplateInfo(outputDirectory, package)
+	base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
+	config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
 	template = NewTextTemplate(open(ENUM_HANDLER_TEMPLATE).read())
 	for obj in model.objects.values():
 		for prop in obj.properties.values():
@@ -250,7 +253,7 @@ def enumHandlersMain(args):
 			                    "%sEnumHandler.java" % prop.javaType)
 			f = open(path, "w")
 			classContent = template.generate(fu=fu, klass=prop,
-				enum_value_name=enum_value_name).render()
+				enum_value_name=enum_value_name, config=config).render()
 			f.write(classContent)
 			f.close()
 
