@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-24 16:13:00.333355
+ * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,8 +81,8 @@ public class PulseEnumHandler implements IEnumerationHandler {
         return Pulse.fromString(v);
       }
     }
-    throw new EnumerationException(this.getClass().getName() +
-     " could not find enumeration for " + value);
+    System.err.println("WARN: Could not find enumeration for " + value);
+    return Pulse.OTHER;
   }
 
   /* @see IEnumerationHandler#getEntity() */
