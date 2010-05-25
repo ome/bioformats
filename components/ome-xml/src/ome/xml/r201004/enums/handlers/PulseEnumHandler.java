@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,6 +67,7 @@ public class PulseEnumHandler implements IEnumerationHandler {
     p.put("^\\s*QSwitched\\s*", "QSwitched");
     p.put("^\\s*Repetitive\\s*", "Repetitive");
     p.put("^\\s*ModeLocked\\s*", "ModeLocked");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

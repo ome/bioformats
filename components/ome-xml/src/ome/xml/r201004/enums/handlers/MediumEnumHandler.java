@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,6 +66,7 @@ public class MediumEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Oil\\s*", "Oil");
     p.put("^\\s*Water\\s*", "Water");
     p.put("^\\s*Glycerol\\s*", "Glycerol");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

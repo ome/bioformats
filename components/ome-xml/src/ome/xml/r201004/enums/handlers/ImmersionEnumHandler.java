@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -68,9 +68,14 @@ public class ImmersionEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Air\\s*", "Air");
     p.put("^\\s*Multi\\s*", "Multi");
     p.put("^\\s*Glycerol\\s*", "Glycerol");
+    p.put("^\\s*Other\\s*", "Other");
     // BEGIN custom enumeration mappings
-    p.put("^\\s*Oil.*", "Oil");
-    p.put("^\\s*W", "Water");
+    p.put(".*Oil.*", "Oil");
+    p.put(".*Oel.*", "Oil");
+    p.put(".*Wasser.*", "Water");
+    p.put(".*Gly.*", "Glycerol");
+    p.put("^\\s*Wl\\s*", "Water");
+    p.put("^\\s*W\\s*", "Water");
     return p;
   }
 

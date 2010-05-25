@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,6 +81,7 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*TIRF\\s*", "TIRF");
     p.put("^\\s*FSM\\s*", "FSM");
     p.put("^\\s*LCM\\s*", "LCM");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

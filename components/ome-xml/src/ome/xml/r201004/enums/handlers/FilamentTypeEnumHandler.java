@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -64,6 +64,7 @@ public class FilamentTypeEnumHandler implements IEnumerationHandler {
     // BEGIN Schema enumeration mappings
     p.put("^\\s*Incandescent\\s*", "Incandescent");
     p.put("^\\s*Halogen\\s*", "Halogen");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

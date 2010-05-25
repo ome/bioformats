@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -95,6 +95,7 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
     p.put("^\\s*GaAs\\s*", "GaAs");
     p.put("^\\s*GaAlAs\\s*", "GaAlAs");
     p.put("^\\s*EMinus\\s*", "EMinus");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

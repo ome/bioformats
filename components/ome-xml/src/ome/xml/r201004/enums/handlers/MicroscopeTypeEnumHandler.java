@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,6 +66,7 @@ public class MicroscopeTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Inverted\\s*", "Inverted");
     p.put("^\\s*Dissection\\s*", "Dissection");
     p.put("^\\s*Electrophysiology\\s*", "Electrophysiology");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

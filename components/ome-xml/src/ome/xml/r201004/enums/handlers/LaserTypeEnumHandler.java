@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,7 @@ public class LaserTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Dye\\s*", "Dye");
     p.put("^\\s*Semiconductor\\s*", "Semiconductor");
     p.put("^\\s*FreeElectron\\s*", "FreeElectron");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

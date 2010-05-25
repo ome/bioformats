@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -75,6 +75,7 @@ public class DetectorTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*APD\\s*", "APD");
     p.put("^\\s*CMOS\\s*", "CMOS");
     p.put("^\\s*EBCCD\\s*", "EBCCD");
+    p.put("^\\s*Other\\s*", "Other");
     // BEGIN custom enumeration mappings
     p.put(".*EM.*CCD.*", "EM-CCD");
     p.put(".*CCD.*", "CCD");

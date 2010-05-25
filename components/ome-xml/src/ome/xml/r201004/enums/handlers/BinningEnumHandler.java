@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,6 +66,7 @@ public class BinningEnumHandler implements IEnumerationHandler {
     p.put("^\\s*2x2\\s*", "2x2");
     p.put("^\\s*4x4\\s*", "4x4");
     p.put("^\\s*8x8\\s*", "8x8");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

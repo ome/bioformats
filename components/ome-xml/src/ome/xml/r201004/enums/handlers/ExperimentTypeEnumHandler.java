@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
  *
  *-----------------------------------------------------------------------------
  */
@@ -77,6 +77,7 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*FluorescenceLifetime\\s*", "FluorescenceLifetime");
     p.put("^\\s*SpectralImaging\\s*", "SpectralImaging");
     p.put("^\\s*Photobleaching\\s*", "Photobleaching");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
