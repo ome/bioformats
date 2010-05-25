@@ -1243,19 +1243,19 @@ public class ImporterTest {
 
     assertEquals(CompositeImage.COLOR, ci.getMode());
 
-    lutTest(ci,0,0,0,0,0,0,254);        // blue
+    lutTest(ci,0,0,0,0,0,0,255);        // blue
     if (sizeC >= 2)
-      lutTest(ci,1,0,0,0,254,0,0);      // red
+      lutTest(ci,1,0,0,0,255,0,0);      // red
     if (sizeC >= 3)
-      lutTest(ci,2,0,0,0,0,254,0);      // green
+      lutTest(ci,2,0,0,0,0,255,0);      // green
     if (sizeC >= 4)
-      lutTest(ci,3,0,0,0,254,0,254);    // magenta
+      lutTest(ci,3,0,0,0,255,0,255);    // magenta
     if (sizeC >= 5)
-      lutTest(ci,4,0,0,0,0,254,254);    // cyan
+      lutTest(ci,4,0,0,0,0,255,255);    // cyan
     if (sizeC >= 7)
-      lutTest(ci,5,0,0,0,254,254,0);    // yellow
+      lutTest(ci,5,0,0,0,255,255,0);    // yellow
     if (sizeC >= 7)
-      lutTest(ci,6,0,0,0,127,127,127);  // gray
+      lutTest(ci,6,0,0,0,128,128,128);  // gray
 
     fail("unfinished");
   }
