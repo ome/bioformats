@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ public class MicrobeamManipulationTypeEnumHandler implements IEnumerationHandler
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*FRAP\\s*", "FRAP");
     p.put("^\\s*FLIP\\s*", "FLIP");
     p.put("^\\s*InverseFRAP\\s*", "InverseFRAP");
@@ -68,7 +69,6 @@ public class MicrobeamManipulationTypeEnumHandler implements IEnumerationHandler
     p.put("^\\s*Photoactivation\\s*", "Photoactivation");
     p.put("^\\s*Uncaging\\s*", "Uncaging");
     p.put("^\\s*OpticalTrapping\\s*", "OpticalTrapping");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

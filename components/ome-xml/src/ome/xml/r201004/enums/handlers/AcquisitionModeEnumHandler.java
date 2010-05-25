@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*WideField\\s*", "WideField");
     p.put("^\\s*LaserScanningConfocalMicroscopy\\s*", "LaserScanningConfocalMicroscopy");
     p.put("^\\s*SpinningDiskConfocal\\s*", "SpinningDiskConfocal");
@@ -80,7 +81,6 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*TIRF\\s*", "TIRF");
     p.put("^\\s*FSM\\s*", "FSM");
     p.put("^\\s*LCM\\s*", "LCM");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

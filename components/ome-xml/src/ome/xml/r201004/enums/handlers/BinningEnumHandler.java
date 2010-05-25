@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,11 +61,11 @@ public class BinningEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*1x1\\s*", "1x1");
     p.put("^\\s*2x2\\s*", "2x2");
     p.put("^\\s*4x4\\s*", "4x4");
     p.put("^\\s*8x8\\s*", "8x8");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

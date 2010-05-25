@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*FP\\s*", "FP");
     p.put("^\\s*FRET\\s*", "FRET");
     p.put("^\\s*TimeLapse\\s*", "TimeLapse");
@@ -76,7 +77,6 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*FluorescenceLifetime\\s*", "FluorescenceLifetime");
     p.put("^\\s*SpectralImaging\\s*", "SpectralImaging");
     p.put("^\\s*Photobleaching\\s*", "Photobleaching");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
