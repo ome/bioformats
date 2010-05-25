@@ -365,13 +365,14 @@ public class ImagePlusReader implements StatusReporter {
     final int green = color.getGreen();
     final int blue = color.getBlue();
     final int lutLength = 256;
+    final int lutDivisor = lutLength - 1;
     byte[] r = new byte[lutLength];
     byte[] g = new byte[lutLength];
     byte[] b = new byte[lutLength];
     for (int i=0; i<lutLength; i++) {
-      r[i] = (byte) (i * red / lutLength);
-      g[i] = (byte) (i * green / lutLength);
-      b[i] = (byte) (i * blue / lutLength);
+      r[i] = (byte) (i * red / lutDivisor);
+      g[i] = (byte) (i * green / lutDivisor);
+      b[i] = (byte) (i * blue / lutDivisor);
     }
     return new LUT(r, g, b);
   }
