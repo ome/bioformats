@@ -5540,6 +5540,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata {
 		Channel o3 = o2.getChannel(channelIndex);
 		model.addModelObject(id, o3);
 		o3.setID(id);
+    if (o3.getLightPath() == null) {
+      o3.setLightPath(new LightPath());
+    }
 	}
 
 	public void setChannelIlluminationType(IlluminationType illuminationType, int imageIndex, int channelIndex)
