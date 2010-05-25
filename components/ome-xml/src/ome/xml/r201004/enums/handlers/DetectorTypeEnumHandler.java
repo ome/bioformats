@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ public class DetectorTypeEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*CCD\\s*", "CCD");
     p.put("^\\s*IntensifiedCCD\\s*", "IntensifiedCCD");
     p.put("^\\s*AnalogVideo\\s*", "AnalogVideo");
@@ -74,7 +75,10 @@ public class DetectorTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*APD\\s*", "APD");
     p.put("^\\s*CMOS\\s*", "CMOS");
     p.put("^\\s*EBCCD\\s*", "EBCCD");
-    p.put("^\\s*Other\\s*", "Other");
+    // BEGIN custom enumeration mappings
+    p.put(".*EM.*CCD.*", "EM-CCD");
+    p.put(".*CCD.*", "CCD");
+    p.put(".*CMOS.*", "CMOS");
     return p;
   }
 

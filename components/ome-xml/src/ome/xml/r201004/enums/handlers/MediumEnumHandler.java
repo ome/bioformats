@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,11 +61,11 @@ public class MediumEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*Air\\s*", "Air");
     p.put("^\\s*Oil\\s*", "Oil");
     p.put("^\\s*Water\\s*", "Water");
     p.put("^\\s*Glycerol\\s*", "Glycerol");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ public class ContrastMethodEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*Brightfield\\s*", "Brightfield");
     p.put("^\\s*Phase\\s*", "Phase");
     p.put("^\\s*DIC\\s*", "DIC");
@@ -69,7 +70,6 @@ public class ContrastMethodEnumHandler implements IEnumerationHandler {
     p.put("^\\s*PolarizedLight\\s*", "PolarizedLight");
     p.put("^\\s*Darkfield\\s*", "Darkfield");
     p.put("^\\s*Fluorescence\\s*", "Fluorescence");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 

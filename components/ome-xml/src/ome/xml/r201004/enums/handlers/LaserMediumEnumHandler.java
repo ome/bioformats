@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
+ * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
 
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
+    // BEGIN Schema enumeration mappings
     p.put("^\\s*Cu\\s*", "Cu");
     p.put("^\\s*Ag\\s*", "Ag");
     p.put("^\\s*ArFl\\s*", "ArFl");
@@ -94,7 +95,6 @@ public class LaserMediumEnumHandler implements IEnumerationHandler {
     p.put("^\\s*GaAs\\s*", "GaAs");
     p.put("^\\s*GaAlAs\\s*", "GaAlAs");
     p.put("^\\s*EMinus\\s*", "EMinus");
-    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
