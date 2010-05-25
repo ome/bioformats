@@ -255,7 +255,6 @@ public class PrairieReader extends FormatReader {
         f.copyInto(files);
         if (tiff == null) {
           tiff = new TiffReader();
-          tiff.setMetadataStore(getMetadataStore());
         }
         tiff.setId(files[0]);
 
