@@ -89,6 +89,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata {
 		model = new OMEModelImpl();
 	}
 
+  public String dumpXML() {
+    resolveReferences();
+    return super.dumpXML();
+  }
+
 	public int resolveReferences()
 	{
 		return model.resolveReferences();
