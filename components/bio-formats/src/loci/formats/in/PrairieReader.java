@@ -218,7 +218,6 @@ public class PrairieReader extends FormatReader {
     if (core == null) core = new CoreMetadata[] {new CoreMetadata()};
     if (tiff == null) {
       tiff = new TiffReader();
-      tiff.setMetadataStore(getMetadataStore());
     }
 
     if (checkSuffix(id, PRAIRIE_SUFFIXES)) {
