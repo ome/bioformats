@@ -538,7 +538,9 @@ public class MetamorphReader extends BaseTiffReader {
           store.setChannelName(waveNames.get(waveIndex), i, c);
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
-        store.setDetectorSettingsBinning(getBinning(binning), i, c);
+        if (binning != null) {
+          store.setDetectorSettingsBinning(getBinning(binning), i, c);
+        }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
@@ -923,6 +925,7 @@ public class MetamorphReader extends BaseTiffReader {
         l = new Location(parent, name);
         return l.exists() ? l.getAbsolutePath() : null;
       }
+      else return l.getAbsolutePath();
     }
     return null;
   }
