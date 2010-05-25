@@ -127,10 +127,10 @@ public class MetamorphReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
-    tp.setDoCaching(false);
     IFD ifd = tp.getFirstIFD();
-    if (ifd == null) return false;
-    return ifd.containsKey(METAMORPH_ID);
+    if (ifd == null || !ifd.containsKey(METAMORPH_ID)) return false;
+    String software = ifd.getIFDTextValue(IFD.SOFTWARE);
+    return software != null && software.trim().startsWith("Meta");
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
