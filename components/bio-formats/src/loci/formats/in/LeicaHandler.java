@@ -104,6 +104,7 @@ public class LeicaHandler extends DefaultHandler {
   private Vector<Laser> lasers = new Vector<Laser>();
 
   private MetadataLevel level;
+  private int laserCount = 0;
 
   // -- Constructor --
 
@@ -191,13 +192,10 @@ public class LeicaHandler extends DefaultHandler {
         }
 
         for (int i=0; i<xPos.size(); i++) {
-          int nPlanes =
-            coreMeta.imageCount / (coreMeta.rgb ? 1 : coreMeta.sizeC);
-          for (int image=0; image<nPlanes; image++) {
-            int index = image * nChannels + i;
-            store.setPlanePositionX(xPos.get(i), numDatasets, index);
-            store.setPlanePositionY(yPos.get(i), numDatasets, index);
-            store.setPlanePositionZ(zPos.get(i), numDatasets, index);
+          for (int image=0; image<coreMeta.imageCount; image++) {
+            store.setPlanePositionX(xPos.get(i), numDatasets, image);
+            store.setPlanePositionY(yPos.get(i), numDatasets, image);
+            store.setPlanePositionZ(zPos.get(i), numDatasets, image);
           }
         }
 
@@ -330,6 +328,8 @@ public class LeicaHandler extends DefaultHandler {
           if (filter >= detectors.size() || filter >= nextFilter) break;
           String id = MetadataTools.createLSID("Filter", numDatasets, filter);
           if (i < numChannels && detectors.get(filter).active) {
+            String lsid = MetadataTools.createLSID("Channel", numDatasets, i);
+            store.setChannelID(lsid, numDatasets, i);
             store.setLightPathEmissionFilterRef(id, numDatasets, i, 0);
           }
           filter++;
@@ -338,6 +338,7 @@ public class LeicaHandler extends DefaultHandler {
 
       core.add(new CoreMetadata());
       numDatasets++;
+      laserCount = 0;
       linkedInstruments = false;
       detectorChannel = 0;
       detectors.clear();
@@ -519,13 +520,9 @@ public class LeicaHandler extends DefaultHandler {
 
       if (attribute.equals("NumericalAperture")) {
         store.setObjectiveLensNA(new Double(variant), numDatasets, 0);
-        store.setObjectiveCorrection(Correction.OTHER, numDatasets, 0);
-        store.setObjectiveImmersion(Immersion.OTHER, numDatasets, 0);
       }
       else if (attribute.equals("OrderNumber")) {
         store.setObjectiveSerialNumber(variant, numDatasets, 0);
-        store.setObjectiveCorrection(Correction.OTHER, numDatasets, 0);
-        store.setObjectiveImmersion(Immersion.OTHER, numDatasets, 0);
       }
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
@@ -609,34 +606,28 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (attribute.equals("XPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
-        int nPlanes = coreMeta.imageCount / c;
+        int nPlanes = coreMeta.imageCount;
         Double posX = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
-          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC);
-          if (index >= nPlanes) continue;
-          store.setPlanePositionX(posX, numDatasets, index);
+          store.setPlanePositionX(posX, numDatasets, image);
         }
         if (numChannels == 0) xPos.add(posX);
       }
       else if (attribute.equals("YPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
-        int nPlanes = coreMeta.imageCount / c;
+        int nPlanes = coreMeta.imageCount;
         Double posY = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
-          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC);
-          if (index >= nPlanes) continue;
-          store.setPlanePositionY(posY, numDatasets, index);
+          store.setPlanePositionY(posY, numDatasets, image);
         }
         if (numChannels == 0) yPos.add(posY);
       }
       else if (attribute.equals("ZPos")) {
         int c = coreMeta.rgb || coreMeta.sizeC == 0 ? 1 : coreMeta.sizeC;
-        int nPlanes = coreMeta.imageCount / c;
+        int nPlanes = coreMeta.imageCount;
         Double posZ = new Double(variant);
         for (int image=0; image<nPlanes; image++) {
-          int index = image * (coreMeta.rgb ? 1 : coreMeta.sizeC);
-          if (index >= nPlanes) continue;
-          store.setPlanePositionZ(posZ, numDatasets, index);
+          store.setPlanePositionZ(posZ, numDatasets, image);
         }
         if (numChannels == 0) zPos.add(posZ);
       }
@@ -717,8 +708,8 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorSettingsID(id, numDatasets, nextChannel);
         }
 
+        store.setDetectorID(id, numDatasets, nextChannel);
         if (detector != null) {
-          store.setDetectorID(id, numDatasets, nextChannel);
           store.setDetectorSettingsGain(gain, numDatasets, nextChannel);
           store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
           store.setDetectorSettingsID(id, numDatasets, nextChannel);
@@ -758,7 +749,14 @@ public class LeicaHandler extends DefaultHandler {
       if (l.index < 0) l.index = 0;
       l.id = MetadataTools.createLSID("LightSource", numDatasets, l.index);
       l.wavelength = new Integer(attributes.getValue("LaserLine"));
+      while (l.index > laserCount) {
+        String lsid =
+          MetadataTools.createLSID("LightSource", numDatasets, laserCount);
+        store.setLaserID(lsid, numDatasets, laserCount);
+        laserCount++;
+      }
       store.setLaserID(l.id, numDatasets, l.index);
+      laserCount++;
       if (l.wavelength > 0) {
         store.setLaserWavelength(
           new PositiveInteger(l.wavelength), numDatasets, l.index);
@@ -947,27 +945,27 @@ public class LeicaHandler extends DefaultHandler {
             points.append(y.get(i).doubleValue() + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
-          store.setPolylinePoints(points.toString(), roi, 0);
-          store.setPolylineClosed(Boolean.TRUE, roi, 0);
+          store.setPolylinePoints(points.toString(), roi, 1);
+          store.setPolylineClosed(Boolean.TRUE, roi, 1);
 
           break;
         case TEXT:
         case RECTANGLE:
-          store.setRectangleX(roiX - Math.abs(cornerX), roi, 0);
-          store.setRectangleY(roiY - Math.abs(cornerY), roi, 0);
+          store.setRectangleX(roiX - Math.abs(cornerX), roi, 1);
+          store.setRectangleY(roiY - Math.abs(cornerY), roi, 1);
           double width = 2 * Math.abs(cornerX);
           double height = 2 * Math.abs(cornerY);
-          store.setRectangleWidth(width, roi, 0);
-          store.setRectangleHeight(height, roi, 0);
+          store.setRectangleWidth(width, roi, 1);
+          store.setRectangleHeight(height, roi, 1);
 
           break;
         case SCALE_BAR:
         case ARROW:
         case LINE:
-          store.setLineX1(roiX + x.get(0), roi, 0);
-          store.setLineY1(roiY + y.get(0), roi, 0);
-          store.setLineX2(roiX + x.get(1), roi, 0);
-          store.setLineY2(roiY + y.get(1), roi, 0);
+          store.setLineX1(roiX + x.get(0), roi, 1);
+          store.setLineY1(roiY + y.get(0), roi, 1);
+          store.setLineX2(roiX + x.get(1), roi, 1);
+          store.setLineY2(roiY + y.get(1), roi, 1);
           break;
       }
     }
