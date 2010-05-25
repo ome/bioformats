@@ -173,22 +173,21 @@ public class PCIReader extends FormatReader {
           throw new FormatException("This file does not contain image data.");
         }
       }
-      else if (relativePath.startsWith("Bitmap") || relativePath.equals("Data"))
+      else if (relativePath.startsWith("Bitmap") ||
+        (relativePath.equals("Data") && parent.indexOf("Image") != -1))
       {
         imageFiles.put(imageFiles.size(), name);
 
         if (getSizeX() != 0 && getSizeY() != 0) {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
           int plane = getSizeX() * getSizeY() * bpp;
-          core[0].sizeC = poi.getFileSize(name) / plane;
           if (getSizeC() == 0) {
-            core[0].sizeX /= 16;
-            core[0].sizeY /= 16;
             core[0].sizeC = poi.getFileSize(name) / plane;
           }
         }
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
+        boolean firstBits = core[0].bitsPerPixel == 0;
         int bits = (int) stream.readDouble();
         core[0].bitsPerPixel = bits;
         while (bits % 8 != 0 || bits == 0) bits++;
@@ -199,6 +198,9 @@ public class PCIReader extends FormatReader {
         }
         bits /= 8;
         core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
+        if (getSizeC() > 1 && firstBits) {
+          core[0].sizeC /= bits;
+        }
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
         core[0].sizeY = (int) stream.readDouble();
