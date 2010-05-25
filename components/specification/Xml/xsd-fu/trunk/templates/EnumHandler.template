@@ -63,9 +63,7 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
     Hashtable<String, String> p = new Hashtable<String, String>();
     // BEGIN Schema enumeration mappings
 {% for value in klass.possibleValues %}\
-{% if value not in ('Other') %}\
     p.put("^\\\s*${value}\\\s*", "${value}");
-{% end %}\
 {% end %}\
 {% if klass.javaType in config %}\
     // BEGIN custom enumeration mappings
