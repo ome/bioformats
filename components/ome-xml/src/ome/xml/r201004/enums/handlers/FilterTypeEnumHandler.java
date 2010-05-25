@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-24 16:13:00.333355
+ * Created by callan via xsd-fu on 2010-05-25 12:10:00.232400
  *
  *-----------------------------------------------------------------------------
  */
@@ -82,8 +82,8 @@ public class FilterTypeEnumHandler implements IEnumerationHandler {
         return FilterType.fromString(v);
       }
     }
-    throw new EnumerationException(this.getClass().getName() +
-     " could not find enumeration for " + value);
+    System.err.println("WARN: Could not find enumeration for " + value);
+    return FilterType.OTHER;
   }
 
   /* @see IEnumerationHandler#getEntity() */
