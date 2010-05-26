@@ -363,13 +363,12 @@ public class ImporterTest {
   // channel is 0-based
   private void lutTest(CompositeImage ci, int channel, int minR, int minG, int minB, int maxR, int maxG, int maxB)
   {
-    LUT lut = null;
+    LUT lut = ci.getChannelLut(channel+1);  // IJ is 1-based
     
     byte[] reds = new byte[256];
     byte[] blues = new byte[256];
     byte[] greens = new byte[256];
     
-    lut = ci.getChannelLut(channel+1);  // IJ is 1-based
     lut.getReds(reds);
     lut.getGreens(greens);
     lut.getBlues(blues);
@@ -382,21 +381,21 @@ public class ImporterTest {
     assertEquals((byte)maxB,blues[255]);
   }
   
+  private void multipleLutTests(CompositeImage ci, int numChannels, Color[] colors)
+  {
+    for (int i = 0; i < numChannels; i++)
+    {
+      Color color = colors[i];
+      lutTest(ci,i,0,0,0,color.getRed(),color.getGreen(),color.getBlue());
+    }
+  }
+  
   private void genericLutTest(CompositeImage ci, int numChannels)
   {
-    lutTest(ci,0,0,0,0,255,0,0);
-    if (numChannels > 1)
-      lutTest(ci,1,0,0,0,0,255,0);
-    if (numChannels > 2)
-      lutTest(ci,2,0,0,0,0,0,255);
-    if (numChannels > 3)
-      lutTest(ci,3,0,0,0,255,255,255);
-    if (numChannels > 4)
-      lutTest(ci,4,0,0,0,0,255,255);
-    if (numChannels > 5)
-      lutTest(ci,5,0,0,0,255,0,255);
-    if (numChannels > 6)
-      lutTest(ci,6,0,0,0,255,255,0);
+    Color[] defaultColorOrder =
+      new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.WHITE, Color.CYAN, Color.MAGENTA, Color.YELLOW};
+    
+    multipleLutTests(ci,numChannels,defaultColorOrder);
   }
   
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
@@ -711,8 +710,6 @@ public class ImporterTest {
     assertEquals(CompositeImage.COMPOSITE, ci.getMode());
     
     genericLutTest(ci,sizeC);
-    
-    // TODO - do I need to test more than LUTs?
   }
   
   private void colorCustomTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
@@ -727,26 +724,14 @@ public class ImporterTest {
     ImagePlus[] imps = null;
     ImagePlus imp = null;
     CompositeImage ci = null;
+    Color[] colors = new Color[] {Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.WHITE};
     
     try {
       ImporterOptions options = new ImporterOptions();
       options.setColorMode(ImporterOptions.COLOR_MODE_CUSTOM);
       for (int s = 0; s < numSeries; s++)
-      {
-        options.setCustomColor(s, 0, Color.BLUE);
-        if (sizeC > 1)
-          options.setCustomColor(s, 1, Color.RED);
-        if (sizeC > 2)
-          options.setCustomColor(s, 2, Color.GREEN);
-        if (sizeC > 3)
-          options.setCustomColor(s, 3, Color.MAGENTA);
-        if (sizeC > 4)
-          options.setCustomColor(s, 4, Color.CYAN);
-        if (sizeC > 5)
-          options.setCustomColor(s, 5, Color.YELLOW);
-        if (sizeC > 6)
-          options.setCustomColor(s, 6, Color.GRAY);
-      }
+        for (int c = 0; c < sizeC; c++)
+          options.setCustomColor(s, c, colors[c]);
       options.setId(path);
       imps = BF.openImagePlus(options);
     }
@@ -771,21 +756,7 @@ public class ImporterTest {
 
     assertEquals(CompositeImage.COLOR, ci.getMode());
 
-    lutTest(ci,0,0,0,0,0,0,255);        // blue
-    if (sizeC >= 2)
-      lutTest(ci,1,0,0,0,255,0,0);      // red
-    if (sizeC >= 3)
-      lutTest(ci,2,0,0,0,0,255,0);      // green
-    if (sizeC >= 4)
-      lutTest(ci,3,0,0,0,255,0,255);    // magenta
-    if (sizeC >= 5)
-      lutTest(ci,4,0,0,0,0,255,255);    // cyan
-    if (sizeC >= 7)
-      lutTest(ci,5,0,0,0,255,255,0);    // yellow
-    if (sizeC >= 7)
-      lutTest(ci,6,0,0,0,128,128,128);  // gray
-    
-    // TODO - do I need to test more than LUTs?
+    multipleLutTests(ci,sizeC,colors);
   }
   
   private void memoryVirtualStackTest(boolean desireVirtual)
@@ -1166,7 +1137,7 @@ public class ImporterTest {
   public void testColorComposite()
   {
     // BF only supporting C from 2 to 7 and due to IJ's slider limitation (C*numSeries*3) <= 25
-    
+
     int[] pixTypes = new int[] {FormatTools.INT8, FormatTools.INT16, FormatTools.INT32};
     int[] xs = new int[] {56,107};
     int[] ys = new int[] {41,86};
@@ -1183,7 +1154,10 @@ public class ImporterTest {
               for (int t : ts)
                 for (int s : series)
                   if ((c*s*3) <= 25)  // IJ slider limitation
+                  {
+                    //System.out.println("format "+pixFormat+" x "+x+" y "+y+" z "+z+" c "+c+" t "+t+" s "+s);
                     colorCompositeTest(pixFormat,x,y,z,c,t,s);
+                  }
   }
   
   @Test
@@ -1293,7 +1267,10 @@ public class ImporterTest {
               for (int t : ts)
                 for (int s : series)
                   if ((c*s*3) <= 25)  // IJ slider limitation
+                  {
+                    //System.out.println("format "+pixFormat+" x "+x+" y "+y+" z "+z+" c "+c+" t "+t+" s "+s);
                     colorCustomTest(pixFormat,x,y,z,c,t,s);
+                  }
   }
   
   /*
