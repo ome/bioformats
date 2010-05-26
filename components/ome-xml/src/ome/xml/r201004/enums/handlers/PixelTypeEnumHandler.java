@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 17:10:17.335358
+ * Created by callan via xsd-fu on 2010-05-26 16:31:31.789920
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,10 +81,12 @@ public class PixelTypeEnumHandler implements IEnumerationHandler {
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
     throws EnumerationException {
-    for (String pattern : patterns.keySet()) {
-      if (value.toLowerCase().matches(pattern.toLowerCase())) {
-        String v = patterns.get(pattern);
-        return PixelType.fromString(v);
+    if (value != null) {
+      for (String pattern : patterns.keySet()) {
+        if (value.toLowerCase().matches(pattern.toLowerCase())) {
+          String v = patterns.get(pattern);
+          return PixelType.fromString(v);
+        }
       }
     }
     throw new EnumerationException(this.getClass().getName() +
