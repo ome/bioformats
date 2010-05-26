@@ -33,17 +33,20 @@ import loci.plugins.BF;
 
 // TODO
 //    waiting on BF implementations for
-//      range step by 0
-//      BF/imageJ returning wrong max num pixels for UINT32 - off by one
+//      range step by 0 or less
+//      BF/imageJ returning wrong values of max num pixels (UINT32 off by one, float weird too, etc.)
 //      memoryRecord failure needs BF code fix
 //      comboCropAutoscale() - autoscale of a cropped image returning min of whole image
+//      autoscale failing for Float and Double - need to decide on correct behavior in BF
+//      autoscale of signed images an issue (INT16 gets clamped 0..65535 by ImageJ also)
 //  - flesh out existing tests
 //      write tests for the color options : some mention was made that indexcolor is an issue in testing
 //        default
+//        composite
+//        colorized
+//        grayscale
 //        custom
-//        rgb colorize - need to do actual tests. see BF gui to get idea of how it works
-//        custom colorize - waiting for creation of API for setting r,g,b info
-//        autoscale - working
+//        autoscale - test written
 //      open individual files: try to come up with a way to test without a disk file as source
 //      swapped dims test needs to test cases other than from default swapping Z & T
 //      output stack order - testing of iIndex?
@@ -379,6 +382,23 @@ public class ImporterTest {
     assertEquals((byte)maxB,blues[255]);
   }
   
+  private void genericLutTest(CompositeImage ci, int numChannels)
+  {
+    lutTest(ci,0,0,0,0,255,0,0);
+    if (numChannels > 1)
+      lutTest(ci,1,0,0,0,0,255,0);
+    if (numChannels > 2)
+      lutTest(ci,2,0,0,0,0,0,255);
+    if (numChannels > 3)
+      lutTest(ci,3,0,0,0,255,255,255);
+    if (numChannels > 4)
+      lutTest(ci,4,0,0,0,0,255,255);
+    if (numChannels > 5)
+      lutTest(ci,5,0,0,0,255,0,255);
+    if (numChannels > 6)
+      lutTest(ci,6,0,0,0,255,255,0);
+  }
+  
   private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
   {
     String path = constructFakeFilename("default", pixType, x, y, z, c, t, -1, false, -1, false);
@@ -649,29 +669,23 @@ public class ImporterTest {
     }
   }
   
-  // note - this test needs to rely on crop() to get predictable nonzero minimums
-  
-  private void cropAndAutoscaleTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries,
-      int originCropX, int originCropY, int sizeCrop)
+  private void colorCompositeTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
   {
-    final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
+    // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
     
-    // needed for this test
-    assertTrue(originCropX >= 50);
-    assertTrue(originCropY >= 10); 
-    assertTrue(sizeCrop > 0);
-    assertTrue(originCropX + sizeCrop < sizeX);
-    assertTrue(originCropY + sizeCrop < sizeY);
-    assertTrue(originCropX + sizeCrop < 255);
+    assertTrue(sizeC >= 2);
+    assertTrue(sizeC <= 7);
+    assertTrue(numSeries*sizeC*3 <= 25);  // slider limit in IJ
+    
+    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
+    CompositeImage ci = null;
     
     try {
       ImporterOptions options = new ImporterOptions();
-      options.setAutoscale(true);
-      options.setCrop(true);
-      options.setCropRegion(0,new Region(originCropX,originCropY,sizeCrop,sizeCrop));
+      options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
       options.setId(path);
       imps = BF.openImagePlus(options);
     }
@@ -681,23 +695,97 @@ public class ImporterTest {
     catch (FormatException e) {
       fail(e.getMessage());
     }
-    
+
     impsTest(imps,1);
+    
     imp = imps[0];
-    xyzctTest(imps[0],sizeCrop,sizeCrop,sizeZ,sizeC,sizeT);
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertTrue(imp.isComposite());
+    
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
 
-    ImageStack st = imp.getStack();
-    int numSlices = st.getSize();
-
-    long expectedMax = originCropX+sizeCrop-1;
-    long expectedMin = originCropX;
-
-    for (int i = 0; i < numSlices; i++)
-    {
-      ImageProcessor proc = st.getProcessor(i+1);
-      assertEquals(expectedMax,proc.getMax(),0.1);
-      assertEquals(expectedMin,proc.getMin(),0.1);
+    assertEquals(CompositeImage.COMPOSITE, ci.getMode());
+    
+    genericLutTest(ci,sizeC);
+    
+    // TODO - do I need to test more than LUTs?
+  }
+  
+  private void colorCustomTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
+  {
+    // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
+    
+    assertTrue(sizeC >= 2);
+    assertTrue(sizeC <= 7);
+    assertTrue(numSeries*sizeC*3 <= 25);  // slider limit in IJ
+    
+    String path = constructFakeFilename("colorCustom", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_CUSTOM);
+      for (int s = 0; s < numSeries; s++)
+      {
+        options.setCustomColor(s, 0, Color.BLUE);
+        if (sizeC > 1)
+          options.setCustomColor(s, 1, Color.RED);
+        if (sizeC > 2)
+          options.setCustomColor(s, 2, Color.GREEN);
+        if (sizeC > 3)
+          options.setCustomColor(s, 3, Color.MAGENTA);
+        if (sizeC > 4)
+          options.setCustomColor(s, 4, Color.CYAN);
+        if (sizeC > 5)
+          options.setCustomColor(s, 5, Color.YELLOW);
+        if (sizeC > 6)
+          options.setCustomColor(s, 6, Color.GRAY);
+      }
+      options.setId(path);
+      imps = BF.openImagePlus(options);
     }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    impsTest(imps,1);
+    
+    imp = imps[0];
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    assertTrue(imp.isComposite());
+    
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+
+    assertEquals(CompositeImage.COLOR, ci.getMode());
+
+    lutTest(ci,0,0,0,0,0,0,255);        // blue
+    if (sizeC >= 2)
+      lutTest(ci,1,0,0,0,255,0,0);      // red
+    if (sizeC >= 3)
+      lutTest(ci,2,0,0,0,0,255,0);      // green
+    if (sizeC >= 4)
+      lutTest(ci,3,0,0,0,255,0,255);    // magenta
+    if (sizeC >= 5)
+      lutTest(ci,4,0,0,0,0,255,255);    // cyan
+    if (sizeC >= 7)
+      lutTest(ci,5,0,0,0,255,255,0);    // yellow
+    if (sizeC >= 7)
+      lutTest(ci,6,0,0,0,128,128,128);  // gray
+    
+    // TODO - do I need to test more than LUTs?
   }
   
   private void memoryVirtualStackTest(boolean desireVirtual)
@@ -859,7 +947,57 @@ public class ImporterTest {
     xyzctTest(imps[0],cx,cy,1,1,1);
   }
   
+  // note - this test needs to rely on crop() to get predictable nonzero minimums
+  
+  private void comboCropAndAutoscaleTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries,
+      int originCropX, int originCropY, int sizeCrop)
+  {
+    final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
+    
+    // needed for this test
+    assertTrue(originCropX >= 50);
+    assertTrue(originCropY >= 10); 
+    assertTrue(sizeCrop > 0);
+    assertTrue(originCropX + sizeCrop < sizeX);
+    assertTrue(originCropY + sizeCrop < sizeY);
+    assertTrue(originCropX + sizeCrop < 255);
+    
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setAutoscale(true);
+      options.setCrop(true);
+      options.setCropRegion(0,new Region(originCropX,originCropY,sizeCrop,sizeCrop));
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    impsTest(imps,1);
+    imp = imps[0];
+    xyzctTest(imps[0],sizeCrop,sizeCrop,sizeZ,sizeC,sizeT);
 
+    ImageStack st = imp.getStack();
+    int numSlices = st.getSize();
+
+    long expectedMax = originCropX+sizeCrop-1;
+    long expectedMin = originCropX;
+
+    for (int i = 0; i < numSlices; i++)
+    {
+      ImageProcessor proc = st.getProcessor(i+1);
+      assertEquals(expectedMax,proc.getMax(),0.1);
+      assertEquals(expectedMin,proc.getMin(),0.1);
+    }
+  }
+  
 // ** ImporterTest methods **************************************************************
 
   @Test
@@ -1027,56 +1165,25 @@ public class ImporterTest {
   @Test
   public void testColorComposite()
   {
-    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    // BF only supporting C from 2 to 7 and due to IJ's slider limitation (C*numSeries*3) <= 25
     
-    String path = constructFakeFilename("colorComposite", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
+    int[] pixTypes = new int[] {FormatTools.INT8, FormatTools.INT16, FormatTools.INT32};
+    int[] xs = new int[] {56,107};
+    int[] ys = new int[] {41,86};
+    int[] zs = new int[] {1,2};
+    int[] cs = new int[] {2,3,4,5,6,7};  // all that BF/IJ supports right now
+    int[] ts = new int[] {1,2};
+    int[] series = new int[] {1,2,3,4};
     
-    ImagePlus[] imps = null;
-    ImagePlus imp = null;
-    CompositeImage ci = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsTest(imps,1);
-    
-    imp = imps[0];
-    
-    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
-    
-    assertTrue(imp.isComposite());
-    
-    ci = (CompositeImage)imp;
-    
-    assertFalse(ci.hasCustomLuts());
-
-    assertEquals(CompositeImage.COMPOSITE, ci.getMode());
-    
-    lutTest(ci,0,0,0,0,255,0,0);
-    if (sizeC > 1)
-      lutTest(ci,1,0,0,0,0,255,0);
-    if (sizeC > 2)
-      lutTest(ci,2,0,0,0,0,0,255);
-    if (sizeC > 3)
-      lutTest(ci,3,0,0,0,255,255,255);
-    if (sizeC > 4)
-      lutTest(ci,4,0,0,0,0,255,255);
-    if (sizeC > 5)
-      lutTest(ci,5,0,0,0,255,0,255);
-    if (sizeC > 6)
-      lutTest(ci,6,0,0,0,255,255,0);
-    
-    fail("partial impl");
+    for (int pixFormat : pixTypes)
+      for (int x : xs)
+        for (int y : ys)
+          for (int z : zs)
+            for (int c : cs)
+              for (int t : ts)
+                for (int s : series)
+                  if ((c*s*3) <= 25)  // IJ slider limitation
+                    colorCompositeTest(pixFormat,x,y,z,c,t,s);
   }
   
   @Test
@@ -1117,19 +1224,7 @@ public class ImporterTest {
 
     assertEquals(CompositeImage.COLOR, ci.getMode());
     
-    lutTest(ci,0,0,0,0,255,0,0);
-    if (sizeC > 1)
-      lutTest(ci,1,0,0,0,0,255,0);
-    if (sizeC > 2)
-      lutTest(ci,2,0,0,0,0,0,255);
-    if (sizeC > 3)
-      lutTest(ci,3,0,0,0,255,255,255);
-    if (sizeC > 4)
-      lutTest(ci,4,0,0,0,0,255,255);
-    if (sizeC > 5)
-      lutTest(ci,5,0,0,0,255,0,255);
-    if (sizeC > 6)
-      lutTest(ci,6,0,0,0,255,255,0);
+    genericLutTest(ci,sizeC);
 
     fail("unfinished");
   }
@@ -1172,19 +1267,7 @@ public class ImporterTest {
 
     assertEquals(CompositeImage.GRAYSCALE, ci.getMode());
 
-    lutTest(ci,0,0,0,0,255,0,0);
-    if (sizeC > 1)
-      lutTest(ci,1,0,0,0,0,255,0);
-    if (sizeC > 2)
-      lutTest(ci,2,0,0,0,0,0,255);
-    if (sizeC > 3)
-      lutTest(ci,3,0,0,0,255,255,255);
-    if (sizeC > 4)
-      lutTest(ci,4,0,0,0,0,255,255);
-    if (sizeC > 5)
-      lutTest(ci,5,0,0,0,255,0,255);
-    if (sizeC > 6)
-      lutTest(ci,6,0,0,0,255,255,0);
+    genericLutTest(ci,sizeC);
 
     fail("unfinished");
   }
@@ -1192,72 +1275,25 @@ public class ImporterTest {
   @Test
   public void testColorCustom()
   {
-    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4, numSeries = 3;
+    // BF only supporting C from 2 to 7 and due to IJ's slider limitation (C*numSeries*3) <= 25
     
-    String path = constructFakeFilename("colorCustom", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false);
+    int[] pixTypes = new int[]{FormatTools.UINT8, FormatTools.UINT16, FormatTools.FLOAT};
+    int[] xs = new int[] {41,123};
+    int[] ys = new int[] {10,105};
+    int[] zs = new int[] {1,2};
+    int[] cs = new int[] {2,3,4,5,6,7};  // all that BF/IJ supports right now
+    int[] ts = new int[] {1,2};
+    int[] series = new int[] {1,2,3,4};
     
-    ImagePlus[] imps = null;
-    ImagePlus imp = null;
-    CompositeImage ci = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setColorMode(ImporterOptions.COLOR_MODE_CUSTOM);
-      for (int s = 0; s < numSeries; s++)
-      {
-        options.setCustomColor(s, 0, Color.BLUE);
-        if (sizeC > 1)
-          options.setCustomColor(s, 1, Color.RED);
-        if (sizeC > 2)
-          options.setCustomColor(s, 2, Color.GREEN);
-        if (sizeC > 3)
-          options.setCustomColor(s, 3, Color.MAGENTA);
-        if (sizeC > 4)
-          options.setCustomColor(s, 4, Color.CYAN);
-        if (sizeC > 5)
-          options.setCustomColor(s, 5, Color.YELLOW);
-        if (sizeC > 6)
-          options.setCustomColor(s, 6, Color.GRAY);
-      }
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsTest(imps,1);
-    
-    imp = imps[0];
-    
-    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
-    
-    assertTrue(imp.isComposite());
-    
-    ci = (CompositeImage)imp;
-    
-    assertFalse(ci.hasCustomLuts());
-
-    assertEquals(CompositeImage.COLOR, ci.getMode());
-
-    lutTest(ci,0,0,0,0,0,0,255);        // blue
-    if (sizeC >= 2)
-      lutTest(ci,1,0,0,0,255,0,0);      // red
-    if (sizeC >= 3)
-      lutTest(ci,2,0,0,0,0,255,0);      // green
-    if (sizeC >= 4)
-      lutTest(ci,3,0,0,0,255,0,255);    // magenta
-    if (sizeC >= 5)
-      lutTest(ci,4,0,0,0,0,255,255);    // cyan
-    if (sizeC >= 7)
-      lutTest(ci,5,0,0,0,255,255,0);    // yellow
-    if (sizeC >= 7)
-      lutTest(ci,6,0,0,0,128,128,128);  // gray
-
-    fail("unfinished");
+    for (int pixFormat : pixTypes)
+      for (int x : xs)
+        for (int y : ys)
+          for (int z : zs)
+            for (int c : cs)
+              for (int t : ts)
+                for (int s : series)
+                  if ((c*s*3) <= 25)  // IJ slider limitation
+                    colorCustomTest(pixFormat,x,y,z,c,t,s);
   }
   
   /*
@@ -1615,7 +1651,7 @@ public class ImporterTest {
     }
     
     /* TODO - enable when step by 0 code fixed and remove extra tests above
-    // uber combo test
+    // uber combo test : comprehensive but probably WAY too much computation to finish in reasonable time
     z = 6; c = 5; t = 4;
     for (int zStart = -1; zStart < z+2; zStart++)
       for (int zEnd = -1; zEnd < z+2; zEnd++)
@@ -1801,14 +1837,14 @@ public class ImporterTest {
   public void testComboCropAutoscale()
   {
     // try a simple test: single small byte type image 
-    cropAndAutoscaleTest(FormatTools.UINT8,100,80,1,1,1,1,70,40,25);
+    comboCropAndAutoscaleTest(FormatTools.UINT8,100,80,1,1,1,1,70,40,25);
     
     // try multiple dimensions
-    cropAndAutoscaleTest(FormatTools.UINT8,84,63,4,3,2,5,51,8,13);
+    comboCropAndAutoscaleTest(FormatTools.UINT8,84,63,4,3,2,5,51,8,13);
     
     // try various pixTypes
     for (int pixType : PixelTypes)
-      cropAndAutoscaleTest(pixType,96,96,2,2,2,2,70,60,10);
+      comboCropAndAutoscaleTest(pixType,96,96,2,2,2,2,70,60,10);
   }
   
   @Test
