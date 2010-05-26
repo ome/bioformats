@@ -73,7 +73,7 @@ public class KhorosReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return lut;    
+    return lut;
   }
 
   /**
@@ -156,9 +156,9 @@ public class KhorosReader extends FormatReader {
       lut = new byte[c][n];
       in.skipBytes(436);
 
-      for (int i=0; i<lut[0].length; i++) {
-        for (int j=0; j<lut.length; j++) {
-          lut[j][i] = in.readByte();
+      for (int i=0; i<lut.length; i++) {
+        for (int j=0; j<lut[0].length; j++) {
+          lut[i][j] = in.readByte();
         }
       }
     }
