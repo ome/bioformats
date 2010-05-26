@@ -79,10 +79,12 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
     throws EnumerationException {
-    for (String pattern : patterns.keySet()) {
-      if (value.toLowerCase().matches(pattern.toLowerCase())) {
-        String v = patterns.get(pattern);
-        return ${klass.javaType}.fromString(v);
+    if (value != null) {
+      for (String pattern : patterns.keySet()) {
+        if (value.toLowerCase().matches(pattern.toLowerCase())) {
+          String v = patterns.get(pattern);
+          return ${klass.javaType}.fromString(v);
+        }
       }
     }
 {% if 'Other' in klass.possibleValues %}\
