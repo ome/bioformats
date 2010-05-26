@@ -160,6 +160,7 @@ public class LeicaReader extends FormatReader {
 
   private boolean[][] cutInPopulated;
   private boolean[][] cutOutPopulated;
+  private boolean[][] filterRefPopulated;
 
   // -- Constructor --
 
@@ -296,6 +297,7 @@ public class LeicaReader extends FormatReader {
       exWaves = null;
       cutInPopulated = null;
       cutOutPopulated = null;
+      filterRefPopulated = null;
     }
   }
 
@@ -399,6 +401,7 @@ public class LeicaReader extends FormatReader {
     exWaves = new Vector[getSeriesCount()];
     cutInPopulated = new boolean[getSeriesCount()][];
     cutOutPopulated = new boolean[getSeriesCount()][];
+    filterRefPopulated = new boolean[getSeriesCount()][];
 
     for (int i=0; i<getSeriesCount(); i++) {
       channelNames[i] = new Vector();
@@ -572,6 +575,7 @@ public class LeicaReader extends FormatReader {
 
       cutInPopulated[i] = new boolean[core[i].sizeC];
       cutOutPopulated[i] = new boolean[core[i].sizeC];
+      filterRefPopulated[i] = new boolean[core[i].sizeC];
 
       Integer[] keys = ifd.keySet().toArray(new Integer[ifd.size()]);
       Arrays.sort(keys);
@@ -1212,7 +1216,10 @@ public class LeicaReader extends FormatReader {
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
           if (index >= 0 && index < core[series].sizeC) {
-            store.setLightPathEmissionFilterRef(filterID, series, index, 0);
+            if (!filterRefPopulated[series][index]) {
+              store.setLightPathEmissionFilterRef(filterID, series, index, 0);
+              filterRefPopulated[series][index] = true;
+            }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
               store.setTransmittanceRangeCutIn(wavelength, series, channel);
