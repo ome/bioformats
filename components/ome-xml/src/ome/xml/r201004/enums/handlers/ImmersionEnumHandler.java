@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-26 16:31:31.789920
  *
  *-----------------------------------------------------------------------------
  */
@@ -68,9 +68,15 @@ public class ImmersionEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Air\\s*", "Air");
     p.put("^\\s*Multi\\s*", "Multi");
     p.put("^\\s*Glycerol\\s*", "Glycerol");
+    p.put("^\\s*Other\\s*", "Other");
     // BEGIN custom enumeration mappings
-    p.put("^\\s*Oil.*", "Oil");
-    p.put("^\\s*W", "Water");
+    p.put("^\\s*OI\\s*", "Oil");
+    p.put(".*Oil.*", "Oil");
+    p.put(".*Oel.*", "Oil");
+    p.put(".*Wasser.*", "Water");
+    p.put(".*Gly.*", "Glycerol");
+    p.put("^\\s*Wl\\s*", "Water");
+    p.put("^\\s*W\\s*", "Water");
     return p;
   }
 
@@ -79,10 +85,12 @@ public class ImmersionEnumHandler implements IEnumerationHandler {
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
     throws EnumerationException {
-    for (String pattern : patterns.keySet()) {
-      if (value.toLowerCase().matches(pattern.toLowerCase())) {
-        String v = patterns.get(pattern);
-        return Immersion.fromString(v);
+    if (value != null) {
+      for (String pattern : patterns.keySet()) {
+        if (value.toLowerCase().matches(pattern.toLowerCase())) {
+          String v = patterns.get(pattern);
+          return Immersion.fromString(v);
+        }
       }
     }
     System.err.println("WARN: Could not find enumeration for " + value);

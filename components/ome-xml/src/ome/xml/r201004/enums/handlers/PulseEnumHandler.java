@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-26 16:31:31.789920
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,6 +67,7 @@ public class PulseEnumHandler implements IEnumerationHandler {
     p.put("^\\s*QSwitched\\s*", "QSwitched");
     p.put("^\\s*Repetitive\\s*", "Repetitive");
     p.put("^\\s*ModeLocked\\s*", "ModeLocked");
+    p.put("^\\s*Other\\s*", "Other");
     return p;
   }
 
@@ -75,10 +76,12 @@ public class PulseEnumHandler implements IEnumerationHandler {
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
     throws EnumerationException {
-    for (String pattern : patterns.keySet()) {
-      if (value.toLowerCase().matches(pattern.toLowerCase())) {
-        String v = patterns.get(pattern);
-        return Pulse.fromString(v);
+    if (value != null) {
+      for (String pattern : patterns.keySet()) {
+        if (value.toLowerCase().matches(pattern.toLowerCase())) {
+          String v = patterns.get(pattern);
+          return Pulse.fromString(v);
+        }
       }
     }
     System.err.println("WARN: Could not find enumeration for " + value);

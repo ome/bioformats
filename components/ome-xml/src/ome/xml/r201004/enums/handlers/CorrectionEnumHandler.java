@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-25 16:07:53.011910
+ * Created by callan via xsd-fu on 2010-05-26 16:31:31.789920
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,12 +76,16 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Fluotar\\s*", "Fluotar");
     p.put("^\\s*Apo\\s*", "Apo");
     p.put("^\\s*PlanNeofluar\\s*", "PlanNeofluar");
+    p.put("^\\s*Other\\s*", "Other");
     // BEGIN custom enumeration mappings
-    p.put("^\\s*Pl.*Apo.*", "PlanApo");
-    p.put("^\\s*Pl.*Flu.*", "PlanFluor");
-    p.put("^\\s*Sup.*Flu.*", "SuperFluor");
+    p.put(".*Pl.*Apo.*", "PlanApo");
+    p.put(".*Pl.*Flu.*", "PlanFluor");
     p.put("^\\s*Vio.*Corr.*", "VioletCorrected");
-    p.put("^\\s*Neo.*flu.*", "Neofluar");
+    p.put(".*S.*Flu.*", "SuperFluor");
+    p.put(".*Neo.*flu.*", "Neofluar");
+    p.put(".*Flu.*tar.*", "Fluotar");
+    p.put(".*Fluo.*", "Fluor");
+    p.put(".*Flua.*", "Fluar");
     p.put("^\\s*Apo.*", "Apo");
     return p;
   }
@@ -91,10 +95,12 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
   /* @see IEnumerationHandler#getEnumeration(String) */
   public Enumeration getEnumeration(String value)
     throws EnumerationException {
-    for (String pattern : patterns.keySet()) {
-      if (value.toLowerCase().matches(pattern.toLowerCase())) {
-        String v = patterns.get(pattern);
-        return Correction.fromString(v);
+    if (value != null) {
+      for (String pattern : patterns.keySet()) {
+        if (value.toLowerCase().matches(pattern.toLowerCase())) {
+          String v = patterns.get(pattern);
+          return Correction.fromString(v);
+        }
       }
     }
     System.err.println("WARN: Could not find enumeration for " + value);
