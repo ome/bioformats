@@ -533,7 +533,7 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The X position of the image within the well relative to
-						the well origin defied on the Plate.
+						the well origin defined on the Plate.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -541,7 +541,7 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The Y position of the image within the well relative to
-						the well origin defied on the Plate.
+						the well origin defined on the Plate.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
