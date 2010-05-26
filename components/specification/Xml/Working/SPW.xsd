@@ -128,14 +128,28 @@
 			<xsd:attribute name="WellOriginX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						This defines the X position to use for the origin of the
+						fields(individual  images) taken in a well. It is used 
+						with the PositionX in the WellSample to display the fields
+						in the correct position relative to each other. Each Well
+						in the plate has the same well origin. [units:none]
+						
+						In the OMERO clients by convention we display the WellOrigin
+						in the center of the view.
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
 			<xsd:attribute name="WellOriginY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						MISSING
+						This defines the Y position to use for the origin of the
+						fields(individual  images) taken in a well. It is used 
+						with the PositionY in the WellSample to display the fields
+						in the correct position relative to each other. Each Well
+						in the plate has the same well origin. [units:none]
+						
+						In the OMERO clients by convention we display the WellOrigin
+						in the center of the view.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -518,14 +532,16 @@
 			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the image within the well
+						The X position of the image within the well relative to
+						the well origin defied on the Plate.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the image within the well
+						The Y position of the image within the well relative to
+						the well origin defied on the Plate.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
