@@ -206,7 +206,9 @@ public class IPLabReader extends FormatReader {
   {
     LOGGER.info("Reading tags");
 
-    String tag = in.readString(4);
+    byte[] tagBytes = new byte[4];
+    in.read(tagBytes);
+    String tag = new String(tagBytes);
     while (!tag.equals("fini") && in.getFilePointer() < in.length() - 4) {
       int size = in.readInt();
       if (tag.equals("clut")) {
@@ -350,8 +352,8 @@ public class IPLabReader extends FormatReader {
 
         store.setImageDescription(notes, 0);
       }
-      else if (tag.charAt(0) == (char) 0x1a && tag.charAt(1) == (char) 0xd9 &&
-        tag.charAt(2) == (char) 0x8b && tag.charAt(3) == (char) 0xef)
+      else if (tagBytes[0] == 0x1a && tagBytes[1] == (byte) 0xd9 &&
+        tagBytes[2] == (byte) 0x8b && tagBytes[3] == (byte) 0xef)
       {
         int units = in.readInt();
 
@@ -389,7 +391,8 @@ public class IPLabReader extends FormatReader {
       else in.skipBytes(size);
 
       if (in.getFilePointer() + 4 <= in.length()) {
-        tag = in.readString(4);
+        in.read(tagBytes);
+        tag = new String(tagBytes);
       }
       else {
         tag = "fini";
