@@ -285,7 +285,11 @@ public class MinimalTiffReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     tiffParser = new TiffParser(in);
-    boolean little = tiffParser.checkHeader().booleanValue();
+    Boolean littleEndian = tiffParser.checkHeader();
+    if (littleEndian == null) {
+      throw new FormatException("Invalid TIFF file");
+    }
+    boolean little = littleEndian.booleanValue();
     in.order(little);
 
     LOGGER.info("Reading IFDs");

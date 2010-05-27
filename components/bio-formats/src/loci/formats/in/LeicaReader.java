@@ -214,8 +214,12 @@ public class LeicaReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
-      tiff.setId((String) files[series].get(lastPlane));
+      int index = (int) Math.min(lastPlane, files[series].size() - 1);
+      tiff.setId((String) files[series].get(index));
       return tiff.get8BitLookupTable();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Failed to retrieve lookup table", e);
     }
     catch (IOException e) {
       LOGGER.debug("Failed to retrieve lookup table", e);
@@ -227,8 +231,12 @@ public class LeicaReader extends FormatReader {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
-      tiff.setId((String) files[series].get(lastPlane));
+      int index = (int) Math.min(lastPlane, files[series].size() - 1);
+      tiff.setId((String) files[series].get(index));
       return tiff.get16BitLookupTable();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Failed to retrieve lookup table", e);
     }
     catch (IOException e) {
       LOGGER.debug("Failed to retrieve lookup table", e);
@@ -250,13 +258,24 @@ public class LeicaReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
-    if (no < files[series].size()) {
-      String filename = (String) files[series].get(no);
-      if (new Location(filename).exists()) {
+
+    int fileIndex = no < files[series].size() ? no : 0;
+    int planeIndex = no < files[series].size() ? 0 : no;
+    String filename = (String) files[series].get(fileIndex);
+
+    if (new Location(filename).exists()) {
+      if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
         tiff.setId(filename);
-        return tiff.openBytes(0, buf, x, y, w, h);
+        return tiff.openBytes(planeIndex, buf, x, y, w, h);
+      }
+      else {
+        RandomAccessInputStream s = new RandomAccessInputStream(filename);
+        s.seek(planeIndex * FormatTools.getPlaneSize(this));
+        readPlane(s, x, y, w, h, buf);
+        s.close();
       }
     }
+
     // imitate Leica's software and return a blank plane if the
     // appropriate TIFF file is missing
     return buf;
@@ -308,8 +327,10 @@ public class LeicaReader extends FormatReader {
     close();
 
     String leiFile = findLEIFile(id);
-    if (leiFile == null) {
-      if (checkSuffix(id, TiffReader.TIFF_SUFFIXES) && !isGroupFiles()) {
+    if (leiFile == null || leiFile.trim().length() == 0 ||
+      new Location(leiFile).isDirectory())
+    {
+      if (checkSuffix(id, TiffReader.TIFF_SUFFIXES)) {
         super.initFile(id);
         TiffReader r = new TiffReader();
         r.setMetadataStore(getMetadataStore());
@@ -340,7 +361,7 @@ public class LeicaReader extends FormatReader {
 
     super.initFile(leiFile);
 
-    leiFilename = 
+    leiFilename =
       new File(leiFile).exists()? new Location(leiFile).getAbsolutePath() : id;
 
     in = new RandomAccessInputStream(leiFile);
@@ -354,6 +375,7 @@ public class LeicaReader extends FormatReader {
       fourBytes[1] == TiffConstants.LITTLE &&
       fourBytes[2] == TiffConstants.LITTLE &&
       fourBytes[3] == TiffConstants.LITTLE);
+    boolean realLittleEndian = isLittleEndian();
 
     in.order(isLittleEndian());
 
@@ -540,6 +562,7 @@ public class LeicaReader extends FormatReader {
 
       core[i].dimensionOrder =
         MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
+      core[i].littleEndian = realLittleEndian;
     }
 
     MetadataStore store = makeFilterMetadata();

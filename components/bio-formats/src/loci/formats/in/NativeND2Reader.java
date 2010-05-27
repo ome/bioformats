@@ -248,10 +248,30 @@ public class NativeND2Reader extends FormatReader {
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
-      final String sig = new String(sigBytes);
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
-        in.findString(false, 1024, sig); // empirically, 1KB blocks work well
+        byte[] buf = new byte[1024];
+        int foundIndex = -1;
+        in.read(buf, 0, sigBytes.length);
+        while (foundIndex == -1 && in.getFilePointer() < in.length()) {
+          int n = in.read(buf, sigBytes.length, buf.length - sigBytes.length);
+          for (int i=0; i<buf.length-sigBytes.length; i++) {
+            for (int j=0; j<sigBytes.length; j++) {
+              if (buf[i + j] != sigBytes[j]) break;
+              if (j == sigBytes.length - 1) foundIndex = i;
+            }
+            if (foundIndex != -1) break;
+          }
+          if (foundIndex == -1) {
+            System.arraycopy(buf, buf.length - sigBytes.length - 1,
+              buf, 0, sigBytes.length);
+          }
+          else in.seek(in.getFilePointer() - n + foundIndex);
+        }
+        if (in.getFilePointer() >= in.length() || foundIndex == -1) {
+          break;
+        }
+
         if (in.getFilePointer() > in.length() - 24) break;
 
         int lenOne = in.readInt();
@@ -1210,7 +1230,7 @@ public class NativeND2Reader extends FormatReader {
               }
             }
             else if (dim.startsWith("T")) {
-              if (getSizeT() <= 1) {
+              if (getSizeT() <= 1 || v < getSizeT()) {
                 core[0].sizeT = v;
               }
             }
