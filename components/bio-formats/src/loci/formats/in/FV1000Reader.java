@@ -285,6 +285,8 @@ public class FV1000Reader extends FormatReader {
 
     if (!fileOnly) {
       tiffs = usedFiles = null;
+      filenames = new Hashtable<Integer, String>();
+      roiFilenames = new Hashtable<Integer, String>();
       thumbReader = null;
       thumbId = null;
       isOIB = false;
