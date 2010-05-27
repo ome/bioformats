@@ -23,12 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import loci.common.DataTools;
+import loci.common.IRandomAccess;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -190,16 +194,34 @@ public class TextReader extends FormatReader {
   private List<String> readFile(String id) throws IOException {
     List<String> lines = new ArrayList<String>();
     long time = System.currentTimeMillis();
-    RandomAccessInputStream in = new RandomAccessInputStream(id);
-    int no = 0;
-    while (true) {
-      no++;
-      time = checkTime(time, no, in.getFilePointer(), in.length());
-      String line = in.readLine();
-      if (line == null) break; // eof
-      lines.add(line);
+    IRandomAccess handle = Location.getMappedFile(id);
+    if (handle == null) {
+      // HACK: Read using vanilla BufferedReader, since it's faster.
+      String mapId = Location.getMappedId(id);
+      BufferedReader in = new BufferedReader(new FileReader(mapId));
+      int no = 0;
+      while (true) {
+        no++;
+        time = checkTime(time, no, 0, 0);
+        String line = in.readLine();
+        if (line == null) break; // eof
+        lines.add(line);
+      }
+      in.close();
     }
-    in.close();
+    else {
+      // read data using RandomAccessInputStream (data may not be a file)
+      RandomAccessInputStream in = new RandomAccessInputStream(handle);
+      int no = 0;
+      while (true) {
+        no++;
+        time = checkTime(time, no, in.getFilePointer(), in.length());
+        String line = in.readLine();
+        if (line == null) break; // eof
+        lines.add(line);
+      }
+      in.close();
+    }
     return lines;
   }
 
@@ -363,8 +385,11 @@ public class TextReader extends FormatReader {
     long t = System.currentTimeMillis();
     if (t - time > TIME_OFFSET) {
       // some time has passed; report progress
-      int percent = (int) (100 * pos / len);
-      LOGGER.info("Reading line " + no + " (" + percent + "%)");
+      if (len > 0) {
+        int percent = (int) (100 * pos / len);
+        LOGGER.info("Reading line " + no + " (" + percent + "%)");
+      }
+      else LOGGER.info("Reading line " + no);
       time = t;
     }
     return time;
