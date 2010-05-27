@@ -449,7 +449,7 @@ public class ImporterTest {
 
     assertEquals(z*c*t,numSlices);
 
-    int count = 0;
+    int procNum = 1;
     //System.out.println(order);
     Axis fastest = axis(order,0);
     Axis middle = axis(order,1);
@@ -461,7 +461,7 @@ public class ImporterTest {
       for (int j = 0; j < maxJ; j++)
         for (int k = 0; k < maxK; k++)
         {
-          ImageProcessor proc = st.getProcessor(count+1);
+          ImageProcessor proc = st.getProcessor(procNum++);
           //printVals(proc);
           assertNotNull(proc);
           assertEquals(x,proc.getWidth());
@@ -470,7 +470,6 @@ public class ImporterTest {
           assertEquals(i,index(slowest,proc));
           assertEquals(j,index(middle,proc));
           assertEquals(k,index(fastest,proc));
-          count++;
         }
   }
   
@@ -599,12 +598,12 @@ public class ImporterTest {
     // make sure the number of slices in stack is a sum of all series
     assertEquals(z*c*t*s, st.getSize());
     
-    int index = 0;
+    int index = 1;
     for (int sIndex = 0; sIndex < s; sIndex++) {
       for (int tIndex = 0; tIndex < t; tIndex++) {
         for (int cIndex = 0; cIndex < c; cIndex++) {
           for (int zIndex = 0; zIndex < z; zIndex++) {
-            ImageProcessor proc = st.getProcessor(++index); 
+            ImageProcessor proc = st.getProcessor(index++); 
             assertEquals(sIndex, sIndex(proc));
             assertEquals(zIndex, zIndex(proc));
             assertEquals(cIndex, cIndex(proc));
