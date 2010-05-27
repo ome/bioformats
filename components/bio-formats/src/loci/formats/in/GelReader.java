@@ -194,7 +194,6 @@ public class GelReader extends BaseTiffReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-      store.setImageDescription(info, 0);
       Double pixelSize = new Double(scale.doubleValue());
       store.setPixelsPhysicalSizeX(pixelSize, 0);
       store.setPixelsPhysicalSizeY(pixelSize, 0);

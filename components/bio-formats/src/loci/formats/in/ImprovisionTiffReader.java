@@ -226,6 +226,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
           store.setChannelName(cNames[i], 0, i);
         }
       }
+      store.setImageDescription("", 0);
     }
   }
 

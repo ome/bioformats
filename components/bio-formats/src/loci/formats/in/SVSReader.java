@@ -44,6 +44,7 @@ public class SVSReader extends BaseTiffReader {
   // -- Fields --
 
   private float[] pixelSize;
+  private String[] comments;
 
   // -- Constructor --
 
@@ -73,7 +74,10 @@ public class SVSReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (!fileOnly) pixelSize = null;
+    if (!fileOnly) {
+      pixelSize = null;
+      comments = null;
+    }
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -87,6 +91,7 @@ public class SVSReader extends BaseTiffReader {
     core = new CoreMetadata[ifds.size()];
 
     pixelSize = new float[core.length];
+    comments = new String[core.length];
     for (int i=0; i<core.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
@@ -97,9 +102,12 @@ public class SVSReader extends BaseTiffReader {
         String[] tokens;
         String key, value;
         for (String line : lines) {
-          tokens = line.split("|");
+          tokens = line.split("[|]");
           for (String t : tokens) {
-            if (t.indexOf("=") == -1) addGlobalMeta("Comment", t);
+            if (t.indexOf("=") == -1) {
+              addGlobalMeta("Comment", t);
+              comments[i] = t;
+            }
             else {
               key = t.substring(0, t.indexOf("=")).trim();
               value = t.substring(t.indexOf("=") + 1).trim();
@@ -145,6 +153,7 @@ public class SVSReader extends BaseTiffReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
+      store.setImageDescription(comments[i], i);
     }
   }
 
