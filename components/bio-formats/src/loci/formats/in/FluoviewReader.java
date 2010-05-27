@@ -373,9 +373,6 @@ public class FluoviewReader extends BaseTiffReader {
 
     for (int i=0; i<getSizeC(); i++) {
       if (voltages[i] != null) {
-        if (detectorManufacturer != null) {
-          store.setDetectorManufacturer(detectorManufacturer, 0, 0);
-        }
         store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, i);
       }
       if (gains[i] != null) {
@@ -385,6 +382,9 @@ public class FluoviewReader extends BaseTiffReader {
         store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
       }
       store.setDetectorType(getDetectorType("Other"), 0, i);
+      if (detectorManufacturer != null) {
+        store.setDetectorManufacturer(detectorManufacturer, 0, i);
+      }
 
       // link DetectorSettings to an actual Detector
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
@@ -520,27 +520,21 @@ public class FluoviewReader extends BaseTiffReader {
           String value = token.substring(eq + 1);
           addGlobalMeta(key, value);
           if (key.startsWith("Gain Ch")) {
-            for (int i=0; i<gains.length; i++) {
-              if (gains[i] == null) {
-                gains[i] = value;
-                break;
-              }
+            int index = Integer.parseInt(key.substring(7).trim());
+            if (index > 0 && index <= gains.length) {
+              gains[index - 1] = value;
             }
           }
           else if (key.startsWith("PMT Voltage Ch")) {
-            for (int i=0; i<voltages.length; i++) {
-              if (voltages[i] == null) {
-                voltages[i] = value;
-                break;
-              }
+            int index = Integer.parseInt(key.substring(14).trim());
+            if (index > 0 && index <= voltages.length) {
+              voltages[index - 1] = value;
             }
           }
           else if (key.startsWith("Offset Ch")) {
-            for (int i=0; i<offsets.length; i++) {
-              if (offsets[i] == null) {
-                offsets[i] = value;
-                break;
-              }
+            int index = Integer.parseInt(key.substring(9).trim());
+            if (index > 0 && index <= offsets.length) {
+              offsets[index - 1] = value;
             }
           }
           else if (key.equals("Magnification")) mag = value;
@@ -557,11 +551,9 @@ public class FluoviewReader extends BaseTiffReader {
             }
           }
           else if (key.startsWith("Confocal Aperture-Ch")) {
-            for (int i=0; i<lensNA.length; i++) {
-              if (lensNA[i] == null) {
-                lensNA[i] = value.substring(0, value.length() - 2);
-                break;
-              }
+            int index = Integer.parseInt(key.substring(20).trim());
+            if (index > 0 && index <= lensNA.length) {
+              lensNA[index - 1] = value.substring(0, value.length() - 2);
             }
           }
           else if (key.equals("Date")) {
