@@ -52,6 +52,8 @@ package ${fu.package};
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -76,6 +78,10 @@ public class ${klass.name} extends ${klass.javaBase}
 	// -- Constants --
 
 	public static final String NAMESPACE = "${klass.namespace}";
+
+	/** Logger for this class. */
+	private static final Logger LOGGER =
+		LoggerFactory.getLogger(${klass.name}.class);
 
 	// -- Instance variables --
 {% for prop in klass.properties.values() %}\
@@ -149,13 +155,7 @@ ${customContent}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
 		{
-			System.err.println(String.format(
-					"WARNING: Expecting node name of ${klass.name} got %s",
-					tagName));
-			// TODO: Should be its own Exception
-			//throw new RuntimeException(String.format(
-			//		"Expecting node name of ${klass.name} got %s",
-			//		tagName));
+			LOGGER.debug("Expecting node name of ${klass.name} got {}", tagName);
 		}
 {% end %}\
 {% for prop in klass.properties.values() %}\

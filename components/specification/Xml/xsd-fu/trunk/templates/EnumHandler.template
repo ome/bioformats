@@ -41,6 +41,9 @@ package ${fu.package};
 import java.util.Hashtable;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
 import ome.xml.r201004.enums.${klass.javaType};
@@ -53,6 +56,12 @@ import ome.xml.r201004.enums.${klass.javaType};
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/${klass.javaType}Handler.java">SVN</a></dd></dl>
  */
 public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(${klass.javaType}EnumHandler.class);
 
   // -- Fields --
 
@@ -87,8 +96,8 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
         }
       }
     }
+    LOGGER.warn("Could not find enumeration for {}", value);
 {% if 'Other' in klass.possibleValues %}\
-    System.err.println("WARN: Could not find enumeration for " + value);
     return ${klass.javaType}.OTHER;
 {% end %}\
 {% if 'Other' not in klass.possibleValues %}\
