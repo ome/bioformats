@@ -158,7 +158,9 @@ public class FluoviewReader extends BaseTiffReader {
       put("Header Flag", ras.readShort());
       put("Image Type", ras.read());
 
-      put("Image name", ras.readString(257));
+      String name = ras.readString(257);
+      name = name.substring(0, name.indexOf("\0"));
+      put("Image name", name);
 
       ras.skipBytes(4); // skip pointer to data field
 
