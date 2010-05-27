@@ -129,7 +129,7 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						This defines the X position to use for the origin of the
-						fields(individual  images) taken in a well. It is used 
+						fields (individual images) taken in a well. It is used 
 						with the PositionX in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
 						in the plate has the same well origin. [units:none]
@@ -143,7 +143,7 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						This defines the Y position to use for the origin of the
-						fields(individual  images) taken in a well. It is used 
+						fields (individual images) taken in a well. It is used 
 						with the PositionY in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
 						in the plate has the same well origin. [units:none]
@@ -532,7 +532,7 @@
 			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the image within the well relative to
+						The X position of the field (image) within the well relative to
 						the well origin defined on the Plate.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -540,7 +540,7 @@
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the image within the well relative to
+						The Y position of the field (image) within the well relative to
 						the well origin defined on the Plate.
 					</xsd:documentation>
 				</xsd:annotation>
