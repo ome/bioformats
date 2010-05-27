@@ -173,7 +173,6 @@ public class PerkinElmerReader extends FormatReader {
 
     RandomAccessInputStream ras = new RandomAccessInputStream(files[no]);
     ras.seek(6);
-
     readPlane(ras, x, y, w, h, buf);
     ras.close();
     return buf;
@@ -691,6 +690,8 @@ public class PerkinElmerReader extends FormatReader {
         int nPlanes = sizeC * getSizeT();
         int count = (int) Math.min(oldCount, nPlanes);
         System.arraycopy(tmpFiles, oldFile, files, nextFile, count);
+        nextFile += count;
+        oldFile += count;
         if (count < oldCount) oldFile += (oldCount - count);
       }
       core[0].imageCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
