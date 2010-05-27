@@ -308,12 +308,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read the next line of text from the input stream. */
   public String readLine() throws IOException {
-    return findString("\n");
+    String line = findString("\n");
+    return line.length() == 0 ? null : line;
   }
 
   /** Read a string of arbitrary length, terminated by a null char. */
   public String readCString() throws IOException {
-    return findString("\0");
+    String line = findString("\0");
+    return line.length() == 0 ? null : line;
   }
 
   /** Read a string of up to length n. */
