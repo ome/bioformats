@@ -136,6 +136,9 @@ loci.formats.in.PhotoshopTiffReader   # tif
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
 
+# standard text reader must go last (it accepts any plaintext)
+loci.formats.in.TextReader            # txt, csv
+
 # non-TIFF readers with slow isThisType
 loci.formats.in.BurleighReader        # img
 loci.formats.in.OpenlabReader         # liff
