@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-30 16:52:08+0100
+ * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,6 +41,8 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,6 +57,10 @@ public class Polyline extends Shape
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+
+	/** Logger for this class. */
+	private static final Logger LOGGER =
+		LoggerFactory.getLogger(Polyline.class);
 
 	// -- Instance variables --
 
@@ -109,13 +115,7 @@ public class Polyline extends Shape
 		String tagName = element.getTagName();
 		if (!"Polyline".equals(tagName))
 		{
-			System.err.println(String.format(
-					"WARNING: Expecting node name of Polyline got %s",
-					tagName));
-			// TODO: Should be its own Exception
-			//throw new RuntimeException(String.format(
-			//		"Expecting node name of Polyline got %s",
-			//		tagName));
+			LOGGER.debug("Expecting node name of Polyline got {}", tagName);
 		}
 		if (element.hasAttribute("Points"))
 		{

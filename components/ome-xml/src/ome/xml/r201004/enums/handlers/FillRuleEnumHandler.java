@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-26 16:31:31.789920
+ * Created by callan via xsd-fu on 2010-05-27 15:11:27.217603
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,6 +40,9 @@ package ome.xml.r201004.enums.handlers;
 
 import java.util.Hashtable;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ome.xml.r201004.enums.Enumeration;
 import ome.xml.r201004.enums.EnumerationException;
@@ -53,6 +56,12 @@ import ome.xml.r201004.enums.FillRule;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/enums/handler/FillRuleHandler.java">SVN</a></dd></dl>
  */
 public class FillRuleEnumHandler implements IEnumerationHandler {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(FillRuleEnumHandler.class);
 
   // -- Fields --
 
@@ -80,6 +89,7 @@ public class FillRuleEnumHandler implements IEnumerationHandler {
         }
       }
     }
+    LOGGER.warn("Could not find enumeration for {}", value);
     throw new EnumerationException(this.getClass().getName() +
      " could not find enumeration for " + value);
   }
