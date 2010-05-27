@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-04-30 16:52:08+0100
+ * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
  *
  *-----------------------------------------------------------------------------
  */
@@ -41,6 +41,8 @@ package ome.xml.r201004;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,6 +57,10 @@ public abstract class LightSource extends ManufacturerSpec
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+
+	/** Logger for this class. */
+	private static final Logger LOGGER =
+		LoggerFactory.getLogger(LightSource.class);
 
 	// -- Instance variables --
 
