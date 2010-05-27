@@ -545,6 +545,11 @@ public class LeicaReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
+    // Ensure we populate Image names before returning due to a possible
+    // minimum metadata level.
+    for (int i=0; i<numSeries;i ++) {
+      store.setImageName(seriesNames.get(i), i);
+    }
     if (metadataLevel == MetadataLevel.MINIMUM) return;
 
     for (int i=0; i<numSeries; i++) {
@@ -562,7 +567,6 @@ public class LeicaReader extends FormatReader {
         MetadataTools.setDefaultCreationDate(store, id, i);
       }
 
-      store.setImageName(seriesNames.get(i), i);
       store.setImageDescription(seriesDescriptions.get(i), i);
 
       String instrumentID = MetadataTools.createLSID("Instrument", i);
