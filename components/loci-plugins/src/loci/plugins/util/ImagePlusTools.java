@@ -136,22 +136,27 @@ public final class ImagePlusTools {
     Double td = retrieve.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 
-    boolean xcalMissing = Double.isNaN(xcal);
-    boolean ycalMissing = Double.isNaN(ycal);
-    boolean zcalMissing = Double.isNaN(zcal);
-    boolean tcalMissing = Double.isNaN(tcal);
-    if (xcalMissing || ycalMissing || zcalMissing || tcalMissing) {
-      // if the physical width or physical height are missing, assume that
-      // the width and height are equal
-      if (!xcalMissing) xcal = ycal;
-      if (!ycalMissing) ycal = xcal;
+    final boolean xcalPresent = !Double.isNaN(xcal);
+    final boolean ycalPresent = !Double.isNaN(ycal);
+    final boolean zcalPresent = !Double.isNaN(zcal);
+    final boolean tcalPresent = !Double.isNaN(tcal);
 
+    // if the physical width or physical height are missing,
+    // assume that the width and height are equal
+    if (xcalPresent && !ycalPresent) ycal = xcal;
+    else if (ycalPresent && !xcalPresent) xcal = ycal;
+
+    final boolean hasSpatial = xcalPresent || ycalPresent || zcalPresent;
+    final boolean hasCalibration = hasSpatial || ycalPresent;
+
+    if (hasCalibration) {
+      // set calibration only if at least one value is present
       Calibration cal = new Calibration();
-      cal.setUnit("micron");
-      cal.pixelWidth = xcal;
-      cal.pixelHeight = ycal;
-      cal.pixelDepth = zcal;
-      cal.frameInterval = tcal;
+      if (hasSpatial) cal.setUnit("micron");
+      if (xcalPresent) cal.pixelWidth = xcal;
+      if (ycalPresent) cal.pixelHeight = ycal;
+      if (zcalPresent) cal.pixelDepth = zcal;
+      if (tcalPresent) cal.frameInterval = tcal;
       imp.setCalibration(cal);
     }
 
