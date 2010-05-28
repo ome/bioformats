@@ -28,14 +28,18 @@ import java.io.IOException;
 import loci.formats.meta.MetadataStore;
 
 /**
- * Expands indexed color images to RGB.
+ * For indexed color data representing true color, factors out
+ * the indices, replacing them with the color table values directly.
+ * 
+ * For all other data (either non-indexed, or indexed with
+ * "false color" tables), does nothing.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ChannelFiller.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ChannelFiller.java">SVN</a></dd></dl>
  */
 public class ChannelFiller extends ReaderWrapper {
-
+  
   // -- Utility methods --
 
   /** Converts the given reader into a ChannelFiller, wrapping if needed. */
@@ -54,54 +58,55 @@ public class ChannelFiller extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
-  /* @see IFormatReader#isIndexed() */
-  public boolean isIndexed() {
-    return false;
-  }
-
-  /* @see IFormatReader#getSizeC() */
+  @Override
   public int getSizeC() {
-    return reader.getSizeC() *
-      ((reader.isIndexed() && !reader.isFalseColor()) ? 3 : 1);
-  }
-
-  /* @see IFormatReader#getRGBChannelCount() */
-  public int getRGBChannelCount() {
-    return (reader.isIndexed() && !reader.isFalseColor()) ? 3 :
-      reader.getRGBChannelCount();
+    if (passthrough()) return reader.getSizeC();
+    return reader.getSizeC() * getLookupTableComponentCount();
   }
 
   /* @see IFormatReader#isRGB() */
+  @Override
   public boolean isRGB() {
-    return (reader.isIndexed() && !reader.isFalseColor()) || reader.isRGB();
+    if (passthrough()) return reader.isRGB();
+    return false;
+  }
+
+  /* @see IFormatReader#isIndexed() */
+  @Override
+  public boolean isIndexed() {
+    if (passthrough()) return reader.isIndexed();
+    return false;
+  }
+
+  /* @see IFormatReader#getRGBChannelCount() */
+  @Override
+  public int getRGBChannelCount() {
+    if (passthrough()) return reader.getRGBChannelCount();
+    return reader.getRGBChannelCount() * getLookupTableComponentCount();
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
-  public byte[][] get8BitLookupTable() {
-    try {
-      return reader.isFalseColor() ? reader.get8BitLookupTable() : null;
-    }
-    catch (FormatException e) { }
-    catch (IOException e) { }
+  @Override
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    if (passthrough()) return reader.get8BitLookupTable();
     return null;
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
-  public short[][] get16BitLookupTable() {
-    try {
-      return reader.isFalseColor() ? reader.get16BitLookupTable() : null;
-    }
-    catch (FormatException e) { }
-    catch (IOException e) { }
+  @Override
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    if (passthrough()) return reader.get16BitLookupTable();
     return null;
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -109,6 +114,7 @@ public class ChannelFiller extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -118,65 +124,86 @@ public class ChannelFiller extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (reader.isIndexed() && !reader.isFalseColor()) {
-      byte[] pix = reader.openBytes(no, x, y, w, h);
-      if (getPixelType() == FormatTools.UINT8) {
-        byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(), pix);
-        if (isInterleaved()) {
-          int pt = 0;
-          for (int i=0; i<b[0].length; i++) {
-            for (int j=0; j<b.length; j++) {
-              buf[pt++] = b[j][i];
-            }
-          }
-        }
-        else {
-          for (int i=0; i<b.length; i++) {
-            System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
-          }
-        }
-        return buf;
-      }
-      short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
-        pix, isLittleEndian());
+    if (passthrough()) return reader.openBytes(no, buf, x, y, w, h);
 
+    byte[] pix = reader.openBytes(no, x, y, w, h);
+    if (getPixelType() == FormatTools.UINT8) {
+      byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(), pix);
       if (isInterleaved()) {
         int pt = 0;
-        for (int i=0; i<s[0].length; i++) {
-          for (int j=0; j<s.length; j++) {
-            buf[pt++] = (byte) (isLittleEndian() ?
-              (s[j][i] & 0xff) : (s[j][i] >> 8));
-            buf[pt++] = (byte) (isLittleEndian() ?
-              (s[j][i] >> 8) : (s[j][i] & 0xff));
+        for (int i=0; i<b[0].length; i++) {
+          for (int j=0; j<b.length; j++) {
+            buf[pt++] = b[j][i];
           }
         }
       }
       else {
-        int pt = 0;
-        for (int i=0; i<s.length; i++) {
-          for (int j=0; j<s[i].length; j++) {
-            buf[pt++] = (byte) (isLittleEndian() ?
-              (s[i][j] & 0xff) : (s[i][j] >> 8));
-            buf[pt++] = (byte) (isLittleEndian() ?
-              (s[i][j] >> 8) : (s[i][j] & 0xff));
-          }
+        for (int i=0; i<b.length; i++) {
+          System.arraycopy(b[i], 0, buf, i*b[i].length, b[i].length);
         }
       }
       return buf;
     }
-    return reader.openBytes(no, buf, x, y, w, h);
+    short[][] s = ImageTools.indexedToRGB(reader.get16BitLookupTable(),
+      pix, isLittleEndian());
+
+    if (isInterleaved()) {
+      int pt = 0;
+      for (int i=0; i<s[0].length; i++) {
+        for (int j=0; j<s.length; j++) {
+          buf[pt++] = (byte) (isLittleEndian() ?
+            (s[j][i] & 0xff) : (s[j][i] >> 8));
+          buf[pt++] = (byte) (isLittleEndian() ?
+            (s[j][i] >> 8) : (s[j][i] & 0xff));
+        }
+      }
+    }
+    else {
+      int pt = 0;
+      for (int i=0; i<s.length; i++) {
+        for (int j=0; j<s[i].length; j++) {
+          buf[pt++] = (byte) (isLittleEndian() ?
+            (s[i][j] & 0xff) : (s[i][j] >> 8));
+          buf[pt++] = (byte) (isLittleEndian() ?
+            (s[i][j] >> 8) : (s[i][j] & 0xff));
+        }
+      }
+    }
+    return buf;
   }
 
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this, false, false);
+  }
+  
+  // -- Helper methods --
+
+  /** Whether to hand off all method calls directly to the wrapped reader. */
+  private boolean passthrough() {
+    return !reader.isIndexed() || reader.isFalseColor();
+  }
+  
+  /** Gets the number of color components in the lookup table. */
+  private int getLookupTableComponentCount() {
+    try {
+      byte[][] lut8 = reader.get8BitLookupTable();
+      if (lut8 != null) return lut8.length;
+      short[][] lut16 = reader.get16BitLookupTable();
+      if (lut16 != null) return lut16.length;
+    }
+    catch (FormatException exc) { }
+    catch (IOException exc) { }
+    return 3;
   }
 
 }
