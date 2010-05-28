@@ -359,6 +359,22 @@ public class ImporterTest {
     */
   }
 
+  /** get the actual pixel value (lookup when data is indexed) of the index of a fake image at a given z,c,t */
+  private int getIndexPixelValue(CompositeImage ci, int z, int c, int t, boolean indexed)
+  {
+    //  if I have numZ=2,numC=3,numT=4 then don't I have 24 images? why only testing c values makes a difference?
+
+    // our indices are 0-based while IJ's are 1-based
+    ci.setPosition(c+1, z+1, t+1);
+    int rawValue = iIndex(ci.getProcessor());
+    //int rawValue = iIndex(ci.getProcessor(c+1));
+    System.out.println("zct "+z+" "+c+" "+t+" rawVal "+rawValue);
+    if (indexed)
+      return ci.getChannelLut(c+1).getRGB(rawValue);
+    else
+      return rawValue;
+  }
+  
   // ****** helper tests ****************************************************************************************
   
   /** tests that the correct number of ImagePluses exist */
@@ -683,15 +699,6 @@ public class ImporterTest {
     }
   }
   
-  private int getPixelValue(CompositeImage ci, int channel, boolean indexed)
-  {
-    int rawValue = iIndex(ci.getProcessor(channel));
-    if (indexed)
-      return ci.getChannelLut(channel).getRGB(rawValue);
-    else
-      return rawValue;
-  }
-  
   private void colorCompositeTest(boolean indexed, int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
   {
     // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
@@ -738,6 +745,19 @@ public class ImporterTest {
     assertEquals(CompositeImage.COMPOSITE, ci.getMode());
     
     colorTests(ci,sizeC,DefaultColorOrder);
+
+    ci.reset();  // force the channel processors to get initialized, otherwise nullptr  - TODO : does this point out a IJ bug?
+    
+    System.out.println("Checking index vals");
+    System.out.println("maxes z c t = "+ci.getNSlices()+" "+ci.getNChannels()+" "+ci.getNFrames());
+    // check that each image in the overall series has the correct iIndex value
+    for (int z = 0; z < ci.getNSlices(); z++)
+      for (int c = 0; c < ci.getNChannels(); c++)
+        for (int t = 0; t < ci.getNFrames(); t++)
+        {
+          //getIndexPixelValue(ci,z,c,t,indexed);
+          assertEquals((6*t+3*z+c),getIndexPixelValue(ci,z,c,t,indexed));
+        }
   }
   
   private void colorCustomTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
@@ -1165,6 +1185,7 @@ public class ImporterTest {
   {
     // BF only supporting C from 2 to 7 and due to IJ's slider limitation (C*numSeries*3) <= 25
 
+    colorCompositeTest(false,FormatTools.UINT8,55,44,2,3,4,1);
     colorCompositeTest(true,FormatTools.UINT8,55,44,2,3,4,1);
 
     int[] pixTypes = new int[] {FormatTools.UINT8};
@@ -1175,27 +1196,19 @@ public class ImporterTest {
     int[] ts = new int[] {1,2};
     int[] series = new int[] {1,2,3,4};
     
-    for (int pixFormat : pixTypes) {
-      for (int x : xs) {
-        for (int y : ys) {
-          for (int z : zs) {
-            for (int c : cs) {
-              for (int t : ts) {
-                for (int s : series) {
+    for (int pixFormat : pixTypes)
+      for (int x : xs)
+        for (int y : ys)
+          for (int z : zs)
+            for (int c : cs)
+              for (int t : ts)
+                for (int s : series)
                   if ((c*s*3) <= 25)  // IJ slider limitation
-                  {
-                    for (boolean indexed : BooleanStates) {
+                    for (boolean indexed : BooleanStates)
+                    {
                       //System.out.println("indexed "+indexed+" format "+pixFormat+" x "+x+" y "+y+" z "+z+" c "+c+" t "+t+" s "+s);
                       colorCompositeTest(indexed,pixFormat,x,y,z,c,t,s);
                     }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
   
   @Test
@@ -1320,23 +1333,23 @@ public class ImporterTest {
     // the image. If selected, histogram is stretched for each stack based upon the global minimum and maximum value
     // throughout the stack.
 
+    autoscaleTest(FormatTools.DOUBLE,false);
+    autoscaleTest(FormatTools.FLOAT,false);
     autoscaleTest(FormatTools.UINT8,false);
     autoscaleTest(FormatTools.UINT16,false);
     autoscaleTest(FormatTools.UINT32,false);
     autoscaleTest(FormatTools.INT8,false);
     autoscaleTest(FormatTools.INT16,false);
     autoscaleTest(FormatTools.INT32,false);
-    autoscaleTest(FormatTools.DOUBLE,false);
-    autoscaleTest(FormatTools.FLOAT,false);
     
+    autoscaleTest(FormatTools.DOUBLE,true);
+    autoscaleTest(FormatTools.FLOAT,true);
     autoscaleTest(FormatTools.UINT8,true);
     autoscaleTest(FormatTools.UINT16,true);
     autoscaleTest(FormatTools.UINT32,true);
     autoscaleTest(FormatTools.INT8,true);
-    //autoscaleTest(FormatTools.INT16,true);  // TODO in this case IJ via ShortProcessor::setMinAndMax() clamps the min value to 0 : bug due to obliviousness to sign?
     autoscaleTest(FormatTools.INT32,true);
-    autoscaleTest(FormatTools.DOUBLE,true);
-    autoscaleTest(FormatTools.FLOAT,true);
+    autoscaleTest(FormatTools.INT16,true);  // TODO in this case IJ via ShortProcessor::setMinAndMax() clamps the min value to 0 : bug due to obliviousness to sign?
 
     /*
     // TODO - delete above code when tests are passing
