@@ -75,6 +75,8 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 {
+	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- javaBase: ${klass.javaBase} -- javaType: ${klass.javaType}
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "${klass.namespace}";
@@ -84,6 +86,12 @@ public class ${klass.name} extends ${klass.javaBase}
 		LoggerFactory.getLogger(${klass.name}.class);
 
 	// -- Instance variables --
+
+{% if klass.javaType != 'Object' %}\
+	// Element's text data
+	private ${klass.javaType} ${klass.name}_value;
+{% end %}\
+\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.isReference and prop.maxOccurs > 1%}
@@ -151,6 +159,13 @@ ${customContent}\
 	    throws EnumerationException
 	{
 		super.update(element, model);
+{% if klass.javaType != 'Object' %}\
+		// Element's text data
+		String ${klass.name}_value_textContent = element.getTextContent();
+		if (${klass.name}_value_textContent.trim().length() > 0) {
+			${klass.name}_value = ${klass.javaType}.valueOf(${klass.name}_value_textContent);
+		}
+{% end %}\
 {% if not klass.isAbstractProprietary %}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
@@ -312,6 +327,20 @@ ${customContent}\
 				"Unable to handle reference of type: " + reference.getClass());
 	}
 
+{% if klass.javaType != 'Object' %}\
+	// Element's text data getter
+	public ${klass.javaType} getValue()
+	{
+		return ${klass.name}_value;
+	}
+
+	// Element's text data setter
+	public void setValue(${klass.javaType} ${klass.name}_value)
+	{
+		this.${klass.name}_value = ${klass.name}_value;
+	}
+{% end %}\
+\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when (prop.isReference and prop.maxOccurs > 1) or prop.isBackReference %}
@@ -432,6 +461,7 @@ ${customContent}\
 	protected Element asXMLElement(Document document, Element ${klass.name}_element)
 	{
 		// Creating XML block for ${klass.name}
+
 {% if klass.isAbstractProprietary %}\
 		// Class is abstract so we may need to create its "container" element
 		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
@@ -448,6 +478,13 @@ ${customContent}\
 					document.createElementNS(NAMESPACE, "${klass.name}");
 		}
 
+{% if klass.javaType != 'Object' %}\
+		// Element's text data
+		if (${klass.name}_value != null) {
+			${klass.name}_element.setTextContent(${klass.name}_value.toString());
+		}
+
+{% end %}\
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
 		if (${prop.javaInstanceVariableName} != null)

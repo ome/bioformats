@@ -82,8 +82,7 @@
  *-----------------------------------------------------------------------------
  */
 
-// TODO: TEMPORARY, WILL NOT BE USED AFTER TESTING IS COMPLETE
-package ome.xml;
+package loci.formats.meta;
 
 import ome.xml.r201004.enums.*;
 import ome.xml.r201004.primitives.*;
@@ -122,6 +121,12 @@ public interface MetadataRetrieve {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
+{% if o.javaType != 'Object' %}\
+	// Element's text data
+	// ${repr(indexes[o.name])}
+	${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
+
+{% end %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\

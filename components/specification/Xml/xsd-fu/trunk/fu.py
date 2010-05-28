@@ -66,7 +66,7 @@ JAVA_PRIMITIVE_TYPE_MAP = None
 # A global type mapping from XSD Schema types to Java base classes that is
 # used to override places in the model where we do not wish subclassing to
 # take place.
-JAVA_BASE_TYPE_MAP = None
+JAVA_BASE_TYPE_MAP = {}
 
 # Types which have not been recognized as explicit defines (XML Schema
 # definitions that warrant a the creation of a first class model object) that
@@ -206,14 +206,11 @@ class ReferenceDelegate(object):
 
 	def getName(self):
 		return self.name
-	
-class OMEModelProperty(object):
+
+class OMEModelEntity(object):
 	"""
-	An aggregate type representing either an OME XML Schema element, 
-	attribute or our OME XML Schema "Reference" meta element (handled by the
-	ReferenceDelegate class). This class equates conceptually to an object
-	oriented language instance variable which may be of a singular type or a 
-	collection.
+	An abstract root class for properties and model objects containing
+	common type resolution and text processing functionality.
 	"""
 
 	REF_REGEX = re.compile(r'Ref$|RefNode$')
@@ -221,6 +218,46 @@ class OMEModelProperty(object):
 	BACKREF_REGEX = re.compile(r'_BackReference')
 
 	LOWER_CASE_REGEX = re.compile(r'[a-z]')
+
+	def resolveJavaTypeFromSimpleType(self, simpleTypeName):
+		getSimpleType = self.model.getTopLevelSimpleType
+		while True:
+			simpleType = getSimpleType(simpleTypeName)
+			if simpleType is None:
+				logging.debug("No simpleType found with name: %s" % \
+						simpleTypeName)
+				# Handle cases where the simple type is prefixed by
+				# a namespace definition. (ex. OME:LSID).
+				namespaceless = simpleTypeName.split(':')[-1]
+				if namespaceless != simpleTypeName:
+					simpleTypeName = namespaceless
+					continue
+				break
+			logging.debug("%s simpleType dump: %s" % \
+					(self, simpleType.__dict__))
+			# It's possible the simpleType is a union of other
+			# simpleTypes so we need to handle that. We assume
+			# that all the unioned simpleTypes are of the same
+			# base type (ex. "xsd:string" or "xsd:float").
+			if simpleType.unionOf:
+				union = getSimpleType(simpleType.unionOf[0])
+				try:
+					return JAVA_TYPE_MAP[union.getBase()]
+				except KeyError:
+					simpleTypeName = union.getBase()
+			try:
+				return JAVA_TYPE_MAP[simpleType.getBase()]
+			except KeyError:
+				simpleTypeName = simpleType.getBase()
+
+class OMEModelProperty(OMEModelEntity):
+	"""
+	An aggregate type representing either an OME XML Schema element, 
+	attribute or our OME XML Schema "Reference" meta element (handled by the
+	ReferenceDelegate class). This class equates conceptually to an object
+	oriented language instance variable which may be of a singular type or a 
+	collection.
+	"""
 
 	def __init__(self, delegate, parent, model):
 		self.model = model
@@ -261,7 +298,7 @@ class OMEModelProperty(object):
 	def _get_name(self):
 		return self.delegate.getName()
 	name = property(_get_name, doc="""The property's name.""")
-	
+
 	def _get_javaType(self):
 		try:
 			# Hand back the type of enumerations
@@ -296,36 +333,8 @@ class OMEModelProperty(object):
 			if not self.isEnumeration:
 				# We have a property whose type was defined by a top level 
 				# simpleType. 
-				getSimpleType = self.model.getTopLevelSimpleType
 				simpleTypeName = self.type
-				while True:
-					simpleType = getSimpleType(simpleTypeName)
-					if simpleType is None:
-						logging.debug("No simpleType found with name: %s" % \
-								simpleTypeName)
-						# Handle cases where the simple type is prefixed by
-						# a namespace definition. (ex. OME:LSID).
-						namespaceless = simpleTypeName.split(':')[-1]
-						if namespaceless != simpleTypeName:
-							simpleTypeName = namespaceless
-							continue
-						break
-					logging.debug("%s simpleType dump: %s" % \
-							(self, simpleType.__dict__))
-					# It's possible the simpleType is a union of other
-					# simpleTypes so we need to handle that. We assume
-					# that all the unioned simpleTypes are of the same
-					# base type (ex. "xsd:string" or "xsd:float").
-					if simpleType.unionOf:
-						union = getSimpleType(simpleType.unionOf[0])
-						try:
-							return JAVA_TYPE_MAP[union.getBase()]
-						except KeyError:
-							simpleTypeName = union.getBase()
-					try:
-						return JAVA_TYPE_MAP[simpleType.getBase()]
-					except KeyError:
-						simpleTypeName = simpleType.getBase()
+				return self.resolveJavaTypeFromSimpleType(simpleTypeName)
 			logging.debug("%s dump: %s" % (self, self.__dict__))
 			logging.debug("%s delegate dump: %s" % (self, self.delegate.__dict__))
 			raise ModelProcessingError, \
@@ -428,11 +437,11 @@ class OMEModelProperty(object):
 		return instance
 	fromReference = classmethod(fromReference)
 
-class OMEModelObject(object):
+class OMEModelObject(OMEModelEntity):
 	"""
 	A single element of an OME data model.
 	"""
-	
+
 	def __init__(self, element, parent, model):
 		self.model = model
 		self.element = element
@@ -502,14 +511,34 @@ class OMEModelObject(object):
 		return list()
 	baseObjectProperties = property(_get_baseObjectProperties,
 		doc="""The model object's base object properties.""")
-		
+
 	def _get_refNodeName(self):
 		if self.base == "Reference":
 			return self.properties["ID"].javaType
 		return None
 	refNodeName = property(_get_refNodeName,
 		doc="""The name of this node's reference node; None otherwise.""")
-	
+
+	def _get_javaType(self):
+		try:
+			return JAVA_TYPE_MAP[self.base]
+		except KeyError:
+			if self.base is not None:
+				simpleType = self.model.getTopLevelSimpleType(self.base)
+				parent = self.model.getObjectByName(self.base)
+				if simpleType is not None:
+					return self.resolveJavaTypeFromSimpleType(self.base)
+				if parent is not None:
+					return parent.javaType
+			return "Object"
+	javaType = property(_get_javaType, doc="""The property's Java type.""")
+
+	def isComplex(self):
+		"""
+		Returns whether or not the model object has a "complex" content type.
+		"""
+		return self.element.isComplex()
+
 	def __str__(self):
 		return self.__repr__()
 	
