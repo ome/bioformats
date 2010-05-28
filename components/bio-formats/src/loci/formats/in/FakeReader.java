@@ -99,66 +99,76 @@ public class FakeReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int series = getSeries();
-    int pixelType = getPixelType();
-    int bpp = FormatTools.getBytesPerPixel(pixelType);
-    boolean signed = FormatTools.isSigned(pixelType);
-    boolean floating = FormatTools.isFloatingPoint(pixelType);
-    boolean little = isLittleEndian();
-    boolean indexed = isIndexed();
+    final int series = getSeries();
+    final int pixelType = getPixelType();
+    final int bpp = FormatTools.getBytesPerPixel(pixelType);
+    final boolean signed = FormatTools.isSigned(pixelType);
+    final boolean floating = FormatTools.isFloatingPoint(pixelType);
+    final int rgb = getRGBChannelCount();
+    final boolean indexed = isIndexed();
+    final boolean little = isLittleEndian();
+    final boolean interleaved = isInterleaved();
 
-    int[] zct = getZCTCoords(no);
-    int zIndex = zct[0], cIndex = zct[1], tIndex = zct[2];
+    final int[] zct = getZCTCoords(no);
+    final int zIndex = zct[0], cIndex = zct[1], tIndex = zct[2];
 
     // integer types start gradient at the smallest value
     long min = signed ? (long) -Math.pow(2, 8 * bpp - 1) : 0;
     if (floating) min = 0; // floating point types always start at 0
 
-    for (int row=0; row<h; row++) {
-      int yy = y + row;
-      for (int col=0; col<w; col++) {
-        int index = bpp * (w * row + col);
-        int xx = x + col;
-
-        // encode various information into the image plane
-        long pixel = min + xx;
-        if (yy < BOX_SIZE) {
-          int grid = xx / BOX_SIZE;
-          switch (grid) {
-            case 0:
-              pixel = series;
+    for (int cOffset=0; cOffset<rgb; cOffset++) {
+      int channel = cIndex + cOffset;
+      for (int row=0; row<h; row++) {
+        int yy = y + row;
+        for (int col=0; col<w; col++) {
+          int xx = x + col;
+  
+          // encode various information into the image plane
+          long pixel = min + xx;
+          if (yy < BOX_SIZE) {
+            int grid = xx / BOX_SIZE;
+            switch (grid) {
+              case 0:
+                pixel = series;
+                break;
+              case 1:
+                pixel = no;
+                break;
+              case 2:
+                pixel = zIndex;
+                break;
+              case 3:
+                pixel = channel;
+                break;
+              case 4:
+                pixel = tIndex;
+                break;
+            }
+          }
+  
+          // if indexed color with non-null LUT, convert value to index
+          if (indexed) {
+            if (lut8 != null) pixel = valueToIndex[(int) (pixel % 256)];
+            if (lut16 != null) pixel = valueToIndex[(int) (pixel % 65536)];
+          }
+  
+          // if floating point, convert value to raw IEEE floating point bits
+          switch (pixelType) {
+            case FormatTools.FLOAT:
+              pixel = Float.floatToIntBits(pixel);
               break;
-            case 1:
-              pixel = no;
-              break;
-            case 2:
-              pixel = zIndex;
-              break;
-            case 3:
-              pixel = cIndex;
-              break;
-            case 4:
-              pixel = tIndex;
+            case FormatTools.DOUBLE:
+              pixel = Double.doubleToLongBits(pixel);
               break;
           }
-        }
 
-        // if indexed color with non-null LUT, convert value to index
-        if (indexed) {
-          if (lut8 != null) pixel = valueToIndex[(int) (pixel % 256)];
-          if (lut16 != null) pixel = valueToIndex[(int) (pixel % 65536)];
+          // unpack pixel into byte buffer
+          int index;
+          if (interleaved) index = w * rgb * row + rgb * col + cOffset; // CXY
+          else index = h * w * cOffset + w * row + col; // XYC
+          index *= bpp;
+          DataTools.unpackBytes(pixel, buf, index, bpp, little);
         }
-
-        // if floating point, convert value to raw IEEE floating point bits
-        switch (pixelType) {
-          case FormatTools.FLOAT:
-            pixel = Float.floatToIntBits(pixel);
-            break;
-          case FormatTools.DOUBLE:
-            pixel = Double.doubleToLongBits(pixel);
-            break;
-        }
-        DataTools.unpackBytes(pixel, buf, index, bpp, little);
       }
     }
 
@@ -195,6 +205,7 @@ public class FakeReader extends FormatReader {
     boolean thumbnail = false;
 
     int seriesCount = 1;
+    int lutLength = 3;
 
     // parse tokens from filename
     for (String token : tokens) {
@@ -236,6 +247,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("metadataComplete")) metadataComplete = bool;
       else if (key.equals("thumbnail")) thumbnail = bool;
       else if (key.equals("series")) seriesCount = num;
+      else if (key.equals("lutLength")) lutLength = num;
     }
 
     // do some sanity checks
@@ -260,6 +272,9 @@ public class FakeReader extends FormatReader {
     }
     if (seriesCount < 1) {
       throw new FormatException("Invalid seriesCount: " + seriesCount);
+    }
+    if (lutLength < 1) {
+      throw new FormatException("Invalid lutLength: " + lutLength);
     }
 
     // populate core metadata
@@ -303,9 +318,9 @@ public class FakeReader extends FormatReader {
         // create 8-bit LUT
         final int num = 256;
         createIndexMap(num);
-        lut8 = new byte[rgb][num];
+        lut8 = new byte[lutLength][num];
         // linear ramp
-        for (int c=0; c<rgb; c++) {
+        for (int c=0; c<lutLength; c++) {
           for (int index = 0; index < num; index++) {
             lut8[c][index] = (byte) indexToValue[index];
           }
@@ -315,9 +330,9 @@ public class FakeReader extends FormatReader {
         // create 16-bit LUT
         final int num = 65536;
         createIndexMap(num);
-        lut16 = new short[rgb][num];
+        lut16 = new short[lutLength][num];
         // linear ramp
-        for (int c=0; c<rgb; c++) {
+        for (int c=0; c<lutLength; c++) {
           for (int index = 0; index < num; index++) {
             lut16[c][index] = (short) indexToValue[index];
           }
@@ -329,7 +344,7 @@ public class FakeReader extends FormatReader {
 
   // -- Helper methods --
 
-  /** Creates an index map from 0 */
+  /** Creates a mapping between indices and color values. */
   private void createIndexMap(int num) {
     // create random mapping from indices to values
     indexToValue = new int[num];
