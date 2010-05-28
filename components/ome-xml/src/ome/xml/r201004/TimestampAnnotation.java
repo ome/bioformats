@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class TimestampAnnotation extends Annotation
 {
+	// Base: Annotation -- Name: TimestampAnnotation -- Type: TimestampAnnotation -- javaBase: Annotation -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
@@ -63,6 +65,7 @@ public class TimestampAnnotation extends Annotation
 		LoggerFactory.getLogger(TimestampAnnotation.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private String value;
@@ -161,6 +164,7 @@ public class TimestampAnnotation extends Annotation
 	protected Element asXMLElement(Document document, Element TimestampAnnotation_element)
 	{
 		// Creating XML block for TimestampAnnotation
+
 		if (TimestampAnnotation_element == null)
 		{
 			TimestampAnnotation_element =

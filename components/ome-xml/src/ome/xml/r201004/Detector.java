@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class Detector extends ManufacturerSpec
 {
+	// Base: ManufacturerSpec -- Name: Detector -- Type: Detector -- javaBase: ManufacturerSpec -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class Detector extends ManufacturerSpec
 		LoggerFactory.getLogger(Detector.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Double zoom;
@@ -279,6 +282,7 @@ public class Detector extends ManufacturerSpec
 	protected Element asXMLElement(Document document, Element Detector_element)
 	{
 		// Creating XML block for Detector
+
 		if (Detector_element == null)
 		{
 			Detector_element =

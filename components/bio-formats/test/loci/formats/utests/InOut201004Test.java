@@ -32,7 +32,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.utests;
+package loci.formats.utests;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -55,9 +55,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import loci.formats.ome.OMEXMLMetadataImpl;
+
 import static org.testng.AssertJUnit.*;
 
-import ome.xml.OMEXMLMetadataImpl;
 import ome.xml.r201004.Annotation;
 import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
@@ -75,7 +76,9 @@ import ome.xml.r201004.ObjectiveSettings;
 import ome.xml.r201004.Reference;
 import ome.xml.r201004.StringAnnotation;
 import ome.xml.r201004.StructuredAnnotations;
+import ome.xml.r201004.TiffData;
 import ome.xml.r201004.TimestampAnnotation;
+import ome.xml.r201004.UUID;
 import ome.xml.r201004.XMLAnnotation;
 import ome.xml.r201004.Channel;
 import ome.xml.r201004.Dichroic;
@@ -270,6 +273,9 @@ public class InOut201004Test {
   public static final String OTF_BINARY_FILE_EXTERNAL_SHA1 =
     "1234567890123456789012345678901234567890";
 
+  public static final String TIFF_DATA_UUID = 
+    "6DFA2954-FA9B-4447-A26C-82F9580D9425";
+
   /** XML namespace. */
   public static final String XML_NS =
     "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -375,9 +381,10 @@ public class InOut201004Test {
     assertEquals(SIZE_T, pixels.getSizeT().getValue());
     assertEquals(DIMENSION_ORDER, pixels.getDimensionOrder());
     assertEquals(PIXEL_TYPE, pixels.getType());
+    assertEquals(1, pixels.sizeOfTiffDataList());
   }
 
-  @Test(dependsOnMethods={"testValidImageNode"})
+  @Test(dependsOnMethods={"testValidImageMetadata"})
   public void testValidPixelsMetadata() {
     assertEquals(SIZE_X, metadata.getPixelsSizeX(0).getValue());
     assertEquals(SIZE_Y, metadata.getPixelsSizeY(0).getValue());
@@ -386,6 +393,18 @@ public class InOut201004Test {
     assertEquals(SIZE_T, metadata.getPixelsSizeT(0).getValue());
     assertEquals(DIMENSION_ORDER, metadata.getPixelsDimensionOrder(0));
     assertEquals(PIXEL_TYPE, metadata.getPixelsType(0));
+  }
+
+  @Test(dependsOnMethods={"testValidPixelsNode"})
+  public void testValidTiffDataNode() {
+    TiffData tiffData = ome.getImage(0).getPixels().getTiffData(0);
+    UUID uuid = tiffData.getUUID();
+    assertEquals(TIFF_DATA_UUID, uuid.getValue());
+  }
+
+  @Test(dependsOnMethods={"testValidPixelsMetadata"})
+  public void testValidTiffDataMetadata() {
+    // TODO: Implement
   }
 
   @Test(dependsOnMethods={"testValidPixelsNode"})

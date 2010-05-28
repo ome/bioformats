@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class Point extends Shape
 {
+	// Base:  -- Name: Point -- Type: Point -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
@@ -63,6 +65,7 @@ public class Point extends Shape
 		LoggerFactory.getLogger(Point.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Double y;
@@ -171,6 +174,7 @@ public class Point extends Shape
 	protected Element asXMLElement(Document document, Element Point_element)
 	{
 		// Creating XML block for Point
+
 		if (Point_element == null)
 		{
 			Point_element =

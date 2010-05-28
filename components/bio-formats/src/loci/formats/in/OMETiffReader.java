@@ -351,7 +351,10 @@ public class OMETiffReader extends FormatReader {
 
       String order = meta.getPixelsDimensionOrder(i).toString();
 
-      Integer samplesPerPixel = meta.getChannelSamplesPerPixel(i, 0);
+      Integer samplesPerPixel = null;
+      if (meta.getChannelCount(i) > 0) {
+        samplesPerPixel = meta.getChannelSamplesPerPixel(i, 0);
+      }
       int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.intValue();
       int tiffSamples = firstIFD.getSamplesPerPixel();
       if (samples != tiffSamples) {
@@ -376,10 +379,18 @@ public class OMETiffReader extends FormatReader {
       for (int td=0; td<tiffDataCount; td++) {
         LOGGER.debug("    TiffData[{}] {", td);
         // extract TiffData parameters
-        String filename = meta.getUUIDFileName(i, td);
-        // TODO
-        //String uuid = meta.getTiffDataUUID(i, td);
+        String filename = null;
         String uuid = null;
+        try {
+          filename = meta.getUUIDFileName(i, td);
+        } catch (NullPointerException e) {
+          LOGGER.debug("Ignoring null UUID object when retrieving filename.");
+        }
+        try {
+          uuid = meta.getUUIDValue(i, td);
+        } catch (NullPointerException e) {
+          LOGGER.debug("Ignoring null UUID object when retrieving value.");
+        }
         Integer tdIFD = meta.getTiffDataIFD(i, td);
         int ifd = tdIFD == null ? 0 : tdIFD.intValue();
         Integer numPlanes = meta.getTiffDataPlaneCount(i, td);

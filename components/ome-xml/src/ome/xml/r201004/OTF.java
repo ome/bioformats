@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class OTF extends AbstractOMEModelObject
 {
+	// Base:  -- Name: OTF -- Type: OTF -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class OTF extends AbstractOMEModelObject
 		LoggerFactory.getLogger(OTF.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private PositiveInteger sizeX;
@@ -372,6 +375,7 @@ public class OTF extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element OTF_element)
 	{
 		// Creating XML block for OTF
+
 		if (OTF_element == null)
 		{
 			OTF_element =

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public abstract class Shape extends AbstractOMEModelObject
 {
+	// Base:  -- Name: Shape -- Type: Shape -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
@@ -63,6 +65,7 @@ public abstract class Shape extends AbstractOMEModelObject
 		LoggerFactory.getLogger(Shape.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private String strokeDashArray;
@@ -699,6 +702,7 @@ public abstract class Shape extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element Shape_element)
 	{
 		// Creating XML block for Shape
+
 		// Class is abstract so we may need to create its "container" element
 		if (!"Shape".equals(Shape_element.getTagName()))
 		{

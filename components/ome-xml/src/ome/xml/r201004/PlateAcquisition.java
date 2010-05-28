@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class PlateAcquisition extends AbstractOMEModelObject
 {
+	// Base:  -- Name: PlateAcquisition -- Type: PlateAcquisition -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-04";
@@ -63,6 +65,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		LoggerFactory.getLogger(PlateAcquisition.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Integer maximumFieldCount;
@@ -373,6 +376,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element PlateAcquisition_element)
 	{
 		// Creating XML block for PlateAcquisition
+
 		if (PlateAcquisition_element == null)
 		{
 			PlateAcquisition_element =

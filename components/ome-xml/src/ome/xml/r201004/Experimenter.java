@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class Experimenter extends AbstractOMEModelObject
 {
+	// Base:  -- Name: Experimenter -- Type: Experimenter -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class Experimenter extends AbstractOMEModelObject
 		LoggerFactory.getLogger(Experimenter.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private String userName;
@@ -578,6 +581,7 @@ public class Experimenter extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element Experimenter_element)
 	{
 		// Creating XML block for Experimenter
+
 		if (Experimenter_element == null)
 		{
 			Experimenter_element =

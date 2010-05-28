@@ -43,4 +43,28 @@
             <class name="loci.formats.utests.tiff.TiffParserTest"/>
         </classes>
     </test>
+    <test name="2010-04SchemaModelObjects">
+        <groups>
+            <run>
+                <exclude name="disabled"/>
+            </run>
+        </groups>
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.ObjectBasedOMEModelMock"/>
+        <classes>
+            <class name="loci.formats.utests.InOut201004Test"/>
+        </classes>
+    </test>
+    <test name="2010-04SchemaIMetadata">
+        <groups>
+            <run>
+                <exclude name="disabled"/>
+            </run>
+        </groups>
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.IMetadataBasedOMEModelMock"/>
+        <classes>
+            <class name="loci.formats.utests.InOut201004Test"/>
+        </classes>
+    </test>
 </suite>

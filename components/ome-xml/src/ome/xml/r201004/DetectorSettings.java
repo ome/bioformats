@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class DetectorSettings extends Settings
 {
+	// Base: Settings -- Name: DetectorSettings -- Type: DetectorSettings -- javaBase: Settings -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class DetectorSettings extends Settings
 		LoggerFactory.getLogger(DetectorSettings.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Binning binning;
@@ -259,6 +262,7 @@ public class DetectorSettings extends Settings
 	protected Element asXMLElement(Document document, Element DetectorSettings_element)
 	{
 		// Creating XML block for DetectorSettings
+
 		if (DetectorSettings_element == null)
 		{
 			DetectorSettings_element =

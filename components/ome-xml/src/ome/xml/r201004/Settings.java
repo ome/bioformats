@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public abstract class Settings extends Reference
 {
+	// Base: Reference -- Name: Settings -- Type: Settings -- javaBase: Reference -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public abstract class Settings extends Reference
 		LoggerFactory.getLogger(Settings.class);
 
 	// -- Instance variables --
+
 
 	// -- Constructors --
 
@@ -131,6 +134,7 @@ public abstract class Settings extends Reference
 	protected Element asXMLElement(Document document, Element Settings_element)
 	{
 		// Creating XML block for Settings
+
 		if (Settings_element == null)
 		{
 			Settings_element =

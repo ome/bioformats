@@ -31,6 +31,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.meta;
 
+import ome.xml.r201004.Image;
+import ome.xml.r201004.OME;
+import ome.xml.r201004.Pixels;
+import ome.xml.r201004.TiffData;
+import ome.xml.r201004.UUID;
 import ome.xml.r201004.enums.*;
 import ome.xml.r201004.primitives.*;
 
@@ -2247,6 +2252,10 @@ public class DummyMetadata implements IMetadata {
 
   // - UUID property retrieval -
 
+  public String getUUIDValue(int imageIndex, int tiffDataIndex) {
+    return null;
+  }
+
   /* @see MetadataRetrieve#getUUIDFileName(int, int) */
   public String getUUIDFileName(int imageIndex, int tiffDataIndex) {
     return null;
@@ -4166,6 +4175,9 @@ public class DummyMetadata implements IMetadata {
   }
 
   // - UUID property storage -
+
+  public void setUUIDValue(String value, int imageIndex, int tiffDataIndex) {
+  }
 
   /* @see MetadataStore#setUUIDFileName(String, int, int) */
   public void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex) {

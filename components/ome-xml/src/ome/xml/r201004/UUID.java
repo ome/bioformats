@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class UUID extends AbstractOMEModelObject
 {
+	// Base: UniversallyUniqueIdentifier -- Name: UUID -- Type: UUID -- javaBase: AbstractOMEModelObject -- javaType: String
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,9 @@ public class UUID extends AbstractOMEModelObject
 		LoggerFactory.getLogger(UUID.class);
 
 	// -- Instance variables --
+
+	// Element's text data
+	private String UUID_value;
 
 	// Property
 	private String fileName;
@@ -109,6 +114,11 @@ public class UUID extends AbstractOMEModelObject
 	    throws EnumerationException
 	{
 		super.update(element, model);
+		// Element's text data
+		String UUID_value_textContent = element.getTextContent();
+		if (UUID_value_textContent.trim().length() > 0) {
+			UUID_value = String.valueOf(UUID_value_textContent);
+		}
 		String tagName = element.getTagName();
 		if (!"UUID".equals(tagName))
 		{
@@ -131,6 +141,17 @@ public class UUID extends AbstractOMEModelObject
 				"Unable to handle reference of type: " + reference.getClass());
 	}
 
+	// Element's text data getter
+	public String getValue()
+	{
+		return UUID_value;
+	}
+
+	// Element's text data setter
+	public void setValue(String UUID_value)
+	{
+		this.UUID_value = UUID_value;
+	}
 
 	// Property
 	public String getFileName()
@@ -151,10 +172,16 @@ public class UUID extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element UUID_element)
 	{
 		// Creating XML block for UUID
+
 		if (UUID_element == null)
 		{
 			UUID_element =
 					document.createElementNS(NAMESPACE, "UUID");
+		}
+
+		// Element's text data
+		if (UUID_value != null) {
+			UUID_element.setTextContent(UUID_value.toString());
 		}
 
 		if (fileName != null)
