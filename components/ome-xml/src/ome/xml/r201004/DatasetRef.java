@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class DatasetRef extends Reference
 {
+	// Base: Reference -- Name: DatasetRef -- Type: DatasetRef -- javaBase: Reference -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class DatasetRef extends Reference
 		LoggerFactory.getLogger(DatasetRef.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private String id;
@@ -159,6 +162,7 @@ public class DatasetRef extends Reference
 	protected Element asXMLElement(Document document, Element DatasetRef_element)
 	{
 		// Creating XML block for DatasetRef
+
 		if (DatasetRef_element == null)
 		{
 			DatasetRef_element =

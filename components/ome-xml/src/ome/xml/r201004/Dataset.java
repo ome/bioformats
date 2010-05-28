@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class Dataset extends AbstractOMEModelObject
 {
+	// Base:  -- Name: Dataset -- Type: Dataset -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class Dataset extends AbstractOMEModelObject
 		LoggerFactory.getLogger(Dataset.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private String name;
@@ -424,6 +427,7 @@ public class Dataset extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element Dataset_element)
 	{
 		// Creating XML block for Dataset
+
 		if (Dataset_element == null)
 		{
 			Dataset_element =

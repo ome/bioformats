@@ -32,12 +32,11 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-04 18:17:27+0100
+ * Created by callan via xsd-fu on 2010-05-28 12:36:56.007582
  *
  *-----------------------------------------------------------------------------
  */
 
-// TODO: TEMPORARY, WILL NOT BE USED AFTER TESTING IS COMPLETE
 package loci.formats.meta;
 
 import ome.xml.r201004.enums.*;
@@ -103,7 +102,7 @@ public interface MetadataStore
 	//
 	// AnnotationRef property storage
 	//
-	// {u'Plate': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'ROI': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -1896,6 +1895,10 @@ public interface MetadataStore
 	void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex);
 
 	void setTransmittanceRangeTransmittance(PercentFraction transmittance, int instrumentIndex, int filterIndex);
+
+	// Element's text data
+	// {u'TiffData': [u'int imageIndex', u'int tiffDataIndex']}
+	void setUUIDValue(String value, int imageIndex, int tiffDataIndex);
 
 	//
 	// UUID property storage

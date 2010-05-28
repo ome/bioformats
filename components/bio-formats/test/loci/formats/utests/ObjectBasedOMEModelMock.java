@@ -32,7 +32,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.utests;
+package loci.formats.utests;
 
 import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
@@ -62,7 +62,9 @@ import ome.xml.r201004.ROI;
 import ome.xml.r201004.Rectangle;
 import ome.xml.r201004.StringAnnotation;
 import ome.xml.r201004.StructuredAnnotations;
+import ome.xml.r201004.TiffData;
 import ome.xml.r201004.TimestampAnnotation;
+import ome.xml.r201004.UUID;
 import ome.xml.r201004.Union;
 import ome.xml.r201004.Well;
 import ome.xml.r201004.WellSample;
@@ -118,7 +120,13 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     pixels.setSizeT(new PositiveInteger(InOut201004Test.SIZE_T));
     pixels.setDimensionOrder(InOut201004Test.DIMENSION_ORDER);
     pixels.setType(InOut201004Test.PIXEL_TYPE);
-    pixels.setMetadataOnly(new MetadataOnly());
+    // Create <TiffData/>
+    TiffData tiffData = new TiffData();
+    // Create <UUID/>
+    UUID uuid = new UUID();
+    uuid.setValue(InOut201004Test.TIFF_DATA_UUID);
+    tiffData.setUUID(uuid);
+    pixels.addTiffData(tiffData);
     // Create <Channel/> under <Pixels/>
     for (int i = 0; i < InOut201004Test.SIZE_C; i++) {
       Channel channel = new Channel();

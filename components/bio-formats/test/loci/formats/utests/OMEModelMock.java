@@ -32,7 +32,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.utests;
+package loci.formats.utests;
 
 import ome.xml.r201004.OME;
 

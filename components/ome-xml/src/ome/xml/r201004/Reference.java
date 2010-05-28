@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public abstract class Reference extends AbstractOMEModelObject
 {
+	// Base:  -- Name: Reference -- Type: Reference -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public abstract class Reference extends AbstractOMEModelObject
 		LoggerFactory.getLogger(Reference.class);
 
 	// -- Instance variables --
+
 
 	// -- Constructors --
 
@@ -142,6 +145,7 @@ public abstract class Reference extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element Reference_element)
 	{
 		// Creating XML block for Reference
+
 		if (Reference_element == null)
 		{
 			Reference_element =

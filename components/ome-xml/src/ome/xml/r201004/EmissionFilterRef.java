@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class EmissionFilterRef extends FilterRef
 {
+	// Base:  -- Name: EmissionFilterRef -- Type: FilterRef -- javaBase: FilterRef -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class EmissionFilterRef extends FilterRef
 		LoggerFactory.getLogger(EmissionFilterRef.class);
 
 	// -- Instance variables --
+
 
 	// -- Constructors --
 
@@ -131,6 +134,7 @@ public class EmissionFilterRef extends FilterRef
 	protected Element asXMLElement(Document document, Element EmissionFilterRef_element)
 	{
 		// Creating XML block for EmissionFilterRef
+
 		if (EmissionFilterRef_element == null)
 		{
 			EmissionFilterRef_element =

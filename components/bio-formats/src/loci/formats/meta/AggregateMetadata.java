@@ -34,6 +34,8 @@ package loci.formats.meta;
 import java.util.Iterator;
 import java.util.List;
 
+import loci.common.DataTools;
+
 import ome.xml.r201004.enums.*;
 import ome.xml.r201004.primitives.*;
 
@@ -6427,6 +6429,18 @@ public class AggregateMetadata implements IMetadata {
 
   // - UUID property retrieval -
 
+  public String getUUIDValue(int imageIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getUUIDValue(imageIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
   /* @see MetadataRetrieve#getUUIDFileName(int, int) */
   public String getUUIDFileName(int imageIndex, int tiffDataIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -11424,6 +11438,16 @@ public class AggregateMetadata implements IMetadata {
   }
 
   // - UUID property storage -
+  
+  public void setUUIDValue(String value, int imageIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setUUIDValue(value, imageIndex, tiffDataIndex);
+      }
+    }
+  }
 
   /* @see MetadataStore#setUUIDFileName(String, int, int) */
   public void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex) {

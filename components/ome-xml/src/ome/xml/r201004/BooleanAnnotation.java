@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class BooleanAnnotation extends Annotation
 {
+	// Base: Annotation -- Name: BooleanAnnotation -- Type: BooleanAnnotation -- javaBase: Annotation -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
@@ -63,6 +65,7 @@ public class BooleanAnnotation extends Annotation
 		LoggerFactory.getLogger(BooleanAnnotation.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Boolean value;
@@ -161,6 +164,7 @@ public class BooleanAnnotation extends Annotation
 	protected Element asXMLElement(Document document, Element BooleanAnnotation_element)
 	{
 		// Creating XML block for BooleanAnnotation
+
 		if (BooleanAnnotation_element == null)
 		{
 			BooleanAnnotation_element =

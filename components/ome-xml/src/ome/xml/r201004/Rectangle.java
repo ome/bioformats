@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class Rectangle extends Shape
 {
+	// Base:  -- Name: Rectangle -- Type: Rectangle -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
@@ -63,6 +65,7 @@ public class Rectangle extends Shape
 		LoggerFactory.getLogger(Rectangle.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Double y;
@@ -211,6 +214,7 @@ public class Rectangle extends Shape
 	protected Element asXMLElement(Document document, Element Rectangle_element)
 	{
 		// Creating XML block for Rectangle
+
 		if (Rectangle_element == null)
 		{
 			Rectangle_element =

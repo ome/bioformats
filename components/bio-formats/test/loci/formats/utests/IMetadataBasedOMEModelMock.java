@@ -32,9 +32,9 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.utests;
+package loci.formats.utests;
 
-import ome.xml.OMEXMLMetadataImpl;
+import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.r201004.Arc;
 import ome.xml.r201004.BinaryFile;
 import ome.xml.r201004.BooleanAnnotation;
@@ -114,6 +114,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setPixelsSizeT(new PositiveInteger(InOut201004Test.SIZE_T), 0);
     store.setPixelsDimensionOrder(InOut201004Test.DIMENSION_ORDER, 0);
     store.setPixelsType(InOut201004Test.PIXEL_TYPE, 0);
+    store.setUUIDValue(InOut201004Test.TIFF_DATA_UUID, 0, 0);
     // Create <Channel/> under <Pixels/>
     store.setXMLAnnotationID(
         InOut201004Test.CHANNEL_ANNOTATION_ID, 0);

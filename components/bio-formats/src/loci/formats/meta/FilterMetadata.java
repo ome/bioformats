@@ -33,6 +33,11 @@ package loci.formats.meta;
 
 import loci.common.DataTools;
 
+import ome.xml.r201004.Image;
+import ome.xml.r201004.OME;
+import ome.xml.r201004.Pixels;
+import ome.xml.r201004.TiffData;
+import ome.xml.r201004.UUID;
 import ome.xml.r201004.enums.*;
 import ome.xml.r201004.primitives.*;
 
@@ -2525,6 +2530,12 @@ public class FilterMetadata implements MetadataStore {
   }
 
   // -- UUID property storage -
+
+  public void setUUIDValue(String value, int imageIndex, int tiffDataIndex)
+  {
+    String filteredValue = filter ? DataTools.sanitize(value) : value;
+    store.setUUIDValue(filteredValue, imageIndex, tiffDataIndex);
+  }
 
   /* @see MetadataStore#setUUIDFileName(String, int, int) */
   public void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex) {

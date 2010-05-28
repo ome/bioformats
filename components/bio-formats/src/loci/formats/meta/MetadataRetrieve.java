@@ -32,12 +32,11 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-04 18:17:31+0100
+ * Created by callan via xsd-fu on 2010-05-28 12:37:01.222862
  *
  *-----------------------------------------------------------------------------
  */
 
-// TODO: TEMPORARY, WILL NOT BE USED AFTER TESTING IS COMPLETE
 package loci.formats.meta;
 
 import ome.xml.r201004.enums.*;
@@ -76,11 +75,13 @@ public interface MetadataRetrieve {
 	// -- Entity counting --
 
 	// AnnotationRef entity counting
-	int getPlateAnnotationRefCount(int plateIndex);
+	int getROIAnnotationRefCount(int ROIIndex);
 
-	int getListAnnotationAnnotationRefCount(int listAnnotationIndex);
+	int getReagentAnnotationRefCount(int screenIndex, int reagentIndex);
 
 	int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex);
+
+	int getPlateAnnotationRefCount(int plateIndex);
 
 	int getImageAnnotationRefCount(int imageIndex);
 
@@ -88,13 +89,11 @@ public interface MetadataRetrieve {
 
 	int getWellAnnotationRefCount(int plateIndex, int wellIndex);
 
-	int getROIAnnotationRefCount(int ROIIndex);
-
 	int getDatasetAnnotationRefCount(int datasetIndex);
 
 	int getProjectAnnotationRefCount(int projectIndex);
 
-	int getReagentAnnotationRefCount(int screenIndex, int reagentIndex);
+	int getListAnnotationAnnotationRefCount(int listAnnotationIndex);
 
 	int getShapeAnnotationRefCount(int ROIIndex, int shapeIndex);
 
@@ -265,6 +264,10 @@ public interface MetadataRetrieve {
 	int getTimestampAnnotationCount();
 
 	// TransmittanceRange entity counting
+	// Element's text data
+	// {u'TiffData': [u'int imageIndex', u'int tiffDataIndex']}
+	String getUUIDValue(int imageIndex, int tiffDataIndex);
+
 	// UUID entity counting
 	// Union entity counting
 	// Well entity counting
@@ -292,7 +295,7 @@ public interface MetadataRetrieve {
 	//
 	// AnnotationRef property storage
 	//
-	// {u'Plate': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'ROI': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1

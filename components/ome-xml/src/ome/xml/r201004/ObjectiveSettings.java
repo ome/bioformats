@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class ObjectiveSettings extends Settings
 {
+	// Base: Settings -- Name: ObjectiveSettings -- Type: ObjectiveSettings -- javaBase: Settings -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class ObjectiveSettings extends Settings
 		LoggerFactory.getLogger(ObjectiveSettings.class);
 
 	// -- Instance variables --
+
 
 	// Property
 	private Double refractiveIndex;
@@ -219,6 +222,7 @@ public class ObjectiveSettings extends Settings
 	protected Element asXMLElement(Document document, Element ObjectiveSettings_element)
 	{
 		// Creating XML block for ObjectiveSettings
+
 		if (ObjectiveSettings_element == null)
 		{
 			ObjectiveSettings_element =

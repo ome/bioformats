@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-27 15:15:11.052999
+ * Created by callan via xsd-fu on 2010-05-28 12:00:54.360042
  *
  *-----------------------------------------------------------------------------
  */
@@ -54,6 +54,8 @@ import ome.xml.r201004.primitives.*;
 
 public class LightPath extends AbstractOMEModelObject
 {
+	// Base:  -- Name: LightPath -- Type: LightPath -- javaBase: AbstractOMEModelObject -- javaType: Object
+
 	// -- Constants --
 
 	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
@@ -63,6 +65,7 @@ public class LightPath extends AbstractOMEModelObject
 		LoggerFactory.getLogger(LightPath.class);
 
 	// -- Instance variables --
+
 
 	// Reference ExcitationFilterRef
 	private List<Filter> excitationFilterList = new ArrayList<Filter>();
@@ -273,6 +276,7 @@ public class LightPath extends AbstractOMEModelObject
 	protected Element asXMLElement(Document document, Element LightPath_element)
 	{
 		// Creating XML block for LightPath
+
 		if (LightPath_element == null)
 		{
 			LightPath_element =
