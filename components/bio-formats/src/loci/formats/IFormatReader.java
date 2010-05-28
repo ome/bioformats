@@ -63,10 +63,15 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Checks if the given stream is a valid stream for this file format. */
   boolean isThisType(RandomAccessInputStream stream) throws IOException;
 
-  /** Determines the number of images in the current file. */
+  /** Determines the number of image planes in the current file. */
   int getImageCount();
 
-  /** Checks if the images in the file are RGB. */
+  /**
+   * Checks if the image planes in the file have more than one channel per
+   * {@link #openBytes} call.
+   * This method returns true if and only if {@link #getRGBChannelCount()}
+   * returns a value greater than 1.
+   */
   boolean isRGB();
 
   /** Gets the size of the X dimension. */
@@ -86,13 +91,13 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Gets the pixel type.
-   * @return the pixel type as an enumeration from <code>FormatTools</code>
-   * <i>static</i> pixel types such as <code>INT8</code>.
+   * @return the pixel type as an enumeration from {@link FormatTools}
+   * <i>static</i> pixel types such as {@link FormatTools#INT8}.
    */
   int getPixelType();
 
   /**
-   * Gets the number of valid bits per pixel.  The number of valid bits per
+   * Gets the number of valid bits per pixel. The number of valid bits per
    * pixel is always less than or equal to the number of bits per pixel
    * that correspond to {@link #getPixelType()}.
    */
@@ -105,40 +110,53 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    */
   int getEffectiveSizeC();
 
-  /** Gets the number of channels per RGB image (if not RGB, this returns 1). */
+  /**
+   * Gets the number of channels returned with each call to openBytes.
+   * The most common case where this value is greater than 1 is for interleaved
+   * RGB data, such as a 24-bit color image plane. However, it is possible for
+   * this value to be greater than 1 for non-interleaved data, such as an RGB
+   * TIFF with Planar rather than Chunky configuration.
+   */
   int getRGBChannelCount();
 
-  /** Gets whether the images are indexed color. */
+  /**
+   * Gets whether the image planes are indexed color.
+   * This value has no impact on {@link #getSizeC()},
+   * {@link #getEffectiveSizeC()} or {@link #getRGBChannelCount()}.
+   */
   boolean isIndexed();
 
   /**
-   * Returns false if isIndexed is false, or if isIndexed is true and the lookup
-   * table represents "real" color data.  Returns true if isIndexed is true
-   * and the lookup table is only present to aid in visualization.
+   * Returns false if {@link #isIndexed()} is false, or if {@link #isIndexed()}
+   * is true and the lookup table represents "real" color data. Returns true
+   * if {@link #isIndexed} is true and the lookup table is only present to aid
+   * in visualization.
    */
   boolean isFalseColor();
 
   /**
    * Gets the 8-bit color lookup table associated with
    * the most recently opened image.
-   * If no images have been opened, or if isIndexed() returns false, then
-   * this returns null.  Also, if getPixelType() returns anything other than
-   * <code>INT8</code> or <code>UINT8</code>, this method will return null.
+   * If no image planes have been opened, or if {@link #isIndexed()} returns
+   * false, then this may return null. Also, if {@link #getPixelType()} returns
+   * anything other than {@link FormatTools#INT8} or {@link FormatTools#UINT8},
+   * this method will return null.
    */
   byte[][] get8BitLookupTable() throws FormatException, IOException;
 
   /**
    * Gets the 16-bit color lookup table associated with
    * the most recently opened image.
-   * If no images have been opened, or if isIndexed() returns false, then
-   * this returns null.  Also, if getPixelType() returns anything other than
-   * <code>INT16</code> or <code>UINT16</code>, this method will return null.
+   * If no image planes have been opened, or if {@link #isIndexed()} returns
+   * false, then this may return null. Also, if {@link #getPixelType()} returns
+   * anything other than {@link FormatTools#INT16} or {@link
+   * FormatTools#UINT16}, this method will return null.
    */
   short[][] get16BitLookupTable() throws FormatException, IOException;
 
   /**
    * Gets the lengths of each subdimension of C,
-   * in fastest-to-sloweset rasterization order.
+   * in fastest-to-slowest rasterization order.
    */
   int[] getChannelDimLengths();
 
@@ -188,7 +206,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /**
    * Gets whether or not the channels are interleaved. This method exists
    * because X and Y must appear first in the dimension order. For
-   * interleaved data, XYCTZ or XYCZT is used, and this method returns true.
+   * interleaved data, {@link #getDimensionOrder()} returns XYCTZ or XYCZT,
+   * and this method returns true.
    */
   boolean isInterleaved();
 
@@ -203,6 +222,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Obtains the specified image plane from the current file as a byte array.
+   * @see openBytes(int, byte[])
    */
   byte[] openBytes(int no) throws FormatException, IOException;
 
@@ -215,8 +235,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Obtains the specified image plane from the current file into a
-   * pre-allocated byte array of (sizeX * sizeY * bytesPerPixel * RGB channel
-   * count).
+   * pre-allocated byte array of
+   * (sizeX * sizeY * bytesPerPixel * RGB channel count).
    *
    * @param no the image index within the file.
    * @param buf a pre-allocated buffer.
@@ -287,18 +307,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /** Returns true if we should normalize float data. */
   boolean isNormalized();
-
-  /**
-   * Specifies whether or not to collect metadata.
-   * @deprecated Use {@link setMetadataOptions(MetadataOptions)} instead.
-   */
-  void setMetadataCollected(boolean collect);
-
-  /**
-   * Returns true if we should collect metadata.
-   * @deprecated Use {@link getMetadataOptions()} instead.
-   */
-  boolean isMetadataCollected();
 
   /**
    * Specifies whether or not to save proprietary metadata
@@ -397,15 +405,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Hashtable<String, Object> getGlobalMetadata();
 
   /**
-   * Returns a hashtable containing the union of all of the field/value pairs
-   * in getGlobalMetadata() and getSeriesMetadata().  The series name is
-   * prepended to fields in the getSeriesMetadata() hashtable.
-   *
-   * @deprecated Use getGlobalMetadata() or getSeriesMetadata() instead.
-   */
-  Hashtable<String, Object> getMetadata();
-
-  /**
    * Obtains the hashtable containing metadata field/value pairs from the
    * current series in the current file.
    */
@@ -449,14 +448,12 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Object getMetadataStoreRoot();
 
   /**
-   * Retrieves all underlying readers.  Returns null if there are no underlying
-   * readers.
+   * Retrieves all underlying readers.
+   * Returns null if there are no underlying readers.
    */
   IFormatReader[] getUnderlyingReaders();
 
-  /**
-   * Returns true if this is a single-file format.
-   */
+  /** Returns true if this is a single-file format. */
   boolean isSingleFile(String id) throws FormatException, IOException;
 
   /** Returns a list of scientific domains in which this format is used. */
@@ -464,5 +461,28 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /** Returns true if this format supports multi-file datasets. */
   boolean hasCompanionFiles();
+
+  // -- Deprecated methods --
+
+  /**
+   * Specifies whether or not to collect metadata.
+   * @deprecated Use {@link #setMetadataOptions(MetadataOptions)} instead.
+   */
+  void setMetadataCollected(boolean collect);
+
+  /**
+   * Returns true if we should collect metadata.
+   * @deprecated Use {@link #getMetadataOptions()} instead.
+   */
+  boolean isMetadataCollected();
+
+  /**
+   * Returns a hashtable containing the union of all of the field/value pairs
+   * in getGlobalMetadata() and getSeriesMetadata(). The series name is
+   * prepended to fields in the getSeriesMetadata() hashtable.
+   *
+   * @deprecated Use #getGlobalMetadata() or #getSeriesMetadata() instead.
+   */
+  Hashtable<String, Object> getMetadata();
 
 }
