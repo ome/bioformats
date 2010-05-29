@@ -39,7 +39,7 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ChannelFiller.java">SVN</a></dd></dl>
  */
 public class ChannelFiller extends ReaderWrapper {
-  
+
   // -- Utility methods --
 
   /** Converts the given reader into a ChannelFiller, wrapping if needed. */
@@ -58,17 +58,27 @@ public class ChannelFiller extends ReaderWrapper {
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#getSizeC() */
   @Override
   public int getSizeC() {
     if (passthrough()) return reader.getSizeC();
     return reader.getSizeC() * getLookupTableComponentCount();
   }
 
+  /* @see IFormatReader#getImageCount() */
+/*
+  @Override
+  public int getImageCount() {
+    if (passthrough()) return reader.getImageCount();
+    return reader.getImageCount() * getLookupTableComponentCount();
+  }
+*/
+
   /* @see IFormatReader#isRGB() */
   @Override
   public boolean isRGB() {
     if (passthrough()) return reader.isRGB();
-    return false;
+    return getRGBChannelCount() > 1;
   }
 
   /* @see IFormatReader#isIndexed() */
@@ -76,13 +86,6 @@ public class ChannelFiller extends ReaderWrapper {
   public boolean isIndexed() {
     if (passthrough()) return reader.isIndexed();
     return false;
-  }
-
-  /* @see IFormatReader#getRGBChannelCount() */
-  @Override
-  public int getRGBChannelCount() {
-    if (passthrough()) return reader.getRGBChannelCount();
-    return reader.getRGBChannelCount() * getLookupTableComponentCount();
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -97,6 +100,39 @@ public class ChannelFiller extends ReaderWrapper {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     if (passthrough()) return reader.get16BitLookupTable();
     return null;
+  }
+
+  /* @see IFormatReader#getChannelDimLengths() */
+  @Override
+  public int[] getChannelDimLengths() {
+    int[] cLengths = reader.getChannelDimLengths();
+    if (passthrough()) return cLengths;
+
+    // in the case of a single channel, replace rather than append
+    if (cLengths.length == 1 && cLengths[0] == 1) cLengths = new int[0];
+
+    // append filled dimension to channel dim lengths
+    int[] newLengths = new int[1 + cLengths.length];
+    newLengths[0] = getLookupTableComponentCount();
+    System.arraycopy(cLengths, 0, newLengths, 1, cLengths.length);
+    return newLengths;
+  }
+
+  /* @see IFormatReader#getChannelDimTypes() */
+  @Override
+  public String[] getChannelDimTypes() {
+    String[] cTypes = reader.getChannelDimTypes();
+    if (passthrough()) return cTypes;
+
+    // in the case of a single channel, leave type unchanged
+    int[] cLengths = reader.getChannelDimLengths();
+    if (cLengths.length == 1 && cLengths[0] == 1) return cTypes;
+
+    // append filled dimension to channel dim types
+    String[] newTypes = new String[1 + cTypes.length];
+    newTypes[0] = FormatTools.CHANNEL;
+    System.arraycopy(cTypes, 0, newTypes, 1, cTypes.length);
+    return newTypes;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -185,14 +221,14 @@ public class ChannelFiller extends ReaderWrapper {
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this, false, false);
   }
-  
+
   // -- Helper methods --
 
   /** Whether to hand off all method calls directly to the wrapped reader. */
   private boolean passthrough() {
     return !reader.isIndexed() || reader.isFalseColor();
   }
-  
+
   /** Gets the number of color components in the lookup table. */
   private int getLookupTableComponentCount() {
     try {
