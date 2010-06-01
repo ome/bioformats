@@ -139,6 +139,9 @@ public class ImagePlusReader implements StatusReporter {
     ImporterOptions options = process.getOptions();
 
     if (options.isVirtual()) {
+      // set virtual stack's reference count to match # of image windows
+      // in this case, these is one window per enabled image series
+      // when all image windows are closed, the Bio-Formats reader is closed
       int totalSeries = 0;
       for (int s=0; s<reader.getSeriesCount(); s++) {
         if (options.isSeriesOn(s)) totalSeries++;
@@ -146,6 +149,7 @@ public class ImagePlusReader implements StatusReporter {
       process.getVirtualReader().setRefCount(totalSeries);
     }
 
+    // read in each image series
     for (int s=0; s<reader.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
       readSeries(s, imps);
@@ -462,14 +466,22 @@ public class ImagePlusReader implements StatusReporter {
 
     imp.setOpenAsHyperStack(true);
 
-    if (options.isAutoscale()) {
+    // apply intensity scaling
+    int pixelType = reader.getPixelType();
+    // always autoscale floating point image data
+    if (options.isAutoscale() || FormatTools.isFloatingPoint(pixelType)) {
       ImagePlusTools.adjustColorRange(imp, process.getMinMaxCalculator());
     }
-    else if (!(imp.getProcessor() instanceof FloatProcessor)) {
-      // ImageJ may autoscale the images anyway, so we need to manually
-      // set the display range to the min/max values allowed for
-      // this pixel type
-      imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
+    else {
+      // ImageJ may autoscale the images anyway, so we need to manually set
+      // the display range to the min/max values allowed for this pixel type
+      int bitDepth = reader.getBitsPerPixel();
+      // NB: ImageJ does not directly support signed data (it is merely
+      // unsigned data shifted downward by half via a "calibration"),
+      // so the following min and max values also work for signed.
+      double min = 0;
+      double max = Math.pow(2, bitDepth) - 1;
+      imp.setDisplayRange(min, max);
     }
 
     return imp;
