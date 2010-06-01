@@ -116,6 +116,7 @@ public class OMEModelImpl implements OMEModel {
         LOGGER.error("Null reference to {} objects, continuing.",
                      references.size());
         unhandledReferences += references.size();
+        continue;
       }
       for (Reference reference : entry.getValue()) {
         String referenceID = reference.getID();
