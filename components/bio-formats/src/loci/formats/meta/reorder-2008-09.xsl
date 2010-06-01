@@ -38,8 +38,7 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-09</xsl:variable>
@@ -305,7 +304,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="text()|processing-instruction()|comment()" priority="1">
+	<xsl:template match="text()|processing-instruction()|comment()">
 		<xsl:copy>
 			<xsl:apply-templates select="node()"/>
 		</xsl:copy>

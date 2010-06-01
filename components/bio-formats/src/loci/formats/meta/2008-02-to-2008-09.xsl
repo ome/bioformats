@@ -613,15 +613,7 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="text()|processing-instruction()|comment()">
-		<xsl:copy>
-			<xsl:apply-templates select="node()"/>
-		</xsl:copy>
-	</xsl:template>
-
 	<!-- data management -->
-
-
 
 	<!-- Follow useful list of functions -->
 	<!-- Replace string -->
