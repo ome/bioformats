@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-28 12:45:35.110314
+ * Created by melissa via xsd-fu on 2010-06-01 11:06:50.718672
  *
  *-----------------------------------------------------------------------------
  */
@@ -1468,20 +1468,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Is multi path? True
 
 	//
-	// EmissionFilterRef property storage
-	//
-	// Indexes: {u'LightPath': [u'int imageIndex', u'int channelIndex', u'int emissionFilterRefIndex'], u'FilterSet': [u'int instrumentIndex', u'int filterSetIndex', u'int emissionFilterRefIndex']}
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// ExcitationFilterRef property storage
-	//
-	// Indexes: {u'LightPath': [u'int imageIndex', u'int channelIndex', u'int excitationFilterRefIndex'], u'FilterSet': [u'int instrumentIndex', u'int filterSetIndex', u'int excitationFilterRefIndex']}
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
 	// ExcitationFilterRef property storage
 	//
 	// Indexes: {u'LightPath': [u'int imageIndex', u'int channelIndex', u'int excitationFilterRefIndex'], u'FilterSet': [u'int instrumentIndex', u'int filterSetIndex', u'int excitationFilterRefIndex']}
@@ -1621,7 +1607,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
+	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
@@ -5570,6 +5556,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		Channel o3 = o2.getChannel(channelIndex);
 		model.addModelObject(id, o3);
 		o3.setID(id);
+		// Custom content from Channel ID template
+		if (o3.getLightPath() == null)
+		{
+			o3.setLightPath(new LightPath());
+		}
 	}
 
 	public void setChannelIlluminationType(IlluminationType illuminationType, int imageIndex, int channelIndex)
@@ -6828,18 +6819,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	//
 	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// ExcitationFilterRef property storage
 	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True

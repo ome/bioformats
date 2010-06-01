@@ -841,7 +841,7 @@ public class IFD extends HashMap<Integer, Object> {
       String v = null;
       if ((value instanceof Boolean) || (value instanceof Number) ||
         (value instanceof String) || (value instanceof PhotoInterp) ||
-        (value instanceof TiffCompression))
+        (value instanceof TiffCompression) || (value instanceof TiffIFDEntry))
       {
         v = value.toString();
         LOGGER.trace("\t{}={}", getIFDTagName(tag.intValue()), v);

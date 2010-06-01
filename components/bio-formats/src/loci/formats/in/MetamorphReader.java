@@ -925,9 +925,8 @@ public class MetamorphReader extends BaseTiffReader {
         l = new Location(parent, name);
         return l.exists() ? l.getAbsolutePath() : null;
       }
-      else return l.getAbsolutePath();
     }
-    return null;
+    return l.getAbsolutePath();
   }
 
   /**

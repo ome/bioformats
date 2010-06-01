@@ -121,6 +121,8 @@ public class LEOReader extends BaseTiffReader {
       store.setPixelsPhysicalSizeX(xSize, 0);
       store.setPixelsPhysicalSizeY(xSize, 0);
       store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     }
   }
 

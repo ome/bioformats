@@ -146,7 +146,10 @@ public class TCSReader extends FormatReader {
     // check for Leica TCS IFD directory entries
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
-    if (ifd == null) return false;
+    if (ifd == null) {
+      stream.seek(0);
+      return stream.readString(6).equals("<Data>");
+    }
     String document = ifd.getIFDTextValue(IFD.DOCUMENT_NAME);
     if (document == null) document = "";
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
@@ -190,15 +193,11 @@ public class TCSReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      String name = currentId.toLowerCase();
-      if (checkSuffix(name, TiffReader.TIFF_SUFFIXES)) return null;
-      return new String[] {currentId};
+      return xmlFile == null ? null : new String[] {xmlFile};
     }
     Vector<String> v = new Vector<String>();
     v.addAll(tiffs);
-
-    String absoluteId = new Location(currentId).getAbsolutePath();
-    if (!v.contains(absoluteId)) v.add(absoluteId);
+    if (xmlFile != null) v.add(xmlFile);
     return v.toArray(new String[v.size()]);
   }
 
@@ -236,6 +235,8 @@ public class TCSReader extends FormatReader {
         }
       }
     }
+
+    if (isXML) xmlFile = l.getAbsolutePath();
 
     super.initFile(id);
 
