@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author callan
  *
@@ -44,6 +47,10 @@ public class OMEModelImpl implements OMEModel {
 
   private Map<OMEModelObject, List<Reference>> references =
     new HashMap<OMEModelObject, List<Reference>>();
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(OMEModelImpl.class);
 
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModel#removeModelObject(java.lang.String)
@@ -100,13 +107,22 @@ public class OMEModelImpl implements OMEModel {
     for (Entry<OMEModelObject, List<Reference>> entry : references.entrySet())
     {
       OMEModelObject a = entry.getKey();
+      if (a == null) {
+        List<Reference> references = entry.getValue();
+        if (references == null) {
+          LOGGER.error("Null reference to null object, continuing.");
+          continue;
+        }
+        LOGGER.error("Null reference to {} objects, continuing.",
+                     references.size());
+        unhandledReferences += references.size();
+      }
       for (Reference reference : entry.getValue()) {
         String referenceID = reference.getID();
         OMEModelObject b = getModelObject(referenceID);
         if (b == null) {
-          System.err.println(String.format(
-              "%s reference to %s missing from object hierarchy.",
-              a, referenceID));
+          LOGGER.warn("{} reference to {} missing from object hierarchy.",
+                      a, referenceID);
           unhandledReferences++;
           continue;
         }
