@@ -519,8 +519,8 @@ public class BDReader extends FormatReader {
         store.setRectangleY(new Double(cols[3]), i - firstRow, 0);
         store.setRectangleWidth(new Double(cols[4]), i - firstRow, 0);
         store.setRectangleHeight(new Double(cols[5]), i - firstRow, 0);
-        String roiID = MetadataTools.createLSID("Rectangle", i - firstRow, 0);
-        store.setRectangleID(roiID, i - firstRow, 0);
+        String roiID = MetadataTools.createLSID("ROI", i - firstRow);
+        store.setROIID(roiID, i - firstRow);
         store.setImageROIRef(roiID, 0, i - firstRow);
       }
     }

@@ -480,6 +480,10 @@ public class AVIReader extends FormatReader {
       else {
         // skipping unknown block
         readTypeAndSize();
+        if (in.getFilePointer() + 8 < in.length()) {
+          readTypeAndSize();
+        }
+        else break;
         if (in.getFilePointer() + size + 4 <= in.length()) {
           in.skipBytes(size);
         }

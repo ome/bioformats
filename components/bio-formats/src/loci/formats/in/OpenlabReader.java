@@ -141,10 +141,12 @@ public class OpenlabReader extends FormatReader {
 
     lastPlane = no;
 
+    if (no >= planeOffsets[series].length) return buf;
     int index = planeOffsets[series][no];
 
     long first = planes[index].planeOffset;
-    long last = no == getImageCount() - 1 ? in.length() :
+    long last = no == planeOffsets[series].length - 1 ||
+      planeOffsets[series][no + 1] >= planes.length ? in.length() :
       planes[planeOffsets[series][no + 1]].planeOffset;
     in.seek(first);
 
@@ -722,6 +724,19 @@ public class OpenlabReader extends FormatReader {
       core[s].sizeT = uniqueT.size();
       core[s].sizeZ /= core[s].sizeT;
     }
+
+    int newCount = getSizeZ() * getSizeT();
+    if (!isRGB()) newCount *= getSizeC();
+
+    if (newCount < getImageCount()) {
+      char firstAxis = getDimensionOrder().charAt(2);
+      if (firstAxis == 'Z') core[s].sizeZ++;
+      else if (firstAxis == 'C' && !isRGB()) core[s].sizeC++;
+      else core[s].sizeT++;
+      core[s].imageCount = getSizeZ() * getSizeT();
+      if (!isRGB()) core[s].imageCount *= getSizeC();
+    }
+    else if (newCount > getImageCount()) core[s].imageCount = newCount;
   }
 
   // -- Helper classes --

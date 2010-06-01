@@ -443,7 +443,11 @@ public class TiffParser {
       // 32-bit (4-byte) unsigned integer
       if (count == 1) return new Long(in.readInt());
       long[] longs = new long[count];
-      for (int j=0; j<count; j++) longs[j] = in.readInt();
+      for (int j=0; j<count; j++) {
+        if (in.getFilePointer() + 4 <= in.length()) {
+          longs[j] = in.readInt();
+        }
+      }
       return longs;
     }
     else if (type == IFDType.LONG8 || type == IFDType.SLONG8
@@ -751,8 +755,6 @@ public class TiffParser {
       nChannels = 1;
     }
 
-    int nSamples = samples.length / nChannels;
-
     LOGGER.debug(
       "unpacking {} samples (startIndex={}; totalBits={}; numBytes={})",
       new Object[] {sampleCount, startIndex, nChannels * bitsPerSample[0],
@@ -762,6 +764,7 @@ public class TiffParser {
 
     int bps0 = bitsPerSample[0];
     int numBytes = ifd.getBytesPerSample()[0];
+    int nSamples = samples.length / (nChannels * numBytes);
 
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
@@ -834,10 +837,10 @@ public class TiffParser {
               photoInterp != PhotoInterp.RGB_PALETTE))
             {
               value = bb.getBits(bps0) & 0xffff;
-              if (littleEndian && bps0 > 8) {
-                value = DataTools.swap(value) >> (64 - bps0);
-              }
-              if ((ndx % imageWidth) == imageWidth - 1 && bps0 < 8) {
+              //if (littleEndian && bps0 > 8) {
+              //  value = DataTools.swap(value) >> (64 - bps0);
+              //}
+              if ((ndx % imageWidth) == imageWidth - 1/* && bps0 < 8*/) {
                 bb.skipBits(skipBits);
               }
             }

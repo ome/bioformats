@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 public enum TiffCompression implements CodedEnum {
 
   // (TIFF code, codec, codec name)
+  DEFAULT_UNCOMPRESSED(0, new PassthroughCodec(), "Uncompressed"),
   UNCOMPRESSED(1, new PassthroughCodec(), "Uncompressed"),
   CCITT_1D(2, null, "CCITT Group 3 1-Dimensional Modified Huffman"),
   GROUP_3_FAX(3, null, "CCITT T.4 bi-level encoding (Group 3 Fax)"),

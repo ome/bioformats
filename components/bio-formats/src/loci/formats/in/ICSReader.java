@@ -820,11 +820,11 @@ public class ICSReader extends FormatReader {
       // populate Laser data
 
       Integer[] lasers = wavelengths.keySet().toArray(new Integer[0]);
-      for (Integer laser : lasers) {
+      for (int i=0; i<lasers.length; i++) {
         store.setLaserWavelength(
-          new PositiveInteger(wavelengths.get(laser)), 0, laser.intValue());
-        store.setLaserType(getLaserType("Other"), 0, laser.intValue());
-        store.setLaserLaserMedium(getLaserMedium("Other"), 0, laser.intValue());
+          new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        store.setLaserType(getLaserType("Other"), 0, i);
+        store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
       }
 
       // populate Objective data
