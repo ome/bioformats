@@ -32,27 +32,31 @@ import loci.plugins.BF;
 
 
 // TODO
-//    waiting on BF implementations for
-//      range step by 0 or less
-//      BF/imageJ returning wrong values of max num pixels (UINT32 off by one, float weird too, etc.)
-//      memoryRecord failure needs BF code fix
-//      comboCropAutoscale() - autoscale of a cropped image returning min of whole image
-//      autoscale failing for Float and Double - need to decide on correct behavior in BF
-//      autoscale of signed images an issue (INT16 gets clamped 0..65535 by ImageJ also)
-//  - flesh out existing tests
-//      write tests for the color options : some mention was made that indexcolor is an issue in testing
-//        default
-//        composite
-//        colorized
-//        grayscale
-//        custom
-//        autoscale - test written
-//      open individual files: try to come up with a way to test without a disk file as source
-//      swapped dims test needs to test cases other than from default swapping Z & T
-//      output stack order - testing of iIndex?
-//      range - uncomment the by 0 tests when BF fixed
+
+// must address before release
+//  - write tests for the color options : some mention was made that indexcolor is an issue in testing
+//     default - waiting on BF to know how it should behave
+//     composite
+//     colorized
+//     grayscale
+//     custom
+//     autoscale - test done but BF failing
+//  - comboCropAutoscale() - autoscale of a cropped image returning min of whole image
+//  - autoscale of signed images an issue (INT16 gets clamped 0..65535 by ImageJ also)
 //  - add some tests for combination of options
-//  - improve, comment, and generalize code for increased coverage
+//  - macros
+
+// would be nice to address before release
+
+//  waiting on BF implementations for
+//    - autoscale failing (when off?) for Float and Double - need to decide on correct behavior in BF
+//    - range step by 0 or less: uncomment these tests when BF fixed
+//    - BF/imageJ returning wrong values of max num pixels (UINT32 off by one, float weird too, etc.)
+//    - memoryRecord failure needs BF code fix
+//    - open individual files: try to come up with a way to test without a disk file as source
+//    - swapped dims test needs to test cases other than from default swapping Z & T
+//    - output stack order - testing of iIndex? should match isatck num, 5th plane == 5
+//    - improve, comment, and generalize code for increased coverage
 
 public class ImporterTest {
 
@@ -748,15 +752,20 @@ public class ImporterTest {
 
     ci.reset();  // force the channel processors to get initialized, otherwise nullptr  - TODO : does this point out a IJ bug?
     
+    int maxZ = ci.getNSlices();
+    int maxC = ci.getNChannels();
+    int maxT = ci.getNFrames();
+    
     System.out.println("Checking index vals");
-    System.out.println("maxes z c t = "+ci.getNSlices()+" "+ci.getNChannels()+" "+ci.getNFrames());
+    System.out.println("maxes z c t = "+maxZ+" "+maxC+" "+maxT);
+    
     // check that each image in the overall series has the correct iIndex value
     for (int z = 0; z < ci.getNSlices(); z++)
       for (int c = 0; c < ci.getNChannels(); c++)
         for (int t = 0; t < ci.getNFrames(); t++)
         {
           //getIndexPixelValue(ci,z,c,t,indexed);
-          assertEquals((6*t+3*z+c),getIndexPixelValue(ci,z,c,t,indexed));
+          assertEquals((maxZ*maxC*t + maxC*z + c), getIndexPixelValue(ci,z,c,t,indexed));  // CZT order
         }
   }
   
