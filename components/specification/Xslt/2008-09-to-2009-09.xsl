@@ -172,14 +172,15 @@
 	</xsl:template>
 
 	<xsl:template match="SA:List/SA:Link">
+		<xsl:variable name="theLinkValue"><xsl:value-of select="node()"/></xsl:variable>
 		<xsl:choose>
-			<xsl:when test="@ID">
+			<xsl:when test="//SA:StructuredAnnotations/* [@ID=$theLinkValue]">
 				<xsl:element name="SA:AnnotationRef" namespace="{$newSANS}">
-					<xsl:apply-templates select="@*|node()"/>
+					<xsl:attribute name="ID"><xsl:value-of select="$theLinkValue"/></xsl:attribute>
 				</xsl:element>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:comment>Link to <xsl:value-of select="node()"/> removed as only annotation links now supported.</xsl:comment>
+				<xsl:comment>Link to <xsl:value-of select="$theLinkValue"/> removed as only annotation links now supported.</xsl:comment>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
