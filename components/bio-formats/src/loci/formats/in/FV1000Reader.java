@@ -485,7 +485,8 @@ public class FV1000Reader extends FormatReader {
       index = 1;
       IniTable channel = f.getTable("Channel " + index + " Parameters");
       while (channel != null) {
-        String illumination = channel.get("LightType").toLowerCase();
+        String illumination = channel.get("LightType");
+        if (illumination != null) illumination = illumination.toLowerCase();
         if (illumination == null) {
           // Ignored
         }
@@ -727,8 +728,12 @@ public class FV1000Reader extends FormatReader {
       else core[0].imageCount += diff;
     }
 
-    if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
+    if (getSizeC() > 1 && getSizeZ() == 1 && getSizeT() == 1) {
+      if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
+    }
+
     if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
     if (getDimensionOrder().indexOf("T") == -1) core[0].dimensionOrder += "T";
 
     core[0].pixelType =
@@ -917,14 +922,14 @@ public class FV1000Reader extends FormatReader {
       String emFilter = MetadataTools.createLSID("Dichroic", 0, emIndex);
       String exFilter = MetadataTools.createLSID("Dichroic", 0, exIndex);
 
-      store.setLightPathDichroicRef(exFilter, 0, channelIndex);
-
       // populate Dichroic data
       store.setDichroicID(emFilter, 0, emIndex);
       store.setDichroicModel(channel.emissionFilter, 0, emIndex);
 
       store.setDichroicID(exFilter, 0, exIndex);
       store.setDichroicModel(channel.excitationFilter, 0, exIndex);
+
+      store.setLightPathDichroicRef(exFilter, 0, channelIndex);
 
       // populate Laser data
       store.setLaserID(lightSourceID, 0, channelIndex);
@@ -1083,7 +1088,7 @@ public class FV1000Reader extends FormatReader {
             int centerY = y + (height / 2);
 
             store.setLineTransform(String.format(ROTATION,
-              angle, centerX, centerY), nextROI, shape);
+              angle, (float) centerX, (float) centerY), nextROI, shape);
           }
           else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
             double rx = width / 2;
@@ -1118,6 +1123,10 @@ public class FV1000Reader extends FormatReader {
             store.setPolylineTheT(tIndex, nextROI, shape);
             store.setPolylineFontSize(fontSize, nextROI, shape);
             store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
+          }
+          else {
+            if (shape == 0) nextROI--;
+            shape--;
           }
         }
       }
