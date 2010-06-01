@@ -63,6 +63,9 @@ public class FakeReader extends FormatReader {
 
   // -- Fields --
 
+  /** Scale factor for gradient, if any. */
+  private double scaleFactor = 1;
+
   /** 8-bit lookup table, if indexed color. */
   private byte[][] lut8 = null;
 
@@ -122,11 +125,13 @@ public class FakeReader extends FormatReader {
         int yy = y + row;
         for (int col=0; col<w; col++) {
           int xx = x + col;
-  
-          // encode various information into the image plane
           long pixel = min + xx;
+
+          // encode various information into the image plane
+          boolean specialPixel = false;
           if (yy < BOX_SIZE) {
             int grid = xx / BOX_SIZE;
+            specialPixel = true;
             switch (grid) {
               case 0:
                 pixel = series;
@@ -143,23 +148,35 @@ public class FakeReader extends FormatReader {
               case 4:
                 pixel = tIndex;
                 break;
+              default:
+                // just a normal pixel in the gradient
+                specialPixel = false;
             }
           }
-  
+
           // if indexed color with non-null LUT, convert value to index
           if (indexed) {
             if (lut8 != null) pixel = valueToIndex[(int) (pixel % 256)];
             if (lut16 != null) pixel = valueToIndex[(int) (pixel % 65536)];
           }
-  
+
+          // scale pixel value by the scale factor
           // if floating point, convert value to raw IEEE floating point bits
           switch (pixelType) {
             case FormatTools.FLOAT:
-              pixel = Float.floatToIntBits(pixel);
+              float floatPixel;
+              if (specialPixel) floatPixel = pixel;
+              else floatPixel = (float) (scaleFactor * pixel);
+              pixel = Float.floatToIntBits(floatPixel);
               break;
             case FormatTools.DOUBLE:
-              pixel = Double.doubleToLongBits(pixel);
+              double doublePixel;
+              if (specialPixel) doublePixel = pixel;
+              else doublePixel = scaleFactor * pixel;
+              pixel = Double.doubleToLongBits(doublePixel);
               break;
+            default:
+              if (!specialPixel) pixel = (long) (scaleFactor * pixel);
           }
 
           // unpack pixel into byte buffer
@@ -222,32 +239,36 @@ public class FakeReader extends FormatReader {
       String key = token.substring(0, equals);
       String value = token.substring(equals + 1);
 
-      boolean bool = value.equals("true");
-      int num = -1;
-      try { num = Integer.parseInt(value); }
+      boolean boolValue = value.equals("true");
+      double doubleValue = Double.NaN;
+      try {
+        doubleValue = Double.parseDouble(value);
+      }
       catch (NumberFormatException exc) { }
+      int intValue = Double.isNaN(doubleValue) ? -1 : (int) doubleValue;
 
-      if (key.equals("sizeX")) sizeX = num;
-      else if (key.equals("sizeY")) sizeY = num;
-      else if (key.equals("sizeZ")) sizeZ = num;
-      else if (key.equals("sizeC")) sizeC = num;
-      else if (key.equals("sizeT")) sizeT = num;
-      else if (key.equals("thumbSizeX")) thumbSizeX = num;
-      else if (key.equals("thumbSizeY")) thumbSizeY = num;
+      if (key.equals("sizeX")) sizeX = intValue;
+      else if (key.equals("sizeY")) sizeY = intValue;
+      else if (key.equals("sizeZ")) sizeZ = intValue;
+      else if (key.equals("sizeC")) sizeC = intValue;
+      else if (key.equals("sizeT")) sizeT = intValue;
+      else if (key.equals("thumbSizeX")) thumbSizeX = intValue;
+      else if (key.equals("thumbSizeY")) thumbSizeY = intValue;
       else if (key.equals("pixelType")) {
         pixelType = FormatTools.pixelTypeFromString(value);
       }
-      else if (key.equals("rgb")) rgb = num;
+      else if (key.equals("rgb")) rgb = intValue;
       else if (key.equals("dimOrder")) dimOrder = value.toUpperCase();
-      else if (key.equals("orderCertain")) orderCertain = bool;
-      else if (key.equals("little")) little = bool;
-      else if (key.equals("interleaved")) interleaved = bool;
-      else if (key.equals("indexed")) indexed = bool;
-      else if (key.equals("falseColor")) falseColor = bool;
-      else if (key.equals("metadataComplete")) metadataComplete = bool;
-      else if (key.equals("thumbnail")) thumbnail = bool;
-      else if (key.equals("series")) seriesCount = num;
-      else if (key.equals("lutLength")) lutLength = num;
+      else if (key.equals("orderCertain")) orderCertain = boolValue;
+      else if (key.equals("little")) little = boolValue;
+      else if (key.equals("interleaved")) interleaved = boolValue;
+      else if (key.equals("indexed")) indexed = boolValue;
+      else if (key.equals("falseColor")) falseColor = boolValue;
+      else if (key.equals("metadataComplete")) metadataComplete = boolValue;
+      else if (key.equals("thumbnail")) thumbnail = boolValue;
+      else if (key.equals("series")) seriesCount = intValue;
+      else if (key.equals("lutLength")) lutLength = intValue;
+      else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
     }
 
     // do some sanity checks
