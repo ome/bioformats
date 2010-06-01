@@ -101,7 +101,6 @@
 					<xsd:element ref="Path" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Text" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
