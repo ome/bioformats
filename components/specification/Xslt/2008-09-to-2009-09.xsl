@@ -767,6 +767,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
 		</xsl:element>
 	</xsl:template>
 
