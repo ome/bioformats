@@ -147,6 +147,9 @@ METADATA_AGGREGATE_TEMPLATE = "templates/AggregateMetadata.template"
 # The default template for OME XML metadata processing.
 OMEXML_METADATA_TEMPLATE = "templates/OMEXMLMetadataImpl.template"
 
+# The default template for OMERO metadata processing.
+OMERO_METADATA_TEMPLATE = "templates/OmeroMetadata.template"
+
 def resolve_parents(model, element_name):
 	"""
 	Resolves the parents of an element and returns them as an ordered list.
@@ -547,13 +550,21 @@ class OMEModelObject(OMEModelEntity):
 	
 class OMEModel(object):
 	def __init__(self):
+		self.elementNameObjectMap = dict()
 		self.objects = odict()
 		self.parents = dict()
 		
 	def addObject(self, element, obj):
+		elementName = element.getName()
 		if self.objects.has_key(element):
 			raise ModelProcessingError(
 				"Element %s has been processed!" % element)
+		if elementName in self.elementNameObjectMap:
+			logging.warn(
+				"Element %s has duplicate object with same name, skipping!" \
+				% element)
+			return
+		self.elementNameObjectMap[element.getName()] = obj
 		self.objects[element] = obj
 		
 	def getObject(self, element):
@@ -561,11 +572,12 @@ class OMEModel(object):
 			return self.objects[element]
 		except KeyError:
 			return None
-		
+
 	def getObjectByName(self, name):
-		for obj in self.objects:
-			if obj.getName() == name:
-				return self.objects[obj]
+		try:
+			return self.elementNameObjectMap[name]
+		except KeyError:
+			return None
 
 	def getTopLevelSimpleType(self, name):
 		"""

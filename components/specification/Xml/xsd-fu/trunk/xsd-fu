@@ -48,6 +48,7 @@ Executes an OME-XML Schema definition parsing and code generation subcommand.
 Available subcommands:
   java_classes
   omexml_metadata
+  omero_metadata
   metadata_store
   metadata_retrieve
   metadata_aggregate
@@ -298,7 +299,9 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
 		if is_child_multi_path:
 			is_multi_path = True
 		if child is not None and max_occurs >= min_occurs:
-			results[key].append(func(child, max_occurs, level))
+			to_append = func(child, max_occurs, level)
+			if to_append is not None:
+				results[key].append(to_append)
 	return is_multi_path
 
 def processMetadataTemplate(template, outputFilename, namespace, args):
@@ -332,8 +335,8 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 
 def omeXmlMetadataMain(args):
 	"""
-	Default main() that parses command line options and generates a
-	MetadataStore implementation.
+	OME-XML main() that parses command line options and generates a
+	MetadataStore and MetadataRetrieve implementation.
 	"""
 	try:
 		options, args = getopt(args, "n:")
@@ -349,6 +352,27 @@ def omeXmlMetadataMain(args):
 			namespace = argument
 
 	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl.java",
+	                        namespace, args)
+
+def omeroMetadataMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataRetrieve implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata.java",
 	                        namespace, args)
 
 def metadataStoreMain(args):
@@ -546,6 +570,8 @@ if __name__ == '__main__':
 		main(sys.argv[2:])
 	elif a == "omexml_metadata":
 		omeXmlMetadataMain(sys.argv[2:])
+	elif a == "omero_metadata":
+		omeroMetadataMain(sys.argv[2:])
 	elif a == "metadata_store":
 		metadataStoreMain(sys.argv[2:])
 	elif a == "metadata_retrieve":
