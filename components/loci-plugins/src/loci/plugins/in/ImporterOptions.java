@@ -385,7 +385,9 @@ public class ImporterOptions extends OptionsList {
   public void setCEnd(int s, int value) { set(cEnd, s, value, -1); }
   public int getCStep(int s) { return get(cStep, s, 1); }
   public void setCStep(int s, int value) {
-    if (value < 1) value = 1;
+    if (value <= 0) {
+      throw new IllegalArgumentException("Invalid C step: " + value);
+    }
     set(cStep, s, value, 1);
   }
 
@@ -395,7 +397,9 @@ public class ImporterOptions extends OptionsList {
   public void setZEnd(int s, int value) { set(zEnd, s, value, -1); }
   public int getZStep(int s) { return get(zStep, s, 1); }
   public void setZStep(int s, int value) {
-    if (value < 1) value = 1;
+    if (value <= 0) {
+      throw new IllegalArgumentException("Invalid Z step: " + value);
+    }
     set(zStep, s, value, 1);
   }
 
@@ -405,7 +409,9 @@ public class ImporterOptions extends OptionsList {
   public void setTEnd(int s, int value) { set(tEnd, s, value, -1); }
   public int getTStep(int s) { return get(tStep, s, 1); }
   public void setTStep(int s, int value) {
-    if (value < 1) value = 1;
+    if (value <= 0) {
+      throw new IllegalArgumentException("Invalid T step: " + value);
+    }
     set(tStep, s, value, 1);
   }
 
