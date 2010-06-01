@@ -34,28 +34,27 @@ import loci.plugins.BF;
 // TODO
 
 // must address before release
+
+//  - macros should still work like before
 //  - write tests for the color options : some mention was made that indexcolor is an issue in testing
 //     default - waiting on BF to know how it should behave
 //     composite
 //     colorized
 //     grayscale
 //     custom
-//     autoscale - test done but BF failing
+//  - add some tests for combination of options
 //  - comboCropAutoscale() - autoscale of a cropped image returning min of whole image
 //  - autoscale of signed images an issue (INT16 gets clamped 0..65535 by ImageJ also)
-//  - add some tests for combination of options
-//  - macros
 
 // would be nice to address before release
 
 //  waiting on BF implementations for
 //    - autoscale failing (when off?) for Float and Double - need to decide on correct behavior in BF
-//    - range step by 0 or less: uncomment these tests when BF fixed
-//    - BF/imageJ returning wrong values of max num pixels (UINT32 off by one, float weird too, etc.)
+//    - BF/imageJ returning wrong values of max num pixels (UINT32 off by one - IJ bug, float weird too, etc.)
 //    - memoryRecord failure needs BF code fix
 //    - open individual files: try to come up with a way to test without a disk file as source
 //    - swapped dims test needs to test cases other than from default swapping Z & T
-//    - output stack order - testing of iIndex? should match isatck num, 5th plane == 5
+//    - output stack order - testing of iIndex? should match imagestack number? i.e. 5th plane == 4 - doesn't look so
 //    - improve, comment, and generalize code for increased coverage
 
 public class ImporterTest {
@@ -372,7 +371,7 @@ public class ImporterTest {
     ci.setPosition(c+1, z+1, t+1);
     int rawValue = iIndex(ci.getProcessor());
     //int rawValue = iIndex(ci.getProcessor(c+1));
-    System.out.println("zct "+z+" "+c+" "+t+" rawVal "+rawValue);
+    //System.out.println("zct "+z+" "+c+" "+t+" rawVal "+rawValue);
     if (indexed)
       return ci.getChannelLut(c+1).getRGB(rawValue);
     else
@@ -682,7 +681,7 @@ public class ImporterTest {
 
     long expectedMax,expectedMin;
     
-    if (wantAutoscale)
+    if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
     {
       expectedMax = Math.max( minPixelValue(pixType)+sizeX-1, sizeZ*sizeC*sizeT - 1 );  // series size always 1 so ignore
       expectedMin = minPixelValue(pixType);
@@ -756,8 +755,8 @@ public class ImporterTest {
     int maxC = ci.getNChannels();
     int maxT = ci.getNFrames();
     
-    System.out.println("Checking index vals");
-    System.out.println("maxes z c t = "+maxZ+" "+maxC+" "+maxT);
+    //System.out.println("Checking index vals");
+    //System.out.println("maxes z c t = "+maxZ+" "+maxC+" "+maxT);
     
     // check that each image in the overall series has the correct iIndex value
     for (int z = 0; z < ci.getNSlices(); z++)
@@ -1022,6 +1021,165 @@ public class ImporterTest {
       ImageProcessor proc = st.getProcessor(i+1);
       assertEquals(expectedMax,proc.getMax(),0.1);
       assertEquals(expectedMin,proc.getMin(),0.1);
+    }
+  }
+  
+  private void concatSplitFocalPlanesTest()
+  {
+    // take a nontrivial zct set of series
+    // run split and concat at same time
+
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7, series = 3;
+    final String path = constructFakeFilename("concatSplitZ",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, series, false, -1, false);
+
+    // open image
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setConcatenate(true);
+      options.setSplitFocalPlanes(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    // one time point per image
+    impsCountTest(imps,sizeZ);
+    
+    // TODO : passes - is order of indices correct?
+    for (int z = 0; z < sizeZ; z++)
+    {
+      ImagePlus imp = imps[z];
+      xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
+      ImageStack st = imp.getStack();
+      assertEquals(sizeC * sizeT,st.getSize());
+      for (int s = 0; s < series; s++) {
+        int index = 0;
+        for (int t = 0; t < sizeT; t++) {
+          for (int c = 0; c < sizeC; c++) {
+            ImageProcessor proc = st.getProcessor(++index);
+            //System.out.println("index "+index);
+            //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
+            //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
+            // test the values
+            assertEquals(z,zIndex(proc));
+            assertEquals(c,cIndex(proc));
+            assertEquals(t,tIndex(proc));
+          }
+        }
+      }
+    }
+  }
+  
+  private void concatSplitChannelsTest()
+  {
+    // take a nontrivial zct set of series
+    // run split and concat at same time
+
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7, series = 3;
+    final String path = constructFakeFilename("concatSplitC",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, series, false, -1, false);
+
+    // open image
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setConcatenate(true);
+      options.setSplitChannels(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    // one time point per image
+    impsCountTest(imps,sizeC);
+    
+    // TODO : passes - is order of indices correct?
+    for (int c = 0; c < sizeC; c++)
+    {
+      ImagePlus imp = imps[c];
+      xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
+      ImageStack st = imp.getStack();
+      assertEquals(sizeZ * sizeT,st.getSize());
+      for (int s = 0; s < series; s++) {
+        int index = 0;
+        for (int t = 0; t < sizeT; t++) {
+          for (int z = 0; z < sizeZ; z++) {
+            ImageProcessor proc = st.getProcessor(++index);
+            //System.out.println("index "+index);
+            //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
+            //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
+            // test the values
+            assertEquals(z,zIndex(proc));
+            assertEquals(c,cIndex(proc));
+            assertEquals(t,tIndex(proc));
+          }
+        }
+      }
+    }
+  }
+  
+  private void concatSplitTimepointsTest()
+  {
+    // take a nontrivial zct set of series
+    // run split and concat at same time
+
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7, series = 3;
+    final String path = constructFakeFilename("concatSplitC",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, series, false, -1, false);
+
+    // open image
+    ImagePlus[] imps = null;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setConcatenate(true);
+      options.setSplitTimepoints(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+      }
+    
+    // one time point per image
+    impsCountTest(imps,sizeT);
+    
+    // TODO : passes - is order of indices correct?
+    for (int t = 0; t < sizeT; t++)
+    {
+      ImagePlus imp = imps[t];
+      xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
+      ImageStack st = imp.getStack();
+      assertEquals(sizeZ * sizeC,st.getSize());
+      for (int s = 0; s < series; s++) {
+        int index = 0;
+        for (int c = 0; c < sizeC; c++) {
+          for (int z = 0; z < sizeZ; z++) {
+            ImageProcessor proc = st.getProcessor(++index);
+            //System.out.println("index "+index);
+            //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
+            //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
+            // test the values
+            assertEquals(z,zIndex(proc));
+            assertEquals(c,cIndex(proc));
+            assertEquals(t,tIndex(proc));
+          }
+        }
+      }
     }
   }
   
@@ -1475,9 +1633,8 @@ public class ImporterTest {
     // z by < 1
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      // TODO - enable post fix
-      //memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      //fail();
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
     }
@@ -1503,9 +1660,8 @@ public class ImporterTest {
     // c by < 1
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
-      // TODO - enable post fix
-      //memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      //fail();
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
     }
@@ -1531,9 +1687,8 @@ public class ImporterTest {
     // t by < 1
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
-      // TODO - enable post fix
-      //memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      //fail();
+      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
     }
@@ -1722,6 +1877,13 @@ public class ImporterTest {
   }
 
   @Test
+  public void testMacros()
+  {
+    //IJ.runMacro("Bio-Formats Importer", "open=int8&pixelType=int8&sizeZ=3&sizeC=5&sizeT=7&sizeY=50.fake merge_channels stack_order=Default");
+    fail("unimplemented");
+  }
+  
+  @Test
   public void testComboCropAutoscale()
   {
     // try a simple test: single small byte type image 
@@ -1744,7 +1906,9 @@ public class ImporterTest {
   @Test
   public void testComboConcatSplit()
   {
-    fail("unimplemented");
+    concatSplitFocalPlanesTest();
+    concatSplitChannelsTest();
+    concatSplitTimepointsTest();
   }
 
   @Test
