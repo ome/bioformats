@@ -71,47 +71,35 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     LoggerFactory.getLogger(OMEXMLService.class);
 
   /** Reordering stylesheet. */
-  private static Templates reorderXSLT;
+  private static Templates reorderXSLT =
+    XMLTools.getStylesheet("/loci/formats/meta/reorder-2008-09.xsl",
+    OMEXMLServiceImpl.class);
 
   /** Stylesheets for updating from previous schema releases. */
-  private static Templates UPDATE_2003FC;
-  private static Templates UPDATE_2006LO;
-  private static Templates UPDATE_200706;
-  private static Templates UPDATE_200802;
-  private static Templates UPDATE_200809;
-  private static Templates UPDATE_200909;
+  private static Templates UPDATE_2003FC =
+    XMLTools.getStylesheet("/loci/formats/meta/2003-FC-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_2006LO =
+    XMLTools.getStylesheet("/loci/formats/meta/2006-LO-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200706 =
+    XMLTools.getStylesheet("/loci/formats/meta/2007-06-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200802 =
+    XMLTools.getStylesheet("/loci/formats/meta/2008-02-to-2008-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200809 =
+    XMLTools.getStylesheet("/loci/formats/meta/2008-09-to-2009-09.xsl",
+    OMEXMLServiceImpl.class);
+  private static Templates UPDATE_200909 =
+    XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
+    OMEXMLServiceImpl.class);
 
   /**
    * Default constructor.
    */
   public OMEXMLServiceImpl() {
     checkClassDependency(ome.xml.r201004.OMEModelObject.class);
-    System.setProperty("javax.xml.transform.TransformerFactory",
-//                       "net.sf.saxon.TransformerFactoryImpl");
-//                       "org.apache.xalan.processor.TransformerFactoryImpl");
-                       "com.icl.saxon.TransformerFactoryImpl");
-
-    reorderXSLT =
-      XMLTools.getStylesheet("/loci/formats/meta/reorder-2008-09.xsl",
-      OMEXMLServiceImpl.class);
-    UPDATE_2003FC =
-      XMLTools.getStylesheet("/loci/formats/meta/2003-FC-to-2008-09.xsl",
-      OMEXMLServiceImpl.class);
-    UPDATE_2006LO =
-      XMLTools.getStylesheet("/loci/formats/meta/2006-LO-to-2008-09.xsl",
-      OMEXMLServiceImpl.class);
-    UPDATE_200706 =
-      XMLTools.getStylesheet("/loci/formats/meta/2007-06-to-2008-09.xsl",
-      OMEXMLServiceImpl.class);
-    UPDATE_200802 =
-      XMLTools.getStylesheet("/loci/formats/meta/2008-02-to-2008-09.xsl",
-      OMEXMLServiceImpl.class);
-    UPDATE_200809 =
-      XMLTools.getStylesheet("/loci/formats/meta/2008-09-to-2009-09.xsl",
-      OMEXMLServiceImpl.class);
-    UPDATE_200909 =
-      XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
-      OMEXMLServiceImpl.class);
   }
 
   /* (non-Javadoc)

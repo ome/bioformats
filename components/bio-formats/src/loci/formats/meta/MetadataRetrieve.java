@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-28 12:37:01.222862
+ * Created by callan via xsd-fu on 2010-06-01 11:44:50.965032
  *
  *-----------------------------------------------------------------------------
  */
@@ -634,18 +634,6 @@ public interface MetadataRetrieve {
 
 	//
 	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// ExcitationFilterRef property storage
 	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True

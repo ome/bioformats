@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-28 12:36:56.007582
+ * Created by callan via xsd-fu on 2010-06-01 11:45:36.959537
  *
  *-----------------------------------------------------------------------------
  */
@@ -441,18 +441,6 @@ public interface MetadataStore
 
 	//
 	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// ExcitationFilterRef property storage
 	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True
