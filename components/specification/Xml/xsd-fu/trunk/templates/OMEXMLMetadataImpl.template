@@ -158,6 +158,10 @@
 {% end %}\
 {% end %}\
 {% end %}\
+{% if obj.name in customContent and prop.name in customContent[obj.name] %}\
+		// Custom content from ${obj.name} ${prop.name} template
+${customContent[obj.name][prop.name]}
+{% end %}\
 	}
 {% end %}\
 \

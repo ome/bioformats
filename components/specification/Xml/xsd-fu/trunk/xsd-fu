@@ -321,14 +321,30 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 		is_multi_path[name] = resolve_hierarchy(indexes[name], model,
 		                                        {name: parents[name]},
 		                                        index_string)
+
 	fu = TemplateInfo(None, None)
 	fu.max_occurs_under_parent = max_occurs_under_parent
 	fu.resolve_hierarchy = resolve_hierarchy
 	fu.METADATA_OBJECT_IGNORE = METADATA_OBJECT_IGNORE
+	base, filename = os.path.split(template)
+	name, extension = os.path.splitext(filename)
 	template = NewTextTemplate(open(template).read())
+	from glob import glob
+	customContent = dict()
+	for customTemplate in glob(os.path.join(base, '%s_*' % (name))):
+		filename = os.path.split(customTemplate)[1];
+		filename = os.path.splitext(filename)[0]
+		base, objectName, propertyName = filename.split("_")
+		customTemplate = NewTextTemplate(open(customTemplate).read())
+		customTemplate = customTemplate.generate(
+		    fu=fu, model=model, parents=parents, is_multi_path=is_multi_path,
+		    indexes=indexes)
+		if objectName not in customContent:
+			customContent[objectName] = dict()
+		customContent[objectName][propertyName] = customTemplate.render()
 	content = template.generate(fu=fu, model=model, parents=parents,
-	                            is_multi_path=is_multi_path,
-	                            indexes=indexes).render()
+	                            is_multi_path=is_multi_path, indexes=indexes,
+	                            customContent=customContent).render()
 	f = open(outputFilename, "w")
 	f.write(content)
 	f.close()
