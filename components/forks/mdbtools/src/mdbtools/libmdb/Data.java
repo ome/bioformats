@@ -890,7 +890,9 @@ public class Data
           try {
             System.arraycopy(mdb.pg_buf,row_start+4,dest.ba,cur,len-4);
           }
-          catch (ArrayIndexOutOfBoundsException e) { }
+          catch (ArrayIndexOutOfBoundsException e) {
+            break;
+          }
 //          memcpy(dest[cur], mdb.pg_buf[row_start+4],len - 4);
         }
         cur += len - 4;
