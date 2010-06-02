@@ -109,7 +109,6 @@ public class DimensionSwapper extends ReaderWrapper {
 
     int[] dims = new int[5];
 
-    System.out.println("---> swapDims: old order = " + oldOrder + ", new order = " + order);//TEMP
     int oldX = oldOrder.indexOf("X");
     int oldY = oldOrder.indexOf("Y");
     int oldZ = oldOrder.indexOf("Z");
@@ -167,7 +166,6 @@ public class DimensionSwapper extends ReaderWrapper {
 
   public String getInputOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    System.out.println("---> HERE WE ARE IN getInputOrder... series=" + getSeries() + ", core=" + core[getSeries()]);//TEMP
     return core[getSeries()].dimensionOrder;
   }
 
@@ -287,8 +285,6 @@ public class DimensionSwapper extends ReaderWrapper {
       // NB: Create our own copy of the CoreMetadata,
       // which we can manipulate safely.
       core = copyCoreMetadata(reader);
-      System.out.println("----> core metadata copied... dimOrder=" + core[0].dimensionOrder);//TEMP
-      System.out.println("----> wrapped reader's dimOrder=" + reader.getDimensionOrder());//TEMP
     }
   }
 
