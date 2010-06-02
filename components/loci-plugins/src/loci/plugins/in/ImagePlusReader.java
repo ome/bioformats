@@ -306,11 +306,20 @@ public class ImagePlusReader implements StatusReporter {
   private List<ImagePlus> applyColors(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
 
-    // CTR FIXME - problems with single channel data
-    // CTR FIXME - problems with sizeC > 7
     // CTR FIXME - problems with default color mode
     int mode = -1;
-    if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
+    int sizeC = process.getReader().getSizeC();
+    if (sizeC == 1) {
+      // NB: Cannot use CompositeImage for single-channel images.
+      // CTR FIXME finish sizeC==1 case
+      loci.plugins.BF.warn(options.isQuiet(), "sizeC = 1");//TEMP
+    }
+    else if (sizeC > 7) {
+      // NB: Cannot use CompositeImage when there are more than seven channels.
+      // CTR FIXME finish sizeC>7 case
+      loci.plugins.BF.warn(options.isQuiet(), "sizeC > 7");//TEMP
+    }
+    else if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
     else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
     else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
     else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
