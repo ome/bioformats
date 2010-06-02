@@ -33,9 +33,12 @@ import java.util.Hashtable;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/CoreMetadata.java">SVN</a></dd></dl>
  */
 public class CoreMetadata {
+
+  // -- Fields --
+
   // TODO
   //
-  // We may also want to consider refactoring the FormatReader getter methods
+  // We may want to consider refactoring the FormatReader getter methods
   // that populate missing CoreMetadata fields on the fly
   // (getChannelDimLengths, getChannelDimTypes, getThumbSizeX, getThumbSizeY)
   // to avoid doing so -- one alternate approach would be to have this class
@@ -134,8 +137,72 @@ public class CoreMetadata {
    */
   public boolean thumbnail;
 
+  // -- Constructors --
+
   public CoreMetadata() {
     seriesMetadata = new Hashtable<String, Object>();
+  }
+
+  public CoreMetadata(IFormatReader r, int seriesNo) {
+    int series = r.getSeries();
+    r.setSeries(seriesNo);
+    sizeX = r.getSizeX();
+    sizeY = r.getSizeY();
+    sizeZ = r.getSizeZ();
+    sizeC = r.getSizeC();
+    sizeT = r.getSizeT();
+    thumbSizeX = r.getThumbSizeX();
+    thumbSizeY = r.getThumbSizeY();
+    pixelType = r.getPixelType();
+    bitsPerPixel = r.getBitsPerPixel();
+    imageCount = r.getImageCount();
+    cLengths = r.getChannelDimLengths();
+    cTypes = r.getChannelDimTypes();
+    dimensionOrder = r.getDimensionOrder();
+    orderCertain = r.isOrderCertain();
+    rgb = r.isRGB();
+    littleEndian = r.isLittleEndian();
+    interleaved = r.isInterleaved();
+    indexed = r.isIndexed();
+    falseColor = r.isFalseColor();
+    metadataComplete = r.isMetadataComplete();
+    seriesMetadata = r.getSeriesMetadata();
+    thumbnail = r.isThumbnailSeries();
+    r.setSeries(series);
+  }
+
+  // -- Object methods --
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(super.toString() + ":");
+    sb.append("\n\tsizeX = " + sizeX);
+    sb.append("\n\tsizeY = " + sizeY);
+    sb.append("\n\tsizeZ = " + sizeZ);
+    sb.append("\n\tsizeC = " + sizeC);
+    sb.append("\n\tsizeT = " + sizeT);
+    sb.append("\n\tthumbSizeX = " + thumbSizeX);
+    sb.append("\n\tthumbSizeY = " + thumbSizeY);
+    sb.append("\n\tpixelType = " + FormatTools.getPixelTypeString(pixelType));
+    sb.append("\n\tbitsPerPixel = " + bitsPerPixel);
+    sb.append("\n\timageCount = " + imageCount);
+    sb.append("\n\tcLengths =");
+    if (cLengths == null) sb.append(" null");
+    else for (int i=0; i<cLengths.length; i++) sb.append(" " + cLengths[i]);
+    sb.append("\n\tcTypes =");
+    if (cTypes == null) sb.append(" null");
+    else for (int i=0; i<cTypes.length; i++) sb.append(" " + cTypes[i]);
+    sb.append("\n\tdimensionOrder = " + dimensionOrder);
+    sb.append("\n\torderCertain = " + orderCertain);
+    sb.append("\n\trgb = " + rgb);
+    sb.append("\n\tlittleEndian = " + littleEndian);
+    sb.append("\n\tinterleaved = " + interleaved);
+    sb.append("\n\tindexed = " + indexed);
+    sb.append("\n\tfalseColor = " + falseColor);
+    sb.append("\n\tmetadataComplete = " + metadataComplete);
+    sb.append("\n\tseriesMetadata = " + seriesMetadata.size() + " keys");
+    sb.append("\n\tthumbnail = " + thumbnail);
+    return sb.toString();
   }
 
 }

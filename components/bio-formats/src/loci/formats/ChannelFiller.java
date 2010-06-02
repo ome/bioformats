@@ -30,7 +30,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * For indexed color data representing true color, factors out
  * the indices, replacing them with the color table values directly.
- * 
+ *
  * For all other data (either non-indexed, or indexed with
  * "false color" tables), does nothing.
  *
