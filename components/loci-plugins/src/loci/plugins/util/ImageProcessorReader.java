@@ -97,10 +97,13 @@ public class ImageProcessorReader extends ReaderWrapper {
     byte[] b = null;
     boolean first = true;
     while (true) {
+      // TODO: This is the wrong place to prompt for the LuraWave code.
+      // This logic should be moved to a higher, GUI-specific level.
+
       // read LuraWave license code, if available
       String code = LuraWave.initLicenseCode();
       try {
-        b = openBytes(no, x, y, w, h); 
+        b = openBytes(no, x, y, w, h);
         break;
       }
       catch (FormatException exc) {
@@ -130,26 +133,7 @@ public class ImageProcessorReader extends ReaderWrapper {
     boolean isSigned = FormatTools.isSigned(type);
 
     IndexColorModel cm = null;
-    if (isIndexed()) {
-      byte[][] byteTable = get8BitLookupTable();
-      if (byteTable != null) {
-        cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
-          byteTable[1], byteTable[2]);
-      }
-      short[][] shortTable = get16BitLookupTable();
-      if (shortTable != null) {
-        byteTable = new byte[3][256];
-
-        for (int i=0; i<byteTable[0].length; i++) {
-          byteTable[0][i] = (byte) shortTable[0][i];
-          byteTable[1][i] = (byte) shortTable[1][i];
-          byteTable[2][i] = (byte) shortTable[2][i];
-        }
-
-        cm = new IndexColorModel(8, byteTable[0].length, byteTable[0],
-          byteTable[1], byteTable[2]);
-      }
-    }
+    if (isIndexed()) cm = createIndexColorModel();
 
     // construct image processors
     ImageProcessor[] ip = new ImageProcessor[c];
@@ -225,6 +209,28 @@ public class ImageProcessorReader extends ReaderWrapper {
     throws FormatException, IOException
   {
     return openProcessors(no, x, y, w, h);
+  }
+
+  // -- Helper methods --
+
+  private IndexColorModel createIndexColorModel()
+    throws FormatException, IOException
+  {
+    byte[][] byteTable = get8BitLookupTable();
+    if (byteTable == null) byteTable = convertTo8Bit(get16BitLookupTable());
+    if (byteTable == null) return null;
+    return new IndexColorModel(8, byteTable[0].length,
+      byteTable[0], byteTable[1], byteTable[2]);
+  }
+
+  private byte[][] convertTo8Bit(short[][] shortTable) {
+    if (shortTable == null) return null;
+    byte[][] byteTable = new byte[shortTable.length][256];
+    for (int c=0; c<byteTable.length; c++) {
+      int len = Math.min(byteTable.length, shortTable[c].length);
+      for (int i=0; i<len; i++) byteTable[c][i] = (byte) shortTable[c][i];
+    }
+    return byteTable;
   }
 
 }
