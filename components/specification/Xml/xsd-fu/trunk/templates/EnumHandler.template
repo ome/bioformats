@@ -44,9 +44,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ome.xml.r201004.enums.Enumeration;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.${klass.javaType};
+import ${'.'.join(fu.package.split('.')[:-1])}.Enumeration;
+import ${'.'.join(fu.package.split('.')[:-1])}.EnumerationException;
+import ${'.'.join(fu.package.split('.')[:-1])}.${klass.javaType};
 
 /**
  * Enumeration handler for ${klass.javaType}.

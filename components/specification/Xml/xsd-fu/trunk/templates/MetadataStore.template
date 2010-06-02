@@ -84,8 +84,8 @@
 
 package loci.formats.meta;
 
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a

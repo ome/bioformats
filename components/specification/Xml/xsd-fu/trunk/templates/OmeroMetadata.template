@@ -49,12 +49,12 @@
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract proprietary
-        ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop)[:-1])});
+        ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop))});
         return o == null? null : o.getID();
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
-        ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop)[:-1])});
+        ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop))});
         return o == null? null : o.get${prop.javaMethodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
@@ -190,8 +190,8 @@ import ome.system.ServiceFactory;
 import ome.tools.hibernate.ProxyCleanupFilter;
 import ome.tools.hibernate.QueryBuilder;
 import ome.util.Filterable;
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 import omero.model.*;
 import omero.util.IceMapper;
 
