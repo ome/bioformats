@@ -1024,7 +1024,7 @@ public class ImporterTest {
     }
   }
   
-  private void concatSplitFocalPlanesTest()
+  private void comboConcatSplitFocalPlanesTest()
   {
     // take a nontrivial zct set of series
     // run split and concat at same time
@@ -1051,33 +1051,35 @@ public class ImporterTest {
     
     // one time point per image
     impsCountTest(imps,sizeZ);
-    
-    // TODO : passes - is order of indices correct?
+
+    // from ZCT order: Z pulled out, CT in order
     for (int z = 0; z < sizeZ; z++)
     {
       ImagePlus imp = imps[z];
       xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
       ImageStack st = imp.getStack();
-      assertEquals(sizeC * sizeT,st.getSize());
+      assertEquals(series*sizeC*sizeT,st.getSize());
       for (int s = 0; s < series; s++) {
-        int index = 0;
+        int index = 1; // IJ 1-based
         for (int t = 0; t < sizeT; t++) {
           for (int c = 0; c < sizeC; c++) {
-            ImageProcessor proc = st.getProcessor(++index);
-            //System.out.println("index "+index);
+            System.out.println("index "+index);
+            ImageProcessor proc = st.getProcessor(s*sizeT*sizeC + index++);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
-            //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
+            System.out.println("z c t "+z+" "+c+" "+t);
+            System.out.println("is iz ic it "+sIndex(proc)+" "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
             // test the values
             assertEquals(z,zIndex(proc));
             assertEquals(c,cIndex(proc));
             assertEquals(t,tIndex(proc));
+            assertEquals(s,sIndex(proc));
           }
         }
       }
     }
   }
   
-  private void concatSplitChannelsTest()
+  private void comboConcatSplitChannelsTest()
   {
     // take a nontrivial zct set of series
     // run split and concat at same time
@@ -1105,18 +1107,18 @@ public class ImporterTest {
     // one time point per image
     impsCountTest(imps,sizeC);
     
-    // TODO : passes - is order of indices correct?
+    // from ZCT order: C pulled out, ZT in order
     for (int c = 0; c < sizeC; c++)
     {
       ImagePlus imp = imps[c];
       xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
       ImageStack st = imp.getStack();
-      assertEquals(sizeZ * sizeT,st.getSize());
+      assertEquals(series*sizeZ*sizeT,st.getSize());
       for (int s = 0; s < series; s++) {
-        int index = 0;
+        int index = 1;
         for (int t = 0; t < sizeT; t++) {
           for (int z = 0; z < sizeZ; z++) {
-            ImageProcessor proc = st.getProcessor(++index);
+            ImageProcessor proc = st.getProcessor(s*sizeZ*sizeT + index++);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1124,13 +1126,14 @@ public class ImporterTest {
             assertEquals(z,zIndex(proc));
             assertEquals(c,cIndex(proc));
             assertEquals(t,tIndex(proc));
+            assertEquals(s,sIndex(proc));
           }
         }
       }
     }
   }
   
-  private void concatSplitTimepointsTest()
+  private void comboConcatSplitTimepointsTest()
   {
     // take a nontrivial zct set of series
     // run split and concat at same time
@@ -1158,18 +1161,18 @@ public class ImporterTest {
     // one time point per image
     impsCountTest(imps,sizeT);
     
-    // TODO : passes - is order of indices correct?
+    // from ZCT order: T pulled out, ZC in order
     for (int t = 0; t < sizeT; t++)
     {
       ImagePlus imp = imps[t];
       xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
       ImageStack st = imp.getStack();
-      assertEquals(sizeZ * sizeC,st.getSize());
+      assertEquals(series*sizeZ*sizeC,st.getSize());
       for (int s = 0; s < series; s++) {
-        int index = 0;
+        int index = 1;
         for (int c = 0; c < sizeC; c++) {
           for (int z = 0; z < sizeZ; z++) {
-            ImageProcessor proc = st.getProcessor(++index);
+            ImageProcessor proc = st.getProcessor(s*sizeZ*sizeC + index++);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1177,6 +1180,7 @@ public class ImporterTest {
             assertEquals(z,zIndex(proc));
             assertEquals(c,cIndex(proc));
             assertEquals(t,tIndex(proc));
+            assertEquals(s,sIndex(proc));
           }
         }
       }
@@ -1906,9 +1910,9 @@ public class ImporterTest {
   @Test
   public void testComboConcatSplit()
   {
-    concatSplitFocalPlanesTest();
-    concatSplitChannelsTest();
-    concatSplitTimepointsTest();
+    comboConcatSplitFocalPlanesTest();
+    comboConcatSplitChannelsTest();
+    comboConcatSplitTimepointsTest();
   }
 
   @Test
