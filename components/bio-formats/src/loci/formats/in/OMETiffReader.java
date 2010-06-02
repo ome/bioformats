@@ -554,13 +554,11 @@ public class OMETiffReader extends FormatReader {
           }
         }
 
-        core[s].littleEndian =
-          !meta.getPixelsBinDataBigEndian(i, 0).booleanValue();
-        boolean tiffLittleEndian = firstIFD.isLittleEndian();
-        if (core[s].littleEndian != tiffLittleEndian) {
-          LOGGER.warn("BigEndian mismatch: OME={}, TIFF={}",
-            !core[s].littleEndian, !tiffLittleEndian);
+        if (meta.getPixelsBinDataCount(i) > 1) {
+          LOGGER.warn("OME-TIFF Pixels element contains BinData elements! " +
+                      "Ignoring.");
         }
+        core[s].littleEndian = firstIFD.isLittleEndian();
         core[s].interleaved = false;
         core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
           firstIFD.getIFDValue(IFD.COLOR_MAP) != null;

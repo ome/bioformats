@@ -98,6 +98,19 @@ public class AggregateMetadata implements IMetadata {
 
   // - Entity counting -
 
+  /* @see MetadataRetrieve#getPixelsBinDataCount(int) */
+  public int getPixelsBinDataCount(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getPixelsBinDataCount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
   /* @see MetadataRetrieve#getBooleanAnnotationCount() */
   public int getBooleanAnnotationCount() {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {

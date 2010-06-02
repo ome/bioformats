@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-01 11:06:50.718672
+ * Created by callan via xsd-fu on 2010-06-02 14:15:07.135315
  *
  *-----------------------------------------------------------------------------
  */
@@ -96,7 +96,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return model.resolveReferences();
 	}
 
-	// -- Entity counting --
+	// -- Entity counting (manual definitions) --
+
+	public int getPixelsBinDataCount(int imageIndex)
+	{
+		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
+	}
+
+	// -- Entity counting (code generated definitions) --
 
 	// AnnotationRef entity counting
 	public int getROIAnnotationRefCount(int ROIIndex)
@@ -1607,7 +1614,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 

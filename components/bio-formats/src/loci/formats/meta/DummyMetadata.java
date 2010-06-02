@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.meta;
 
+import java.util.Iterator;
+
 import ome.xml.r201004.Image;
 import ome.xml.r201004.OME;
 import ome.xml.r201004.Pixels;
@@ -56,6 +58,11 @@ public class DummyMetadata implements IMetadata {
   // -- MetadataRetrieve API methods --
 
   // - Entity counting -
+
+  /* @see MetadataRetrieve#getPixelsBinDataCount(int) */
+  public int getPixelsBinDataCount(int imageIndex) {
+    return -1;
+  }
 
   /* @see MetadataRetrieve#getBooleanAnnotationCount() */
   public int getBooleanAnnotationCount() {

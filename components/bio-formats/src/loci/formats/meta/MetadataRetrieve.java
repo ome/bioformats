@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-01 11:44:50.965032
+ * Created by callan via xsd-fu on 2010-06-02 14:15:02.248588
  *
  *-----------------------------------------------------------------------------
  */
@@ -72,7 +72,11 @@ import ome.xml.r201004.primitives.*;
  */
 public interface MetadataRetrieve {
 
-	// -- Entity counting --
+	// -- Entity counting (manual definitions) --
+
+	int getPixelsBinDataCount(int imageIndex);
+
+	// -- Entity counting (code generated definitions) --
 
 	// AnnotationRef entity counting
 	int getROIAnnotationRefCount(int ROIIndex);
