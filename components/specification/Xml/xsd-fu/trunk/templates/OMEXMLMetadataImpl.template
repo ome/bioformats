@@ -310,7 +310,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return model.resolveReferences();
 	}
 
-	// -- Entity counting --
+	// -- Entity counting (manual definitions) --
+
+	public int getPixelsBinDataCount(int imageIndex)
+	{
+		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
+	}
+
+	// -- Entity counting (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\

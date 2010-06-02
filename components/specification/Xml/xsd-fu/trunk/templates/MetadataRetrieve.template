@@ -117,7 +117,11 @@ import ome.xml.r201004.primitives.*;
  */
 public interface MetadataRetrieve {
 
-	// -- Entity counting --
+	// -- Entity counting (manual definitions) --
+
+	int getPixelsBinDataCount(int imageIndex);
+
+	// -- Entity counting (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
