@@ -1885,6 +1885,7 @@
         <folder path="../../../Java/xslt/"/>
         <folder path="../../Documentation/Samples/"/>
         <folder path="../Validator/Backend/samples/"/>
+        <folder path="../xsd-fu/trunk/"/>
         <folder path="../../Xslt/"/>
         <file name="BinaryFile.xsd"/>
         <file name="ome.xsd"/>
