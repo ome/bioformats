@@ -65,15 +65,6 @@ public class ChannelFiller extends ReaderWrapper {
     return reader.getSizeC() * getLookupTableComponentCount();
   }
 
-  /* @see IFormatReader#getImageCount() */
-/*
-  @Override
-  public int getImageCount() {
-    if (passthrough()) return reader.getImageCount();
-    return reader.getImageCount() * getLookupTableComponentCount();
-  }
-*/
-
   /* @see IFormatReader#isRGB() */
   @Override
   public boolean isRGB() {
