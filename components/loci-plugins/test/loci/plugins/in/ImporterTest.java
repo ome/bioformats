@@ -511,7 +511,8 @@ public class ImporterTest {
   
   private void datasetSwapDimsTest(int pixType, int x, int y, int z, int t)
   {
-    int c = 3; ChannelOrder origOrder = ChannelOrder.ZCT, swappedOrder = ChannelOrder.TCZ;
+    int c = 3;
+    ChannelOrder swappedOrder = ChannelOrder.TCZ; // original order is ZCT
     String path = constructFakeFilename("swapDims", pixType, x, y, z, c, t, -1, false, -1, false);
     ImagePlus[] imps = null;
     try {
@@ -538,16 +539,27 @@ public class ImporterTest {
     int numSlices = st.getSize();
     assertEquals(z*c*t,numSlices);
 
-    // make sure the dimensions were swapped correctly
+    // verify that the dimensional extents were swapped
+    final int actualSizeZ = imp.getNSlices();
+    final int actualSizeC = imp.getNChannels();
+    final int actualSizeT = imp.getNFrames();
+    assertEquals(t, actualSizeZ); // Z<->T swapped
+    assertEquals(c, actualSizeC);
+    assertEquals(z, actualSizeT); // Z<->T swapped
+
+    // verify that every plane appears in the swapped order
     int p = 1;
-    for (int zIndex = 0; zIndex < z; zIndex++)
+    for (int tIndex = 0; tIndex < actualSizeT; tIndex++)
       for (int cIndex = 0; cIndex < c; cIndex++)
-        for (int tIndex = 0; tIndex < t; tIndex++)
+        for (int zIndex = 0; zIndex < actualSizeZ; zIndex++)
         {
           ImageProcessor proc = st.getProcessor(p++);
-          assertEquals(tIndex,zIndex(proc)); // Z<->T swapped
-          assertEquals(cIndex,cIndex(proc));
-          assertEquals(zIndex,tIndex(proc)); // Z<->T swapped
+          final int actualZ = tIndex(proc); // Z<->T swapped
+          final int actualC = cIndex(proc);
+          final int actualT = zIndex(proc); // Z<->T swapped
+          assertEquals(zIndex, actualZ);
+          assertEquals(cIndex, actualC);
+          assertEquals(tIndex, actualT);
         }
   }
 
