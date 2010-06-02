@@ -71,7 +71,7 @@ class Test200809(XsltBasic):
 
     STYLESHEET = "../../../Xslt/2008-09.xsl"
     
-    DOCUMENT = "tmp/sample-2008-09.ome"
+    DOCUMENT = "../../Working/test-ome-samples/sample-2008-09.ome"
     
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 

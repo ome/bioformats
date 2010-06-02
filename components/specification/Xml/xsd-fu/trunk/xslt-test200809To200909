@@ -72,9 +72,10 @@ class Test200809(XsltBasic):
     STYLESHEET = "../../../Xslt/2008-09-to-2009-09.xsl"
     
     OLD_VALIDATION = "../../../Schemas/OME/2008-09/ome.xsd"
-    NEW_VALIDATION = "../../../Xml/Working/ome.xsd"
+    NEW_VALIDATION = "../../../Schemas/OME/2009-09/ome.xsd"
+#    NEW_VALIDATION = "../../../Xml/Working/ome.xsd"
 
-    DOCUMENT = "tmp/sample-2008-09.ome"
+    DOCUMENT = "../../Working/test-ome-samples/sample-2008-09.ome"
     
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 
@@ -95,6 +96,10 @@ class Test200809(XsltBasic):
     def tearDown(self):
         self.xslt_file.close()
         self.instance_file.close()
+
+#    def test_dummy(self):
+#        print self.result
+
 
     def test_objective_settings(self):
         """
@@ -158,7 +163,6 @@ class Test200809(XsltBasic):
         Change OME:Description to be a local simple type in each
         element it is used called Description based on xsd:string
         """
-        print self.result
         # find old OME:Description
         xpath = './/{%s}Description' % self.OLD_OME_NS
         reference_count_all = len(self.old_root.findall(xpath))
@@ -285,18 +289,17 @@ class Test200809(XsltBasic):
         """
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ["Experiment"]);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ["Experiment"]);
-        
-        
+
         for i, newElement in enumerate(newElements):
             id = newElement.get('ID');
             elementWithRefs = self.findElementByID(self.old_root,self.OLD_OME_NS,'Experiment',id);
             oldElementWithoutMBRef = self.replaceRefsWithElements(self.old_root, self.OLD_OME_NS, elementWithRefs, ["MicrobeamManipulation"]);
             oldElementsWithoutROIRef = self.replaceRefsWithElementsRecurse(self.old_root, self.OLD_OME_NS, oldElementWithoutMBRef, ["ROI"]);
             oldElementWithoutChannel = self.moveElementsFromChildToParent(oldElementsWithoutROIRef, self.OLD_OME_NS, "Channels");
-            print 'DUMP(oldElementWithoutChannel)';
-            dump(oldElementWithoutChannel);
-            print 'DUMP(newElement)';
-            dump(newElement);
+#            print 'DUMP(oldElementWithoutChannel)';
+#            dump(oldElementWithoutChannel);
+#            print 'DUMP(newElement)';
+#            dump(newElement);
             self.compareGraphs(oldElementWithoutChannel, newElement, ['{http://www.w3.org/XML/1998/namespace}lang', 'ID'], {'theZ':'TheZ', 'theT':'TheT','theC':'TheC'}, {"LogicalChannelRef":"ChannelRef"});
                 
                 
@@ -309,9 +312,9 @@ class Test200809(XsltBasic):
         toElements = self.getAllElements(self.new_root, self.NEW_OME_NS,
                                          ['Detector'])
         self.assertEqual(len(fromElements), len(toElements))
-        print "Element count: %d" % len(toElements)
-        for element in toElements:
-            print dump(element)
+#        print "Element count: %d" % len(toElements)
+#        for element in toElements:
+#            print dump(element)
 
     """
     Follow a collection of tests for transformation related to ROI elements.
@@ -319,7 +322,7 @@ class Test200809(XsltBasic):
  
     def test_shape_transformation(self):
         """
-        Checks that the Detector types have been correctly transformed.
+        Checks that the shape types have been correctly transformed.
         """
 
     def test_validate_input(self):

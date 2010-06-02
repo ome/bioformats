@@ -236,7 +236,7 @@ class XsltBasic(unittest.TestCase):
     def compareAttributes(self, oldElement, newElement, exceptionList=None, renameMap=None):
         for key in oldElement.attrib.keys():
             if(exceptionList != None):
-                print key
+#                print key
                 if(key in exceptionList):
                     continue;
             mappedKey = key;
@@ -246,13 +246,13 @@ class XsltBasic(unittest.TestCase):
             newValue = newElement.get(mappedKey);
             oldValue = oldElement.get(key);
             if(oldValue != newValue):
-                print 'FAILURE'
+                print 'FAILURE in xsltbasic.compareAttributes'
                 print 'EXCEPTIONLIST %s' % exceptionList
                 print 'oldElement.tag %s' % oldElement.tag
                 print 'newElement.tag %s' % newElement.tag
-                print key
-                print oldValue
-                print newValue
+                print 'key %s' % key
+                print 'old %s' % oldValue
+                print 'new %s' % newValue
                 print 'END FAILURE'
             self.assertEquals(newValue, oldValue);    
 
@@ -291,7 +291,7 @@ class XsltBasic(unittest.TestCase):
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
     def compareGraphs(self, left, right, ignoreAttributes = None, renameAttributes = None, renameElements=None):
-        print 'IGNOREATTRIBUTES %s' % ignoreAttributes
+#        print 'IGNOREATTRIBUTES %s' % ignoreAttributes
         leftChildren = left.getchildren();
         rightChildren = right.getchildren();
         self.assertEqual(len(leftChildren), len(rightChildren));
@@ -366,7 +366,7 @@ class XsltBasic(unittest.TestCase):
             return;
         for i, child in enumerate(children):
             elementName = self.elementRefName(self.localName(child.tag))
-            print elementName
+#            print elementName
             if(self.isRef(child) and elementName in RefList):
                 elementFromRef = self.findElementByID(root, NS, elementName, child.get('ID'));
                 newElement.append(deepcopy(elementFromRef));

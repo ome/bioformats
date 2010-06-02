@@ -73,7 +73,7 @@ class Test2003FCto200809(XsltBasic):
     OLD_VALIDATION = "../../../Xml/Release/2003-FC/V2/ome.xsd"
     NEW_VALIDATION = "../../../Schemas/OME/2008-09/ome.xsd"
     
-    DOCUMENT = "tmp/sample-2003-FC.ome"
+    DOCUMENT = "../../Working/test-ome-samples/sample-2003-FC.ome"
     
     OLD_OME_NS = "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
     

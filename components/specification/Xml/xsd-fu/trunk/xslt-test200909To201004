@@ -67,29 +67,26 @@ def run_stylesheet(xslt, document):
     return transform(document)
 
 
-class Test2003FCto200809to200909(XsltBasic):
-    STYLESHEET = "../../../Xslt/2003-FC-to-2008-09.xsl"
-    STYLESHEET2 = "../../../Xslt/2008-09-to-2009-09.xsl"
+class Test200909to201004(XsltBasic):
+    STYLESHEET = "../../../Xslt/2009-09-to-2010-04.xsl"
 
-    OLD_VALIDATION = "../../../Xml/Release/2003-FC/V2/ome.xsd"
-    NEW_VALIDATION = "../../../Schemas/OME/2009-09/ome.xsd"
-    
-    DOCUMENT = "../../Working/test-ome-samples/sample-2003-FC.ome"
-    
-    OLD_OME_NS = "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
-    
-    NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
+    OLD_VALIDATION = "../../../Schemas/OME/2009-09/ome.xsd"
+    NEW_VALIDATION = "../../../Schemas/OME/2010-04/ome.xsd"
 
-    NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2008-09"
-    
+    DOCUMENT = "../../Working/test-ome-samples/sample-2009-09.ome"
 
- 
+    OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
+
+    NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2010-04"
+
+    NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2010-04"
+
+
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
-        self.xslt_file2 = open(self.STYLESHEET2)
         self.instance_file = open(self.DOCUMENT)
         self.instance_document = parse(self.instance_file)
-        self.result = run_stylesheet(self.xslt_file2,run_stylesheet(self.xslt_file, self.instance_document))
+        self.result = run_stylesheet(self.xslt_file, self.instance_document)
         self.old_root = self.instance_document.getroot()
         self.new_root = self.result.getroot()
 
@@ -169,7 +166,7 @@ if __name__ == '__main__':
     for option, argument in options:
         pass
 
-    xslt_filename = "2008-09.xsl"
+    xslt_filename = "2010-04.xsl"
     xslt = open(xslt_filename)
     in_filename = "tmp/sample-lsm-nobindata.ome"
     in_file = open(in_filename)
