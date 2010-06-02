@@ -72,7 +72,7 @@ public class TextReader extends FormatReader {
    * in general, we cheat and store the entire file's data in a giant array.
    */
   private float[][] data;
-  
+
   /** Current row number. */
   private int row;
 
@@ -116,8 +116,23 @@ public class TextReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.assertId(currentId, true, 1);
-    return DataTools.floatsToBytes(data[no], LITTLE_ENDIAN);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    // copy floating point data into byte buffer
+    final float[] plane = data[no];
+    int q = 0;
+    for (int j=0; j<h; j++) {
+      final int yy = y + j;
+      for (int i=x; i<w; i++) {
+        final int xx = x + i;
+        final int index = yy * sizeX + xx;
+        final int bits = Float.floatToIntBits(plane[index]);
+        DataTools.unpackBytes(bits, buf, q, 4, LITTLE_ENDIAN);
+        q += 4;
+      }
+    }
+
+    return buf;
   }
 
   /* @see IFormatReader#openPlane(int, int, int, int, int int) */
@@ -155,7 +170,7 @@ public class TextReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    
+
     // read file into memory
     LOGGER.info("Reading file");
     List<String> lines = readFile(id);
