@@ -36,7 +36,7 @@ package ome.xml.utests;
 
 import static org.testng.AssertJUnit.*;
 
-import ome.xml.r201004.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.NonNegativeInteger;
 
 import org.testng.annotations.Test;
 
