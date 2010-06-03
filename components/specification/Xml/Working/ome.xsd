@@ -545,11 +545,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="4294967295">
+			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="-2147483648">
 				<xsd:annotation>
 					<xsd:documentation>
 						A color used render this channel - encoded as RGBA
-						The default value "4294967295" is #FFFFFFFF so solid white 
+						The default value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
