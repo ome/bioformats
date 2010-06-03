@@ -1939,6 +1939,7 @@ public class ImporterTest {
       options.setCrop(true);
       options.setCropRegion(0, new Region(cropOriginX,cropOriginY,cropSizeX,cropSizeY));
       options.setTStep(0, stepBy);
+      options.setTBegin(0, 1);
       options.setSplitFocalPlanes(true);
       imps = BF.openImagePlus(options);
     }
@@ -1951,20 +1952,19 @@ public class ImporterTest {
 
     impsCountTest(imps,sizeT);  // we split on Z but that dim was swapped with T
 
-    for (int zIndex = 0; zIndex < sizeT; zIndex++)
+    for (int zIndex = 0; zIndex < sizeT; zIndex++)  // sizeT = Z
     {
-    
       ImagePlus imp = imps[zIndex];
       
-      int numC = numInSeries(0,sizeC-1,stepBy);
+      int numC = numInSeries(1,sizeC-1,stepBy);
 
-      xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,numC); // all dims swapped
+      xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,numC); // all dims changed
   
       ImageStack st = imp.getStack();
       assertEquals(sizeZ*numC,st.getSize());  // sizeZ = C, numC = T
       
       int p = 1;
-      for (int tIndex = 0; tIndex < sizeC; tIndex += stepBy)
+      for (int tIndex = 1; tIndex < sizeC; tIndex += stepBy)
         for (int cIndex = 0; cIndex < sizeZ; cIndex++)
         {
           ImageProcessor proc = st.getProcessor(p++);
