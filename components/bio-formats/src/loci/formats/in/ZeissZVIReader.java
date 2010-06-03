@@ -50,7 +50,7 @@ import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.

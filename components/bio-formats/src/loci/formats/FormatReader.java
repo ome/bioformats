@@ -44,59 +44,59 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.r201004.enums.AcquisitionMode;
-import ome.xml.r201004.enums.ArcType;
-import ome.xml.r201004.enums.Binning;
-import ome.xml.r201004.enums.Compression;
-import ome.xml.r201004.enums.ContrastMethod;
-import ome.xml.r201004.enums.Correction;
-import ome.xml.r201004.enums.DetectorType;
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.ExperimentType;
-import ome.xml.r201004.enums.FilamentType;
-import ome.xml.r201004.enums.FillRule;
-import ome.xml.r201004.enums.FilterType;
-import ome.xml.r201004.enums.FontFamily;
-import ome.xml.r201004.enums.FontStyle;
-import ome.xml.r201004.enums.IlluminationType;
-import ome.xml.r201004.enums.Immersion;
-import ome.xml.r201004.enums.LaserMedium;
-import ome.xml.r201004.enums.LaserType;
-import ome.xml.r201004.enums.LineCap;
-import ome.xml.r201004.enums.Marker;
-import ome.xml.r201004.enums.Medium;
-import ome.xml.r201004.enums.MicrobeamManipulationType;
-import ome.xml.r201004.enums.MicroscopeType;
-import ome.xml.r201004.enums.NamingConvention;
-import ome.xml.r201004.enums.PixelType;
-import ome.xml.r201004.enums.Pulse;
-import ome.xml.r201004.enums.handlers.AcquisitionModeEnumHandler;
-import ome.xml.r201004.enums.handlers.ArcTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.BinningEnumHandler;
-import ome.xml.r201004.enums.handlers.CompressionEnumHandler;
-import ome.xml.r201004.enums.handlers.ContrastMethodEnumHandler;
-import ome.xml.r201004.enums.handlers.CorrectionEnumHandler;
-import ome.xml.r201004.enums.handlers.DetectorTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.DimensionOrderEnumHandler;
-import ome.xml.r201004.enums.handlers.ExperimentTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.FilamentTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.FillRuleEnumHandler;
-import ome.xml.r201004.enums.handlers.FilterTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.FontFamilyEnumHandler;
-import ome.xml.r201004.enums.handlers.FontStyleEnumHandler;
-import ome.xml.r201004.enums.handlers.IlluminationTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.ImmersionEnumHandler;
-import ome.xml.r201004.enums.handlers.LaserMediumEnumHandler;
-import ome.xml.r201004.enums.handlers.LaserTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.LineCapEnumHandler;
-import ome.xml.r201004.enums.handlers.MarkerEnumHandler;
-import ome.xml.r201004.enums.handlers.MediumEnumHandler;
-import ome.xml.r201004.enums.handlers.MicrobeamManipulationTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.MicroscopeTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.NamingConventionEnumHandler;
-import ome.xml.r201004.enums.handlers.PixelTypeEnumHandler;
-import ome.xml.r201004.enums.handlers.PulseEnumHandler;
+import ome.xml.model.enums.AcquisitionMode;
+import ome.xml.model.enums.ArcType;
+import ome.xml.model.enums.Binning;
+import ome.xml.model.enums.Compression;
+import ome.xml.model.enums.ContrastMethod;
+import ome.xml.model.enums.Correction;
+import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.ExperimentType;
+import ome.xml.model.enums.FilamentType;
+import ome.xml.model.enums.FillRule;
+import ome.xml.model.enums.FilterType;
+import ome.xml.model.enums.FontFamily;
+import ome.xml.model.enums.FontStyle;
+import ome.xml.model.enums.IlluminationType;
+import ome.xml.model.enums.Immersion;
+import ome.xml.model.enums.LaserMedium;
+import ome.xml.model.enums.LaserType;
+import ome.xml.model.enums.LineCap;
+import ome.xml.model.enums.Marker;
+import ome.xml.model.enums.Medium;
+import ome.xml.model.enums.MicrobeamManipulationType;
+import ome.xml.model.enums.MicroscopeType;
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.enums.Pulse;
+import ome.xml.model.enums.handlers.AcquisitionModeEnumHandler;
+import ome.xml.model.enums.handlers.ArcTypeEnumHandler;
+import ome.xml.model.enums.handlers.BinningEnumHandler;
+import ome.xml.model.enums.handlers.CompressionEnumHandler;
+import ome.xml.model.enums.handlers.ContrastMethodEnumHandler;
+import ome.xml.model.enums.handlers.CorrectionEnumHandler;
+import ome.xml.model.enums.handlers.DetectorTypeEnumHandler;
+import ome.xml.model.enums.handlers.DimensionOrderEnumHandler;
+import ome.xml.model.enums.handlers.ExperimentTypeEnumHandler;
+import ome.xml.model.enums.handlers.FilamentTypeEnumHandler;
+import ome.xml.model.enums.handlers.FillRuleEnumHandler;
+import ome.xml.model.enums.handlers.FilterTypeEnumHandler;
+import ome.xml.model.enums.handlers.FontFamilyEnumHandler;
+import ome.xml.model.enums.handlers.FontStyleEnumHandler;
+import ome.xml.model.enums.handlers.IlluminationTypeEnumHandler;
+import ome.xml.model.enums.handlers.ImmersionEnumHandler;
+import ome.xml.model.enums.handlers.LaserMediumEnumHandler;
+import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
+import ome.xml.model.enums.handlers.LineCapEnumHandler;
+import ome.xml.model.enums.handlers.MarkerEnumHandler;
+import ome.xml.model.enums.handlers.MediumEnumHandler;
+import ome.xml.model.enums.handlers.MicrobeamManipulationTypeEnumHandler;
+import ome.xml.model.enums.handlers.MicroscopeTypeEnumHandler;
+import ome.xml.model.enums.handlers.NamingConventionEnumHandler;
+import ome.xml.model.enums.handlers.PixelTypeEnumHandler;
+import ome.xml.model.enums.handlers.PulseEnumHandler;
 
 /**
  * Abstract superclass of all biological file format readers.
@@ -1074,10 +1074,10 @@ public abstract class FormatReader extends FormatHandler
   // -- Metadata enumeration convenience methods --
 
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.AcquisitionMode} enumeration
+   * Retrieves an {@link ome.xml.model.enums.AcquisitionMode} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected AcquisitionMode getAcquisitionMode(String value)
@@ -1093,10 +1093,10 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.ArcType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.ArcType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected ArcType getArcType(String value) throws FormatException {
@@ -1110,10 +1110,10 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Binning} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Binning} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Binning getBinning(String value) throws FormatException {
@@ -1126,10 +1126,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Compression} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Compression} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Compression getCompression(String value) throws FormatException {
@@ -1142,10 +1142,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.ContrastMethod} enumeration
+   * Retrieves an {@link ome.xml.model.enums.ContrastMethod} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected ContrastMethod getContrastMethod(String value)
@@ -1160,10 +1160,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Correction} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Correction} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Correction getCorrection(String value) throws FormatException {
@@ -1176,10 +1176,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.DetectorType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.DetectorType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected DetectorType getDetectorType(String value) throws FormatException {
@@ -1192,10 +1192,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.DimensionOrder} enumeration
+   * Retrieves an {@link ome.xml.model.enums.DimensionOrder} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected DimensionOrder getDimensionOrder(String value)
@@ -1210,10 +1210,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.ExperimentType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.ExperimentType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected ExperimentType getExperimentType(String value)
@@ -1228,10 +1228,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.FilamentType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.FilamentType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected FilamentType getFilamentType(String value) throws FormatException {
@@ -1244,10 +1244,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.FillRule} enumeration
+   * Retrieves an {@link ome.xml.model.enums.FillRule} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected FillRule getFillRule(String value) throws FormatException {
@@ -1260,10 +1260,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.FilterType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.FilterType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected FilterType getFilterType(String value) throws FormatException {
@@ -1276,10 +1276,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.FontFamily} enumeration
+   * Retrieves an {@link ome.xml.model.enums.FontFamily} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected FontFamily getFontFamily(String value) throws FormatException {
@@ -1292,10 +1292,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.FontStyle} enumeration
+   * Retrieves an {@link ome.xml.model.enums.FontStyle} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected FontStyle getFontStyle(String value) throws FormatException {
@@ -1308,10 +1308,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.IlluminationType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.IlluminationType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected IlluminationType getIlluminationType(String value)
@@ -1326,10 +1326,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Immersion} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Immersion} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Immersion getImmersion(String value) throws FormatException {
@@ -1342,10 +1342,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.LaserMedium} enumeration
+   * Retrieves an {@link ome.xml.model.enums.LaserMedium} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected LaserMedium getLaserMedium(String value) throws FormatException {
@@ -1358,10 +1358,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.LaserType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.LaserType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected LaserType getLaserType(String value) throws FormatException {
@@ -1374,10 +1374,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.LineCap} enumeration
+   * Retrieves an {@link ome.xml.model.enums.LineCap} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected LineCap getLineCap(String value) throws FormatException {
@@ -1390,10 +1390,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Marker} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Marker} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Marker getMarker(String value) throws FormatException {
@@ -1406,10 +1406,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Medium} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Medium} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Medium getMedium(String value) throws FormatException {
@@ -1422,10 +1422,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.MicrobeamManipulationType}
+   * Retrieves an {@link ome.xml.model.enums.MicrobeamManipulationType}
    * enumeration value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected MicrobeamManipulationType getMicrobeamManipulationType(String value)
@@ -1441,10 +1441,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.MicroscopeType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.MicroscopeType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected MicroscopeType getMicroscopeType(String value)
@@ -1459,10 +1459,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.NamingConvention} enumeration
+   * Retrieves an {@link ome.xml.model.enums.NamingConvention} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected NamingConvention getNamingConvention(String value)
@@ -1477,10 +1477,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.PixelType} enumeration
+   * Retrieves an {@link ome.xml.model.enums.PixelType} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected PixelType getPixelType(String value) throws FormatException {
@@ -1493,10 +1493,10 @@ public abstract class FormatReader extends FormatHandler
     }
   }
   /**
-   * Retrieves an {@link ome.xml.r201004.enums.Pulse} enumeration
+   * Retrieves an {@link ome.xml.model.enums.Pulse} enumeration
    * value for the given String.
    *
-   * @throws ome.xml.r201004.enums.EnumerationException if an appropriate
+   * @throws ome.xml.model.enums.EnumerationException if an appropriate
    *  enumeration value is not found.
    */
   protected Pulse getPulse(String value) throws FormatException {

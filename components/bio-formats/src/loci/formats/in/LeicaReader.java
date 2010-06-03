@@ -47,7 +47,7 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

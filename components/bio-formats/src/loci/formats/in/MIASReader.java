@@ -48,7 +48,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.NonNegativeInteger;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -680,11 +680,11 @@ public class MIASReader extends FormatReader {
       store.setWellColumn(new NonNegativeInteger(wellCol - 1), 0, well);
 
       String imageID = MetadataTools.createLSID("Image", well);
-      store.setWellSampleImageRef(imageID, 0, well, 0);
       store.setWellSampleIndex(new NonNegativeInteger(well), 0, well, 0);
 
       store.setImageID(imageID, well);
       store.setImageName("Well " + wellRow + wellCol, well);
+      store.setWellSampleImageRef(imageID, 0, well, 0);
 
       MetadataTools.setDefaultCreationDate(store, id, well);
     }

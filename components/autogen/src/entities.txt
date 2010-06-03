@@ -1001,6 +1001,7 @@ type = Double
 type = PixelType
 
 [PixelsBinData]
+countable = true
 path = Image+/Pixels/BinData+
 
 [PixelsBinData BigEndian]
@@ -1515,6 +1516,9 @@ countable = false
 path = Image+/TiffData+/UUID
 
 [UUID FileName]
+type = String
+
+[UUID Value]
 type = String
 
 [Well]

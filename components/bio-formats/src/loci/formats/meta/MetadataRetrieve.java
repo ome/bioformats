@@ -32,15 +32,15 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-02 14:15:02.248588
+ * Created by melissa via xsd-fu on 2010-06-03 11:40:17.511048
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.meta;
 
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A proxy whose responsibility it is to extract biological image data from a

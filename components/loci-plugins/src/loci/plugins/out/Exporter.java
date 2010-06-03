@@ -57,6 +57,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
@@ -67,10 +68,10 @@ import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
 
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.PixelType;
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
@@ -277,6 +278,13 @@ public class Exporter {
       store.setPixelsSizeC(new PositiveInteger(channels*imp.getNChannels()), 0);
       store.setPixelsSizeT(new PositiveInteger(imp.getNFrames()), 0);
 
+      if (store.getImageID(0) == null) {
+        store.setImageID(MetadataTools.createLSID("Image", 0), 0);
+      }
+      if (store.getPixelsID(0) == null) {
+        store.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
+      }
+
       if (store.getPixelsType(0) == null) {
         try {
         store.setPixelsType(PixelType.fromString(
@@ -284,7 +292,9 @@ public class Exporter {
         }
         catch (EnumerationException e) { }
       }
-      if (store.getPixelsBinDataBigEndian(0, 0) == null) {
+      if (store.getPixelsBinDataCount(0) == 0 ||
+        store.getPixelsBinDataBigEndian(0, 0) == null)
+      {
         store.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
       }
       if (store.getPixelsDimensionOrder(0) == null) {
@@ -293,8 +303,16 @@ public class Exporter {
         }
         catch (EnumerationException e) { }
       }
-      if (store.getChannelSamplesPerPixel(0, 0) == null) {
+      if (store.getChannelCount(0) == 0 ||
+        store.getChannelSamplesPerPixel(0, 0) == null)
+      {
         store.setChannelSamplesPerPixel(new Integer(channels), 0, 0);
+      }
+      for (int channel=0; channel<store.getChannelCount(0); channel++) {
+        if (store.getChannelID(0, channel) == null) {
+          String lsid = MetadataTools.createLSID("Channel", 0, channel);
+          store.setChannelID(lsid, 0, channel);
+        }
       }
 
       Calibration cal = imp.getCalibration();

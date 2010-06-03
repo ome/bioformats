@@ -52,7 +52,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and

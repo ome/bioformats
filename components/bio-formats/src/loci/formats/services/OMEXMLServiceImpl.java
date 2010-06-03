@@ -41,11 +41,11 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.OMEXMLFactory;
-import ome.xml.r201004.OME;
-import ome.xml.r201004.OMEModel;
-import ome.xml.r201004.OMEModelImpl;
-import ome.xml.r201004.OMEModelObject;
-import ome.xml.r201004.StructuredAnnotations;
+import ome.xml.model.OME;
+import ome.xml.model.OMEModel;
+import ome.xml.model.OMEModelImpl;
+import ome.xml.model.OMEModelObject;
+import ome.xml.model.StructuredAnnotations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    * Default constructor.
    */
   public OMEXMLServiceImpl() {
-    checkClassDependency(ome.xml.r201004.OMEModelObject.class);
+    checkClassDependency(ome.xml.model.OMEModelObject.class);
   }
 
   /* (non-Javadoc)
@@ -201,7 +201,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    * ensure type safety of return values as instances of service dependency
    * classes should not leak out of the interface.
    * @param xml String of XML to create the root node from.
-   * @return An ome.xml.r201004.OMEModelObject subclass root node.
+   * @return An ome.xml.model.OMEModelObject subclass root node.
    * @throws IOException If there is an error reading from the string.
    * @throws SAXException If there is an error parsing the XML.
    * @throws ParserConfigurationException If there is an error preparing the

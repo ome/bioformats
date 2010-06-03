@@ -56,8 +56,8 @@ import loci.plugins.util.LociPrefs;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
 
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

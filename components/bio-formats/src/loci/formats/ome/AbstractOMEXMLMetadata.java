@@ -32,8 +32,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import ome.xml.DOMUtil;
-import ome.xml.r201004.OME;
-import ome.xml.r201004.OMEModelObject;
+import ome.xml.model.OME;
+import ome.xml.model.OMEModelObject;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

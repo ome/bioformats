@@ -37,7 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * DeltavisionReader is the file format reader for Deltavision files.

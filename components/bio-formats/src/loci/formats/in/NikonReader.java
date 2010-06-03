@@ -241,8 +241,18 @@ public class NikonReader extends BaseTiffReader {
       }
     }
 
-    return ImageTools.interpolate(pix, buf, colorMap, getSizeX(), getSizeY(),
+    byte[] b = new byte[FormatTools.getPlaneSize(this)];
+    ImageTools.interpolate(pix, b, colorMap, getSizeX(), getSizeY(),
       isLittleEndian());
+    int bpp = FormatTools.getBytesPerPixel(getPixelType()) * 3;
+    int rowLen = w * bpp;
+    int width = getSizeX() * bpp;
+    for (int row=0; row<h; row++) {
+      System.arraycopy(
+        b, (row + y) * width + x * bpp, buf, row * rowLen, rowLen);
+    }
+
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

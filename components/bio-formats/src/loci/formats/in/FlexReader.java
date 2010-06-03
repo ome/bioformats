@@ -46,8 +46,8 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.r201004.primitives.NonNegativeInteger;
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;

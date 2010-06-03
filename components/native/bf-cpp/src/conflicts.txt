@@ -50,5 +50,5 @@ loci.formats.enums.LineCap.LINE
 loci.formats.in.LiFlimReader.COMPRESSION_NONE
 loci.formats.out.TiffWriter.COMPRESSION_LZW
 loci.formats.out.TiffWriter.COMPRESSION_JPEG
-ome.xml.r201004.enums.Compression.NONE
-ome.xml.r201004.enums.LineCap.LINE
+ome.xml.model.enums.Compression.NONE
+ome.xml.model.enums.LineCap.LINE

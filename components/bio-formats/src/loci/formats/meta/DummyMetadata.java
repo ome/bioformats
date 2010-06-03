@@ -33,13 +33,13 @@ package loci.formats.meta;
 
 import java.util.Iterator;
 
-import ome.xml.r201004.Image;
-import ome.xml.r201004.OME;
-import ome.xml.r201004.Pixels;
-import ome.xml.r201004.TiffData;
-import ome.xml.r201004.UUID;
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.Image;
+import ome.xml.model.OME;
+import ome.xml.model.Pixels;
+import ome.xml.model.TiffData;
+import ome.xml.model.UUID;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A dummy implementation for {@link MetadataStore} and

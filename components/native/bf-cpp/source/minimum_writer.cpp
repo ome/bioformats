@@ -54,9 +54,9 @@ using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::IMetadata;
 #include "ome-xml.h"
-using jace::proxy::ome::xml::r201004::enums::DimensionOrder;
-using jace::proxy::ome::xml::r201004::enums::PixelType;
-using jace::proxy::ome::xml::r201004::primitives::PositiveInteger;
+using jace::proxy::ome::xml::model::enums::DimensionOrder;
+using jace::proxy::ome::xml::model::enums::PixelType;
+using jace::proxy::ome::xml::model::primitives::PositiveInteger;
 
 #include <iostream>
 using std::cout;

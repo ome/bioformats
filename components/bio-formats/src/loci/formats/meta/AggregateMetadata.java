@@ -36,8 +36,8 @@ import java.util.List;
 
 import loci.common.DataTools;
 
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A metadata store which delegates the actual storage to one or more <i>sub</i>

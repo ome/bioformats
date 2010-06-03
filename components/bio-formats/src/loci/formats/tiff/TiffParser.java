@@ -761,6 +761,7 @@ public class TiffParser {
       bytes.length});
 
     long imageWidth = ifd.getImageWidth();
+    long imageHeight = ifd.getImageLength();
 
     int bps0 = bitsPerSample[0];
     int numBytes = ifd.getBytesPerSample()[0];
@@ -793,7 +794,11 @@ public class TiffParser {
     if (photoInterp == PhotoInterp.CMYK) maxValue = Integer.MAX_VALUE;
 
     int skipBits = (int) (8 - ((imageWidth * bps0 * nChannels) % 8));
-    if (skipBits == 8) skipBits = 0;
+    if (skipBits == 8 ||
+      (bytes.length * 8 < bps0 * (nChannels * imageWidth + imageHeight)))
+    {
+      skipBits = 0;
+    }
 
     // set up YCbCr-specific values
     float lumaRed = PhotoInterp.LUMA_RED;
@@ -823,7 +828,7 @@ public class TiffParser {
 
       for (int channel=0; channel<nChannels; channel++) {
         int index = numBytes * (sample * nChannels + channel);
-        int outputIndex = channel * nSamples + ndx * numBytes;
+        int outputIndex = (channel * nSamples + ndx) * numBytes;
 
         // unpack non-YCbCr samples
         if (photoInterp != PhotoInterp.Y_CB_CR) {
@@ -837,10 +842,7 @@ public class TiffParser {
               photoInterp != PhotoInterp.RGB_PALETTE))
             {
               value = bb.getBits(bps0) & 0xffff;
-              //if (littleEndian && bps0 > 8) {
-              //  value = DataTools.swap(value) >> (64 - bps0);
-              //}
-              if ((ndx % imageWidth) == imageWidth - 1/* && bps0 < 8*/) {
+              if ((ndx % imageWidth) == imageWidth - 1) {
                 bb.skipBits(skipBits);
               }
             }

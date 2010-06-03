@@ -32,21 +32,21 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-02 14:15:07.135315
+ * Created by melissa via xsd-fu on 2010-06-03 11:40:18.758353
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import ome.xml.r201004.*;
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
  * DOMs for the 2010-04 version of OME-XML. It requires the
- * ome.xml.r201004 package to compile (part of ome-xml.jar).
+ * ome.xml.model package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200809Metadata.java">Trac</a>,
@@ -1614,7 +1614,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
+	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
