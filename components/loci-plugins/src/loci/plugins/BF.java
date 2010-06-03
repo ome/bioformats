@@ -54,17 +54,17 @@ public final class BF {
   public static void debug(String msg) {
     if (IJ.debugMode) IJ.log("LOCI: " + msg);
   }
-  
+
   public static void status(boolean quiet, String msg) {
     if (quiet) return;
     IJ.showStatus(msg);
   }
-  
+
   public static void warn(boolean quiet, String msg) {
     if (quiet) return;
     IJ.log("Warning: " + msg);
   }
-  
+
   public static void progress(boolean quiet, int value, int max) {
     if (quiet) return;
     IJ.showProgress(value, max);
@@ -81,10 +81,25 @@ public final class BF {
   public static ImagePlus[] openImagePlus(ImporterOptions options)
     throws FormatException, IOException
   {
-    options.setQuiet(true);//TEMP
-    options.setWindowless(true);//TEMP
+    // TODO: Eliminate use of the ImporterPrompter. While no dialogs should
+    // appear due to the quiet and windowless flags, it would be cleaner to
+    // avoid piping everything through invisible GenericDialogs internally.
+    //
+    // However, we need to be sure all the Dialog classes are not performing
+    // any "side-effect" logic on the ImportProcess and/or ImporterOptions
+    // before we can make this change.
+    //
+    // Another downside might be that we could miss out on any other magic that
+    // ImageJ is performing (e.g., macro-related functionality), but further
+    // testing is warranted.
+
+    options.setQuiet(true); // NB: Only needed due to ImporterPrompter.
+    options.setWindowless(true); // NB: Only needed due to ImporterPrompter.
+
     ImportProcess process = new ImportProcess(options);
-    new ImporterPrompter(process);//TEMP
+
+    new ImporterPrompter(process); // NB: Could eliminate this (see above).
+
     if (!process.execute()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
     return reader.openImagePlus();
