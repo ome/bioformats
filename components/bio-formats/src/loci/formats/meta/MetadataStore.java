@@ -32,15 +32,15 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-05-28 12:36:56.007582
+ * Created by melissa via xsd-fu on 2010-06-03 10:29:37.250861
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.meta;
 
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
@@ -441,18 +441,6 @@ public interface MetadataStore
 
 	//
 	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// EmissionFilterRef property storage
-	//
-	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	//
-	// ExcitationFilterRef property storage
 	//
 	// {u'LightPath': {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}, u'FilterSet': {u'Instrument': {u'OME': None}}}
 	// Is multi path? True

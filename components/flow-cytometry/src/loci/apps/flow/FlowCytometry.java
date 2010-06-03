@@ -74,8 +74,8 @@ import loci.formats.MetadataTools;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 import visad.DataReferenceImpl;
 import visad.Display;

@@ -90,9 +90,9 @@ import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 import ome.xml.DOMUtil;
 import ome.xml.OMEXMLNode;
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.openmicroscopy.xml.AttributeNode;
 import org.openmicroscopy.xml.CustomAttributesNode;

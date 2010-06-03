@@ -176,12 +176,13 @@ public class TiffParserTest {
     tiffParser.getFirstIFD().getRowsPerStrip();
   }
 
-  @Test(expectedExceptions={ FormatException.class })
+  @Test
   public void testBitsPerSampleMismatch() throws IOException, FormatException {
     mock = new BitsPerSampleSamplesPerPixelMismatchMock();
     tiffParser = mock.getTiffParser();
     assertTrue(tiffParser.checkHeader());
-    tiffParser.getFirstIFD().getBitsPerSample();
+    int[] samples = tiffParser.getFirstIFD().getBitsPerSample();
+    assertEquals(samples.length, mock.getSamplesPerPixel());
   }
 
   // TODO: Test wrong type exceptions

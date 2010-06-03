@@ -67,10 +67,10 @@ import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
 
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.PixelType;
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
@@ -284,7 +284,9 @@ public class Exporter {
         }
         catch (EnumerationException e) { }
       }
-      if (store.getPixelsBinDataBigEndian(0, 0) == null) {
+      if (store.getPixelsBinDataCount(0) == 0 ||
+        store.getPixelsBinDataBigEndian(0, 0) == null)
+      {
         store.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
       }
       if (store.getPixelsDimensionOrder(0) == null) {

@@ -47,7 +47,7 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Reader is the file format reader for Metamorph STK files.

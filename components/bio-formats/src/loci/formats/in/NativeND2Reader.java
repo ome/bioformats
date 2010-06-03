@@ -44,7 +44,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;

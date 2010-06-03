@@ -32,16 +32,16 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-01 11:06:50.718672
+ * Created by melissa via xsd-fu on 2010-06-03 10:29:39.713258
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.ome;
 
-import ome.xml.r201004.*;
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
@@ -96,7 +96,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return model.resolveReferences();
 	}
 
-	// -- Entity counting --
+	// -- Entity counting (manual definitions) --
+
+	public int getPixelsBinDataCount(int imageIndex)
+	{
+		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
+	}
+
+	// -- Entity counting (code generated definitions) --
 
 	// AnnotationRef entity counting
 	public int getROIAnnotationRefCount(int ROIIndex)

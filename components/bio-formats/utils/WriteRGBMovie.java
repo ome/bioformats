@@ -7,10 +7,10 @@ import loci.formats.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.r201004.enums.DimensionOrder;
-import ome.xml.r201004.enums.EnumerationException;
-import ome.xml.r201004.enums.PixelType;
-import ome.xml.r201004.primitives.PositiveInteger;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Demonstrates writing multiple RGB image planes to a movie.

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on May 10, 2010 9:27:03 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 3, 2010 10:53:27 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -34,10 +34,8 @@ package loci.formats.meta;
 import java.util.Iterator;
 import java.util.List;
 
-import loci.common.DataTools;
-
-import ome.xml.r201004.enums.*;
-import ome.xml.r201004.primitives.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * A metadata store which delegates the actual storage to one or more <i>sub</i>
@@ -547,6 +545,19 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         int result = retrieve.getPixelsAnnotationRefCount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  /* @see MetadataRetrieve#getPixelsBinDataCount(int) */
+  public int getPixelsBinDataCount(int imageIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getPixelsBinDataCount(imageIndex);
         if (result >= 0) return result;
       }
     }
@@ -6429,18 +6440,6 @@ public class AggregateMetadata implements IMetadata {
 
   // - UUID property retrieval -
 
-  public String getUUIDValue(int imageIndex, int tiffDataIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        String result = retrieve.getUUIDValue(imageIndex, tiffDataIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
-
   /* @see MetadataRetrieve#getUUIDFileName(int, int) */
   public String getUUIDFileName(int imageIndex, int tiffDataIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -6448,6 +6447,19 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataRetrieve) {
         MetadataRetrieve retrieve = (MetadataRetrieve) o;
         String result = retrieve.getUUIDFileName(imageIndex, tiffDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+
+  /* @see MetadataRetrieve#getUUIDValue(int, int) */
+  public String getUUIDValue(int imageIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.getUUIDValue(imageIndex, tiffDataIndex);
         if (result != null) return result;
       }
     }
@@ -11438,16 +11450,6 @@ public class AggregateMetadata implements IMetadata {
   }
 
   // - UUID property storage -
-  
-  public void setUUIDValue(String value, int imageIndex, int tiffDataIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataStore) {
-        MetadataStore store = (MetadataStore) o;
-        store.setUUIDValue(value, imageIndex, tiffDataIndex);
-      }
-    }
-  }
 
   /* @see MetadataStore#setUUIDFileName(String, int, int) */
   public void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex) {
@@ -11456,6 +11458,17 @@ public class AggregateMetadata implements IMetadata {
       if (o instanceof MetadataStore) {
         MetadataStore store = (MetadataStore) o;
         store.setUUIDFileName(fileName, imageIndex, tiffDataIndex);
+      }
+    }
+  }
+
+  /* @see MetadataStore#setUUIDValue(String, int, int) */
+  public void setUUIDValue(String value, int imageIndex, int tiffDataIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataStore) {
+        MetadataStore store = (MetadataStore) o;
+        store.setUUIDValue(value, imageIndex, tiffDataIndex);
       }
     }
   }

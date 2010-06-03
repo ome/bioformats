@@ -34,7 +34,7 @@
 
 package loci.formats.utests;
 
-import ome.xml.r201004.OME;
+import ome.xml.model.OME;
 
 /**
  *
