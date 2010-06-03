@@ -322,6 +322,7 @@ public class TiffParser {
   public IFD getIFD(long ifdNum, long offset, boolean bigTiff,
     boolean fillInEntries) throws IOException
   {
+    if (offset < 0 || offset >= in.length()) return null;
     IFD ifd = new IFD();
 
     // save little-endian flag to internal LITTLE_ENDIAN tag
