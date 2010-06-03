@@ -317,10 +317,7 @@ public class ScanrReader extends FormatReader {
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
-      Integer w = keys.length > 0 ? wellLabels.get(keys[well]) : null;
-      int wellIndex = w == null ? well + 1 : w.intValue();
-
-      String wellPos = getBlock(wellIndex, "W");
+      String wellPos = getBlock(well + 1, "W");
       int originalIndex = next;
 
       for (int pos=0; pos<nPos; pos++) {
