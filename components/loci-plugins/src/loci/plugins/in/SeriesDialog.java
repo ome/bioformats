@@ -37,25 +37,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.StringTokenizer;
 
 import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
-import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
-import loci.plugins.BF;
 import loci.plugins.util.WindowTools;
 
 /**

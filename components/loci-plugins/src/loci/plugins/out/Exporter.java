@@ -390,6 +390,7 @@ public class Exporter {
       byte[] plane = null;
       w.setInterleaved(false);
 
+      int no = 0;
       for (int i=start; i<end; i+=n) {
         if (doStack) {
           BF.status(false, "Saving plane " + (i + 1) + "/" + size);
@@ -457,7 +458,7 @@ public class Exporter {
         if (notSupportedType) {
           IJ.error("Pixel type not supported by this format.");
         }
-        else w.saveBytes(plane, i == end - n);
+        else w.saveBytes(no++, plane);
       }
       w.close();
     }
