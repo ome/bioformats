@@ -33,6 +33,7 @@ import ij.gui.GenericDialog;
 
 import java.awt.Button;
 import java.awt.Checkbox;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -171,7 +172,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
 
     // rebuild dialog so that the thumbnails and checkboxes line up correctly
-    rebuildDialog(gd);
+    rebuildDialog(gd, nGroups);
 
     return gd;
   }
@@ -226,7 +227,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     }
   }
 
-  private void rebuildDialog(GenericDialog gd) {
+  private void rebuildDialog(GenericDialog gd, int buttonRow) {
     // rebuild dialog using FormLayout to organize things more nicely
 
     final String cols = p == null ? "pref" : "pref, 3dlu, pref";
@@ -258,6 +259,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     gd.add(masterPanel);
 
     WindowTools.addScrollBars(gd);
+    gd.setBackground(Color.white); // HACK: workaround for JPanel in a Dialog
 
     // add Select All and Deselect All buttons
 
@@ -274,7 +276,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     buttons.add(deselect);
 
     gbc.gridx = 2;
-    gbc.gridy = 2;
+    gbc.gridy = buttonRow;
     gbc.anchor = GridBagConstraints.EAST;
     gbc.insets = new Insets(15, 0, 0, 0);
     gdl.setConstraints(buttons, gbc);
