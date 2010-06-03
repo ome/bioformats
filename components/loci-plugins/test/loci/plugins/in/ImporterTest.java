@@ -1925,9 +1925,11 @@ public class ImporterTest {
   public void testComboManyOptions()
   {
     int pixType = FormatTools.UINT16, sizeX = 106, sizeY = 33, sizeZ = 3, sizeC = 5, sizeT = 7;
-    int cropOriginX = 0, cropOriginY = 0, cropSizeX = 55, cropSizeY = 16, stepBy = 2;
+    int cropOriginX = 0, cropOriginY = 0, cropSizeX = 55, cropSizeY = 16, start = 1, stepBy = 2;
     ChannelOrder swappedOrder = ChannelOrder.CTZ;  // orig is ZCT : this is a deadly swap of all dims
 
+    // note - to reuse existing code it is necessary that the crop origin is (0,0)
+    
     String path = constructFakeFilename("superCombo", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, 1, false, -1, false);
   
     ImagePlus[] imps = null;
@@ -1939,7 +1941,7 @@ public class ImporterTest {
       options.setCrop(true);
       options.setCropRegion(0, new Region(cropOriginX,cropOriginY,cropSizeX,cropSizeY));
       options.setTStep(0, stepBy);
-      options.setTBegin(0, 1);
+      options.setTBegin(0, start);
       options.setSplitFocalPlanes(true);
       imps = BF.openImagePlus(options);
     }
@@ -1956,7 +1958,7 @@ public class ImporterTest {
     {
       ImagePlus imp = imps[zIndex];
       
-      int numC = numInSeries(1,sizeC-1,stepBy);
+      int numC = numInSeries(start,sizeC-1,stepBy);
 
       xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,numC); // all dims changed
   
@@ -1964,13 +1966,18 @@ public class ImporterTest {
       assertEquals(sizeZ*numC,st.getSize());  // sizeZ = C, numC = T
       
       int p = 1;
-      for (int tIndex = 1; tIndex < sizeC; tIndex += stepBy)
+      for (int tIndex = start; tIndex < sizeC; tIndex += stepBy)
         for (int cIndex = 0; cIndex < sizeZ; cIndex++)
         {
           ImageProcessor proc = st.getProcessor(p++);
+          
+          assertEquals(cropSizeX,proc.getWidth());
+          assertEquals(cropSizeY,proc.getHeight());
+
           final int actualZ = tIndex(proc);
           final int actualC = zIndex(proc);
           final int actualT = cIndex(proc);
+          
           assertEquals(zIndex, actualZ);
           assertEquals(cIndex, actualC);
           assertEquals(tIndex, actualT);
