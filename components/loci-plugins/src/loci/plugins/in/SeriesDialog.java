@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import ij.gui.GenericDialog;
 
 import java.awt.Button;
@@ -44,6 +48,7 @@ import java.util.StringTokenizer;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -64,6 +69,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   // -- Constants --
 
   public static final int MAX_COMPONENTS = 256;
+  public static final int MAX_SERIES_THUMBS = 200;
 
   // -- Fields --
 
@@ -91,7 +97,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
         }
 
         // default all series to false
-        int seriesCount = process.getSeriesCount();
+        final int seriesCount = process.getSeriesCount();
         for (int s=0; s<seriesCount; s++) options.setSeriesOn(s, false);
 
         // extract enabled series values from series string
@@ -116,67 +122,56 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     // has a normalize(IFormatReader) method
     // call both before and after the dialog here...
 
-    GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
+    final int seriesCount = process.getSeriesCount();
 
-    // set up the thumbnail panels
-    thumbReader = new BufferedImageReader(process.getReader());
-    int seriesCount = thumbReader.getSeriesCount();
-    p = new Panel[seriesCount];
-    for (int i=0; i<seriesCount; i++) {
-      thumbReader.setSeries(i);
-      int sx = thumbReader.getThumbSizeX() + 10; // a little extra padding
-      int sy = thumbReader.getThumbSizeY();
-      p[i] = new Panel();
-      p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
-      if (options.isForceThumbnails()) {
-        BF.status(options.isQuiet(),
-          "Reading thumbnail for series #" + (i + 1));
-        int z = thumbReader.getSizeZ() / 2;
-        int t = thumbReader.getSizeT() / 2;
-        int ndx = thumbReader.getIndex(z, 0, t);
-        try {
-          BufferedImage img = thumbReader.openThumbImage(ndx);
-          boolean isFloat = thumbReader.getPixelType() != FormatTools.FLOAT;
-          if (options.isAutoscale() && isFloat) {
-            img = AWTImageTools.autoscale(img);
-          }
-          ImageIcon icon = new ImageIcon(img);
-          p[i].removeAll();
-          p[i].add(new JLabel(icon));
+    // NB: Load thumbnails only when series count is modest.
+    if (seriesCount < MAX_SERIES_THUMBS) {
+      // construct thumbnail reader
+      thumbReader = new BufferedImageReader(process.getReader());
+
+      // set up the thumbnail panels
+      p = new Panel[seriesCount];
+      for (int i=0; i<seriesCount; i++) {
+        thumbReader.setSeries(i);
+        int sx = thumbReader.getThumbSizeX() + 10; // a little extra padding
+        int sy = thumbReader.getThumbSizeY();
+        p[i] = new Panel();
+        p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
+        if (options.isForceThumbnails()) {
+          // load thumbnail immediately
+          ThumbLoader.loadThumb(thumbReader,
+            i, p[i], options.isQuiet(), options.isAutoscale());
         }
-        catch (FormatException exc) { }
-        catch (IOException exc) { }
       }
     }
 
-    // add the checkboxes
+    GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
 
-    // we need to add the checkboxes in groups, to prevent an
-    // exception from being thrown if there are more than 512 series
-    // see https://skyking.microscopy.wisc.edu/trac/java/ticket/408 and
-    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5107980
+    // NB: We need to add the checkboxes in groups, to prevent an
+    // exception from being thrown if there are more than 512 series.
+    // See also:
+    //   https://skyking.microscopy.wisc.edu/trac/java/ticket/408 and
+    //   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5107980
 
-    int nPanels = p.length / MAX_COMPONENTS;
-    if (nPanels * MAX_COMPONENTS < p.length) nPanels++;
-
+    final int nGroups = (seriesCount + MAX_COMPONENTS - 1) / MAX_COMPONENTS;
     int nextSeries = 0;
-    for (int i=0; i<nPanels; i++) {
-      int nRows = i == nPanels - 1 ? p.length % MAX_COMPONENTS : MAX_COMPONENTS;
-      String[] labels = new String[nRows];
-      boolean[] defaultValues = new boolean[nRows];
+    for (int i=0; i<nGroups; i++) {
+      final int nRows = Math.min(MAX_COMPONENTS, seriesCount - nextSeries);
+      final String[] labels = new String[nRows];
+      final boolean[] defaultValues = new boolean[nRows];
       for (int row=0; row<nRows; row++) {
         labels[row] = process.getSeriesLabel(nextSeries);
-        defaultValues[row] = options.isSeriesOn(nextSeries++);
+        defaultValues[row] = options.isSeriesOn(nextSeries);
+        nextSeries++;
       }
       gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
     }
 
+    // extract checkboxes, for "Select All" and "Deselect All" functions
     boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
 
-    // remove components and re-add everything so that the thumbnails and
-    // checkboxes line up correctly
-
-    rebuildDialog(gd, nPanels);
+    // rebuild dialog so that the thumbnails and checkboxes line up correctly
+    rebuildDialog(gd);
 
     return gd;
   }
@@ -184,7 +179,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   @Override
   protected boolean displayDialog(GenericDialog gd) {
     ThumbLoader loader = null;
-    if (!options.isForceThumbnails()) {
+    if (thumbReader != null && !options.isForceThumbnails()) {
       // spawn background thumbnail loader
       loader = new ThumbLoader(thumbReader, p, gd, options.isAutoscale());
     }
@@ -195,8 +190,8 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   @Override
   protected boolean harvestResults(GenericDialog gd) {
+    final int seriesCount = process.getSeriesCount();
     String seriesString = "[";
-    int seriesCount = process.getSeriesCount();
     for (int i=0; i<seriesCount; i++) {
       boolean on = gd.getNextBoolean();
       options.setSeriesOn(i, on);
@@ -231,24 +226,35 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     }
   }
 
-  private void rebuildDialog(GenericDialog gd, int nPanels) {
-    int seriesCount = process.getSeriesCount();
+  private void rebuildDialog(GenericDialog gd) {
+    // rebuild dialog using FormLayout to organize things more nicely
+
+    final String cols = p == null ? "pref" : "pref, 3dlu, pref";
+
+    final StringBuilder sb = new StringBuilder("pref");
+    for (int s=1; s<boxes.length; s++) sb.append(", 3dlu, pref");
+    final String rows = sb.toString();
+
+    final PanelBuilder builder = new PanelBuilder(new FormLayout(cols, rows));
+    final CellConstraints cc = new CellConstraints();
+
+    int row = 1;
+    for (int s=0; s<boxes.length; s++) {
+      builder.add(boxes[s], cc.xy(1, row));
+      if (p != null) builder.add(p[s], cc.xy(3, row));
+      row += 2;
+    }
+
+    final JPanel masterPanel = builder.getPanel();
 
     gd.removeAll();
-
-    Panel masterPanel = new Panel();
-    masterPanel.setLayout(new GridLayout(seriesCount, 2));
-
-    for (int i=0; i<seriesCount; i++) {
-      masterPanel.add(boxes[i]);
-      masterPanel.add(p[i]);
-    }
 
     GridBagLayout gdl = (GridBagLayout) gd.getLayout();
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 0;
     gdl.setConstraints(masterPanel, gbc);
+
     gd.add(masterPanel);
 
     WindowTools.addScrollBars(gd);
@@ -268,7 +274,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     buttons.add(deselect);
 
     gbc.gridx = 2;
-    gbc.gridy = nPanels;
+    gbc.gridy = 2;
     gbc.anchor = GridBagConstraints.EAST;
     gbc.insets = new Insets(15, 0, 0, 0);
     gdl.setConstraints(buttons, gbc);
