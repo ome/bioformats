@@ -762,7 +762,11 @@ public class LeicaReader extends FormatReader {
       prefix = getString(nameLength);
       f.add(dirPrefix + prefix);
       // test to make sure the path is valid
-      Location test = new Location(f.get(f.size() - 1));
+      Location test = new Location(f.get(f.size() - 1)).getAbsoluteFile();
+      LOGGER.debug("Expected to find TIFF file {}", test.getAbsolutePath());
+      if (!test.exists()) {
+        LOGGER.debug("  file does not exist");
+      }
       if (test.exists()) list.remove(prefix);
       if (!tiffsExist) tiffsExist = test.exists();
     }
@@ -782,6 +786,7 @@ public class LeicaReader extends FormatReader {
       for (String q : listing) {
         Location l = new Location(dirPrefix, q).getAbsoluteFile();
         FilePattern pattern = new FilePattern(l);
+        if (!pattern.isValid()) continue;
 
         AxisGuesser guess = new AxisGuesser(pattern, "XYZCT", 1, 1, 1, false);
         String fp = pattern.getPattern();
