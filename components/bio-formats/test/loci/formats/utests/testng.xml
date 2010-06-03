@@ -67,4 +67,10 @@
             <class name="loci.formats.utests.InOut201004Test"/>
         </classes>
     </test>
+    <test name="ReaderWrapper">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.WrapperTest"/>
+      </classes>
+    </test>
 </suite>
