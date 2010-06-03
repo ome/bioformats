@@ -264,7 +264,10 @@ public class OMETiffReader extends FormatReader {
     }
 
     String currentUUID = meta.getUUID();
-    service.convertMetadata(meta, metadataStore);
+    if (service.isOMEXMLMetadata(metadataStore)) {
+      metadataStore = meta;
+    }
+    else service.convertMetadata(meta, metadataStore);
 
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();

@@ -199,6 +199,7 @@ public class MetadataAutogen {
         spaces.setLength(0);
         for (int k=1; k<j+indent; k++) spaces.append("  ");
         out.println(spaces + "}");
+        out.println(spaces + "} catch (NullPointerException e) { }");
       }
 
       // start new for loops
@@ -208,6 +209,7 @@ public class MetadataAutogen {
         for (int k=0; k<j+indent; k++) spaces.append("  ");
         String iVar = q.var(index + "Index");
         String countVar = iVar.replaceFirst("Index$", "Count");
+        out.println(spaces + "try {");
         out.println(spaces + "int " + countVar + " = " +
           "src.get" + index + "Count" + "(" +
           q.varsList(q.chop(), q.chop(q.defaultPath())) + ");");
@@ -224,10 +226,12 @@ public class MetadataAutogen {
         String iList = q.varsList();
         String type = q.defaultType();
         String var = q.var(methodName) + "Value";
+        out.println(spaces + "try {");
         out.println(spaces + "  " + type + " " + var + " = " +
           "src.get" + methodName + "(" + iList + ");");
         out.println(spaces + "  if (" + var + " != null) " +
           "dest.set" + methodName + "(" + var + ", " + iList + ");");
+        out.println(spaces + "} catch (NullPointerException e) { }");
       }
     }
 
@@ -237,6 +241,7 @@ public class MetadataAutogen {
       spaces.setLength(0);
       for (int k=1; k<j+indent; k++) spaces.append("  ");
       out.println(spaces + "}");
+      out.println(spaces + "} catch (NullPointerException e) { }");
     }
 
     out.close();
