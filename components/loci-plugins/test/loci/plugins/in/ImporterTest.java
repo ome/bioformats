@@ -1956,39 +1956,21 @@ public class ImporterTest {
     
       ImagePlus imp = imps[zIndex];
       
-      final int actualSizeZ = imp.getNSlices();
-      final int actualSizeC = imp.getNChannels();
-      final int actualSizeT = imp.getNFrames();
-
       int numC = numInSeries(0,sizeC-1,stepBy);
 
-      System.out.println("Actual z c t "+actualSizeZ+" "+actualSizeC+" "+actualSizeT);
-      System.out.println("  numInSeries(0,actualSizeZ-1,2)"+numInSeries(0,actualSizeZ-1,2));
-      System.out.println("  numInSeries(0,actualSizeC-1,2)"+numInSeries(0,actualSizeC-1,2));
-      System.out.println("  numInSeries(0,actualSizeT-1,2)"+numInSeries(0,actualSizeT-1,2));
-      System.out.println("  numInSeries(0,sizeZ-1,2)"+numInSeries(0,sizeZ-1,2));
-      System.out.println("  numInSeries(0,sizeC-1,2)"+numInSeries(0,sizeC-1,2));
-      System.out.println("  numInSeries(0,sizeT-1,2)"+numInSeries(0,sizeT-1,2));
-      System.out.println("About to test ZCT vs. "+1+" "+sizeZ+" "+numC);
-      
-      //xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,sizeC); //  Before tStepBy and works
       xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,numC); // all dims swapped
   
       ImageStack st = imp.getStack();
-      //assertEquals(actualSizeC*actualSizeT,st.getSize());  // works before tSTepBy
       assertEquals(sizeZ*numC,st.getSize());  // sizeZ = C, numC = T
       
       int p = 1;
-//      for (int tIndex = 0; tIndex < actualSizeT; tIndex++) // worked before tStepBy
       for (int tIndex = 0; tIndex < sizeC; tIndex += stepBy)
-        for (int cIndex = 0; cIndex < actualSizeC; cIndex++)
+        for (int cIndex = 0; cIndex < sizeZ; cIndex++)
         {
           ImageProcessor proc = st.getProcessor(p++);
           final int actualZ = tIndex(proc);
           final int actualC = zIndex(proc);
           final int actualT = cIndex(proc);
-          System.out.println(" indices z c t "+zIndex+" "+cIndex+" "+tIndex);
-          System.out.println(" values z c t "+actualZ+" "+actualC+" "+actualT);
           assertEquals(zIndex, actualZ);
           assertEquals(cIndex, actualC);
           assertEquals(tIndex, actualT);
