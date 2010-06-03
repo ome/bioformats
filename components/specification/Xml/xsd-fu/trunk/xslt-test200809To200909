@@ -81,6 +81,8 @@ class Test200809(XsltBasic):
 
     OLD_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2008-09"
     
+    OLD_AM_NS = "http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09"
+    
     NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 
     NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2009-09"
@@ -170,6 +172,23 @@ class Test200809(XsltBasic):
         # find old OME:Description only in SPW:Screen
         xpath = './/{%s}Screen/{%s}Description' % (self.OLD_SPW_NS, self.OLD_OME_NS)
         reference_screen_descripton_elements = self.old_root.findall(xpath)
+        # find old OME:Description only in AM:AnalysisModule
+        xpath = './/{%s}AnalysisModule/{%s}Description' % (self.OLD_AM_NS, self.OLD_OME_NS)
+        reference_analysismodule_descripton_elements = self.old_root.findall(xpath)
+        # find old OME:Description only in AM:LookupTable
+        xpath = './/{%s}LookupTable/{%s}Description' % (self.OLD_AM_NS, self.OLD_OME_NS)
+        reference_lookuptable_descripton_elements = self.old_root.findall(xpath)
+        # find old OME:Description only in AM:FormalInput
+        xpath = './/{%s}FormalInput/{%s}Description' % (self.OLD_AM_NS, self.OLD_OME_NS)
+        reference_formalinput_descripton_elements = self.old_root.findall(xpath)
+        # find old OME:Description only in AM:FormalOutput
+        xpath = './/{%s}FormalOutput/{%s}Description' % (self.OLD_AM_NS, self.OLD_OME_NS)
+        reference_formaloutput_descripton_elements = self.old_root.findall(xpath)
+        # find old OME:Description only in AM:Category
+        xpath = './/{%s}Category/{%s}Description' % (self.OLD_AM_NS, self.OLD_OME_NS)
+        reference_category_descripton_elements = self.old_root.findall(xpath)
+        
+        
         # find new OME:Description
         xpath = './/{%s}Description' % self.NEW_OME_NS
         new_ome_descripton_elements = self.new_root.findall(xpath)
@@ -186,8 +205,16 @@ class Test200809(XsltBasic):
         new_elements = self.new_root.findall(xpath)
         for element in new_elements:
             self.assertFalse('lang' in element.keys())
-        # all old OME must equal new OME + new SPW
-        self.assertEquals(reference_count_all, len(new_ome_descripton_elements)+len(new_screen_descripton_elements))
+        # all old OME - AM must equal new OME + new SPW
+        self.assertEquals(
+            reference_count_all 
+                - len(reference_analysismodule_descripton_elements) 
+                - len(reference_lookuptable_descripton_elements)
+                - len(reference_formaloutput_descripton_elements)
+                - len(reference_category_descripton_elements)
+                - len(reference_formalinput_descripton_elements), 
+            len(new_ome_descripton_elements)
+                + len(new_screen_descripton_elements))
         # old OME in screen must equal new OME in screen
         self.assertEquals(len(reference_screen_descripton_elements),len(new_screen_descripton_elements))
 
@@ -294,15 +321,17 @@ class Test200809(XsltBasic):
             id = newElement.get('ID');
             elementWithRefs = self.findElementByID(self.old_root,self.OLD_OME_NS,'Experiment',id);
             oldElementWithoutMBRef = self.replaceRefsWithElements(self.old_root, self.OLD_OME_NS, elementWithRefs, ["MicrobeamManipulation"]);
-            oldElementsWithoutROIRef = self.replaceRefsWithElementsRecurse(self.old_root, self.OLD_OME_NS, oldElementWithoutMBRef, ["ROI"]);
-            oldElementWithoutChannel = self.moveElementsFromChildToParent(oldElementsWithoutROIRef, self.OLD_OME_NS, "Channels");
 #            print 'DUMP(oldElementWithoutChannel)';
-#            dump(oldElementWithoutChannel);
+#            dump(oldElementWithoutMBRef);
 #            print 'DUMP(newElement)';
 #            dump(newElement);
-            self.compareGraphs(oldElementWithoutChannel, newElement, ['{http://www.w3.org/XML/1998/namespace}lang', 'ID'], {'theZ':'TheZ', 'theT':'TheT','theC':'TheC'}, {"LogicalChannelRef":"ChannelRef"});
-                
-                
+            self.compareGraphs(
+                oldElementWithoutMBRef, 
+                newElement, 
+                ['{http://www.w3.org/XML/1998/namespace}lang', 'ID'], #ignoreAttributes
+                None, #renameAttributes
+                {"LightSourceRef":"LightSourceSettings"}); #renameElements
+
     def test_detector_type(self):
         """
         Checks that the Detector types have been correctly transformed.

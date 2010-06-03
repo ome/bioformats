@@ -175,24 +175,6 @@
 				<HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</HashSHA1>
 			</Plane>
 		</Pixels>
-		<Pixels ID="urn:lsid:-.-:Pixels:3" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
-			 SizeZ="2" SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
-			 TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
-				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
-					<UUID FileName="FileName3">urn:uuid:00000000-0000-0000-0000-000000000000</UUID>
-				</TiffData>
-				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
-					<UUID FileName="FileName5">urn:uuid:00000000-0000-0000-0000-000000000000</UUID>
-				</TiffData>
-				<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
-					<UUID FileName="FileName7">urn:uuid:00000000-0000-0000-0000-000000000000</UUID>
-				</TiffData>
-			<Plane TheZ="0" TheT="0" TheC="0">
-				<PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
-				<StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
-				<HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</HashSHA1>
-			</Plane>
-		</Pixels>
 		<Region Tag="Tag1" Name="Name19" ID="urn:lsid:-.-:Region:1">
 			<CA:CustomAttributes>
 			</CA:CustomAttributes>
@@ -273,6 +255,27 @@
 			<LightSourceRef ID="urn:lsid:-.-:LightSource:1" Attenuation="0.50" Wavelength="2"/>
 		</MicrobeamManipulation>
 	</Image>
+	<Image ID="urn:lsid:-.-:Image:3" DefaultPixels="urn:lsid:-.-:Pixels:3">
+		<Pixels ID="urn:lsid:-.-:Pixels:3" DimensionOrder="XYZCT" PixelType="int8" BigEndian="false" SizeX="2" SizeY="2"
+			SizeZ="2" SizeC="2" SizeT="2" PhysicalSizeX="3.14159E0" PhysicalSizeY="3.14159E0" PhysicalSizeZ="3.14159E0"
+			TimeIncrement="3.14159E0" WaveStart="2" WaveIncrement="2">
+			<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
+				<UUID FileName="FileName3">urn:uuid:00000000-0000-0000-0000-000000000000</UUID>
+			</TiffData>
+			<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
+				<UUID FileName="FileName5">urn:uuid:00000000-0000-0000-0000-000000000000</UUID>
+			</TiffData>
+			<TiffData IFD="0" FirstZ="0" FirstT="0" FirstC="0" NumPlanes="0">
+				<UUID FileName="FileName7">urn:uuid:00000000-0000-0000-0000-000000000000</UUID>
+			</TiffData>
+			<Plane TheZ="0" TheT="0" TheC="0">
+				<PlaneTiming DeltaT="3.14159E0" ExposureTime="3.14159E0"/>
+				<StagePosition PositionX="3.14159E0" PositionY="3.14159E0" PositionZ="3.14159E0"/>
+				<HashSHA1>1234567890ABCDEF1234567890ABCDEF12345678</HashSHA1>
+			</Plane>
+		</Pixels>
+	</Image>
+	
 	<STD:SemanticTypeDefinitions>
 		<STD:SemanticType Name="Name21" Parent="Parent1" AppliesTo="G">
 			<STD:Label xml:lang="en">Label0</STD:Label>

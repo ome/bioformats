@@ -1308,19 +1308,19 @@
 		<xsl:param name="bg"/>
 		<xsl:param name="node"/>
 		<xsl:choose>
-			<xsl:when test="name(.) = 'Bin:BinData'">
-				<xsl:element name="{name(.)}" namespace="{$newBINNS}">
+			<xsl:when test="local-name($node) = 'BinData'">
+				<xsl:element name="{local-name($node)}" namespace="{$newBINNS}">
 					<xsl:attribute name="BigEndian">
 						<xsl:value-of select="$bg"/>
 					</xsl:attribute>
 					<xsl:apply-templates select="@*|node()"/>
 				</xsl:element>
 			</xsl:when>
-			<xsl:when test="name(.)='Plane' or name(.)='TiffData'">
-				<xsl:apply-templates select="current()"/>
+			<xsl:when test="local-name($node)='Plane' or local-name($node)='TiffData'">
+				<xsl:apply-templates select="$node"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+				<xsl:element name="{local-name($node)}" namespace="{$newOMENS}">
 					<xsl:apply-templates select="@*|node()"/>
 				</xsl:element>
 			</xsl:otherwise>
