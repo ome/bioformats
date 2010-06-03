@@ -223,6 +223,9 @@ public class ImporterTest {
   /** returns the number of of elements in a series given from, to, and by values */
   private int numInSeries(int from, int to, int by)
   {
+    if (by < 1)
+      throw new IllegalArgumentException("numInSeries passed a stepBy value < 1");
+    
     // could calc this but simple loop suffices for our purposes
     int count = 0;
     for (int i = from; i <= to; i += by)
@@ -1922,7 +1925,7 @@ public class ImporterTest {
   public void testComboManyOptions()
   {
     int pixType = FormatTools.UINT16, sizeX = 106, sizeY = 33, sizeZ = 3, sizeC = 5, sizeT = 7;
-    int cropOriginX = 0, cropOriginY = 0, cropSizeX = 55, cropSizeY = 16, tStepBy = 2;
+    int cropOriginX = 0, cropOriginY = 0, cropSizeX = 55, cropSizeY = 16, stepBy = 2;
     ChannelOrder swappedOrder = ChannelOrder.CTZ;  // orig is ZCT : this is a deadly swap of all dims
 
     String path = constructFakeFilename("superCombo", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, 1, false, -1, false);
@@ -1935,7 +1938,7 @@ public class ImporterTest {
       options.setInputOrder(0, bfChanOrd(swappedOrder));
       options.setCrop(true);
       options.setCropRegion(0, new Region(cropOriginX,cropOriginY,cropSizeX,cropSizeY));
-      options.setTStep(0, tStepBy);
+      options.setTStep(0, stepBy);
       options.setSplitFocalPlanes(true);
       imps = BF.openImagePlus(options);
     }
@@ -1946,39 +1949,50 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    impsCountTest(imps,sizeT);
+    impsCountTest(imps,sizeT);  // we split on Z but that dim was swapped with T
 
-    for (int z = 0; z < sizeT; z++)
+    for (int zIndex = 0; zIndex < sizeT; zIndex++)
     {
     
-      ImagePlus imp = imps[z];
+      ImagePlus imp = imps[zIndex];
       
       final int actualSizeZ = imp.getNSlices();
       final int actualSizeC = imp.getNChannels();
       final int actualSizeT = imp.getNFrames();
 
+      int numC = numInSeries(0,sizeC-1,stepBy);
+
       System.out.println("Actual z c t "+actualSizeZ+" "+actualSizeC+" "+actualSizeT);
-      xyzctTest(imp,cropSizeX,cropSizeY,1,3,3); // all dims swapped
-  
-      int numT = numInSeries(0,actualSizeT,tStepBy);
+      System.out.println("  numInSeries(0,actualSizeZ-1,2)"+numInSeries(0,actualSizeZ-1,2));
+      System.out.println("  numInSeries(0,actualSizeC-1,2)"+numInSeries(0,actualSizeC-1,2));
+      System.out.println("  numInSeries(0,actualSizeT-1,2)"+numInSeries(0,actualSizeT-1,2));
+      System.out.println("  numInSeries(0,sizeZ-1,2)"+numInSeries(0,sizeZ-1,2));
+      System.out.println("  numInSeries(0,sizeC-1,2)"+numInSeries(0,sizeC-1,2));
+      System.out.println("  numInSeries(0,sizeT-1,2)"+numInSeries(0,sizeT-1,2));
+      System.out.println("About to test ZCT vs. "+1+" "+sizeZ+" "+numC);
       
+      //xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,sizeC); //  Before tStepBy and works
+      xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,numC); // all dims swapped
+  
       ImageStack st = imp.getStack();
-      assertEquals(sizeC*numT,st.getSize());
+      //assertEquals(actualSizeC*actualSizeT,st.getSize());  // works before tSTepBy
+      assertEquals(sizeZ*numC,st.getSize());  // sizeZ = C, numC = T
       
       int p = 1;
-      for (int tIndex = 0; tIndex < actualSizeT; tIndex += tStepBy)
+//      for (int tIndex = 0; tIndex < actualSizeT; tIndex++) // worked before tStepBy
+      for (int tIndex = 0; tIndex < sizeC; tIndex += stepBy)
         for (int cIndex = 0; cIndex < actualSizeC; cIndex++)
-          for (int zIndex = 0; zIndex < actualSizeZ; zIndex++)
-          {
-            ImageProcessor proc = st.getProcessor(p++);
-            final int actualZ = cIndex(proc);
-            final int actualC = tIndex(proc);
-            final int actualT = zIndex(proc);
-            assertEquals(zIndex, actualZ);
-            assertEquals(cIndex, actualC);
-            assertEquals(tIndex, actualT);
-          }
-      
+        {
+          ImageProcessor proc = st.getProcessor(p++);
+          final int actualZ = tIndex(proc);
+          final int actualC = zIndex(proc);
+          final int actualT = cIndex(proc);
+          System.out.println(" indices z c t "+zIndex+" "+cIndex+" "+tIndex);
+          System.out.println(" values z c t "+actualZ+" "+actualC+" "+actualT);
+          assertEquals(zIndex, actualZ);
+          assertEquals(cIndex, actualC);
+          assertEquals(tIndex, actualT);
+        }
     }
   }
 }
