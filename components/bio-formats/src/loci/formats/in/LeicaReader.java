@@ -507,7 +507,7 @@ public class LeicaReader extends FormatReader {
         long offset = ((Long) ifd.get(key)).longValue();
         in.seek(offset);
 
-        if (key.equals(SERIES) && metadataLevel == MetadataLevel.ALL) {
+        if (key.equals(SERIES)) {
           parseSeriesTag();
         }
         else if (key.equals(IMAGES)) {
