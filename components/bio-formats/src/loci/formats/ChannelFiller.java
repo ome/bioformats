@@ -157,6 +157,14 @@ public class ChannelFiller extends ReaderWrapper {
   {
     if (passthrough()) return reader.openBytes(no, buf, x, y, w, h);
 
+    // TODO: The pixel type should change to match the available color table.
+    // That is, even if the indices are uint8, if the color table is 16-bit,
+    // The pixel type should change to uint16. Similarly, if the indices are
+    // uint16 but we are filling with an 8-bit color table, the pixel type
+    // should change to uint8.
+
+    // TODO: This logic below is opaque and could use some comments.
+
     byte[] pix = reader.openBytes(no, x, y, w, h);
     if (getPixelType() == FormatTools.UINT8) {
       byte[][] b = ImageTools.indexedToRGB(reader.get8BitLookupTable(), pix);

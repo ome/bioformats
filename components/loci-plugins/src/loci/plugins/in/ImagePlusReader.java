@@ -356,7 +356,6 @@ public class ImagePlusReader implements StatusReporter {
     }
     return imps;
   }
-  
 
   private LUT[] makeLUTs(int series) {
     final ImageProcessorReader reader = process.getReader();
@@ -365,14 +364,14 @@ public class ImagePlusReader implements StatusReporter {
     for (int c=0; c<luts.length; c++) luts[c] = makeLUT(series, c);
     return luts;
   }
-  
+
   private LUT makeLUT(int series, int channel) {
     final ImporterOptions options = process.getOptions();
     Color color = options.getCustomColor(series, channel);
     if (color == null) color = options.getDefaultCustomColor(channel);
     return makeLUT(color);
   }
-  
+
   private LUT makeLUT(Color color) {
     final int red = color.getRed();
     final int green = color.getGreen();
@@ -389,7 +388,7 @@ public class ImagePlusReader implements StatusReporter {
     }
     return new LUT(r, g, b);
   }
-    
+
   private FileInfo createFileInfo() {
     FileInfo fi = new FileInfo();
 

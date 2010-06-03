@@ -36,9 +36,7 @@ public class CoreMetadata {
 
   // -- Fields --
 
-  // TODO
-  //
-  // We may want to consider refactoring the FormatReader getter methods
+  // TODO: We may want to consider refactoring the FormatReader getter methods
   // that populate missing CoreMetadata fields on the fly
   // (getChannelDimLengths, getChannelDimTypes, getThumbSizeX, getThumbSizeY)
   // to avoid doing so -- one alternate approach would be to have this class
