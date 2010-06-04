@@ -129,7 +129,6 @@ public class ImageProcessorReader extends ReaderWrapper {
     }
 
     // create a color model for this plane (null means default)
-    ij.IJ.log("For image #" + no + "...");//TEMP
     final ColorModel cm = createColorModel();
 
     // convert byte array to appropriate primitive array type
@@ -223,7 +222,6 @@ public class ImageProcessorReader extends ReaderWrapper {
     byte[][] byteTable = get8BitLookupTable();
     if (byteTable == null) byteTable = convertTo8Bit(get16BitLookupTable());
     if (byteTable == null) return null;
-    ij.IJ.log("Found 8-bit color table: last green value=" + byteTable[1][byteTable[1].length - 1]);//TEMP
     return new IndexColorModel(8, byteTable[0].length,
       byteTable[0], byteTable[1], byteTable[2]);
   }
