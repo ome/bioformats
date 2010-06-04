@@ -522,7 +522,7 @@ public class LeicaReader extends FormatReader {
         else if (key.equals(EXPERIMENT) && metadataLevel == MetadataLevel.ALL) {
           parseExperimentTag();
         }
-        else if (key.equals(LUTDESC) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(LUTDESC)) {
           parseLUT(i);
         }
         else if (key.equals(CHANDESC) && metadataLevel == MetadataLevel.ALL) {
