@@ -317,7 +317,7 @@ public class NikonReader extends BaseTiffReader {
         }
         else {
           addGlobalMeta(name, exifIFD.get(key));
-          if (name.equals("Offset to maker note")) {
+          if (name.equals("MAKER_NOTE")) {
             byte[] b = (byte[]) exifIFD.get(key);
             int extra = new String(b, 0, 10).startsWith("Nikon") ? 10 : 0;
             byte[] buf = new byte[b.length];
