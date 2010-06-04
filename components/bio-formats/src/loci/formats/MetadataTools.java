@@ -189,6 +189,18 @@ public final class MetadataTools {
       throw new FormatException("Metadata object has null root; " +
         "call IMetadata.createRoot() first");
     }
+    if (src.getImageID(n) == null) {
+      throw new FormatException("Image ID #" + n + " is null");
+    }
+    if (src.getPixelsID(n) == null) {
+      throw new FormatException("Pixels ID #" + n + " is null");
+    }
+    for (int i=0; i<src.getChannelCount(n); i++) {
+      if (src.getChannelID(i, n) == null) {
+        throw new FormatException("Channel ID #" + i + " in Image #" + n +
+          " is null");
+      }
+    }
     if (src.getPixelsBinDataBigEndian(n, 0) == null) {
       throw new FormatException("BigEndian #" + n + " is null");
     }
