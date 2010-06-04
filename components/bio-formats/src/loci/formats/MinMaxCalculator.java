@@ -290,7 +290,7 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     boolean little = isLittleEndian();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
-    int pixels = getSizeX() * getSizeY();
+    int pixels = b.length / (bytes * numRGB);
     boolean interleaved = isInterleaved();
 
     int[] coords = getZCTCoords(ndx);
