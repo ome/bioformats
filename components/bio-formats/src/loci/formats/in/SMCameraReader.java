@@ -109,6 +109,9 @@ public class SMCameraReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].littleEndian = false;
 
+    addGlobalMeta("Image width", getSizeX());
+    addGlobalMeta("Image height", getSizeY());
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);

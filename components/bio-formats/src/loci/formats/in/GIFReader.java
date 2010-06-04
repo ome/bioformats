@@ -198,6 +198,7 @@ public class GIFReader extends FormatReader {
     boolean gctFlag = (packed & 0x80) != 0;
     int gctSize = 2 << (packed & 7);
     in.skipBytes(2);
+    addGlobalMeta("Global lookup table size", gctSize);
 
     if (gctFlag) {
       gct = readLut(gctSize);

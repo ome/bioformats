@@ -105,7 +105,8 @@ public class NAFReader extends FormatReader {
 
     in.seek(192);
     while (in.read() == 0);
-    in.readCString(); // some kind of description?
+    String description = in.readCString();
+    addGlobalMeta("Description", description);
 
     while (in.readInt() == 0);
 

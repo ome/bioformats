@@ -91,6 +91,7 @@ public class VGSAMReader extends FormatReader {
     in.skipBytes(4);
 
     int bpp = in.readInt();
+    addGlobalMeta("Bytes per pixel", bpp);
     core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, bpp == 4);
     core[0].littleEndian = false;
     core[0].sizeZ = 1;

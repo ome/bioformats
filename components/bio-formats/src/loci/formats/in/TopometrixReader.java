@@ -106,8 +106,10 @@ public class TopometrixReader extends FormatReader {
     pixelOffset = Long.parseLong(in.readString(4));
     in.skipBytes(2);
 
+    long fp = in.getFilePointer();
     String date = in.readLine().trim();
-    String comment = in.readString(240 - date.length()).trim();
+    int commentLength = (int) (240 - in.getFilePointer() + fp);
+    String comment = in.readString(commentLength).trim();
 
     if (version == 5) {
       in.seek(452);

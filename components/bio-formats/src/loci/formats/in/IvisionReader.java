@@ -150,6 +150,7 @@ public class IvisionReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     String version = in.readString(4);
+    addGlobalMeta("Version", version);
     int fileFormat = in.read();
     int dataType = in.read();
 
