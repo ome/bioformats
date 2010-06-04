@@ -942,6 +942,9 @@ public class ZeissLSMReader extends FormatReader {
       if (laser.type != null) {
         store.setLaserType(getLaserType(laser.type), series, nextLaser);
       }
+      if (laser.model != null) {
+        store.setLaserModel(laser.model, series, nextLaser);
+      }
       String lightSourceID =
         MetadataTools.createLSID("LightSource", series, nextLaser);
       store.setLaserID(lightSourceID, series, nextLaser);
@@ -1724,11 +1727,12 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   class Laser extends SubBlock {
-    public String medium, type;
+    public String medium, type, model;
     public Double power;
 
     protected void read() throws IOException {
       super.read();
+      model = getStringValue(LASER_NAME);
       type = getStringValue(LASER_NAME);
       if (type == null) type = "";
       medium = "";
