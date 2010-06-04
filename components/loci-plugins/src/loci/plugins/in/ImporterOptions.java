@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import ij.Macro;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -188,6 +190,17 @@ public class ImporterOptions extends OptionsList {
 
       parseOptions(arg);
     }
+  }
+
+  /** Handles obsolete macro keys, for backward compatibility. */
+  public void checkObsoleteOptions() {
+    String options = Macro.getOptions();
+    boolean mergeChannels = checkKey(options, "merge_channels");
+    boolean rgbColorize = checkKey(options, "rgb_colorize");
+    boolean customColorize = checkKey(options, "custom_colorize");
+    if (mergeChannels) setColorMode(COLOR_MODE_COMPOSITE);
+    else if (rgbColorize) setColorMode(COLOR_MODE_COLORIZED);
+    else if (customColorize) setColorMode(COLOR_MODE_CUSTOM);
   }
 
   // -- ImporterOptions methods - base options accessors and mutators --
@@ -437,7 +450,7 @@ public class ImporterOptions extends OptionsList {
     return DEFAULT_COLORS[c % DEFAULT_COLORS.length];
   }
 
-  // -- Helper methods - miscellaneous --
+  // -- Helper methods --
 
   private <T extends Object> void set(List<T> list,
     int index, T value, T fillValue)
@@ -449,6 +462,29 @@ public class ImporterOptions extends OptionsList {
   private <T extends Object> T get(List<T> list, int index, T defaultValue) {
     if (list.size() <= index) return defaultValue;
     return list.get(index);
+  }
+
+  /** Tests whether the given boolean key is set in the specified options. */
+  private boolean checkKey(String options, String key) {
+    if (options == null) return false;
+
+    // delete anything inside square brackets, for simplicity
+    while (true) {
+      int lIndex = options.indexOf("[");
+      if (lIndex < 0) break;
+      int rIndex = options.indexOf("]");
+      if (rIndex < 0) rIndex = options.length() - 1;
+      options = options.substring(0, lIndex) + options.substring(rIndex + 1);
+    }
+
+    // split the options string
+    final String[] tokens = options.split(" ");
+
+    // search for a token matching the key
+    for (String token : tokens) {
+      if (token.equals(key)) return true;
+    }
+    return false;
   }
 
 }
