@@ -726,7 +726,7 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorVoltage(detector.voltage, numDatasets, nextChannel);
         }
 
-        if (laser != null && laser.intensity > 0) {
+        if (laser != null && laser.intensity < 100) {
           store.setChannelLightSourceSettingsID(laser.id, numDatasets,
             nextChannel);
           store.setChannelLightSourceSettingsAttenuation(
