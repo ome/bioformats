@@ -195,6 +195,20 @@ public class ImporterOptions extends OptionsList {
   /** Handles obsolete macro keys, for backward compatibility. */
   public void checkObsoleteOptions() {
     String options = Macro.getOptions();
+
+    // check obsolete view options
+    String stackFormat = options == null ?
+      null : Macro.getValue(options, "view", null);
+    final String viewStandard = "Standard ImageJ";
+    if (viewStandard.equals(stackFormat)) {
+      // Standard ImageJ -> Hyperstack
+      options = options.replaceFirst(
+        "\\[" + viewStandard + "\\]", VIEW_HYPERSTACK);
+      Macro.setOptions(options);
+      setStackFormat(VIEW_HYPERSTACK);
+    }
+
+    // check obsolete color options
     boolean mergeChannels = checkKey(options, "merge_channels");
     boolean rgbColorize = checkKey(options, "rgb_colorize");
     boolean customColorize = checkKey(options, "custom_colorize");
