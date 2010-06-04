@@ -253,6 +253,7 @@ public class TCSReader extends FormatReader {
     }
 
     groupFiles();
+    addGlobalMeta("Number of image files", tiffs.size());
     tiffReaders = new TiffReader[tiffs.size()];
 
     for (int i=0; i<tiffReaders.length; i++) {
@@ -314,6 +315,7 @@ public class TCSReader extends FormatReader {
 
       date = document.substring(space, document.indexOf("FORMAT")).trim();
       stamp[i] = DateTools.getTime(date, DATE_FORMAT);
+      addGlobalMeta("Timestamp for plane #" + i, stamp[i]);
     }
 
     core[0].sizeT = 0;
@@ -426,6 +428,7 @@ public class TCSReader extends FormatReader {
       XMLTools.parseXML(xml, handler);
 
       metadata = handler.getGlobalMetadata();
+      MetadataTools.merge(handler.getGlobalMetadata(), metadata, "");
 
       core = handler.getCoreMetadata().toArray(new CoreMetadata[0]);
 

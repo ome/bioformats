@@ -292,6 +292,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
+    addGlobalMeta("Is SPW file", hasSPW);
 
     // TODO
     //Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();

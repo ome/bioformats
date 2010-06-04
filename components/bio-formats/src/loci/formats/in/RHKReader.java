@@ -183,6 +183,7 @@ public class RHKReader extends FormatReader {
 
     in.seek(352);
     String description = in.readString(32).trim();
+    addGlobalMeta("Description", description);
 
     core[0].rgb = false;
     core[0].sizeZ = 1;

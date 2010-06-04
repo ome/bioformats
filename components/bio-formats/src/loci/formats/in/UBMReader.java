@@ -104,6 +104,7 @@ public class UBMReader extends FormatReader {
 
     padding =
       (int) ((in.length() - FormatTools.getPlaneSize(this)) / (getSizeY() * 4));
+    addGlobalMeta("Padding bytes", padding);
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
