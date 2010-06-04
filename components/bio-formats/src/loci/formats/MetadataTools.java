@@ -196,7 +196,7 @@ public final class MetadataTools {
       throw new FormatException("Pixels ID #" + n + " is null");
     }
     for (int i=0; i<src.getChannelCount(n); i++) {
-      if (src.getChannelID(i, n) == null) {
+      if (src.getChannelID(n, i) == null) {
         throw new FormatException("Channel ID #" + i + " in Image #" + n +
           " is null");
       }
