@@ -125,7 +125,7 @@ public class ImagePlusReader implements StatusReporter {
     for (StatusListener l : listeners) l.statusUpdated(e);
   }
 
-  // -- Helper methods --
+  // -- Helper methods - image reading --
 
   private List<ImagePlus> readImages()
     throws FormatException, IOException
@@ -297,11 +297,15 @@ public class ImagePlusReader implements StatusReporter {
     if (impO != null) imps.add(impO);
   }
 
+  // -- Helper methods - concatenation --
+
   private List<ImagePlus> concatenate(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
     if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
     return imps;
   }
+
+  // -- Helper methods - colorization --
 
   private List<ImagePlus> applyColors(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
@@ -338,25 +342,6 @@ public class ImagePlusReader implements StatusReporter {
     return imps;
   }
 
-  private List<ImagePlus> splitDims(List<ImagePlus> imps) {
-    final ImporterOptions options = process.getOptions();
-
-    boolean sliceC = options.isSplitChannels();
-    boolean sliceZ = options.isSplitFocalPlanes();
-    boolean sliceT = options.isSplitTimepoints();
-    if (sliceC || sliceZ || sliceT) {
-      String stackOrder = process.getStackOrder();
-      List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
-      for (ImagePlus imp : imps) {
-        ImagePlus[] results = new Slicer().reslice(imp,
-          sliceC, sliceZ, sliceT, stackOrder);
-        for (ImagePlus result : results) slicedImps.add(result);
-      }
-      imps = slicedImps;
-    }
-    return imps;
-  }
-
   private LUT[] makeLUTs(int series) {
     final ImageProcessorReader reader = process.getReader();
     reader.setSeries(series);
@@ -388,6 +373,66 @@ public class ImagePlusReader implements StatusReporter {
     }
     return new LUT(r, g, b);
   }
+
+  // -- Helper methods - window splitting --
+
+  private List<ImagePlus> splitDims(List<ImagePlus> imps) {
+    final ImporterOptions options = process.getOptions();
+
+    boolean sliceC = options.isSplitChannels();
+    boolean sliceZ = options.isSplitFocalPlanes();
+    boolean sliceT = options.isSplitTimepoints();
+    if (sliceC || sliceZ || sliceT) {
+      String stackOrder = process.getStackOrder();
+      List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
+      for (ImagePlus imp : imps) {
+        ImagePlus[] results = new Slicer().reslice(imp,
+          sliceC, sliceZ, sliceT, stackOrder);
+        for (ImagePlus result : results) slicedImps.add(result);
+      }
+      imps = slicedImps;
+    }
+    return imps;
+  }
+
+  // -- Helper methods - timing --
+
+  private long startTime, time;
+
+  private void startTiming() {
+    startTime = time = System.currentTimeMillis();
+  }
+
+  private void updateTiming(int s, int i, int current, int total) {
+    final ImageProcessorReader reader = process.getReader();
+
+    long clock = System.currentTimeMillis();
+    if (clock - time >= 100) {
+      String sLabel = reader.getSeriesCount() > 1 ?
+        ("series " + (s + 1) + ", ") : "";
+      String pLabel = "plane " + (i + 1) + "/" + total;
+      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
+      time = clock;
+    }
+    notifyListeners(new StatusEvent(current, total, null));
+  }
+
+  private void finishTiming() {
+    final ImageProcessorReader reader = process.getReader();
+
+    long endTime = System.currentTimeMillis();
+    double elapsed = (endTime - startTime) / 1000.0;
+    if (reader.getImageCount() == 1) {
+      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
+    }
+    else {
+      long average = (endTime - startTime) / reader.getImageCount();
+      notifyListeners(new StatusEvent("Bio-Formats: " +
+        elapsed + " seconds (" + average + " ms per plane)"));
+    }
+  }
+
+  // -- Helper methods -- miscellaneous --
 
   private FileInfo createFileInfo() {
     FileInfo fi = new FileInfo();
@@ -571,43 +616,6 @@ public class ImagePlusReader implements StatusReporter {
       sb.append(imageName);
     }
     return sb.toString();
-  }
-
-  // -- Helper methods - timing --
-
-  private long startTime, time;
-
-  private void startTiming() {
-    startTime = time = System.currentTimeMillis();
-  }
-
-  private void updateTiming(int s, int i, int current, int total) {
-    final ImageProcessorReader reader = process.getReader();
-
-    long clock = System.currentTimeMillis();
-    if (clock - time >= 100) {
-      String sLabel = reader.getSeriesCount() > 1 ?
-        ("series " + (s + 1) + ", ") : "";
-      String pLabel = "plane " + (i + 1) + "/" + total;
-      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
-      time = clock;
-    }
-    notifyListeners(new StatusEvent(current, total, null));
-  }
-
-  private void finishTiming() {
-    final ImageProcessorReader reader = process.getReader();
-
-    long endTime = System.currentTimeMillis();
-    double elapsed = (endTime - startTime) / 1000.0;
-    if (reader.getImageCount() == 1) {
-      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
-    }
-    else {
-      long average = (endTime - startTime) / reader.getImageCount();
-      notifyListeners(new StatusEvent("Bio-Formats: " +
-        elapsed + " seconds (" + average + " ms per plane)"));
-    }
   }
 
 }
