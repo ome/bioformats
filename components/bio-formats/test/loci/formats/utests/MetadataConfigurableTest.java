@@ -97,6 +97,7 @@ public class MetadataConfigurableTest {
       assertEquals(all.getSizeT(), pixelsOnly.getSizeT());
       assertEquals(all.getPixelType(), pixelsOnly.getPixelType());
       assertEquals(all.isLittleEndian(), pixelsOnly.isLittleEndian());
+      assertEquals(all.isIndexed(), pixelsOnly.isIndexed());
     }
   }
 
