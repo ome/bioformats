@@ -30,6 +30,7 @@ import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
+import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
@@ -127,13 +128,14 @@ public class ImageProcessorReader extends ReaderWrapper {
         " (expected w=" + w + ", h=" + h + ", c=" + c + ", bpp=" + bpp + ")");
     }
 
+    // create a color model for this plane (null means default)
+    ij.IJ.log("For image #" + no + "...");//TEMP
+    final ColorModel cm = createColorModel();
+
     // convert byte array to appropriate primitive array type
     boolean isFloat = FormatTools.isFloatingPoint(type);
     boolean isLittle = isLittleEndian();
     boolean isSigned = FormatTools.isSigned(type);
-
-    IndexColorModel cm = null;
-    if (isIndexed()) cm = createIndexColorModel();
 
     // construct image processors
     ImageProcessor[] ip = new ImageProcessor[c];
@@ -213,12 +215,15 @@ public class ImageProcessorReader extends ReaderWrapper {
 
   // -- Helper methods --
 
-  private IndexColorModel createIndexColorModel()
-    throws FormatException, IOException
-  {
+  private ColorModel createColorModel() throws FormatException, IOException {
+    // NB: If a color table is present, we might as well use it,
+    // regardless of the value of isIndexed.
+    //if (!isIndexed()) return null;
+
     byte[][] byteTable = get8BitLookupTable();
     if (byteTable == null) byteTable = convertTo8Bit(get16BitLookupTable());
     if (byteTable == null) return null;
+    ij.IJ.log("Found 8-bit color table: last green value=" + byteTable[1][byteTable[1].length - 1]);//TEMP
     return new IndexColorModel(8, byteTable[0].length,
       byteTable[0], byteTable[1], byteTable[2]);
   }
