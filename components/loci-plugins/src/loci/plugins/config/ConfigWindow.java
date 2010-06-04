@@ -57,6 +57,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -102,7 +103,7 @@ public class ConfigWindow extends JFrame
 
   public ConfigWindow() {
     setTitle("LOCI Plugins Configuration");
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
     // build UI
 
@@ -295,7 +296,6 @@ public class ConfigWindow extends JFrame
     // generate list of formats
     log.println();
     log.println("-- Formats --");
-    FormatEntry[] formats = null;
     try {
       Class<?> irClass = Class.forName("loci.formats.ImageReader");
       Object ir = irClass.newInstance();
@@ -315,10 +315,6 @@ public class ConfigWindow extends JFrame
     log.println("-- Libraries --");
 
     // enumerate list of libraries
-    final String libCore = "Core library";
-    final String libNative = "Native library";
-    final String libPlugin = "ImageJ plugin";
-    final String libJava = "Java library";
 
     String javaVersion = System.getProperty("java.version") +
       " (" + System.getProperty("java.vendor") + ")";
@@ -378,8 +374,8 @@ public class ConfigWindow extends JFrame
     }
 
     HashMap<String, String> versions = new HashMap<String, String>();
-    if (javaVersion != null) versions.put("javaVersion", javaVersion);
-    if (bfVersion != null) versions.put("bfVersion", bfVersion);
+    versions.put("javaVersion", javaVersion);
+    versions.put("bfVersion", bfVersion);
     if (qtVersion != null) versions.put("qtVersion", qtVersion);
     if (clibIIOVersion != null) versions.put("clibIIOVersion", clibIIOVersion);
     if (matlabVersion != null) versions.put("matlabVersion", matlabVersion);

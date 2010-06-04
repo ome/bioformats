@@ -324,12 +324,6 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.drawDot(xcenter, ycenter);
   }
 
-  public void drawDot2(int x, int y) {
-    record("drawDot2", new Object[] {new Integer(x), new Integer(y)},
-      new Class[] {int.class, int.class});
-    proc.drawDot2(x, y);
-  }
-
   public void drawLine(int x1, int y1, int x2, int y2) {
     record("drawLine", new Object[] {new Integer(x1), new Integer(y1),
       new Integer(x2), new Integer(y2)}, new Class[] {int.class, int.class,
@@ -697,11 +691,6 @@ public class RecordedImageProcessor extends ImageProcessor {
   public boolean isInvertedLut() {
     record("isInvertedLut");
     return proc.isInvertedLut();
-  }
-
-  public boolean isKillable() {
-    record("isKillable");
-    return proc.isKillable();
   }
 
   public boolean isPseudoColorLut() {
@@ -1085,11 +1074,11 @@ public class RecordedImageProcessor extends ImageProcessor {
     return proc.toString();
   }
 
-  public void translate(int xOffset, int yOffset, boolean eraseBackground) {
-    record("translate", new Object[] {new Integer(xOffset),
-      new Integer(yOffset), new Boolean(eraseBackground)}, new Class[] {
-      int.class, int.class, boolean.class});
-    proc.translate(xOffset, yOffset, eraseBackground);
+  public void translate(int xOffset, int yOffset) {
+    record("translate",
+      new Object[] {new Integer(xOffset), new Integer(yOffset)},
+      new Class[] {int.class, int.class});
+    proc.translate(xOffset, yOffset);
   }
 
   public void updateComposite(int[] rgbPixels, int channel) {
@@ -1101,6 +1090,21 @@ public class RecordedImageProcessor extends ImageProcessor {
   public void xor(int value) {
     record("xor", new Integer(value), int.class);
     proc.xor(value);
+  }
+  
+  // -- Deprecated methods --
+
+  /** @deprecated */
+  public void drawDot2(int x, int y) {
+    record("drawDot2", new Object[] {new Integer(x), new Integer(y)},
+      new Class[] {int.class, int.class});
+    proc.drawDot2(x, y);
+  }
+
+  /** @deprecated */
+  public boolean isKillable() {
+    record("isKillable");
+    return proc.isKillable();
   }
 
   // -- Helper methods --

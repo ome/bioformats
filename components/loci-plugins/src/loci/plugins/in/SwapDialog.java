@@ -25,8 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.IJ;
 import ij.gui.GenericDialog;
+
+import java.awt.Choice;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
 
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.WindowTools;
@@ -38,7 +42,11 @@ import loci.plugins.util.WindowTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/SwapDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/SwapDialog.java">SVN</a></dd></dl>
  */
-public class SwapDialog extends ImporterDialog {
+public class SwapDialog extends ImporterDialog implements ItemListener {
+
+  // -- Fields --
+
+  private Choice zChoice, cChoice, tChoice;
 
   // -- Constructor --
 
@@ -48,12 +56,12 @@ public class SwapDialog extends ImporterDialog {
   }
 
   // -- ImporterDialog methods --
-  
+
   @Override
   protected boolean needPrompt() {
     return !process.isWindowless() && options.isSwapDimensions();
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
     ImageProcessorReader reader = process.getReader();
@@ -75,11 +83,20 @@ public class SwapDialog extends ImporterDialog {
         gd.addChoice(sizes[i] + "_planes", labels, labels[i]);
       }
     }
+
+    List<Choice> choices = WindowTools.getChoices(gd);
+    zChoice = choices.get(0);
+    cChoice = choices.get(1);
+    tChoice = choices.get(2);
+    zChoice.addItemListener(this);
+    cChoice.addItemListener(this);
+    tChoice.addItemListener(this);
+
     WindowTools.addScrollBars(gd);
 
     return gd;
   }
-  
+
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     ImageProcessorReader reader = process.getReader();
@@ -93,8 +110,9 @@ public class SwapDialog extends ImporterDialog {
       String t = gd.getNextChoice();
 
       if (z.equals(t) || z.equals(c) || c.equals(t)) {
-        IJ.error("Invalid swapping options - each axis can be used only once.");
-        throw new IllegalStateException(); // CTR FIXME
+        // should never occur... ;-)
+        throw new IllegalStateException(
+          "Invalid swapping options - each axis can be used only once.");
       }
 
       String originalOrder = reader.getDimensionOrder();
@@ -109,6 +127,44 @@ public class SwapDialog extends ImporterDialog {
       options.setInputOrder(s, sb.toString());
     }
     return true;
+  }
+
+  // -- ItemListener methods --
+
+  public void itemStateChanged(ItemEvent e) {
+    final Object src = e.getSource();
+    final int zIndex = zChoice.getSelectedIndex();
+    final int cIndex = cChoice.getSelectedIndex();
+    final int tIndex = tChoice.getSelectedIndex();
+    if (src == zChoice) {
+      if (zIndex == cIndex) cChoice.select(firstAvailable(zIndex, tIndex));
+      else if (zIndex == tIndex) tChoice.select(firstAvailable(zIndex, cIndex));
+    }
+    else if (src == cChoice) {
+      if (cIndex == zIndex) zChoice.select(firstAvailable(cIndex, tIndex));
+      else if (cIndex == tIndex) tChoice.select(firstAvailable(zIndex, cIndex));
+    }
+    else if (src == tChoice) {
+      if (tIndex == zIndex) zChoice.select(firstAvailable(cIndex, tIndex));
+      else if (tIndex == cIndex) cChoice.select(firstAvailable(zIndex, tIndex));
+    }
+  }
+
+  // -- Helper methods --
+
+  private int firstAvailable(int... index) {
+    final int minValue = 0, maxValue = 2;
+    for (int v=minValue; v<=maxValue; v++) {
+      boolean taken = false;
+      for (int i : index) {
+        if (v == i) {
+          taken = true;
+          break;
+        }
+      }
+      if (!taken) return v;
+    }
+    return -1;
   }
 
 }

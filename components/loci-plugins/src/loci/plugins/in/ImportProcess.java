@@ -415,24 +415,35 @@ public class ImportProcess implements StatusReporter {
     }
     r.setId(options.getId());
 
-    boolean fillIndexed;
+    final boolean fillIndexed;
     if (r.isIndexed()) {
+      final int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
+      final byte[][] lut8 = r.get8BitLookupTable();
+      final boolean defaultColorMode = options.isColorModeDefault();
+
+      // NB: ImageJ only supports 8-bit RGB color tables.
+      // In addition, we only keep the indices in default color mode.
+      final boolean keepColorTable = defaultColorMode &&
+        bpp == 1 && lut8 != null && lut8.length >= 1 && lut8.length <= 3;
+
       if (r.isFalseColor()) {
-        // false color; never fill indices
+        // false color; never fill the indices
         fillIndexed = false;
+        if (!keepColorTable) {
+          // warn the user that we'll have to throw away the color table
+          BF.warn(options.isQuiet(),
+            "false color table will be lost: " + getIdName());
+        }
       }
       else {
-        // true color; fill indices unless 8-bit RGB with default color mode
-        int bpp = FormatTools.getBytesPerPixel(r.getPixelType());
-        byte[][] lut8 = r.get8BitLookupTable();
-        boolean defaultColorMode = options.isColorModeDefault();
-        fillIndexed = !defaultColorMode || bpp > 1 || lut8 == null || lut8[0].length > 3;
+        // true color; if we can't keep the color table, then fill the indices
+        fillIndexed = !keepColorTable;
       }
     }
     else fillIndexed = false; // no need to fill non-indexed data
     if (fillIndexed) {
       r = channelFiller = new ChannelFiller(r);
-      BF.warn(options.isQuiet(), "Index values will be lost");
+      BF.warn(options.isQuiet(), "index values will be lost: " + getIdName());
     }
 
     r = channelSeparator = new ChannelSeparator(r);

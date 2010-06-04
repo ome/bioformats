@@ -352,14 +352,6 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isNormalized() { return reader.isNormalized(); }
 
-  /** @deprecated */
-  public void setMetadataCollected(boolean collect) {
-    reader.setMetadataCollected(collect);
-  }
-
-  /** @deprecated */
-  public boolean isMetadataCollected() { return reader.isMetadataCollected(); }
-
   public void setOriginalMetadataPopulated(boolean populate) {
     reader.setOriginalMetadataPopulated(populate);
   }
@@ -414,13 +406,12 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
-  /** @deprecated */
-  public Hashtable<String, Object> getMetadata() {
-    return reader.getMetadata();
-  }
-
   public CoreMetadata[] getCoreMetadata() {
-    return reader.getCoreMetadata();
+    //return reader.getCoreMetadata();
+
+    // NB: Be sure all CoreMetadata values are returned correctly,
+    // regardless of any method overrides.
+    return copyCoreMetadata(this);
   }
 
   public void setMetadataFiltered(boolean filter) {
@@ -536,6 +527,31 @@ public abstract class ReaderWrapper implements IFormatReader {
     catch (InvocationTargetException exc) { throw new FormatException(exc); }
 
     return wrapperCopy;
+  }
+
+  // -- Deprecated methods --
+
+
+  /** @deprecated */
+  public void setMetadataCollected(boolean collect) {
+    reader.setMetadataCollected(collect);
+  }
+
+  /** @deprecated */
+  public boolean isMetadataCollected() { return reader.isMetadataCollected(); }
+
+  /** @deprecated */
+  public Hashtable<String, Object> getMetadata() {
+    return reader.getMetadata();
+  }
+
+  // -- Helper methods --
+
+  /** Creates a copy of the core metadata matching to the given reader state. */
+  protected CoreMetadata[] copyCoreMetadata(IFormatReader r) {
+    CoreMetadata[] core = new CoreMetadata[r.getSeriesCount()];
+    for (int s=0; s<core.length; s++) core[s] = new CoreMetadata(r, s);
+    return core;
   }
 
 }

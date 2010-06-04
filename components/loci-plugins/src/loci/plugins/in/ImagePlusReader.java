@@ -125,7 +125,7 @@ public class ImagePlusReader implements StatusReporter {
     for (StatusListener l : listeners) l.statusUpdated(e);
   }
 
-  // -- Helper methods --
+  // -- Helper methods - image reading --
 
   private List<ImagePlus> readImages()
     throws FormatException, IOException
@@ -139,6 +139,9 @@ public class ImagePlusReader implements StatusReporter {
     ImporterOptions options = process.getOptions();
 
     if (options.isVirtual()) {
+      // set virtual stack's reference count to match # of image windows
+      // in this case, these is one window per enabled image series
+      // when all image windows are closed, the Bio-Formats reader is closed
       int totalSeries = 0;
       for (int s=0; s<reader.getSeriesCount(); s++) {
         if (options.isSeriesOn(s)) totalSeries++;
@@ -146,6 +149,7 @@ public class ImagePlusReader implements StatusReporter {
       process.getVirtualReader().setRefCount(totalSeries);
     }
 
+    // read in each image series
     for (int s=0; s<reader.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
       readSeries(s, imps);
@@ -187,6 +191,7 @@ public class ImagePlusReader implements StatusReporter {
     Region region = process.getCropRegion(s);
 
     if (options.isVirtual()) {
+      // CTR FIXME - clean up this part
       boolean doMerge = false; //options.isMergeChannels();
       boolean doColorize = false; //options.isColorize();
 
@@ -292,20 +297,33 @@ public class ImagePlusReader implements StatusReporter {
     if (impO != null) imps.add(impO);
   }
 
+  // -- Helper methods - concatenation --
+
   private List<ImagePlus> concatenate(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
     if (options.isConcatenate()) imps = new Concatenator().concatenate(imps);
     return imps;
   }
 
+  // -- Helper methods - colorization --
+
   private List<ImagePlus> applyColors(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
 
-    // CTR FIXME - problems with single channel data
-    // CTR FIXME - problems with sizeC > 7
     // CTR FIXME - problems with default color mode
     int mode = -1;
-    if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
+    int sizeC = process.getReader().getSizeC();
+    if (sizeC == 1) {
+      // NB: Cannot use CompositeImage for single-channel images.
+      // CTR FIXME finish sizeC==1 case
+      loci.plugins.BF.warn(options.isQuiet(), "sizeC = 1");//TEMP
+    }
+    else if (sizeC > 7) {
+      // NB: Cannot use CompositeImage when there are more than seven channels.
+      // CTR FIXME finish sizeC>7 case
+      loci.plugins.BF.warn(options.isQuiet(), "sizeC > 7");//TEMP
+    }
+    else if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
     else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
     else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
     else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
@@ -323,6 +341,40 @@ public class ImagePlusReader implements StatusReporter {
     }
     return imps;
   }
+
+  private LUT[] makeLUTs(int series) {
+    final ImageProcessorReader reader = process.getReader();
+    reader.setSeries(series);
+    LUT[] luts = new LUT[reader.getSizeC()];
+    for (int c=0; c<luts.length; c++) luts[c] = makeLUT(series, c);
+    return luts;
+  }
+
+  private LUT makeLUT(int series, int channel) {
+    final ImporterOptions options = process.getOptions();
+    Color color = options.getCustomColor(series, channel);
+    if (color == null) color = options.getDefaultCustomColor(channel);
+    return makeLUT(color);
+  }
+
+  private LUT makeLUT(Color color) {
+    final int red = color.getRed();
+    final int green = color.getGreen();
+    final int blue = color.getBlue();
+    final int lutLength = 256;
+    final int lutDivisor = lutLength - 1;
+    byte[] r = new byte[lutLength];
+    byte[] g = new byte[lutLength];
+    byte[] b = new byte[lutLength];
+    for (int i=0; i<lutLength; i++) {
+      r[i] = (byte) (i * red / lutDivisor);
+      g[i] = (byte) (i * green / lutDivisor);
+      b[i] = (byte) (i * blue / lutDivisor);
+    }
+    return new LUT(r, g, b);
+  }
+
+  // -- Helper methods - window splitting --
 
   private List<ImagePlus> splitDims(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
@@ -342,39 +394,46 @@ public class ImagePlusReader implements StatusReporter {
     }
     return imps;
   }
-  
 
-  private LUT[] makeLUTs(int series) {
+  // -- Helper methods - timing --
+
+  private long startTime, time;
+
+  private void startTiming() {
+    startTime = time = System.currentTimeMillis();
+  }
+
+  private void updateTiming(int s, int i, int current, int total) {
     final ImageProcessorReader reader = process.getReader();
-    reader.setSeries(series);
-    LUT[] luts = new LUT[reader.getSizeC()];
-    for (int c=0; c<luts.length; c++) luts[c] = makeLUT(series, c);
-    return luts;
-  }
-  
-  private LUT makeLUT(int series, int channel) {
-    final ImporterOptions options = process.getOptions();
-    Color color = options.getCustomColor(series, channel);
-    if (color == null) color = options.getDefaultCustomColor(channel);
-    return makeLUT(color);
-  }
-  
-  private LUT makeLUT(Color color) {
-    final int red = color.getRed();
-    final int green = color.getGreen();
-    final int blue = color.getBlue();
-    final int lutLength = 256;
-    byte[] r = new byte[lutLength];
-    byte[] g = new byte[lutLength];
-    byte[] b = new byte[lutLength];
-    for (int i=0; i<lutLength; i++) {
-      r[i] = (byte) (i * red / lutLength);
-      g[i] = (byte) (i * green / lutLength);
-      b[i] = (byte) (i * blue / lutLength);
+
+    long clock = System.currentTimeMillis();
+    if (clock - time >= 100) {
+      String sLabel = reader.getSeriesCount() > 1 ?
+        ("series " + (s + 1) + ", ") : "";
+      String pLabel = "plane " + (i + 1) + "/" + total;
+      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
+      time = clock;
     }
-    return new LUT(r, g, b);
+    notifyListeners(new StatusEvent(current, total, null));
   }
-    
+
+  private void finishTiming() {
+    final ImageProcessorReader reader = process.getReader();
+
+    long endTime = System.currentTimeMillis();
+    double elapsed = (endTime - startTime) / 1000.0;
+    if (reader.getImageCount() == 1) {
+      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
+    }
+    else {
+      long average = (endTime - startTime) / reader.getImageCount();
+      notifyListeners(new StatusEvent("Bio-Formats: " +
+        elapsed + " seconds (" + average + " ms per plane)"));
+    }
+  }
+
+  // -- Helper methods -- miscellaneous --
+
   private FileInfo createFileInfo() {
     FileInfo fi = new FileInfo();
 
@@ -460,49 +519,23 @@ public class ImagePlusReader implements StatusReporter {
 
     imp.setOpenAsHyperStack(true);
 
-    if (options.isAutoscale()) {
+    // apply intensity scaling
+    int pixelType = reader.getPixelType();
+    // always autoscale floating point image data
+    if (options.isAutoscale() || FormatTools.isFloatingPoint(pixelType)) {
       ImagePlusTools.adjustColorRange(imp, process.getMinMaxCalculator());
     }
-    else if (!(imp.getProcessor() instanceof ColorProcessor)) {
-      // ImageJ may autoscale the images anyway, so we need to manually
-      // set the display range to the min/max values allowed for
-      // this pixel type
-      imp.setDisplayRange(0, Math.pow(2, imp.getBitDepth()) - 1);
+    else {
+      // ImageJ may autoscale the images anyway, so we need to manually set
+      // the display range to the min/max values allowed for this pixel type
+      int bitDepth = reader.getBitsPerPixel();
+      // NB: ImageJ does not directly support signed data (it is merely
+      // unsigned data shifted downward by half via a "calibration"),
+      // so the following min and max values also work for signed.
+      double min = 0;
+      double max = Math.pow(2, bitDepth) - 1;
+      imp.setDisplayRange(min, max);
     }
-
-//    IFormatReader r = options.getReader();
-//    boolean windowless = options.isWindowless();
-
-
-    // NB: ImageJ 1.39+ is required for hyperstacks
-
-//      boolean hyper = options.isViewHyperstack() || options.isViewBrowser();
-//
-//      boolean splitC = options.isSplitChannels();
-//      boolean splitZ = options.isSplitFocalPlanes();
-//      boolean splitT = options.isSplitTimepoints();
-//
-//      boolean customColorize = options.isCustomColorize();
-//      boolean browser = options.isViewBrowser();
-//      boolean virtual = options.isVirtual();
-//
-//      if (options.isColorize() || customColorize) {
-//        byte[][][] lut =
-//          Colorizer.makeDefaultLut(imp.getNChannels(), customColorize ? -1 : 0);
-//        imp = Colorizer.colorize(imp, true, stackOrder, lut, r.getSeries(), null, options.isViewHyperstack());
-//      }
-//      else if (colorModels != null && !browser && !virtual) {
-//        byte[][][] lut = new byte[colorModels.length][][];
-//        for (int channel=0; channel<lut.length; channel++) {
-//          lut[channel] = new byte[3][256];
-//          colorModels[channel].getReds(lut[channel][0]);
-//          colorModels[channel].getGreens(lut[channel][1]);
-//          colorModels[channel].getBlues(lut[channel][2]);
-//        }
-//        imp = Colorizer.colorize(imp, true,
-//          stackOrder, lut, r.getSeries(), null, hyper);
-//      }
-//    }
 
     return imp;
   }
@@ -583,43 +616,6 @@ public class ImagePlusReader implements StatusReporter {
       sb.append(imageName);
     }
     return sb.toString();
-  }
-
-  // -- Helper methods - timing --
-
-  private long startTime, time;
-
-  private void startTiming() {
-    startTime = time = System.currentTimeMillis();
-  }
-
-  private void updateTiming(int s, int i, int current, int total) {
-    final ImageProcessorReader reader = process.getReader();
-
-    long clock = System.currentTimeMillis();
-    if (clock - time >= 100) {
-      String sLabel = reader.getSeriesCount() > 1 ?
-        ("series " + (s + 1) + ", ") : "";
-      String pLabel = "plane " + (i + 1) + "/" + total;
-      notifyListeners(new StatusEvent("Reading " + sLabel + pLabel));
-      time = clock;
-    }
-    notifyListeners(new StatusEvent(current, total, null));
-  }
-
-  private void finishTiming() {
-    final ImageProcessorReader reader = process.getReader();
-
-    long endTime = System.currentTimeMillis();
-    double elapsed = (endTime - startTime) / 1000.0;
-    if (reader.getImageCount() == 1) {
-      notifyListeners(new StatusEvent("Bio-Formats: " + elapsed + " seconds"));
-    }
-    else {
-      long average = (endTime - startTime) / reader.getImageCount();
-      notifyListeners(new StatusEvent("Bio-Formats: " +
-        elapsed + " seconds (" + average + " ms per plane)"));
-    }
   }
 
 }

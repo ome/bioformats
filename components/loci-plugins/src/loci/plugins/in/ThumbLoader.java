@@ -40,6 +40,7 @@ import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.plugins.BF;
+import loci.plugins.util.WindowTools;
 
 /**
  * Loads thumbnails for Bio-Formats Importer
@@ -99,45 +100,53 @@ public class ThumbLoader implements Runnable {
 
   /** Does the work of loading the thumbnails. */
   public void run() {
-    try {
-      BF.status(false, "Gathering series information");
-      int seriesCount = ir.getSeriesCount();
+    BF.status(false, "Gathering series information");
+    int seriesCount = ir.getSeriesCount();
 
-      // find image plane for each series and sort by size
-      SeriesInfo[] info = new SeriesInfo[seriesCount];
-      for (int i=0; i<seriesCount; i++) {
-        if (stop) return;
-        ir.setSeries(i);
-        info[i] = new SeriesInfo(i, ir.getSizeX() * ir.getSizeY());
-      }
+    // find image plane for each series and sort by size
+    SeriesInfo[] info = new SeriesInfo[seriesCount];
+    for (int i=0; i<seriesCount; i++) {
       if (stop) return;
-      Arrays.sort(info);
+      ir.setSeries(i);
+      info[i] = new SeriesInfo(i, ir.getSizeX() * ir.getSizeY());
+    }
+    if (stop) return;
+    Arrays.sort(info);
 
-      // open each thumbnail, fastest/smallest first
-      for (int i=0; i<seriesCount; i++) {
-        if (stop) return;
-        final int ii = info[i].index;
-        BF.status(false, "Reading thumbnail for series #" + (ii + 1));
-        ir.setSeries(ii);
-        // open middle image thumbnail
-        int z = ir.getSizeZ() / 2;
-        int t = ir.getSizeT() / 2;
-        int ndx = ir.getIndex(z, 0, t);
-        BufferedImage thumb = ir.openThumbImage(ndx);
-        if (scale && ir.getPixelType() != FormatTools.FLOAT) {
-          thumb = AWTImageTools.autoscale(thumb);
-        }
-        ImageIcon icon = new ImageIcon(thumb);
-        p[ii].removeAll();
-        p[ii].add(new JLabel(icon));
-        if (dialog != null) dialog.validate();
-      }
+    // open each thumbnail, fastest/smallest first
+    for (int i=0; i<seriesCount; i++) {
+      if (stop) return;
+      final int ii = info[i].index;
+      loadThumb(ir, ii, p[ii], false, scale);
+      if (dialog != null) dialog.validate();
     }
-    catch (IOException exc) {
-      exc.printStackTrace();
+  }
+
+  // -- Helper methods --
+
+  public static void loadThumb(BufferedImageReader thumbReader,
+    int series, Panel panel, boolean quiet, boolean autoscale)
+  {
+    BF.status(quiet, "Reading thumbnail for series #" + (series + 1));
+    thumbReader.setSeries(series);
+    // open middle image thumbnail
+    int z = thumbReader.getSizeZ() / 2;
+    int t = thumbReader.getSizeT() / 2;
+    int ndx = thumbReader.getIndex(z, 0, t);
+    Exception exc = null;
+    try {
+      BufferedImage thumb = thumbReader.openThumbImage(ndx);
+      boolean notFloat = thumbReader.getPixelType() != FormatTools.FLOAT;
+      if (autoscale && notFloat) thumb = AWTImageTools.autoscale(thumb);
+      ImageIcon icon = new ImageIcon(thumb);
+      panel.removeAll();
+      panel.add(new JLabel(icon));
     }
-    catch (FormatException exc) {
-      exc.printStackTrace();
+    catch (FormatException e) { exc = e; }
+    catch (IOException e) { exc = e; }
+    if (exc != null) {
+      WindowTools.reportException(exc, quiet,
+        "Error loading thumbnail for series #" + (series + 1));
     }
   }
 

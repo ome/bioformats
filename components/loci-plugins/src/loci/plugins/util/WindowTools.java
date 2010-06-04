@@ -31,6 +31,7 @@ import ij.gui.GenericDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
+import java.awt.Choice;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -186,7 +187,7 @@ public final class WindowTools {
     if (t != null) {
       String s = DebugTools.getStackTrace(t);
       StringTokenizer st = new StringTokenizer(s, "\n\r");
-      while (st.hasMoreTokens()) IJ.write(st.nextToken());
+      while (st.hasMoreTokens()) IJ.log(st.nextToken());
     }
     if (msg != null) IJ.error("Bio-Formats Importer", msg);
   }
@@ -199,6 +200,11 @@ public final class WindowTools {
   @SuppressWarnings("unchecked")
   public static List<Checkbox> getCheckboxes(GenericDialog gd) {
     return gd.getCheckboxes();
+  }
+
+  @SuppressWarnings("unchecked")
+  public static List<Choice> getChoices(GenericDialog gd) {
+    return gd.getChoices();
   }
 
 }

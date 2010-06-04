@@ -112,6 +112,7 @@ public class Importer {
     ImporterOptions options = new ImporterOptions();
     options.loadOptions();
     options.parseArg(arg);
+    options.checkObsoleteOptions();
     return options;
   }
 

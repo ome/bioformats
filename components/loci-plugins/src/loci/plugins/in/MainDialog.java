@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import ij.gui.GenericDialog;
 
 import java.awt.Checkbox;
@@ -47,10 +51,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
 import loci.plugins.util.WindowTools;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Bio-Formats Importer general options dialog box.
@@ -101,14 +101,14 @@ public class MainDialog extends ImporterDialog
   public MainDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
     return !process.isWindowless();
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
     GenericDialog gd = new GenericDialog("Bio-Formats Import Options");
@@ -135,7 +135,7 @@ public class MainDialog extends ImporterDialog
     rebuildDialog(gd);
     return gd;
   }
-  
+
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     options.setAutoscale(gd.getNextBoolean());
@@ -160,7 +160,7 @@ public class MainDialog extends ImporterDialog
     options.setVirtual(gd.getNextBoolean());
     return true;
   }
-  
+
   // -- FocusListener methods --
 
   /** Handles information pane updates when component focus changes. */
@@ -255,6 +255,9 @@ public class MainDialog extends ImporterDialog
     }
     verifyOptions(null);
 
+    // TODO: The info table and focus logic could be split into
+    // its own class, rather than being specific to this dialog.
+
     // associate information for each option
     infoTable = new HashMap<Component, String>();
     infoTable.put(autoscaleBox, options.getAutoscaleInfo());
@@ -287,7 +290,7 @@ public class MainDialog extends ImporterDialog
       "pref, 3dlu, pref:grow, " +
       // second column
       "10dlu, pref, " +
-	    // third column
+      // third column
       "10dlu, fill:150dlu";
 
     String rows =
@@ -299,7 +302,7 @@ public class MainDialog extends ImporterDialog
       // Color options        | Split into separate windows
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref";
 
-    // TODO: change "Use virtual stack" and "Record modifications to virtual
+    // TODO: Change "Use virtual stack" and "Record modifications to virtual
     // stack" checkboxes to "Stack type" choice with options:
     //   "Normal", "Virtual" or "Smart virtual"
 
@@ -525,7 +528,7 @@ public class MainDialog extends ImporterDialog
 
     boolean splitEnabled = !isStackNone && !isStackBrowser &&
       !isStackImage5D && !isStackView5D && !isVirtual;
-    // TODO: make splitting work with Data Browser & virtual stacks
+    // TODO: Make splitting work with Data Browser & virtual stacks.
 
     // splitCBox
     splitCEnabled = splitEnabled;
