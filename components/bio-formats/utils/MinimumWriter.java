@@ -45,6 +45,8 @@ public class MinimumWriter {
     IMetadata meta = service.createOMEXMLMetadata();
 
     meta.createRoot();
+    meta.setImageID("Image:0", 0);
+    meta.setPixelsID("Pixels:0", 0);
     meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
     meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
     meta.setPixelsType(
@@ -54,6 +56,7 @@ public class MinimumWriter {
     meta.setPixelsSizeZ(new PositiveInteger(1), 0);
     meta.setPixelsSizeC(new PositiveInteger(1), 0);
     meta.setPixelsSizeT(new PositiveInteger(1), 0);
+    meta.setChannelID("Channel:0:0", 0, 0);
     meta.setChannelSamplesPerPixel(1, 0, 0);
 
     // write image plane to disk
