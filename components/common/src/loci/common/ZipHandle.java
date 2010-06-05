@@ -42,7 +42,7 @@ import java.util.zip.ZipFile;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/ZipHandle.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/ZipHandle.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ZipHandle extends StreamHandle {
 

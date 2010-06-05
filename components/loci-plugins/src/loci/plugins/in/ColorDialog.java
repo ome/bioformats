@@ -53,7 +53,7 @@ import loci.plugins.util.WindowTools;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/ColorDialog.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/ColorDialog.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ColorDialog extends ImporterDialog {

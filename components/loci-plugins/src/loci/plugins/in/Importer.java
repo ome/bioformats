@@ -43,7 +43,7 @@ import loci.plugins.util.WindowTools;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/Importer.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Importer {
 

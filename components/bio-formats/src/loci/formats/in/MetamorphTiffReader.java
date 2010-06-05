@@ -44,7 +44,7 @@ import loci.formats.tiff.TiffParser;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Thomas Caswell tcaswell at uchicago.edu
  */
 public class MetamorphTiffReader extends BaseTiffReader {

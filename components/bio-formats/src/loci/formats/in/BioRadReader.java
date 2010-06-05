@@ -51,7 +51,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/BioRadReader.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 
 public class BioRadReader extends FormatReader {

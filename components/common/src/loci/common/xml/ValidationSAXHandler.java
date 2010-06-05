@@ -38,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 /**  */
 class ValidationSAXHandler extends DefaultHandler {

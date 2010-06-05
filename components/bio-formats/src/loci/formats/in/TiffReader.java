@@ -46,7 +46,7 @@ import loci.formats.tiff.TiffCompression;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/TiffReader.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class TiffReader extends BaseTiffReader {
 

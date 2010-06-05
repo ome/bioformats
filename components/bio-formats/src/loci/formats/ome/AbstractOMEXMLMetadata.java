@@ -48,7 +48,7 @@ import org.w3c.dom.Element;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ome/AbsractOMEXMLMetadata.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
