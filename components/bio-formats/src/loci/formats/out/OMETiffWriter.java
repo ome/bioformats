@@ -30,6 +30,7 @@ import java.util.UUID;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -66,6 +67,8 @@ public class OMETiffWriter extends TiffWriter {
 
   private ArrayList<Integer> seriesMap;
   private boolean wroteLast;
+  private String[][] imageLocations;
+  private int totalPlanes = 0;
 
   // -- Constructor --
 
@@ -79,9 +82,8 @@ public class OMETiffWriter extends TiffWriter {
   public void close() throws IOException {
     if (currentId != null) {
       if (!wroteLast) {
-        // FIXME
-        throw new IOException(
-          "Sorry, closing OME-TIFF files early is not yet supported.");
+        super.close();
+        return;
       }
 
       // extract OME-XML string from metadata object
@@ -105,11 +107,6 @@ public class OMETiffWriter extends TiffWriter {
         throw new RuntimeException(se);
       }
 
-      // generate UUID and add to OME element
-      String filename = new Location(currentId).getName();
-      String uuid = "urn:uuid:" + getUUID(filename);
-      omeMeta.setUUID(uuid);
-
       for (int series=0; series<omeMeta.getImageCount(); series++) {
         String dimensionOrder =
           omeMeta.getPixelsDimensionOrder(series).toString();
@@ -117,20 +114,12 @@ public class OMETiffWriter extends TiffWriter {
         int sizeC = omeMeta.getPixelsSizeC(series).getValue().intValue();
         int sizeT = omeMeta.getPixelsSizeT(series).getValue().intValue();
 
-        int imageCount = 0;
+        int imageCount = getPlaneCount();
         int ifdCount = seriesMap.size();
-        for (int q=0; q<ifdCount; q++) {
-          if (seriesMap.get(q).intValue() == series) imageCount++;
-        }
 
         if (imageCount == 0) {
           omeMeta.setTiffDataPlaneCount(new Integer(0), series, 0);
           continue;
-        }
-
-        // if RGB planes were written, adjust sizeC
-        if (imageCount < sizeZ * sizeC * sizeT) {
-          sizeC = imageCount / (sizeZ * sizeT);
         }
 
         Integer samplesPerPixel =
@@ -139,77 +128,81 @@ public class OMETiffWriter extends TiffWriter {
           omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
         }
 
-        int ifd = 0, plane = 0;
-        while (plane < imageCount) {
-          // skip past IFDs from other series
-          while (seriesMap.get(ifd).intValue() != series) {
-            ifd++;
-          }
-          // determine number of sequential IFDs
-          int end = ifd;
-          while (end < ifdCount && seriesMap.get(end).intValue() == series) {
-            end++;
-          }
-          int num = end - ifd;
+        HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
-          // fill in filename and UUID values
+        for (int plane=0; plane<imageCount; plane++) {
           int[] zct = FormatTools.getZCTCoords(dimensionOrder,
             sizeZ, sizeC, sizeT, imageCount, plane);
+          String filename =
+            new Location(imageLocations[series][plane]).getName();
+
+          Integer ifdIndex = ifdCounts.get(filename);
+          int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
+
           omeMeta.setUUIDFileName(filename, series, plane);
-          // TODO
-          //omeMeta.setTiffDataUUID(uuid, series, 0, plane);
+          String uuid = "urn:uuid:" + getUUID(filename);
+          omeMeta.setUUIDValue(uuid, series, plane);
           // fill in any non-default TiffData attributes
-          if (zct[0] > 0) {
-            omeMeta.setTiffDataFirstZ(new Integer(zct[0]), series, plane);
-          }
-          if (zct[1] > 0) {
-            omeMeta.setTiffDataFirstC(new Integer(zct[1]), series, plane);
-          }
-          if (zct[2] > 0) {
-            omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, plane);
-          }
-          if (ifd > 0) {
-            omeMeta.setTiffDataIFD(new Integer(ifd), series, plane);
-          }
-          if (num != ifdCount) {
-            omeMeta.setTiffDataPlaneCount(new Integer(num), series, plane);
-          }
-          plane += num;
-          ifd = end;
+          omeMeta.setTiffDataFirstZ(zct[0], series, plane);
+          omeMeta.setTiffDataFirstC(zct[1], series, plane);
+          omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, plane);
+          omeMeta.setTiffDataIFD(ifd, series, plane);
+          omeMeta.setTiffDataPlaneCount(1, series, plane);
+
+          ifdCounts.put(filename, ifd + 1);
         }
       }
 
-      String xml;
-      try {
-        xml = service.getOMEXML(omeMeta);
-      }
-      catch (ServiceException se) {
-        // FIXME: Modify close() signature to include FormatException?
-        // throw new FormatException(se);
-        throw new RuntimeException(se);
+      ArrayList<String> files = new ArrayList<String>();
+      for (String[] s : imageLocations) {
+        for (String f : s) {
+          if (!files.contains(f)) files.add(f);
+        }
       }
 
-      // insert warning comment
-      String prefix = xml.substring(0, xml.indexOf(">") + 1);
-      String suffix = xml.substring(xml.indexOf(">") + 1);
-      xml = prefix + WARNING_COMMENT + suffix;
+      for (String file : files) {
+        // generate UUID and add to OME element
+        String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
+        omeMeta.setUUID(uuid);
 
-      // write OME-XML to the first IFD's comment
-      try {
-        TiffSaver saver = new TiffSaver(out);
-        RandomAccessInputStream in = new RandomAccessInputStream(currentId);
-        saver.overwriteComment(in, xml);
-        in.close();
-      }
-      catch (FormatException exc) {
-        IOException io = new IOException("Unable to append OME-XML comment");
-        io.initCause(exc);
-        throw io;
+        String xml;
+        try {
+          xml = service.getOMEXML(omeMeta);
+        }
+        catch (ServiceException se) {
+          // FIXME: Modify close() signature to include FormatException?
+          // throw new FormatException(se);
+          throw new RuntimeException(se);
+        }
+
+        // insert warning comment
+        String prefix = xml.substring(0, xml.indexOf(">") + 1);
+        String suffix = xml.substring(xml.indexOf(">") + 1);
+        xml = prefix + WARNING_COMMENT + suffix;
+
+        if (out != null) out.close();
+        out = new RandomAccessOutputStream(file);
+
+        // write OME-XML to the first IFD's comment
+        try {
+          TiffSaver saver = new TiffSaver(out);
+          RandomAccessInputStream in = new RandomAccessInputStream(file);
+          saver.overwriteLastIFDOffset(in);
+          saver.overwriteComment(in, xml);
+          in.close();
+        }
+        catch (FormatException exc) {
+          IOException io = new IOException("Unable to append OME-XML comment");
+          io.initCause(exc);
+          throw io;
+        }
       }
     }
     super.close();
     seriesMap = null;
+    imageLocations = null;
     wroteLast = false;
+    totalPlanes = 0;
   }
 
   // -- IFormatWriter API methods --
@@ -225,8 +218,20 @@ public class OMETiffWriter extends TiffWriter {
 
     MetadataRetrieve r = getMetadataRetrieve();
 
-    wroteLast = series == r.getImageCount() - 1 && no == getPlaneCount() - 1;
     super.saveBytes(no, buf, x, y, w, h);
+
+    int index = totalPlanes;
+    int currentSeries = series;
+    for (int s=0; s<currentSeries; s++) {
+      setSeries(s);
+      index -= getPlaneCount();
+    }
+    setSeries(currentSeries);
+
+    imageLocations[series][index] = currentId;
+    totalPlanes++;
+
+    wroteLast = series == r.getImageCount() - 1 && index == getPlaneCount() - 1;
   }
 
   // -- IFormatHandler API methods --
@@ -234,13 +239,16 @@ public class OMETiffWriter extends TiffWriter {
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
-    Location file = new Location(id);
-    if (file.exists() && file.length() > 0) {
-      // FIXME
-      throw new FormatException(
-        "Sorry, appending to existing OME-TIFF files is not yet supported.");
-    }
     super.setId(id);
+    if (imageLocations == null) {
+      MetadataRetrieve r = getMetadataRetrieve();
+      imageLocations = new String[r.getImageCount()][];
+      for (int i=0; i<imageLocations.length; i++) {
+        setSeries(i);
+        imageLocations[i] = new String[getPlaneCount()];
+      }
+      setSeries(0);
+    }
   }
 
   // -- Helper methods --

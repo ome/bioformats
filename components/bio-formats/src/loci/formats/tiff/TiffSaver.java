@@ -446,6 +446,15 @@ public class TiffSaver {
     }
   }
 
+  public void overwriteLastIFDOffset(RandomAccessInputStream raf)
+    throws FormatException, IOException
+  {
+    TiffParser parser = new TiffParser(raf);
+    long[] offsets = parser.getIFDOffsets();
+    out.seek(raf.getFilePointer() - (bigTiff ? 8 : 4));
+    writeIntValue(out, 0);
+  }
+
   /**
    * Surgically overwrites an existing IFD value with the given one. This
    * method requires that the IFD directory entry already exist. It
