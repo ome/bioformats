@@ -53,7 +53,7 @@ import ome.xml.model.primitives.*;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200809Metadata.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 {

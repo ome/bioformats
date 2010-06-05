@@ -44,7 +44,7 @@ import loci.formats.tiff.TiffRational;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/BaseTiffReader.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public abstract class BaseTiffReader extends MinimalTiffReader {
 

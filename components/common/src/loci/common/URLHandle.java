@@ -41,7 +41,7 @@ import java.net.URLConnection;
  * @see StreamHandle
  * @see java.net.URLConnection
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class URLHandle extends StreamHandle {
 
