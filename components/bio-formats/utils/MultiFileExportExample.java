@@ -1,6 +1,7 @@
 import java.io.IOException;
 
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
@@ -13,7 +14,7 @@ public class MultiFileExportExample {
   public static void main(String[] args) throws FormatException, IOException {
     if (args.length < 2) {
       System.out.println(
-        "Usage: java MultiFileExportExample <infile> <output file extension");
+        "Usage: java MultiFileExportExample <infile> <output file extension>");
       System.exit(1);
     }
 
@@ -36,7 +37,11 @@ public class MultiFileExportExample {
         String file = baseFile + "_s" + series + "_z" + z + args[1];
         writer.changeOutputFile(file);
         for (int image=0; image<planesPerFile; image++) {
-          writer.saveBytes(image, reader.openBytes(image));
+          int zct[] = FormatTools.getZCTCoords(reader.getDimensionOrder(),
+            1, reader.getEffectiveSizeC(), reader.getSizeT(),
+            planesPerFile, image);
+          int index = FormatTools.getIndex(reader, z, zct[1], zct[2]);
+          writer.saveBytes(image, reader.openBytes(index));
         }
       }
     }

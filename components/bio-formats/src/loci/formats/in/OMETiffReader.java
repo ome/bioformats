@@ -202,7 +202,14 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return noPixels ? null : used;
+    if (noPixels) return null;
+    Vector<String> usedFiles = new Vector<String>();
+    for (int i=0; i<info[series].length; i++) {
+      if (!usedFiles.contains(info[series][i].id)) {
+        usedFiles.add(info[series][i].id);
+      }
+    }
+    return usedFiles.toArray(new String[usedFiles.size()]);
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption() */
