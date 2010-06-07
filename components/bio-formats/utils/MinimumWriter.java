@@ -8,7 +8,6 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 

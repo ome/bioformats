@@ -66,6 +66,12 @@ the latest release of the OME-XML schema. E.g.:
     <java classname="${component.jace-header-class}"
       classpath="${classes.dir}:${component.runtime-cp}"
       fork="true" dir="${component.jace-header-dir}">
+      <arg value="ome-xml"/>
+      <arg value="${root.dir}/components/ome-xml/src"/>
+    </java>
+    <java classname="${component.jace-header-class}"
+      classpath="${classes.dir}:${component.runtime-cp}"
+      fork="true" dir="${component.jace-header-dir}">
       <arg value="flow-cytometry"/>
       <arg value="${root.dir}/components/flow-cytometry/src"/>
     </java>

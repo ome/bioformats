@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via JaceHeaderAutogen on Mar 19, 2010 1:24:54 PM CDT
+ * Created by melissa via JaceHeaderAutogen on Jun 7, 2010 1:51:51 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,6 +58,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/common/CRC.h"
 #include "jace/proxy/loci/common/DataTools.h"
 #include "jace/proxy/loci/common/DateTools.h"
+#include "jace/proxy/loci/common/DebugTools.h"
 #include "jace/proxy/loci/common/FileHandle.h"
 #include "jace/proxy/loci/common/GZipHandle.h"
 #include "jace/proxy/loci/common/HandleException.h"
@@ -66,6 +67,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/common/IniParser.h"
 #include "jace/proxy/loci/common/IniTable.h"
 #include "jace/proxy/loci/common/Location.h"
+#include "jace/proxy/loci/common/NIOByteBufferProvider.h"
 #include "jace/proxy/loci/common/NIOFileHandle.h"
 #include "jace/proxy/loci/common/NIOInputStream.h"
 #include "jace/proxy/loci/common/RandomAccessInputStream.h"
@@ -73,6 +75,9 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/common/ReflectException.h"
 #include "jace/proxy/loci/common/ReflectedUniverse.h"
 #include "jace/proxy/loci/common/Region.h"
+#include "jace/proxy/loci/common/StatusEvent.h"
+#include "jace/proxy/loci/common/StatusListener.h"
+#include "jace/proxy/loci/common/StatusReporter.h"
 #include "jace/proxy/loci/common/StreamHandle.h"
 #include "jace/proxy/loci/common/URLHandle.h"
 #include "jace/proxy/loci/common/ZipHandle.h"
