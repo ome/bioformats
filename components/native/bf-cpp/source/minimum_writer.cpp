@@ -121,6 +121,8 @@ bool minWrite(int argc, const char *argv[]) {
   cout << "Populating metadata..." << endl;
   IMetadata meta = MetadataTools::createOMEXMLMetadata();
   meta.createRoot();
+  meta.setImageID("Image:0", 0);
+  meta.setPixelsID("Pixels:0", 0);
   meta.setPixelsBinDataBigEndian(Boolean(1), 0, 0);
   meta.setPixelsDimensionOrder(DimensionOrder::XYZCT(), 0);
   meta.setPixelsType(
@@ -130,6 +132,7 @@ bool minWrite(int argc, const char *argv[]) {
   meta.setPixelsSizeZ(PositiveInteger(Integer(1)), 0);
   meta.setPixelsSizeC(PositiveInteger(Integer(1)), 0);
   meta.setPixelsSizeT(PositiveInteger(Integer(1)), 0);
+  meta.setChannelID("Channel:0:0", 0, 0);
   meta.setChannelSamplesPerPixel(Integer(1), 0, 0);
 
   // write image plane to disk
