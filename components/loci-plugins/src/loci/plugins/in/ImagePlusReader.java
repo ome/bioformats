@@ -256,12 +256,12 @@ public class ImagePlusReader implements StatusReporter {
         // add plane to image stack
         int w = region.width, h = region.height;
         if (ip instanceof ByteProcessor) {
-          if (stackB == null) stackB = new ImageStack(w, h);
-          stackB.addSlice(label, ip);
+          throw new FormatException(
+            "Found a FloatProcessor, expected a ByteProcessor");
         }
         else if (ip instanceof ShortProcessor) {
-          if (stackS == null) stackS = new ImageStack(w, h);
-          stackS.addSlice(label, ip);
+          throw new FormatException(
+            "Found a FloatProcessor, expected a ShortProcessor");
         }
         else if (ip instanceof FloatProcessor) {
           // merge image plane into existing stack if possible
