@@ -177,8 +177,11 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
+    RandomAccessInputStream in = new RandomAccessInputStream(currentId);
+    tiffSaver.setInputStream(in);
     tiffSaver.writeImage(buf, ifd, no, type, x, y, w, h,
       no == getPlaneCount() - 1);
+    in.close();
   }
 
   // -- IFormatWriter API methods --

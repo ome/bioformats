@@ -74,6 +74,10 @@ public class APNGWriter extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
+    if (!isFullPlane(x, y, w, h)) {
+      throw new FormatException(
+        "APNGWriter does not yet support saving image tiles.");
+    }
     MetadataRetrieve meta = getMetadataRetrieve();
 
     int width = meta.getPixelsSizeX(series).getValue().intValue();

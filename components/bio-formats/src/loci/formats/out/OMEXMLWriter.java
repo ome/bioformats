@@ -120,6 +120,10 @@ public class OMEXMLWriter extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
+    if (!isFullPlane(x, y, w, h)) {
+      throw new FormatException(
+        "OMEXMLWriter does not yet support saving image tiles.");
+    }
     MetadataRetrieve retrieve = getMetadataRetrieve();
 
     String type = retrieve.getPixelsType(series).toString();

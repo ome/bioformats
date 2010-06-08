@@ -58,6 +58,10 @@ public class JPEG2000Writer extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
+    if (!isFullPlane(x, y, w, h)) {
+      throw new FormatException(
+        "JPEG2000Writer does not yet support saving image tiles.");
+    }
     MetadataRetrieve retrieve = getMetadataRetrieve();
     boolean littleEndian =
       !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
