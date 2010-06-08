@@ -62,6 +62,9 @@ public class TiffSaver {
   /** Output stream to use when saving TIFF data. */
   protected RandomAccessOutputStream out;
 
+  /** Input stream to use when overwriting data. */
+  protected RandomAccessInputStream in;
+
   /** Whether or not to write BigTIFF data. */
   private boolean bigTiff = false;
 
@@ -81,6 +84,11 @@ public class TiffSaver {
   }
 
   // -- TiffSaver methods --
+
+  /** Sets the input stream. */
+  public void setInputStream(RandomAccessInputStream in) {
+    this.in = in;
+  }
 
   /** Gets the stream from which TIFF data is being saved. */
   public RandomAccessOutputStream getStream() {
@@ -166,15 +174,24 @@ public class TiffSaver {
       throw new FormatException("Image data cannot be null");
     }
 
+    if (in == null) {
+      throw new FormatException("RandomAccessInputStream is null. " +
+        "Call setInputStream(RandomAccessInputStream) first.");
+    }
+
     if (ifd == null) {
       throw new FormatException("IFD cannot be null");
     }
 
     int width = (int) ifd.getImageWidth();
+    if (w != width) {
+      // TODO : allow the tile to be narrower than the full image
+      throw new FormatException("Tile must be as wide as the full image.");
+    }
     int height = (int) ifd.getImageLength();
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
     int plane = width * height * bytesPerPixel;
-    int nChannels = buf.length / plane;
+    int nChannels = buf.length / (w * h * bytesPerPixel);
     boolean interleaved = ifd.getPlanarConfiguration() == 1;
 
     //boolean indexed = ifd.getIFDValue(IFD.COLOR_MAP) != null;
@@ -184,13 +201,7 @@ public class TiffSaver {
     // create pixel output buffers
 
     TiffCompression compression = ifd.getCompression();
-    boolean compressFullImage = compression == TiffCompression.JPEG_2000 ||
-      compression == TiffCompression.JPEG_2000_LOSSY ||
-      compression == TiffCompression.JPEG ||
-      compression == TiffCompression.ALT_JPEG;
-
     int pixels = width;
-    if (compressFullImage) pixels *= height;
 
     int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
     int stripSize = rowsPerStrip * width * bytesPerPixel;
@@ -208,10 +219,10 @@ public class TiffSaver {
     int[] bps = ifd.getBitsPerSample();
 
     // write pixel strips to output buffers
-    for (int row=0; row<height; row++) {
+    for (int row=y; row<h+y; row++) {
       int strip = row / rowsPerStrip;
       for (int col=0; col<width; col++) {
-        int ndx = row * width * bytesPerPixel + col * bytesPerPixel;
+        int ndx = (row - y) * width * bytesPerPixel + col * bytesPerPixel;
         for (int c=0; c<nChannels; c++) {
           for (int n=0; n<bps[c]/8; n++) {
             if (interleaved) {
@@ -237,13 +248,29 @@ public class TiffSaver {
       strips[strip] = compression.compress(strips[strip], options);
     }
 
+    TiffParser parser = new TiffParser(in);
+    long[] ifdOffsets = parser.getIFDOffsets();
+    if (no < ifdOffsets.length) {
+      out.seek(ifdOffsets[no]);
+      ifd = parser.getIFD(ifdOffsets[no]);
+    }
+
     // record strip byte counts and offsets
 
     long[] stripByteCounts = new long[nStrips];
     long[] stripOffsets = new long[nStrips];
 
+    if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS)) {
+      stripByteCounts = ifd.getStripByteCounts();
+    }
+    if (ifd.containsKey(IFD.STRIP_OFFSETS)) {
+      stripOffsets = ifd.getStripOffsets();
+    }
+
     for (int i=0; i<nStrips; i++) {
-      stripByteCounts[i] = strips[i].length;
+      if (stripByteCounts[i] == 0) {
+        stripByteCounts[i] = strips[i].length;
+      }
     }
 
     ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
@@ -253,9 +280,16 @@ public class TiffSaver {
     writeIFD(ifd, 0);
 
     for (int i=0; i<strips.length; i++) {
-      stripOffsets[i] = out.getFilePointer();
-      out.write(strips[i]);
+      if (stripOffsets[i] > 0 && strips[i].length == 0) {
+        out.seek(stripOffsets[i] + stripByteCounts[i]);
+      }
+      else {
+        stripOffsets[i] = out.getFilePointer();
+        out.write(strips[i]);
+      }
     }
+    ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
+    ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
     long endFP = out.getFilePointer();
     out.seek(fp);
     writeIFD(ifd, last ? 0 : endFP);

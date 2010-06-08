@@ -58,6 +58,10 @@ public class JavaWriter extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
+    if (!isFullPlane(x, y, w, h)) {
+      throw new FormatException(
+        "JavaWriter does not yet support saving image tiles.");
+    }
 
     // check pixel type
     MetadataRetrieve meta = getMetadataRetrieve();
