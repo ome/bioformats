@@ -111,9 +111,13 @@ public class MicromanagerReader extends FormatReader {
     try {
       Location parent = new Location(name).getAbsoluteFile().getParentFile();
       Location metaFile = new Location(parent, METADATA);
-      return metaFile.exists() && metaFile.length() > 0;
+      RandomAccessInputStream s = new RandomAccessInputStream(name);
+      boolean validTIFF = isThisType(s);
+      s.close();
+      return metaFile.exists() && metaFile.length() > 0 && validTIFF;
     }
     catch (NullPointerException e) { }
+    catch (IOException e) { }
     return false;
   }
 
@@ -123,7 +127,9 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException
+  {
+    if (tiffReader == null) tiffReader = new MinimalTiffReader();
     return tiffReader.isThisType(stream);
   }
 
