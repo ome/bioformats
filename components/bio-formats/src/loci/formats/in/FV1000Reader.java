@@ -687,17 +687,27 @@ public class FV1000Reader extends FormatReader {
       int ss = Integer.parseInt(size[i]);
       if (pixelSize[i] == null) pixelSize[i] = 1.0;
       if (code[i].equals("X")) core[0].sizeX = ss;
-      else if (code[i].equals("Y")) core[0].sizeY = ss;
+      else if (code[i].equals("Y") && ss > 1) core[0].sizeY = ss;
       else if (code[i].equals("Z")) {
-        core[0].sizeZ = ss;
-        // Z size stored in nm
-        pixelSizeZ =
-          Math.abs((pixelSize[i].doubleValue() / (getSizeZ() - 1)) / 1000);
+        if (getSizeY() == 0) {
+          core[0].sizeY = ss;
+        }
+        else {
+          core[0].sizeZ = ss;
+          // Z size stored in nm
+          pixelSizeZ =
+            Math.abs((pixelSize[i].doubleValue() / (getSizeZ() - 1)) / 1000);
+        }
       }
       else if (code[i].equals("T")) {
-        core[0].sizeT = ss;
-        pixelSizeT =
-          Math.abs((pixelSize[i].doubleValue() / (getSizeT() - 1)) / 1000);
+        if (getSizeY() == 0) {
+          core[0].sizeY = ss;
+        }
+        else {
+          core[0].sizeT = ss;
+          pixelSizeT =
+            Math.abs((pixelSize[i].doubleValue() / (getSizeT() - 1)) / 1000);
+        }
       }
       else if (ss > 0) {
         if (getSizeC() == 0) core[0].sizeC = ss;
