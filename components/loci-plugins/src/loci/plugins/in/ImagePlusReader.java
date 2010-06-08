@@ -312,6 +312,7 @@ public class ImagePlusReader implements StatusReporter {
 
     // CTR FIXME - problems with default color mode
     int mode = -1;
+    boolean indexed = process.getReader().isIndexed();
     int sizeC = process.getReader().getSizeC();
     if (sizeC == 1) {
       // NB: Cannot use CompositeImage for single-channel images.
@@ -327,6 +328,8 @@ public class ImagePlusReader implements StatusReporter {
     else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
     else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
     else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
+    else if (indexed && sizeC > 1) mode = CompositeImage.COLOR;
+
     if (mode != -1) {
       List<ImagePlus> compositeImps = new ArrayList<ImagePlus>();
       for (ImagePlus imp : imps) {
@@ -334,6 +337,26 @@ public class ImagePlusReader implements StatusReporter {
         LUT[] luts = null;
         int series = (Integer) imp.getProperty("Series");
         if (options.isColorModeCustom()) luts = makeLUTs(series);
+        else if (indexed) {
+          luts = new LUT[sizeC];
+          for (int i=0; i<luts.length; i++) {
+            byte[][] lut = null;
+            try {
+              int index = process.getReader().getIndex(0, i, 0);
+              process.getReader().openBytes(index, 0, 0, 1, 1);
+              lut = process.getReader().get8BitLookupTable();
+            }
+            catch (FormatException e) { }
+            catch (IOException e) { }
+            if (lut != null) {
+              luts[i] = new LUT(lut[0], lut[1], lut[2]);
+            }
+            else {
+              luts = null;
+              break;
+            }
+          }
+        }
         if (luts != null) compImage.setLuts(luts);
         compositeImps.add(compImage);
       }
