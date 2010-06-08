@@ -309,42 +309,50 @@ public class ImagePlusReader implements StatusReporter {
 
   private List<ImagePlus> applyColors(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
+    final ImageProcessorReader reader = process.getReader();
 
-    // CTR FIXME - problems with default color mode
-    int mode = -1;
-    boolean indexed = process.getReader().isIndexed();
-    int sizeC = process.getReader().getSizeC();
-    if (sizeC == 1) {
-      // NB: Cannot use CompositeImage for single-channel images.
-      // CTR FIXME finish sizeC==1 case
-      loci.plugins.BF.warn(options.isQuiet(), "sizeC = 1");//TEMP
-    }
-    else if (sizeC > 7) {
-      // NB: Cannot use CompositeImage when there are more than seven channels.
-      // CTR FIXME finish sizeC>7 case
-      loci.plugins.BF.warn(options.isQuiet(), "sizeC > 7");//TEMP
-    }
-    else if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
-    else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
-    else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
-    else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
-    else if (indexed && sizeC > 1) mode = CompositeImage.COLOR;
+    for (int image=0; image<imps.size(); image++) {
+      ImagePlus imp = imps.get(image);
+      int series = (Integer) imp.getProperty("Series");
+      reader.setSeries(series);
 
-    if (mode != -1) {
-      List<ImagePlus> compositeImps = new ArrayList<ImagePlus>();
-      for (ImagePlus imp : imps) {
+      // CTR FIXME - problems with default color mode
+      int mode = -1;
+      boolean indexed = reader.isIndexed();
+      int sizeC = reader.getSizeC();
+      if (sizeC == 1 &&
+        (options.isColorModeColorized() || options.isColorModeCustom()))
+      {
+        LUT lut = makeLUT(options.getDefaultCustomColor(0));
+        if (options.isColorModeCustom()) {
+          lut = makeLUT(series, 0);
+        }
+        imp.getProcessor().setColorModel(lut);
+      }
+      else if (sizeC > 7) {
+        // NB: Cannot use CompositeImage when there are more than
+        // seven channels.
+        // CTR FIXME finish sizeC>7 case
+        loci.plugins.BF.warn(options.isQuiet(), "sizeC > 7");//TEMP
+      }
+      else if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
+      else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
+      else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
+      else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
+      else if (indexed && sizeC > 1) mode = CompositeImage.COLOR;
+
+      if (mode != -1) {
         CompositeImage compImage = new CompositeImage(imp, mode);
         LUT[] luts = null;
-        int series = (Integer) imp.getProperty("Series");
         if (options.isColorModeCustom()) luts = makeLUTs(series);
         else if (indexed) {
           luts = new LUT[sizeC];
           for (int i=0; i<luts.length; i++) {
             byte[][] lut = null;
             try {
-              int index = process.getReader().getIndex(0, i, 0);
-              process.getReader().openBytes(index, 0, 0, 1, 1);
-              lut = process.getReader().get8BitLookupTable();
+              int index = reader.getIndex(0, i, 0);
+              reader.openBytes(index, 0, 0, 1, 1);
+              lut = reader.get8BitLookupTable();
             }
             catch (FormatException e) { }
             catch (IOException e) { }
@@ -358,9 +366,8 @@ public class ImagePlusReader implements StatusReporter {
           }
         }
         if (luts != null) compImage.setLuts(luts);
-        compositeImps.add(compImage);
+        imps.set(image, compImage);
       }
-      imps = compositeImps;
     }
     return imps;
   }
