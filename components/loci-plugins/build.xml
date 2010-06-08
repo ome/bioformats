@@ -11,4 +11,18 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+
+  <target name="test" depends="jar, compile-tests"
+    description="run tests" if="doTests">
+    <!-- overrides default 'test' target in java.xml -->
+
+    <junit>
+      <classpath>
+        <pathelement path="${component.classpath}"/>
+        <pathelement location="${test-classes.dir}"/>
+      </classpath>
+      <formatter type="plain" usefile="true"/>
+      <test name="loci.plugins.in.ImporterTest"/>
+    </junit>
+  </target>
 </project>
