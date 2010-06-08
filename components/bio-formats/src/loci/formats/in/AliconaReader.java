@@ -87,6 +87,7 @@ public class AliconaReader extends FormatReader {
     // so instead of LMLMLM... storage, we have LLLLL...MMMMM...
     for (int i=0; i<numBytes; i++) {
       in.seek(textureOffset + (no * planeSize * (i + 1)));
+      in.skipBytes(y * (getSizeX() + pad));
       if (getSizeX() == w) {
         in.read(buf, i * w * h, w * h);
       }
