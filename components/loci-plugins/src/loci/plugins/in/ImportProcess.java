@@ -65,7 +65,7 @@ import org.apache.log4j.Logger;
 /**
  * Manages the import preparation process.
  * After calling {@link #execute()}, the process will be ready to feed to
- * an {@link ImagePlusReader} to read in the actual {@link ImagePlus} objects.
+ * an {@link ImagePlusReader} to read in the actual {@link ij.ImagePlus} objects.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,

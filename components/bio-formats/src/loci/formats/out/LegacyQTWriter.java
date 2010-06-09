@@ -129,7 +129,7 @@ public class LegacyQTWriter extends FormatWriter {
   }
 
   /**
-   * @see loci.formats.IFormatWriter#savePlane(int, Image, int, int, int, int)
+   * @see loci.formats.IFormatWriter#savePlane(int, Object, int, int, int, int)
    */
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException

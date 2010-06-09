@@ -43,7 +43,8 @@ public class RangeDialog extends ImporterDialog {
   /**
    * Creates a range chooser dialog for the Bio-Formats Importer.
    *
-   * @param dimSwap The reader to use for extracting details of each series.
+   * @param process the {@link ImportProcess} to use for extracting
+   * details of each series.
    */
   public RangeDialog(ImportProcess process) {
     super(process);
