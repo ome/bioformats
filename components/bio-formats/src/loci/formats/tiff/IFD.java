@@ -710,6 +710,12 @@ public class IFD extends HashMap<Integer, Object> {
       offsets = getIFDLongArray(STRIP_OFFSETS);
     }
 
+    for (int i=0; i<offsets.length; i++) {
+      if (offsets[i] < 0) {
+        offsets[i] += 0x100000000L;
+      }
+    }
+
     if (isTiled()) return offsets;
     long rowsPerStrip = getRowsPerStrip()[0];
     long numStrips = (getImageLength() + rowsPerStrip - 1) / rowsPerStrip;
