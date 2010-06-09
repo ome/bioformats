@@ -551,7 +551,8 @@ public final class FormatTools {
    * Retrieves the number of bytes per pixel in the current plane.
    * @param pixelType the pixel type, as a String.
    * @return the number of bytes per pixel.
-   * @see #pixelTypeFromString(String), #getBytesPerPixel(int)
+   * @see #pixelTypeFromString(String)
+   * @see #getBytesPerPixel(int)
    */
   public static int getBytesPerPixel(String pixelType) {
     return getBytesPerPixel(pixelTypeFromString(pixelType));

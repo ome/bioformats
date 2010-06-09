@@ -222,7 +222,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /**
    * Obtains the specified image plane from the current file as a byte array.
-   * @see openBytes(int, byte[])
+   * @see #openBytes(int, byte[])
    */
   byte[] openBytes(int no) throws FormatException, IOException;
 
