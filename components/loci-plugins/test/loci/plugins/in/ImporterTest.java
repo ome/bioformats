@@ -2144,8 +2144,12 @@ public class ImporterTest {
     if (lutLen == -1)
       lutLen = 3;
     
-    if ((indexed) && (!falseColor))
+    if ((indexed) && (!falseColor)) {
       expectedSizeC *= lutLen;
+    }
+    else if (indexed && falseColor) {
+      expectedSizeC /= rgb;
+    }
       
     //System.out.println("  chans channsPerPlane planes expectedSizeC "+totalChannels+" "+channelsPerPlane+" "+totalPlanes+" "+expectedSizeC);
 

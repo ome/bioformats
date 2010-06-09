@@ -319,7 +319,7 @@ public class ImagePlusReader implements StatusReporter {
       // CTR FIXME - problems with default color mode
       int mode = -1;
       boolean indexed = reader.isIndexed();
-      int sizeC = reader.getSizeC();
+      int sizeC = reader.getEffectiveSizeC();
       if (sizeC == 1 &&
         (options.isColorModeColorized() || options.isColorModeCustom()))
       {
