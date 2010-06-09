@@ -430,10 +430,12 @@ public class ImporterTest {
     lut.getGreens(greens);
     lut.getBlues(blues);
     
+    /* TODO - helper for testing falseColor problems
     System.out.println("  expected min rgb : "+minR+" "+minG+" "+minB);
     System.out.println("  expected max rgb : "+maxR+" "+maxG+" "+maxB);
     System.out.println("  actual min rgb : "+reds[0]+" "+greens[0]+" "+blues[0]);
     System.out.println("  actual max rgb : "+(reds[255]&0xff)+" "+(greens[255]&0xff)+" "+(blues[255]&0xff));
+    */
     
     assertEquals((byte)minR,reds[0]);
     assertEquals((byte)maxR,reds[255]);
