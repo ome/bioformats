@@ -22,6 +22,7 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 
 import java.awt.Color;
+import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -360,16 +361,24 @@ public class ImporterTest {
     
     // else a regular ImagePlus
     
-    if (channel != 0)
-      throw new IllegalArgumentException("getColorTable(): nonzero channel number requested of an ImagePlus.");
+    //if (channel != 0)
+    //  throw new IllegalArgumentException("getColorTable(): nonzero channel number requested of an ImagePlus.");
     
-    // TODO - figure out what to do here ... do I get a ColorModel from Imp somehow and build a LUT to use?
+    System.out.println("In here!!!!!");
     
-    return null;
+    IndexColorModel icm = (IndexColorModel)imp.getStack().getColorModel();
+    
+    byte[] reds = new byte[256], greens = new byte[256], blues = new byte[256];
+    
+    icm.getReds(reds);
+    icm.getGreens(greens);
+    icm.getBlues(blues);
+    
+    return new LUT(reds,greens,blues);
   }
   
   /** get the actual pixel value (lookup when data is indexed) of the index of a fake image at a given z,c,t */
-  private int getPixelValue(int x,int y,ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int getPixelValue(int x,int y, ImagePlus imp, int z, int c, int t, boolean indexed)
   {
     // our indices are 0-based while IJ's are 1-based
     if (imp instanceof CompositeImage)
@@ -391,9 +400,9 @@ public class ImporterTest {
     return value;
   }
   
-  private int getIndexPixelValue(CompositeImage ci, int z, int c, int t, boolean indexed)
+  private int getIndexPixelValue(ImagePlus imp, int z, int c, int t, boolean indexed)
   {
-    return getPixelValue(10,0,ci,z,c,t,indexed);
+    return getPixelValue(10,0,imp,z,c,t,indexed);
   }
   
   // ****** helper tests ****************************************************************************************
@@ -2136,19 +2145,16 @@ public class ImporterTest {
     imp = imps[0];
    
     int expectedSizeC = sizeC;
-    //if (indexed && !falseColor)
-    //  expectedSizeC = 3 * sizeC;
-    //if ((totalPlanes == 1) && (expectedSizeC == 2) && falseColor)
-    //  expectedSizeC = 3;
     
     if (lutLen == -1)
       lutLen = 3;
-    
-    if ((indexed) && (!falseColor)) {
-      expectedSizeC *= lutLen;
-    }
-    else if (indexed && falseColor) {
-      expectedSizeC /= rgb;
+
+    if (indexed)
+    {
+      if (falseColor)
+        expectedSizeC /= rgb;
+      else // not falseColor
+        expectedSizeC *= lutLen;
     }
       
     //System.out.println("  chans channsPerPlane planes expectedSizeC "+totalChannels+" "+channelsPerPlane+" "+totalPlanes+" "+expectedSizeC);
@@ -2168,18 +2174,21 @@ public class ImporterTest {
     
       //colorTests(ci,expectedSizeC,DefaultColorOrder);  // TODO - was sizeC, also not passing (falseColor stuff needs to be impl???)
       
-      if (indexed)
-        System.out.println("  colorColorizedTester() - MaxZ MaxC MaxT "+sizeZ+" "+expectedSizeC+" "+sizeT);
-
-      int iIndex = 0;
-      for (int cIndex = 0; cIndex < expectedSizeC; cIndex++)
-        for (int tIndex = 0; tIndex < sizeT; tIndex++)
-          for (int zIndex = 0; zIndex < sizeZ; zIndex++)
-            getIndexPixelValue(ci, zIndex, cIndex, tIndex, indexed);
-            //assertEquals(iIndex++,getIndexPixelValue(ci, zIndex, cIndex, tIndex, indexed));
     }
     else
       System.out.println("  Not a composite image");
+
+    // TODO - this code was pulled out to allow mixing of CompImg and ImagePlus test code. Not working.
+    
+    if (indexed)
+      System.out.println("  colorColorizedTester() - MaxZ MaxC MaxT "+sizeZ+" "+expectedSizeC+" "+sizeT);
+
+    int iIndex = 0;
+    for (int cIndex = 0; cIndex < expectedSizeC; cIndex++)
+      for (int tIndex = 0; tIndex < sizeT; tIndex++)
+        for (int zIndex = 0; zIndex < sizeZ; zIndex++)
+          //getIndexPixelValue(imp, zIndex, cIndex, tIndex, indexed);
+          assertEquals(iIndex++,getIndexPixelValue(imp, zIndex, cIndex, tIndex, indexed));
   }
 
   @Test
