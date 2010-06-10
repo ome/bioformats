@@ -56,9 +56,10 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.services.DependencyException;
-import loci.common.services.OMENotesService;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ChannelMerger;
 import loci.formats.FileStitcher;
@@ -68,10 +69,14 @@ import loci.formats.IFormatHandler;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEReaderWriterService;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * ImageViewer is a simple viewer/converter
@@ -103,7 +108,10 @@ public class ImageViewer extends JFrame implements ActionListener,
   protected JPanel sliderPanel;
   protected JSlider nSlider, zSlider, tSlider, cSlider;
   protected JLabel probeLabel;
-  protected JMenuItem fileSave;
+  protected JMenuItem fileView, fileSave;
+
+  /** Attached OME metadata store, if available. */
+  protected MetadataStore omeMeta;
 
   /** Current format reader. */
   protected BufferedImageReader myReader;
@@ -114,20 +122,8 @@ public class ImageViewer extends JFrame implements ActionListener,
   /** Reader for files on disk. */
   protected IFormatReader fileReader;
 
-  /** Reader for OME servers. */
-  protected IFormatReader omeReader;
-
-  /** Reader for OMERO servers. */
-  protected IFormatReader omeroReader;
-
   /** Writer for files on disk. */
   protected IFormatWriter fileWriter;
-
-  /** Writer for OME servers. */
-  protected IFormatWriter omeWriter;
-
-  /** Writer for OMERO servers. */
-  protected IFormatWriter omeroWriter;
 
   protected String filename;
   protected IFormatReader in;
@@ -136,6 +132,25 @@ public class ImageViewer extends JFrame implements ActionListener,
 
   protected boolean anim = false;
   protected int fps = 10;
+
+  // -- Fields - OME-XML --
+
+  /** Service for working with OME-XML metadata. */
+  protected OMEXMLService omexmlService;
+
+  // -- Fields - OME I/O --
+
+  /** Reader for OME servers. */
+  protected IFormatReader omeReader;
+
+  /** Reader for OMERO servers. */
+  protected IFormatReader omeroReader;
+
+  /** Writer for OME servers. */
+  protected IFormatWriter omeWriter;
+
+  /** Writer for OMERO servers. */
+  protected IFormatWriter omeroWriter;
 
   // -- Constructor --
 
@@ -150,20 +165,28 @@ public class ImageViewer extends JFrame implements ActionListener,
     fileWriter = new ImageWriter();
     myWriter = new BufferedImageWriter(fileWriter);
 
-    // NB: avoid dependencies on optional loci.ome.io package
     try {
+      // NB: avoid dependencies on optional ome.xml package
       ServiceFactory factory = new ServiceFactory();
-      OMEReaderWriterService service =
+      omexmlService = factory.getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException exc) {
+      LOGGER.debug("OME-XML service unavailable", exc);
+    }
+    try {
+      // NB: avoid dependencies on optional loci.ome.io package
+      ServiceFactory factory = new ServiceFactory();
+      OMEReaderWriterService omeIOService =
         factory.getInstance(OMEReaderWriterService.class);
       // OME server I/O engine
       try {
-        omeReader = service.newOMEReader();
+        omeReader = omeIOService.newOMEReader();
       }
       catch (Exception exc) {
         LOGGER.debug("OME reader not available", exc);
       }
       try {
-        omeWriter = service.newOMEWriter();
+        omeWriter = omeIOService.newOMEWriter();
       }
       catch (Exception exc) {
         LOGGER.debug("OME writer not available", exc);
@@ -171,20 +194,20 @@ public class ImageViewer extends JFrame implements ActionListener,
 
       // OMERO server I/O engine
       try {
-        omeroReader = service.newOMEROReader();
+        omeroReader = omeIOService.newOMEROReader();
       }
       catch (Exception exc) {
         LOGGER.debug("OMERO reader not available", exc);
       }
       try {
-        omeroWriter = service.newOMEROWriter();
+        omeroWriter = omeIOService.newOMEROWriter();
       }
       catch (Exception exc) {
         LOGGER.debug("OMERO writer not available", exc);
       }
     }
     catch (DependencyException e) {
-      LOGGER.debug("OME and OMERO reader/writer service unavailble", e);
+      LOGGER.debug("OME and OMERO reader/writer service unavailable", e);
     }
 
     // content pane
@@ -277,16 +300,8 @@ public class ImageViewer extends JFrame implements ActionListener,
     fileSave.setActionCommand("save");
     fileSave.addActionListener(this);
     file.add(fileSave);
-    boolean canDoNotes = false;
-    try {
-      Class c = Class.forName("loci.ome.notes.Notes");
-      if (c != null) canDoNotes = true;
-    }
-    catch (Throwable t) {
-      LOGGER.debug("Could not find OME Notes", t);
-    }
-    if (canDoNotes) {
-      JMenuItem fileView = new JMenuItem("View Metadata...");
+    if (omexmlService != null) {
+      fileView = new JMenuItem("View Metadata...");
       fileView.setMnemonic('m');
       fileView.setEnabled(true);
       fileView.setActionCommand("view");
@@ -346,6 +361,12 @@ public class ImageViewer extends JFrame implements ActionListener,
     try {
       //Location f = new Location(id);
       //id = f.getAbsolutePath();
+      try {
+        myReader.setMetadataStore(omexmlService.createOMEXMLMetadata());
+      }
+      catch (ServiceException exc) {
+        LOGGER.info("OME metadata unavailable", exc);
+      }
       myReader.setId(id);
       int num = myReader.getImageCount();
       ProgressMonitor progress = new ProgressMonitor(this,
@@ -428,7 +449,12 @@ public class ImageViewer extends JFrame implements ActionListener,
       sizeZ = reader.getSizeZ();
       sizeT = reader.getSizeT();
       sizeC = reader.getEffectiveSizeC();
+      omeMeta = reader.getMetadataStore();
+      if (omexmlService == null || !omexmlService.isOMEXMLMetadata(omeMeta)) {
+        omeMeta = null;
+      }
     }
+    fileView.setEnabled(omeMeta != null);
 
     fileSave.setEnabled(true);
     nSlider.removeChangeListener(this);
@@ -524,15 +550,22 @@ public class ImageViewer extends JFrame implements ActionListener,
       }
     }
     else if ("view".equals(cmd)) {
-      // NB: avoid dependency on optional loci.ome.notes package
-      OMENotesService service = null;
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        service = factory.getInstance(OMENotesService.class);
-        service.newNotes(filename);
-      }
-      catch (DependencyException de) {
-        LOGGER.info("", de);
+      if (omeMeta != null) {
+        XMLWindow metaWindow = new XMLWindow("OME Metadata - " + getTitle());
+        metaWindow.setDefaultCloseOperation(XMLWindow.DISPOSE_ON_CLOSE);
+        Exception exception = null;
+        try {
+          MetadataRetrieve retrieve = omexmlService.asRetrieve(omeMeta);
+          metaWindow.setXML(omexmlService.getOMEXML(retrieve));
+          metaWindow.setVisible(true);
+        }
+        catch (ServiceException exc) { exception = exc; }
+        catch (ParserConfigurationException exc) { exception = exc; }
+        catch (SAXException exc) { exception = exc; }
+        catch (IOException exc) { exception = exc; }
+        if (exception != null) {
+          LOGGER.info("Cannot display OME metadata", exception);
+        }
       }
     }
     else if ("exit".equals(cmd)) dispose();
