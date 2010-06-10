@@ -148,14 +148,14 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Rows" use="optional" type="xsd:integer">
+			<xsd:attribute name="Rows" use="optional" type="OME:PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The number of rows in the plate 
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
-			<xsd:attribute name="Columns" use="optional" type="xsd:integer">
+			<xsd:attribute name="Columns" use="optional" type="OME:PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The number of columns in the plate 
@@ -412,7 +412,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="MaximumFieldCount" use="optional" type="xsd:integer">
+			<xsd:attribute name="MaximumFieldCount" use="optional" type="OME:PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The maximum number of fields (well samples) in any well 
@@ -448,7 +448,7 @@
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellID"/>
-			<xsd:attribute name="Column" use="required" type="xsd:nonNegativeInteger">
+			<xsd:attribute name="Column" use="required" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						This is the column index of the well, the origin is the top left corner of the plate
@@ -457,7 +457,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Row" use="required" type="xsd:nonNegativeInteger">
+			<xsd:attribute name="Row" use="required" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						This is the row index of the well, the origin is the top left corner of the plate
@@ -489,11 +489,11 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="4294967295">
+			<xsd:attribute name="Color" use="optional" type="xsd:int" default="-2147483648">
 				<xsd:annotation>
 					<xsd:documentation>
 						A marker color used to highlight the well - encoded as RGBA
-						The default value "4294967295" is #FFFFFFFF so solid white
+						The default value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -547,7 +547,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Index" use="required" type="xsd:nonNegativeInteger">
+			<xsd:attribute name="Index" use="required" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						This records the order of the well samples. Each 

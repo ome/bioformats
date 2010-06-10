@@ -121,10 +121,11 @@
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
-			<xsd:attribute name="Fill" use="optional" type="xsd:integer">
+			<xsd:attribute name="Fill" use="optional" type="xsd:int">
 				<xsd:annotation>
 					<xsd:documentation>
 						The colour of the fill - encoded as RGBA
+						The value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -142,10 +143,11 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
+			<xsd:attribute name="Stroke" use="optional" type="xsd:int">
 				<xsd:annotation>
 					<xsd:documentation>
 						The colour of the stroke  - encoded as RGBA
+						The value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -195,7 +197,7 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="FontSize" use="optional" type="xsd:integer">
+			<xsd:attribute name="FontSize" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						Size of the font [units points]
@@ -218,7 +220,7 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="ID" use="required" type="ShapeID"/>
-			<xsd:attribute name="TheZ" use="optional" type="xsd:integer">
+			<xsd:attribute name="TheZ" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The z-section the ROI applies to. If not specified then 
@@ -227,7 +229,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TheT" use="optional" type="xsd:integer">
+			<xsd:attribute name="TheT" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The timepoint the ROI applies to. If not specified then 
@@ -236,7 +238,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TheC" use="optional" type="xsd:integer">
+			<xsd:attribute name="TheC" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The channel the ROI applies to. If not specified then 

@@ -20,10 +20,16 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06"
 	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2010-06"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version = "1"
 	elementFormDefault = "qualified">
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+	<!-- Using the svn location for import -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
+	<!-- Using the local directory location for import 
+		<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="ome.xsd"/>
+	-->
 	<xsd:annotation>
 		<xsd:documentation>
 			The elements in this file are not yet represented by classes in the EA diagrams - ajp
@@ -93,7 +99,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
-							<xsd:restriction base="xsd:nonNegativeInteger">
+							<xsd:restriction base="OME:NonNegativeLong">
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
@@ -107,11 +113,11 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:choice minOccurs="1" maxOccurs="1">
-				<xsd:element ref = "Bin:External" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref = "Bin:BinData" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Bin:External" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
-			<xsd:attribute name = "FileName" use = "required" type="xsd:string"/>
-			<xsd:attribute name = "Size" use = "required" type = "xsd:integer">
+			<xsd:attribute name ="FileName" use="required" type="xsd:string"/>
+			<xsd:attribute name ="Size" use="required" type="OME:NonNegativeLong">
 				<xsd:annotation>
 					<xsd:documentation>
 						Size (in bytes) of the uncompressed file.

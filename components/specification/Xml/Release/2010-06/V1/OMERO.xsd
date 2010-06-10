@@ -16,9 +16,9 @@
 	# Written by:  Andrew J Patterson 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/OMERO/2010-04"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/OMERO/2010-04"
-	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2010-04"
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/OMERO/2010-06"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/OMERO/2010-06"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2010-06"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
