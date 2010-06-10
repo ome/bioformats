@@ -117,7 +117,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
-    super("Metamorph STK", new String[] {"stk", "nd"});
+    super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
   }
