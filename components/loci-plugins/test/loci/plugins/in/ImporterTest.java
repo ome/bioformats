@@ -416,9 +416,26 @@ public class ImporterTest {
     return value;
   }
   
-  private int getIndexPixelValue(ImagePlus imp, int z, int c, int t, boolean indexed)
+  /** gets the value of the index of a fake file doing LUT lookup if needed */ 
+  private int getIndexValue(ImagePlus imp, int z, int c, int t, boolean indexed)
   {
     return getPixelValue(10,0,imp,z,c,t,indexed);
+  }
+  
+  /** calculate the effective size C of an image given various params */
+  private int effectiveC(int sizeC, int rgb, int lutLen, boolean indexed, boolean falseColor)
+  {
+    int effC = sizeC;
+    
+    if (indexed)
+    {
+      if (falseColor)
+        effC /= rgb;
+      else // not falseColor
+        effC *= lutLen;
+    }
+    
+    return effC;
   }
   
   // ****** helper tests ****************************************************************************************
@@ -478,6 +495,20 @@ public class ImporterTest {
       Color color = expectedColors[i];
       lutTest(ci,i,0,0,0,color.getRed(),color.getGreen(),color.getBlue());
     }
+  }
+  
+  /** tests that input to the crop tests is valid */
+  private void verifyCropInput(int sizeX, int sizeY, int originCropX, int originCropY, int sizeCrop)
+  {
+    assertTrue((sizeX > 50) || (sizeY > 10));
+    assertTrue(sizeX < 256);
+    assertTrue(sizeY < 256);
+    assertTrue(sizeCrop > 0);
+    assertTrue(originCropX >= 0);
+    assertTrue(originCropY >= 0);
+    assertTrue((originCropX > 50) || (originCropY > 10));
+    assertTrue(originCropX + sizeCrop <= sizeX);
+    assertTrue(originCropY + sizeCrop <= sizeY);
   }
   
   /** tests BioFormats when directly calling BF.openImagePlus(path) (no options set) */
@@ -784,7 +815,6 @@ public class ImporterTest {
   
   private void colorCompositeTest(int pixType, boolean indexed, int rgb, boolean falseColor, int sizeC, int numSeries)
   {
-    
     int sizeX = 55, sizeY = 71, sizeZ = 3, sizeT = 4;
     
     // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
@@ -821,16 +851,8 @@ public class ImporterTest {
 
     int lutLen = 3;
     
-    int expectedSizeC = sizeC;
-
-    if (indexed)
-    {
-      if (falseColor)
-        expectedSizeC /= rgb;
-      else // not falseColor
-        expectedSizeC *= lutLen;
-    }
-
+    int expectedSizeC = effectiveC(sizeC, rgb, lutLen, indexed, falseColor);
+   
     xyzctTest(imp,sizeX,sizeY,sizeZ,expectedSizeC,sizeT);
     
     assertTrue(imp.isComposite());
@@ -857,7 +879,7 @@ public class ImporterTest {
     for (int t = 0; t < maxT; t++)
       for (int z = 0; z < maxZ; z++)
         for (int c = 0; c < maxC; c++)
-          assertEquals(index++, getIndexPixelValue(ci,z,c,t,indexed));  // expected value from CZT order
+          assertEquals(index++, getIndexValue(ci,z,c,t,indexed));  // expected value from CZT order
   }
   
   private void colorColorizedTest()
@@ -892,15 +914,7 @@ public class ImporterTest {
     
     int lutLen = 3;
     
-    int expectedSizeC = sizeC;
-
-    if (indexed)
-    {
-      if (falseColor)
-        expectedSizeC /= rgb;
-      else // not falseColor
-        expectedSizeC *= lutLen;
-    }
+    int expectedSizeC = effectiveC(sizeC, rgb, lutLen, indexed, falseColor);
 
     xyzctTest(imp,sizeX,sizeY,sizeZ,expectedSizeC,sizeT);
     
@@ -1143,16 +1157,8 @@ public class ImporterTest {
   
   private void memoryCropTest(int x, int y, int ox, int oy, int cropSize)
   {
-    assertTrue((x > 50) || (y > 10));
-    assertTrue(x < 256);
-    assertTrue(y < 256);
-    assertTrue(cropSize > 0);
-    assertTrue(ox >= 0);
-    assertTrue(oy >= 0);
-    assertTrue((ox > 50) || (oy > 10));
-    assertTrue(ox + cropSize <= x);
-    assertTrue(oy + cropSize <= y);
-    
+    verifyCropInput(x, y, ox, oy, cropSize);  // needed for this test
+
     String path = constructFakeFilename("crop", FormatTools.UINT8, x, y, 1, 1, 1, -1, false, -1, false, -1);
     
     // open image
@@ -1182,7 +1188,7 @@ public class ImporterTest {
       for (int iy = 0; iy < cropSize; iy++)
         assertEquals(ox+ix,proc.getPixelValue(ix, iy),0);
   }
-  
+
   // note - this test needs to rely on crop() to get predictable nonzero minimums
   
   private void comboCropAndAutoscaleTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
@@ -1191,15 +1197,7 @@ public class ImporterTest {
     final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
     
     // needed for this test
-    assertTrue((sizeX > 50) || (sizeY > 10));
-    assertTrue(sizeX < 256);
-    assertTrue(sizeY < 256);
-    assertTrue(sizeCrop > 0);
-    assertTrue(originCropX >= 0);
-    assertTrue(originCropY >= 0);
-    assertTrue((originCropX > 50) || (originCropY > 10));
-    assertTrue(originCropX + sizeCrop <= sizeX);
-    assertTrue(originCropY + sizeCrop <= sizeY);
+    verifyCropInput(sizeX,sizeY,originCropX,originCropY,sizeCrop);
     
     ImagePlus[] imps = null;
     ImagePlus imp = null;
@@ -2216,18 +2214,10 @@ public class ImporterTest {
           printVals(proc);
         }
     
-    int expectedSizeC = sizeC;
-    
     if (lutLen == -1)
       lutLen = 3;
 
-    if (indexed)
-    {
-      if (falseColor)
-        expectedSizeC /= rgb;
-      else // not falseColor
-        expectedSizeC *= lutLen;
-    }
+    int expectedSizeC = effectiveC(sizeC, rgb, lutLen, indexed, falseColor);
       
     //System.out.println("  chans channsPerPlane planes expectedSizeC "+totalChannels+" "+channelsPerPlane+" "+totalPlanes+" "+expectedSizeC);
 
@@ -2256,8 +2246,8 @@ public class ImporterTest {
     for (int cIndex = 0; cIndex < expectedSizeC; cIndex++)
       for (int tIndex = 0; tIndex < sizeT; tIndex++)
         for (int zIndex = 0; zIndex < sizeZ; zIndex++)
-          getIndexPixelValue(imp, zIndex, cIndex, tIndex, indexed);
-          //assertEquals(iIndex++,getIndexPixelValue(imp, zIndex, cIndex, tIndex, indexed));
+          getIndexValue(imp, zIndex, cIndex, tIndex, indexed);
+          //assertEquals(iIndex++,getIndexValue(imp, zIndex, cIndex, tIndex, indexed));
   }
 
   @Test
@@ -2322,6 +2312,8 @@ public class ImporterTest {
               }
     System.out.println("testColorizeSubcases() - past all cases");
     */
+    
+    fail("Numerous failures : actual tests commented out to see all print statements.");
   }
   
 }
