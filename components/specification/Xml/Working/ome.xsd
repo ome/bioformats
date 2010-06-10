@@ -599,7 +599,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
-			<xsd:attribute name="IFD" type="xsd:integer" default="0" use="optional">
+			<xsd:attribute name="IFD" type="OME:NonNegativeInt" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
@@ -631,7 +631,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PlaneCount" use="optional" type="xsd:integer">
+			<xsd:attribute name="PlaneCount" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
@@ -1171,6 +1171,36 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:restriction base="xsd:hexBinary">
 			<xsd:length value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonNegativeLong">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to an integer between 0 and 9223372036854775807 (inclusive).
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:long">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonNegativeInt">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to an integer between 0 and 2,147,483,647 (inclusive).
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PositiveInt">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to an integer between 1 and 2,147,483,647 (inclusive).
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PercentFraction">
