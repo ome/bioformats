@@ -462,7 +462,7 @@ my %junit = (
   NAME    => "junit",
   TITLE   => "JUnit",
   JAR     => "junit.jar",
-  PACKAGE => "junit",
+  PACKAGE => ".*junit",
   LICENSE => "Common Public License",
   URL     => "http://www.junit.org/",
   NOTES   => <<ZZ,
@@ -667,6 +667,34 @@ ZZ
   VERSION => "1.2-b1"
 );
 
+my %serializer = (
+  NAME    => "serializer",
+  TITLE   => "Xalan Serializer",
+  JAR     => "serializer-2.7.1.jar",
+  PACKAGE => "org.apache.xml.serializer",
+  LICENSE => "Apache",
+  URL     => "http://xml.apache.org/xalan-j/",
+  NOTES   => <<ZZ,
+used for OME-XML transformations
+ZZ
+  VERSION => "2.7.1"
+);
+
+my %xalan = (
+  NAME    => "xalan",
+  TITLE   => "Xalan",
+  JAR     => "xalan-2.7.1.jar",
+  PACKAGE => "org.apache.xalan",
+  LICENSE => "Apache",
+  URL     => "http://xml.apache.org/xalan-j/",
+  NOTES   => <<ZZ,
+used for OME-XML transformations
+ZZ
+  VERSION => "2.7.1"
+);
+
+
+
 # -- DATA STRUCTURES --
 
 # List of active LOCI software components
@@ -732,10 +760,12 @@ my @libs = (
   \%omeJavaDeprecated,
   \%omeroClient,
   \%omeroCommon,
+  \%serializer,
   \%skinlf,
   \%testng,
   \%velocity,
   \%visad,
+  \%xalan,
   \%xmlrpc,
 );
 
@@ -961,6 +991,9 @@ foreach my $c (@components) {
     foreach my $q (@libDeps) {
       if ($$q{NAME} eq $testng{NAME}) {
         push(@deps, "org.testng.TESTNG_CONTAINER");
+      }
+      if ($$q{NAME} eq $junit{NAME}) {
+        push(@deps, "org.eclipse.jdt.junit.JUNIT_CONTAINER/4");
       }
     }
   }

@@ -7,6 +7,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-io"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
