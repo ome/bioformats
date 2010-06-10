@@ -22,17 +22,6 @@ LOCI code generator
     Optional:      (none)
     License:       GPL
 
-Bio-Formats Ice framework
-    Bindings for Bio-Formats client/server communication enabling
-    cross-language interoperability
-    -=-
-    JAR file:      bf-ice.jar
-    Path:          components/bf-ice
-    Project deps:  Bio-Formats, LOCI Common
-    Library deps:  Ice, Apache log4j
-    Optional:      (none)
-    License:       GPL
-
 Bio-Formats
     A library for reading and writing popular microscopy file formats
     -=-
@@ -41,9 +30,11 @@ Bio-Formats
     Project deps:  LOCI Common, OME-XML Java library, JAI Image I/O Tools,
                    MDB Tools (Java port), Apache Jakarta POI,
                    Luratech LuraWave stubs
-    Library deps:  JGoodies Forms, Apache log4j, NetCDF,
-                   Simple Logging Facade for Java API, TestNG
-    Optional:      OME I/O, OME Notes
+    Library deps:  JGoodies Forms, NetCDF, Simple Logging Facade for Java API,
+                   TestNG
+    Optional:      OME I/O, Apache log4j,
+                   Simple Logging Facade for Java log4j Binding,
+                   Xalan Serializer, Xalan
     License:       GPL
 
 WiscScan Flow Cytometry
@@ -51,7 +42,7 @@ WiscScan Flow Cytometry
     -=-
     JAR file:      flow-cytometry.jar
     Path:          components/flow-cytometry
-    Project deps:  Bio-Formats, LOCI Common
+    Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
     Library deps:  ImageJ, VisAD
     Optional:      (none)
     License:       BSD
@@ -73,7 +64,7 @@ LOCI Common
     Path:          components/common
     Project deps:  (none)
     Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      (none)
+    Optional:      Apache log4j, Simple Logging Facade for Java log4j Binding
     License:       GPL
 
 LOCI Plugins for ImageJ
@@ -83,9 +74,9 @@ LOCI Plugins for ImageJ
     -=-
     JAR file:      loci_plugins.jar
     Path:          components/loci-plugins
-    Project deps:  Bio-Formats, LOCI Common
-    Library deps:  JGoodies Forms, ImageJ, Apache log4j
-    Optional:      OME I/O, VisBio
+    Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
+    Library deps:  JGoodies Forms, ImageJ, JUnit, Apache log4j
+    Optional:      (none)
     License:       GPL
 
 OME I/O
@@ -105,7 +96,8 @@ OME Plugins for ImageJ
     -=-
     JAR file:      ome_plugins.jar
     Path:          components/ome-plugins
-    Project deps:  Bio-Formats, LOCI Common, LOCI Plugins for ImageJ, OME I/O
+    Project deps:  Bio-Formats, LOCI Common, LOCI Plugins for ImageJ, OME I/O,
+                   OME-XML Java library
     Library deps:  ImageJ
     Optional:      (none)
     License:       GPL
@@ -116,7 +108,7 @@ OME-XML Java library
     JAR file:      ome-xml.jar
     Path:          components/ome-xml
     Project deps:  (none)
-    Library deps:  (none)
+    Library deps:  Simple Logging Facade for Java API, TestNG
     Optional:      (none)
     License:       GPL
 
@@ -181,16 +173,6 @@ OME Metadata Editor
     JAR file:      ome-editor.jar
     Path:          components/legacy/ome-editor
     Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
-    Optional:      (none)
-    License:       LGPL
-
-OME Notes
-    A library for flexible organization and presentation of OME-XML metadata
-    within a graphical browser and editor interface
-    -=-
-    JAR file:      ome-notes.jar
-    Path:          components/legacy/ome-notes
-    Project deps:  Bio-Formats, LOCI Common
     Optional:      (none)
     License:       LGPL
 
@@ -356,7 +338,7 @@ Simple Logging Facade for Java API
     Notes:     used for all logging in loci.*
     License:   BSD
 
-Simple Logging Facade for Java Binding
+Simple Logging Facade for Java log4j Binding
     JAR file:  slf4j-log4j12-1.5.10.jar
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
@@ -386,6 +368,12 @@ OMERO Common
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
 
+Xalan Serializer
+    JAR file:  serializer-2.7.1.jar
+    URL:       http://xml.apache.org/xalan-j/
+    Notes:     used for OME-XML transformations
+    License:   Apache
+
 Skin Look and Feel
     JAR file:  skinlf.jar
     URL:       http://skinlf.l2fprod.com/
@@ -411,6 +399,12 @@ VisAD
     Notes:     stripped down VisAD library used by VisBio and SLIM Plotter for
                interactive visualization
     License:   LGPL
+
+Xalan
+    JAR file:  xalan-2.7.1.jar
+    URL:       http://xml.apache.org/xalan-j/
+    Notes:     used for OME-XML transformations
+    License:   Apache
 
 Apache XML-RPC
     JAR file:  xmlrpc-1.2-b1.jar

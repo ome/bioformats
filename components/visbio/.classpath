@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>
