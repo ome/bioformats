@@ -264,7 +264,7 @@ public class ExportPane extends WizardPane {
                 "Writing #" + (i + 1) + "/" + numTotal);
               saver.setId(filename);
               if (doLZW) saver.setCompression("LZW");
-              saver.saveImage(AWTImageTools.makeBuffered(image), true);
+              saver.savePlane(0, AWTImageTools.makeBuffered(image));
             }
             else {
               for (int j=0; j<lengths[excl]; j++) {
@@ -278,10 +278,9 @@ public class ExportPane extends WizardPane {
                   DataUtility.extractImage(ff, false);
                 task.setStatus(count++, max,
                   "Writing #" + img + "/" + numTotal);
-                boolean last = j == lengths[excl] - 1;
                 saver.setId(filename);
                 if (doLZW) saver.setCompression("LZW");
-                saver.saveImage(AWTImageTools.makeBuffered(image), last);
+                saver.savePlane(j, AWTImageTools.makeBuffered(image));
               }
             }
           }

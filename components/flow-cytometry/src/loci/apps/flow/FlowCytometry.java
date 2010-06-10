@@ -492,7 +492,7 @@ public class FlowCytometry {
     System.out.println(stack.getSize());
     for (int i=1; i<=stack.getSize(); i++) {
       byte[] byteArray = (byte[]) stack.getProcessor(i).getPixels();
-      iw.saveBytes(byteArray, i==stack.getSize());
+      iw.saveBytes(i - 1, byteArray);
     }
     iw.close();
   }

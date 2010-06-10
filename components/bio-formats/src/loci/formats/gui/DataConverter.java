@@ -637,8 +637,7 @@ public class DataConverter extends JFrame implements
                   }
 
                   writer.setId(outFile);
-                  biWriter.saveImage(img,
-                    shutdown || filePlane == planesPerFile);
+                  biWriter.savePlane(filePlane, img);
                   if (shutdown) break;
                 }
               }

@@ -394,14 +394,14 @@ public class ImageViewer extends JFrame implements ActionListener,
         for (int i=0; i<images.length; i++) {
           progress.setProgress(i);
           boolean canceled = progress.isCanceled();
-          myWriter.saveImage(images[i], i == images.length - 1 || canceled);
+          myWriter.savePlane(i, images[i]);
           if (canceled) break;
         }
         progress.setProgress(images.length);
       }
       else {
         // save current image only
-        myWriter.saveImage(getImage(), true);
+        myWriter.savePlane(0, getImage());
         progress.setProgress(1);
       }
       myWriter.close();
