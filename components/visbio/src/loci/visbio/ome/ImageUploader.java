@@ -99,7 +99,7 @@ public class ImageUploader {
         pos[0] = zct[2];
         pos[1] = zct[0];
         System.arraycopy(cPos, 0, pos, 2, cPos.length);
-        biWriter.saveImage(data.getImage(pos), i == total - 1);
+        biWriter.savePlane(i, data.getImage(pos));
       }
 
       writer.close();

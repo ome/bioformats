@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Mar 15, 2010 2:19:27 PM CDT
+ * Created by melissa via MetadataAutogen on Jun 10, 2010 11:37:54 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -38,6 +38,9 @@ import loci.common.services.ServiceFactory;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
 
 /**
  * Server-side Ice wrapper for client/server
@@ -91,12 +94,24 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Entity counting -
 
-  public int getChannelComponentCount(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getChannelComponentCount(imageIndex, logicalChannelIndex);
+  public int getBooleanAnnotationCount(Current current) {
+    return metadataObject.getBooleanAnnotationCount();
+  }
+
+  public int getChannelCount(int imageIndex, Current current) {
+    return metadataObject.getChannelCount(imageIndex);
+  }
+
+  public int getChannelAnnotationRefCount(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelAnnotationRefCount(imageIndex, channelIndex);
   }
 
   public int getDatasetCount(Current current) {
     return metadataObject.getDatasetCount();
+  }
+
+  public int getDatasetAnnotationRefCount(int datasetIndex, Current current) {
+    return metadataObject.getDatasetAnnotationRefCount(datasetIndex);
   }
 
   public int getDatasetRefCount(int imageIndex, Current current) {
@@ -111,6 +126,10 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDichroicCount(instrumentIndex);
   }
 
+  public int getDoubleAnnotationCount(Current current) {
+    return metadataObject.getDoubleAnnotationCount();
+  }
+
   public int getExperimentCount(Current current) {
     return metadataObject.getExperimentCount();
   }
@@ -119,8 +138,16 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getExperimenterCount();
   }
 
-  public int getExperimenterMembershipCount(int experimenterIndex, Current current) {
-    return metadataObject.getExperimenterMembershipCount(experimenterIndex);
+  public int getExperimenterAnnotationRefCount(int experimenterIndex, Current current) {
+    return metadataObject.getExperimenterAnnotationRefCount(experimenterIndex);
+  }
+
+  public int getExperimenterGroupRefCount(int experimenterIndex, Current current) {
+    return metadataObject.getExperimenterGroupRefCount(experimenterIndex);
+  }
+
+  public int getFileAnnotationCount(Current current) {
+    return metadataObject.getFileAnnotationCount();
   }
 
   public int getFilterCount(int instrumentIndex, Current current) {
@@ -131,40 +158,68 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getFilterSetCount(instrumentIndex);
   }
 
-  public int getGroupCount(Current current) {
-    return metadataObject.getGroupCount();
+  public int getFilterSetEmissionFilterRefCount(int instrumentIndex, int filterSetIndex, Current current) {
+    return metadataObject.getFilterSetEmissionFilterRefCount(instrumentIndex, filterSetIndex);
   }
 
-  public int getGroupRefCount(int experimenterIndex, Current current) {
-    return metadataObject.getGroupRefCount(experimenterIndex);
+  public int getFilterSetExcitationFilterRefCount(int instrumentIndex, int filterSetIndex, Current current) {
+    return metadataObject.getFilterSetExcitationFilterRefCount(instrumentIndex, filterSetIndex);
+  }
+
+  public int getGroupCount(Current current) {
+    return metadataObject.getGroupCount();
   }
 
   public int getImageCount(Current current) {
     return metadataObject.getImageCount();
   }
 
+  public int getImageAnnotationRefCount(int imageIndex, Current current) {
+    return metadataObject.getImageAnnotationRefCount(imageIndex);
+  }
+
+  public int getImageROIRefCount(int imageIndex, Current current) {
+    return metadataObject.getImageROIRefCount(imageIndex);
+  }
+
   public int getInstrumentCount(Current current) {
     return metadataObject.getInstrumentCount();
   }
 
-  public int getLightSourceCount(int instrumentIndex, Current current) {
-    return metadataObject.getLightSourceCount(instrumentIndex);
+  public int getLightPathEmissionFilterRefCount(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getLightPathEmissionFilterRefCount(imageIndex, channelIndex);
   }
 
-  public int getLightSourceRefCount(int imageIndex, int microbeamManipulationIndex, Current current) {
-    return metadataObject.getLightSourceRefCount(imageIndex, microbeamManipulationIndex);
+  public int getLightPathExcitationFilterRefCount(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getLightPathExcitationFilterRefCount(imageIndex, channelIndex);
   }
 
-  public int getLogicalChannelCount(int imageIndex, Current current) {
-    return metadataObject.getLogicalChannelCount(imageIndex);
+  public int getListAnnotationCount(Current current) {
+    return metadataObject.getListAnnotationCount();
   }
 
-  public int getMicrobeamManipulationCount(int imageIndex, Current current) {
-    return metadataObject.getMicrobeamManipulationCount(imageIndex);
+  public int getListAnnotationAnnotationRefCount(int listAnnotationIndex, Current current) {
+    return metadataObject.getListAnnotationAnnotationRefCount(listAnnotationIndex);
   }
 
-  public int getMicrobeamManipulationRefCount(int experimentIndex, Current current) {
-    return metadataObject.getMicrobeamManipulationRefCount(experimentIndex);
+  public int getLongAnnotationCount(Current current) {
+    return metadataObject.getLongAnnotationCount();
+  }
+
+  public int getMicrobeamManipulationCount(int experimentIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationCount(experimentIndex);
+  }
+
+  public int getMicrobeamManipulationLightSourceSettingsCount(int experimentIndex, int microbeamManipulationIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationLightSourceSettingsCount(experimentIndex, microbeamManipulationIndex);
+  }
+
+  public int getMicrobeamManipulationROIRefCount(int experimentIndex, int microbeamManipulationIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationROIRefCount(experimentIndex, microbeamManipulationIndex);
+  }
+
+  public int getMicrobeamManipulationRefCount(int imageIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationRefCount(imageIndex);
   }
 
   public int getOTFCount(int instrumentIndex, Current current) {
@@ -175,16 +230,36 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveCount(instrumentIndex);
   }
 
-  public int getPixelsCount(int imageIndex, Current current) {
-    return metadataObject.getPixelsCount(imageIndex);
+  public int getPixelsAnnotationRefCount(int imageIndex, Current current) {
+    return metadataObject.getPixelsAnnotationRefCount(imageIndex);
   }
 
-  public int getPlaneCount(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPlaneCount(imageIndex, pixelsIndex);
+  public int getPixelsBinDataCount(int imageIndex, Current current) {
+    return metadataObject.getPixelsBinDataCount(imageIndex);
+  }
+
+  public int getPlaneCount(int imageIndex, Current current) {
+    return metadataObject.getPlaneCount(imageIndex);
+  }
+
+  public int getPlaneAnnotationRefCount(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneAnnotationRefCount(imageIndex, planeIndex);
   }
 
   public int getPlateCount(Current current) {
     return metadataObject.getPlateCount();
+  }
+
+  public int getPlateAcquisitionCount(int plateIndex, Current current) {
+    return metadataObject.getPlateAcquisitionCount(plateIndex);
+  }
+
+  public int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionAnnotationRefCount(plateIndex, plateAcquisitionIndex);
+  }
+
+  public int getPlateAnnotationRefCount(int plateIndex, Current current) {
+    return metadataObject.getPlateAnnotationRefCount(plateIndex);
   }
 
   public int getPlateRefCount(int screenIndex, Current current) {
@@ -195,60 +270,80 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getProjectCount();
   }
 
+  public int getProjectAnnotationRefCount(int projectIndex, Current current) {
+    return metadataObject.getProjectAnnotationRefCount(projectIndex);
+  }
+
   public int getProjectRefCount(int datasetIndex, Current current) {
     return metadataObject.getProjectRefCount(datasetIndex);
   }
 
-  public int getROICount(int imageIndex, Current current) {
-    return metadataObject.getROICount(imageIndex);
+  public int getROICount(Current current) {
+    return metadataObject.getROICount();
   }
 
-  public int getROIRefCount(int imageIndex, int microbeamManipulationIndex, Current current) {
-    return metadataObject.getROIRefCount(imageIndex, microbeamManipulationIndex);
+  public int getROIAnnotationRefCount(int roiIndex, Current current) {
+    return metadataObject.getROIAnnotationRefCount(roiIndex);
   }
 
   public int getReagentCount(int screenIndex, Current current) {
     return metadataObject.getReagentCount(screenIndex);
   }
 
-  public int getRegionCount(int imageIndex, Current current) {
-    return metadataObject.getRegionCount(imageIndex);
-  }
-
-  public int getRoiLinkCount(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getRoiLinkCount(imageIndex, roiIndex);
+  public int getReagentAnnotationRefCount(int screenIndex, int reagentIndex, Current current) {
+    return metadataObject.getReagentAnnotationRefCount(screenIndex, reagentIndex);
   }
 
   public int getScreenCount(Current current) {
     return metadataObject.getScreenCount();
   }
 
-  public int getScreenAcquisitionCount(int screenIndex, Current current) {
-    return metadataObject.getScreenAcquisitionCount(screenIndex);
+  public int getScreenAnnotationRefCount(int screenIndex, Current current) {
+    return metadataObject.getScreenAnnotationRefCount(screenIndex);
   }
 
   public int getScreenRefCount(int plateIndex, Current current) {
     return metadataObject.getScreenRefCount(plateIndex);
   }
 
-  public int getShapeCount(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getShapeCount(imageIndex, roiIndex);
+  public int getShapeAnnotationRefCount(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getShapeAnnotationRefCount(roiIndex, shapeIndex);
   }
 
-  public int getTiffDataCount(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getTiffDataCount(imageIndex, pixelsIndex);
+  public int getStringAnnotationCount(Current current) {
+    return metadataObject.getStringAnnotationCount();
+  }
+
+  public int getTiffDataCount(int imageIndex, Current current) {
+    return metadataObject.getTiffDataCount(imageIndex);
+  }
+
+  public int getTimestampAnnotationCount(Current current) {
+    return metadataObject.getTimestampAnnotationCount();
   }
 
   public int getWellCount(int plateIndex, Current current) {
     return metadataObject.getWellCount(plateIndex);
   }
 
+  public int getWellAnnotationRefCount(int plateIndex, int wellIndex, Current current) {
+    return metadataObject.getWellAnnotationRefCount(plateIndex, wellIndex);
+  }
+
   public int getWellSampleCount(int plateIndex, int wellIndex, Current current) {
     return metadataObject.getWellSampleCount(plateIndex, wellIndex);
   }
 
-  public int getWellSampleRefCount(int screenIndex, int screenAcquisitionIndex, Current current) {
-    return metadataObject.getWellSampleRefCount(screenIndex, screenAcquisitionIndex);
+  public int getWellSampleAnnotationRefCount(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+    return metadataObject.getWellSampleAnnotationRefCount(plateIndex, wellIndex, wellSampleIndex);
+  }
+
+  public int getWellSampleRefCount(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getWellSampleRefCount(plateIndex, plateAcquisitionIndex);
+  }
+
+  public int getXMLAnnotationCount(Current current) {
+    return metadataObject.getXMLAnnotationCount();
   }
 
   // - Entity retrieval -
@@ -259,53 +354,133 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Arc property retrieval -
 
-  public String getArcType(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getArcType(instrumentIndex, lightSourceIndex);
+  public String getArcID(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcID(instrumentIndex, arcIndex);
   }
 
-  // - ChannelComponent property retrieval -
-
-  public String getChannelComponentColorDomain(int imageIndex, int logicalChannelIndex, int channelComponentIndex, Current current) {
-    return metadataObject.getChannelComponentColorDomain(imageIndex, logicalChannelIndex, channelComponentIndex);
+  public String getArcLotNumber(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcLotNumber(instrumentIndex, arcIndex);
   }
 
-  public int getChannelComponentIndex(int imageIndex, int logicalChannelIndex, int channelComponentIndex, Current current) {
-    return metadataObject.getChannelComponentIndex(imageIndex, logicalChannelIndex, channelComponentIndex);
+  public String getArcManufacturer(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcManufacturer(instrumentIndex, arcIndex);
   }
 
-  public String getChannelComponentPixels(int imageIndex, int logicalChannelIndex, int channelComponentIndex, Current current) {
-    return metadataObject.getChannelComponentPixels(imageIndex, logicalChannelIndex, channelComponentIndex);
+  public String getArcModel(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcModel(instrumentIndex, arcIndex);
   }
 
-  // - Circle property retrieval -
-
-  public String getCircleCx(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getCircleCx(imageIndex, roiIndex, shapeIndex);
+  public double getArcPower(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcPower(instrumentIndex, arcIndex);
   }
 
-  public String getCircleCy(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getCircleCy(imageIndex, roiIndex, shapeIndex);
+  public String getArcSerialNumber(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcSerialNumber(instrumentIndex, arcIndex);
   }
 
-  public String getCircleID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getCircleID(imageIndex, roiIndex, shapeIndex);
+  public ArcType getArcType(int instrumentIndex, int arcIndex, Current current) {
+    return metadataObject.getArcType(instrumentIndex, arcIndex);
   }
 
-  public String getCircleR(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getCircleR(imageIndex, roiIndex, shapeIndex);
+  // - BooleanAnnotation property retrieval -
+
+  public String getBooleanAnnotationID(int booleanAnnotationIndex, Current current) {
+    return metadataObject.getBooleanAnnotationID(booleanAnnotationIndex);
   }
 
-  public String getCircleTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getCircleTransform(imageIndex, roiIndex, shapeIndex);
+  public String getBooleanAnnotationNamespace(int booleanAnnotationIndex, Current current) {
+    return metadataObject.getBooleanAnnotationNamespace(booleanAnnotationIndex);
   }
 
-  // - Contact property retrieval -
-
-  public String getContactExperimenter(int groupIndex, Current current) {
-    return metadataObject.getContactExperimenter(groupIndex);
+  public boolean getBooleanAnnotationValue(int booleanAnnotationIndex, Current current) {
+    return metadataObject.getBooleanAnnotationValue(booleanAnnotationIndex);
   }
+
+  // - Channel property retrieval -
+
+  public AcquisitionMode getChannelAcquisitionMode(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelAcquisitionMode(imageIndex, channelIndex);
+  }
+
+  public String getChannelAnnotationRef(int imageIndex, int channelIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getChannelAnnotationRef(imageIndex, channelIndex, annotationRefIndex);
+  }
+
+  public int getChannelColor(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelColor(imageIndex, channelIndex);
+  }
+
+  public ContrastMethod getChannelContrastMethod(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelContrastMethod(imageIndex, channelIndex);
+  }
+
+  public PositiveInteger getChannelEmissionWavelength(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelEmissionWavelength(imageIndex, channelIndex);
+  }
+
+  public PositiveInteger getChannelExcitationWavelength(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelExcitationWavelength(imageIndex, channelIndex);
+  }
+
+  public String getChannelFilterSetRef(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelFilterSetRef(imageIndex, channelIndex);
+  }
+
+  public String getChannelFluor(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelFluor(imageIndex, channelIndex);
+  }
+
+  public String getChannelID(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelID(imageIndex, channelIndex);
+  }
+
+  public IlluminationType getChannelIlluminationType(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelIlluminationType(imageIndex, channelIndex);
+  }
+
+  public PercentFraction getChannelLightSourceSettingsAttenuation(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelLightSourceSettingsAttenuation(imageIndex, channelIndex);
+  }
+
+  public String getChannelLightSourceSettingsID(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelLightSourceSettingsID(imageIndex, channelIndex);
+  }
+
+  public PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelLightSourceSettingsWavelength(imageIndex, channelIndex);
+  }
+
+  public double getChannelNDFilter(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelNDFilter(imageIndex, channelIndex);
+  }
+
+  public String getChannelName(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelName(imageIndex, channelIndex);
+  }
+
+  public String getChannelOTFRef(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelOTFRef(imageIndex, channelIndex);
+  }
+
+  public double getChannelPinholeSize(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelPinholeSize(imageIndex, channelIndex);
+  }
+
+  public int getChannelPockelCellSetting(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelPockelCellSetting(imageIndex, channelIndex);
+  }
+
+  public int getChannelSamplesPerPixel(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getChannelSamplesPerPixel(imageIndex, channelIndex);
+  }
+
+  // - ChannelAnnotationRef property retrieval -
 
   // - Dataset property retrieval -
+
+  public String getDatasetAnnotationRef(int datasetIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
+  }
 
   public String getDatasetDescription(int datasetIndex, Current current) {
     return metadataObject.getDatasetDescription(datasetIndex);
@@ -323,19 +498,17 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDatasetID(datasetIndex);
   }
 
-  public boolean getDatasetLocked(int datasetIndex, Current current) {
-    return metadataObject.getDatasetLocked(datasetIndex);
-  }
-
   public String getDatasetName(int datasetIndex, Current current) {
     return metadataObject.getDatasetName(datasetIndex);
   }
 
-  // - DatasetRef property retrieval -
-
-  public String getDatasetRefID(int imageIndex, int datasetRefIndex, Current current) {
-    return metadataObject.getDatasetRefID(imageIndex, datasetRefIndex);
+  public String getDatasetProjectRef(int datasetIndex, int projectRefIndex, Current current) {
+    return metadataObject.getDatasetProjectRef(datasetIndex, projectRefIndex);
   }
+
+  // - DatasetAnnotationRef property retrieval -
+
+  // - DatasetRef property retrieval -
 
   // - Detector property retrieval -
 
@@ -349,6 +522,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public String getDetectorID(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorID(instrumentIndex, detectorIndex);
+  }
+
+  public String getDetectorLotNumber(int instrumentIndex, int detectorIndex, Current current) {
+    return metadataObject.getDetectorLotNumber(instrumentIndex, detectorIndex);
   }
 
   public String getDetectorManufacturer(int instrumentIndex, int detectorIndex, Current current) {
@@ -367,7 +544,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDetectorSerialNumber(instrumentIndex, detectorIndex);
   }
 
-  public String getDetectorType(int instrumentIndex, int detectorIndex, Current current) {
+  public DetectorType getDetectorType(int instrumentIndex, int detectorIndex, Current current) {
     return metadataObject.getDetectorType(instrumentIndex, detectorIndex);
   }
 
@@ -381,28 +558,28 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - DetectorSettings property retrieval -
 
-  public String getDetectorSettingsBinning(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getDetectorSettingsBinning(imageIndex, logicalChannelIndex);
+  public Binning getDetectorSettingsBinning(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getDetectorSettingsBinning(imageIndex, channelIndex);
   }
 
-  public String getDetectorSettingsDetector(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getDetectorSettingsDetector(imageIndex, logicalChannelIndex);
+  public double getDetectorSettingsGain(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getDetectorSettingsGain(imageIndex, channelIndex);
   }
 
-  public double getDetectorSettingsGain(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getDetectorSettingsGain(imageIndex, logicalChannelIndex);
+  public String getDetectorSettingsID(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getDetectorSettingsID(imageIndex, channelIndex);
   }
 
-  public double getDetectorSettingsOffset(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getDetectorSettingsOffset(imageIndex, logicalChannelIndex);
+  public double getDetectorSettingsOffset(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getDetectorSettingsOffset(imageIndex, channelIndex);
   }
 
-  public double getDetectorSettingsReadOutRate(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getDetectorSettingsReadOutRate(imageIndex, logicalChannelIndex);
+  public double getDetectorSettingsReadOutRate(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getDetectorSettingsReadOutRate(imageIndex, channelIndex);
   }
 
-  public double getDetectorSettingsVoltage(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getDetectorSettingsVoltage(imageIndex, logicalChannelIndex);
+  public double getDetectorSettingsVoltage(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getDetectorSettingsVoltage(imageIndex, channelIndex);
   }
 
   // - Dichroic property retrieval -
@@ -423,106 +600,92 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getDichroicModel(instrumentIndex, dichroicIndex);
   }
 
-  // - Dimensions property retrieval -
-
-  public double getDimensionsPhysicalSizeX(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getDimensionsPhysicalSizeX(imageIndex, pixelsIndex);
+  public String getDichroicSerialNumber(int instrumentIndex, int dichroicIndex, Current current) {
+    return metadataObject.getDichroicSerialNumber(instrumentIndex, dichroicIndex);
   }
 
-  public double getDimensionsPhysicalSizeY(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getDimensionsPhysicalSizeY(imageIndex, pixelsIndex);
+  // - DoubleAnnotation property retrieval -
+
+  public String getDoubleAnnotationID(int doubleAnnotationIndex, Current current) {
+    return metadataObject.getDoubleAnnotationID(doubleAnnotationIndex);
   }
 
-  public double getDimensionsPhysicalSizeZ(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getDimensionsPhysicalSizeZ(imageIndex, pixelsIndex);
+  public String getDoubleAnnotationNamespace(int doubleAnnotationIndex, Current current) {
+    return metadataObject.getDoubleAnnotationNamespace(doubleAnnotationIndex);
   }
 
-  public double getDimensionsTimeIncrement(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getDimensionsTimeIncrement(imageIndex, pixelsIndex);
-  }
-
-  public int getDimensionsWaveIncrement(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getDimensionsWaveIncrement(imageIndex, pixelsIndex);
-  }
-
-  public int getDimensionsWaveStart(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getDimensionsWaveStart(imageIndex, pixelsIndex);
-  }
-
-  // - DisplayOptions property retrieval -
-
-  public String getDisplayOptionsDisplay(int imageIndex, Current current) {
-    return metadataObject.getDisplayOptionsDisplay(imageIndex);
-  }
-
-  public String getDisplayOptionsID(int imageIndex, Current current) {
-    return metadataObject.getDisplayOptionsID(imageIndex);
-  }
-
-  public double getDisplayOptionsZoom(int imageIndex, Current current) {
-    return metadataObject.getDisplayOptionsZoom(imageIndex);
+  public double getDoubleAnnotationValue(int doubleAnnotationIndex, Current current) {
+    return metadataObject.getDoubleAnnotationValue(doubleAnnotationIndex);
   }
 
   // - Ellipse property retrieval -
 
-  public String getEllipseCx(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getEllipseCx(imageIndex, roiIndex, shapeIndex);
+  public String getEllipseDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseDescription(roiIndex, shapeIndex);
   }
 
-  public String getEllipseCy(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getEllipseCy(imageIndex, roiIndex, shapeIndex);
+  public int getEllipseFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseFill(roiIndex, shapeIndex);
   }
 
-  public String getEllipseID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getEllipseID(imageIndex, roiIndex, shapeIndex);
+  public int getEllipseFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseFontSize(roiIndex, shapeIndex);
   }
 
-  public String getEllipseRx(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getEllipseRx(imageIndex, roiIndex, shapeIndex);
+  public String getEllipseID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseID(roiIndex, shapeIndex);
   }
 
-  public String getEllipseRy(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getEllipseRy(imageIndex, roiIndex, shapeIndex);
+  public String getEllipseLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseLabel(roiIndex, shapeIndex);
   }
 
-  public String getEllipseTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getEllipseTransform(imageIndex, roiIndex, shapeIndex);
+  public String getEllipseName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseName(roiIndex, shapeIndex);
   }
 
-  // - EmFilter property retrieval -
-
-  public String getEmFilterLotNumber(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getEmFilterLotNumber(instrumentIndex, filterIndex);
+  public double getEllipseRadiusX(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseRadiusX(roiIndex, shapeIndex);
   }
 
-  public String getEmFilterManufacturer(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getEmFilterManufacturer(instrumentIndex, filterIndex);
+  public double getEllipseRadiusY(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseRadiusY(roiIndex, shapeIndex);
   }
 
-  public String getEmFilterModel(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getEmFilterModel(instrumentIndex, filterIndex);
+  public int getEllipseStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseStroke(roiIndex, shapeIndex);
   }
 
-  public String getEmFilterType(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getEmFilterType(instrumentIndex, filterIndex);
+  public String getEllipseStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseStrokeDashArray(roiIndex, shapeIndex);
   }
 
-  // - ExFilter property retrieval -
-
-  public String getExFilterLotNumber(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getExFilterLotNumber(instrumentIndex, filterIndex);
+  public double getEllipseStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseStrokeWidth(roiIndex, shapeIndex);
   }
 
-  public String getExFilterManufacturer(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getExFilterManufacturer(instrumentIndex, filterIndex);
+  public int getEllipseTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseTheC(roiIndex, shapeIndex);
   }
 
-  public String getExFilterModel(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getExFilterModel(instrumentIndex, filterIndex);
+  public int getEllipseTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseTheT(roiIndex, shapeIndex);
   }
 
-  public String getExFilterType(int instrumentIndex, int filterIndex, Current current) {
-    return metadataObject.getExFilterType(instrumentIndex, filterIndex);
+  public int getEllipseTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getEllipseTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseTransform(roiIndex, shapeIndex);
+  }
+
+  public double getEllipseX(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseX(roiIndex, shapeIndex);
+  }
+
+  public double getEllipseY(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getEllipseY(roiIndex, shapeIndex);
   }
 
   // - Experiment property retrieval -
@@ -539,11 +702,19 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getExperimentID(experimentIndex);
   }
 
-  public String getExperimentType(int experimentIndex, Current current) {
+  public ExperimentType getExperimentType(int experimentIndex, Current current) {
     return metadataObject.getExperimentType(experimentIndex);
   }
 
   // - Experimenter property retrieval -
+
+  public String getExperimenterAnnotationRef(int experimenterIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
+  }
+
+  public String getExperimenterDisplayName(int experimenterIndex, Current current) {
+    return metadataObject.getExperimenterDisplayName(experimenterIndex);
+  }
 
   public String getExperimenterEmail(int experimenterIndex, Current current) {
     return metadataObject.getExperimenterEmail(experimenterIndex);
@@ -551,6 +722,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public String getExperimenterFirstName(int experimenterIndex, Current current) {
     return metadataObject.getExperimenterFirstName(experimenterIndex);
+  }
+
+  public String getExperimenterGroupRef(int experimenterIndex, int groupRefIndex, Current current) {
+    return metadataObject.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
   }
 
   public String getExperimenterID(int experimenterIndex, Current current) {
@@ -565,20 +740,68 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getExperimenterLastName(experimenterIndex);
   }
 
-  public String getExperimenterOMEName(int experimenterIndex, Current current) {
-    return metadataObject.getExperimenterOMEName(experimenterIndex);
+  public String getExperimenterMiddleName(int experimenterIndex, Current current) {
+    return metadataObject.getExperimenterMiddleName(experimenterIndex);
   }
 
-  // - ExperimenterMembership property retrieval -
-
-  public String getExperimenterMembershipGroup(int experimenterIndex, int groupRefIndex, Current current) {
-    return metadataObject.getExperimenterMembershipGroup(experimenterIndex, groupRefIndex);
+  public String getExperimenterUserName(int experimenterIndex, Current current) {
+    return metadataObject.getExperimenterUserName(experimenterIndex);
   }
+
+  // - ExperimenterAnnotationRef property retrieval -
+
+  // - ExperimenterGroupRef property retrieval -
 
   // - Filament property retrieval -
 
-  public String getFilamentType(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getFilamentType(instrumentIndex, lightSourceIndex);
+  public String getFilamentID(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentID(instrumentIndex, filamentIndex);
+  }
+
+  public String getFilamentLotNumber(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentLotNumber(instrumentIndex, filamentIndex);
+  }
+
+  public String getFilamentManufacturer(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentManufacturer(instrumentIndex, filamentIndex);
+  }
+
+  public String getFilamentModel(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentModel(instrumentIndex, filamentIndex);
+  }
+
+  public double getFilamentPower(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentPower(instrumentIndex, filamentIndex);
+  }
+
+  public String getFilamentSerialNumber(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentSerialNumber(instrumentIndex, filamentIndex);
+  }
+
+  public FilamentType getFilamentType(int instrumentIndex, int filamentIndex, Current current) {
+    return metadataObject.getFilamentType(instrumentIndex, filamentIndex);
+  }
+
+  // - FileAnnotation property retrieval -
+
+  public String getFileAnnotationBinaryFileFileName(int fileAnnotationIndex, Current current) {
+    return metadataObject.getFileAnnotationBinaryFileFileName(fileAnnotationIndex);
+  }
+
+  public String getFileAnnotationBinaryFileMIMEType(int fileAnnotationIndex, Current current) {
+    return metadataObject.getFileAnnotationBinaryFileMIMEType(fileAnnotationIndex);
+  }
+
+  public int getFileAnnotationBinaryFileSize(int fileAnnotationIndex, Current current) {
+    return metadataObject.getFileAnnotationBinaryFileSize(fileAnnotationIndex);
+  }
+
+  public String getFileAnnotationID(int fileAnnotationIndex, Current current) {
+    return metadataObject.getFileAnnotationID(fileAnnotationIndex);
+  }
+
+  public String getFileAnnotationNamespace(int fileAnnotationIndex, Current current) {
+    return metadataObject.getFileAnnotationNamespace(fileAnnotationIndex);
   }
 
   // - Filter property retrieval -
@@ -603,22 +826,26 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getFilterModel(instrumentIndex, filterIndex);
   }
 
-  public String getFilterType(int instrumentIndex, int filterIndex, Current current) {
+  public String getFilterSerialNumber(int instrumentIndex, int filterIndex, Current current) {
+    return metadataObject.getFilterSerialNumber(instrumentIndex, filterIndex);
+  }
+
+  public FilterType getFilterType(int instrumentIndex, int filterIndex, Current current) {
     return metadataObject.getFilterType(instrumentIndex, filterIndex);
   }
 
   // - FilterSet property retrieval -
 
-  public String getFilterSetDichroic(int instrumentIndex, int filterSetIndex, Current current) {
-    return metadataObject.getFilterSetDichroic(instrumentIndex, filterSetIndex);
+  public String getFilterSetDichroicRef(int instrumentIndex, int filterSetIndex, Current current) {
+    return metadataObject.getFilterSetDichroicRef(instrumentIndex, filterSetIndex);
   }
 
-  public String getFilterSetEmFilter(int instrumentIndex, int filterSetIndex, Current current) {
-    return metadataObject.getFilterSetEmFilter(instrumentIndex, filterSetIndex);
+  public String getFilterSetEmissionFilterRef(int instrumentIndex, int filterSetIndex, int emissionFilterRefIndex, Current current) {
+    return metadataObject.getFilterSetEmissionFilterRef(instrumentIndex, filterSetIndex, emissionFilterRefIndex);
   }
 
-  public String getFilterSetExFilter(int instrumentIndex, int filterSetIndex, Current current) {
-    return metadataObject.getFilterSetExFilter(instrumentIndex, filterSetIndex);
+  public String getFilterSetExcitationFilterRef(int instrumentIndex, int filterSetIndex, int excitationFilterRefIndex, Current current) {
+    return metadataObject.getFilterSetExcitationFilterRef(instrumentIndex, filterSetIndex, excitationFilterRefIndex);
   }
 
   public String getFilterSetID(int instrumentIndex, int filterSetIndex, Current current) {
@@ -637,30 +864,48 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getFilterSetModel(instrumentIndex, filterSetIndex);
   }
 
+  public String getFilterSetSerialNumber(int instrumentIndex, int filterSetIndex, Current current) {
+    return metadataObject.getFilterSetSerialNumber(instrumentIndex, filterSetIndex);
+  }
+
+  // - FilterSetEmissionFilterRef property retrieval -
+
+  // - FilterSetExcitationFilterRef property retrieval -
+
   // - Group property retrieval -
+
+  public String getGroupContact(int groupIndex, Current current) {
+    return metadataObject.getGroupContact(groupIndex);
+  }
+
+  public String getGroupDescription(int groupIndex, Current current) {
+    return metadataObject.getGroupDescription(groupIndex);
+  }
 
   public String getGroupID(int groupIndex, Current current) {
     return metadataObject.getGroupID(groupIndex);
+  }
+
+  public String getGroupLeader(int groupIndex, Current current) {
+    return metadataObject.getGroupLeader(groupIndex);
   }
 
   public String getGroupName(int groupIndex, Current current) {
     return metadataObject.getGroupName(groupIndex);
   }
 
-  // - GroupRef property retrieval -
-
   // - Image property retrieval -
 
-  public String getImageAcquiredPixels(int imageIndex, Current current) {
-    return metadataObject.getImageAcquiredPixels(imageIndex);
+  public String getImageAcquiredDate(int imageIndex, Current current) {
+    return metadataObject.getImageAcquiredDate(imageIndex);
   }
 
-  public String getImageCreationDate(int imageIndex, Current current) {
-    return metadataObject.getImageCreationDate(imageIndex);
+  public String getImageAnnotationRef(int imageIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getImageAnnotationRef(imageIndex, annotationRefIndex);
   }
 
-  public String getImageDefaultPixels(int imageIndex, Current current) {
-    return metadataObject.getImageDefaultPixels(imageIndex);
+  public String getImageDatasetRef(int imageIndex, int datasetRefIndex, Current current) {
+    return metadataObject.getImageDatasetRef(imageIndex, datasetRefIndex);
   }
 
   public String getImageDescription(int imageIndex, Current current) {
@@ -687,9 +932,37 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getImageInstrumentRef(imageIndex);
   }
 
+  public String getImageMicrobeamManipulationRef(int imageIndex, int microbeamManipulationRefIndex, Current current) {
+    return metadataObject.getImageMicrobeamManipulationRef(imageIndex, microbeamManipulationRefIndex);
+  }
+
   public String getImageName(int imageIndex, Current current) {
     return metadataObject.getImageName(imageIndex);
   }
+
+  public double getImageObjectiveSettingsCorrectionCollar(int imageIndex, Current current) {
+    return metadataObject.getImageObjectiveSettingsCorrectionCollar(imageIndex);
+  }
+
+  public String getImageObjectiveSettingsID(int imageIndex, Current current) {
+    return metadataObject.getImageObjectiveSettingsID(imageIndex);
+  }
+
+  public Medium getImageObjectiveSettingsMedium(int imageIndex, Current current) {
+    return metadataObject.getImageObjectiveSettingsMedium(imageIndex);
+  }
+
+  public double getImageObjectiveSettingsRefractiveIndex(int imageIndex, Current current) {
+    return metadataObject.getImageObjectiveSettingsRefractiveIndex(imageIndex);
+  }
+
+  public String getImageROIRef(int imageIndex, int roiRefIndex, Current current) {
+    return metadataObject.getImageROIRef(imageIndex, roiRefIndex);
+  }
+
+  // - ImageAnnotationRef property retrieval -
+
+  // - ImageROIRef property retrieval -
 
   // - ImagingEnvironment property retrieval -
 
@@ -697,11 +970,11 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getImagingEnvironmentAirPressure(imageIndex);
   }
 
-  public double getImagingEnvironmentCO2Percent(int imageIndex, Current current) {
+  public PercentFraction getImagingEnvironmentCO2Percent(int imageIndex, Current current) {
     return metadataObject.getImagingEnvironmentCO2Percent(imageIndex);
   }
 
-  public double getImagingEnvironmentHumidity(int imageIndex, Current current) {
+  public PercentFraction getImagingEnvironmentHumidity(int imageIndex, Current current) {
     return metadataObject.getImagingEnvironmentHumidity(imageIndex);
   }
 
@@ -717,268 +990,312 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Laser property retrieval -
 
-  public int getLaserFrequencyMultiplication(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserFrequencyMultiplication(instrumentIndex, lightSourceIndex);
+  public PositiveInteger getLaserFrequencyMultiplication(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserFrequencyMultiplication(instrumentIndex, laserIndex);
   }
 
-  public String getLaserLaserMedium(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserLaserMedium(instrumentIndex, lightSourceIndex);
+  public String getLaserID(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserID(instrumentIndex, laserIndex);
   }
 
-  public boolean getLaserPockelCell(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserPockelCell(instrumentIndex, lightSourceIndex);
+  public LaserMedium getLaserLaserMedium(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserLaserMedium(instrumentIndex, laserIndex);
   }
 
-  public String getLaserPulse(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserPulse(instrumentIndex, lightSourceIndex);
+  public String getLaserLotNumber(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserLotNumber(instrumentIndex, laserIndex);
   }
 
-  public double getLaserRepetitionRate(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserRepetitionRate(instrumentIndex, lightSourceIndex);
+  public String getLaserManufacturer(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserManufacturer(instrumentIndex, laserIndex);
   }
 
-  public boolean getLaserTuneable(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserTuneable(instrumentIndex, lightSourceIndex);
+  public String getLaserModel(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserModel(instrumentIndex, laserIndex);
   }
 
-  public String getLaserType(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserType(instrumentIndex, lightSourceIndex);
+  public boolean getLaserPockelCell(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserPockelCell(instrumentIndex, laserIndex);
   }
 
-  public int getLaserWavelength(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLaserWavelength(instrumentIndex, lightSourceIndex);
+  public double getLaserPower(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserPower(instrumentIndex, laserIndex);
   }
 
-  // - LightSource property retrieval -
-
-  public String getLightSourceID(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLightSourceID(instrumentIndex, lightSourceIndex);
+  public Pulse getLaserPulse(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserPulse(instrumentIndex, laserIndex);
   }
 
-  public String getLightSourceManufacturer(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLightSourceManufacturer(instrumentIndex, lightSourceIndex);
+  public String getLaserPump(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserPump(instrumentIndex, laserIndex);
   }
 
-  public String getLightSourceModel(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLightSourceModel(instrumentIndex, lightSourceIndex);
+  public double getLaserRepetitionRate(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserRepetitionRate(instrumentIndex, laserIndex);
   }
 
-  public double getLightSourcePower(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLightSourcePower(instrumentIndex, lightSourceIndex);
+  public String getLaserSerialNumber(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserSerialNumber(instrumentIndex, laserIndex);
   }
 
-  public String getLightSourceSerialNumber(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getLightSourceSerialNumber(instrumentIndex, lightSourceIndex);
+  public boolean getLaserTuneable(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserTuneable(instrumentIndex, laserIndex);
   }
 
-  // - LightSourceRef property retrieval -
-
-  public double getLightSourceRefAttenuation(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
-    return metadataObject.getLightSourceRefAttenuation(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  public LaserType getLaserType(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserType(instrumentIndex, laserIndex);
   }
 
-  public String getLightSourceRefLightSource(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
-    return metadataObject.getLightSourceRefLightSource(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  public PositiveInteger getLaserWavelength(int instrumentIndex, int laserIndex, Current current) {
+    return metadataObject.getLaserWavelength(instrumentIndex, laserIndex);
   }
 
-  public int getLightSourceRefWavelength(int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
-    return metadataObject.getLightSourceRefWavelength(imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  // - LightEmittingDiode property retrieval -
+
+  public String getLightEmittingDiodeID(int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    return metadataObject.getLightEmittingDiodeID(instrumentIndex, lightEmittingDiodeIndex);
   }
 
-  // - LightSourceSettings property retrieval -
-
-  public double getLightSourceSettingsAttenuation(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLightSourceSettingsAttenuation(imageIndex, logicalChannelIndex);
+  public String getLightEmittingDiodeLotNumber(int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    return metadataObject.getLightEmittingDiodeLotNumber(instrumentIndex, lightEmittingDiodeIndex);
   }
 
-  public String getLightSourceSettingsLightSource(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLightSourceSettingsLightSource(imageIndex, logicalChannelIndex);
+  public String getLightEmittingDiodeManufacturer(int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    return metadataObject.getLightEmittingDiodeManufacturer(instrumentIndex, lightEmittingDiodeIndex);
   }
 
-  public int getLightSourceSettingsWavelength(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLightSourceSettingsWavelength(imageIndex, logicalChannelIndex);
+  public String getLightEmittingDiodeModel(int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    return metadataObject.getLightEmittingDiodeModel(instrumentIndex, lightEmittingDiodeIndex);
   }
+
+  public double getLightEmittingDiodePower(int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    return metadataObject.getLightEmittingDiodePower(instrumentIndex, lightEmittingDiodeIndex);
+  }
+
+  public String getLightEmittingDiodeSerialNumber(int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    return metadataObject.getLightEmittingDiodeSerialNumber(instrumentIndex, lightEmittingDiodeIndex);
+  }
+
+  // - LightPath property retrieval -
+
+  public String getLightPathDichroicRef(int imageIndex, int channelIndex, Current current) {
+    return metadataObject.getLightPathDichroicRef(imageIndex, channelIndex);
+  }
+
+  public String getLightPathEmissionFilterRef(int imageIndex, int channelIndex, int emissionFilterRefIndex, Current current) {
+    return metadataObject.getLightPathEmissionFilterRef(imageIndex, channelIndex, emissionFilterRefIndex);
+  }
+
+  public String getLightPathExcitationFilterRef(int imageIndex, int channelIndex, int excitationFilterRefIndex, Current current) {
+    return metadataObject.getLightPathExcitationFilterRef(imageIndex, channelIndex, excitationFilterRefIndex);
+  }
+
+  // - LightPathEmissionFilterRef property retrieval -
+
+  // - LightPathExcitationFilterRef property retrieval -
 
   // - Line property retrieval -
 
-  public String getLineID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getLineID(imageIndex, roiIndex, shapeIndex);
+  public String getLineDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineDescription(roiIndex, shapeIndex);
   }
 
-  public String getLineTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getLineTransform(imageIndex, roiIndex, shapeIndex);
+  public int getLineFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineFill(roiIndex, shapeIndex);
   }
 
-  public String getLineX1(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getLineX1(imageIndex, roiIndex, shapeIndex);
+  public int getLineFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineFontSize(roiIndex, shapeIndex);
   }
 
-  public String getLineX2(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getLineX2(imageIndex, roiIndex, shapeIndex);
+  public String getLineID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineID(roiIndex, shapeIndex);
   }
 
-  public String getLineY1(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getLineY1(imageIndex, roiIndex, shapeIndex);
+  public String getLineLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineLabel(roiIndex, shapeIndex);
   }
 
-  public String getLineY2(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getLineY2(imageIndex, roiIndex, shapeIndex);
+  public String getLineName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineName(roiIndex, shapeIndex);
   }
 
-  // - LogicalChannel property retrieval -
-
-  public String getLogicalChannelContrastMethod(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelContrastMethod(imageIndex, logicalChannelIndex);
+  public int getLineStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineStroke(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelDetector(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelDetector(imageIndex, logicalChannelIndex);
+  public String getLineStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineStrokeDashArray(roiIndex, shapeIndex);
   }
 
-  public int getLogicalChannelEmWave(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelEmWave(imageIndex, logicalChannelIndex);
+  public double getLineStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineStrokeWidth(roiIndex, shapeIndex);
   }
 
-  public int getLogicalChannelExWave(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelExWave(imageIndex, logicalChannelIndex);
+  public int getLineTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineTheC(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelFilterSet(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelFilterSet(imageIndex, logicalChannelIndex);
+  public int getLineTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineTheT(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelFluor(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelFluor(imageIndex, logicalChannelIndex);
+  public int getLineTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineTheZ(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelID(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelID(imageIndex, logicalChannelIndex);
+  public String getLineTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineTransform(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelIlluminationType(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelIlluminationType(imageIndex, logicalChannelIndex);
+  public double getLineX1(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineX1(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelLightSource(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelLightSource(imageIndex, logicalChannelIndex);
+  public double getLineX2(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineX2(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelMode(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelMode(imageIndex, logicalChannelIndex);
+  public double getLineY1(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineY1(roiIndex, shapeIndex);
   }
 
-  public String getLogicalChannelName(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelName(imageIndex, logicalChannelIndex);
+  public double getLineY2(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getLineY2(roiIndex, shapeIndex);
   }
 
-  public double getLogicalChannelNdFilter(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelNdFilter(imageIndex, logicalChannelIndex);
+  // - ListAnnotation property retrieval -
+
+  public String getListAnnotationAnnotationRef(int listAnnotationIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getListAnnotationAnnotationRef(listAnnotationIndex, annotationRefIndex);
   }
 
-  public String getLogicalChannelOTF(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelOTF(imageIndex, logicalChannelIndex);
+  public String getListAnnotationID(int listAnnotationIndex, Current current) {
+    return metadataObject.getListAnnotationID(listAnnotationIndex);
   }
 
-  public String getLogicalChannelPhotometricInterpretation(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelPhotometricInterpretation(imageIndex, logicalChannelIndex);
+  public String getListAnnotationNamespace(int listAnnotationIndex, Current current) {
+    return metadataObject.getListAnnotationNamespace(listAnnotationIndex);
   }
 
-  public double getLogicalChannelPinholeSize(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelPinholeSize(imageIndex, logicalChannelIndex);
+  // - ListAnnotationAnnotationRef property retrieval -
+
+  // - LongAnnotation property retrieval -
+
+  public String getLongAnnotationID(int longAnnotationIndex, Current current) {
+    return metadataObject.getLongAnnotationID(longAnnotationIndex);
   }
 
-  public int getLogicalChannelPockelCellSetting(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelPockelCellSetting(imageIndex, logicalChannelIndex);
+  public String getLongAnnotationNamespace(int longAnnotationIndex, Current current) {
+    return metadataObject.getLongAnnotationNamespace(longAnnotationIndex);
   }
 
-  public int getLogicalChannelSamplesPerPixel(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelSamplesPerPixel(imageIndex, logicalChannelIndex);
-  }
-
-  public String getLogicalChannelSecondaryEmissionFilter(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelSecondaryEmissionFilter(imageIndex, logicalChannelIndex);
-  }
-
-  public String getLogicalChannelSecondaryExcitationFilter(int imageIndex, int logicalChannelIndex, Current current) {
-    return metadataObject.getLogicalChannelSecondaryExcitationFilter(imageIndex, logicalChannelIndex);
+  public long getLongAnnotationValue(int longAnnotationIndex, Current current) {
+    return metadataObject.getLongAnnotationValue(longAnnotationIndex);
   }
 
   // - Mask property retrieval -
 
-  public String getMaskHeight(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskHeight(imageIndex, roiIndex, shapeIndex);
+  public String getMaskDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskDescription(roiIndex, shapeIndex);
   }
 
-  public String getMaskID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskID(imageIndex, roiIndex, shapeIndex);
+  public int getMaskFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskFill(roiIndex, shapeIndex);
   }
 
-  public String getMaskTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskTransform(imageIndex, roiIndex, shapeIndex);
+  public int getMaskFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskFontSize(roiIndex, shapeIndex);
   }
 
-  public String getMaskWidth(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskWidth(imageIndex, roiIndex, shapeIndex);
+  public String getMaskID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskID(roiIndex, shapeIndex);
   }
 
-  public String getMaskX(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskX(imageIndex, roiIndex, shapeIndex);
+  public String getMaskLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskLabel(roiIndex, shapeIndex);
   }
 
-  public String getMaskY(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskY(imageIndex, roiIndex, shapeIndex);
+  public String getMaskName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskName(roiIndex, shapeIndex);
   }
 
-  // - MaskPixels property retrieval -
-
-  public boolean getMaskPixelsBigEndian(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskPixelsBigEndian(imageIndex, roiIndex, shapeIndex);
+  public int getMaskStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskStroke(roiIndex, shapeIndex);
   }
 
-  public byte[] getMaskPixelsBinData(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskPixelsBinData(imageIndex, roiIndex, shapeIndex);
+  public String getMaskStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskStrokeDashArray(roiIndex, shapeIndex);
   }
 
-  public String getMaskPixelsExtendedPixelType(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskPixelsExtendedPixelType(imageIndex, roiIndex, shapeIndex);
+  public double getMaskStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskStrokeWidth(roiIndex, shapeIndex);
   }
 
-  public String getMaskPixelsID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskPixelsID(imageIndex, roiIndex, shapeIndex);
+  public int getMaskTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskTheC(roiIndex, shapeIndex);
   }
 
-  public int getMaskPixelsSizeX(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskPixelsSizeX(imageIndex, roiIndex, shapeIndex);
+  public int getMaskTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskTheT(roiIndex, shapeIndex);
   }
 
-  public int getMaskPixelsSizeY(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getMaskPixelsSizeY(imageIndex, roiIndex, shapeIndex);
+  public int getMaskTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getMaskTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskTransform(roiIndex, shapeIndex);
+  }
+
+  public double getMaskX(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskX(roiIndex, shapeIndex);
+  }
+
+  public double getMaskY(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getMaskY(roiIndex, shapeIndex);
   }
 
   // - MicrobeamManipulation property retrieval -
 
-  public String getMicrobeamManipulationExperimenterRef(int imageIndex, int microbeamManipulationIndex, Current current) {
-    return metadataObject.getMicrobeamManipulationExperimenterRef(imageIndex, microbeamManipulationIndex);
+  public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationExperimenterRef(experimentIndex, microbeamManipulationIndex);
   }
 
-  public String getMicrobeamManipulationID(int imageIndex, int microbeamManipulationIndex, Current current) {
-    return metadataObject.getMicrobeamManipulationID(imageIndex, microbeamManipulationIndex);
+  public String getMicrobeamManipulationID(int experimentIndex, int microbeamManipulationIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationID(experimentIndex, microbeamManipulationIndex);
   }
 
-  public String getMicrobeamManipulationType(int imageIndex, int microbeamManipulationIndex, Current current) {
-    return metadataObject.getMicrobeamManipulationType(imageIndex, microbeamManipulationIndex);
+  public String getMicrobeamManipulationROIRef(int experimentIndex, int microbeamManipulationIndex, int roiRefIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationROIRef(experimentIndex, microbeamManipulationIndex, roiRefIndex);
   }
+
+  public MicrobeamManipulationType getMicrobeamManipulationType(int experimentIndex, int microbeamManipulationIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationType(experimentIndex, microbeamManipulationIndex);
+  }
+
+  // - MicrobeamManipulationLightSourceSettings property retrieval -
+
+  public PercentFraction getMicrobeamManipulationLightSourceSettingsAttenuation(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationLightSourceSettingsAttenuation(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
+  }
+
+  public String getMicrobeamManipulationLightSourceSettingsID(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationLightSourceSettingsID(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
+  }
+
+  public PositiveInteger getMicrobeamManipulationLightSourceSettingsWavelength(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex, Current current) {
+    return metadataObject.getMicrobeamManipulationLightSourceSettingsWavelength(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
+  }
+
+  // - MicrobeamManipulationROIRef property retrieval -
 
   // - MicrobeamManipulationRef property retrieval -
 
-  public String getMicrobeamManipulationRefID(int experimentIndex, int microbeamManipulationRefIndex, Current current) {
-    return metadataObject.getMicrobeamManipulationRefID(experimentIndex, microbeamManipulationRefIndex);
-  }
-
   // - Microscope property retrieval -
 
-  public String getMicroscopeID(int instrumentIndex, Current current) {
-    return metadataObject.getMicroscopeID(instrumentIndex);
+  public String getMicroscopeLotNumber(int instrumentIndex, Current current) {
+    return metadataObject.getMicroscopeLotNumber(instrumentIndex);
   }
 
   public String getMicroscopeManufacturer(int instrumentIndex, Current current) {
@@ -993,38 +1310,62 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getMicroscopeSerialNumber(instrumentIndex);
   }
 
-  public String getMicroscopeType(int instrumentIndex, Current current) {
+  public MicroscopeType getMicroscopeType(int instrumentIndex, Current current) {
     return metadataObject.getMicroscopeType(instrumentIndex);
   }
 
   // - OTF property retrieval -
 
-  public String getOTFBinaryFile(int instrumentIndex, int otfIndex, Current current) {
-    return metadataObject.getOTFBinaryFile(instrumentIndex, otfIndex);
+  public String getOTFBinaryFileFileName(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFBinaryFileFileName(instrumentIndex, otfIndex);
+  }
+
+  public String getOTFBinaryFileMIMEType(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFBinaryFileMIMEType(instrumentIndex, otfIndex);
+  }
+
+  public int getOTFBinaryFileSize(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFBinaryFileSize(instrumentIndex, otfIndex);
+  }
+
+  public String getOTFFilterSetRef(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFFilterSetRef(instrumentIndex, otfIndex);
   }
 
   public String getOTFID(int instrumentIndex, int otfIndex, Current current) {
     return metadataObject.getOTFID(instrumentIndex, otfIndex);
   }
 
-  public String getOTFObjective(int instrumentIndex, int otfIndex, Current current) {
-    return metadataObject.getOTFObjective(instrumentIndex, otfIndex);
+  public double getOTFObjectiveSettingsCorrectionCollar(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFObjectiveSettingsCorrectionCollar(instrumentIndex, otfIndex);
+  }
+
+  public String getOTFObjectiveSettingsID(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFObjectiveSettingsID(instrumentIndex, otfIndex);
+  }
+
+  public Medium getOTFObjectiveSettingsMedium(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFObjectiveSettingsMedium(instrumentIndex, otfIndex);
+  }
+
+  public double getOTFObjectiveSettingsRefractiveIndex(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFObjectiveSettingsRefractiveIndex(instrumentIndex, otfIndex);
   }
 
   public boolean getOTFOpticalAxisAveraged(int instrumentIndex, int otfIndex, Current current) {
     return metadataObject.getOTFOpticalAxisAveraged(instrumentIndex, otfIndex);
   }
 
-  public String getOTFPixelType(int instrumentIndex, int otfIndex, Current current) {
-    return metadataObject.getOTFPixelType(instrumentIndex, otfIndex);
-  }
-
-  public int getOTFSizeX(int instrumentIndex, int otfIndex, Current current) {
+  public PositiveInteger getOTFSizeX(int instrumentIndex, int otfIndex, Current current) {
     return metadataObject.getOTFSizeX(instrumentIndex, otfIndex);
   }
 
-  public int getOTFSizeY(int instrumentIndex, int otfIndex, Current current) {
+  public PositiveInteger getOTFSizeY(int instrumentIndex, int otfIndex, Current current) {
     return metadataObject.getOTFSizeY(instrumentIndex, otfIndex);
+  }
+
+  public PixelType getOTFType(int instrumentIndex, int otfIndex, Current current) {
+    return metadataObject.getOTFType(instrumentIndex, otfIndex);
   }
 
   // - Objective property retrieval -
@@ -1033,7 +1374,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex);
   }
 
-  public String getObjectiveCorrection(int instrumentIndex, int objectiveIndex, Current current) {
+  public Correction getObjectiveCorrection(int instrumentIndex, int objectiveIndex, Current current) {
     return metadataObject.getObjectiveCorrection(instrumentIndex, objectiveIndex);
   }
 
@@ -1041,7 +1382,7 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveID(instrumentIndex, objectiveIndex);
   }
 
-  public String getObjectiveImmersion(int instrumentIndex, int objectiveIndex, Current current) {
+  public Immersion getObjectiveImmersion(int instrumentIndex, int objectiveIndex, Current current) {
     return metadataObject.getObjectiveImmersion(instrumentIndex, objectiveIndex);
   }
 
@@ -1051,6 +1392,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public double getObjectiveLensNA(int instrumentIndex, int objectiveIndex, Current current) {
     return metadataObject.getObjectiveLensNA(instrumentIndex, objectiveIndex);
+  }
+
+  public String getObjectiveLotNumber(int instrumentIndex, int objectiveIndex, Current current) {
+    return metadataObject.getObjectiveLotNumber(instrumentIndex, objectiveIndex);
   }
 
   public String getObjectiveManufacturer(int instrumentIndex, int objectiveIndex, Current current) {
@@ -1073,108 +1418,182 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex);
   }
 
-  // - ObjectiveSettings property retrieval -
-
-  public double getObjectiveSettingsCorrectionCollar(int imageIndex, Current current) {
-    return metadataObject.getObjectiveSettingsCorrectionCollar(imageIndex);
-  }
-
-  public String getObjectiveSettingsMedium(int imageIndex, Current current) {
-    return metadataObject.getObjectiveSettingsMedium(imageIndex);
-  }
-
-  public String getObjectiveSettingsObjective(int imageIndex, Current current) {
-    return metadataObject.getObjectiveSettingsObjective(imageIndex);
-  }
-
-  public double getObjectiveSettingsRefractiveIndex(int imageIndex, Current current) {
-    return metadataObject.getObjectiveSettingsRefractiveIndex(imageIndex);
-  }
-
   // - Path property retrieval -
 
-  public String getPathD(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPathD(imageIndex, roiIndex, shapeIndex);
+  public String getPathDefinition(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathDefinition(roiIndex, shapeIndex);
   }
 
-  public String getPathID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPathID(imageIndex, roiIndex, shapeIndex);
+  public String getPathDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathDescription(roiIndex, shapeIndex);
+  }
+
+  public int getPathFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathFill(roiIndex, shapeIndex);
+  }
+
+  public int getPathFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathFontSize(roiIndex, shapeIndex);
+  }
+
+  public String getPathID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathID(roiIndex, shapeIndex);
+  }
+
+  public String getPathLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathLabel(roiIndex, shapeIndex);
+  }
+
+  public String getPathName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathName(roiIndex, shapeIndex);
+  }
+
+  public int getPathStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathStroke(roiIndex, shapeIndex);
+  }
+
+  public String getPathStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathStrokeDashArray(roiIndex, shapeIndex);
+  }
+
+  public double getPathStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathStrokeWidth(roiIndex, shapeIndex);
+  }
+
+  public int getPathTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathTheC(roiIndex, shapeIndex);
+  }
+
+  public int getPathTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathTheT(roiIndex, shapeIndex);
+  }
+
+  public int getPathTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getPathTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPathTransform(roiIndex, shapeIndex);
   }
 
   // - Pixels property retrieval -
 
-  public boolean getPixelsBigEndian(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsBigEndian(imageIndex, pixelsIndex);
+  public String getPixelsAnnotationRef(int imageIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getPixelsAnnotationRef(imageIndex, annotationRefIndex);
   }
 
-  public String getPixelsDimensionOrder(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsDimensionOrder(imageIndex, pixelsIndex);
+  public DimensionOrder getPixelsDimensionOrder(int imageIndex, Current current) {
+    return metadataObject.getPixelsDimensionOrder(imageIndex);
   }
 
-  public String getPixelsID(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsID(imageIndex, pixelsIndex);
+  public String getPixelsID(int imageIndex, Current current) {
+    return metadataObject.getPixelsID(imageIndex);
   }
 
-  public String getPixelsPixelType(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsPixelType(imageIndex, pixelsIndex);
+  public double getPixelsPhysicalSizeX(int imageIndex, Current current) {
+    return metadataObject.getPixelsPhysicalSizeX(imageIndex);
   }
 
-  public int getPixelsSizeC(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsSizeC(imageIndex, pixelsIndex);
+  public double getPixelsPhysicalSizeY(int imageIndex, Current current) {
+    return metadataObject.getPixelsPhysicalSizeY(imageIndex);
   }
 
-  public int getPixelsSizeT(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsSizeT(imageIndex, pixelsIndex);
+  public double getPixelsPhysicalSizeZ(int imageIndex, Current current) {
+    return metadataObject.getPixelsPhysicalSizeZ(imageIndex);
   }
 
-  public int getPixelsSizeX(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsSizeX(imageIndex, pixelsIndex);
+  public PositiveInteger getPixelsSizeC(int imageIndex, Current current) {
+    return metadataObject.getPixelsSizeC(imageIndex);
   }
 
-  public int getPixelsSizeY(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsSizeY(imageIndex, pixelsIndex);
+  public PositiveInteger getPixelsSizeT(int imageIndex, Current current) {
+    return metadataObject.getPixelsSizeT(imageIndex);
   }
 
-  public int getPixelsSizeZ(int imageIndex, int pixelsIndex, Current current) {
-    return metadataObject.getPixelsSizeZ(imageIndex, pixelsIndex);
+  public PositiveInteger getPixelsSizeX(int imageIndex, Current current) {
+    return metadataObject.getPixelsSizeX(imageIndex);
+  }
+
+  public PositiveInteger getPixelsSizeY(int imageIndex, Current current) {
+    return metadataObject.getPixelsSizeY(imageIndex);
+  }
+
+  public PositiveInteger getPixelsSizeZ(int imageIndex, Current current) {
+    return metadataObject.getPixelsSizeZ(imageIndex);
+  }
+
+  public double getPixelsTimeIncrement(int imageIndex, Current current) {
+    return metadataObject.getPixelsTimeIncrement(imageIndex);
+  }
+
+  public PixelType getPixelsType(int imageIndex, Current current) {
+    return metadataObject.getPixelsType(imageIndex);
+  }
+
+  // - PixelsAnnotationRef property retrieval -
+
+  // - PixelsBinData property retrieval -
+
+  public boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex, Current current) {
+    return metadataObject.getPixelsBinDataBigEndian(imageIndex, binDataIndex);
   }
 
   // - Plane property retrieval -
 
-  public String getPlaneHashSHA1(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneHashSHA1(imageIndex, pixelsIndex, planeIndex);
+  public String getPlaneAnnotationRef(int imageIndex, int planeIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getPlaneAnnotationRef(imageIndex, planeIndex, annotationRefIndex);
   }
 
-  public String getPlaneID(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneID(imageIndex, pixelsIndex, planeIndex);
+  public double getPlaneDeltaT(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneDeltaT(imageIndex, planeIndex);
   }
 
-  public int getPlaneTheC(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneTheC(imageIndex, pixelsIndex, planeIndex);
+  public double getPlaneExposureTime(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneExposureTime(imageIndex, planeIndex);
   }
 
-  public int getPlaneTheT(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneTheT(imageIndex, pixelsIndex, planeIndex);
+  public String getPlaneHashSHA1(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneHashSHA1(imageIndex, planeIndex);
   }
 
-  public int getPlaneTheZ(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneTheZ(imageIndex, pixelsIndex, planeIndex);
+  public double getPlanePositionX(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlanePositionX(imageIndex, planeIndex);
   }
 
-  // - PlaneTiming property retrieval -
-
-  public double getPlaneTimingDeltaT(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneTimingDeltaT(imageIndex, pixelsIndex, planeIndex);
+  public double getPlanePositionY(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlanePositionY(imageIndex, planeIndex);
   }
 
-  public double getPlaneTimingExposureTime(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getPlaneTimingExposureTime(imageIndex, pixelsIndex, planeIndex);
+  public double getPlanePositionZ(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlanePositionZ(imageIndex, planeIndex);
   }
+
+  public int getPlaneTheC(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneTheC(imageIndex, planeIndex);
+  }
+
+  public int getPlaneTheT(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneTheT(imageIndex, planeIndex);
+  }
+
+  public int getPlaneTheZ(int imageIndex, int planeIndex, Current current) {
+    return metadataObject.getPlaneTheZ(imageIndex, planeIndex);
+  }
+
+  // - PlaneAnnotationRef property retrieval -
 
   // - Plate property retrieval -
 
-  public String getPlateColumnNamingConvention(int plateIndex, Current current) {
+  public String getPlateAnnotationRef(int plateIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getPlateAnnotationRef(plateIndex, annotationRefIndex);
+  }
+
+  public NamingConvention getPlateColumnNamingConvention(int plateIndex, Current current) {
     return metadataObject.getPlateColumnNamingConvention(plateIndex);
+  }
+
+  public int getPlateColumns(int plateIndex, Current current) {
+    return metadataObject.getPlateColumns(plateIndex);
   }
 
   public String getPlateDescription(int plateIndex, Current current) {
@@ -1193,8 +1612,16 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getPlateName(plateIndex);
   }
 
-  public String getPlateRowNamingConvention(int plateIndex, Current current) {
+  public NamingConvention getPlateRowNamingConvention(int plateIndex, Current current) {
     return metadataObject.getPlateRowNamingConvention(plateIndex);
+  }
+
+  public int getPlateRows(int plateIndex, Current current) {
+    return metadataObject.getPlateRows(plateIndex);
+  }
+
+  public String getPlateScreenRef(int plateIndex, int screenRefIndex, Current current) {
+    return metadataObject.getPlateScreenRef(plateIndex, screenRefIndex);
   }
 
   public String getPlateStatus(int plateIndex, Current current) {
@@ -1209,71 +1636,175 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getPlateWellOriginY(plateIndex);
   }
 
+  // - PlateAcquisition property retrieval -
+
+  public String getPlateAcquisitionAnnotationRef(int plateIndex, int plateAcquisitionIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getPlateAcquisitionAnnotationRef(plateIndex, plateAcquisitionIndex, annotationRefIndex);
+  }
+
+  public String getPlateAcquisitionDescription(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionDescription(plateIndex, plateAcquisitionIndex);
+  }
+
+  public String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionEndTime(plateIndex, plateAcquisitionIndex);
+  }
+
+  public String getPlateAcquisitionID(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionID(plateIndex, plateAcquisitionIndex);
+  }
+
+  public int getPlateAcquisitionMaximumFieldCount(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionMaximumFieldCount(plateIndex, plateAcquisitionIndex);
+  }
+
+  public String getPlateAcquisitionName(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionName(plateIndex, plateAcquisitionIndex);
+  }
+
+  public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex, Current current) {
+    return metadataObject.getPlateAcquisitionStartTime(plateIndex, plateAcquisitionIndex);
+  }
+
+  public String getPlateAcquisitionWellSampleRef(int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex, Current current) {
+    return metadataObject.getPlateAcquisitionWellSampleRef(plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
+  }
+
+  // - PlateAcquisitionAnnotationRef property retrieval -
+
+  // - PlateAnnotationRef property retrieval -
+
   // - PlateRef property retrieval -
-
-  public String getPlateRefID(int screenIndex, int plateRefIndex, Current current) {
-    return metadataObject.getPlateRefID(screenIndex, plateRefIndex);
-  }
-
-  public int getPlateRefSample(int screenIndex, int plateRefIndex, Current current) {
-    return metadataObject.getPlateRefSample(screenIndex, plateRefIndex);
-  }
-
-  public String getPlateRefWell(int screenIndex, int plateRefIndex, Current current) {
-    return metadataObject.getPlateRefWell(screenIndex, plateRefIndex);
-  }
 
   // - Point property retrieval -
 
-  public String getPointCx(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPointCx(imageIndex, roiIndex, shapeIndex);
+  public String getPointDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointDescription(roiIndex, shapeIndex);
   }
 
-  public String getPointCy(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPointCy(imageIndex, roiIndex, shapeIndex);
+  public int getPointFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointFill(roiIndex, shapeIndex);
   }
 
-  public String getPointID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPointID(imageIndex, roiIndex, shapeIndex);
+  public int getPointFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointFontSize(roiIndex, shapeIndex);
   }
 
-  public String getPointR(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPointR(imageIndex, roiIndex, shapeIndex);
+  public String getPointID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointID(roiIndex, shapeIndex);
   }
 
-  public String getPointTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPointTransform(imageIndex, roiIndex, shapeIndex);
+  public String getPointLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointLabel(roiIndex, shapeIndex);
   }
 
-  // - Polygon property retrieval -
-
-  public String getPolygonID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPolygonID(imageIndex, roiIndex, shapeIndex);
+  public String getPointName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointName(roiIndex, shapeIndex);
   }
 
-  public String getPolygonPoints(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPolygonPoints(imageIndex, roiIndex, shapeIndex);
+  public int getPointStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointStroke(roiIndex, shapeIndex);
   }
 
-  public String getPolygonTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPolygonTransform(imageIndex, roiIndex, shapeIndex);
+  public String getPointStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointStrokeDashArray(roiIndex, shapeIndex);
+  }
+
+  public double getPointStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointStrokeWidth(roiIndex, shapeIndex);
+  }
+
+  public int getPointTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointTheC(roiIndex, shapeIndex);
+  }
+
+  public int getPointTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointTheT(roiIndex, shapeIndex);
+  }
+
+  public int getPointTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getPointTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointTransform(roiIndex, shapeIndex);
+  }
+
+  public double getPointX(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointX(roiIndex, shapeIndex);
+  }
+
+  public double getPointY(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPointY(roiIndex, shapeIndex);
   }
 
   // - Polyline property retrieval -
 
-  public String getPolylineID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPolylineID(imageIndex, roiIndex, shapeIndex);
+  public boolean getPolylineClosed(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineClosed(roiIndex, shapeIndex);
   }
 
-  public String getPolylinePoints(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPolylinePoints(imageIndex, roiIndex, shapeIndex);
+  public String getPolylineDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineDescription(roiIndex, shapeIndex);
   }
 
-  public String getPolylineTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getPolylineTransform(imageIndex, roiIndex, shapeIndex);
+  public int getPolylineFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineFill(roiIndex, shapeIndex);
+  }
+
+  public int getPolylineFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineFontSize(roiIndex, shapeIndex);
+  }
+
+  public String getPolylineID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineID(roiIndex, shapeIndex);
+  }
+
+  public String getPolylineLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineLabel(roiIndex, shapeIndex);
+  }
+
+  public String getPolylineName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineName(roiIndex, shapeIndex);
+  }
+
+  public String getPolylinePoints(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylinePoints(roiIndex, shapeIndex);
+  }
+
+  public int getPolylineStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineStroke(roiIndex, shapeIndex);
+  }
+
+  public String getPolylineStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineStrokeDashArray(roiIndex, shapeIndex);
+  }
+
+  public double getPolylineStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineStrokeWidth(roiIndex, shapeIndex);
+  }
+
+  public int getPolylineTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineTheC(roiIndex, shapeIndex);
+  }
+
+  public int getPolylineTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineTheT(roiIndex, shapeIndex);
+  }
+
+  public int getPolylineTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getPolylineTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getPolylineTransform(roiIndex, shapeIndex);
   }
 
   // - Project property retrieval -
+
+  public String getProjectAnnotationRef(int projectIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getProjectAnnotationRef(projectIndex, annotationRefIndex);
+  }
 
   public String getProjectDescription(int projectIndex, Current current) {
     return metadataObject.getProjectDescription(projectIndex);
@@ -1295,63 +1826,39 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getProjectName(projectIndex);
   }
 
+  // - ProjectAnnotationRef property retrieval -
+
   // - ProjectRef property retrieval -
-
-  public String getProjectRefID(int datasetIndex, int projectRefIndex, Current current) {
-    return metadataObject.getProjectRefID(datasetIndex, projectRefIndex);
-  }
-
-  // - Pump property retrieval -
-
-  public String getPumpLightSource(int instrumentIndex, int lightSourceIndex, Current current) {
-    return metadataObject.getPumpLightSource(instrumentIndex, lightSourceIndex);
-  }
 
   // - ROI property retrieval -
 
-  public String getROIID(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIID(imageIndex, roiIndex);
+  public String getROIAnnotationRef(int roiIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getROIAnnotationRef(roiIndex, annotationRefIndex);
   }
 
-  public int getROIT0(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIT0(imageIndex, roiIndex);
+  public String getROIDescription(int roiIndex, Current current) {
+    return metadataObject.getROIDescription(roiIndex);
   }
 
-  public int getROIT1(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIT1(imageIndex, roiIndex);
+  public String getROIID(int roiIndex, Current current) {
+    return metadataObject.getROIID(roiIndex);
   }
 
-  public int getROIX0(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIX0(imageIndex, roiIndex);
+  public String getROIName(int roiIndex, Current current) {
+    return metadataObject.getROIName(roiIndex);
   }
 
-  public int getROIX1(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIX1(imageIndex, roiIndex);
+  public String getROINamespace(int roiIndex, Current current) {
+    return metadataObject.getROINamespace(roiIndex);
   }
 
-  public int getROIY0(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIY0(imageIndex, roiIndex);
-  }
-
-  public int getROIY1(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIY1(imageIndex, roiIndex);
-  }
-
-  public int getROIZ0(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIZ0(imageIndex, roiIndex);
-  }
-
-  public int getROIZ1(int imageIndex, int roiIndex, Current current) {
-    return metadataObject.getROIZ1(imageIndex, roiIndex);
-  }
-
-  // - ROIRef property retrieval -
-
-  public String getROIRefID(int imageIndex, int microbeamManipulationIndex, int roiRefIndex, Current current) {
-    return metadataObject.getROIRefID(imageIndex, microbeamManipulationIndex, roiRefIndex);
-  }
+  // - ROIAnnotationRef property retrieval -
 
   // - Reagent property retrieval -
+
+  public String getReagentAnnotationRef(int screenIndex, int reagentIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getReagentAnnotationRef(screenIndex, reagentIndex, annotationRefIndex);
+  }
 
   public String getReagentDescription(int screenIndex, int reagentIndex, Current current) {
     return metadataObject.getReagentDescription(screenIndex, reagentIndex);
@@ -1369,68 +1876,86 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getReagentReagentIdentifier(screenIndex, reagentIndex);
   }
 
-  // - Rect property retrieval -
+  // - ReagentAnnotationRef property retrieval -
 
-  public String getRectHeight(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getRectHeight(imageIndex, roiIndex, shapeIndex);
+  // - Rectangle property retrieval -
+
+  public String getRectangleDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleDescription(roiIndex, shapeIndex);
   }
 
-  public String getRectID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getRectID(imageIndex, roiIndex, shapeIndex);
+  public int getRectangleFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleFill(roiIndex, shapeIndex);
   }
 
-  public String getRectTransform(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getRectTransform(imageIndex, roiIndex, shapeIndex);
+  public int getRectangleFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleFontSize(roiIndex, shapeIndex);
   }
 
-  public String getRectWidth(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getRectWidth(imageIndex, roiIndex, shapeIndex);
+  public double getRectangleHeight(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleHeight(roiIndex, shapeIndex);
   }
 
-  public String getRectX(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getRectX(imageIndex, roiIndex, shapeIndex);
+  public String getRectangleID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleID(roiIndex, shapeIndex);
   }
 
-  public String getRectY(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getRectY(imageIndex, roiIndex, shapeIndex);
+  public String getRectangleLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleLabel(roiIndex, shapeIndex);
   }
 
-  // - Region property retrieval -
-
-  public String getRegionID(int imageIndex, int regionIndex, Current current) {
-    return metadataObject.getRegionID(imageIndex, regionIndex);
+  public String getRectangleName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleName(roiIndex, shapeIndex);
   }
 
-  public String getRegionName(int imageIndex, int regionIndex, Current current) {
-    return metadataObject.getRegionName(imageIndex, regionIndex);
+  public int getRectangleStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleStroke(roiIndex, shapeIndex);
   }
 
-  public String getRegionTag(int imageIndex, int regionIndex, Current current) {
-    return metadataObject.getRegionTag(imageIndex, regionIndex);
+  public String getRectangleStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleStrokeDashArray(roiIndex, shapeIndex);
   }
 
-  // - RoiLink property retrieval -
-
-  public String getRoiLinkDirection(int imageIndex, int roiIndex, int roiLinkIndex, Current current) {
-    return metadataObject.getRoiLinkDirection(imageIndex, roiIndex, roiLinkIndex);
+  public double getRectangleStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleStrokeWidth(roiIndex, shapeIndex);
   }
 
-  public String getRoiLinkName(int imageIndex, int roiIndex, int roiLinkIndex, Current current) {
-    return metadataObject.getRoiLinkName(imageIndex, roiIndex, roiLinkIndex);
+  public int getRectangleTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleTheC(roiIndex, shapeIndex);
   }
 
-  public String getRoiLinkRef(int imageIndex, int roiIndex, int roiLinkIndex, Current current) {
-    return metadataObject.getRoiLinkRef(imageIndex, roiIndex, roiLinkIndex);
+  public int getRectangleTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleTheT(roiIndex, shapeIndex);
+  }
+
+  public int getRectangleTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getRectangleTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleTransform(roiIndex, shapeIndex);
+  }
+
+  public double getRectangleWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleWidth(roiIndex, shapeIndex);
+  }
+
+  public double getRectangleX(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleX(roiIndex, shapeIndex);
+  }
+
+  public double getRectangleY(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getRectangleY(roiIndex, shapeIndex);
   }
 
   // - Screen property retrieval -
 
-  public String getScreenDescription(int screenIndex, Current current) {
-    return metadataObject.getScreenDescription(screenIndex);
+  public String getScreenAnnotationRef(int screenIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getScreenAnnotationRef(screenIndex, annotationRefIndex);
   }
 
-  public String getScreenExtern(int screenIndex, Current current) {
-    return metadataObject.getScreenExtern(screenIndex);
+  public String getScreenDescription(int screenIndex, Current current) {
+    return metadataObject.getScreenDescription(screenIndex);
   }
 
   public String getScreenID(int screenIndex, Current current) {
@@ -1439,6 +1964,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public String getScreenName(int screenIndex, Current current) {
     return metadataObject.getScreenName(screenIndex);
+  }
+
+  public String getScreenPlateRef(int screenIndex, int plateRefIndex, Current current) {
+    return metadataObject.getScreenPlateRef(screenIndex, plateRefIndex);
   }
 
   public String getScreenProtocolDescription(int screenIndex, Current current) {
@@ -1461,159 +1990,11 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getScreenType(screenIndex);
   }
 
-  // - ScreenAcquisition property retrieval -
-
-  public String getScreenAcquisitionEndTime(int screenIndex, int screenAcquisitionIndex, Current current) {
-    return metadataObject.getScreenAcquisitionEndTime(screenIndex, screenAcquisitionIndex);
-  }
-
-  public String getScreenAcquisitionID(int screenIndex, int screenAcquisitionIndex, Current current) {
-    return metadataObject.getScreenAcquisitionID(screenIndex, screenAcquisitionIndex);
-  }
-
-  public String getScreenAcquisitionStartTime(int screenIndex, int screenAcquisitionIndex, Current current) {
-    return metadataObject.getScreenAcquisitionStartTime(screenIndex, screenAcquisitionIndex);
-  }
+  // - ScreenAnnotationRef property retrieval -
 
   // - ScreenRef property retrieval -
 
-  public String getScreenRefID(int plateIndex, int screenRefIndex, Current current) {
-    return metadataObject.getScreenRefID(plateIndex, screenRefIndex);
-  }
-
-  // - Shape property retrieval -
-
-  public String getShapeBaselineShift(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeBaselineShift(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeDirection(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeDirection(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFillColor(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFillColor(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFillOpacity(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFillOpacity(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFillRule(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFillRule(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFontFamily(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFontFamily(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public int getShapeFontSize(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFontSize(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFontStretch(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFontStretch(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFontStyle(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFontStyle(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFontVariant(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFontVariant(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeFontWeight(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeFontWeight(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeG(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeG(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public int getShapeGlyphOrientationVertical(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeGlyphOrientationVertical(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeID(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeID(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public boolean getShapeLocked(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeLocked(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeStrokeAttribute(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeAttribute(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeStrokeColor(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeColor(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeStrokeDashArray(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeDashArray(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeStrokeLineCap(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeLineCap(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeStrokeLineJoin(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeLineJoin(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public int getShapeStrokeMiterLimit(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeMiterLimit(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public double getShapeStrokeOpacity(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeOpacity(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public int getShapeStrokeWidth(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeStrokeWidth(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeText(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeText(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeTextAnchor(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeTextAnchor(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeTextDecoration(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeTextDecoration(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeTextFill(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeTextFill(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeTextStroke(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeTextStroke(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public int getShapeTheT(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeTheT(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public int getShapeTheZ(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeTheZ(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeVectorEffect(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeVectorEffect(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public boolean getShapeVisibility(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeVisibility(imageIndex, roiIndex, shapeIndex);
-  }
-
-  public String getShapeWritingMode(int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    return metadataObject.getShapeWritingMode(imageIndex, roiIndex, shapeIndex);
-  }
+  // - ShapeAnnotationRef property retrieval -
 
   // - StageLabel property retrieval -
 
@@ -1633,62 +2014,120 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getStageLabelZ(imageIndex);
   }
 
-  // - StagePosition property retrieval -
+  // - StringAnnotation property retrieval -
 
-  public double getStagePositionPositionX(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getStagePositionPositionX(imageIndex, pixelsIndex, planeIndex);
+  public String getStringAnnotationID(int stringAnnotationIndex, Current current) {
+    return metadataObject.getStringAnnotationID(stringAnnotationIndex);
   }
 
-  public double getStagePositionPositionY(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getStagePositionPositionY(imageIndex, pixelsIndex, planeIndex);
+  public String getStringAnnotationNamespace(int stringAnnotationIndex, Current current) {
+    return metadataObject.getStringAnnotationNamespace(stringAnnotationIndex);
   }
 
-  public double getStagePositionPositionZ(int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    return metadataObject.getStagePositionPositionZ(imageIndex, pixelsIndex, planeIndex);
+  public String getStringAnnotationValue(int stringAnnotationIndex, Current current) {
+    return metadataObject.getStringAnnotationValue(stringAnnotationIndex);
   }
 
-  // - Thumbnail property retrieval -
+  // - Text property retrieval -
 
-  public String getThumbnailHref(int imageIndex, Current current) {
-    return metadataObject.getThumbnailHref(imageIndex);
+  public String getTextDescription(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextDescription(roiIndex, shapeIndex);
   }
 
-  public String getThumbnailID(int imageIndex, Current current) {
-    return metadataObject.getThumbnailID(imageIndex);
+  public int getTextFill(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextFill(roiIndex, shapeIndex);
   }
 
-  public String getThumbnailMIMEtype(int imageIndex, Current current) {
-    return metadataObject.getThumbnailMIMEtype(imageIndex);
+  public int getTextFontSize(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextFontSize(roiIndex, shapeIndex);
+  }
+
+  public String getTextID(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextID(roiIndex, shapeIndex);
+  }
+
+  public String getTextLabel(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextLabel(roiIndex, shapeIndex);
+  }
+
+  public String getTextName(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextName(roiIndex, shapeIndex);
+  }
+
+  public int getTextStroke(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextStroke(roiIndex, shapeIndex);
+  }
+
+  public String getTextStrokeDashArray(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextStrokeDashArray(roiIndex, shapeIndex);
+  }
+
+  public double getTextStrokeWidth(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextStrokeWidth(roiIndex, shapeIndex);
+  }
+
+  public int getTextTheC(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextTheC(roiIndex, shapeIndex);
+  }
+
+  public int getTextTheT(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextTheT(roiIndex, shapeIndex);
+  }
+
+  public int getTextTheZ(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextTheZ(roiIndex, shapeIndex);
+  }
+
+  public String getTextTransform(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextTransform(roiIndex, shapeIndex);
+  }
+
+  public String getTextValue(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextValue(roiIndex, shapeIndex);
+  }
+
+  public double getTextX(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextX(roiIndex, shapeIndex);
+  }
+
+  public double getTextY(int roiIndex, int shapeIndex, Current current) {
+    return metadataObject.getTextY(roiIndex, shapeIndex);
   }
 
   // - TiffData property retrieval -
 
-  public String getTiffDataFileName(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataFileName(imageIndex, pixelsIndex, tiffDataIndex);
+  public int getTiffDataFirstC(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getTiffDataFirstC(imageIndex, tiffDataIndex);
   }
 
-  public int getTiffDataFirstC(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataFirstC(imageIndex, pixelsIndex, tiffDataIndex);
+  public int getTiffDataFirstT(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getTiffDataFirstT(imageIndex, tiffDataIndex);
   }
 
-  public int getTiffDataFirstT(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataFirstT(imageIndex, pixelsIndex, tiffDataIndex);
+  public int getTiffDataFirstZ(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getTiffDataFirstZ(imageIndex, tiffDataIndex);
   }
 
-  public int getTiffDataFirstZ(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataFirstZ(imageIndex, pixelsIndex, tiffDataIndex);
+  public int getTiffDataIFD(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getTiffDataIFD(imageIndex, tiffDataIndex);
   }
 
-  public int getTiffDataIFD(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataIFD(imageIndex, pixelsIndex, tiffDataIndex);
+  public int getTiffDataPlaneCount(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getTiffDataPlaneCount(imageIndex, tiffDataIndex);
   }
 
-  public int getTiffDataNumPlanes(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataNumPlanes(imageIndex, pixelsIndex, tiffDataIndex);
+  // - TimestampAnnotation property retrieval -
+
+  public String getTimestampAnnotationID(int timestampAnnotationIndex, Current current) {
+    return metadataObject.getTimestampAnnotationID(timestampAnnotationIndex);
   }
 
-  public String getTiffDataUUID(int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    return metadataObject.getTiffDataUUID(imageIndex, pixelsIndex, tiffDataIndex);
+  public String getTimestampAnnotationNamespace(int timestampAnnotationIndex, Current current) {
+    return metadataObject.getTimestampAnnotationNamespace(timestampAnnotationIndex);
+  }
+
+  public String getTimestampAnnotationValue(int timestampAnnotationIndex, Current current) {
+    return metadataObject.getTimestampAnnotationValue(timestampAnnotationIndex);
   }
 
   // - TransmittanceRange property retrieval -
@@ -1709,13 +2148,31 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getTransmittanceRangeCutOutTolerance(instrumentIndex, filterIndex);
   }
 
-  public int getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex, Current current) {
+  public PercentFraction getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex, Current current) {
     return metadataObject.getTransmittanceRangeTransmittance(instrumentIndex, filterIndex);
+  }
+
+  // - UUID property retrieval -
+
+  public String getUUIDFileName(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getUUIDFileName(imageIndex, tiffDataIndex);
+  }
+
+  public String getUUIDValue(int imageIndex, int tiffDataIndex, Current current) {
+    return metadataObject.getUUIDValue(imageIndex, tiffDataIndex);
   }
 
   // - Well property retrieval -
 
-  public int getWellColumn(int plateIndex, int wellIndex, Current current) {
+  public String getWellAnnotationRef(int plateIndex, int wellIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getWellAnnotationRef(plateIndex, wellIndex, annotationRefIndex);
+  }
+
+  public int getWellColor(int plateIndex, int wellIndex, Current current) {
+    return metadataObject.getWellColor(plateIndex, wellIndex);
+  }
+
+  public NonNegativeInteger getWellColumn(int plateIndex, int wellIndex, Current current) {
     return metadataObject.getWellColumn(plateIndex, wellIndex);
   }
 
@@ -1731,19 +2188,25 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getWellID(plateIndex, wellIndex);
   }
 
-  public String getWellReagent(int plateIndex, int wellIndex, Current current) {
-    return metadataObject.getWellReagent(plateIndex, wellIndex);
+  public String getWellReagentRef(int plateIndex, int wellIndex, Current current) {
+    return metadataObject.getWellReagentRef(plateIndex, wellIndex);
   }
 
-  public int getWellRow(int plateIndex, int wellIndex, Current current) {
+  public NonNegativeInteger getWellRow(int plateIndex, int wellIndex, Current current) {
     return metadataObject.getWellRow(plateIndex, wellIndex);
   }
 
-  public String getWellType(int plateIndex, int wellIndex, Current current) {
-    return metadataObject.getWellType(plateIndex, wellIndex);
+  public String getWellStatus(int plateIndex, int wellIndex, Current current) {
+    return metadataObject.getWellStatus(plateIndex, wellIndex);
   }
 
+  // - WellAnnotationRef property retrieval -
+
   // - WellSample property retrieval -
+
+  public String getWellSampleAnnotationRef(int plateIndex, int wellIndex, int wellSampleIndex, int annotationRefIndex, Current current) {
+    return metadataObject.getWellSampleAnnotationRef(plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
+  }
 
   public String getWellSampleID(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     return metadataObject.getWellSampleID(plateIndex, wellIndex, wellSampleIndex);
@@ -1753,26 +2216,38 @@ public class IMetadataI extends _IMetadataDisp {
     return metadataObject.getWellSampleImageRef(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public int getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+  public NonNegativeInteger getWellSampleIndex(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     return metadataObject.getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public double getWellSamplePosX(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
-    return metadataObject.getWellSamplePosX(plateIndex, wellIndex, wellSampleIndex);
+  public double getWellSamplePositionX(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+    return metadataObject.getWellSamplePositionX(plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public double getWellSamplePosY(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
-    return metadataObject.getWellSamplePosY(plateIndex, wellIndex, wellSampleIndex);
+  public double getWellSamplePositionY(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+    return metadataObject.getWellSamplePositionY(plateIndex, wellIndex, wellSampleIndex);
   }
 
   public int getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     return metadataObject.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
   }
 
+  // - WellSampleAnnotationRef property retrieval -
+
   // - WellSampleRef property retrieval -
 
-  public String getWellSampleRefID(int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex, Current current) {
-    return metadataObject.getWellSampleRefID(screenIndex, screenAcquisitionIndex, wellSampleRefIndex);
+  // - XMLAnnotation property retrieval -
+
+  public String getXMLAnnotationID(int xmlAnnotationIndex, Current current) {
+    return metadataObject.getXMLAnnotationID(xmlAnnotationIndex);
+  }
+
+  public String getXMLAnnotationNamespace(int xmlAnnotationIndex, Current current) {
+    return metadataObject.getXMLAnnotationNamespace(xmlAnnotationIndex);
+  }
+
+  public String getXMLAnnotationValue(int xmlAnnotationIndex, Current current) {
+    return metadataObject.getXMLAnnotationValue(xmlAnnotationIndex);
   }
 
   // -- MetadataStore methods --
@@ -1789,53 +2264,133 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Arc property storage -
 
-  public void setArcType(String type, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setArcType(type, instrumentIndex, lightSourceIndex);
+  public void setArcID(String id, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcID(id, instrumentIndex, arcIndex);
   }
 
-  // - ChannelComponent property storage -
-
-  public void setChannelComponentColorDomain(String colorDomain, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Current current) {
-    metadataObject.setChannelComponentColorDomain(colorDomain, imageIndex, logicalChannelIndex, channelComponentIndex);
+  public void setArcLotNumber(String lotNumber, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcLotNumber(lotNumber, instrumentIndex, arcIndex);
   }
 
-  public void setChannelComponentIndex(int index, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Current current) {
-    metadataObject.setChannelComponentIndex(index, imageIndex, logicalChannelIndex, channelComponentIndex);
+  public void setArcManufacturer(String manufacturer, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcManufacturer(manufacturer, instrumentIndex, arcIndex);
   }
 
-  public void setChannelComponentPixels(String pixels, int imageIndex, int logicalChannelIndex, int channelComponentIndex, Current current) {
-    metadataObject.setChannelComponentPixels(pixels, imageIndex, logicalChannelIndex, channelComponentIndex);
+  public void setArcModel(String model, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcModel(model, instrumentIndex, arcIndex);
   }
 
-  // - Circle property storage -
-
-  public void setCircleCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setCircleCx(cx, imageIndex, roiIndex, shapeIndex);
+  public void setArcPower(double power, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcPower(power, instrumentIndex, arcIndex);
   }
 
-  public void setCircleCy(String cy, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setCircleCy(cy, imageIndex, roiIndex, shapeIndex);
+  public void setArcSerialNumber(String serialNumber, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcSerialNumber(serialNumber, instrumentIndex, arcIndex);
   }
 
-  public void setCircleID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setCircleID(id, imageIndex, roiIndex, shapeIndex);
+  public void setArcType(ArcType type, int instrumentIndex, int arcIndex, Current current) {
+    metadataObject.setArcType(type, instrumentIndex, arcIndex);
   }
 
-  public void setCircleR(String r, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setCircleR(r, imageIndex, roiIndex, shapeIndex);
+  // - BooleanAnnotation property storage -
+
+  public void setBooleanAnnotationID(String id, int booleanAnnotationIndex, Current current) {
+    metadataObject.setBooleanAnnotationID(id, booleanAnnotationIndex);
   }
 
-  public void setCircleTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setCircleTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setBooleanAnnotationNamespace(String namespace, int booleanAnnotationIndex, Current current) {
+    metadataObject.setBooleanAnnotationNamespace(namespace, booleanAnnotationIndex);
   }
 
-  // - Contact property storage -
-
-  public void setContactExperimenter(String experimenter, int groupIndex, Current current) {
-    metadataObject.setContactExperimenter(experimenter, groupIndex);
+  public void setBooleanAnnotationValue(boolean value, int booleanAnnotationIndex, Current current) {
+    metadataObject.setBooleanAnnotationValue(value, booleanAnnotationIndex);
   }
+
+  // - Channel property storage -
+
+  public void setChannelAcquisitionMode(AcquisitionMode acquisitionMode, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelAcquisitionMode(acquisitionMode, imageIndex, channelIndex);
+  }
+
+  public void setChannelAnnotationRef(String annotationRef, int imageIndex, int channelIndex, int annotationRefIndex, Current current) {
+    metadataObject.setChannelAnnotationRef(annotationRef, imageIndex, channelIndex, annotationRefIndex);
+  }
+
+  public void setChannelColor(int color, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelColor(color, imageIndex, channelIndex);
+  }
+
+  public void setChannelContrastMethod(ContrastMethod contrastMethod, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelContrastMethod(contrastMethod, imageIndex, channelIndex);
+  }
+
+  public void setChannelEmissionWavelength(PositiveInteger emissionWavelength, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelEmissionWavelength(emissionWavelength, imageIndex, channelIndex);
+  }
+
+  public void setChannelExcitationWavelength(PositiveInteger excitationWavelength, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelExcitationWavelength(excitationWavelength, imageIndex, channelIndex);
+  }
+
+  public void setChannelFilterSetRef(String filterSetRef, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelFilterSetRef(filterSetRef, imageIndex, channelIndex);
+  }
+
+  public void setChannelFluor(String fluor, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelFluor(fluor, imageIndex, channelIndex);
+  }
+
+  public void setChannelID(String id, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelID(id, imageIndex, channelIndex);
+  }
+
+  public void setChannelIlluminationType(IlluminationType illuminationType, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelIlluminationType(illuminationType, imageIndex, channelIndex);
+  }
+
+  public void setChannelLightSourceSettingsAttenuation(PercentFraction lightSourceSettingsAttenuation, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelLightSourceSettingsAttenuation(lightSourceSettingsAttenuation, imageIndex, channelIndex);
+  }
+
+  public void setChannelLightSourceSettingsID(String lightSourceSettingsID, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelLightSourceSettingsID(lightSourceSettingsID, imageIndex, channelIndex);
+  }
+
+  public void setChannelLightSourceSettingsWavelength(PositiveInteger lightSourceSettingsWavelength, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelLightSourceSettingsWavelength(lightSourceSettingsWavelength, imageIndex, channelIndex);
+  }
+
+  public void setChannelNDFilter(double ndFilter, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelNDFilter(ndFilter, imageIndex, channelIndex);
+  }
+
+  public void setChannelName(String name, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelName(name, imageIndex, channelIndex);
+  }
+
+  public void setChannelOTFRef(String otfRef, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelOTFRef(otfRef, imageIndex, channelIndex);
+  }
+
+  public void setChannelPinholeSize(double pinholeSize, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelPinholeSize(pinholeSize, imageIndex, channelIndex);
+  }
+
+  public void setChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelPockelCellSetting(pockelCellSetting, imageIndex, channelIndex);
+  }
+
+  public void setChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setChannelSamplesPerPixel(samplesPerPixel, imageIndex, channelIndex);
+  }
+
+  // - ChannelAnnotationRef property storage -
 
   // - Dataset property storage -
+
+  public void setDatasetAnnotationRef(String annotationRef, int datasetIndex, int annotationRefIndex, Current current) {
+    metadataObject.setDatasetAnnotationRef(annotationRef, datasetIndex, annotationRefIndex);
+  }
 
   public void setDatasetDescription(String description, int datasetIndex, Current current) {
     metadataObject.setDatasetDescription(description, datasetIndex);
@@ -1853,19 +2408,17 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDatasetID(id, datasetIndex);
   }
 
-  public void setDatasetLocked(boolean locked, int datasetIndex, Current current) {
-    metadataObject.setDatasetLocked(locked, datasetIndex);
-  }
-
   public void setDatasetName(String name, int datasetIndex, Current current) {
     metadataObject.setDatasetName(name, datasetIndex);
   }
 
-  // - DatasetRef property storage -
-
-  public void setDatasetRefID(String id, int imageIndex, int datasetRefIndex, Current current) {
-    metadataObject.setDatasetRefID(id, imageIndex, datasetRefIndex);
+  public void setDatasetProjectRef(String projectRef, int datasetIndex, int projectRefIndex, Current current) {
+    metadataObject.setDatasetProjectRef(projectRef, datasetIndex, projectRefIndex);
   }
+
+  // - DatasetAnnotationRef property storage -
+
+  // - DatasetRef property storage -
 
   // - Detector property storage -
 
@@ -1879,6 +2432,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public void setDetectorID(String id, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorID(id, instrumentIndex, detectorIndex);
+  }
+
+  public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex, Current current) {
+    metadataObject.setDetectorLotNumber(lotNumber, instrumentIndex, detectorIndex);
   }
 
   public void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex, Current current) {
@@ -1897,7 +2454,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDetectorSerialNumber(serialNumber, instrumentIndex, detectorIndex);
   }
 
-  public void setDetectorType(String type, int instrumentIndex, int detectorIndex, Current current) {
+  public void setDetectorType(DetectorType type, int instrumentIndex, int detectorIndex, Current current) {
     metadataObject.setDetectorType(type, instrumentIndex, detectorIndex);
   }
 
@@ -1911,28 +2468,28 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - DetectorSettings property storage -
 
-  public void setDetectorSettingsBinning(String binning, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setDetectorSettingsBinning(binning, imageIndex, logicalChannelIndex);
+  public void setDetectorSettingsBinning(Binning binning, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setDetectorSettingsBinning(binning, imageIndex, channelIndex);
   }
 
-  public void setDetectorSettingsDetector(String detector, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setDetectorSettingsDetector(detector, imageIndex, logicalChannelIndex);
+  public void setDetectorSettingsGain(double gain, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setDetectorSettingsGain(gain, imageIndex, channelIndex);
   }
 
-  public void setDetectorSettingsGain(double gain, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setDetectorSettingsGain(gain, imageIndex, logicalChannelIndex);
+  public void setDetectorSettingsID(String id, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setDetectorSettingsID(id, imageIndex, channelIndex);
   }
 
-  public void setDetectorSettingsOffset(double offset, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setDetectorSettingsOffset(offset, imageIndex, logicalChannelIndex);
+  public void setDetectorSettingsOffset(double offset, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setDetectorSettingsOffset(offset, imageIndex, channelIndex);
   }
 
-  public void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setDetectorSettingsReadOutRate(readOutRate, imageIndex, logicalChannelIndex);
+  public void setDetectorSettingsReadOutRate(double readOutRate, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setDetectorSettingsReadOutRate(readOutRate, imageIndex, channelIndex);
   }
 
-  public void setDetectorSettingsVoltage(double voltage, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setDetectorSettingsVoltage(voltage, imageIndex, logicalChannelIndex);
+  public void setDetectorSettingsVoltage(double voltage, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setDetectorSettingsVoltage(voltage, imageIndex, channelIndex);
   }
 
   // - Dichroic property storage -
@@ -1953,106 +2510,92 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setDichroicModel(model, instrumentIndex, dichroicIndex);
   }
 
-  // - Dimensions property storage -
-
-  public void setDimensionsPhysicalSizeX(double physicalSizeX, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setDimensionsPhysicalSizeX(physicalSizeX, imageIndex, pixelsIndex);
+  public void setDichroicSerialNumber(String serialNumber, int instrumentIndex, int dichroicIndex, Current current) {
+    metadataObject.setDichroicSerialNumber(serialNumber, instrumentIndex, dichroicIndex);
   }
 
-  public void setDimensionsPhysicalSizeY(double physicalSizeY, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setDimensionsPhysicalSizeY(physicalSizeY, imageIndex, pixelsIndex);
+  // - DoubleAnnotation property storage -
+
+  public void setDoubleAnnotationID(String id, int doubleAnnotationIndex, Current current) {
+    metadataObject.setDoubleAnnotationID(id, doubleAnnotationIndex);
   }
 
-  public void setDimensionsPhysicalSizeZ(double physicalSizeZ, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setDimensionsPhysicalSizeZ(physicalSizeZ, imageIndex, pixelsIndex);
+  public void setDoubleAnnotationNamespace(String namespace, int doubleAnnotationIndex, Current current) {
+    metadataObject.setDoubleAnnotationNamespace(namespace, doubleAnnotationIndex);
   }
 
-  public void setDimensionsTimeIncrement(double timeIncrement, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setDimensionsTimeIncrement(timeIncrement, imageIndex, pixelsIndex);
-  }
-
-  public void setDimensionsWaveIncrement(int waveIncrement, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setDimensionsWaveIncrement(waveIncrement, imageIndex, pixelsIndex);
-  }
-
-  public void setDimensionsWaveStart(int waveStart, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setDimensionsWaveStart(waveStart, imageIndex, pixelsIndex);
-  }
-
-  // - DisplayOptions property storage -
-
-  public void setDisplayOptionsDisplay(String display, int imageIndex, Current current) {
-    metadataObject.setDisplayOptionsDisplay(display, imageIndex);
-  }
-
-  public void setDisplayOptionsID(String id, int imageIndex, Current current) {
-    metadataObject.setDisplayOptionsID(id, imageIndex);
-  }
-
-  public void setDisplayOptionsZoom(double zoom, int imageIndex, Current current) {
-    metadataObject.setDisplayOptionsZoom(zoom, imageIndex);
+  public void setDoubleAnnotationValue(double value, int doubleAnnotationIndex, Current current) {
+    metadataObject.setDoubleAnnotationValue(value, doubleAnnotationIndex);
   }
 
   // - Ellipse property storage -
 
-  public void setEllipseCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setEllipseCx(cx, imageIndex, roiIndex, shapeIndex);
+  public void setEllipseDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setEllipseCy(String cy, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setEllipseCy(cy, imageIndex, roiIndex, shapeIndex);
+  public void setEllipseFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseFill(fill, roiIndex, shapeIndex);
   }
 
-  public void setEllipseID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setEllipseID(id, imageIndex, roiIndex, shapeIndex);
+  public void setEllipseFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseFontSize(fontSize, roiIndex, shapeIndex);
   }
 
-  public void setEllipseRx(String rx, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setEllipseRx(rx, imageIndex, roiIndex, shapeIndex);
+  public void setEllipseID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseID(id, roiIndex, shapeIndex);
   }
 
-  public void setEllipseRy(String ry, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setEllipseRy(ry, imageIndex, roiIndex, shapeIndex);
+  public void setEllipseLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseLabel(label, roiIndex, shapeIndex);
   }
 
-  public void setEllipseTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setEllipseTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setEllipseName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseName(name, roiIndex, shapeIndex);
   }
 
-  // - EmFilter property storage -
-
-  public void setEmFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setEmFilterLotNumber(lotNumber, instrumentIndex, filterIndex);
+  public void setEllipseRadiusX(double radiusX, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseRadiusX(radiusX, roiIndex, shapeIndex);
   }
 
-  public void setEmFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setEmFilterManufacturer(manufacturer, instrumentIndex, filterIndex);
+  public void setEllipseRadiusY(double radiusY, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseRadiusY(radiusY, roiIndex, shapeIndex);
   }
 
-  public void setEmFilterModel(String model, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setEmFilterModel(model, instrumentIndex, filterIndex);
+  public void setEllipseStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseStroke(stroke, roiIndex, shapeIndex);
   }
 
-  public void setEmFilterType(String type, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setEmFilterType(type, instrumentIndex, filterIndex);
+  public void setEllipseStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
   }
 
-  // - ExFilter property storage -
-
-  public void setExFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setExFilterLotNumber(lotNumber, instrumentIndex, filterIndex);
+  public void setEllipseStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseStrokeWidth(strokeWidth, roiIndex, shapeIndex);
   }
 
-  public void setExFilterManufacturer(String manufacturer, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setExFilterManufacturer(manufacturer, instrumentIndex, filterIndex);
+  public void setEllipseTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseTheC(theC, roiIndex, shapeIndex);
   }
 
-  public void setExFilterModel(String model, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setExFilterModel(model, instrumentIndex, filterIndex);
+  public void setEllipseTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseTheT(theT, roiIndex, shapeIndex);
   }
 
-  public void setExFilterType(String type, int instrumentIndex, int filterIndex, Current current) {
-    metadataObject.setExFilterType(type, instrumentIndex, filterIndex);
+  public void setEllipseTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setEllipseTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseTransform(transform, roiIndex, shapeIndex);
+  }
+
+  public void setEllipseX(double x, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseX(x, roiIndex, shapeIndex);
+  }
+
+  public void setEllipseY(double y, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setEllipseY(y, roiIndex, shapeIndex);
   }
 
   // - Experiment property storage -
@@ -2069,11 +2612,19 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setExperimentID(id, experimentIndex);
   }
 
-  public void setExperimentType(String type, int experimentIndex, Current current) {
+  public void setExperimentType(ExperimentType type, int experimentIndex, Current current) {
     metadataObject.setExperimentType(type, experimentIndex);
   }
 
   // - Experimenter property storage -
+
+  public void setExperimenterAnnotationRef(String annotationRef, int experimenterIndex, int annotationRefIndex, Current current) {
+    metadataObject.setExperimenterAnnotationRef(annotationRef, experimenterIndex, annotationRefIndex);
+  }
+
+  public void setExperimenterDisplayName(String displayName, int experimenterIndex, Current current) {
+    metadataObject.setExperimenterDisplayName(displayName, experimenterIndex);
+  }
 
   public void setExperimenterEmail(String email, int experimenterIndex, Current current) {
     metadataObject.setExperimenterEmail(email, experimenterIndex);
@@ -2081,6 +2632,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public void setExperimenterFirstName(String firstName, int experimenterIndex, Current current) {
     metadataObject.setExperimenterFirstName(firstName, experimenterIndex);
+  }
+
+  public void setExperimenterGroupRef(String groupRef, int experimenterIndex, int groupRefIndex, Current current) {
+    metadataObject.setExperimenterGroupRef(groupRef, experimenterIndex, groupRefIndex);
   }
 
   public void setExperimenterID(String id, int experimenterIndex, Current current) {
@@ -2095,20 +2650,68 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setExperimenterLastName(lastName, experimenterIndex);
   }
 
-  public void setExperimenterOMEName(String omeName, int experimenterIndex, Current current) {
-    metadataObject.setExperimenterOMEName(omeName, experimenterIndex);
+  public void setExperimenterMiddleName(String middleName, int experimenterIndex, Current current) {
+    metadataObject.setExperimenterMiddleName(middleName, experimenterIndex);
   }
 
-  // - ExperimenterMembership property storage -
-
-  public void setExperimenterMembershipGroup(String group, int experimenterIndex, int groupRefIndex, Current current) {
-    metadataObject.setExperimenterMembershipGroup(group, experimenterIndex, groupRefIndex);
+  public void setExperimenterUserName(String userName, int experimenterIndex, Current current) {
+    metadataObject.setExperimenterUserName(userName, experimenterIndex);
   }
+
+  // - ExperimenterAnnotationRef property storage -
+
+  // - ExperimenterGroupRef property storage -
 
   // - Filament property storage -
 
-  public void setFilamentType(String type, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setFilamentType(type, instrumentIndex, lightSourceIndex);
+  public void setFilamentID(String id, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentID(id, instrumentIndex, filamentIndex);
+  }
+
+  public void setFilamentLotNumber(String lotNumber, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentLotNumber(lotNumber, instrumentIndex, filamentIndex);
+  }
+
+  public void setFilamentManufacturer(String manufacturer, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentManufacturer(manufacturer, instrumentIndex, filamentIndex);
+  }
+
+  public void setFilamentModel(String model, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentModel(model, instrumentIndex, filamentIndex);
+  }
+
+  public void setFilamentPower(double power, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentPower(power, instrumentIndex, filamentIndex);
+  }
+
+  public void setFilamentSerialNumber(String serialNumber, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentSerialNumber(serialNumber, instrumentIndex, filamentIndex);
+  }
+
+  public void setFilamentType(FilamentType type, int instrumentIndex, int filamentIndex, Current current) {
+    metadataObject.setFilamentType(type, instrumentIndex, filamentIndex);
+  }
+
+  // - FileAnnotation property storage -
+
+  public void setFileAnnotationBinaryFileFileName(String binaryFileFileName, int fileAnnotationIndex, Current current) {
+    metadataObject.setFileAnnotationBinaryFileFileName(binaryFileFileName, fileAnnotationIndex);
+  }
+
+  public void setFileAnnotationBinaryFileMIMEType(String binaryFileMIMEType, int fileAnnotationIndex, Current current) {
+    metadataObject.setFileAnnotationBinaryFileMIMEType(binaryFileMIMEType, fileAnnotationIndex);
+  }
+
+  public void setFileAnnotationBinaryFileSize(int binaryFileSize, int fileAnnotationIndex, Current current) {
+    metadataObject.setFileAnnotationBinaryFileSize(binaryFileSize, fileAnnotationIndex);
+  }
+
+  public void setFileAnnotationID(String id, int fileAnnotationIndex, Current current) {
+    metadataObject.setFileAnnotationID(id, fileAnnotationIndex);
+  }
+
+  public void setFileAnnotationNamespace(String namespace, int fileAnnotationIndex, Current current) {
+    metadataObject.setFileAnnotationNamespace(namespace, fileAnnotationIndex);
   }
 
   // - Filter property storage -
@@ -2133,22 +2736,26 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setFilterModel(model, instrumentIndex, filterIndex);
   }
 
-  public void setFilterType(String type, int instrumentIndex, int filterIndex, Current current) {
+  public void setFilterSerialNumber(String serialNumber, int instrumentIndex, int filterIndex, Current current) {
+    metadataObject.setFilterSerialNumber(serialNumber, instrumentIndex, filterIndex);
+  }
+
+  public void setFilterType(FilterType type, int instrumentIndex, int filterIndex, Current current) {
     metadataObject.setFilterType(type, instrumentIndex, filterIndex);
   }
 
   // - FilterSet property storage -
 
-  public void setFilterSetDichroic(String dichroic, int instrumentIndex, int filterSetIndex, Current current) {
-    metadataObject.setFilterSetDichroic(dichroic, instrumentIndex, filterSetIndex);
+  public void setFilterSetDichroicRef(String dichroicRef, int instrumentIndex, int filterSetIndex, Current current) {
+    metadataObject.setFilterSetDichroicRef(dichroicRef, instrumentIndex, filterSetIndex);
   }
 
-  public void setFilterSetEmFilter(String emFilter, int instrumentIndex, int filterSetIndex, Current current) {
-    metadataObject.setFilterSetEmFilter(emFilter, instrumentIndex, filterSetIndex);
+  public void setFilterSetEmissionFilterRef(String emissionFilterRef, int instrumentIndex, int filterSetIndex, int emissionFilterRefIndex, Current current) {
+    metadataObject.setFilterSetEmissionFilterRef(emissionFilterRef, instrumentIndex, filterSetIndex, emissionFilterRefIndex);
   }
 
-  public void setFilterSetExFilter(String exFilter, int instrumentIndex, int filterSetIndex, Current current) {
-    metadataObject.setFilterSetExFilter(exFilter, instrumentIndex, filterSetIndex);
+  public void setFilterSetExcitationFilterRef(String excitationFilterRef, int instrumentIndex, int filterSetIndex, int excitationFilterRefIndex, Current current) {
+    metadataObject.setFilterSetExcitationFilterRef(excitationFilterRef, instrumentIndex, filterSetIndex, excitationFilterRefIndex);
   }
 
   public void setFilterSetID(String id, int instrumentIndex, int filterSetIndex, Current current) {
@@ -2167,30 +2774,48 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setFilterSetModel(model, instrumentIndex, filterSetIndex);
   }
 
+  public void setFilterSetSerialNumber(String serialNumber, int instrumentIndex, int filterSetIndex, Current current) {
+    metadataObject.setFilterSetSerialNumber(serialNumber, instrumentIndex, filterSetIndex);
+  }
+
+  // - FilterSetEmissionFilterRef property storage -
+
+  // - FilterSetExcitationFilterRef property storage -
+
   // - Group property storage -
+
+  public void setGroupContact(String contact, int groupIndex, Current current) {
+    metadataObject.setGroupContact(contact, groupIndex);
+  }
+
+  public void setGroupDescription(String description, int groupIndex, Current current) {
+    metadataObject.setGroupDescription(description, groupIndex);
+  }
 
   public void setGroupID(String id, int groupIndex, Current current) {
     metadataObject.setGroupID(id, groupIndex);
+  }
+
+  public void setGroupLeader(String leader, int groupIndex, Current current) {
+    metadataObject.setGroupLeader(leader, groupIndex);
   }
 
   public void setGroupName(String name, int groupIndex, Current current) {
     metadataObject.setGroupName(name, groupIndex);
   }
 
-  // - GroupRef property storage -
-
   // - Image property storage -
 
-  public void setImageAcquiredPixels(String acquiredPixels, int imageIndex, Current current) {
-    metadataObject.setImageAcquiredPixels(acquiredPixels, imageIndex);
+  public void setImageAcquiredDate(String acquiredDate, int imageIndex, Current current) {
+    metadataObject.setImageAcquiredDate(acquiredDate, imageIndex);
   }
 
-  public void setImageCreationDate(String creationDate, int imageIndex, Current current) {
-    metadataObject.setImageCreationDate(creationDate, imageIndex);
+  public void setImageAnnotationRef(String annotationRef, int imageIndex, int annotationRefIndex, Current current) {
+    metadataObject.setImageAnnotationRef(annotationRef, imageIndex, annotationRefIndex);
   }
 
-  public void setImageDefaultPixels(String defaultPixels, int imageIndex, Current current) {
-    metadataObject.setImageDefaultPixels(defaultPixels, imageIndex);
+  public void setImageDatasetRef(String datasetRef, int imageIndex, int datasetRefIndex, Current current) {
+    metadataObject.setImageDatasetRef(datasetRef, imageIndex, datasetRefIndex);
   }
 
   public void setImageDescription(String description, int imageIndex, Current current) {
@@ -2217,9 +2842,37 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setImageInstrumentRef(instrumentRef, imageIndex);
   }
 
+  public void setImageMicrobeamManipulationRef(String microbeamManipulationRef, int imageIndex, int microbeamManipulationRefIndex, Current current) {
+    metadataObject.setImageMicrobeamManipulationRef(microbeamManipulationRef, imageIndex, microbeamManipulationRefIndex);
+  }
+
   public void setImageName(String name, int imageIndex, Current current) {
     metadataObject.setImageName(name, imageIndex);
   }
+
+  public void setImageObjectiveSettingsCorrectionCollar(double objectiveSettingsCorrectionCollar, int imageIndex, Current current) {
+    metadataObject.setImageObjectiveSettingsCorrectionCollar(objectiveSettingsCorrectionCollar, imageIndex);
+  }
+
+  public void setImageObjectiveSettingsID(String objectiveSettingsID, int imageIndex, Current current) {
+    metadataObject.setImageObjectiveSettingsID(objectiveSettingsID, imageIndex);
+  }
+
+  public void setImageObjectiveSettingsMedium(Medium objectiveSettingsMedium, int imageIndex, Current current) {
+    metadataObject.setImageObjectiveSettingsMedium(objectiveSettingsMedium, imageIndex);
+  }
+
+  public void setImageObjectiveSettingsRefractiveIndex(double objectiveSettingsRefractiveIndex, int imageIndex, Current current) {
+    metadataObject.setImageObjectiveSettingsRefractiveIndex(objectiveSettingsRefractiveIndex, imageIndex);
+  }
+
+  public void setImageROIRef(String roiRef, int imageIndex, int roiRefIndex, Current current) {
+    metadataObject.setImageROIRef(roiRef, imageIndex, roiRefIndex);
+  }
+
+  // - ImageAnnotationRef property storage -
+
+  // - ImageROIRef property storage -
 
   // - ImagingEnvironment property storage -
 
@@ -2227,11 +2880,11 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setImagingEnvironmentAirPressure(airPressure, imageIndex);
   }
 
-  public void setImagingEnvironmentCO2Percent(double cO2Percent, int imageIndex, Current current) {
+  public void setImagingEnvironmentCO2Percent(PercentFraction cO2Percent, int imageIndex, Current current) {
     metadataObject.setImagingEnvironmentCO2Percent(cO2Percent, imageIndex);
   }
 
-  public void setImagingEnvironmentHumidity(double humidity, int imageIndex, Current current) {
+  public void setImagingEnvironmentHumidity(PercentFraction humidity, int imageIndex, Current current) {
     metadataObject.setImagingEnvironmentHumidity(humidity, imageIndex);
   }
 
@@ -2247,268 +2900,312 @@ public class IMetadataI extends _IMetadataDisp {
 
   // - Laser property storage -
 
-  public void setLaserFrequencyMultiplication(int frequencyMultiplication, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserFrequencyMultiplication(frequencyMultiplication, instrumentIndex, lightSourceIndex);
+  public void setLaserFrequencyMultiplication(PositiveInteger frequencyMultiplication, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserFrequencyMultiplication(frequencyMultiplication, instrumentIndex, laserIndex);
   }
 
-  public void setLaserLaserMedium(String laserMedium, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserLaserMedium(laserMedium, instrumentIndex, lightSourceIndex);
+  public void setLaserID(String id, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserID(id, instrumentIndex, laserIndex);
   }
 
-  public void setLaserPockelCell(boolean pockelCell, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserPockelCell(pockelCell, instrumentIndex, lightSourceIndex);
+  public void setLaserLaserMedium(LaserMedium laserMedium, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserLaserMedium(laserMedium, instrumentIndex, laserIndex);
   }
 
-  public void setLaserPulse(String pulse, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserPulse(pulse, instrumentIndex, lightSourceIndex);
+  public void setLaserLotNumber(String lotNumber, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserLotNumber(lotNumber, instrumentIndex, laserIndex);
   }
 
-  public void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserRepetitionRate(repetitionRate, instrumentIndex, lightSourceIndex);
+  public void setLaserManufacturer(String manufacturer, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserManufacturer(manufacturer, instrumentIndex, laserIndex);
   }
 
-  public void setLaserTuneable(boolean tuneable, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserTuneable(tuneable, instrumentIndex, lightSourceIndex);
+  public void setLaserModel(String model, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserModel(model, instrumentIndex, laserIndex);
   }
 
-  public void setLaserType(String type, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserType(type, instrumentIndex, lightSourceIndex);
+  public void setLaserPockelCell(boolean pockelCell, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserPockelCell(pockelCell, instrumentIndex, laserIndex);
   }
 
-  public void setLaserWavelength(int wavelength, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLaserWavelength(wavelength, instrumentIndex, lightSourceIndex);
+  public void setLaserPower(double power, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserPower(power, instrumentIndex, laserIndex);
   }
 
-  // - LightSource property storage -
-
-  public void setLightSourceID(String id, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLightSourceID(id, instrumentIndex, lightSourceIndex);
+  public void setLaserPulse(Pulse pulse, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserPulse(pulse, instrumentIndex, laserIndex);
   }
 
-  public void setLightSourceManufacturer(String manufacturer, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLightSourceManufacturer(manufacturer, instrumentIndex, lightSourceIndex);
+  public void setLaserPump(String pump, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserPump(pump, instrumentIndex, laserIndex);
   }
 
-  public void setLightSourceModel(String model, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLightSourceModel(model, instrumentIndex, lightSourceIndex);
+  public void setLaserRepetitionRate(double repetitionRate, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserRepetitionRate(repetitionRate, instrumentIndex, laserIndex);
   }
 
-  public void setLightSourcePower(double power, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLightSourcePower(power, instrumentIndex, lightSourceIndex);
+  public void setLaserSerialNumber(String serialNumber, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserSerialNumber(serialNumber, instrumentIndex, laserIndex);
   }
 
-  public void setLightSourceSerialNumber(String serialNumber, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setLightSourceSerialNumber(serialNumber, instrumentIndex, lightSourceIndex);
+  public void setLaserTuneable(boolean tuneable, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserTuneable(tuneable, instrumentIndex, laserIndex);
   }
 
-  // - LightSourceRef property storage -
-
-  public void setLightSourceRefAttenuation(double attenuation, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
-    metadataObject.setLightSourceRefAttenuation(attenuation, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  public void setLaserType(LaserType type, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserType(type, instrumentIndex, laserIndex);
   }
 
-  public void setLightSourceRefLightSource(String lightSource, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
-    metadataObject.setLightSourceRefLightSource(lightSource, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  public void setLaserWavelength(PositiveInteger wavelength, int instrumentIndex, int laserIndex, Current current) {
+    metadataObject.setLaserWavelength(wavelength, instrumentIndex, laserIndex);
   }
 
-  public void setLightSourceRefWavelength(int wavelength, int imageIndex, int microbeamManipulationIndex, int lightSourceRefIndex, Current current) {
-    metadataObject.setLightSourceRefWavelength(wavelength, imageIndex, microbeamManipulationIndex, lightSourceRefIndex);
+  // - LightEmittingDiode property storage -
+
+  public void setLightEmittingDiodeID(String id, int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    metadataObject.setLightEmittingDiodeID(id, instrumentIndex, lightEmittingDiodeIndex);
   }
 
-  // - LightSourceSettings property storage -
-
-  public void setLightSourceSettingsAttenuation(double attenuation, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLightSourceSettingsAttenuation(attenuation, imageIndex, logicalChannelIndex);
+  public void setLightEmittingDiodeLotNumber(String lotNumber, int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    metadataObject.setLightEmittingDiodeLotNumber(lotNumber, instrumentIndex, lightEmittingDiodeIndex);
   }
 
-  public void setLightSourceSettingsLightSource(String lightSource, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLightSourceSettingsLightSource(lightSource, imageIndex, logicalChannelIndex);
+  public void setLightEmittingDiodeManufacturer(String manufacturer, int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    metadataObject.setLightEmittingDiodeManufacturer(manufacturer, instrumentIndex, lightEmittingDiodeIndex);
   }
 
-  public void setLightSourceSettingsWavelength(int wavelength, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLightSourceSettingsWavelength(wavelength, imageIndex, logicalChannelIndex);
+  public void setLightEmittingDiodeModel(String model, int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    metadataObject.setLightEmittingDiodeModel(model, instrumentIndex, lightEmittingDiodeIndex);
   }
+
+  public void setLightEmittingDiodePower(double power, int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    metadataObject.setLightEmittingDiodePower(power, instrumentIndex, lightEmittingDiodeIndex);
+  }
+
+  public void setLightEmittingDiodeSerialNumber(String serialNumber, int instrumentIndex, int lightEmittingDiodeIndex, Current current) {
+    metadataObject.setLightEmittingDiodeSerialNumber(serialNumber, instrumentIndex, lightEmittingDiodeIndex);
+  }
+
+  // - LightPath property storage -
+
+  public void setLightPathDichroicRef(String dichroicRef, int imageIndex, int channelIndex, Current current) {
+    metadataObject.setLightPathDichroicRef(dichroicRef, imageIndex, channelIndex);
+  }
+
+  public void setLightPathEmissionFilterRef(String emissionFilterRef, int imageIndex, int channelIndex, int emissionFilterRefIndex, Current current) {
+    metadataObject.setLightPathEmissionFilterRef(emissionFilterRef, imageIndex, channelIndex, emissionFilterRefIndex);
+  }
+
+  public void setLightPathExcitationFilterRef(String excitationFilterRef, int imageIndex, int channelIndex, int excitationFilterRefIndex, Current current) {
+    metadataObject.setLightPathExcitationFilterRef(excitationFilterRef, imageIndex, channelIndex, excitationFilterRefIndex);
+  }
+
+  // - LightPathEmissionFilterRef property storage -
+
+  // - LightPathExcitationFilterRef property storage -
 
   // - Line property storage -
 
-  public void setLineID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setLineID(id, imageIndex, roiIndex, shapeIndex);
+  public void setLineDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setLineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setLineTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setLineFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineFill(fill, roiIndex, shapeIndex);
   }
 
-  public void setLineX1(String x1, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setLineX1(x1, imageIndex, roiIndex, shapeIndex);
+  public void setLineFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineFontSize(fontSize, roiIndex, shapeIndex);
   }
 
-  public void setLineX2(String x2, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setLineX2(x2, imageIndex, roiIndex, shapeIndex);
+  public void setLineID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineID(id, roiIndex, shapeIndex);
   }
 
-  public void setLineY1(String y1, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setLineY1(y1, imageIndex, roiIndex, shapeIndex);
+  public void setLineLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineLabel(label, roiIndex, shapeIndex);
   }
 
-  public void setLineY2(String y2, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setLineY2(y2, imageIndex, roiIndex, shapeIndex);
+  public void setLineName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineName(name, roiIndex, shapeIndex);
   }
 
-  // - LogicalChannel property storage -
-
-  public void setLogicalChannelContrastMethod(String contrastMethod, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelContrastMethod(contrastMethod, imageIndex, logicalChannelIndex);
+  public void setLineStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineStroke(stroke, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelDetector(String detector, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelDetector(detector, imageIndex, logicalChannelIndex);
+  public void setLineStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelEmWave(int emWave, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelEmWave(emWave, imageIndex, logicalChannelIndex);
+  public void setLineStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineStrokeWidth(strokeWidth, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelExWave(int exWave, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelExWave(exWave, imageIndex, logicalChannelIndex);
+  public void setLineTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineTheC(theC, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelFilterSet(String filterSet, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelFilterSet(filterSet, imageIndex, logicalChannelIndex);
+  public void setLineTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineTheT(theT, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelFluor(String fluor, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelFluor(fluor, imageIndex, logicalChannelIndex);
+  public void setLineTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineTheZ(theZ, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelID(String id, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelID(id, imageIndex, logicalChannelIndex);
+  public void setLineTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineTransform(transform, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelIlluminationType(String illuminationType, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelIlluminationType(illuminationType, imageIndex, logicalChannelIndex);
+  public void setLineX1(double x1, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineX1(x1, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelLightSource(String lightSource, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelLightSource(lightSource, imageIndex, logicalChannelIndex);
+  public void setLineX2(double x2, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineX2(x2, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelMode(String mode, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelMode(mode, imageIndex, logicalChannelIndex);
+  public void setLineY1(double y1, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineY1(y1, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelName(String name, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelName(name, imageIndex, logicalChannelIndex);
+  public void setLineY2(double y2, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setLineY2(y2, roiIndex, shapeIndex);
   }
 
-  public void setLogicalChannelNdFilter(double ndFilter, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelNdFilter(ndFilter, imageIndex, logicalChannelIndex);
+  // - ListAnnotation property storage -
+
+  public void setListAnnotationAnnotationRef(String annotationRef, int listAnnotationIndex, int annotationRefIndex, Current current) {
+    metadataObject.setListAnnotationAnnotationRef(annotationRef, listAnnotationIndex, annotationRefIndex);
   }
 
-  public void setLogicalChannelOTF(String otf, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelOTF(otf, imageIndex, logicalChannelIndex);
+  public void setListAnnotationID(String id, int listAnnotationIndex, Current current) {
+    metadataObject.setListAnnotationID(id, listAnnotationIndex);
   }
 
-  public void setLogicalChannelPhotometricInterpretation(String photometricInterpretation, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelPhotometricInterpretation(photometricInterpretation, imageIndex, logicalChannelIndex);
+  public void setListAnnotationNamespace(String namespace, int listAnnotationIndex, Current current) {
+    metadataObject.setListAnnotationNamespace(namespace, listAnnotationIndex);
   }
 
-  public void setLogicalChannelPinholeSize(double pinholeSize, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelPinholeSize(pinholeSize, imageIndex, logicalChannelIndex);
+  // - ListAnnotationAnnotationRef property storage -
+
+  // - LongAnnotation property storage -
+
+  public void setLongAnnotationID(String id, int longAnnotationIndex, Current current) {
+    metadataObject.setLongAnnotationID(id, longAnnotationIndex);
   }
 
-  public void setLogicalChannelPockelCellSetting(int pockelCellSetting, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelPockelCellSetting(pockelCellSetting, imageIndex, logicalChannelIndex);
+  public void setLongAnnotationNamespace(String namespace, int longAnnotationIndex, Current current) {
+    metadataObject.setLongAnnotationNamespace(namespace, longAnnotationIndex);
   }
 
-  public void setLogicalChannelSamplesPerPixel(int samplesPerPixel, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelSamplesPerPixel(samplesPerPixel, imageIndex, logicalChannelIndex);
-  }
-
-  public void setLogicalChannelSecondaryEmissionFilter(String secondaryEmissionFilter, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelSecondaryEmissionFilter(secondaryEmissionFilter, imageIndex, logicalChannelIndex);
-  }
-
-  public void setLogicalChannelSecondaryExcitationFilter(String secondaryExcitationFilter, int imageIndex, int logicalChannelIndex, Current current) {
-    metadataObject.setLogicalChannelSecondaryExcitationFilter(secondaryExcitationFilter, imageIndex, logicalChannelIndex);
+  public void setLongAnnotationValue(long value, int longAnnotationIndex, Current current) {
+    metadataObject.setLongAnnotationValue(value, longAnnotationIndex);
   }
 
   // - Mask property storage -
 
-  public void setMaskHeight(String height, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskHeight(height, imageIndex, roiIndex, shapeIndex);
+  public void setMaskDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setMaskID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskID(id, imageIndex, roiIndex, shapeIndex);
+  public void setMaskFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskFill(fill, roiIndex, shapeIndex);
   }
 
-  public void setMaskTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setMaskFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskFontSize(fontSize, roiIndex, shapeIndex);
   }
 
-  public void setMaskWidth(String width, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskWidth(width, imageIndex, roiIndex, shapeIndex);
+  public void setMaskID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskID(id, roiIndex, shapeIndex);
   }
 
-  public void setMaskX(String x, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskX(x, imageIndex, roiIndex, shapeIndex);
+  public void setMaskLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskLabel(label, roiIndex, shapeIndex);
   }
 
-  public void setMaskY(String y, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskY(y, imageIndex, roiIndex, shapeIndex);
+  public void setMaskName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskName(name, roiIndex, shapeIndex);
   }
 
-  // - MaskPixels property storage -
-
-  public void setMaskPixelsBigEndian(boolean bigEndian, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskPixelsBigEndian(bigEndian, imageIndex, roiIndex, shapeIndex);
+  public void setMaskStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskStroke(stroke, roiIndex, shapeIndex);
   }
 
-  public void setMaskPixelsBinData(byte[] binData, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskPixelsBinData(binData, imageIndex, roiIndex, shapeIndex);
+  public void setMaskStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
   }
 
-  public void setMaskPixelsExtendedPixelType(String extendedPixelType, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskPixelsExtendedPixelType(extendedPixelType, imageIndex, roiIndex, shapeIndex);
+  public void setMaskStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskStrokeWidth(strokeWidth, roiIndex, shapeIndex);
   }
 
-  public void setMaskPixelsID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskPixelsID(id, imageIndex, roiIndex, shapeIndex);
+  public void setMaskTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskTheC(theC, roiIndex, shapeIndex);
   }
 
-  public void setMaskPixelsSizeX(int sizeX, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskPixelsSizeX(sizeX, imageIndex, roiIndex, shapeIndex);
+  public void setMaskTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskTheT(theT, roiIndex, shapeIndex);
   }
 
-  public void setMaskPixelsSizeY(int sizeY, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setMaskPixelsSizeY(sizeY, imageIndex, roiIndex, shapeIndex);
+  public void setMaskTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setMaskTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskTransform(transform, roiIndex, shapeIndex);
+  }
+
+  public void setMaskX(double x, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskX(x, roiIndex, shapeIndex);
+  }
+
+  public void setMaskY(double y, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setMaskY(y, roiIndex, shapeIndex);
   }
 
   // - MicrobeamManipulation property storage -
 
-  public void setMicrobeamManipulationExperimenterRef(String experimenterRef, int imageIndex, int microbeamManipulationIndex, Current current) {
-    metadataObject.setMicrobeamManipulationExperimenterRef(experimenterRef, imageIndex, microbeamManipulationIndex);
+  public void setMicrobeamManipulationExperimenterRef(String experimenterRef, int experimentIndex, int microbeamManipulationIndex, Current current) {
+    metadataObject.setMicrobeamManipulationExperimenterRef(experimenterRef, experimentIndex, microbeamManipulationIndex);
   }
 
-  public void setMicrobeamManipulationID(String id, int imageIndex, int microbeamManipulationIndex, Current current) {
-    metadataObject.setMicrobeamManipulationID(id, imageIndex, microbeamManipulationIndex);
+  public void setMicrobeamManipulationID(String id, int experimentIndex, int microbeamManipulationIndex, Current current) {
+    metadataObject.setMicrobeamManipulationID(id, experimentIndex, microbeamManipulationIndex);
   }
 
-  public void setMicrobeamManipulationType(String type, int imageIndex, int microbeamManipulationIndex, Current current) {
-    metadataObject.setMicrobeamManipulationType(type, imageIndex, microbeamManipulationIndex);
+  public void setMicrobeamManipulationROIRef(String roiRef, int experimentIndex, int microbeamManipulationIndex, int roiRefIndex, Current current) {
+    metadataObject.setMicrobeamManipulationROIRef(roiRef, experimentIndex, microbeamManipulationIndex, roiRefIndex);
   }
+
+  public void setMicrobeamManipulationType(MicrobeamManipulationType type, int experimentIndex, int microbeamManipulationIndex, Current current) {
+    metadataObject.setMicrobeamManipulationType(type, experimentIndex, microbeamManipulationIndex);
+  }
+
+  // - MicrobeamManipulationLightSourceSettings property storage -
+
+  public void setMicrobeamManipulationLightSourceSettingsAttenuation(PercentFraction attenuation, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex, Current current) {
+    metadataObject.setMicrobeamManipulationLightSourceSettingsAttenuation(attenuation, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
+  }
+
+  public void setMicrobeamManipulationLightSourceSettingsID(String id, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex, Current current) {
+    metadataObject.setMicrobeamManipulationLightSourceSettingsID(id, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
+  }
+
+  public void setMicrobeamManipulationLightSourceSettingsWavelength(PositiveInteger wavelength, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex, Current current) {
+    metadataObject.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
+  }
+
+  // - MicrobeamManipulationROIRef property storage -
 
   // - MicrobeamManipulationRef property storage -
 
-  public void setMicrobeamManipulationRefID(String id, int experimentIndex, int microbeamManipulationRefIndex, Current current) {
-    metadataObject.setMicrobeamManipulationRefID(id, experimentIndex, microbeamManipulationRefIndex);
-  }
-
   // - Microscope property storage -
 
-  public void setMicroscopeID(String id, int instrumentIndex, Current current) {
-    metadataObject.setMicroscopeID(id, instrumentIndex);
+  public void setMicroscopeLotNumber(String lotNumber, int instrumentIndex, Current current) {
+    metadataObject.setMicroscopeLotNumber(lotNumber, instrumentIndex);
   }
 
   public void setMicroscopeManufacturer(String manufacturer, int instrumentIndex, Current current) {
@@ -2523,38 +3220,62 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setMicroscopeSerialNumber(serialNumber, instrumentIndex);
   }
 
-  public void setMicroscopeType(String type, int instrumentIndex, Current current) {
+  public void setMicroscopeType(MicroscopeType type, int instrumentIndex, Current current) {
     metadataObject.setMicroscopeType(type, instrumentIndex);
   }
 
   // - OTF property storage -
 
-  public void setOTFBinaryFile(String binaryFile, int instrumentIndex, int otfIndex, Current current) {
-    metadataObject.setOTFBinaryFile(binaryFile, instrumentIndex, otfIndex);
+  public void setOTFBinaryFileFileName(String binaryFileFileName, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFBinaryFileFileName(binaryFileFileName, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFBinaryFileMIMEType(String binaryFileMIMEType, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFBinaryFileMIMEType(binaryFileMIMEType, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFBinaryFileSize(int binaryFileSize, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFBinaryFileSize(binaryFileSize, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFFilterSetRef(String filterSetRef, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFFilterSetRef(filterSetRef, instrumentIndex, otfIndex);
   }
 
   public void setOTFID(String id, int instrumentIndex, int otfIndex, Current current) {
     metadataObject.setOTFID(id, instrumentIndex, otfIndex);
   }
 
-  public void setOTFObjective(String objective, int instrumentIndex, int otfIndex, Current current) {
-    metadataObject.setOTFObjective(objective, instrumentIndex, otfIndex);
+  public void setOTFObjectiveSettingsCorrectionCollar(double objectiveSettingsCorrectionCollar, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFObjectiveSettingsCorrectionCollar(objectiveSettingsCorrectionCollar, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFObjectiveSettingsID(String objectiveSettingsID, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFObjectiveSettingsID(objectiveSettingsID, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFObjectiveSettingsMedium(Medium objectiveSettingsMedium, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFObjectiveSettingsMedium(objectiveSettingsMedium, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFObjectiveSettingsRefractiveIndex(double objectiveSettingsRefractiveIndex, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFObjectiveSettingsRefractiveIndex(objectiveSettingsRefractiveIndex, instrumentIndex, otfIndex);
   }
 
   public void setOTFOpticalAxisAveraged(boolean opticalAxisAveraged, int instrumentIndex, int otfIndex, Current current) {
     metadataObject.setOTFOpticalAxisAveraged(opticalAxisAveraged, instrumentIndex, otfIndex);
   }
 
-  public void setOTFPixelType(String pixelType, int instrumentIndex, int otfIndex, Current current) {
-    metadataObject.setOTFPixelType(pixelType, instrumentIndex, otfIndex);
-  }
-
-  public void setOTFSizeX(int sizeX, int instrumentIndex, int otfIndex, Current current) {
+  public void setOTFSizeX(PositiveInteger sizeX, int instrumentIndex, int otfIndex, Current current) {
     metadataObject.setOTFSizeX(sizeX, instrumentIndex, otfIndex);
   }
 
-  public void setOTFSizeY(int sizeY, int instrumentIndex, int otfIndex, Current current) {
+  public void setOTFSizeY(PositiveInteger sizeY, int instrumentIndex, int otfIndex, Current current) {
     metadataObject.setOTFSizeY(sizeY, instrumentIndex, otfIndex);
+  }
+
+  public void setOTFType(PixelType type, int instrumentIndex, int otfIndex, Current current) {
+    metadataObject.setOTFType(type, instrumentIndex, otfIndex);
   }
 
   // - Objective property storage -
@@ -2563,7 +3284,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setObjectiveCalibratedMagnification(calibratedMagnification, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveCorrection(String correction, int instrumentIndex, int objectiveIndex, Current current) {
+  public void setObjectiveCorrection(Correction correction, int instrumentIndex, int objectiveIndex, Current current) {
     metadataObject.setObjectiveCorrection(correction, instrumentIndex, objectiveIndex);
   }
 
@@ -2571,7 +3292,7 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setObjectiveID(id, instrumentIndex, objectiveIndex);
   }
 
-  public void setObjectiveImmersion(String immersion, int instrumentIndex, int objectiveIndex, Current current) {
+  public void setObjectiveImmersion(Immersion immersion, int instrumentIndex, int objectiveIndex, Current current) {
     metadataObject.setObjectiveImmersion(immersion, instrumentIndex, objectiveIndex);
   }
 
@@ -2581,6 +3302,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public void setObjectiveLensNA(double lensNA, int instrumentIndex, int objectiveIndex, Current current) {
     metadataObject.setObjectiveLensNA(lensNA, instrumentIndex, objectiveIndex);
+  }
+
+  public void setObjectiveLotNumber(String lotNumber, int instrumentIndex, int objectiveIndex, Current current) {
+    metadataObject.setObjectiveLotNumber(lotNumber, instrumentIndex, objectiveIndex);
   }
 
   public void setObjectiveManufacturer(String manufacturer, int instrumentIndex, int objectiveIndex, Current current) {
@@ -2603,108 +3328,182 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setObjectiveWorkingDistance(workingDistance, instrumentIndex, objectiveIndex);
   }
 
-  // - ObjectiveSettings property storage -
-
-  public void setObjectiveSettingsCorrectionCollar(double correctionCollar, int imageIndex, Current current) {
-    metadataObject.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
-  }
-
-  public void setObjectiveSettingsMedium(String medium, int imageIndex, Current current) {
-    metadataObject.setObjectiveSettingsMedium(medium, imageIndex);
-  }
-
-  public void setObjectiveSettingsObjective(String objective, int imageIndex, Current current) {
-    metadataObject.setObjectiveSettingsObjective(objective, imageIndex);
-  }
-
-  public void setObjectiveSettingsRefractiveIndex(double refractiveIndex, int imageIndex, Current current) {
-    metadataObject.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
-  }
-
   // - Path property storage -
 
-  public void setPathD(String d, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPathD(d, imageIndex, roiIndex, shapeIndex);
+  public void setPathDefinition(String definition, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathDefinition(definition, roiIndex, shapeIndex);
   }
 
-  public void setPathID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPathID(id, imageIndex, roiIndex, shapeIndex);
+  public void setPathDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathDescription(description, roiIndex, shapeIndex);
+  }
+
+  public void setPathFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathFill(fill, roiIndex, shapeIndex);
+  }
+
+  public void setPathFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathFontSize(fontSize, roiIndex, shapeIndex);
+  }
+
+  public void setPathID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathID(id, roiIndex, shapeIndex);
+  }
+
+  public void setPathLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathLabel(label, roiIndex, shapeIndex);
+  }
+
+  public void setPathName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathName(name, roiIndex, shapeIndex);
+  }
+
+  public void setPathStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathStroke(stroke, roiIndex, shapeIndex);
+  }
+
+  public void setPathStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
+  }
+
+  public void setPathStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathStrokeWidth(strokeWidth, roiIndex, shapeIndex);
+  }
+
+  public void setPathTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathTheC(theC, roiIndex, shapeIndex);
+  }
+
+  public void setPathTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathTheT(theT, roiIndex, shapeIndex);
+  }
+
+  public void setPathTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setPathTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPathTransform(transform, roiIndex, shapeIndex);
   }
 
   // - Pixels property storage -
 
-  public void setPixelsBigEndian(boolean bigEndian, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsBigEndian(bigEndian, imageIndex, pixelsIndex);
+  public void setPixelsAnnotationRef(String annotationRef, int imageIndex, int annotationRefIndex, Current current) {
+    metadataObject.setPixelsAnnotationRef(annotationRef, imageIndex, annotationRefIndex);
   }
 
-  public void setPixelsDimensionOrder(String dimensionOrder, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsDimensionOrder(dimensionOrder, imageIndex, pixelsIndex);
+  public void setPixelsDimensionOrder(DimensionOrder dimensionOrder, int imageIndex, Current current) {
+    metadataObject.setPixelsDimensionOrder(dimensionOrder, imageIndex);
   }
 
-  public void setPixelsID(String id, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsID(id, imageIndex, pixelsIndex);
+  public void setPixelsID(String id, int imageIndex, Current current) {
+    metadataObject.setPixelsID(id, imageIndex);
   }
 
-  public void setPixelsPixelType(String pixelType, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsPixelType(pixelType, imageIndex, pixelsIndex);
+  public void setPixelsPhysicalSizeX(double physicalSizeX, int imageIndex, Current current) {
+    metadataObject.setPixelsPhysicalSizeX(physicalSizeX, imageIndex);
   }
 
-  public void setPixelsSizeC(int sizeC, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsSizeC(sizeC, imageIndex, pixelsIndex);
+  public void setPixelsPhysicalSizeY(double physicalSizeY, int imageIndex, Current current) {
+    metadataObject.setPixelsPhysicalSizeY(physicalSizeY, imageIndex);
   }
 
-  public void setPixelsSizeT(int sizeT, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsSizeT(sizeT, imageIndex, pixelsIndex);
+  public void setPixelsPhysicalSizeZ(double physicalSizeZ, int imageIndex, Current current) {
+    metadataObject.setPixelsPhysicalSizeZ(physicalSizeZ, imageIndex);
   }
 
-  public void setPixelsSizeX(int sizeX, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsSizeX(sizeX, imageIndex, pixelsIndex);
+  public void setPixelsSizeC(PositiveInteger sizeC, int imageIndex, Current current) {
+    metadataObject.setPixelsSizeC(sizeC, imageIndex);
   }
 
-  public void setPixelsSizeY(int sizeY, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsSizeY(sizeY, imageIndex, pixelsIndex);
+  public void setPixelsSizeT(PositiveInteger sizeT, int imageIndex, Current current) {
+    metadataObject.setPixelsSizeT(sizeT, imageIndex);
   }
 
-  public void setPixelsSizeZ(int sizeZ, int imageIndex, int pixelsIndex, Current current) {
-    metadataObject.setPixelsSizeZ(sizeZ, imageIndex, pixelsIndex);
+  public void setPixelsSizeX(PositiveInteger sizeX, int imageIndex, Current current) {
+    metadataObject.setPixelsSizeX(sizeX, imageIndex);
+  }
+
+  public void setPixelsSizeY(PositiveInteger sizeY, int imageIndex, Current current) {
+    metadataObject.setPixelsSizeY(sizeY, imageIndex);
+  }
+
+  public void setPixelsSizeZ(PositiveInteger sizeZ, int imageIndex, Current current) {
+    metadataObject.setPixelsSizeZ(sizeZ, imageIndex);
+  }
+
+  public void setPixelsTimeIncrement(double timeIncrement, int imageIndex, Current current) {
+    metadataObject.setPixelsTimeIncrement(timeIncrement, imageIndex);
+  }
+
+  public void setPixelsType(PixelType type, int imageIndex, Current current) {
+    metadataObject.setPixelsType(type, imageIndex);
+  }
+
+  // - PixelsAnnotationRef property storage -
+
+  // - PixelsBinData property storage -
+
+  public void setPixelsBinDataBigEndian(boolean bigEndian, int imageIndex, int binDataIndex, Current current) {
+    metadataObject.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
   }
 
   // - Plane property storage -
 
-  public void setPlaneHashSHA1(String hashSHA1, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneHashSHA1(hashSHA1, imageIndex, pixelsIndex, planeIndex);
+  public void setPlaneAnnotationRef(String annotationRef, int imageIndex, int planeIndex, int annotationRefIndex, Current current) {
+    metadataObject.setPlaneAnnotationRef(annotationRef, imageIndex, planeIndex, annotationRefIndex);
   }
 
-  public void setPlaneID(String id, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneID(id, imageIndex, pixelsIndex, planeIndex);
+  public void setPlaneDeltaT(double deltaT, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlaneDeltaT(deltaT, imageIndex, planeIndex);
   }
 
-  public void setPlaneTheC(int theC, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneTheC(theC, imageIndex, pixelsIndex, planeIndex);
+  public void setPlaneExposureTime(double exposureTime, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlaneExposureTime(exposureTime, imageIndex, planeIndex);
   }
 
-  public void setPlaneTheT(int theT, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneTheT(theT, imageIndex, pixelsIndex, planeIndex);
+  public void setPlaneHashSHA1(String hashSHA1, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlaneHashSHA1(hashSHA1, imageIndex, planeIndex);
   }
 
-  public void setPlaneTheZ(int theZ, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneTheZ(theZ, imageIndex, pixelsIndex, planeIndex);
+  public void setPlanePositionX(double positionX, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlanePositionX(positionX, imageIndex, planeIndex);
   }
 
-  // - PlaneTiming property storage -
-
-  public void setPlaneTimingDeltaT(double deltaT, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneTimingDeltaT(deltaT, imageIndex, pixelsIndex, planeIndex);
+  public void setPlanePositionY(double positionY, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlanePositionY(positionY, imageIndex, planeIndex);
   }
 
-  public void setPlaneTimingExposureTime(double exposureTime, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setPlaneTimingExposureTime(exposureTime, imageIndex, pixelsIndex, planeIndex);
+  public void setPlanePositionZ(double positionZ, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlanePositionZ(positionZ, imageIndex, planeIndex);
   }
+
+  public void setPlaneTheC(int theC, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlaneTheC(theC, imageIndex, planeIndex);
+  }
+
+  public void setPlaneTheT(int theT, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlaneTheT(theT, imageIndex, planeIndex);
+  }
+
+  public void setPlaneTheZ(int theZ, int imageIndex, int planeIndex, Current current) {
+    metadataObject.setPlaneTheZ(theZ, imageIndex, planeIndex);
+  }
+
+  // - PlaneAnnotationRef property storage -
 
   // - Plate property storage -
 
-  public void setPlateColumnNamingConvention(String columnNamingConvention, int plateIndex, Current current) {
+  public void setPlateAnnotationRef(String annotationRef, int plateIndex, int annotationRefIndex, Current current) {
+    metadataObject.setPlateAnnotationRef(annotationRef, plateIndex, annotationRefIndex);
+  }
+
+  public void setPlateColumnNamingConvention(NamingConvention columnNamingConvention, int plateIndex, Current current) {
     metadataObject.setPlateColumnNamingConvention(columnNamingConvention, plateIndex);
+  }
+
+  public void setPlateColumns(int columns, int plateIndex, Current current) {
+    metadataObject.setPlateColumns(columns, plateIndex);
   }
 
   public void setPlateDescription(String description, int plateIndex, Current current) {
@@ -2723,8 +3522,16 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setPlateName(name, plateIndex);
   }
 
-  public void setPlateRowNamingConvention(String rowNamingConvention, int plateIndex, Current current) {
+  public void setPlateRowNamingConvention(NamingConvention rowNamingConvention, int plateIndex, Current current) {
     metadataObject.setPlateRowNamingConvention(rowNamingConvention, plateIndex);
+  }
+
+  public void setPlateRows(int rows, int plateIndex, Current current) {
+    metadataObject.setPlateRows(rows, plateIndex);
+  }
+
+  public void setPlateScreenRef(String screenRef, int plateIndex, int screenRefIndex, Current current) {
+    metadataObject.setPlateScreenRef(screenRef, plateIndex, screenRefIndex);
   }
 
   public void setPlateStatus(String status, int plateIndex, Current current) {
@@ -2739,71 +3546,175 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setPlateWellOriginY(wellOriginY, plateIndex);
   }
 
+  // - PlateAcquisition property storage -
+
+  public void setPlateAcquisitionAnnotationRef(String annotationRef, int plateIndex, int plateAcquisitionIndex, int annotationRefIndex, Current current) {
+    metadataObject.setPlateAcquisitionAnnotationRef(annotationRef, plateIndex, plateAcquisitionIndex, annotationRefIndex);
+  }
+
+  public void setPlateAcquisitionDescription(String description, int plateIndex, int plateAcquisitionIndex, Current current) {
+    metadataObject.setPlateAcquisitionDescription(description, plateIndex, plateAcquisitionIndex);
+  }
+
+  public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex, Current current) {
+    metadataObject.setPlateAcquisitionEndTime(endTime, plateIndex, plateAcquisitionIndex);
+  }
+
+  public void setPlateAcquisitionID(String id, int plateIndex, int plateAcquisitionIndex, Current current) {
+    metadataObject.setPlateAcquisitionID(id, plateIndex, plateAcquisitionIndex);
+  }
+
+  public void setPlateAcquisitionMaximumFieldCount(int maximumFieldCount, int plateIndex, int plateAcquisitionIndex, Current current) {
+    metadataObject.setPlateAcquisitionMaximumFieldCount(maximumFieldCount, plateIndex, plateAcquisitionIndex);
+  }
+
+  public void setPlateAcquisitionName(String name, int plateIndex, int plateAcquisitionIndex, Current current) {
+    metadataObject.setPlateAcquisitionName(name, plateIndex, plateAcquisitionIndex);
+  }
+
+  public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex, Current current) {
+    metadataObject.setPlateAcquisitionStartTime(startTime, plateIndex, plateAcquisitionIndex);
+  }
+
+  public void setPlateAcquisitionWellSampleRef(String wellSampleRef, int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex, Current current) {
+    metadataObject.setPlateAcquisitionWellSampleRef(wellSampleRef, plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
+  }
+
+  // - PlateAcquisitionAnnotationRef property storage -
+
+  // - PlateAnnotationRef property storage -
+
   // - PlateRef property storage -
-
-  public void setPlateRefID(String id, int screenIndex, int plateRefIndex, Current current) {
-    metadataObject.setPlateRefID(id, screenIndex, plateRefIndex);
-  }
-
-  public void setPlateRefSample(int sample, int screenIndex, int plateRefIndex, Current current) {
-    metadataObject.setPlateRefSample(sample, screenIndex, plateRefIndex);
-  }
-
-  public void setPlateRefWell(String well, int screenIndex, int plateRefIndex, Current current) {
-    metadataObject.setPlateRefWell(well, screenIndex, plateRefIndex);
-  }
 
   // - Point property storage -
 
-  public void setPointCx(String cx, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPointCx(cx, imageIndex, roiIndex, shapeIndex);
+  public void setPointDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setPointCy(String cy, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPointCy(cy, imageIndex, roiIndex, shapeIndex);
+  public void setPointFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointFill(fill, roiIndex, shapeIndex);
   }
 
-  public void setPointID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPointID(id, imageIndex, roiIndex, shapeIndex);
+  public void setPointFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointFontSize(fontSize, roiIndex, shapeIndex);
   }
 
-  public void setPointR(String r, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPointR(r, imageIndex, roiIndex, shapeIndex);
+  public void setPointID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointID(id, roiIndex, shapeIndex);
   }
 
-  public void setPointTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPointTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setPointLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointLabel(label, roiIndex, shapeIndex);
   }
 
-  // - Polygon property storage -
-
-  public void setPolygonID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPolygonID(id, imageIndex, roiIndex, shapeIndex);
+  public void setPointName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointName(name, roiIndex, shapeIndex);
   }
 
-  public void setPolygonPoints(String points, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPolygonPoints(points, imageIndex, roiIndex, shapeIndex);
+  public void setPointStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointStroke(stroke, roiIndex, shapeIndex);
   }
 
-  public void setPolygonTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPolygonTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setPointStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
+  }
+
+  public void setPointStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointStrokeWidth(strokeWidth, roiIndex, shapeIndex);
+  }
+
+  public void setPointTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointTheC(theC, roiIndex, shapeIndex);
+  }
+
+  public void setPointTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointTheT(theT, roiIndex, shapeIndex);
+  }
+
+  public void setPointTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setPointTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointTransform(transform, roiIndex, shapeIndex);
+  }
+
+  public void setPointX(double x, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointX(x, roiIndex, shapeIndex);
+  }
+
+  public void setPointY(double y, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPointY(y, roiIndex, shapeIndex);
   }
 
   // - Polyline property storage -
 
-  public void setPolylineID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPolylineID(id, imageIndex, roiIndex, shapeIndex);
+  public void setPolylineClosed(boolean closed, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineClosed(closed, roiIndex, shapeIndex);
   }
 
-  public void setPolylinePoints(String points, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPolylinePoints(points, imageIndex, roiIndex, shapeIndex);
+  public void setPolylineDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setPolylineTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setPolylineTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setPolylineFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineFill(fill, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineFontSize(fontSize, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineID(id, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineLabel(label, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineName(name, roiIndex, shapeIndex);
+  }
+
+  public void setPolylinePoints(String points, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylinePoints(points, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineStroke(stroke, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineStrokeWidth(strokeWidth, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineTheC(theC, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineTheT(theT, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setPolylineTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setPolylineTransform(transform, roiIndex, shapeIndex);
   }
 
   // - Project property storage -
+
+  public void setProjectAnnotationRef(String annotationRef, int projectIndex, int annotationRefIndex, Current current) {
+    metadataObject.setProjectAnnotationRef(annotationRef, projectIndex, annotationRefIndex);
+  }
 
   public void setProjectDescription(String description, int projectIndex, Current current) {
     metadataObject.setProjectDescription(description, projectIndex);
@@ -2825,63 +3736,39 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setProjectName(name, projectIndex);
   }
 
+  // - ProjectAnnotationRef property storage -
+
   // - ProjectRef property storage -
-
-  public void setProjectRefID(String id, int datasetIndex, int projectRefIndex, Current current) {
-    metadataObject.setProjectRefID(id, datasetIndex, projectRefIndex);
-  }
-
-  // - Pump property storage -
-
-  public void setPumpLightSource(String lightSource, int instrumentIndex, int lightSourceIndex, Current current) {
-    metadataObject.setPumpLightSource(lightSource, instrumentIndex, lightSourceIndex);
-  }
 
   // - ROI property storage -
 
-  public void setROIID(String id, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIID(id, imageIndex, roiIndex);
+  public void setROIAnnotationRef(String annotationRef, int roiIndex, int annotationRefIndex, Current current) {
+    metadataObject.setROIAnnotationRef(annotationRef, roiIndex, annotationRefIndex);
   }
 
-  public void setROIT0(int t0, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIT0(t0, imageIndex, roiIndex);
+  public void setROIDescription(String description, int roiIndex, Current current) {
+    metadataObject.setROIDescription(description, roiIndex);
   }
 
-  public void setROIT1(int t1, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIT1(t1, imageIndex, roiIndex);
+  public void setROIID(String id, int roiIndex, Current current) {
+    metadataObject.setROIID(id, roiIndex);
   }
 
-  public void setROIX0(int x0, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIX0(x0, imageIndex, roiIndex);
+  public void setROIName(String name, int roiIndex, Current current) {
+    metadataObject.setROIName(name, roiIndex);
   }
 
-  public void setROIX1(int x1, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIX1(x1, imageIndex, roiIndex);
+  public void setROINamespace(String namespace, int roiIndex, Current current) {
+    metadataObject.setROINamespace(namespace, roiIndex);
   }
 
-  public void setROIY0(int y0, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIY0(y0, imageIndex, roiIndex);
-  }
-
-  public void setROIY1(int y1, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIY1(y1, imageIndex, roiIndex);
-  }
-
-  public void setROIZ0(int z0, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIZ0(z0, imageIndex, roiIndex);
-  }
-
-  public void setROIZ1(int z1, int imageIndex, int roiIndex, Current current) {
-    metadataObject.setROIZ1(z1, imageIndex, roiIndex);
-  }
-
-  // - ROIRef property storage -
-
-  public void setROIRefID(String id, int imageIndex, int microbeamManipulationIndex, int roiRefIndex, Current current) {
-    metadataObject.setROIRefID(id, imageIndex, microbeamManipulationIndex, roiRefIndex);
-  }
+  // - ROIAnnotationRef property storage -
 
   // - Reagent property storage -
+
+  public void setReagentAnnotationRef(String annotationRef, int screenIndex, int reagentIndex, int annotationRefIndex, Current current) {
+    metadataObject.setReagentAnnotationRef(annotationRef, screenIndex, reagentIndex, annotationRefIndex);
+  }
 
   public void setReagentDescription(String description, int screenIndex, int reagentIndex, Current current) {
     metadataObject.setReagentDescription(description, screenIndex, reagentIndex);
@@ -2899,68 +3786,86 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setReagentReagentIdentifier(reagentIdentifier, screenIndex, reagentIndex);
   }
 
-  // - Rect property storage -
+  // - ReagentAnnotationRef property storage -
 
-  public void setRectHeight(String height, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setRectHeight(height, imageIndex, roiIndex, shapeIndex);
+  // - Rectangle property storage -
+
+  public void setRectangleDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setRectID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setRectID(id, imageIndex, roiIndex, shapeIndex);
+  public void setRectangleFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleFill(fill, roiIndex, shapeIndex);
   }
 
-  public void setRectTransform(String transform, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setRectTransform(transform, imageIndex, roiIndex, shapeIndex);
+  public void setRectangleFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleFontSize(fontSize, roiIndex, shapeIndex);
   }
 
-  public void setRectWidth(String width, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setRectWidth(width, imageIndex, roiIndex, shapeIndex);
+  public void setRectangleHeight(double height, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleHeight(height, roiIndex, shapeIndex);
   }
 
-  public void setRectX(String x, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setRectX(x, imageIndex, roiIndex, shapeIndex);
+  public void setRectangleID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleID(id, roiIndex, shapeIndex);
   }
 
-  public void setRectY(String y, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setRectY(y, imageIndex, roiIndex, shapeIndex);
+  public void setRectangleLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleLabel(label, roiIndex, shapeIndex);
   }
 
-  // - Region property storage -
-
-  public void setRegionID(String id, int imageIndex, int regionIndex, Current current) {
-    metadataObject.setRegionID(id, imageIndex, regionIndex);
+  public void setRectangleName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleName(name, roiIndex, shapeIndex);
   }
 
-  public void setRegionName(String name, int imageIndex, int regionIndex, Current current) {
-    metadataObject.setRegionName(name, imageIndex, regionIndex);
+  public void setRectangleStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleStroke(stroke, roiIndex, shapeIndex);
   }
 
-  public void setRegionTag(String tag, int imageIndex, int regionIndex, Current current) {
-    metadataObject.setRegionTag(tag, imageIndex, regionIndex);
+  public void setRectangleStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
   }
 
-  // - RoiLink property storage -
-
-  public void setRoiLinkDirection(String direction, int imageIndex, int roiIndex, int roiLinkIndex, Current current) {
-    metadataObject.setRoiLinkDirection(direction, imageIndex, roiIndex, roiLinkIndex);
+  public void setRectangleStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleStrokeWidth(strokeWidth, roiIndex, shapeIndex);
   }
 
-  public void setRoiLinkName(String name, int imageIndex, int roiIndex, int roiLinkIndex, Current current) {
-    metadataObject.setRoiLinkName(name, imageIndex, roiIndex, roiLinkIndex);
+  public void setRectangleTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleTheC(theC, roiIndex, shapeIndex);
   }
 
-  public void setRoiLinkRef(String ref, int imageIndex, int roiIndex, int roiLinkIndex, Current current) {
-    metadataObject.setRoiLinkRef(ref, imageIndex, roiIndex, roiLinkIndex);
+  public void setRectangleTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleTheT(theT, roiIndex, shapeIndex);
+  }
+
+  public void setRectangleTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setRectangleTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleTransform(transform, roiIndex, shapeIndex);
+  }
+
+  public void setRectangleWidth(double width, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleWidth(width, roiIndex, shapeIndex);
+  }
+
+  public void setRectangleX(double x, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleX(x, roiIndex, shapeIndex);
+  }
+
+  public void setRectangleY(double y, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setRectangleY(y, roiIndex, shapeIndex);
   }
 
   // - Screen property storage -
 
-  public void setScreenDescription(String description, int screenIndex, Current current) {
-    metadataObject.setScreenDescription(description, screenIndex);
+  public void setScreenAnnotationRef(String annotationRef, int screenIndex, int annotationRefIndex, Current current) {
+    metadataObject.setScreenAnnotationRef(annotationRef, screenIndex, annotationRefIndex);
   }
 
-  public void setScreenExtern(String extern, int screenIndex, Current current) {
-    metadataObject.setScreenExtern(extern, screenIndex);
+  public void setScreenDescription(String description, int screenIndex, Current current) {
+    metadataObject.setScreenDescription(description, screenIndex);
   }
 
   public void setScreenID(String id, int screenIndex, Current current) {
@@ -2969,6 +3874,10 @@ public class IMetadataI extends _IMetadataDisp {
 
   public void setScreenName(String name, int screenIndex, Current current) {
     metadataObject.setScreenName(name, screenIndex);
+  }
+
+  public void setScreenPlateRef(String plateRef, int screenIndex, int plateRefIndex, Current current) {
+    metadataObject.setScreenPlateRef(plateRef, screenIndex, plateRefIndex);
   }
 
   public void setScreenProtocolDescription(String protocolDescription, int screenIndex, Current current) {
@@ -2991,159 +3900,11 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setScreenType(type, screenIndex);
   }
 
-  // - ScreenAcquisition property storage -
-
-  public void setScreenAcquisitionEndTime(String endTime, int screenIndex, int screenAcquisitionIndex, Current current) {
-    metadataObject.setScreenAcquisitionEndTime(endTime, screenIndex, screenAcquisitionIndex);
-  }
-
-  public void setScreenAcquisitionID(String id, int screenIndex, int screenAcquisitionIndex, Current current) {
-    metadataObject.setScreenAcquisitionID(id, screenIndex, screenAcquisitionIndex);
-  }
-
-  public void setScreenAcquisitionStartTime(String startTime, int screenIndex, int screenAcquisitionIndex, Current current) {
-    metadataObject.setScreenAcquisitionStartTime(startTime, screenIndex, screenAcquisitionIndex);
-  }
+  // - ScreenAnnotationRef property storage -
 
   // - ScreenRef property storage -
 
-  public void setScreenRefID(String id, int plateIndex, int screenRefIndex, Current current) {
-    metadataObject.setScreenRefID(id, plateIndex, screenRefIndex);
-  }
-
-  // - Shape property storage -
-
-  public void setShapeBaselineShift(String baselineShift, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeBaselineShift(baselineShift, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeDirection(String direction, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeDirection(direction, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFillColor(String fillColor, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFillColor(fillColor, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFillOpacity(String fillOpacity, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFillOpacity(fillOpacity, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFillRule(String fillRule, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFillRule(fillRule, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFontFamily(String fontFamily, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFontFamily(fontFamily, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFontSize(int fontSize, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFontSize(fontSize, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFontStretch(String fontStretch, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFontStretch(fontStretch, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFontStyle(String fontStyle, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFontStyle(fontStyle, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFontVariant(String fontVariant, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFontVariant(fontVariant, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeFontWeight(String fontWeight, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeFontWeight(fontWeight, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeG(String g, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeG(g, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeGlyphOrientationVertical(int glyphOrientationVertical, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeGlyphOrientationVertical(glyphOrientationVertical, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeID(String id, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeID(id, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeLocked(boolean locked, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeLocked(locked, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeAttribute(String strokeAttribute, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeAttribute(strokeAttribute, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeColor(String strokeColor, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeColor(strokeColor, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeDashArray(String strokeDashArray, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeDashArray(strokeDashArray, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeLineCap(String strokeLineCap, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeLineCap(strokeLineCap, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeLineJoin(String strokeLineJoin, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeLineJoin(strokeLineJoin, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeMiterLimit(int strokeMiterLimit, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeMiterLimit(strokeMiterLimit, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeOpacity(double strokeOpacity, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeOpacity(strokeOpacity, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeStrokeWidth(int strokeWidth, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeStrokeWidth(strokeWidth, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeText(String text, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeText(text, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeTextAnchor(String textAnchor, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeTextAnchor(textAnchor, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeTextDecoration(String textDecoration, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeTextDecoration(textDecoration, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeTextFill(String textFill, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeTextFill(textFill, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeTextStroke(String textStroke, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeTextStroke(textStroke, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeTheT(int theT, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeTheT(theT, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeTheZ(int theZ, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeTheZ(theZ, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeVectorEffect(String vectorEffect, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeVectorEffect(vectorEffect, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeVisibility(boolean visibility, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeVisibility(visibility, imageIndex, roiIndex, shapeIndex);
-  }
-
-  public void setShapeWritingMode(String writingMode, int imageIndex, int roiIndex, int shapeIndex, Current current) {
-    metadataObject.setShapeWritingMode(writingMode, imageIndex, roiIndex, shapeIndex);
-  }
+  // - ShapeAnnotationRef property storage -
 
   // - StageLabel property storage -
 
@@ -3163,62 +3924,120 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setStageLabelZ(z, imageIndex);
   }
 
-  // - StagePosition property storage -
+  // - StringAnnotation property storage -
 
-  public void setStagePositionPositionX(double positionX, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setStagePositionPositionX(positionX, imageIndex, pixelsIndex, planeIndex);
+  public void setStringAnnotationID(String id, int stringAnnotationIndex, Current current) {
+    metadataObject.setStringAnnotationID(id, stringAnnotationIndex);
   }
 
-  public void setStagePositionPositionY(double positionY, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setStagePositionPositionY(positionY, imageIndex, pixelsIndex, planeIndex);
+  public void setStringAnnotationNamespace(String namespace, int stringAnnotationIndex, Current current) {
+    metadataObject.setStringAnnotationNamespace(namespace, stringAnnotationIndex);
   }
 
-  public void setStagePositionPositionZ(double positionZ, int imageIndex, int pixelsIndex, int planeIndex, Current current) {
-    metadataObject.setStagePositionPositionZ(positionZ, imageIndex, pixelsIndex, planeIndex);
+  public void setStringAnnotationValue(String value, int stringAnnotationIndex, Current current) {
+    metadataObject.setStringAnnotationValue(value, stringAnnotationIndex);
   }
 
-  // - Thumbnail property storage -
+  // - Text property storage -
 
-  public void setThumbnailHref(String href, int imageIndex, Current current) {
-    metadataObject.setThumbnailHref(href, imageIndex);
+  public void setTextDescription(String description, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextDescription(description, roiIndex, shapeIndex);
   }
 
-  public void setThumbnailID(String id, int imageIndex, Current current) {
-    metadataObject.setThumbnailID(id, imageIndex);
+  public void setTextFill(int fill, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextFill(fill, roiIndex, shapeIndex);
   }
 
-  public void setThumbnailMIMEtype(String mimEtype, int imageIndex, Current current) {
-    metadataObject.setThumbnailMIMEtype(mimEtype, imageIndex);
+  public void setTextFontSize(int fontSize, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextFontSize(fontSize, roiIndex, shapeIndex);
+  }
+
+  public void setTextID(String id, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextID(id, roiIndex, shapeIndex);
+  }
+
+  public void setTextLabel(String label, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextLabel(label, roiIndex, shapeIndex);
+  }
+
+  public void setTextName(String name, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextName(name, roiIndex, shapeIndex);
+  }
+
+  public void setTextStroke(int stroke, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextStroke(stroke, roiIndex, shapeIndex);
+  }
+
+  public void setTextStrokeDashArray(String strokeDashArray, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextStrokeDashArray(strokeDashArray, roiIndex, shapeIndex);
+  }
+
+  public void setTextStrokeWidth(double strokeWidth, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextStrokeWidth(strokeWidth, roiIndex, shapeIndex);
+  }
+
+  public void setTextTheC(int theC, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextTheC(theC, roiIndex, shapeIndex);
+  }
+
+  public void setTextTheT(int theT, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextTheT(theT, roiIndex, shapeIndex);
+  }
+
+  public void setTextTheZ(int theZ, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextTheZ(theZ, roiIndex, shapeIndex);
+  }
+
+  public void setTextTransform(String transform, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextTransform(transform, roiIndex, shapeIndex);
+  }
+
+  public void setTextValue(String value, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextValue(value, roiIndex, shapeIndex);
+  }
+
+  public void setTextX(double x, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextX(x, roiIndex, shapeIndex);
+  }
+
+  public void setTextY(double y, int roiIndex, int shapeIndex, Current current) {
+    metadataObject.setTextY(y, roiIndex, shapeIndex);
   }
 
   // - TiffData property storage -
 
-  public void setTiffDataFileName(String fileName, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataFileName(fileName, imageIndex, pixelsIndex, tiffDataIndex);
+  public void setTiffDataFirstC(int firstC, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setTiffDataFirstC(firstC, imageIndex, tiffDataIndex);
   }
 
-  public void setTiffDataFirstC(int firstC, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataFirstC(firstC, imageIndex, pixelsIndex, tiffDataIndex);
+  public void setTiffDataFirstT(int firstT, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setTiffDataFirstT(firstT, imageIndex, tiffDataIndex);
   }
 
-  public void setTiffDataFirstT(int firstT, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataFirstT(firstT, imageIndex, pixelsIndex, tiffDataIndex);
+  public void setTiffDataFirstZ(int firstZ, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setTiffDataFirstZ(firstZ, imageIndex, tiffDataIndex);
   }
 
-  public void setTiffDataFirstZ(int firstZ, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataFirstZ(firstZ, imageIndex, pixelsIndex, tiffDataIndex);
+  public void setTiffDataIFD(int ifd, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setTiffDataIFD(ifd, imageIndex, tiffDataIndex);
   }
 
-  public void setTiffDataIFD(int ifd, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataIFD(ifd, imageIndex, pixelsIndex, tiffDataIndex);
+  public void setTiffDataPlaneCount(int planeCount, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setTiffDataPlaneCount(planeCount, imageIndex, tiffDataIndex);
   }
 
-  public void setTiffDataNumPlanes(int numPlanes, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataNumPlanes(numPlanes, imageIndex, pixelsIndex, tiffDataIndex);
+  // - TimestampAnnotation property storage -
+
+  public void setTimestampAnnotationID(String id, int timestampAnnotationIndex, Current current) {
+    metadataObject.setTimestampAnnotationID(id, timestampAnnotationIndex);
   }
 
-  public void setTiffDataUUID(String uuid, int imageIndex, int pixelsIndex, int tiffDataIndex, Current current) {
-    metadataObject.setTiffDataUUID(uuid, imageIndex, pixelsIndex, tiffDataIndex);
+  public void setTimestampAnnotationNamespace(String namespace, int timestampAnnotationIndex, Current current) {
+    metadataObject.setTimestampAnnotationNamespace(namespace, timestampAnnotationIndex);
+  }
+
+  public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex, Current current) {
+    metadataObject.setTimestampAnnotationValue(value, timestampAnnotationIndex);
   }
 
   // - TransmittanceRange property storage -
@@ -3239,13 +4058,31 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setTransmittanceRangeCutOutTolerance(cutOutTolerance, instrumentIndex, filterIndex);
   }
 
-  public void setTransmittanceRangeTransmittance(int transmittance, int instrumentIndex, int filterIndex, Current current) {
+  public void setTransmittanceRangeTransmittance(PercentFraction transmittance, int instrumentIndex, int filterIndex, Current current) {
     metadataObject.setTransmittanceRangeTransmittance(transmittance, instrumentIndex, filterIndex);
+  }
+
+  // - UUID property storage -
+
+  public void setUUIDFileName(String fileName, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setUUIDFileName(fileName, imageIndex, tiffDataIndex);
+  }
+
+  public void setUUIDValue(String value, int imageIndex, int tiffDataIndex, Current current) {
+    metadataObject.setUUIDValue(value, imageIndex, tiffDataIndex);
   }
 
   // - Well property storage -
 
-  public void setWellColumn(int column, int plateIndex, int wellIndex, Current current) {
+  public void setWellAnnotationRef(String annotationRef, int plateIndex, int wellIndex, int annotationRefIndex, Current current) {
+    metadataObject.setWellAnnotationRef(annotationRef, plateIndex, wellIndex, annotationRefIndex);
+  }
+
+  public void setWellColor(int color, int plateIndex, int wellIndex, Current current) {
+    metadataObject.setWellColor(color, plateIndex, wellIndex);
+  }
+
+  public void setWellColumn(NonNegativeInteger column, int plateIndex, int wellIndex, Current current) {
     metadataObject.setWellColumn(column, plateIndex, wellIndex);
   }
 
@@ -3261,19 +4098,25 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setWellID(id, plateIndex, wellIndex);
   }
 
-  public void setWellReagent(String reagent, int plateIndex, int wellIndex, Current current) {
-    metadataObject.setWellReagent(reagent, plateIndex, wellIndex);
+  public void setWellReagentRef(String reagentRef, int plateIndex, int wellIndex, Current current) {
+    metadataObject.setWellReagentRef(reagentRef, plateIndex, wellIndex);
   }
 
-  public void setWellRow(int row, int plateIndex, int wellIndex, Current current) {
+  public void setWellRow(NonNegativeInteger row, int plateIndex, int wellIndex, Current current) {
     metadataObject.setWellRow(row, plateIndex, wellIndex);
   }
 
-  public void setWellType(String type, int plateIndex, int wellIndex, Current current) {
-    metadataObject.setWellType(type, plateIndex, wellIndex);
+  public void setWellStatus(String status, int plateIndex, int wellIndex, Current current) {
+    metadataObject.setWellStatus(status, plateIndex, wellIndex);
   }
 
+  // - WellAnnotationRef property storage -
+
   // - WellSample property storage -
+
+  public void setWellSampleAnnotationRef(String annotationRef, int plateIndex, int wellIndex, int wellSampleIndex, int annotationRefIndex, Current current) {
+    metadataObject.setWellSampleAnnotationRef(annotationRef, plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
+  }
 
   public void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     metadataObject.setWellSampleID(id, plateIndex, wellIndex, wellSampleIndex);
@@ -3283,26 +4126,38 @@ public class IMetadataI extends _IMetadataDisp {
     metadataObject.setWellSampleImageRef(imageRef, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSampleIndex(int index, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+  public void setWellSampleIndex(NonNegativeInteger index, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     metadataObject.setWellSampleIndex(index, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSamplePosX(double posX, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
-    metadataObject.setWellSamplePosX(posX, plateIndex, wellIndex, wellSampleIndex);
+  public void setWellSamplePositionX(double positionX, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+    metadataObject.setWellSamplePositionX(positionX, plateIndex, wellIndex, wellSampleIndex);
   }
 
-  public void setWellSamplePosY(double posY, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
-    metadataObject.setWellSamplePosY(posY, plateIndex, wellIndex, wellSampleIndex);
+  public void setWellSamplePositionY(double positionY, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
+    metadataObject.setWellSamplePositionY(positionY, plateIndex, wellIndex, wellSampleIndex);
   }
 
   public void setWellSampleTimepoint(int timepoint, int plateIndex, int wellIndex, int wellSampleIndex, Current current) {
     metadataObject.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex);
   }
 
+  // - WellSampleAnnotationRef property storage -
+
   // - WellSampleRef property storage -
 
-  public void setWellSampleRefID(String id, int screenIndex, int screenAcquisitionIndex, int wellSampleRefIndex, Current current) {
-    metadataObject.setWellSampleRefID(id, screenIndex, screenAcquisitionIndex, wellSampleRefIndex);
+  // - XMLAnnotation property storage -
+
+  public void setXMLAnnotationID(String id, int xmlAnnotationIndex, Current current) {
+    metadataObject.setXMLAnnotationID(id, xmlAnnotationIndex);
+  }
+
+  public void setXMLAnnotationNamespace(String namespace, int xmlAnnotationIndex, Current current) {
+    metadataObject.setXMLAnnotationNamespace(namespace, xmlAnnotationIndex);
+  }
+
+  public void setXMLAnnotationValue(String value, int xmlAnnotationIndex, Current current) {
+    metadataObject.setXMLAnnotationValue(value, xmlAnnotationIndex);
   }
 
 }

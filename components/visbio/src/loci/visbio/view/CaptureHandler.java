@@ -164,7 +164,7 @@ public class CaptureHandler implements Saveable {
         BufferedImageWriter writer = new BufferedImageWriter();
         try {
           writer.setId(id);
-          writer.saveImage(getSnapshot(), true);
+          writer.savePlane(0, getSnapshot());
           writer.close();
         }
         catch (FormatException exc) { exc.printStackTrace(); }
@@ -269,7 +269,7 @@ public class CaptureHandler implements Saveable {
             String name = doMovie ? filename : (pre + count + post);
             try {
               writer.setId(name);
-              writer.saveImage(image, !doMovie);
+              writer.savePlane(image, !doMovie);
             }
             catch (IOException exc) { exc.printStackTrace(); }
             catch (FormatException exc) { exc.printStackTrace(); }
@@ -284,7 +284,7 @@ public class CaptureHandler implements Saveable {
         String name = doMovie ? filename : (pre + count + post);
         try {
           writer.setId(name);
-          writer.saveImage(image, true);
+          writer.savePlane(0, image);
         }
         catch (IOException exc) { exc.printStackTrace(); }
         catch (FormatException exc) { exc.printStackTrace(); }

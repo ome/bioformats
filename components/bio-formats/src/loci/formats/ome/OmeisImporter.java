@@ -35,6 +35,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.FileStitcher;
@@ -42,6 +45,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.formats.services.OMEXMLService;
 import ome.xml.DOMUtil;
 import ome.xml.r2003fc.ome.OMENode;
 
@@ -97,7 +101,15 @@ public class OmeisImporter {
     stitch = stitchFiles;
     reader = new ChannelSeparator(new ChannelFiller());
     if (stitch) reader = new FileStitcher(reader);
-    omexmlMeta = (AbstractOMEXMLMetadata) MetadataTools.createOMEXMLMetadata();
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      omexmlMeta = (AbstractOMEXMLMetadata) service.createOMEXMLMetadata();
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
+
     reader.setOriginalMetadataPopulated(true);
     reader.setMetadataStore(omexmlMeta);
   }
