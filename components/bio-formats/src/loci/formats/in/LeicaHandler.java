@@ -528,6 +528,7 @@ public class LeicaHandler extends DefaultHandler {
         if (attribute.equals("State")) {
           Detector d = new Detector();
           String data = attributes.getValue("data");
+          if (data == null) data = attributes.getValue("Data");
           d.channel = data == null ? 0 : Integer.parseInt(data);
           d.type = "PMT";
           d.model = object;
