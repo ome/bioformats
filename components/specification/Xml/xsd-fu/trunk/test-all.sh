@@ -17,4 +17,7 @@ echo Testing 200809To200909
 echo Testing 200909To201004
 ./xslt-test200909To201004
 
+echo Testing 201004To201006
+./xslt-test201004To201006
+
 echo Testing finished.
