@@ -161,11 +161,11 @@ public class Slicer implements PlugInFilter {
       // prompt for slicing options
 
       GenericDialog gd = new GenericDialog("Slicing options...");
-      gd.addCheckbox("Split channels", false);
-      gd.addCheckbox("Split Z slices", false);
-      gd.addCheckbox("Split timepoints", false);
-      gd.addCheckbox("Keep original stack", false);
-      gd.addChoice("Stack order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
+      gd.addCheckbox("Split_channels", false);
+      gd.addCheckbox("Split_Z slices", false);
+      gd.addCheckbox("Split_timepoints", false);
+      gd.addCheckbox("Keep_original stack", false);
+      gd.addChoice("Stack_order", new String[] {"XYCZT", "XYCTZ", "XYZCT",
         "XYZTC", "XYTCZ", "XYTZC"}, "XYCZT");
       gd.showDialog();
 
@@ -181,9 +181,9 @@ public class Slicer implements PlugInFilter {
       stackOrder = gd.getNextChoice();
     }
     else {
-      sliceC = getBooleanValue("slice_c");
-      sliceZ = getBooleanValue("slice_z");
-      sliceT = getBooleanValue("slice_t");
+      sliceC = getBooleanValue("split_channels");
+      sliceZ = getBooleanValue("split_z");
+      sliceT = getBooleanValue("split_timepoints");
       keepOriginal = getBooleanValue("keep_original");
       stackOrder = Macro.getValue(arg, "stack_order", "XYCZT");
     }
