@@ -84,8 +84,134 @@
 		</xsl:choose>
 	</xsl:template>
 
+	<!-- Transform the value from the unsigned int color range to the signed int color range -->
+	<xsl:template name="transformColorToSignedValue">
+		<xsl:param name="colorValue"/>
+		<xsl:choose>
+			<xsl:when test="$colorValue > 2147483647">
+				<xsl:value-of select="0 - ( $colorValue - 2147483647 )"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$colorValue"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
 	<!-- Actual schema changes -->
 
+	<xsl:template match="ROI:Mask">
+		<xsl:element name="ROI:Mask" namespace="{$newROINS}">
+			<xsl:attribute name="Width">
+				<xsl:value-of select="$numberDefault"/>
+			</xsl:attribute>
+			<xsl:attribute name="Height">
+				<xsl:value-of select="$numberDefault"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="ROI:Shape">
+		<xsl:element name="ROI:Shape" namespace="{$newROINS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name() = 'Fill' or name() = 'Stroke'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformColorToSignedValue">
+								<xsl:with-param name="colorValue">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="OME:Channel">
+		<xsl:element name="OME:Channel" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name() = 'Color'">
+						<xsl:attribute name="Color">
+							<xsl:call-template name="transformColorToSignedValue">
+								<xsl:with-param name="colorValue">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="SPW:Well">
+		<xsl:element name="SPW:Well" namespace="{$newSPWNS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name() = 'Color'">
+						<xsl:attribute name="Color">
+							<xsl:call-template name="transformColorToSignedValue">
+								<xsl:with-param name="colorValue">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="SPW:WellSample">
+		<xsl:element name="SPW:WellSample" namespace="{$newSPWNS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name() = 'Timepoint'">
+						<!-- 1970-01-01T00:00:00.0Z -->
+						<!-- 
+							Currently the value Timepoint is stripped as we can see
+							no valid way of transforming it to the new type.
+						-->
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="SA:StringAnnotation">
+		<xsl:element name="SA:CommentAnnotation" namespace="{$newSANS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+	
+	
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
@@ -95,7 +221,11 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06 http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd">
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06 
+			http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd">
+			<!-- TODO:Fix to real location 
+				http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd
+			-->
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>
