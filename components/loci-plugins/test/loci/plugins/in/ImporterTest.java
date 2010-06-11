@@ -35,6 +35,12 @@ import loci.plugins.in.ImporterOptions;
 
 // TODO
 
+// left off
+//   why does seriesInCorrectOrder() behave so differently depending upon how it loads index values?
+//     ImagePlus.setPosition() sets the slice based on CZT order. My other code assumes ZCT order and never messes with
+//     setPosition(). Somehow I have to look in order of stack but order not via czt but zct. I started changin getPixelValue()
+//     to lookup slices in ZCT order. My change did not work as I expected. It temporarily broke memorySpecRange().
+
 // seem broken but don't know status from Curtis
 //   colorized: 1/1/indexed (all indices 0 for all images), 3/1/indexed (iIndex,cIndex) (although w/ falseColor its okay),
 //     6/3/nonindexed (iIndex,cIndex), 12/3/nonindexed (iIndex,cIndex), 3/3/indexed (iIndex,cIndex)
@@ -42,9 +48,9 @@ import loci.plugins.in.ImporterOptions;
 //   record does not work
 
 // broken
-//   comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are outside
-//   the minimum represntable value of an int as a float. So when we make a FloatProcessor on the int[] data the
-//   huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
+//   comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are less
+//   than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
+//   the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
 //   by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
 //   with I guess.
 
@@ -61,6 +67,7 @@ import loci.plugins.in.ImporterOptions;
 //     "Invert" is recordable and record("invert") getting called but doRecording is false for some reason. Also Curtis
 //     thought flip would be easier to use for predicting actual values rather than special case code with invert. As
 //     I'm only doing UINT8 for now this is not a problem.
+//   I removed the mergePixel() routine. BF does merging somewhere but I don't yet know where to test it.
 
 // waiting on BF implementations for
 //   - indexed color support
@@ -262,7 +269,7 @@ public class ImporterTest {
   
   // note : for now assumes default ZCT ordering
   /** Tests that an ImageStack is ordered according to specified from/to/by points of z/c/t */
-  private boolean seriesInCorrectOrder(ImageStack st,
+  private boolean seriesInCorrectOrder(ImagePlus imp, boolean indexed,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
       int tFrom, int tTo, int tBy)
@@ -270,6 +277,8 @@ public class ImporterTest {
     int zs = numInSeries(zFrom,zTo,zBy);
     int cs = numInSeries(cFrom,cTo,cBy);
     int ts = numInSeries(tFrom,tTo,tBy);
+    
+    ImageStack st = imp.getStack();
     
     if ((zs * cs * ts) != st.getSize())
     {
@@ -282,11 +291,30 @@ public class ImporterTest {
       for (int c = cFrom; c <= cTo; c += cBy)
         for (int z = zFrom; z <= zTo; z += zBy)
         {
-          ImageProcessor proc = st.getProcessor(procNum);
-          if ((zIndex(proc) != z) || (cIndex(proc) != c) || (tIndex(proc) != t))
+          int zIndex=0, cIndex=0, tIndex=0;
+          
+          // TODO - this code fails with C/Z calced in wrong order - determine why
+          
+          zIndex = zIndex(imp,z,c,t,indexed);
+          cIndex = cIndex(imp,z,c,t,indexed);
+          tIndex = tIndex(imp,z,c,t,indexed);
+
+          //System.out.println("  after wrong way z("+imp.getSlice()+") c("+imp.getChannel()+") t("+imp.getFrame()+")");
+          
+          // TODO - this code works but can't support indexed data
+          
+          //ImageProcessor proc = imp.getStack().getProcessor(procNum);
+          
+          //zIndex = zIndex(proc);
+          //cIndex = cIndex(proc);
+          //tIndex = tIndex(proc);
+          
+          //System.out.println("  after right way z("+imp.getSlice()+") c("+imp.getChannel()+") t("+imp.getFrame()+")");
+
+          if ((zIndex != z) || (cIndex != c) || (tIndex != t))
           {
-            System.out.println("seriesInCorrectOrder() - slices out of order: exp z"+z+" c"+c+" t"+t+" != act z"+
-                zIndex(proc)+" c"+cIndex(proc)+" t"+tIndex(proc)+" for proc number "+procNum);
+            System.out.println("seriesInCorrectOrder() - slices out of order: expZ("+z+") expC("+c+") expT("+t+") != actZ("+
+                zIndex+") actC("+cIndex+") actT("+tIndex+") for proc number "+procNum);
             return false;
           }
           procNum++;
@@ -321,15 +349,6 @@ public class ImporterTest {
 
   /** The number of effective C slices in an ImagePlus */
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
-
-  // used by the color merge code. calcs a pixel value in our ramped data for a 3 channel merged image
-  private int mergedPixel(int i)
-  {
-    if ((i < 0) || (i > 15))
-      throw new IllegalArgumentException("mergedPixel() can only handle 1st 16 cases. Wants 0<=i<=15 but i = " + i);
-    
-    return i*65536 + i*256 + i;
-  }
 
   // TODO : this code written to pass tests - looks wrong on a number of pixel types
   private long maxPixelValue(int pixType)
@@ -394,11 +413,17 @@ public class ImporterTest {
     return new LUT(reds,greens,blues);
   }
   
+  private void mySetPos(ImagePlus imp,int z, int c, int t, int maxZ, int maxC, int maxT)
+  {
+    imp.setSlice(t*maxC*maxZ + c*maxZ + z);
+  }
+
   /** get the actual pixel value (lookup when data is indexed) of the index of a fake image at a given z,c,t */
   private int getPixelValue(int x,int y, ImagePlus imp, int z, int c, int t, boolean indexed)
   {
     // our indices are 0-based while IJ's are 1-based
-    imp.setPosition(c+1, z+1, t+1);
+    //imp.setPosition(c+1, z+1, t+1);  // TODO - old way
+    mySetPos(imp,z,c,t,imp.getNSlices(),imp.getNChannels(),imp.getNFrames()); // TODO - why doesn't this result in correct behavior?
     
     int rawValue = (int) (imp.getProcessor().getPixelValue(x, y));
     
@@ -511,8 +536,10 @@ public class ImporterTest {
     assertTrue(originCropY + sizeCrop <= sizeY);
   }
   
+  // ******** specific testers  **********************************
+  
   /** tests BioFormats when directly calling BF.openImagePlus(path) (no options set) */
-  private void defaultBehaviorTest(int pixType, int x, int y, int z, int c, int t)
+  private void defaultBehaviorTester(int pixType, int x, int y, int z, int c, int t)
   {
     String path = constructFakeFilename("default", pixType, x, y, z, c, t, -1, false, -1, false, -1);
     ImagePlus[] imps = null;
@@ -534,7 +561,7 @@ public class ImporterTest {
     xyzctTest(imp,x,y,z,c,t);
   }
   
-  private void outputStackOrderTest(int pixType, ChannelOrder order, int x, int y, int z, int c, int t)
+  private void outputStackOrderTester(int pixType, ChannelOrder order, int x, int y, int z, int c, int t)
   {
     String bfChOrder = bfChanOrd(order);
     String chOrder = order.toString();
@@ -590,7 +617,7 @@ public class ImporterTest {
         }
   }
   
-  private void datasetSwapDimsTest(int pixType, int x, int y, int z, int t)
+  private void datasetSwapDimsTester(int pixType, int x, int y, int z, int t)
   {
     int c = 3;
     ChannelOrder swappedOrder = ChannelOrder.TCZ; // original order is ZCT
@@ -644,7 +671,7 @@ public class ImporterTest {
         }
   }
 
-  private void datasetOpenAllSeriesTest(int x, int y, int z, int c, int t, int s)
+  private void datasetOpenAllSeriesTester(int x, int y, int z, int c, int t, int s)
   {
     String path = constructFakeFilename("openAllSeries", FormatTools.UINT32, x, y, z, c, t, s, false, -1, false, -1);
     
@@ -696,7 +723,7 @@ public class ImporterTest {
     }
   }
   
-  private void datasetConcatenateTest(int pixType, int x, int y, int z, int c, int t, int s)
+  private void datasetConcatenateTester(int pixType, int x, int y, int z, int c, int t, int s)
   {
     assertTrue(s >= 1);  // necessary for this test
     
@@ -742,7 +769,7 @@ public class ImporterTest {
     }
   }
   
-  private void autoscaleTest(int pixType, boolean wantAutoscale)
+  private void autoscaleTester(int pixType, boolean wantAutoscale)
   {
     final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
     final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
@@ -813,7 +840,7 @@ public class ImporterTest {
     }
   }
   
-  private void colorCompositeTest(int pixType, boolean indexed, int rgb, boolean falseColor, int sizeC, int numSeries)
+  private void colorCompositeTester(int pixType, boolean indexed, int rgb, boolean falseColor, int sizeC, int numSeries)
   {
     int sizeX = 55, sizeY = 71, sizeZ = 3, sizeT = 4;
     
@@ -882,7 +909,7 @@ public class ImporterTest {
           assertEquals(index++, getIndexValue(ci,z,c,t,indexed));  // expected value from CZT order
   }
   
-  private void colorColorizedTest()
+  private void colorColorizedTester()
   {
     // TODO: temp first attempt: sizeC == 1 and rgb matches
     
@@ -931,7 +958,7 @@ public class ImporterTest {
     fail("unfinished");
   }
   
-  private void colorGrayscaleTest()
+  private void colorGrayscaleTester()
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4;
     
@@ -973,7 +1000,7 @@ public class ImporterTest {
     fail("unfinished");
   }
 
-  private void colorCustomTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
+  private void colorCustomTester(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
   {
     // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
     
@@ -1021,7 +1048,7 @@ public class ImporterTest {
     colorTests(ci,sizeC,CustomColorOrder);
   }
   
-  private void memoryVirtualStackTest(boolean desireVirtual)
+  private void memoryVirtualStackTester(boolean desireVirtual)
   {
       int x = 604, y = 531, z = 7, c = 1, t = 1;
       
@@ -1050,7 +1077,7 @@ public class ImporterTest {
       assertEquals(desireVirtual,imp.getStack().isVirtual());
   }
 
-  private void memoryRecordModificationsTest(boolean wantToRemember)
+  private void memoryRecordModificationsTester(boolean wantToRemember)
   {
     int x = 50, y = 15, z = 3, c = 1, t = 1;
     String path = constructFakeFilename("memRec", FormatTools.UINT8, x, y, z, c, t, -1, false, -1, false, -1);
@@ -1098,7 +1125,7 @@ public class ImporterTest {
     assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(1,10));
   }
   
-  private void memorySpecifyRangeTest(int z, int c, int t,
+  private void memorySpecifyRangeTester(int z, int c, int t,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
       int tFrom, int tTo, int tBy)
@@ -1149,13 +1176,12 @@ public class ImporterTest {
     impsCountTest(imps,1);
     ImagePlus imp = imps[0];
     xyzctTest(imp,x,y,numInSeries(zFrom,zTo,zBy),numInSeries(cFrom,cTo,cBy),numInSeries(tFrom,tTo,tBy));
-    ImageStack st = imp.getStack();
 
     // should be in correct order
-    assertTrue(seriesInCorrectOrder(st,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy));
+    assertTrue(seriesInCorrectOrder(imp,false,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy));
   }
   
-  private void memoryCropTest(int x, int y, int ox, int oy, int cropSize)
+  private void memoryCropTester(int x, int y, int ox, int oy, int cropSize)
   {
     verifyCropInput(x, y, ox, oy, cropSize);  // needed for this test
 
@@ -1191,7 +1217,7 @@ public class ImporterTest {
 
   // note - this test needs to rely on crop() to get predictable nonzero minimums
   
-  private void comboCropAndAutoscaleTest(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
+  private void comboCropAndAutoscaleTester(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
       int originCropX, int originCropY, int sizeCrop)
   {
     final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
@@ -1263,7 +1289,7 @@ public class ImporterTest {
     }
   }
   
-  private void comboConcatSplitFocalPlanesTest()
+  private void comboConcatSplitFocalPlanesTester()
   {
     // take a nontrivial zct set of series
     // run split and concat at same time
@@ -1318,7 +1344,7 @@ public class ImporterTest {
     }
   }
   
-  private void comboConcatSplitChannelsTest()
+  private void comboConcatSplitChannelsTester()
   {
     // take a nontrivial zct set of series
     // run split and concat at same time
@@ -1372,7 +1398,7 @@ public class ImporterTest {
     }
   }
   
-  private void comboConcatSplitTimepointsTest()
+  private void comboConcatSplitTimepointsTester()
   {
     // take a nontrivial zct set of series
     // run split and concat at same time
@@ -1431,21 +1457,21 @@ public class ImporterTest {
   @Test
   public void testDefaultBehavior()
   {
-    defaultBehaviorTest(FormatTools.UINT16, 400, 300, 1, 1, 1);
-    defaultBehaviorTest(FormatTools.INT16, 107, 414, 1, 1, 1);
-    defaultBehaviorTest(FormatTools.UINT32, 323, 206, 3, 2, 1);
-    defaultBehaviorTest(FormatTools.UINT8, 57, 78, 5, 4, 3);
-    defaultBehaviorTest(FormatTools.INT32, 158, 99, 2, 3, 4);
-    defaultBehaviorTest(FormatTools.INT8, 232, 153, 3, 7, 5);
-    defaultBehaviorTest(FormatTools.FLOAT, 73, 99, 3, 4, 5);
-    defaultBehaviorTest(FormatTools.DOUBLE, 106, 44, 5, 5, 4);
+    defaultBehaviorTester(FormatTools.UINT16, 400, 300, 1, 1, 1);
+    defaultBehaviorTester(FormatTools.INT16, 107, 414, 1, 1, 1);
+    defaultBehaviorTester(FormatTools.UINT32, 323, 206, 3, 2, 1);
+    defaultBehaviorTester(FormatTools.UINT8, 57, 78, 5, 4, 3);
+    defaultBehaviorTester(FormatTools.INT32, 158, 99, 2, 3, 4);
+    defaultBehaviorTester(FormatTools.INT8, 232, 153, 3, 7, 5);
+    defaultBehaviorTester(FormatTools.FLOAT, 73, 99, 3, 4, 5);
+    defaultBehaviorTester(FormatTools.DOUBLE, 106, 44, 5, 5, 4);
   }
 
   @Test
   public void testOutputStackOrder()
   {
     for (ChannelOrder order : ChannelOrder.values())
-      outputStackOrderTest(FormatTools.UINT8, order,  82, 47, 2, 3, 4);
+      outputStackOrderTester(FormatTools.UINT8, order,  82, 47, 2, 3, 4);
   }
     
   @Test
@@ -1548,32 +1574,32 @@ public class ImporterTest {
     // TODO: testing only swapping Z&T of XYZTC. Add more option testing.
     //   Note that testComboManyOptions() tests another swap order
 
-    datasetSwapDimsTest(FormatTools.UINT8, 82, 47, 1, 3);
-    datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 3, 1);
-    datasetSwapDimsTest(FormatTools.UINT16, 82, 47, 5, 2);
-    datasetSwapDimsTest(FormatTools.UINT32, 82, 47, 5, 2);
-    datasetSwapDimsTest(FormatTools.INT8, 44, 108, 1, 4);
-    datasetSwapDimsTest(FormatTools.INT16, 44, 108, 2, 1);
-    datasetSwapDimsTest(FormatTools.INT32, 44, 108, 4, 3);
-    datasetSwapDimsTest(FormatTools.FLOAT, 67, 109, 4, 3);
-    datasetSwapDimsTest(FormatTools.DOUBLE, 67, 100, 3, 2);
+    datasetSwapDimsTester(FormatTools.UINT8, 82, 47, 1, 3);
+    datasetSwapDimsTester(FormatTools.UINT16, 82, 47, 3, 1);
+    datasetSwapDimsTester(FormatTools.UINT16, 82, 47, 5, 2);
+    datasetSwapDimsTester(FormatTools.UINT32, 82, 47, 5, 2);
+    datasetSwapDimsTester(FormatTools.INT8, 44, 108, 1, 4);
+    datasetSwapDimsTester(FormatTools.INT16, 44, 108, 2, 1);
+    datasetSwapDimsTester(FormatTools.INT32, 44, 108, 4, 3);
+    datasetSwapDimsTester(FormatTools.FLOAT, 67, 109, 4, 3);
+    datasetSwapDimsTester(FormatTools.DOUBLE, 67, 100, 3, 2);
   }
 
   @Test
   public void testDatasetOpenAllSeries()
   {
-    datasetOpenAllSeriesTest(73,107,1,1,1,1);  // one series
-    datasetOpenAllSeriesTest(73,107,1,1,1,2);  // two series
-    datasetOpenAllSeriesTest(73,107,5,3,4,4);  // multiple series with Z,C,T larger than 1
+    datasetOpenAllSeriesTester(73,107,1,1,1,1);  // one series
+    datasetOpenAllSeriesTester(73,107,1,1,1,2);  // two series
+    datasetOpenAllSeriesTester(73,107,5,3,4,4);  // multiple series with Z,C,T larger than 1
   }
 
   @Test
   public void testDatasetConcatenate()
   {
     // open a dataset that has multiple series and should get back a single series
-    datasetConcatenateTest(FormatTools.UINT8, 82, 47, 1, 1, 1, 1);
-    datasetConcatenateTest(FormatTools.UINT8, 82, 47, 1, 1, 1, 17);
-    datasetConcatenateTest(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
+    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 1, 1, 1, 1);
+    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 1, 1, 1, 17);
+    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
   }
 
   @Test
@@ -1618,8 +1644,8 @@ public class ImporterTest {
     // BF only supporting C from 2 to 7 and due to IJ's slider limitation (C*numSeries*3) <= 25
 
     // these here to simplify debugging
-    colorCompositeTest(FormatTools.UINT8,false,1,false,3,1);
-    colorCompositeTest(FormatTools.UINT8,true,1,false,3,1);
+    colorCompositeTester(FormatTools.UINT8,false,1,false,3,1);
+    colorCompositeTester(FormatTools.UINT8,true,1,false,3,1);
 
     int[] pixTypes = new int[] {FormatTools.UINT8};
     int[] cs = new int[] {2,3,4,5,6,7};  // all that BF/IJ supports right now
@@ -1637,20 +1663,20 @@ public class ImporterTest {
                   for (boolean falseColor : BooleanStates)
                   {
                     //System.out.println(" format "+pixFormat+"indexed "+indexed+" rgb "+rgb+" fasleColor "+falseColor+" c "+c+" s "+s);
-                    colorCompositeTest(pixFormat,indexed,rgb,falseColor,c,s);
+                    colorCompositeTester(pixFormat,indexed,rgb,falseColor,c,s);
                   }
   }
   
   @Test
   public void testColorColorized()
   {
-    colorColorizedTest();
+    colorColorizedTester();
   }
   
   @Test
   public void testColorGrayscale()
   {
-    colorGrayscaleTest();
+    colorGrayscaleTester();
   }
   
   @Test
@@ -1676,7 +1702,7 @@ public class ImporterTest {
                   if ((c*s*3) <= 25)  // IJ slider limitation
                   {
                     //System.out.println("format "+pixFormat+" x "+x+" y "+y+" z "+z+" c "+c+" t "+t+" s "+s);
-                    colorCustomTest(pixFormat,x,y,z,c,t,s);
+                    colorCustomTester(pixFormat,x,y,z,c,t,s);
                   }
   }
   
@@ -1693,7 +1719,7 @@ public class ImporterTest {
       for (boolean autoscale : BooleanStates)
       {
         //System.out.println("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
-        autoscaleTest(pixType,autoscale);
+        autoscaleTester(pixType,autoscale);
       }
     }
   }
@@ -1701,15 +1727,15 @@ public class ImporterTest {
   @Test
   public void testMemoryVirtualStack()
   {
-    memoryVirtualStackTest(false);
-    memoryVirtualStackTest(true);
+    memoryVirtualStackTester(false);
+    memoryVirtualStackTester(true);
   }
 
   @Test
   public void testMemoryRecordModifications()
   {
-    memoryRecordModificationsTest(false);
-    memoryRecordModificationsTest(true);
+    memoryRecordModificationsTester(false);
+    memoryRecordModificationsTester(true);
   }
 
   @Test
@@ -1719,70 +1745,70 @@ public class ImporterTest {
 
     // test partial z: from
     z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial z: to
     z=8; c=3; t=2; zFrom=0; zTo=4; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
 
     // test partial z: by
     z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
 
     // test full z
     z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial c: from
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial c: to
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial c: by
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test full c
     z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial t: from
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial t: to
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=8; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test partial t: by
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test full t
     z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test edge case combo with an invalid by
     z=2; c=2; t=2; zFrom=0; zTo=0; zBy=2; cFrom=1; cTo=1; cBy=1; tFrom=0; tTo=1; tBy=1;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
 
     // test a combination of zct's
     z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=5; tBy=2;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test another combination of zct's
     z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
-    memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
     
     // test bad combination of zct's - choosing beyond ends of ranges
     
     // z index before 0 begin
     try {
       z=7; c=7; t=7; zFrom=-1; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1791,7 +1817,7 @@ public class ImporterTest {
     // z index after z-1 end
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1800,7 +1826,7 @@ public class ImporterTest {
     // z by < 1
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1809,7 +1835,7 @@ public class ImporterTest {
     // c index before 0 begin
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=-1; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1818,7 +1844,7 @@ public class ImporterTest {
     // c index after c-1 end
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1827,7 +1853,7 @@ public class ImporterTest {
     // c by < 1
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1836,7 +1862,7 @@ public class ImporterTest {
     // t index before 0 begin
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=-1; tTo=t-1; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1845,7 +1871,7 @@ public class ImporterTest {
     // t index after t-1 end
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t; tBy=1;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1854,7 +1880,7 @@ public class ImporterTest {
     // t by < 1
     try {
       z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
-      memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
       fail();
     } catch (IllegalArgumentException e) {
       assertTrue(true);
@@ -1885,7 +1911,7 @@ public class ImporterTest {
                       {
                         // expect failure
                         try {
-                          memorySpecifyRangeTest(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+                          memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
                           System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
                             " z vals "+zFrom+" "+zTo+" "+zBy+
                             " c vals "+cFrom+" "+cTo+" "+cBy+
@@ -1897,7 +1923,7 @@ public class ImporterTest {
                       }
                       else
                         // expect success
-                        memorySpecifyRangeTest(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
+                        memorySpecifyRangeTester(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
     */
     
   }
@@ -1905,10 +1931,10 @@ public class ImporterTest {
   @Test
   public void testMemoryCrop()
   {
-    memoryCropTest(203, 255, 55, 20, 3);
-    memoryCropTest(203, 184, 55, 40, 2);
-    memoryCropTest(101, 76, 0, 25, 4);
-    memoryCropTest(100, 122, 0, 15, 3);
+    memoryCropTester(203, 255, 55, 20, 3);
+    memoryCropTester(203, 184, 55, 40, 2);
+    memoryCropTester(101, 76, 0, 25, 4);
+    memoryCropTester(100, 122, 0, 15, 3);
   }
   
   @Test
@@ -2054,14 +2080,14 @@ public class ImporterTest {
   public void testComboCropAutoscale()
   {
     // try a simple test: single small byte type image 
-    comboCropAndAutoscaleTest(FormatTools.UINT8,240,240,1,1,1,70,40,25);
+    comboCropAndAutoscaleTester(FormatTools.UINT8,240,240,1,1,1,70,40,25);
     
     // try multiple dimensions
-    comboCropAndAutoscaleTest(FormatTools.UINT8,240,240,4,3,2,51,15,13);
+    comboCropAndAutoscaleTester(FormatTools.UINT8,240,240,4,3,2,51,15,13);
     
     // try various pixTypes
     for (int pixType : PixelTypes)
-      comboCropAndAutoscaleTest(pixType,240,240,2,2,2,225,225,10);
+      comboCropAndAutoscaleTester(pixType,240,240,2,2,2,225,225,10);
   }
   
   @Test
@@ -2073,19 +2099,19 @@ public class ImporterTest {
   @Test
   public void testComboConcatSplitZ()
   {
-    comboConcatSplitFocalPlanesTest();
+    comboConcatSplitFocalPlanesTester();
   }
 
   @Test
   public void testComboConcatSplitC()
   {
-    comboConcatSplitChannelsTest();
+    comboConcatSplitChannelsTester();
   }
 
   @Test
   public void testComboConcatSplitT()
   {
-    comboConcatSplitTimepointsTest();
+    comboConcatSplitTimepointsTester();
   }
 
   @Test
@@ -2248,6 +2274,7 @@ public class ImporterTest {
         for (int zIndex = 0; zIndex < sizeZ; zIndex++)
           getIndexValue(imp, zIndex, cIndex, tIndex, indexed);
           //assertEquals(iIndex++,getIndexValue(imp, zIndex, cIndex, tIndex, indexed));
+          // testValues(imp,0,zIndex,cIndex,tIndex,iIndex,indexed);
   }
 
   @Test
@@ -2315,5 +2342,131 @@ public class ImporterTest {
     
     fail("Numerous failures : actual tests commented out to see all print statements.");
   }
+
+  private void compositeTester(int sizeC, boolean indexed)
+  {
+    System.out.println("compositeTest: sizeC = "+sizeC);
+    
+    int pixType = FormatTools.UINT8, sizeX = 60, sizeY = 30, sizeZ = 2, sizeT = 3, numSeries = 1, rgb = -1, lutLen = -1;
+    boolean falseColor = false;
+    
+    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, indexed,
+                                          rgb, falseColor, lutLen);
+
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    impsCountTest(imps,1);
+    
+    imp = imps[0];
+   
+    /*
+    System.out.println("  Returned imp: Z = " +imp.getNSlices()+ " C = " +imp.getNChannels()+" T = "+imp.getNFrames());
+    for (int tIndex = 0; tIndex < imp.getNFrames(); tIndex++)
+      for (int zIndex = 0; zIndex < imp.getNSlices(); zIndex++)
+        for (int cIndex = 0; cIndex < imp.getNChannels(); cIndex++)
+        {
+          imp.setPosition(cIndex+1,zIndex+1,tIndex+1);
+          ImageProcessor proc = imp.getProcessor();
+          printVals(proc);
+        }
+    */
+    
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+
+    assertTrue(imp.isComposite());
+
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+
+    assertEquals(CompositeImage.COMPOSITE, ci.getMode());
+    
+    colorTests(ci,sizeC,DefaultColorOrder);
+      
+    int iIndex = 0;
+    for (int tIndex = 0; tIndex < sizeT; tIndex++)
+      for (int zIndex = 0; zIndex < sizeZ; zIndex++)
+        for (int cIndex = 0; cIndex < sizeC; cIndex++)
+        {
+          //testIndexValues(imp,0,iIndex++,zIndex,cIndex,tIndex,indexed);
+          assertEquals(0,sIndex(imp,zIndex,cIndex,tIndex,indexed));
+          assertEquals(iIndex++,iIndex(imp,zIndex,cIndex,tIndex,indexed));
+        }
+    
+    assertTrue(seriesInCorrectOrder(imp,indexed,0,sizeZ-1,1,0,sizeC-1,1,0,sizeT-1,1));
+    
+    // images from BF look to be in ZCT order
+    // however IJ likes CZT order
+    // seriesInCorrectOrder() is the touchpoint between both ways. See there.
+  }
+
+  /** helper test that verifies the indices of a FakeFile[z,c,t] match passed in values*/
+  private void testIndexValues(ImagePlus imp, int s, int i, int z, int c, int t, boolean indexed)
+  {
+    String status = "Correct";
+    if ((z != zIndex(imp, z, c, t, indexed)) || (c != cIndex(imp, z, c, t, indexed)))
+      status = "Wrong";
+    //  System.out.println("expZ("+z+") expC("+c+")  actZ("+zIndex(imp, z, c, t, indexed)+
+    //                      ") actC("+cIndex(imp, z, c, t, indexed)+")");
+    //else
+    //  System.out.println("Z("+z+") C("+c+") correct!");
+    System.out.println("s("+sIndex(imp,z,c,t,indexed)+") i("+iIndex(imp,z,c,t,indexed)+") z("+zIndex(imp,z,c,t,indexed)+
+        ") c("+cIndex(imp,z,c,t,indexed)+") t("+tIndex(imp,z,c,t,indexed)+")    expZ("+z+") expC("+c+") "+status);
+    assertEquals(s,sIndex(imp, z, c, t, indexed));
+    assertEquals(i,iIndex(imp, z, c, t, indexed));
+    //assertEquals(z,zIndex(imp, z, c, t, indexed));
+    //assertEquals(c,cIndex(imp, z, c, t, indexed));
+    assertEquals(t,tIndex(imp, z, c, t, indexed));
+  }
   
+  private int sIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(0,0,imp,z,c,t,indexed);
+  }
+  
+  private int iIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(10,0,imp,z,c,t,indexed);
+  }
+  
+  private int zIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(20,0,imp,z,c,t,indexed);
+  }
+  
+  private int cIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(30,0,imp,z,c,t,indexed);
+  }
+  
+  private int tIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(40,0,imp,z,c,t,indexed);
+  }
+  
+  @Test
+  public void testCompositeSubcases()
+  {
+    // TODO - handle more cases with falseColor, rgb, etc.
+    for (boolean indexed : BooleanStates)
+      for (int channels = 2; channels <= 7; channels++)
+        if (!indexed)  // TODO - remove in future; only doing nonindexed right now
+          compositeTester(channels,indexed);
+    fail("unfinished");
+  }
 }
