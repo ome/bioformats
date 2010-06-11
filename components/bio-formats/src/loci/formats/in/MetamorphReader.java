@@ -120,9 +120,16 @@ public class MetamorphReader extends BaseTiffReader {
     super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "nd")) return true;
+    return super.isThisType(name, open);
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
