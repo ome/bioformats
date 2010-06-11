@@ -183,8 +183,8 @@ public final class ImagePlusTools {
   public static void adjustColorRange(ImagePlus imp,
     MinMaxCalculator minMaxCalc)
   {
-    double min = Double.MAX_VALUE;
-    double max = Double.MIN_VALUE;
+    double min = Double.POSITIVE_INFINITY;
+    double max = Double.NEGATIVE_INFINITY;
 
     // try to grab min and max values from the MinMaxCalculator
     if (minMaxCalc != null) {
@@ -206,7 +206,7 @@ public final class ImagePlusTools {
     }
 
     // couldn't find min and max values; determine manually
-    if (min == Double.MAX_VALUE && max == Double.MIN_VALUE) {
+    if (min == Double.POSITIVE_INFINITY && max == Double.NEGATIVE_INFINITY) {
       ImageStack stack = imp.getStack();
       for (int i=0; i<stack.getSize(); i++) {
         ImageProcessor p = stack.getProcessor(i + 1);

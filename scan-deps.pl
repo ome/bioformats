@@ -461,14 +461,14 @@ ZZ
 my %junit = (
   NAME    => "junit",
   TITLE   => "JUnit",
-  JAR     => "junit.jar",
+  JAR     => "junit-4.8.2.jar",
   PACKAGE => ".*junit",
   LICENSE => "Common Public License",
   URL     => "http://www.junit.org/",
   NOTES   => <<ZZ,
 unit testing framework used for a few VisBio unit tests
 ZZ
-  VERSION => "3.8.2"
+  VERSION => "4.8.2"
 );
 
 my %lma = (
