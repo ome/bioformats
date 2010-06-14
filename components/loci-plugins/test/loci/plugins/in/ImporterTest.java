@@ -36,10 +36,8 @@ import loci.plugins.in.ImporterOptions;
 // TODO
 
 // left off
-//   why does seriesInCorrectOrder() behave so differently depending upon how it loads index values?
-//     ImagePlus.setPosition() sets the slice based on CZT order. My other code assumes ZCT order and never messes with
-//     setPosition(). Somehow I have to look in order of stack but order not via czt but zct. I started changin getPixelValue()
-//     to lookup slices in ZCT order. My change did not work as I expected. It temporarily broke memorySpecRange().
+//   got compositeTestSubcases to work using seriesInSpecificOrder(). Have not modified seriesInZctOrder() to work for indexed
+//   data (see TODO there and try again)
 
 // seem broken but don't know status from Curtis
 //   colorized: 1/1/indexed (all indices 0 for all images), 3/1/indexed (iIndex,cIndex) (although w/ falseColor its okay),
@@ -196,7 +194,37 @@ public class ImporterTest {
   /** Frame number of the given image processor. */
   private int tIndex(ImageProcessor proc) { return (int) proc.getPixelValue(40, 0); }
 
-  @SuppressWarnings("unused")
+  /** Series number of the given ImagePlus at z,c,t index */
+  private int sIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(0,0,imp,z,c,t,indexed);
+  }
+  
+  /** Image number of the given ImagePlus at z,c,t index */
+  private int iIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(10,0,imp,z,c,t,indexed);
+  }
+  
+  /** Slice number of the given ImagePlus at z,c,t index */
+  private int zIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(20,0,imp,z,c,t,indexed);
+  }
+  
+  /** Channel number of the given ImagePlus at z,c,t index */
+  private int cIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(30,0,imp,z,c,t,indexed);
+  }
+  
+  /** Frame number of the given ImagePlus at z,c,t index */
+  private int tIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  {
+    return getPixelValue(40,0,imp,z,c,t,indexed);
+  }
+  
+@SuppressWarnings("unused")
   private void printVals(ImageProcessor proc)
   {
     System.out.println(
@@ -267,9 +295,8 @@ public class ImporterTest {
     return count;
   }
   
-  // note : for now assumes default ZCT ordering
-  /** Tests that an ImageStack is ordered according to specified from/to/by points of z/c/t */
-  private boolean seriesInCorrectOrder(ImagePlus imp, boolean indexed,
+  /** Tests that an ImageStack is ordered ZCT according to specified from/to/by points of z/c/t */
+  private boolean seriesInZctOrder(ImagePlus imp, boolean indexed,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
       int tFrom, int tTo, int tBy)
@@ -282,7 +309,7 @@ public class ImporterTest {
     
     if ((zs * cs * ts) != st.getSize())
     {
-      System.out.println("seriesInCorrectOrder() - slices don't add up: z"+zs+" X c"+cs+" X t"+ts+" != "+st.getSize());
+      System.out.println("seriesInZctOrder() - slices don't add up: z"+zs+" X c"+cs+" X t"+ts+" != "+st.getSize());
       return false;
     }
     
@@ -295,28 +322,91 @@ public class ImporterTest {
           
           // TODO - this code fails with C/Z calced in wrong order - determine why
           
-          zIndex = zIndex(imp,z,c,t,indexed);
-          cIndex = cIndex(imp,z,c,t,indexed);
-          tIndex = tIndex(imp,z,c,t,indexed);
+          //zIndex = zIndex(imp,z,c,t,indexed);
+          //cIndex = cIndex(imp,z,c,t,indexed);
+          //tIndex = tIndex(imp,z,c,t,indexed);
 
           //System.out.println("  after wrong way z("+imp.getSlice()+") c("+imp.getChannel()+") t("+imp.getFrame()+")");
           
           // TODO - this code works but can't support indexed data
           
-          //ImageProcessor proc = imp.getStack().getProcessor(procNum);
+          ImageProcessor proc = imp.getStack().getProcessor(procNum);
           
-          //zIndex = zIndex(proc);
-          //cIndex = cIndex(proc);
-          //tIndex = tIndex(proc);
+          zIndex = zIndex(proc);
+          cIndex = cIndex(proc);
+          tIndex = tIndex(proc);
           
           //System.out.println("  after right way z("+imp.getSlice()+") c("+imp.getChannel()+") t("+imp.getFrame()+")");
 
           if ((zIndex != z) || (cIndex != c) || (tIndex != t))
           {
-            System.out.println("seriesInCorrectOrder() - slices out of order: expZ("+z+") expC("+c+") expT("+t+") != actZ("+
+            System.out.println("seriesInZctOrder() - slices out of order: expZ("+z+") expC("+c+") expT("+t+") != actZ("+
                 zIndex+") actC("+cIndex+") actT("+tIndex+") for proc number "+procNum);
             return false;
           }
+          procNum++;
+        }
+    
+    return true;
+  }
+
+  private int[][] indicesInZctOrder(int maxZ, int maxC, int maxT)
+  {
+    int[][] indices = new int[maxZ*maxC*maxT][3];
+    
+    int i = 0;
+    for (int t = 0; t < maxT; t++)
+      for (int c = 0; c < maxC; c++)
+        for (int z = 0; z < maxZ; z++)
+        {
+          indices[i][0] = z;
+          indices[i][1] = c;
+          indices[i][2] = t;
+          i++;
+        }
+    return indices;  
+  }
+  
+  /** one off method to test that stack order is correct */
+  private boolean seriesInSpecificOrder(ImagePlus imp, boolean indexed, int maxZ, int maxC, int maxT)
+  {
+    ImageStack st = imp.getStack();
+    
+    if ((maxZ * maxC * maxT) != st.getSize())
+    {
+      System.out.println("seriesInSpecificOrder() - slices don't add up: z"+maxZ+" X c"+maxC+" X t"+maxT+" != "+st.getSize());
+      return false;
+    }
+
+    // note - this is confusing here but the images are stored in CZT order but the image indices follow ZCT order
+    // TODO - verify this is correct behavior
+    
+    int[][] indices = indicesInZctOrder(maxZ,maxC,maxT);
+    
+    int procNum = 0;
+    for (int t = 0; t < maxT; t++)
+      for (int z = 0; z < maxZ; z++)
+        for (int c = 0; c < maxC; c++)
+        {
+          int sIndex = sIndex(imp,z,c,t,indexed);
+          int iIndex = iIndex(imp,z,c,t,indexed);
+          int zIndex = zIndex(imp,z,c,t,indexed);
+          int cIndex = cIndex(imp,z,c,t,indexed);
+          int tIndex = tIndex(imp,z,c,t,indexed);
+
+          int expectedS = 0;
+          int expectedI = procNum;
+          int expectedZ = indices[procNum][0];
+          int expectedC = indices[procNum][1];
+          int expectedT = indices[procNum][2];
+          
+          if ((zIndex != expectedZ) || (cIndex != expectedC) || (tIndex != expectedT) || (iIndex != expectedI) || (sIndex != expectedS))
+          {
+            System.out.println("seriesInSpecificOrder() - slices out of order: expS("+expectedS+") expI("+expectedI+") expZ("+expectedZ+") expC("+expectedC+") expT("+
+                expectedT+") != actS("+sIndex+") actI("+iIndex+") actZ("+zIndex+") actC("+cIndex+") actT("+tIndex+") for proc number "+(procNum+1));
+            return false;
+          }
+          
           procNum++;
         }
     
@@ -422,8 +512,8 @@ public class ImporterTest {
   private int getPixelValue(int x,int y, ImagePlus imp, int z, int c, int t, boolean indexed)
   {
     // our indices are 0-based while IJ's are 1-based
-    //imp.setPosition(c+1, z+1, t+1);  // TODO - old way
-    mySetPos(imp,z,c,t,imp.getNSlices(),imp.getNChannels(),imp.getNFrames()); // TODO - why doesn't this result in correct behavior?
+    imp.setPosition(c+1, z+1, t+1);  // TODO - old way
+    //mySetPos(imp,z,c,t,imp.getNSlices(),imp.getNChannels(),imp.getNFrames()); // TODO - why doesn't this result in correct behavior?
     
     int rawValue = (int) (imp.getProcessor().getPixelValue(x, y));
     
@@ -534,6 +624,48 @@ public class ImporterTest {
     assertTrue((originCropX > 50) || (originCropY > 10));
     assertTrue(originCropX + sizeCrop <= sizeX);
     assertTrue(originCropY + sizeCrop <= sizeY);
+  }
+  
+  /** helper test that verifies the indices of a FakeFile[z,c,t] match passed in values*/
+  private void indexValuesTest(ImagePlus imp, int z, int c, int t, boolean indexed, int es, int ei, int ez, int ec, int et)
+  {
+    assertEquals(es,sIndex(imp, z, c, t, indexed));
+    assertEquals(ei,iIndex(imp, z, c, t, indexed));
+    assertEquals(ez,zIndex(imp, z, c, t, indexed));
+    assertEquals(ec,cIndex(imp, z, c, t, indexed));
+    assertEquals(et,tIndex(imp, z, c, t, indexed));
+  }
+  
+  private void stackInSpecificOrderTest(ImagePlus imp, int maxZ, int maxC, int maxT, boolean indexed)
+  {
+    ImageStack st = imp.getStack();
+    
+    if ((maxZ * maxC * maxT) != st.getSize())
+    {
+      System.out.println("testStackInSpecificOrder() - slices don't add up: z"+maxZ+" X c"+maxC+" X t"+maxT+" != "+st.getSize());
+      throw new IllegalArgumentException();
+    }
+
+    // note - this is confusing here but the images are stored in CZT order but the image indices follow ZCT order
+    // TODO - verify this is correct behavior
+    
+    int[][] indices = indicesInZctOrder(maxZ,maxC,maxT);
+    
+    int iIndex = 0;
+    for (int t = 0; t < maxT; t++)
+      for (int z = 0; z < maxZ; z++)
+        for (int c = 0; c < maxC; c++)
+        {
+          int expectedS = 0;
+          int expectedI = iIndex;
+          int expectedZ = indices[iIndex][0];
+          int expectedC = indices[iIndex][1];
+          int expectedT = indices[iIndex][2];
+          
+          iIndex++;
+          
+          indexValuesTest(imp,z,c,t,indexed,expectedS,expectedI,expectedZ,expectedC,expectedT);
+        }
   }
   
   // ******** specific testers  **********************************
@@ -1178,7 +1310,7 @@ public class ImporterTest {
     xyzctTest(imp,x,y,numInSeries(zFrom,zTo,zBy),numInSeries(cFrom,cTo,cBy),numInSeries(tFrom,tTo,tBy));
 
     // should be in correct order
-    assertTrue(seriesInCorrectOrder(imp,false,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy));
+    assertTrue(seriesInZctOrder(imp,false,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy));
   }
   
   private void memoryCropTester(int x, int y, int ox, int oy, int cropSize)
@@ -1450,6 +1582,51 @@ public class ImporterTest {
         }
       }
     }
+  }
+  
+
+  private void compositeTester(int sizeC, boolean indexed)
+  {
+    int pixType = FormatTools.UINT8, sizeX = 60, sizeY = 30, sizeZ = 2, sizeT = 3, numSeries = 1, rgb = -1, lutLen = -1;
+    boolean falseColor = false;
+    
+    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, indexed,
+                                          rgb, falseColor, lutLen);
+
+    ImagePlus[] imps = null;
+    ImagePlus imp = null;
+    CompositeImage ci = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    impsCountTest(imps,1);
+    
+    imp = imps[0];
+
+    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+
+    assertTrue(imp.isComposite());
+
+    ci = (CompositeImage)imp;
+    
+    assertFalse(ci.hasCustomLuts());
+
+    assertEquals(CompositeImage.COMPOSITE, ci.getMode());
+    
+    colorTests(ci,sizeC,DefaultColorOrder);
+      
+    stackInSpecificOrderTest(imp,sizeZ,sizeC,sizeT,indexed);
   }
   
 // ** ImporterTest methods **************************************************************
@@ -2343,122 +2520,6 @@ public class ImporterTest {
     fail("Numerous failures : actual tests commented out to see all print statements.");
   }
 
-  private void compositeTester(int sizeC, boolean indexed)
-  {
-    System.out.println("compositeTest: sizeC = "+sizeC);
-    
-    int pixType = FormatTools.UINT8, sizeX = 60, sizeY = 30, sizeZ = 2, sizeT = 3, numSeries = 1, rgb = -1, lutLen = -1;
-    boolean falseColor = false;
-    
-    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, indexed,
-                                          rgb, falseColor, lutLen);
-
-    ImagePlus[] imps = null;
-    ImagePlus imp = null;
-    CompositeImage ci = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setColorMode(ImporterOptions.COLOR_MODE_COMPOSITE);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsCountTest(imps,1);
-    
-    imp = imps[0];
-   
-    /*
-    System.out.println("  Returned imp: Z = " +imp.getNSlices()+ " C = " +imp.getNChannels()+" T = "+imp.getNFrames());
-    for (int tIndex = 0; tIndex < imp.getNFrames(); tIndex++)
-      for (int zIndex = 0; zIndex < imp.getNSlices(); zIndex++)
-        for (int cIndex = 0; cIndex < imp.getNChannels(); cIndex++)
-        {
-          imp.setPosition(cIndex+1,zIndex+1,tIndex+1);
-          ImageProcessor proc = imp.getProcessor();
-          printVals(proc);
-        }
-    */
-    
-    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
-
-    assertTrue(imp.isComposite());
-
-    ci = (CompositeImage)imp;
-    
-    assertFalse(ci.hasCustomLuts());
-
-    assertEquals(CompositeImage.COMPOSITE, ci.getMode());
-    
-    colorTests(ci,sizeC,DefaultColorOrder);
-      
-    int iIndex = 0;
-    for (int tIndex = 0; tIndex < sizeT; tIndex++)
-      for (int zIndex = 0; zIndex < sizeZ; zIndex++)
-        for (int cIndex = 0; cIndex < sizeC; cIndex++)
-        {
-          //testIndexValues(imp,0,iIndex++,zIndex,cIndex,tIndex,indexed);
-          assertEquals(0,sIndex(imp,zIndex,cIndex,tIndex,indexed));
-          assertEquals(iIndex++,iIndex(imp,zIndex,cIndex,tIndex,indexed));
-        }
-    
-    assertTrue(seriesInCorrectOrder(imp,indexed,0,sizeZ-1,1,0,sizeC-1,1,0,sizeT-1,1));
-    
-    // images from BF look to be in ZCT order
-    // however IJ likes CZT order
-    // seriesInCorrectOrder() is the touchpoint between both ways. See there.
-  }
-
-  /** helper test that verifies the indices of a FakeFile[z,c,t] match passed in values*/
-  private void testIndexValues(ImagePlus imp, int s, int i, int z, int c, int t, boolean indexed)
-  {
-    String status = "Correct";
-    if ((z != zIndex(imp, z, c, t, indexed)) || (c != cIndex(imp, z, c, t, indexed)))
-      status = "Wrong";
-    //  System.out.println("expZ("+z+") expC("+c+")  actZ("+zIndex(imp, z, c, t, indexed)+
-    //                      ") actC("+cIndex(imp, z, c, t, indexed)+")");
-    //else
-    //  System.out.println("Z("+z+") C("+c+") correct!");
-    System.out.println("s("+sIndex(imp,z,c,t,indexed)+") i("+iIndex(imp,z,c,t,indexed)+") z("+zIndex(imp,z,c,t,indexed)+
-        ") c("+cIndex(imp,z,c,t,indexed)+") t("+tIndex(imp,z,c,t,indexed)+")    expZ("+z+") expC("+c+") "+status);
-    assertEquals(s,sIndex(imp, z, c, t, indexed));
-    assertEquals(i,iIndex(imp, z, c, t, indexed));
-    //assertEquals(z,zIndex(imp, z, c, t, indexed));
-    //assertEquals(c,cIndex(imp, z, c, t, indexed));
-    assertEquals(t,tIndex(imp, z, c, t, indexed));
-  }
-  
-  private int sIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
-  {
-    return getPixelValue(0,0,imp,z,c,t,indexed);
-  }
-  
-  private int iIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
-  {
-    return getPixelValue(10,0,imp,z,c,t,indexed);
-  }
-  
-  private int zIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
-  {
-    return getPixelValue(20,0,imp,z,c,t,indexed);
-  }
-  
-  private int cIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
-  {
-    return getPixelValue(30,0,imp,z,c,t,indexed);
-  }
-  
-  private int tIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
-  {
-    return getPixelValue(40,0,imp,z,c,t,indexed);
-  }
-  
   @Test
   public void testCompositeSubcases()
   {
@@ -2467,6 +2528,6 @@ public class ImporterTest {
       for (int channels = 2; channels <= 7; channels++)
         if (!indexed)  // TODO - remove in future; only doing nonindexed right now
           compositeTester(channels,indexed);
-    fail("unfinished");
+    fail("unfinished but 2<=sizeC<=7 nonindexed working");
   }
 }
