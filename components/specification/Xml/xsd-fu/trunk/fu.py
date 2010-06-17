@@ -54,6 +54,11 @@ except ImportError:
 # to these interfaces and implementations.
 METADATA_OBJECT_IGNORE = ('BinData', 'External')
 
+# Type counts which should be ignored from metadata store, retrieve, etc. code
+# generation due either to their incompatibility or complexity as it applies
+# to these interfaces and implementations.
+METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
+
 # A global mapping from XSD Schema types and Java types that is used to
 # inform and override type mappings for OME Model properties which are
 # comprised of XML Schema attributes, elements and OME XML reference virtual
@@ -76,7 +81,7 @@ EXPLICIT_DEFINE_OVERRIDE = ('EmissionFilterRef', 'ExcitationFilterRef')
 
 # Back references that we do not want in the model either because they
 # conflict with other properties or do not make sense.
-BACK_REFERENCE_OVERRIDE = {'Screen': ['Plate'], 'Plate': ['Screen']}
+BACK_REFERENCE_OVERRIDE = {'Screen': ['Plate'], 'Plate': ['Screen'], 'Annotation': ['Annotation']}
 
 # Reference properties of a given type for which back reference link methods
 # should not be code generated for.
@@ -93,9 +98,12 @@ def updateTypeMaps(namespace):
 		namespace + 'dateTime': 'String',
 		namespace + 'string': 'String',
 		namespace + 'integer': 'Integer',
+		namespace + 'int': 'Integer',
 		namespace + 'long': 'Long',
-		namespace + 'positiveInteger': 'PositiveInteger',
-		namespace + 'nonNegativeInteger': 'NonNegativeInteger',
+		'PositiveInt': 'PositiveInteger',
+		'NonNegativeInt': 'NonNegativeInteger',
+		'PositiveLong': 'PositiveLong',
+		'NonNegativeLong': 'NonNegativeLong',
 		namespace + 'float': 'Double',
 		namespace + 'double': 'Double',
 		namespace + 'anyURI': 'String',
@@ -146,6 +154,12 @@ METADATA_AGGREGATE_TEMPLATE = "templates/AggregateMetadata.template"
 
 # The default template for OME XML metadata processing.
 OMEXML_METADATA_TEMPLATE = "templates/OMEXMLMetadataImpl.template"
+
+# The default template for DummyMetadata processing.
+DUMMY_METADATA_TEMPLATE = "templates/DummyMetadata.template"
+
+# The default template for FilterMetadata processing.
+FILTER_METADATA_TEMPLATE = "templates/FilterMetadata.template"
 
 # The default template for OMERO metadata processing.
 OMERO_METADATA_TEMPLATE = "templates/OmeroMetadata.template"
@@ -322,8 +336,10 @@ class OMEModelProperty(OMEModelEntity):
 					# as our Java type name.
 					return self.type
 				return javaType
-			# Handle XML Schema types that directly map to Java types
-			return JAVA_TYPE_MAP[self.type]
+			# Handle XML Schema types that directly map to Java types and
+			# handle cases where the type is prefixed by a namespace definition.
+			# (ex. OME:NonNegativeInt).
+			return JAVA_TYPE_MAP[self.type.replace('OME:', '')]
 		except KeyError:
 			# Hand back the type of references or complex types with the
 			# useless OME XML 'Ref' suffix removed.
@@ -714,6 +730,7 @@ class TemplateInfo(object):
 		self.date = now()
 		self.user = getpwuid(getuid())[0]
 		self.DO_NOT_PROCESS = DO_NOT_PROCESS
+		self.BACK_REFERENCE_OVERRIDE = BACK_REFERENCE_OVERRIDE
 		self.BACK_REFERENCE_LINK_OVERRIDE = BACK_REFERENCE_LINK_OVERRIDE
 	
 	def link_overridden(self, property_name, class_name):

@@ -131,10 +131,11 @@ public interface MetadataRetrieve {
 	${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
-{% if fu.max_occurs_under_parent(model, k, o.name) > 1 %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
+      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 	int get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])});
 
 {% end %}\

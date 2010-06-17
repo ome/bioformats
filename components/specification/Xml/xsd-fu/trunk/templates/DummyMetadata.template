@@ -1,5 +1,7 @@
 {% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
 \
+{% def indexes_name_string(indexes) %}${", ".join([v.replace('int ', '') for v in indexes])}{% end %}\
+\
 {% def index_name_string(name) %}\
 {% choose %}\
 {% when name[:2].isupper()%}${name}Index{% end %}\
@@ -12,15 +14,7 @@
 {% def counter(parent, obj, indexes) %}\
 	public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
 	{
-		// Parents: ${repr(parents[obj.name])}
-{% if obj.isReference %}\
-		// ${obj.name} is a reference
-		return root.${".".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
-{% end %}\
-{% if not obj.isReference %}\
-		// ${obj.name} is not a reference
-		return root.${".".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOf%sList()" % obj.name.replace('Ref', '')])};
-{% end %}\
+		return -1;
 	}
 {% end %}\
 \
@@ -37,31 +31,7 @@
 {% end %}\
 {% end %}\
 	{
-		// Parents: ${repr(parents[obj.name])}
-{% choose %}\
-{% when is_abstract(parent) and prop.isReference %}\
-		// ${parent} is abstract proprietary
-		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.getLinked${prop.javaMethodName}().getID();
-{% end %}\
-{% when is_abstract(parent) %}\
-		// ${parent} is abstract proprietary and not a reference
-		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.get${prop.javaMethodName}();
-{% end %}\
-{% when prop.isReference and prop.maxOccurs > 1 %}\
-		// ${prop.name} is reference and occurs more than once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}(${index_name_string(prop.name)}).getID();
-{% end %}\
-{% when prop.isReference %}\
-		// ${prop.name} is reference and occurs only once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}().getID();
-{% end %}\
-{% otherwise %}\
-		// ${prop.name} is not a reference
-		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.javaMethodName}();
-{% end %}\
-{% end %}\
+		return null;
 	}
 {% end %}\
 \
@@ -78,90 +48,6 @@
 {% end %}\
 {% end %}\
 	{
-		// Parents: ${repr(parents[obj.name])}
-{% choose %}\
-{% when is_abstract(parent) and prop.isReference %}\
-		// ${prop.name} is abstract proprietary and is a reference
-		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
-		model.addReference(
-				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
-				${prop.javaInstanceVariableName}_reference);
-		// ${parent} is abstract proprietary
-{% end %}\
-{% when is_abstract(parent) %}\
-		// ${parent} is abstract proprietary and not a reference
-		OME o0 = root;
-{% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)[:-1]) %}\
-{% choose %}\
-{% when v['level'] == 2 %}\
-		if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
-		{
-			o${i}.add${v['name']}(new ${obj.name}());
-		}
-{% end %}\
-{% when v['max_occurs'] > 1 %}\
-		if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
-		{
-			o${i}.add${v['name']}(new ${v['name']}());
-		}
-{% end %}\
-{% when v['max_occurs'] == 1 %}\
-		if (o${i}.${v['accessor']} == null)
-		{
-			o${i}.set${v['name']}(new ${v['name']}());
-		}
-{% end %}\
-{% end %}\
-		${v['name']} o${i + 1} = o${i}.${v['accessor']};
-{% if v['level'] == 2 %}\
-{% if "ID" == prop.name %}\
-		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
-{% end %}\
-		((${obj.name})o${i + 1}).set${prop.javaMethodName}(${prop.javaArgumentName});
-{% end %}\
-{% end %}\
-{% end %}\
-{% when prop.isReference %}\
-		// ${prop.name} is reference and occurs more than once
-		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
-		model.addReference(
-				root.${".".join(accessor(obj.name, parent, prop))},
-				${prop.javaInstanceVariableName}_reference);
-{% end %}\
-{% otherwise %}\
-		// ${prop.name} is not a reference
-		OME o0 = root;
-{% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)) %}\
-{% choose %}\
-{% when v['max_occurs'] > 1 %}\
-		if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
-		{
-			o${i}.add${v['name']}(new ${v['name']}());
-		}
-{% end %}\
-{% when v['max_occurs'] == 1 %}\
-		if (o${i}.${v['accessor']} == null)
-		{
-			o${i}.set${v['name']}(new ${v['name']}());
-		}
-{% end %}\
-{% end %}\
-		${v['name']} o${i + 1} = o${i}.${v['accessor']};
-{% if v['level'] == 1 %}\
-{% if "ID" == prop.name %}\
-		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
-{% end %}\
-		o${i + 1}.set${prop.javaMethodName}(${prop.javaArgumentName});
-{% end %}\
-{% end %}\
-{% end %}\
-{% end %}\
-{% if obj.name in customContent and prop.name in customContent[obj.name] %}\
-		// Custom content from ${obj.name} ${prop.name} template
-${customContent[obj.name][prop.name]}
-{% end %}\
 	}
 {% end %}\
 \
@@ -214,7 +100,7 @@ ${customContent[obj.name][prop.name]}
 \
 \
 /*
- * loci.formats.ome.OMEXMLMetadataImpl
+ * loci.formats.meta.DummyMetadata
  *
  *-----------------------------------------------------------------------------
  *
@@ -251,70 +137,47 @@ ${customContent[obj.name][prop.name]}
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.ome;
+package loci.formats.meta;
 
-import ome.xml.model.*;
+import java.util.Iterator;
+
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
 /**
- * A metadata store implementation for constructing and manipulating OME-XML
- * DOMs for the 2010-04 version of OME-XML. It requires the
- * ome.xml.r201004 package to compile (part of ome-xml.jar).
+ * A dummy implementation for {@link MetadataStore} and
+ * {@link MetadataRetrieve} that is used when no other
+ * metadata implementations are available.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200809Metadata.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200809Metadata.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/DummyMetadata.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/meta/DummyMetadata.java">SVN</a></dd></dl>
  *
+ * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
  */
-public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
+public class DummyMetadata implements IMetadata
 {
-	private OME root;
-
-	private OMEModel model;
-
-	private String uuid;
+	// -- MetadataStore API methods --
 
 	public void createRoot()
 	{
-		root = new OME();
-		model = new OMEModelImpl();
 	}
 
 	public Object getRoot()
 	{
-		return root;
+		return null;
 	}
 
 	public void setRoot(Object root)
 	{
-		if (!(root instanceof OME))
-		{
-			throw new IllegalArgumentException(
-					"Expecting OME class or subclass.");
-		}
-		this.root = (OME) root;
-		model = new OMEModelImpl();
-	}
-
-	public String dumpXML()
-	{
-		resolveReferences();
-		return super.dumpXML();
-	}
-
-	public int resolveReferences()
-	{
-		return model.resolveReferences();
 	}
 
 	// -- Entity counting (manual definitions) --
 
 	public int getPixelsBinDataCount(int imageIndex)
 	{
-		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
+		return -1;
 	}
 
 	// -- Entity counting (code generated definitions) --
@@ -326,33 +189,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// ${repr(indexes[o.name])}
 	public void set${o.name}Value(${o.javaType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
-		OME o0 = root;
-		if (o0.sizeOfImageList() == imageIndex)
-		{
-			o0.addImage(new Image());
-		}
-		Image o1 = o0.getImage(imageIndex);
-		if (o1.getPixels() == null)
-		{
-			o1.setPixels(new Pixels());
-		}
-		Pixels o2 = o1.getPixels();
-		if (o2.sizeOfTiffDataList() == tiffDataIndex)
-		{
-			o2.addTiffData(new TiffData());
-		}
-		TiffData o3 = o2.getTiffData(tiffDataIndex);
-		if (o3.getUUID() == null)
-		{
-			o3.setUUID(new UUID());
-		}
-		UUID o4 = o3.getUUID();
-		o4.setValue(value);
 	}
 
 	public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
-		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getUUID().getValue();
+		return null;
 	}
 
 {% end %}\
@@ -373,7 +214,7 @@ ${counter(k, o, v)}\
 
 	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
 	{
-		return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
+		return null;
 	}
 
 	// -- Entity retrieval (code generated definitions) --
@@ -381,7 +222,7 @@ ${counter(k, o, v)}\
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
-		return uuid;
+		return null;
 	}
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -450,25 +291,6 @@ ${getter(k, o, prop, v)}\
 
 	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}}
-		// Type is not a reference
-		OME o0 = root;
-		if (o0.sizeOfImageList() == imageIndex)
-		{
-			o0.addImage(new Image());
-		}
-		Image o1 = o0.getImage(imageIndex);
-		if (o1.getPixels() == null)
-		{
-			o1.setPixels(new Pixels());
-		}
-		Pixels o2 = o1.getPixels();
-		if (o2.sizeOfBinDataList() == binDataIndex)
-		{
-			o2.addBinData(new BinData());
-		}
-		BinData o3 = o2.getBinData(binDataIndex);
-		o3.setBigEndian(bigEndian);
 	}
 
 	// -- Entity storage (code generated definitions) --
@@ -476,7 +298,6 @@ ${getter(k, o, prop, v)}\
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)
 	{
-		this.uuid = uuid;
 	}
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\

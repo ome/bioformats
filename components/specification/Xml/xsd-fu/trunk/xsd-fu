@@ -52,6 +52,8 @@ Available subcommands:
   metadata_store
   metadata_retrieve
   metadata_aggregate
+  dummy_metadata
+  filter_metadata
   enum_types
   enum_handlers
   doc_gen
@@ -326,6 +328,7 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 	fu.max_occurs_under_parent = max_occurs_under_parent
 	fu.resolve_hierarchy = resolve_hierarchy
 	fu.METADATA_OBJECT_IGNORE = METADATA_OBJECT_IGNORE
+	fu.METADATA_COUNT_IGNORE = METADATA_COUNT_IGNORE
 	base, filename = os.path.split(template)
 	name, extension = os.path.splitext(filename)
 	template = NewTextTemplate(open(template).read())
@@ -453,6 +456,48 @@ def metadataAggregateMain(args):
 
 	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE,
 	                        "AggregateMetadata.java", namespace, args)
+
+def dummyMetadataMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataRetrieve implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(DUMMY_METADATA_TEMPLATE,
+	                        "DummyMetadata.java", namespace, args)
+
+def filterMetadataMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataRetrieve implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(FILTER_METADATA_TEMPLATE,
+	                        "FilterMetadata.java", namespace, args)
 
 def debugMain(args):
 	"""
@@ -594,6 +639,10 @@ if __name__ == '__main__':
 		metadataRetrieveMain(sys.argv[2:])
 	elif a == "metadata_aggregate":
 		metadataAggregateMain(sys.argv[2:])
+	elif a == "filter_metadata":
+		filterMetadataMain(sys.argv[2:])
+	elif a == "dummy_metadata":
+		dummyMetadataMain(sys.argv[2:])
 	elif a == "enum_types":
 		enumTypesMain(sys.argv[2:])
 	elif a == "enum_handlers":
