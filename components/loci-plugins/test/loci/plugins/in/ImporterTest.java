@@ -48,13 +48,6 @@ import loci.plugins.in.ImporterOptions;
 //   concat and split (returns wrong number of images per imp)
 //   record does not work
 
-// broken
-//   comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are less
-//     than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
-//     the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
-//     by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
-//     with I guess.
-
 // testable code according to my notes
 //   composite, gray, custom: working for 2 <= sizeC <= 7 and nonindexed (not yet tested)
 
@@ -325,6 +318,7 @@ public class ImporterTest {
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
 
   // TODO : this code written to pass tests - looks wrong on a number of pixel types
+  /** returns the maximum pixel value for a given pixel type */
   private long maxPixelValue(int pixType)
   {
     if (FormatTools.isFloatingPoint(pixType))
@@ -344,6 +338,7 @@ public class ImporterTest {
     }
   }
   
+  /** returns the minimum pixel value for a given pixel type */
   private long minPixelValue(int pixType)
   {
     if (FormatTools.isFloatingPoint(pixType))
@@ -364,9 +359,66 @@ public class ImporterTest {
     }
   }
 
-  // note - this code relies on setPosition(c,z,t) being called previously. Otherwise regular ImagePlus case won't work.
-  //   In general this method not designed for general use but actually just for use by getPixelValue().
+  private long expectedMin(int pixType, boolean wantAutoscale)
+  {
+    long min;
+    
+    if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
+    {
+      min = minPixelValue(pixType);
+    }
+    else // not autoscaling - get min/max of pixel type
+    {
+      min = 0;
+    }
+
+    if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
+      if (min < 0)
+        min = 0;
+
+    return min;
+  }
   
+  private long expectedMax(int pixType, boolean wantAutoscale, long maxPixVal, long maxIndex)
+  {
+    long max;
+    
+    if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
+    {
+      max = Math.max( maxPixVal, maxIndex);
+    }
+    else // not autoscaling - get min/max of pixel type
+    {
+      max = maxPixelValue(pixType);
+    }
+
+    if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
+      if (max > 65535)
+        max = 65535;
+    
+    return max;
+  }
+
+  /** set an ImagePlus' position relative to CZT ordering (matches imp.setPosition()) */
+  private void setCztPosition(ImagePlus imp, int z, int c, int t)
+  {
+    // czt order : should match the .setPosition(c,z,t) code
+    int sliceNumber = c + (z*imp.getNChannels()) + (t*imp.getNSlices()*imp.getNChannels());
+    imp.setSlice(sliceNumber+1);
+  }
+  
+  /** set an ImagePlus' position relative to ZCT ordering (rather than default CZT) */
+  private void setZctPosition(ImagePlus imp, int z, int c, int t)
+  {
+    // zct order
+    int sliceNumber = z + (c*imp.getNSlices()) + (t*imp.getNSlices()*imp.getNChannels());
+    imp.setSlice(sliceNumber+1);
+  }
+  
+  // note - the following code relies on setZctPosition() being called previously. Otherwise regular ImagePlus case
+  //   won't work. In general this method not designed for general use but actually just for use by getPixelValue().
+  
+  /** gets the color table from any kind of ImagePlus (composite or not) - not for general use */
   private LUT getColorTable(ImagePlus imp, int channel)
   {
     if (imp instanceof CompositeImage)
@@ -385,21 +437,6 @@ public class ImporterTest {
     icm.getBlues(blues);
     
     return new LUT(reds,greens,blues);
-  }
-  
-  private void setCztPosition(ImagePlus imp, int z, int c, int t)
-  {
-    // czt order : should match the .setPosition(c,z,t) code
-    int sliceNumber = c + (z*imp.getNChannels()) + (t*imp.getNSlices()*imp.getNChannels());
-    imp.setSlice(sliceNumber+1);
-  }
-  
-  /** set an ImagePlus' position relative to ZCT ordering (rather than default CZT) */
-  private void setZctPosition(ImagePlus imp, int z, int c, int t)
-  {
-    // zct order
-    int sliceNumber = z + (c*imp.getNSlices()) + (t*imp.getNSlices()*imp.getNChannels());
-    imp.setSlice(sliceNumber+1);
   }
   
   /** get the actual pixel value (lookup when data is indexed) of the index of a fake image at a given z,c,t */
@@ -447,6 +484,13 @@ public class ImporterTest {
   {
     assertNotNull(imps);
     assertEquals(numExpected,imps.length);
+  }
+  
+  /** tests that the stack of an ImagePlus is of a given size */
+  private void stackTest(ImagePlus imp, int expectedSize)
+  {
+    assertNotNull(imp);
+    assertEquals(expectedSize,imp.getStack().getSize());
   }
   
   /** tests that the dimensions of an ImagePlus match passed in x,y,z,c,t values */
@@ -526,7 +570,7 @@ public class ImporterTest {
   /** tests that a FakeFile dataset has index values in ZCT order */
   private void stackInZctOrderTest(ImagePlus imp, int maxZ, int maxC, int maxT, boolean indexed)
   {
-    assertEquals(imp.getStack().getSize(),(maxZ * maxC * maxT));
+    stackTest(imp,(maxZ * maxC * maxT));
 
     int iIndex = 0;
     for (int t = 0; t < maxT; t++)
@@ -548,11 +592,11 @@ public class ImporterTest {
   /** tests that a FakeFile dataset has index values in ZCT order repeated once per series */
   private void multipleSeriesInZtcOrderTest(ImagePlus imp, int numSeries, int maxZ, int maxC, int maxT)
   {
+    // make sure the number of slices in stack is a sum of all series
+    stackTest(imp,(numSeries*maxZ*maxC*maxT));
+
     ImageStack st = imp.getStack();
 
-    // make sure the number of slices in stack is a sum of all series
-    assertEquals(st.getSize(), (numSeries*maxZ*maxC*maxT));
-    
     int slice = 0;
     for (int sIndex = 0; sIndex < numSeries; sIndex++) {
       for (int tIndex = 0; tIndex < maxT; tIndex++) {
@@ -585,11 +629,12 @@ public class ImporterTest {
             assertEquals(i,getPixelValue(i,10,imp,z,c,t,indexed));
   }
   
+  /** tests that multiple file groups are pulled into one dataset */
   private void groupedFilesTest(ImagePlus imp, int numDatasets, int numImagesPerDataset)
   {
-    ImageStack st = imp.getStack();
+    stackTest(imp,numDatasets*numImagesPerDataset);
     
-    assertEquals(st.getSize(),numDatasets*numImagesPerDataset);
+    ImageStack st = imp.getStack();
     
     int slice = 0;
     for (int fnum = 0; fnum < FAKE_FILES.length; fnum++)
@@ -607,11 +652,12 @@ public class ImporterTest {
     }
   }
   
+  /** tests that a dataset has had its Z & T dimensions swapped */
   private void swappedZtTest(ImagePlus imp, int originalZ, int originalC, int originalT)
   {
+    stackTest(imp,(originalZ*originalC*originalT));
+
     ImageStack st = imp.getStack();
-    int numSlices = st.getSize();
-    assertEquals(numSlices,(originalZ*originalC*originalT));
 
     // verify that the dimensional extents were swapped
     final int actualSizeZ = imp.getNSlices();
@@ -647,9 +693,9 @@ public class ImporterTest {
     int cs = numInSeries(cFrom,cTo,cBy);
     int ts = numInSeries(tFrom,tTo,tBy);
    
-    ImageStack st = imp.getStack();
+    stackTest(imp,(zs * cs * ts));
     
-    assertTrue((zs * cs * ts) == st.getSize());
+    ImageStack st = imp.getStack();
     
     for (int t = 0; t < ts; t++)
       for (int c = 0; c < cs; c++)
@@ -669,6 +715,20 @@ public class ImporterTest {
         }
   }
 
+  /** for signed integral data tests that the Calibration of an ImagePlus is correct */
+  private void calibrationTest(ImagePlus imp, int pixType)
+  {
+    if (FormatTools.isSigned(pixType) && !FormatTools.isFloatingPoint(pixType))
+    {
+      Calibration cal = imp.getCalibration();
+      assertEquals(Calibration.STRAIGHT_LINE,cal.getFunction());
+      double[] coeffs = cal.getCoefficients();
+      int bitsPerPix = FormatTools.getBytesPerPixel(pixType) * 8;
+      assertEquals(-(Math.pow(2, (bitsPerPix-1))),coeffs[0],0);
+      assertEquals(1,coeffs[1],0);
+    }
+  }
+  
   // ******** specific testers  **********************************
   
   /** tests BioFormats when directly calling BF.openImagePlus(path) (no options set) */
@@ -721,10 +781,9 @@ public class ImporterTest {
     
     xyzctTest(imp,x,y,z,c,t);
 
+    stackTest(imp,z*c*t);
+    
     ImageStack st = imp.getStack();
-    int numSlices = st.getSize();
-
-    assertEquals(z*c*t,numSlices);
 
     int slice = 0;
     //System.out.println(order);
@@ -779,56 +838,41 @@ public class ImporterTest {
     swappedZtTest(imp,z,c,t);
   }
 
-  private void datasetOpenAllSeriesTester(int x, int y, int z, int c, int t, int s)
+  /** open a fakefile series either as separate ImagePluses or as one ImagePlus depending on input flag allOfThem */
+  private ImagePlus[] openSeriesTest(String fakeFileName, boolean allOfThem)
   {
+    ImagePlus[] imps = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setId(fakeFileName);
+      options.setOpenAllSeries(allOfThem);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    return imps;
+  }
+  
+  private void datasetOpenAllSeriesTester(boolean allOfThem)
+  {
+    int x = 55, y = 20, z = 2, c = 3, t = 4, s = 5;
+    
     String path = constructFakeFilename("openAllSeries", FormatTools.UINT32, x, y, z, c, t, s, false, -1, false, -1);
     
-    // try it when false
+    int expectedNumSeries = 1;
+    if (allOfThem)
+      expectedNumSeries = s;
     
-    ImagePlus[] imps = null;
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setId(path);
-      options.setOpenAllSeries(false);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    // test results
-    
-    impsCountTest(imps,1);
-    xyzctTest(imps[0],x,y,z,c,t);
-    assertEquals(z*c*t, imps[0].getStack().getSize());
-    
-    // try it when true
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setId(path);
-      options.setOpenAllSeries(true);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    // test results
-    
-    assertEquals(s,imps.length);
-    for (int i = 0; i < s; i++)
-    {
-      assertEquals(x,imps[i].getWidth());
-      assertEquals(y,imps[i].getHeight());
-      assertEquals(z*c*t, imps[i].getStack().getSize());
-    }
+    ImagePlus[] imps = openSeriesTest(path,allOfThem);
+    impsCountTest(imps,expectedNumSeries);
+    for (int i = 0; i < expectedNumSeries; i++)
+      xyzctTest(imps[i],x,y,z,c,t);
   }
   
   private void datasetConcatenateTester(int pixType, int x, int y, int z, int c, int t, int s)
@@ -886,43 +930,19 @@ public class ImporterTest {
     imp = imps[0];
 
     xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    
+    stackTest(imp,sizeZ*sizeC*sizeT);
 
+    calibrationTest(imp,pixType);
+    
+    long maxPixVal = minPixelValue(pixType)+sizeX-1;
+    long maxIndex = sizeZ*sizeC*sizeT - 1;
+    
+    long expectedMax = expectedMax(pixType,wantAutoscale,maxPixVal,maxIndex);
+    long expectedMin = expectedMin(pixType,wantAutoscale);
+    
     ImageStack st = imp.getStack();
     int numSlices = st.getSize();
-
-    long expectedMax,expectedMin;
-    
-    if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
-    {
-      expectedMax = Math.max( minPixelValue(pixType)+sizeX-1, sizeZ*sizeC*sizeT - 1 );  // series size always 1 so ignore
-      expectedMin = minPixelValue(pixType);
-    }
-    else // not autoscaling - get min/max of pixel type
-    {
-      expectedMax = maxPixelValue(pixType);
-      expectedMin = 0;
-    }
-
-    // if signed make sure Calibration is setup correctly
-    if (FormatTools.isSigned(pixType) && !FormatTools.isFloatingPoint(pixType))
-    {
-      Calibration cal = imp.getCalibration();
-      assertEquals(Calibration.STRAIGHT_LINE,cal.getFunction());
-      double[] coeffs = cal.getCoefficients();
-      int bitsPerPix = FormatTools.getBytesPerPixel(pixType) * 8;
-      assertEquals(-(Math.pow(2, (bitsPerPix-1))),coeffs[0],0);
-      assertEquals(1,coeffs[1],0);
-      
-      // note - IJ clamps min and max to a range for ShortProcessor (unlike all other processors)
-      if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
-      {
-        if (expectedMin < 0)
-          expectedMin = 0;
-        if (expectedMax > 65535)
-          expectedMax = 65535;
-      }
-    }
-    
     for (int i = 0; i < numSlices; i++)
     {
       ImageProcessor proc = st.getProcessor(i+1);
@@ -985,6 +1005,7 @@ public class ImporterTest {
 
     ci.reset();  // force the channel processors to get initialized, otherwise nullptr  - TODO : does this point out a IJ bug?
     
+    /*
     int maxZ = ci.getNSlices();
     int maxC = ci.getNChannels();
     int maxT = ci.getNFrames();
@@ -992,7 +1013,6 @@ public class ImporterTest {
     //System.out.println("Checking index vals");
     //System.out.println("maxes z c t = "+maxZ+" "+maxC+" "+maxT);
     
-    /*
     // check that each image in the overall series has the correct iIndex value
     int index = 0;
     for (int t = 0; t < maxT; t++)
@@ -1344,32 +1364,19 @@ public class ImporterTest {
     imp = imps[0];
     xyzctTest(imps[0],sizeCrop,sizeCrop,sizeZ,sizeC,sizeT);
 
-    ImageStack st = imp.getStack();
-    int numSlices = st.getSize();
+    stackTest(imp,(sizeZ*sizeC*sizeT));
     
-    assertEquals(sizeZ*sizeC*sizeT,numSlices);
-
+    calibrationTest(imp,pixType);
+    
     long expectedMax = minPixelValue(pixType) + originCropX + sizeCrop - 1;
     long expectedMin = minPixelValue(pixType) + originCropX;
 
-    // make sure Calibration is set correctly
-    if (FormatTools.isSigned(pixType) && !FormatTools.isFloatingPoint(pixType))
+    if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
     {
-      Calibration cal = imp.getCalibration();
-      assertEquals(Calibration.STRAIGHT_LINE,cal.getFunction());
-      double[] coeffs = cal.getCoefficients();
-      int bitsPerPix = FormatTools.getBytesPerPixel(pixType) * 8;
-      assertEquals(-(Math.pow(2, (bitsPerPix-1))),coeffs[0],0);
-      assertEquals(1,coeffs[1],0);
-      
-      // note - IJ clamps min and max to a range for ShortProcessor (unlike all other processors)
-      if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
-      {
-        if (expectedMin < 0)
-          expectedMin = 0;
-        if (expectedMax > 65535)
-          expectedMax = 65535;
-      }
+      if (expectedMin < 0)
+        expectedMin = 0;
+      if (expectedMax > 65535)
+        expectedMax = 65535;
     }
 
     /*
@@ -1378,6 +1385,8 @@ public class ImporterTest {
     System.out.println("  exp max min "+expectedMax+" "+expectedMin);
     */
     
+    ImageStack st = imp.getStack();
+    int numSlices = st.getSize();
     for (int i = 0; i < numSlices; i++)
     {
       ImageProcessor proc = st.getProcessor(i+1);
@@ -1419,8 +1428,8 @@ public class ImporterTest {
     {
       ImagePlus imp = imps[z];
       xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
+      stackTest(imp,series*sizeC*sizeT);
       ImageStack st = imp.getStack();
-      assertEquals(series*sizeC*sizeT,st.getSize());
       for (int s = 0; s < series; s++) {
         int slice = s*sizeC*sizeT;
         for (int t = 0; t < sizeT; t++) {
@@ -1474,8 +1483,8 @@ public class ImporterTest {
     {
       ImagePlus imp = imps[c];
       xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
+      stackTest(imp,series*sizeZ*sizeT);
       ImageStack st = imp.getStack();
-      assertEquals(series*sizeZ*sizeT,st.getSize());
       for (int s = 0; s < series; s++) {
         int slice = s*sizeZ*sizeT;
         for (int t = 0; t < sizeT; t++) {
@@ -1528,8 +1537,8 @@ public class ImporterTest {
     {
       ImagePlus imp = imps[t];
       xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
+      stackTest(imp,series*sizeZ*sizeC);
       ImageStack st = imp.getStack();
-      assertEquals(series*sizeZ*sizeC,st.getSize());
       for (int s = 0; s < series; s++) {
         int slice = s*sizeZ*sizeC;
         for (int c = 0; c < sizeC; c++) {
@@ -1549,7 +1558,6 @@ public class ImporterTest {
     }
   }
   
-
   private void compositeTester(int sizeC, boolean indexed)
   {
     int pixType = FormatTools.UINT8, sizeX = 60, sizeY = 30, sizeZ = 2, sizeT = 3, numSeries = 1, rgb = -1, lutLen = -1;
@@ -1672,7 +1680,7 @@ public class ImporterTest {
     // test results
     
     impsCountTest(imps,1);
-    assertEquals(16,imps[0].getStack().getSize());  // one loaded as one set with 16 slices
+    stackTest(imps[0],16); // one loaded as one set with 16 slices
     
     // try grouped
     
@@ -1692,7 +1700,7 @@ public class ImporterTest {
     // test results
     
     impsCountTest(imps,1);
-    assertEquals(32,imps[0].getStack().getSize());  // both loaded as one set of 32 slices
+    stackTest(imps[0],32); // both loaded as one set of 32 slices
   }
 
   @Test
@@ -1715,9 +1723,8 @@ public class ImporterTest {
   @Test
   public void testDatasetOpenAllSeries()
   {
-    datasetOpenAllSeriesTester(73,107,1,1,1,1);  // one series
-    datasetOpenAllSeriesTester(73,107,1,1,1,2);  // two series
-    datasetOpenAllSeriesTester(73,107,5,3,4,4);  // multiple series with Z,C,T larger than 1
+    datasetOpenAllSeriesTester(false);
+    datasetOpenAllSeriesTester(true);
   }
 
   @Test
@@ -2088,8 +2095,8 @@ public class ImporterTest {
     for (int c = 0; c < sizeC; c++) {
       ImagePlus imp = imps[c];
       xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
+      stackTest(imp,sizeZ * sizeT);
       ImageStack st = imp.getStack();
-      assertEquals(sizeZ * sizeT,st.getSize());
       int slice = 0;
       for (int t = 0; t < sizeT; t++) {
         for (int z = 0; z < sizeZ; z++) {
@@ -2132,8 +2139,8 @@ public class ImporterTest {
     for (int z = 0; z < sizeZ; z++) {
       ImagePlus imp = imps[z];
       xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
+      stackTest(imp,sizeC * sizeT);
       ImageStack st = imp.getStack();
-      assertEquals(sizeC * sizeT,st.getSize());
       int slice = 0;
       for (int t = 0; t < sizeT; t++) {
         for (int c = 0; c < sizeC; c++) {
@@ -2176,8 +2183,8 @@ public class ImporterTest {
     for (int t = 0; t < sizeT; t++) {
       ImagePlus imp = imps[t];
       xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
+      stackTest(imp,sizeZ * sizeC);
       ImageStack st = imp.getStack();
-      assertEquals(sizeZ * sizeC,st.getSize());
       int slice = 0;
       for (int c = 0; c < sizeC; c++) {
         for (int z = 0; z < sizeZ; z++) {
@@ -2210,6 +2217,14 @@ public class ImporterTest {
     // try various pixTypes
     for (int pixType : PixelTypes)
       comboCropAndAutoscaleTester(pixType,240,240,2,2,2,225,225,10);
+
+    // broken
+    //  comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are less
+    //    than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
+    //    the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
+    //    by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
+    //    with I guess.
+
   }
   
   @Test
@@ -2289,8 +2304,9 @@ public class ImporterTest {
 
       xyzctTest(imp,cropSizeX,cropSizeY,1,sizeZ,numC); // all dims changed
   
+      stackTest(imp,sizeZ*numC);  // sizeZ = C, numC = T
+      
       ImageStack st = imp.getStack();
-      assertEquals(sizeZ*numC,st.getSize());  // sizeZ = C, numC = T
       
       int slice = 0;
       for (int tIndex = start; tIndex < sizeC; tIndex += stepBy)
