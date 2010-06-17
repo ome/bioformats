@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -83,13 +83,19 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	private List<DoubleAnnotation> doubleAnnotationList = new ArrayList<DoubleAnnotation>();
 
 	// Property which occurs more than once
-	private List<StringAnnotation> stringAnnotationList = new ArrayList<StringAnnotation>();
+	private List<CommentAnnotation> commentAnnotationList = new ArrayList<CommentAnnotation>();
 
 	// Property which occurs more than once
 	private List<BooleanAnnotation> booleanAnnotationList = new ArrayList<BooleanAnnotation>();
 
 	// Property which occurs more than once
 	private List<TimestampAnnotation> timestampAnnotationList = new ArrayList<TimestampAnnotation>();
+
+	// Property which occurs more than once
+	private List<TagAnnotation> tagAnnotationList = new ArrayList<TagAnnotation>();
+
+	// Property which occurs more than once
+	private List<TermAnnotation> termAnnotationList = new ArrayList<TermAnnotation>();
 
 	// -- Constructors --
 
@@ -183,14 +189,14 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			addDoubleAnnotation(
 					new DoubleAnnotation(DoubleAnnotation_element, model));
 		}
-		// Element property StringAnnotation which is complex (has
+		// Element property CommentAnnotation which is complex (has
 		// sub-elements) and occurs more than once
-		List<Element> StringAnnotation_nodeList =
-				getChildrenByTagName(element, "StringAnnotation");
-		for (Element StringAnnotation_element : StringAnnotation_nodeList)
+		List<Element> CommentAnnotation_nodeList =
+				getChildrenByTagName(element, "CommentAnnotation");
+		for (Element CommentAnnotation_element : CommentAnnotation_nodeList)
 		{
-			addStringAnnotation(
-					new StringAnnotation(StringAnnotation_element, model));
+			addCommentAnnotation(
+					new CommentAnnotation(CommentAnnotation_element, model));
 		}
 		// Element property BooleanAnnotation which is complex (has
 		// sub-elements) and occurs more than once
@@ -209,6 +215,24 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 		{
 			addTimestampAnnotation(
 					new TimestampAnnotation(TimestampAnnotation_element, model));
+		}
+		// Element property TagAnnotation which is complex (has
+		// sub-elements) and occurs more than once
+		List<Element> TagAnnotation_nodeList =
+				getChildrenByTagName(element, "TagAnnotation");
+		for (Element TagAnnotation_element : TagAnnotation_nodeList)
+		{
+			addTagAnnotation(
+					new TagAnnotation(TagAnnotation_element, model));
+		}
+		// Element property TermAnnotation which is complex (has
+		// sub-elements) and occurs more than once
+		List<Element> TermAnnotation_nodeList =
+				getChildrenByTagName(element, "TermAnnotation");
+		for (Element TermAnnotation_element : TermAnnotation_nodeList)
+		{
+			addTermAnnotation(
+					new TermAnnotation(TermAnnotation_element, model));
 		}
 	}
 
@@ -378,34 +402,34 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 	}
 
 	// Property which occurs more than once
-	public int sizeOfStringAnnotationList()
+	public int sizeOfCommentAnnotationList()
 	{
-		return stringAnnotationList.size();
+		return commentAnnotationList.size();
 	}
 
-	public List<StringAnnotation> copyStringAnnotationList()
+	public List<CommentAnnotation> copyCommentAnnotationList()
 	{
-		return new ArrayList<StringAnnotation>(stringAnnotationList);
+		return new ArrayList<CommentAnnotation>(commentAnnotationList);
 	}
 
-	public StringAnnotation getStringAnnotation(int index)
+	public CommentAnnotation getCommentAnnotation(int index)
 	{
-		return stringAnnotationList.get(index);
+		return commentAnnotationList.get(index);
 	}
 
-	public StringAnnotation setStringAnnotation(int index, StringAnnotation stringAnnotation)
+	public CommentAnnotation setCommentAnnotation(int index, CommentAnnotation commentAnnotation)
 	{
-		return stringAnnotationList.set(index, stringAnnotation);
+		return commentAnnotationList.set(index, commentAnnotation);
 	}
 
-	public void addStringAnnotation(StringAnnotation stringAnnotation)
+	public void addCommentAnnotation(CommentAnnotation commentAnnotation)
 	{
-		stringAnnotationList.add(stringAnnotation);
+		commentAnnotationList.add(commentAnnotation);
 	}
 
-	public void removeStringAnnotation(StringAnnotation stringAnnotation)
+	public void removeCommentAnnotation(CommentAnnotation commentAnnotation)
 	{
-		stringAnnotationList.remove(stringAnnotation);
+		commentAnnotationList.remove(commentAnnotation);
 	}
 
 	// Property which occurs more than once
@@ -470,6 +494,68 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 		timestampAnnotationList.remove(timestampAnnotation);
 	}
 
+	// Property which occurs more than once
+	public int sizeOfTagAnnotationList()
+	{
+		return tagAnnotationList.size();
+	}
+
+	public List<TagAnnotation> copyTagAnnotationList()
+	{
+		return new ArrayList<TagAnnotation>(tagAnnotationList);
+	}
+
+	public TagAnnotation getTagAnnotation(int index)
+	{
+		return tagAnnotationList.get(index);
+	}
+
+	public TagAnnotation setTagAnnotation(int index, TagAnnotation tagAnnotation)
+	{
+		return tagAnnotationList.set(index, tagAnnotation);
+	}
+
+	public void addTagAnnotation(TagAnnotation tagAnnotation)
+	{
+		tagAnnotationList.add(tagAnnotation);
+	}
+
+	public void removeTagAnnotation(TagAnnotation tagAnnotation)
+	{
+		tagAnnotationList.remove(tagAnnotation);
+	}
+
+	// Property which occurs more than once
+	public int sizeOfTermAnnotationList()
+	{
+		return termAnnotationList.size();
+	}
+
+	public List<TermAnnotation> copyTermAnnotationList()
+	{
+		return new ArrayList<TermAnnotation>(termAnnotationList);
+	}
+
+	public TermAnnotation getTermAnnotation(int index)
+	{
+		return termAnnotationList.get(index);
+	}
+
+	public TermAnnotation setTermAnnotation(int index, TermAnnotation termAnnotation)
+	{
+		return termAnnotationList.set(index, termAnnotation);
+	}
+
+	public void addTermAnnotation(TermAnnotation termAnnotation)
+	{
+		termAnnotationList.add(termAnnotation);
+	}
+
+	public void removeTermAnnotation(TermAnnotation termAnnotation)
+	{
+		termAnnotationList.remove(termAnnotation);
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -530,13 +616,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 				StructuredAnnotations_element.appendChild(doubleAnnotationList_value.asXMLElement(document));
 			}
 		}
-		if (stringAnnotationList != null)
+		if (commentAnnotationList != null)
 		{
-			// Element property StringAnnotation which is complex (has
+			// Element property CommentAnnotation which is complex (has
 			// sub-elements) and occurs more than once
-			for (StringAnnotation stringAnnotationList_value : stringAnnotationList)
+			for (CommentAnnotation commentAnnotationList_value : commentAnnotationList)
 			{
-				StructuredAnnotations_element.appendChild(stringAnnotationList_value.asXMLElement(document));
+				StructuredAnnotations_element.appendChild(commentAnnotationList_value.asXMLElement(document));
 			}
 		}
 		if (booleanAnnotationList != null)
@@ -555,6 +641,24 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 			for (TimestampAnnotation timestampAnnotationList_value : timestampAnnotationList)
 			{
 				StructuredAnnotations_element.appendChild(timestampAnnotationList_value.asXMLElement(document));
+			}
+		}
+		if (tagAnnotationList != null)
+		{
+			// Element property TagAnnotation which is complex (has
+			// sub-elements) and occurs more than once
+			for (TagAnnotation tagAnnotationList_value : tagAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(tagAnnotationList_value.asXMLElement(document));
+			}
+		}
+		if (termAnnotationList != null)
+		{
+			// Element property TermAnnotation which is complex (has
+			// sub-elements) and occurs more than once
+			for (TermAnnotation termAnnotationList_value : termAnnotationList)
+			{
+				StructuredAnnotations_element.appendChild(termAnnotationList_value.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, StructuredAnnotations_element);

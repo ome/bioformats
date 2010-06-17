@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class BinData extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -71,7 +71,7 @@ public class BinData extends AbstractOMEModelObject
 	private Boolean bigEndian;
 
 	// Property
-	private NonNegativeInteger length;
+	private NonNegativeLong length;
 
 	// Property
 	private Compression compression;
@@ -132,7 +132,7 @@ public class BinData extends AbstractOMEModelObject
 		if (element.hasAttribute("Length"))
 		{
 			// Attribute property Length
-			setLength(NonNegativeInteger.valueOf(
+			setLength(NonNegativeLong.valueOf(
 					element.getAttribute("Length")));
 		}
 		if (element.hasAttribute("Compression"))
@@ -165,12 +165,12 @@ public class BinData extends AbstractOMEModelObject
 	}
 
 	// Property
-	public NonNegativeInteger getLength()
+	public NonNegativeLong getLength()
 	{
 		return length;
 	}
 
-	public void setLength(NonNegativeInteger length)
+	public void setLength(NonNegativeLong length)
 	{
 		this.length = length;
 	}

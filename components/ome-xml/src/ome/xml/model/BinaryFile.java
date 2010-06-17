@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class BinaryFile extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -71,7 +71,7 @@ public class BinaryFile extends AbstractOMEModelObject
 	private String mimetype;
 
 	// Property
-	private Integer size;
+	private NonNegativeLong size;
 
 	// Property
 	private String fileName;
@@ -138,7 +138,7 @@ public class BinaryFile extends AbstractOMEModelObject
 		if (element.hasAttribute("Size"))
 		{
 			// Attribute property Size
-			setSize(Integer.valueOf(
+			setSize(NonNegativeLong.valueOf(
 					element.getAttribute("Size")));
 		}
 		if (element.hasAttribute("FileName"))
@@ -203,12 +203,12 @@ public class BinaryFile extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getSize()
+	public NonNegativeLong getSize()
 	{
 		return size;
 	}
 
-	public void setSize(Integer size)
+	public void setSize(NonNegativeLong size)
 	{
 		this.size = size;
 	}

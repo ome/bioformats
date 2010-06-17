@@ -48,6 +48,7 @@ import ome.xml.model.enums.handlers.ImmersionEnumHandler;
 import ome.xml.model.enums.handlers.LaserMediumEnumHandler;
 import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
 import ome.xml.model.enums.handlers.MicroscopeTypeEnumHandler;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -559,7 +560,7 @@ public class LeicaHandler extends DefaultHandler {
             String na = token.substring(x + 1);
 
             store.setObjectiveNominalMagnification(
-              new Integer(mag), numDatasets, 0);
+              new PositiveInteger(mag), numDatasets, 0);
             store.setObjectiveLensNA(new Double(na), numDatasets, 0);
           }
           else {
@@ -644,12 +645,14 @@ public class LeicaHandler extends DefaultHandler {
           store.setFilterID(id, numDatasets, nextFilter);
           store.setFilterModel(object, numDatasets, nextFilter);
           if (v != null) {
-            store.setTransmittanceRangeCutIn(v, numDatasets, nextFilter);
+            store.setTransmittanceRangeCutIn(
+                new PositiveInteger(v), numDatasets, nextFilter);
           }
         }
         else if (attributes.getValue("Description").endsWith("(right)")) {
           if (v != null) {
-            store.setTransmittanceRangeCutOut(v, numDatasets, nextFilter);
+            store.setTransmittanceRangeCutOut(
+                new PositiveInteger(v), numDatasets, nextFilter);
             nextFilter++;
           }
         }
@@ -696,8 +699,10 @@ public class LeicaHandler extends DefaultHandler {
           String filter =
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(filter, numDatasets, nextFilter);
-          store.setTransmittanceRangeCutIn(m.cutIn, numDatasets, nextFilter);
-          store.setTransmittanceRangeCutOut(m.cutOut, numDatasets, nextFilter);
+          store.setTransmittanceRangeCutIn(
+              new PositiveInteger(m.cutIn), numDatasets, nextFilter);
+          store.setTransmittanceRangeCutOut(
+              new PositiveInteger(m.cutOut), numDatasets, nextFilter);
           store.setLightPathEmissionFilterRef(
             filter, numDatasets, nextChannel, 0);
           nextFilter++;
@@ -915,7 +920,8 @@ public class LeicaHandler extends DefaultHandler {
 
       if (text != null) store.setTextValue(text, roi, 0);
       if (fontSize != null) {
-        store.setTextFontSize((int) Double.parseDouble(fontSize), roi, 0);
+        store.setTextFontSize(
+            new NonNegativeInteger((int) Double.parseDouble(fontSize)), roi, 0);
       }
       store.setTextStrokeWidth(new Double(linewidth), roi, 0);
 

@@ -736,8 +736,8 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        store.setObjectiveNominalMagnification((int)
-          Double.parseDouble(attributes.getValue("magnification")), 0, 0);
+        store.setObjectiveNominalMagnification(new PositiveInteger((int)
+          Double.parseDouble(attributes.getValue("magnification"))), 0, 0);
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {

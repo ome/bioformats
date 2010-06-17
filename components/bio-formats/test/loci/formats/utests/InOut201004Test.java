@@ -74,7 +74,7 @@ import ome.xml.model.OMEModelObject;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Reference;
-import ome.xml.model.StringAnnotation;
+import ome.xml.model.CommentAnnotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.TiffData;
 import ome.xml.model.TimestampAnnotation;
@@ -108,6 +108,7 @@ import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.testng.annotations.BeforeClass;
@@ -246,9 +247,9 @@ public class InOut201004Test {
 
   public static final Long WELL_ANNOTATION_VALUE = 262144L;
 
-  public static final Integer WELL_ROWS = 3;
+  public static final PositiveInteger WELL_ROWS = new PositiveInteger(3);
 
-  public static final Integer WELL_COLS = 2;
+  public static final PositiveInteger WELL_COLS = new PositiveInteger(2);
 
   public static final NamingConvention WELL_ROW = NamingConvention.LETTER;
 
@@ -266,7 +267,7 @@ public class InOut201004Test {
 
   public static final String OTF_BINARY_FILE_NAME = "abc.bin";
 
-  public static final Integer OTF_BINARY_FILE_SIZE = 64;
+  public static final NonNegativeLong OTF_BINARY_FILE_SIZE = new NonNegativeLong(64L);
 
   public static final String OTF_BINARY_FILE_EXTERNAL_HREF = "file:///abc.bin";
 
@@ -674,10 +675,10 @@ public class InOut201004Test {
     assertEquals(plate.getColumns(), WELL_COLS);
     assertEquals(plate.getRowNamingConvention(), WELL_ROW);
     assertEquals(plate.getColumnNamingConvention(), WELL_COL);
-    assertEquals(plate.sizeOfWellList(), WELL_ROWS * WELL_COLS);
-    for (Integer row=0; row<WELL_ROWS; row++) {
-      for (Integer col=0; col<WELL_COLS; col++) {
-        Well well = plate.getWell(row * WELL_COLS + col);
+    assertEquals(plate.sizeOfWellList(), WELL_ROWS.getValue() * WELL_COLS.getValue());
+    for (Integer row=0; row<WELL_ROWS.getValue(); row++) {
+      for (Integer col=0; col<WELL_COLS.getValue(); col++) {
+        Well well = plate.getWell(row * WELL_COLS.getValue() + col);
         assertNotNull(well);
         assertEquals(String.format("Well:%d_%d", row, col), well.getID());
         assertEquals(well.getRow(), row);
@@ -701,9 +702,9 @@ public class InOut201004Test {
   public void testValidWellSamples() {
     Plate plate = ome.getPlate(0);
     Integer wellSampleIndex = 0;
-    for (int row=0; row<plate.getRows(); row++) {
-      for (int col=0; col<plate.getColumns(); col++) {
-        Well well = plate.getWell(row * plate.getColumns() + col);
+    for (int row=0; row<plate.getRows().getValue(); row++) {
+      for (int col=0; col<plate.getColumns().getValue(); col++) {
+        Well well = plate.getWell(row * plate.getColumns().getValue() + col);
         assertEquals(1, well.sizeOfWellSampleList());
         WellSample sample = well.getWellSample(0);
         assertNotNull(sample);
@@ -756,8 +757,8 @@ public class InOut201004Test {
     assertNotNull(n);
     assertEquals(ROI_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
-    assertTrue(n instanceof StringAnnotation);
-    StringAnnotation string = (StringAnnotation) n;
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
     assertEquals(ROI_ANNOTATION_VALUE, string.getValue());
   }
 

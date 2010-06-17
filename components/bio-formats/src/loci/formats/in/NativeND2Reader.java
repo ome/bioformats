@@ -44,6 +44,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -1079,7 +1080,7 @@ public class NativeND2Reader extends FormatReader {
       String type = roi.get("ROIType");
 
       if (type.equals("Text")) {
-        store.setTextFontSize(new Integer(roi.get("fHeight")), r, 0);
+        store.setTextFontSize(NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
         store.setTextValue(roi.get("eval-text"), r, 0);
         store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
 

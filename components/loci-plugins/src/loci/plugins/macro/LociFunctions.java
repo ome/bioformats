@@ -515,9 +515,9 @@ public class LociFunctions extends MacroFunctions {
     int planeCount = retrieve.getPlaneCount(imageIndex);
     int[] zct = r.getZCTCoords(no);
     for (int i=0; i<planeCount; i++) {
-      Integer theC = retrieve.getPlaneTheC(imageIndex, i);
-      Integer theT = retrieve.getPlaneTheT(imageIndex, i);
-      Integer theZ = retrieve.getPlaneTheZ(imageIndex, i);
+      Integer theC = retrieve.getPlaneTheC(imageIndex, i).getValue();
+      Integer theT = retrieve.getPlaneTheT(imageIndex, i).getValue();
+      Integer theZ = retrieve.getPlaneTheZ(imageIndex, i).getValue();
       if (zct[0] == theZ.intValue() && zct[1] == theC.intValue() &&
         zct[2] == theT.intValue())
       {

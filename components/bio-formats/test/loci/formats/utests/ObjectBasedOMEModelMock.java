@@ -38,6 +38,7 @@ import ome.xml.model.Arc;
 import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;
 import ome.xml.model.Channel;
+import ome.xml.model.CommentAnnotation;
 import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
 import ome.xml.model.DoubleAnnotation;
@@ -60,7 +61,6 @@ import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.ROI;
 import ome.xml.model.Rectangle;
-import ome.xml.model.StringAnnotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.TiffData;
 import ome.xml.model.TimestampAnnotation;
@@ -279,8 +279,8 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     annotations.addTimestampAnnotation(plateAnnotation);
 
     int wellSampleIndex = 0;
-    for (int row=0; row<InOut201004Test.WELL_ROWS; row++) {
-      for (int col=0; col<InOut201004Test.WELL_COLS; col++) {
+    for (int row=0; row<InOut201004Test.WELL_ROWS.getValue(); row++) {
+      for (int col=0; col<InOut201004Test.WELL_COLS.getValue(); col++) {
         Well well = new Well();
         well.setID(String.format("Well:%d_%d", row, col));
         well.setRow(new NonNegativeInteger(row));
@@ -312,12 +312,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ROI roi = new ROI();
     roi.setID(InOut201004Test.ROI_ID);
 
-    StringAnnotation roiAnnotation = new StringAnnotation();
+    CommentAnnotation roiAnnotation = new CommentAnnotation();
     roiAnnotation.setID(InOut201004Test.ROI_ANNOTATION_ID);
     roiAnnotation.setValue(InOut201004Test.ROI_ANNOTATION_VALUE);
     roiAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     roi.linkAnnotation(roiAnnotation);
-    annotations.addStringAnnotation(roiAnnotation);
+    annotations.addCommentAnnotation(roiAnnotation);
 
     Union shapeUnion = new Union();
     Rectangle rect = new Rectangle();

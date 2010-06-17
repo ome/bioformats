@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -80,10 +80,10 @@ public abstract class Shape extends AbstractOMEModelObject
 	private LineCap lineCap;
 
 	// Property
-	private Integer theC;
+	private NonNegativeInteger theC;
 
 	// Property
-	private Integer theT;
+	private NonNegativeInteger theT;
 
 	// Property
 	private String transform;
@@ -104,10 +104,10 @@ public abstract class Shape extends AbstractOMEModelObject
 	private Marker markerEnd;
 
 	// Property
-	private Integer theZ;
+	private NonNegativeInteger theZ;
 
 	// Property
-	private Integer fontSize;
+	private NonNegativeInteger fontSize;
 
 	// Property
 	private String id;
@@ -136,9 +136,6 @@ public abstract class Shape extends AbstractOMEModelObject
 	// *** WARNING *** Unhandled or skipped property Path
 
 	// *** WARNING *** Unhandled or skipped property Text
-
-	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// Property
 	private String description;
@@ -212,13 +209,13 @@ public abstract class Shape extends AbstractOMEModelObject
 		if (element.hasAttribute("TheC"))
 		{
 			// Attribute property TheC
-			setTheC(Integer.valueOf(
+			setTheC(NonNegativeInteger.valueOf(
 					element.getAttribute("TheC")));
 		}
 		if (element.hasAttribute("TheT"))
 		{
 			// Attribute property TheT
-			setTheT(Integer.valueOf(
+			setTheT(NonNegativeInteger.valueOf(
 					element.getAttribute("TheT")));
 		}
 		if (element.hasAttribute("Transform"))
@@ -260,13 +257,13 @@ public abstract class Shape extends AbstractOMEModelObject
 		if (element.hasAttribute("TheZ"))
 		{
 			// Attribute property TheZ
-			setTheZ(Integer.valueOf(
+			setTheZ(NonNegativeInteger.valueOf(
 					element.getAttribute("TheZ")));
 		}
 		if (element.hasAttribute("FontSize"))
 		{
 			// Attribute property FontSize
-			setFontSize(Integer.valueOf(
+			setFontSize(NonNegativeInteger.valueOf(
 					element.getAttribute("FontSize")));
 		}
 		if (!element.hasAttribute("ID") && getID() == null)
@@ -397,15 +394,6 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Text_nodeList.size() != 0)
 		{
 		}
-		// Element reference AnnotationRef
-		List<Element> AnnotationRef_nodeList =
-				getChildrenByTagName(element, "AnnotationRef");
-		for (Element AnnotationRef_element : AnnotationRef_nodeList)
-		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
-		}
 		List<Element> Description_nodeList =
 				getChildrenByTagName(element, "Description");
 		if (Description_nodeList.size() > 1)
@@ -428,13 +416,6 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	public void link(Reference reference, OMEModelObject o)
 	{
-		if (reference instanceof AnnotationRef)
-		{
-			Annotation o_casted = (Annotation) o;
-			o_casted.linkShape(this);
-			annotationList.add(o_casted);
-			return;
-		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(
 				"Unable to handle reference of type: " + reference.getClass());
@@ -486,23 +467,23 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getTheC()
+	public NonNegativeInteger getTheC()
 	{
 		return theC;
 	}
 
-	public void setTheC(Integer theC)
+	public void setTheC(NonNegativeInteger theC)
 	{
 		this.theC = theC;
 	}
 
 	// Property
-	public Integer getTheT()
+	public NonNegativeInteger getTheT()
 	{
 		return theT;
 	}
 
-	public void setTheT(Integer theT)
+	public void setTheT(NonNegativeInteger theT)
 	{
 		this.theT = theT;
 	}
@@ -574,23 +555,23 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getTheZ()
+	public NonNegativeInteger getTheZ()
 	{
 		return theZ;
 	}
 
-	public void setTheZ(Integer theZ)
+	public void setTheZ(NonNegativeInteger theZ)
 	{
 		this.theZ = theZ;
 	}
 
 	// Property
-	public Integer getFontSize()
+	public NonNegativeInteger getFontSize()
 	{
 		return fontSize;
 	}
 
-	public void setFontSize(Integer fontSize)
+	public void setFontSize(NonNegativeInteger fontSize)
 	{
 		this.fontSize = fontSize;
 	}
@@ -654,39 +635,6 @@ public abstract class Shape extends AbstractOMEModelObject
 	// *** WARNING *** Unhandled or skipped property Path
 
 	// *** WARNING *** Unhandled or skipped property Text
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedAnnotationList()
-	{
-		return annotationList.size();
-	}
-
-	public List<Annotation> copyLinkedAnnotationList()
-	{
-		return new ArrayList<Annotation>(annotationList);
-	}
-
-	public Annotation getLinkedAnnotation(int index)
-	{
-		return annotationList.get(index);
-	}
-
-	public Annotation setLinkedAnnotation(int index, Annotation o)
-	{
-		return annotationList.set(index, o);
-	}
-
-	public boolean linkAnnotation(Annotation o)
-	{
-		o.linkShape(this);
-		return annotationList.add(o);
-	}
-
-	public boolean unlinkAnnotation(Annotation o)
-	{
-		o.unlinkShape(this);
-		return annotationList.remove(o);
-	}
 
 	// Property
 	public String getDescription()

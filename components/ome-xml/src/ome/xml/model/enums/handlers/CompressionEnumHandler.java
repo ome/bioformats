@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:15.370551
+ * Created by callan via xsd-fu on 2010-06-11 17:18:07+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,7 +90,8 @@ public class CompressionEnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for {}", value);
+    LOGGER.warn("Could not find enumeration for '{}'({})",
+                value, value.length());
     throw new EnumerationException(this.getClass().getName() +
      " could not find enumeration for " + value);
   }

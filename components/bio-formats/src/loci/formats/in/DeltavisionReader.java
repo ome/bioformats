@@ -804,7 +804,7 @@ public class DeltavisionReader extends FormatReader {
 
             try {
               store.setObjectiveNominalMagnification(
-                new Integer(magnification), 0, 0);
+                PositiveInteger.valueOf(magnification), 0, 0);
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse magnification '{}'", magnification);

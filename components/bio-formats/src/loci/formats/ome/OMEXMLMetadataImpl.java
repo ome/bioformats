@@ -1,6 +1,6 @@
 
 /*
- * loci.formats.meta.OMEXMLMetadataImpl
+ * loci.formats.ome.OMEXMLMetadataImpl
  *
  *-----------------------------------------------------------------------------
  *
@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:18.758353
+ * Created by callan via xsd-fu on 2010-06-17 12:33:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -46,14 +46,14 @@ import ome.xml.model.primitives.*;
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
  * DOMs for the 2010-04 version of OME-XML. It requires the
- * ome.xml.model package to compile (part of ome-xml.jar).
+ * ome.xml.r201004 package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200809Metadata.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ome/OMEXML200809Metadata.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 {
@@ -108,112 +108,98 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// AnnotationRef entity counting
 	public int getROIAnnotationRefCount(int ROIIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getROI(ROIIndex).sizeOfLinkedAnnotationList();
 	}
 
-	public int getReagentAnnotationRefCount(int screenIndex, int reagentIndex)
-	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-		// AnnotationRef is a reference
-		return root.getScreen(screenIndex).getReagent(reagentIndex).sizeOfLinkedAnnotationList();
-	}
-
 	public int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPlateAnnotationRefCount(int plateIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getImageAnnotationRefCount(int imageIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getScreenAnnotationRefCount(int screenIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getScreen(screenIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getWellAnnotationRefCount(int plateIndex, int wellIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).getWell(wellIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getDatasetAnnotationRefCount(int datasetIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getDataset(datasetIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getProjectAnnotationRefCount(int projectIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getProject(projectIndex).sizeOfLinkedAnnotationList();
 	}
 
-	public int getListAnnotationAnnotationRefCount(int listAnnotationIndex)
+	public int getReagentAnnotationRefCount(int screenIndex, int reagentIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
-		return root.getStructuredAnnotations().getListAnnotation(listAnnotationIndex).sizeOfLinkedAnnotationList();
-	}
-
-	public int getShapeAnnotationRefCount(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-		// AnnotationRef is a reference
-		return root.getROI(ROIIndex).getUnion().getShape(shapeIndex).sizeOfLinkedAnnotationList();
+		return root.getScreen(screenIndex).getReagent(reagentIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPlaneAnnotationRefCount(int imageIndex, int planeIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getExperimenterAnnotationRefCount(int experimenterIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getExperimenter(experimenterIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getWellSampleAnnotationRefCount(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPixelsAnnotationRefCount(int imageIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).getPixels().sizeOfLinkedAnnotationList();
 	}
 
 	public int getChannelAnnotationRefCount(int imageIndex, int channelIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).sizeOfLinkedAnnotationList();
 	}
@@ -234,6 +220,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// Channel is not a reference
 		return root.getImage(imageIndex).getPixels().sizeOfChannelList();
+	}
+
+	// CommentAnnotation entity counting
+	public int getCommentAnnotationCount()
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// CommentAnnotation is not a reference
+		return root.getStructuredAnnotations().sizeOfCommentAnnotationList();
 	}
 
 	// Contact entity counting
@@ -574,15 +568,23 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// StageLabel entity counting
-	// StringAnnotation entity counting
-	public int getStringAnnotationCount()
+	// StructuredAnnotations entity counting
+	// TagAnnotation entity counting
+	public int getTagAnnotationCount()
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
-		// StringAnnotation is not a reference
-		return root.getStructuredAnnotations().sizeOfStringAnnotationList();
+		// TagAnnotation is not a reference
+		return root.getStructuredAnnotations().sizeOfTagAnnotationList();
 	}
 
-	// StructuredAnnotations entity counting
+	// TermAnnotation entity counting
+	public int getTermAnnotationCount()
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// TermAnnotation is not a reference
+		return root.getStructuredAnnotations().sizeOfTermAnnotationList();
+	}
+
 	// Text entity counting
 	// TiffData entity counting
 	public int getTiffDataCount(int imageIndex)
@@ -687,8 +689,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// AnnotationRef property storage
 	//
-	// Indexes: {u'ROI': [u'int ROIIndex', u'int annotationRefIndex'], u'ListAnnotation': [u'int listAnnotationIndex', u'int annotationRefIndex'], u'Reagent': [u'int screenIndex', u'int reagentIndex', u'int annotationRefIndex'], u'Plate': [u'int plateIndex', u'int annotationRefIndex'], u'Image': [u'int imageIndex', u'int annotationRefIndex'], u'Well': [u'int plateIndex', u'int wellIndex', u'int annotationRefIndex'], u'Pixels': [u'int imageIndex', u'int annotationRefIndex'], u'Dataset': [u'int datasetIndex', u'int annotationRefIndex'], u'Project': [u'int projectIndex', u'int annotationRefIndex'], u'PlateAcquisition': [u'int plateIndex', u'int plateAcquisitionIndex', u'int annotationRefIndex'], u'Shape': [u'int ROIIndex', u'int shapeIndex', u'int annotationRefIndex'], u'Plane': [u'int imageIndex', u'int planeIndex', u'int annotationRefIndex'], u'Experimenter': [u'int experimenterIndex', u'int annotationRefIndex'], u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex', u'int annotationRefIndex'], u'Screen': [u'int screenIndex', u'int annotationRefIndex'], u'Channel': [u'int imageIndex', u'int channelIndex', u'int annotationRefIndex']}
-	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Indexes: {u'ROI': [u'int ROIIndex', u'int annotationRefIndex'], u'Reagent': [u'int screenIndex', u'int reagentIndex', u'int annotationRefIndex'], u'Plate': [u'int plateIndex', u'int annotationRefIndex'], u'Image': [u'int imageIndex', u'int annotationRefIndex'], u'Well': [u'int plateIndex', u'int wellIndex', u'int annotationRefIndex'], u'Pixels': [u'int imageIndex', u'int annotationRefIndex'], u'Dataset': [u'int datasetIndex', u'int annotationRefIndex'], u'Project': [u'int projectIndex', u'int annotationRefIndex'], u'PlateAcquisition': [u'int plateIndex', u'int plateAcquisitionIndex', u'int annotationRefIndex'], u'Plane': [u'int imageIndex', u'int planeIndex', u'int annotationRefIndex'], u'Experimenter': [u'int experimenterIndex', u'int annotationRefIndex'], u'Annotation': [u'int annotationRefIndex'], u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex', u'int annotationRefIndex'], u'Screen': [u'int screenIndex', u'int annotationRefIndex'], u'Channel': [u'int imageIndex', u'int channelIndex', u'int annotationRefIndex']}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -805,14 +807,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getBinaryFile().getMIMEType();
 	}
 
-	public Integer getFileAnnotationBinaryFileSize(int fileAnnotationIndex)
+	public NonNegativeLong getFileAnnotationBinaryFileSize(int fileAnnotationIndex)
 	{
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// Size is not a reference
 		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getBinaryFile().getSize();
 	}
 
-	public Integer getOTFBinaryFileSize(int instrumentIndex, int OTFIndex)
+	public NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex)
 	{
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// Size is not a reference
@@ -826,8 +828,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getBooleanAnnotationAnnotationRef(int booleanAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getBooleanAnnotationDescription(int booleanAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getBooleanAnnotationID(int booleanAnnotationIndex)
 	{
@@ -837,7 +853,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getBooleanAnnotationNamespace(int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -853,7 +868,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public Boolean getBooleanAnnotationValue(int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -978,13 +992,69 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getPockelCellSetting();
 	}
 
-	public Integer getChannelSamplesPerPixel(int imageIndex, int channelIndex)
+	public PositiveInteger getChannelSamplesPerPixel(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// SamplesPerPixel is not a reference
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getSamplesPerPixel();
 	}
 
+	//
+	// CommentAnnotation property storage
+	//
+	// Indexes: {u'StructuredAnnotations': [u'int commentAnnotationIndex']}
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	public String getCommentAnnotationAnnotationRef(int commentAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	public String getCommentAnnotationDescription(int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).getDescription();
+	}
+
+	// Ignoring Experimenter_BackReference back reference
+	public String getCommentAnnotationID(int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// ID is not a reference
+		return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).getID();
+	}
+
+	// Ignoring Image_BackReference back reference
+	public String getCommentAnnotationNamespace(int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Namespace is not a reference
+		return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).getNamespace();
+	}
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	public String getCommentAnnotationValue(int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Value is not a reference
+		return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).getValue();
+	}
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Contact property storage
 	//
@@ -1259,8 +1329,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getDoubleAnnotationAnnotationRef(int doubleAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getDoubleAnnotationDescription(int doubleAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getDoubleAnnotationID(int doubleAnnotationIndex)
 	{
@@ -1270,7 +1354,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getDoubleAnnotationNamespace(int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1286,7 +1369,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public Double getDoubleAnnotationValue(int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1303,7 +1385,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getEllipseDescription(int ROIIndex, int shapeIndex)
 	{
@@ -1326,7 +1407,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getEllipseFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getEllipseFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -1400,7 +1481,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getEllipseTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getEllipseTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -1409,7 +1490,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getEllipseTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getEllipseTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -1418,7 +1499,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getEllipseTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getEllipseTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -1614,7 +1695,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
 	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
@@ -1702,9 +1783,23 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getFileAnnotationAnnotationRef(int fileAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring BinaryFile element, complex property
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getFileAnnotationDescription(int fileAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getFileAnnotationID(int fileAnnotationIndex)
 	{
@@ -1714,7 +1809,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getFileAnnotationNamespace(int fileAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1730,7 +1824,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -2398,7 +2491,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getLineDescription(int ROIIndex, int shapeIndex)
 	{
@@ -2421,7 +2513,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getLineFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getLineFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2495,7 +2587,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getLineTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getLineTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2504,7 +2596,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getLineTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getLineTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2513,7 +2605,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getLineTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getLineTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2578,6 +2670,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getListAnnotationDescription(int listAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getListAnnotation(listAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getListAnnotationID(int listAnnotationIndex)
 	{
@@ -2587,7 +2686,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getListAnnotationNamespace(int listAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -2603,7 +2701,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -2613,8 +2710,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getLongAnnotationAnnotationRef(int longAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getLongAnnotationDescription(int longAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getLongAnnotationID(int longAnnotationIndex)
 	{
@@ -2624,7 +2735,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getLongAnnotationNamespace(int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -2640,7 +2750,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public Long getLongAnnotationValue(int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -2657,7 +2766,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getMaskDescription(int ROIIndex, int shapeIndex)
 	{
@@ -2680,7 +2788,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getMaskFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getMaskFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2754,7 +2862,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getMaskTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getMaskTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2763,7 +2871,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getMaskTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getMaskTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2772,7 +2880,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getMaskTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getMaskTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -2790,6 +2898,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring BinData element, complex property
+	public Double getMaskHeight(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getHeight();
+	}
+
+	public Double getMaskWidth(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getWidth();
+	}
+
 	public Double getMaskX(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
@@ -3036,7 +3160,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getObjective(objectiveIndex).getModel();
 	}
 
-	public Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex)
+	public PositiveInteger getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
 		// NominalMagnification is not a reference
@@ -3127,7 +3251,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getPathDescription(int ROIIndex, int shapeIndex)
 	{
@@ -3150,7 +3273,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getPathFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPathFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3224,7 +3347,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getPathTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPathTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3233,7 +3356,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getPathTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPathTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3242,7 +3365,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getPathTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPathTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3426,21 +3549,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).getPositionZ();
 	}
 
-	public Integer getPlaneTheC(int imageIndex, int planeIndex)
+	public NonNegativeInteger getPlaneTheC(int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// TheC is not a reference
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).getTheC();
 	}
 
-	public Integer getPlaneTheT(int imageIndex, int planeIndex)
+	public NonNegativeInteger getPlaneTheT(int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// TheT is not a reference
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).getTheT();
 	}
 
-	public Integer getPlaneTheZ(int imageIndex, int planeIndex)
+	public NonNegativeInteger getPlaneTheZ(int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// TheZ is not a reference
@@ -3468,7 +3591,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getColumnNamingConvention();
 	}
 
-	public Integer getPlateColumns(int plateIndex)
+	public PositiveInteger getPlateColumns(int plateIndex)
 	{
 		// Parents: {u'OME': None}
 		// Columns is not a reference
@@ -3511,7 +3634,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getRowNamingConvention();
 	}
 
-	public Integer getPlateRows(int plateIndex)
+	public PositiveInteger getPlateRows(int plateIndex)
 	{
 		// Parents: {u'OME': None}
 		// Rows is not a reference
@@ -3582,7 +3705,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).getID();
 	}
 
-	public Integer getPlateAcquisitionMaximumFieldCount(int plateIndex, int plateAcquisitionIndex)
+	public PositiveInteger getPlateAcquisitionMaximumFieldCount(int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// MaximumFieldCount is not a reference
@@ -3628,7 +3751,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getPointDescription(int ROIIndex, int shapeIndex)
 	{
@@ -3651,7 +3773,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getPointFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPointFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3725,7 +3847,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getPointTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPointTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3734,7 +3856,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getPointTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPointTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3743,7 +3865,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getPointTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPointTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3783,7 +3905,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getPolylineDescription(int ROIIndex, int shapeIndex)
 	{
@@ -3806,7 +3927,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getPolylineFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPolylineFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3880,7 +4001,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getPolylineTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPolylineTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3889,7 +4010,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getPolylineTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPolylineTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -3898,7 +4019,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getPolylineTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getPolylineTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4120,7 +4241,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getRectangleDescription(int ROIIndex, int shapeIndex)
 	{
@@ -4143,7 +4263,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getRectangleFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getRectangleFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4217,7 +4337,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getRectangleTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getRectangleTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4226,7 +4346,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getRectangleTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getRectangleTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4235,7 +4355,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getRectangleTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getRectangleTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4409,29 +4529,59 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// StringAnnotation property storage
+	// StructuredAnnotations property storage
 	//
-	// Indexes: {u'StructuredAnnotations': [u'int stringAnnotationIndex']}
+	// Indexes: {u'OME': []}
+	// {u'OME': None}
+	// Is multi path? False
+
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring CommentAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring TagAnnotation element, complex property
+	// Ignoring TermAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
+	//
+	// TagAnnotation property storage
+	//
+	// Indexes: {u'StructuredAnnotations': [u'int tagAnnotationIndex']}
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getTagAnnotationAnnotationRef(int tagAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getTagAnnotationDescription(int tagAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
-	public String getStringAnnotationID(int stringAnnotationIndex)
+	public String getTagAnnotationID(int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
-		return root.getStructuredAnnotations().getStringAnnotation(stringAnnotationIndex).getID();
+		return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).getID();
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
-	public String getStringAnnotationNamespace(int stringAnnotationIndex)
+	public String getTagAnnotationNamespace(int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
-		return root.getStructuredAnnotations().getStringAnnotation(stringAnnotationIndex).getNamespace();
+		return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).getNamespace();
 	}
 
 	// Ignoring Pixels_BackReference back reference
@@ -4442,31 +4592,71 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
-	public String getStringAnnotationValue(int stringAnnotationIndex)
+	public String getTagAnnotationValue(int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
-		return root.getStructuredAnnotations().getStringAnnotation(stringAnnotationIndex).getValue();
+		return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).getValue();
 	}
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
-	// StructuredAnnotations property storage
+	// TermAnnotation property storage
 	//
-	// Indexes: {u'OME': []}
-	// {u'OME': None}
+	// Indexes: {u'StructuredAnnotations': [u'int termAnnotationIndex']}
+	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
-	// Ignoring BooleanAnnotation element, complex property
-	// Ignoring DoubleAnnotation element, complex property
-	// Ignoring FileAnnotation element, complex property
-	// Ignoring ListAnnotation element, complex property
-	// Ignoring LongAnnotation element, complex property
-	// Ignoring StringAnnotation element, complex property
-	// Ignoring TimestampAnnotation element, complex property
-	// Ignoring XMLAnnotation element, complex property
+	public String getTermAnnotationAnnotationRef(int termAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	public String getTermAnnotationDescription(int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).getDescription();
+	}
+
+	// Ignoring Experimenter_BackReference back reference
+	public String getTermAnnotationID(int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// ID is not a reference
+		return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).getID();
+	}
+
+	// Ignoring Image_BackReference back reference
+	public String getTermAnnotationNamespace(int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Namespace is not a reference
+		return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).getNamespace();
+	}
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	public String getTermAnnotationValue(int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Value is not a reference
+		return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).getValue();
+	}
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Text property storage
 	//
@@ -4474,7 +4664,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public String getTextDescription(int ROIIndex, int shapeIndex)
 	{
@@ -4497,7 +4686,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public Integer getTextFontSize(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getTextFontSize(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4571,7 +4760,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public Integer getTextTheC(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getTextTheC(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4580,7 +4769,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public Integer getTextTheT(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getTextTheT(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4589,7 +4778,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public Integer getTextTheZ(int ROIIndex, int shapeIndex)
+	public NonNegativeInteger getTextTheZ(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4637,35 +4826,35 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
-	public Integer getTiffDataFirstC(int imageIndex, int tiffDataIndex)
+	public NonNegativeInteger getTiffDataFirstC(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// FirstC is not a reference
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getFirstC();
 	}
 
-	public Integer getTiffDataFirstT(int imageIndex, int tiffDataIndex)
+	public NonNegativeInteger getTiffDataFirstT(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// FirstT is not a reference
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getFirstT();
 	}
 
-	public Integer getTiffDataFirstZ(int imageIndex, int tiffDataIndex)
+	public NonNegativeInteger getTiffDataFirstZ(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// FirstZ is not a reference
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getFirstZ();
 	}
 
-	public Integer getTiffDataIFD(int imageIndex, int tiffDataIndex)
+	public NonNegativeInteger getTiffDataIFD(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// IFD is not a reference
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getIFD();
 	}
 
-	public Integer getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
+	public NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// PlaneCount is not a reference
@@ -4680,8 +4869,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getTimestampAnnotationAnnotationRef(int timestampAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getTimestampAnnotationDescription(int timestampAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getTimestampAnnotationID(int timestampAnnotationIndex)
 	{
@@ -4691,7 +4894,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getTimestampAnnotationNamespace(int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -4707,7 +4909,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -4724,28 +4925,28 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Filter': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
-	public Integer getTransmittanceRangeCutIn(int instrumentIndex, int filterIndex)
+	public PositiveInteger getTransmittanceRangeCutIn(int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutIn is not a reference
 		return root.getInstrument(instrumentIndex).getFilter(filterIndex).getTransmittanceRange().getCutIn();
 	}
 
-	public Integer getTransmittanceRangeCutInTolerance(int instrumentIndex, int filterIndex)
+	public NonNegativeInteger getTransmittanceRangeCutInTolerance(int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutInTolerance is not a reference
 		return root.getInstrument(instrumentIndex).getFilter(filterIndex).getTransmittanceRange().getCutInTolerance();
 	}
 
-	public Integer getTransmittanceRangeCutOut(int instrumentIndex, int filterIndex)
+	public PositiveInteger getTransmittanceRangeCutOut(int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutOut is not a reference
 		return root.getInstrument(instrumentIndex).getFilter(filterIndex).getTransmittanceRange().getCutOut();
 	}
 
-	public Integer getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex)
+	public NonNegativeInteger getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutOutTolerance is not a reference
@@ -4902,7 +5103,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).getPositionY();
 	}
 
-	public Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
+	public String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// Timepoint is not a reference
@@ -4927,8 +5128,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public String getXMLAnnotationAnnotationRef(int XMLAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		return root.getStructuredAnnotations().getXMLAnnotation(XMLAnnotationIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public String getXMLAnnotationDescription(int XMLAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		return root.getStructuredAnnotations().getXMLAnnotation(XMLAnnotationIndex).getDescription();
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public String getXMLAnnotationID(int XMLAnnotationIndex)
 	{
@@ -4938,7 +5153,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public String getXMLAnnotationNamespace(int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -4954,7 +5168,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public String getXMLAnnotationValue(int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5001,7 +5214,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -5251,7 +5464,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setMIMEType(mimetype);
 	}
 
-	public void setFileAnnotationBinaryFileSize(Integer size, int fileAnnotationIndex)
+	public void setFileAnnotationBinaryFileSize(NonNegativeLong size, int fileAnnotationIndex)
 	{
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// Size is not a reference
@@ -5274,7 +5487,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setSize(size);
 	}
 
-	public void setOTFBinaryFileSize(Integer size, int instrumentIndex, int OTFIndex)
+	public void setOTFBinaryFileSize(NonNegativeLong size, int instrumentIndex, int OTFIndex)
 	{
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// Size is not a reference
@@ -5303,8 +5516,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setBooleanAnnotationAnnotationRef(String annotation, int booleanAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setBooleanAnnotationDescription(String description, int booleanAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfBooleanAnnotationList() == booleanAnnotationIndex)
+		{
+			o1.addBooleanAnnotation(new BooleanAnnotation());
+		}
+		BooleanAnnotation o2 = o1.getBooleanAnnotation(booleanAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setBooleanAnnotationID(String id, int booleanAnnotationIndex)
 	{
@@ -5326,7 +5568,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setBooleanAnnotationNamespace(String namespace, int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5353,7 +5594,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5698,7 +5938,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPockelCellSetting(pockelCellSetting);
 	}
 
-	public void setChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int channelIndex)
+	public void setChannelSamplesPerPixel(PositiveInteger samplesPerPixel, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// SamplesPerPixel is not a reference
@@ -5721,6 +5961,110 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setSamplesPerPixel(samplesPerPixel);
 	}
 
+	//
+	// CommentAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	public void setCommentAnnotationAnnotationRef(String annotation, int commentAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex),
+				annotationList_reference);
+	}
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	public void setCommentAnnotationDescription(String description, int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfCommentAnnotationList() == commentAnnotationIndex)
+		{
+			o1.addCommentAnnotation(new CommentAnnotation());
+		}
+		CommentAnnotation o2 = o1.getCommentAnnotation(commentAnnotationIndex);
+		o2.setDescription(description);
+	}
+
+	// Ignoring Experimenter_BackReference back reference
+	public void setCommentAnnotationID(String id, int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// ID is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfCommentAnnotationList() == commentAnnotationIndex)
+		{
+			o1.addCommentAnnotation(new CommentAnnotation());
+		}
+		CommentAnnotation o2 = o1.getCommentAnnotation(commentAnnotationIndex);
+		model.addModelObject(id, o2);
+		o2.setID(id);
+	}
+
+	// Ignoring Image_BackReference back reference
+	public void setCommentAnnotationNamespace(String namespace, int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Namespace is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfCommentAnnotationList() == commentAnnotationIndex)
+		{
+			o1.addCommentAnnotation(new CommentAnnotation());
+		}
+		CommentAnnotation o2 = o1.getCommentAnnotation(commentAnnotationIndex);
+		o2.setNamespace(namespace);
+	}
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Value is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfCommentAnnotationList() == commentAnnotationIndex)
+		{
+			o1.addCommentAnnotation(new CommentAnnotation());
+		}
+		CommentAnnotation o2 = o1.getCommentAnnotation(commentAnnotationIndex);
+		o2.setValue(value);
+	}
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Contact property storage
 	//
@@ -6327,8 +6671,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setDoubleAnnotationAnnotationRef(String annotation, int doubleAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setDoubleAnnotationDescription(String description, int doubleAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfDoubleAnnotationList() == doubleAnnotationIndex)
+		{
+			o1.addDoubleAnnotation(new DoubleAnnotation());
+		}
+		DoubleAnnotation o2 = o1.getDoubleAnnotation(doubleAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setDoubleAnnotationID(String id, int doubleAnnotationIndex)
 	{
@@ -6350,7 +6723,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setDoubleAnnotationNamespace(String namespace, int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -6377,7 +6749,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -6404,7 +6775,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setEllipseDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -6457,7 +6827,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setEllipseFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setEllipseFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -6637,7 +7007,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setEllipseTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setEllipseTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -6661,7 +7031,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setEllipseTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setEllipseTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -6685,7 +7055,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setEllipseTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setEllipseTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -7202,9 +7572,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setFileAnnotationAnnotationRef(String annotation, int fileAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring BinaryFile element, complex property
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setFileAnnotationDescription(String description, int fileAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfFileAnnotationList() == fileAnnotationIndex)
+		{
+			o1.addFileAnnotation(new FileAnnotation());
+		}
+		FileAnnotation o2 = o1.getFileAnnotation(fileAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setFileAnnotationID(String id, int fileAnnotationIndex)
 	{
@@ -7226,7 +7625,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setFileAnnotationNamespace(String namespace, int fileAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -7253,7 +7651,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -8517,7 +8914,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setLineDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -8570,7 +8966,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setLineFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setLineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -8750,7 +9146,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setLineTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setLineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -8774,7 +9170,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setLineTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setLineTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -8798,7 +9194,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setLineTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setLineTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -8956,6 +9352,24 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setListAnnotationDescription(String description, int listAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfListAnnotationList() == listAnnotationIndex)
+		{
+			o1.addListAnnotation(new ListAnnotation());
+		}
+		ListAnnotation o2 = o1.getListAnnotation(listAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setListAnnotationID(String id, int listAnnotationIndex)
 	{
@@ -8977,7 +9391,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setListAnnotationNamespace(String namespace, int listAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -9004,7 +9417,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -9013,8 +9425,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setLongAnnotationAnnotationRef(String annotation, int longAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setLongAnnotationDescription(String description, int longAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfLongAnnotationList() == longAnnotationIndex)
+		{
+			o1.addLongAnnotation(new LongAnnotation());
+		}
+		LongAnnotation o2 = o1.getLongAnnotation(longAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setLongAnnotationID(String id, int longAnnotationIndex)
 	{
@@ -9036,7 +9477,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setLongAnnotationNamespace(String namespace, int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -9063,7 +9503,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -9090,7 +9529,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setMaskDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -9143,7 +9581,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setMaskFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setMaskFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9323,7 +9761,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setMaskTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setMaskTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9347,7 +9785,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setMaskTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setMaskTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9371,7 +9809,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setMaskTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setMaskTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9419,6 +9857,52 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring BinData element, complex property
+	public void setMaskHeight(Double height, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setHeight(height);
+	}
+
+	public void setMaskWidth(Double width, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setWidth(width);
+	}
+
 	public void setMaskX(Double x, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
@@ -9934,7 +10418,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setModel(model);
 	}
 
-	public void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex)
+	public void setObjectiveNominalMagnification(PositiveInteger nominalMagnification, int instrumentIndex, int objectiveIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
 		// NominalMagnification is not a reference
@@ -10166,7 +10650,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setPathDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -10219,7 +10702,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setPathFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setPathFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -10399,7 +10882,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setPathTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setPathTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -10423,7 +10906,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setPathTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setPathTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -10447,7 +10930,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setPathTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setPathTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -10911,7 +11394,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPositionZ(positionZ);
 	}
 
-	public void setPlaneTheC(Integer theC, int imageIndex, int planeIndex)
+	public void setPlaneTheC(NonNegativeInteger theC, int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// TheC is not a reference
@@ -10934,7 +11417,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setTheC(theC);
 	}
 
-	public void setPlaneTheT(Integer theT, int imageIndex, int planeIndex)
+	public void setPlaneTheT(NonNegativeInteger theT, int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// TheT is not a reference
@@ -10957,7 +11440,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setTheT(theT);
 	}
 
-	public void setPlaneTheZ(Integer theZ, int imageIndex, int planeIndex)
+	public void setPlaneTheZ(NonNegativeInteger theZ, int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// TheZ is not a reference
@@ -11010,7 +11493,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setColumnNamingConvention(columnNamingConvention);
 	}
 
-	public void setPlateColumns(Integer columns, int plateIndex)
+	public void setPlateColumns(PositiveInteger columns, int plateIndex)
 	{
 		// Parents: {u'OME': None}
 		// Columns is not a reference
@@ -11090,7 +11573,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setRowNamingConvention(rowNamingConvention);
 	}
 
-	public void setPlateRows(Integer rows, int plateIndex)
+	public void setPlateRows(PositiveInteger rows, int plateIndex)
 	{
 		// Parents: {u'OME': None}
 		// Rows is not a reference
@@ -11226,7 +11709,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
-	public void setPlateAcquisitionMaximumFieldCount(Integer maximumFieldCount, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionMaximumFieldCount(PositiveInteger maximumFieldCount, int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// MaximumFieldCount is not a reference
@@ -11307,7 +11790,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setPointDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -11360,7 +11842,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setPointFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setPointFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11540,7 +12022,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setPointTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setPointTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11564,7 +12046,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setPointTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setPointTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11588,7 +12070,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setPointTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setPointTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11687,7 +12169,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setPolylineDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -11740,7 +12221,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setPolylineFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setPolylineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11920,7 +12401,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setPolylineTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setPolylineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11944,7 +12425,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setPolylineTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setPolylineTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11968,7 +12449,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setPolylineTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setPolylineTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12351,7 +12832,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setRectangleDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -12404,7 +12884,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setRectangleFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setRectangleFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12584,7 +13064,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setRectangleTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setRectangleTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12608,7 +13088,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setRectangleTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setRectangleTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12632,7 +13112,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setRectangleTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setRectangleTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12994,15 +13474,60 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// StringAnnotation property storage
+	// StructuredAnnotations property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring CommentAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring TagAnnotation element, complex property
+	// Ignoring TermAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
+	//
+	// TagAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setTagAnnotationAnnotationRef(String annotation, int tagAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setTagAnnotationDescription(String description, int tagAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfTagAnnotationList() == tagAnnotationIndex)
+		{
+			o1.addTagAnnotation(new TagAnnotation());
+		}
+		TagAnnotation o2 = o1.getTagAnnotation(tagAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
-	public void setStringAnnotationID(String id, int stringAnnotationIndex)
+	public void setTagAnnotationID(String id, int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// ID is not a reference
@@ -13012,18 +13537,17 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o0.setStructuredAnnotations(new StructuredAnnotations());
 		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
-		if (o1.sizeOfStringAnnotationList() == stringAnnotationIndex)
+		if (o1.sizeOfTagAnnotationList() == tagAnnotationIndex)
 		{
-			o1.addStringAnnotation(new StringAnnotation());
+			o1.addTagAnnotation(new TagAnnotation());
 		}
-		StringAnnotation o2 = o1.getStringAnnotation(stringAnnotationIndex);
+		TagAnnotation o2 = o1.getTagAnnotation(tagAnnotationIndex);
 		model.addModelObject(id, o2);
 		o2.setID(id);
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
-	public void setStringAnnotationNamespace(String namespace, int stringAnnotationIndex)
+	public void setTagAnnotationNamespace(String namespace, int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Namespace is not a reference
@@ -13033,11 +13557,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o0.setStructuredAnnotations(new StructuredAnnotations());
 		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
-		if (o1.sizeOfStringAnnotationList() == stringAnnotationIndex)
+		if (o1.sizeOfTagAnnotationList() == tagAnnotationIndex)
 		{
-			o1.addStringAnnotation(new StringAnnotation());
+			o1.addTagAnnotation(new TagAnnotation());
 		}
-		StringAnnotation o2 = o1.getStringAnnotation(stringAnnotationIndex);
+		TagAnnotation o2 = o1.getTagAnnotation(tagAnnotationIndex);
 		o2.setNamespace(namespace);
 	}
 
@@ -13049,8 +13573,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
-	public void setStringAnnotationValue(String value, int stringAnnotationIndex)
+	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
@@ -13060,37 +13583,126 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o0.setStructuredAnnotations(new StructuredAnnotations());
 		}
 		StructuredAnnotations o1 = o0.getStructuredAnnotations();
-		if (o1.sizeOfStringAnnotationList() == stringAnnotationIndex)
+		if (o1.sizeOfTagAnnotationList() == tagAnnotationIndex)
 		{
-			o1.addStringAnnotation(new StringAnnotation());
+			o1.addTagAnnotation(new TagAnnotation());
 		}
-		StringAnnotation o2 = o1.getStringAnnotation(stringAnnotationIndex);
+		TagAnnotation o2 = o1.getTagAnnotation(tagAnnotationIndex);
 		o2.setValue(value);
 	}
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
-	// StructuredAnnotations property storage
+	// TermAnnotation property storage
 	//
-	// {u'OME': None}
+	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
-	// Ignoring BooleanAnnotation element, complex property
-	// Ignoring DoubleAnnotation element, complex property
-	// Ignoring FileAnnotation element, complex property
-	// Ignoring ListAnnotation element, complex property
-	// Ignoring LongAnnotation element, complex property
-	// Ignoring StringAnnotation element, complex property
-	// Ignoring TimestampAnnotation element, complex property
-	// Ignoring XMLAnnotation element, complex property
+	public void setTermAnnotationAnnotationRef(String annotation, int termAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex),
+				annotationList_reference);
+	}
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	public void setTermAnnotationDescription(String description, int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfTermAnnotationList() == termAnnotationIndex)
+		{
+			o1.addTermAnnotation(new TermAnnotation());
+		}
+		TermAnnotation o2 = o1.getTermAnnotation(termAnnotationIndex);
+		o2.setDescription(description);
+	}
+
+	// Ignoring Experimenter_BackReference back reference
+	public void setTermAnnotationID(String id, int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// ID is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfTermAnnotationList() == termAnnotationIndex)
+		{
+			o1.addTermAnnotation(new TermAnnotation());
+		}
+		TermAnnotation o2 = o1.getTermAnnotation(termAnnotationIndex);
+		model.addModelObject(id, o2);
+		o2.setID(id);
+	}
+
+	// Ignoring Image_BackReference back reference
+	public void setTermAnnotationNamespace(String namespace, int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Namespace is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfTermAnnotationList() == termAnnotationIndex)
+		{
+			o1.addTermAnnotation(new TermAnnotation());
+		}
+		TermAnnotation o2 = o1.getTermAnnotation(termAnnotationIndex);
+		o2.setNamespace(namespace);
+	}
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	public void setTermAnnotationValue(String value, int termAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Value is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfTermAnnotationList() == termAnnotationIndex)
+		{
+			o1.addTermAnnotation(new TermAnnotation());
+		}
+		TermAnnotation o2 = o1.getTermAnnotation(termAnnotationIndex);
+		o2.setValue(value);
+	}
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Text property storage
 	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	public void setTextDescription(String description, int ROIIndex, int shapeIndex)
 	{
@@ -13143,7 +13755,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	public void setTextFontSize(Integer fontSize, int ROIIndex, int shapeIndex)
+	public void setTextFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13323,7 +13935,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	public void setTextTheC(Integer theC, int ROIIndex, int shapeIndex)
+	public void setTextTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13347,7 +13959,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheT accessor from parent Shape
-	public void setTextTheT(Integer theT, int ROIIndex, int shapeIndex)
+	public void setTextTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13371,7 +13983,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// TheZ accessor from parent Shape
-	public void setTextTheZ(Integer theZ, int ROIIndex, int shapeIndex)
+	public void setTextTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13493,7 +14105,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
-	public void setTiffDataFirstC(Integer firstC, int imageIndex, int tiffDataIndex)
+	public void setTiffDataFirstC(NonNegativeInteger firstC, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// FirstC is not a reference
@@ -13516,7 +14128,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setFirstC(firstC);
 	}
 
-	public void setTiffDataFirstT(Integer firstT, int imageIndex, int tiffDataIndex)
+	public void setTiffDataFirstT(NonNegativeInteger firstT, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// FirstT is not a reference
@@ -13539,7 +14151,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setFirstT(firstT);
 	}
 
-	public void setTiffDataFirstZ(Integer firstZ, int imageIndex, int tiffDataIndex)
+	public void setTiffDataFirstZ(NonNegativeInteger firstZ, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// FirstZ is not a reference
@@ -13562,7 +14174,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setFirstZ(firstZ);
 	}
 
-	public void setTiffDataIFD(Integer ifd, int imageIndex, int tiffDataIndex)
+	public void setTiffDataIFD(NonNegativeInteger ifd, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// IFD is not a reference
@@ -13585,7 +14197,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setIFD(ifd);
 	}
 
-	public void setTiffDataPlaneCount(Integer planeCount, int imageIndex, int tiffDataIndex)
+	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// PlaneCount is not a reference
@@ -13615,8 +14227,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setTimestampAnnotationAnnotationRef(String annotation, int timestampAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setTimestampAnnotationDescription(String description, int timestampAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfTimestampAnnotationList() == timestampAnnotationIndex)
+		{
+			o1.addTimestampAnnotation(new TimestampAnnotation());
+		}
+		TimestampAnnotation o2 = o1.getTimestampAnnotation(timestampAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setTimestampAnnotationID(String id, int timestampAnnotationIndex)
 	{
@@ -13638,7 +14279,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setTimestampAnnotationNamespace(String namespace, int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -13665,7 +14305,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -13692,7 +14331,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Filter': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
-	public void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex)
+	public void setTransmittanceRangeCutIn(PositiveInteger cutIn, int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutIn is not a reference
@@ -13715,7 +14354,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setCutIn(cutIn);
 	}
 
-	public void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex)
+	public void setTransmittanceRangeCutInTolerance(NonNegativeInteger cutInTolerance, int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutInTolerance is not a reference
@@ -13738,7 +14377,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setCutInTolerance(cutInTolerance);
 	}
 
-	public void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex)
+	public void setTransmittanceRangeCutOut(PositiveInteger cutOut, int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutOut is not a reference
@@ -13761,7 +14400,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setCutOut(cutOut);
 	}
 
-	public void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex)
+	public void setTransmittanceRangeCutOutTolerance(NonNegativeInteger cutOutTolerance, int instrumentIndex, int filterIndex)
 	{
 		// Parents: {u'Filter': {u'Instrument': {u'OME': None}}}
 		// CutOutTolerance is not a reference
@@ -14126,7 +14765,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPositionY(positionY);
 	}
 
-	public void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// Timepoint is not a reference
@@ -14165,8 +14804,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	public void setXMLAnnotationAnnotationRef(String annotation, int XMLAnnotationIndex, int annotationRefIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationList_reference = new AnnotationRef();
+		annotationList_reference.setID(annotation);
+		model.addReference(
+				root.getStructuredAnnotations().getXMLAnnotation(XMLAnnotationIndex),
+				annotationList_reference);
+	}
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	public void setXMLAnnotationDescription(String description, int XMLAnnotationIndex)
+	{
+		// Parents: {u'StructuredAnnotations': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.getStructuredAnnotations() == null)
+		{
+			o0.setStructuredAnnotations(new StructuredAnnotations());
+		}
+		StructuredAnnotations o1 = o0.getStructuredAnnotations();
+		if (o1.sizeOfXMLAnnotationList() == XMLAnnotationIndex)
+		{
+			o1.addXMLAnnotation(new XMLAnnotation());
+		}
+		XMLAnnotation o2 = o1.getXMLAnnotation(XMLAnnotationIndex);
+		o2.setDescription(description);
+	}
+
 	// Ignoring Experimenter_BackReference back reference
 	public void setXMLAnnotationID(String id, int XMLAnnotationIndex)
 	{
@@ -14188,7 +14856,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	public void setXMLAnnotationNamespace(String namespace, int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -14215,7 +14882,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}

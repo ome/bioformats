@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Channel extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -104,7 +104,7 @@ public class Channel extends AbstractOMEModelObject
 	private String id;
 
 	// Property
-	private Integer samplesPerPixel;
+	private PositiveInteger samplesPerPixel;
 
 	// Property
 	private LightSourceSettings lightSourceSettings;
@@ -254,7 +254,7 @@ public class Channel extends AbstractOMEModelObject
 		if (element.hasAttribute("SamplesPerPixel"))
 		{
 			// Attribute property SamplesPerPixel
-			setSamplesPerPixel(Integer.valueOf(
+			setSamplesPerPixel(PositiveInteger.valueOf(
 					element.getAttribute("SamplesPerPixel")));
 		}
 		List<Element> LightSourceSettings_nodeList =
@@ -498,12 +498,12 @@ public class Channel extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getSamplesPerPixel()
+	public PositiveInteger getSamplesPerPixel()
 	{
 		return samplesPerPixel;
 	}
 
-	public void setSamplesPerPixel(Integer samplesPerPixel)
+	public void setSamplesPerPixel(PositiveInteger samplesPerPixel)
 	{
 		this.samplesPerPixel = samplesPerPixel;
 	}

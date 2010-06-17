@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Plate extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -71,7 +71,7 @@ public class Plate extends AbstractOMEModelObject
 	private String status;
 
 	// Property
-	private Integer rows;
+	private PositiveInteger rows;
 
 	// Property
 	private String externalIdentifier;
@@ -92,7 +92,7 @@ public class Plate extends AbstractOMEModelObject
 	private String id;
 
 	// Property
-	private Integer columns;
+	private PositiveInteger columns;
 
 	// Property
 	private String name;
@@ -168,7 +168,7 @@ public class Plate extends AbstractOMEModelObject
 		if (element.hasAttribute("Rows"))
 		{
 			// Attribute property Rows
-			setRows(Integer.valueOf(
+			setRows(PositiveInteger.valueOf(
 					element.getAttribute("Rows")));
 		}
 		if (element.hasAttribute("ExternalIdentifier"))
@@ -218,7 +218,7 @@ public class Plate extends AbstractOMEModelObject
 		if (element.hasAttribute("Columns"))
 		{
 			// Attribute property Columns
-			setColumns(Integer.valueOf(
+			setColumns(PositiveInteger.valueOf(
 					element.getAttribute("Columns")));
 		}
 		if (element.hasAttribute("Name"))
@@ -317,12 +317,12 @@ public class Plate extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getRows()
+	public PositiveInteger getRows()
 	{
 		return rows;
 	}
 
-	public void setRows(Integer rows)
+	public void setRows(PositiveInteger rows)
 	{
 		this.rows = rows;
 	}
@@ -394,12 +394,12 @@ public class Plate extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getColumns()
+	public PositiveInteger getColumns()
 	{
 		return columns;
 	}
 
-	public void setColumns(Integer columns)
+	public void setColumns(PositiveInteger columns)
 	{
 		this.columns = columns;
 	}

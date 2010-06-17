@@ -40,6 +40,7 @@ import loci.formats.services.OMEXMLService;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -128,15 +129,15 @@ public final class MetadataTools {
         Integer sampleCount = new Integer(r.getRGBChannelCount());
         for (int c=0; c<r.getEffectiveSizeC(); c++) {
           store.setChannelID(createLSID("Channel", i, c), i, c);
-          store.setChannelSamplesPerPixel(sampleCount, i, c);
+          store.setChannelSamplesPerPixel(new PositiveInteger(sampleCount), i, c);
         }
       }
       if (doPlane) {
         for (int q=0; q<r.getImageCount(); q++) {
           int[] coords = r.getZCTCoords(q);
-          store.setPlaneTheZ(new Integer(coords[0]), i, q);
-          store.setPlaneTheC(new Integer(coords[1]), i, q);
-          store.setPlaneTheT(new Integer(coords[2]), i, q);
+          store.setPlaneTheZ(new NonNegativeInteger(coords[0]), i, q);
+          store.setPlaneTheC(new NonNegativeInteger(coords[1]), i, q);
+          store.setPlaneTheT(new NonNegativeInteger(coords[2]), i, q);
         }
       }
     }

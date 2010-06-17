@@ -40,6 +40,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -485,7 +487,8 @@ public class BioRadReader extends FormatReader {
       store.setImageObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
-      store.setObjectiveNominalMagnification((int) magFactor, 0, 0);
+      store.setObjectiveNominalMagnification(
+          new PositiveInteger((int) magFactor), 0, 0);
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
@@ -631,11 +634,11 @@ public class BioRadReader extends FormatReader {
               }
               else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
                 store.setObjectiveNominalMagnification(
-                  (int) Float.parseFloat(value), 0, 0);
+                  new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
                 store.setObjectiveNominalMagnification(
-                  (int) Float.parseFloat(value), 0, 0);
+                  new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
               }
               else if (key.startsWith("SETTING")) {
                 if (key.indexOf("_DET_") != -1) {
@@ -719,7 +722,7 @@ public class BioRadReader extends FormatReader {
                   }
 
                   store.setObjectiveNominalMagnification(
-                    (int) Float.parseFloat(values[11]), 0, 0);
+                    new PositiveInteger((int) Float.parseFloat(values[11])), 0, 0);
                   store.setPixelsPhysicalSizeZ(new Double(values[14]), 0);
                   break;
                 case 2:

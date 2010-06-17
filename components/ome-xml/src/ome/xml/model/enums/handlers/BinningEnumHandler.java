@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:15.370551
+ * Created by callan via xsd-fu on 2010-06-11 17:18:07+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,6 +76,11 @@ public class BinningEnumHandler implements IEnumerationHandler {
     p.put("^\\s*4x4\\s*", "4x4");
     p.put("^\\s*8x8\\s*", "8x8");
     p.put("^\\s*Other\\s*", "Other");
+    // BEGIN custom enumeration mappings
+    p.put("^\\s*1.*x.*1\\s*", "1x1");
+    p.put("^\\s*2.*x.*2\\s*", "2x2");
+    p.put("^\\s*4.*x.*4\\s*", "4x4");
+    p.put("^\\s*8.*x.*8\\s*", "8x8");
     return p;
   }
 
@@ -92,7 +97,8 @@ public class BinningEnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for {}", value);
+    LOGGER.warn("Could not find enumeration for '{}'({})",
+                value, value.length());
     return Binning.OTHER;
   }
 

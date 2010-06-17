@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:17.511048
+ * Created by callan via xsd-fu on 2010-06-17 12:33:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,7 +67,7 @@ import ome.xml.model.primitives.*;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/MetadataRetrieve.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/meta/MetadataRetrieve.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface MetadataRetrieve {
@@ -80,8 +80,6 @@ public interface MetadataRetrieve {
 
 	// AnnotationRef entity counting
 	int getROIAnnotationRefCount(int ROIIndex);
-
-	int getReagentAnnotationRefCount(int screenIndex, int reagentIndex);
 
 	int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex);
 
@@ -97,9 +95,7 @@ public interface MetadataRetrieve {
 
 	int getProjectAnnotationRefCount(int projectIndex);
 
-	int getListAnnotationAnnotationRefCount(int listAnnotationIndex);
-
-	int getShapeAnnotationRefCount(int ROIIndex, int shapeIndex);
+	int getReagentAnnotationRefCount(int screenIndex, int reagentIndex);
 
 	int getPlaneAnnotationRefCount(int imageIndex, int planeIndex);
 
@@ -118,6 +114,9 @@ public interface MetadataRetrieve {
 
 	// Channel entity counting
 	int getChannelCount(int imageIndex);
+
+	// CommentAnnotation entity counting
+	int getCommentAnnotationCount();
 
 	// Contact entity counting
 	// Dataset entity counting
@@ -186,6 +185,9 @@ public interface MetadataRetrieve {
 	// Leader entity counting
 	// LightEmittingDiode entity counting
 	// LightPath entity counting
+	// LightSource entity counting
+	int getLightSourceCount(int instrumentIndex);
+
 	// LightSourceSettings entity counting
 	int getMicrobeamManipulationLightSourceSettingsCount(int experimentIndex, int microbeamManipulationIndex);
 
@@ -255,11 +257,17 @@ public interface MetadataRetrieve {
 	// ScreenRef entity counting
 	int getScreenRefCount(int plateIndex);
 
-	// StageLabel entity counting
-	// StringAnnotation entity counting
-	int getStringAnnotationCount();
+	// Shape entity counting
+	int getShapeCount(int ROIIndex);
 
+	// StageLabel entity counting
 	// StructuredAnnotations entity counting
+	// TagAnnotation entity counting
+	int getTagAnnotationCount();
+
+	// TermAnnotation entity counting
+	int getTermAnnotationCount();
+
 	// Text entity counting
 	// TiffData entity counting
 	int getTiffDataCount(int imageIndex);
@@ -299,7 +307,7 @@ public interface MetadataRetrieve {
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -352,9 +360,9 @@ public interface MetadataRetrieve {
 
 	String getOTFBinaryFileMIMEType(int instrumentIndex, int OTFIndex);
 
-	Integer getFileAnnotationBinaryFileSize(int fileAnnotationIndex);
+	NonNegativeLong getFileAnnotationBinaryFileSize(int fileAnnotationIndex);
 
-	Integer getOTFBinaryFileSize(int instrumentIndex, int OTFIndex);
+	NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex);
 
 	//
 	// BooleanAnnotation property storage
@@ -362,13 +370,16 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getBooleanAnnotationAnnotationRef(int booleanAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getBooleanAnnotationDescription(int booleanAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getBooleanAnnotationID(int booleanAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getBooleanAnnotationNamespace(int booleanAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -379,7 +390,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	Boolean getBooleanAnnotationValue(int booleanAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -423,8 +433,38 @@ public interface MetadataRetrieve {
 
 	Integer getChannelPockelCellSetting(int imageIndex, int channelIndex);
 
-	Integer getChannelSamplesPerPixel(int imageIndex, int channelIndex);
+	PositiveInteger getChannelSamplesPerPixel(int imageIndex, int channelIndex);
 
+	//
+	// CommentAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	String getCommentAnnotationAnnotationRef(int commentAnnotationIndex, int annotationRefIndex);
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	String getCommentAnnotationDescription(int commentAnnotationIndex);
+
+	// Ignoring Experimenter_BackReference back reference
+	String getCommentAnnotationID(int commentAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	String getCommentAnnotationNamespace(int commentAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	String getCommentAnnotationValue(int commentAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Contact property storage
 	//
@@ -546,13 +586,16 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getDoubleAnnotationAnnotationRef(int doubleAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getDoubleAnnotationDescription(int doubleAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getDoubleAnnotationID(int doubleAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getDoubleAnnotationNamespace(int doubleAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -563,7 +606,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	Double getDoubleAnnotationValue(int doubleAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -574,7 +616,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getEllipseDescription(int ROIIndex, int shapeIndex);
 
@@ -585,7 +626,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getEllipseFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getEllipseFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -617,13 +658,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getEllipseTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getEllipseTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getEllipseTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getEllipseTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getEllipseTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getEllipseTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getEllipseTransform(int ROIIndex, int shapeIndex);
@@ -751,14 +792,17 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getFileAnnotationAnnotationRef(int fileAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring BinaryFile element, complex property
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getFileAnnotationDescription(int fileAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getFileAnnotationID(int fileAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getFileAnnotationNamespace(int fileAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -769,7 +813,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1065,7 +1108,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getLineDescription(int ROIIndex, int shapeIndex);
 
@@ -1076,7 +1118,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getLineFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getLineFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1108,13 +1150,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getLineTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getLineTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getLineTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getLineTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getLineTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getLineTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getLineTransform(int ROIIndex, int shapeIndex);
@@ -1137,11 +1179,12 @@ public interface MetadataRetrieve {
 
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getListAnnotationDescription(int listAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getListAnnotationID(int listAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getListAnnotationNamespace(int listAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -1152,7 +1195,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1161,13 +1203,16 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getLongAnnotationAnnotationRef(int longAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getLongAnnotationDescription(int longAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getLongAnnotationID(int longAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getLongAnnotationNamespace(int longAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -1178,7 +1223,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	Long getLongAnnotationValue(int longAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1189,7 +1233,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getMaskDescription(int ROIIndex, int shapeIndex);
 
@@ -1200,7 +1243,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getMaskFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getMaskFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1232,18 +1275,22 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getMaskTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getMaskTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getMaskTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getMaskTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getMaskTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getMaskTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getMaskTransform(int ROIIndex, int shapeIndex);
 
 	// Ignoring BinData element, complex property
+	Double getMaskHeight(int ROIIndex, int shapeIndex);
+
+	Double getMaskWidth(int ROIIndex, int shapeIndex);
+
 	Double getMaskX(int ROIIndex, int shapeIndex);
 
 	Double getMaskY(int ROIIndex, int shapeIndex);
@@ -1351,7 +1398,7 @@ public interface MetadataRetrieve {
 
 	String getObjectiveModel(int instrumentIndex, int objectiveIndex);
 
-	Integer getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
+	PositiveInteger getObjectiveNominalMagnification(int instrumentIndex, int objectiveIndex);
 
 	String getObjectiveSerialNumber(int instrumentIndex, int objectiveIndex);
 
@@ -1385,7 +1432,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getPathDescription(int ROIIndex, int shapeIndex);
 
@@ -1396,7 +1442,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getPathFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPathFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1428,13 +1474,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getPathTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPathTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getPathTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPathTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getPathTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPathTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getPathTransform(int ROIIndex, int shapeIndex);
@@ -1498,11 +1544,11 @@ public interface MetadataRetrieve {
 
 	Double getPlanePositionZ(int imageIndex, int planeIndex);
 
-	Integer getPlaneTheC(int imageIndex, int planeIndex);
+	NonNegativeInteger getPlaneTheC(int imageIndex, int planeIndex);
 
-	Integer getPlaneTheT(int imageIndex, int planeIndex);
+	NonNegativeInteger getPlaneTheT(int imageIndex, int planeIndex);
 
-	Integer getPlaneTheZ(int imageIndex, int planeIndex);
+	NonNegativeInteger getPlaneTheZ(int imageIndex, int planeIndex);
 
 	//
 	// Plate property storage
@@ -1514,7 +1560,7 @@ public interface MetadataRetrieve {
 
 	NamingConvention getPlateColumnNamingConvention(int plateIndex);
 
-	Integer getPlateColumns(int plateIndex);
+	PositiveInteger getPlateColumns(int plateIndex);
 
 	String getPlateDescription(int plateIndex);
 
@@ -1527,7 +1573,7 @@ public interface MetadataRetrieve {
 	// Ignoring PlateAcquisition element, complex property
 	NamingConvention getPlateRowNamingConvention(int plateIndex);
 
-	Integer getPlateRows(int plateIndex);
+	PositiveInteger getPlateRows(int plateIndex);
 
 	String getPlateScreenRef(int plateIndex, int screenRefIndex);
 
@@ -1552,7 +1598,7 @@ public interface MetadataRetrieve {
 
 	String getPlateAcquisitionID(int plateIndex, int plateAcquisitionIndex);
 
-	Integer getPlateAcquisitionMaximumFieldCount(int plateIndex, int plateAcquisitionIndex);
+	PositiveInteger getPlateAcquisitionMaximumFieldCount(int plateIndex, int plateAcquisitionIndex);
 
 	String getPlateAcquisitionName(int plateIndex, int plateAcquisitionIndex);
 
@@ -1576,7 +1622,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getPointDescription(int ROIIndex, int shapeIndex);
 
@@ -1587,7 +1632,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getPointFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPointFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1619,13 +1664,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getPointTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPointTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getPointTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPointTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getPointTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPointTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getPointTransform(int ROIIndex, int shapeIndex);
@@ -1640,7 +1685,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getPolylineDescription(int ROIIndex, int shapeIndex);
 
@@ -1651,7 +1695,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getPolylineFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPolylineFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1683,13 +1727,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getPolylineTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPolylineTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getPolylineTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPolylineTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getPolylineTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getPolylineTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getPolylineTransform(int ROIIndex, int shapeIndex);
@@ -1799,7 +1843,6 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getRectangleDescription(int ROIIndex, int shapeIndex);
 
@@ -1810,7 +1853,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getRectangleFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getRectangleFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1842,13 +1885,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getRectangleTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getRectangleTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getRectangleTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getRectangleTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getRectangleTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getRectangleTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getRectangleTransform(int ROIIndex, int shapeIndex);
@@ -1913,19 +1956,38 @@ public interface MetadataRetrieve {
 	Double getStageLabelZ(int imageIndex);
 
 	//
-	// StringAnnotation property storage
+	// StructuredAnnotations property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring CommentAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring TagAnnotation element, complex property
+	// Ignoring TermAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
+	//
+	// TagAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getTagAnnotationAnnotationRef(int tagAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getTagAnnotationDescription(int tagAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
-	String getStringAnnotationID(int stringAnnotationIndex);
+	String getTagAnnotationID(int tagAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
-	String getStringAnnotationNamespace(int stringAnnotationIndex);
+	String getTagAnnotationNamespace(int tagAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
 	// Ignoring Plane_BackReference back reference
@@ -1935,32 +1997,46 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
-	String getStringAnnotationValue(int stringAnnotationIndex);
+	String getTagAnnotationValue(int tagAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
-	// StructuredAnnotations property storage
+	// TermAnnotation property storage
 	//
-	// {u'OME': None}
+	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
-	// Ignoring BooleanAnnotation element, complex property
-	// Ignoring DoubleAnnotation element, complex property
-	// Ignoring FileAnnotation element, complex property
-	// Ignoring ListAnnotation element, complex property
-	// Ignoring LongAnnotation element, complex property
-	// Ignoring StringAnnotation element, complex property
-	// Ignoring TimestampAnnotation element, complex property
-	// Ignoring XMLAnnotation element, complex property
+	String getTermAnnotationAnnotationRef(int termAnnotationIndex, int annotationRefIndex);
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	String getTermAnnotationDescription(int termAnnotationIndex);
+
+	// Ignoring Experimenter_BackReference back reference
+	String getTermAnnotationID(int termAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	String getTermAnnotationNamespace(int termAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	String getTermAnnotationValue(int termAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Text property storage
 	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	String getTextDescription(int ROIIndex, int shapeIndex);
 
@@ -1971,7 +2047,7 @@ public interface MetadataRetrieve {
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	Integer getTextFontSize(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getTextFontSize(int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -2003,13 +2079,13 @@ public interface MetadataRetrieve {
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	Integer getTextTheC(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getTextTheC(int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	Integer getTextTheT(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getTextTheT(int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	Integer getTextTheZ(int ROIIndex, int shapeIndex);
+	NonNegativeInteger getTextTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	String getTextTransform(int ROIIndex, int shapeIndex);
@@ -2026,15 +2102,15 @@ public interface MetadataRetrieve {
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
-	Integer getTiffDataFirstC(int imageIndex, int tiffDataIndex);
+	NonNegativeInteger getTiffDataFirstC(int imageIndex, int tiffDataIndex);
 
-	Integer getTiffDataFirstT(int imageIndex, int tiffDataIndex);
+	NonNegativeInteger getTiffDataFirstT(int imageIndex, int tiffDataIndex);
 
-	Integer getTiffDataFirstZ(int imageIndex, int tiffDataIndex);
+	NonNegativeInteger getTiffDataFirstZ(int imageIndex, int tiffDataIndex);
 
-	Integer getTiffDataIFD(int imageIndex, int tiffDataIndex);
+	NonNegativeInteger getTiffDataIFD(int imageIndex, int tiffDataIndex);
 
-	Integer getTiffDataPlaneCount(int imageIndex, int tiffDataIndex);
+	NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex);
 
 	// Ignoring UUID element, complex property
 	//
@@ -2043,13 +2119,16 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getTimestampAnnotationAnnotationRef(int timestampAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getTimestampAnnotationDescription(int timestampAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getTimestampAnnotationID(int timestampAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getTimestampAnnotationNamespace(int timestampAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -2060,7 +2139,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	String getTimestampAnnotationValue(int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -2071,13 +2149,13 @@ public interface MetadataRetrieve {
 	// {u'Filter': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
-	Integer getTransmittanceRangeCutIn(int instrumentIndex, int filterIndex);
+	PositiveInteger getTransmittanceRangeCutIn(int instrumentIndex, int filterIndex);
 
-	Integer getTransmittanceRangeCutInTolerance(int instrumentIndex, int filterIndex);
+	NonNegativeInteger getTransmittanceRangeCutInTolerance(int instrumentIndex, int filterIndex);
 
-	Integer getTransmittanceRangeCutOut(int instrumentIndex, int filterIndex);
+	PositiveInteger getTransmittanceRangeCutOut(int instrumentIndex, int filterIndex);
 
-	Integer getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex);
+	NonNegativeInteger getTransmittanceRangeCutOutTolerance(int instrumentIndex, int filterIndex);
 
 	PercentFraction getTransmittanceRangeTransmittance(int instrumentIndex, int filterIndex);
 
@@ -2140,7 +2218,7 @@ public interface MetadataRetrieve {
 
 	Double getWellSamplePositionY(int plateIndex, int wellIndex, int wellSampleIndex);
 
-	Integer getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
+	String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
 	//
 	// WellSampleRef property storage
@@ -2158,13 +2236,16 @@ public interface MetadataRetrieve {
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	String getXMLAnnotationAnnotationRef(int XMLAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	String getXMLAnnotationDescription(int XMLAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	String getXMLAnnotationID(int XMLAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	String getXMLAnnotationNamespace(int XMLAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -2175,7 +2256,6 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	String getXMLAnnotationValue(int XMLAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference

@@ -31,6 +31,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
+
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -361,11 +364,11 @@ public class OMETiffReader extends FormatReader {
 
       String order = meta.getPixelsDimensionOrder(i).toString();
 
-      Integer samplesPerPixel = null;
+      PositiveInteger samplesPerPixel = null;
       if (meta.getChannelCount(i) > 0) {
         samplesPerPixel = meta.getChannelSamplesPerPixel(i, 0);
       }
-      int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.intValue();
+      int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.getValue();
       int tiffSamples = firstIFD.getSamplesPerPixel();
       if (samples != tiffSamples) {
         LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
@@ -401,15 +404,15 @@ public class OMETiffReader extends FormatReader {
         } catch (NullPointerException e) {
           LOGGER.debug("Ignoring null UUID object when retrieving value.");
         }
-        Integer tdIFD = meta.getTiffDataIFD(i, td);
-        int ifd = tdIFD == null ? 0 : tdIFD.intValue();
-        Integer numPlanes = meta.getTiffDataPlaneCount(i, td);
-        Integer firstC = meta.getTiffDataFirstC(i, td);
-        Integer firstT = meta.getTiffDataFirstT(i, td);
-        Integer firstZ = meta.getTiffDataFirstZ(i, td);
-        int c = firstC == null ? 0 : firstC.intValue();
-        int t = firstT == null ? 0 : firstT.intValue();
-        int z = firstZ == null ? 0 : firstZ.intValue();
+        NonNegativeInteger tdIFD = meta.getTiffDataIFD(i, td);
+        int ifd = tdIFD == null ? 0 : tdIFD.getValue();
+        NonNegativeInteger numPlanes = meta.getTiffDataPlaneCount(i, td);
+        NonNegativeInteger firstC = meta.getTiffDataFirstC(i, td);
+        NonNegativeInteger firstT = meta.getTiffDataFirstT(i, td);
+        NonNegativeInteger firstZ = meta.getTiffDataFirstZ(i, td);
+        int c = firstC == null ? 0 : firstC.getValue();
+        int t = firstT == null ? 0 : firstT.getValue();
+        int z = firstZ == null ? 0 : firstZ.getValue();
 
         // NB: some writers index FirstC, FirstZ and FirstT from 1
         if (c >= effSizeC) c--;
@@ -418,7 +421,7 @@ public class OMETiffReader extends FormatReader {
 
         int index = FormatTools.getIndex(order,
           sizeZ, effSizeC, sizeT, num, z, c, t);
-        int count = numPlanes == null ? 1 : numPlanes.intValue();
+        int count = numPlanes == null ? 1 : numPlanes.getValue();
         if (count == 0) {
           core[s] = null;
           break;

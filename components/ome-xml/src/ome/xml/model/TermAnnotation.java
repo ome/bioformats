@@ -1,5 +1,5 @@
 /*
- * ome.xml.model.StringAnnotation
+ * ome.xml.model.TermAnnotation
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,17 +52,17 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class StringAnnotation extends Annotation
+public class TermAnnotation extends Annotation
 {
-	// Base: Annotation -- Name: StringAnnotation -- Type: StringAnnotation -- javaBase: Annotation -- javaType: Object
+	// Base: Annotation -- Name: TermAnnotation -- Type: TermAnnotation -- javaBase: Annotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(StringAnnotation.class);
+		LoggerFactory.getLogger(TermAnnotation.class);
 
 	// -- Instance variables --
 
@@ -73,13 +73,13 @@ public class StringAnnotation extends Annotation
 	// -- Constructors --
 
 	/** Default constructor. */
-	public StringAnnotation()
+	public TermAnnotation()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs StringAnnotation recursively from an XML DOM tree.
+	 * Constructs TermAnnotation recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -87,19 +87,19 @@ public class StringAnnotation extends Annotation
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public StringAnnotation(Element element, OMEModel model)
+	public TermAnnotation(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from StringAnnotation specific template --
+	// -- Custom content from TermAnnotation specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates StringAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates TermAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -113,9 +113,9 @@ public class StringAnnotation extends Annotation
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"StringAnnotation".equals(tagName))
+		if (!"TermAnnotation".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of StringAnnotation got {}", tagName);
+			LOGGER.debug("Expecting node name of TermAnnotation got {}", tagName);
 		}
 		List<Element> Value_nodeList =
 				getChildrenByTagName(element, "Value");
@@ -135,7 +135,7 @@ public class StringAnnotation extends Annotation
 		}
 	}
 
-	// -- StringAnnotation API methods --
+	// -- TermAnnotation API methods --
 
 	public void link(Reference reference, OMEModelObject o)
 	{
@@ -161,14 +161,14 @@ public class StringAnnotation extends Annotation
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element StringAnnotation_element)
+	protected Element asXMLElement(Document document, Element TermAnnotation_element)
 	{
-		// Creating XML block for StringAnnotation
+		// Creating XML block for TermAnnotation
 
-		if (StringAnnotation_element == null)
+		if (TermAnnotation_element == null)
 		{
-			StringAnnotation_element =
-					document.createElementNS(NAMESPACE, "StringAnnotation");
+			TermAnnotation_element =
+					document.createElementNS(NAMESPACE, "TermAnnotation");
 		}
 
 		if (value != null)
@@ -178,8 +178,8 @@ public class StringAnnotation extends Annotation
 			Element value_element = 
 					document.createElementNS(NAMESPACE, "Value");
 			value_element.setTextContent(value.toString());
-			StringAnnotation_element.appendChild(value_element);
+			TermAnnotation_element.appendChild(value_element);
 		}
-		return super.asXMLElement(document, StringAnnotation_element);
+		return super.asXMLElement(document, TermAnnotation_element);
 	}
 }

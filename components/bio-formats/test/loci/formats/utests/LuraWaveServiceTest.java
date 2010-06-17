@@ -52,7 +52,7 @@ public class LuraWaveServiceTest {
     service = sf.getInstance(LuraWaveService.class);
   }
 
-  @Test
+  @Test(expectedExceptions={DependencyException.class})
   public void testInitialize()
     throws IOException, DependencyException, ServiceException {
     service.initialize(new ByteArrayInputStream(new byte[0]));

@@ -424,7 +424,7 @@ public class FormatReaderTest {
         // total number of ChannelComponents should match SizeC
         int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
         int nChannelComponents = retrieve.getChannelCount(i);
-        int samplesPerPixel = retrieve.getChannelSamplesPerPixel(i, 0);
+        int samplesPerPixel = retrieve.getChannelSamplesPerPixel(i, 0).getValue();
 
         if (sizeC != nChannelComponents * samplesPerPixel) {
           msg = "ChannelComponent";
@@ -439,9 +439,9 @@ public class FormatReaderTest {
         if (retrieve.getPlaneCount(i) > 0) {
           deltaT = retrieve.getPlaneDeltaT(i, 0);
           exposure = retrieve.getPlaneExposureTime(i, 0);
-          z = retrieve.getPlaneTheZ(i, 0);
-          c = retrieve.getPlaneTheC(i, 0);
-          t = retrieve.getPlaneTheT(i, 0);
+          z = retrieve.getPlaneTheZ(i, 0).getValue();
+          c = retrieve.getPlaneTheC(i, 0).getValue();
+          t = retrieve.getPlaneTheT(i, 0).getValue();
         }
 
         if ((deltaT != null || exposure != null) &&

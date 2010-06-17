@@ -306,7 +306,7 @@ public class Exporter {
       if (store.getChannelCount(0) == 0 ||
         store.getChannelSamplesPerPixel(0, 0) == null)
       {
-        store.setChannelSamplesPerPixel(new Integer(channels), 0, 0);
+        store.setChannelSamplesPerPixel(new PositiveInteger(channels), 0, 0);
       }
       for (int channel=0; channel<store.getChannelCount(0); channel++) {
         if (store.getChannelID(0, channel) == null) {

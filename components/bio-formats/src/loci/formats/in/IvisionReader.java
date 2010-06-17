@@ -34,6 +34,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -261,7 +263,8 @@ public class IvisionReader extends FormatReader {
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (magnification != null) {
-        store.setObjectiveNominalMagnification(magnification, 0, 0);
+        store.setObjectiveNominalMagnification(
+            new PositiveInteger(magnification), 0, 0);
       }
       if (refractiveIndex != null) {
         store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);

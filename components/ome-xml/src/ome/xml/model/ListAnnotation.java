@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class ListAnnotation extends Annotation
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -66,9 +66,6 @@ public class ListAnnotation extends Annotation
 
 	// -- Instance variables --
 
-
-	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
@@ -117,66 +114,17 @@ public class ListAnnotation extends Annotation
 		{
 			LOGGER.debug("Expecting node name of ListAnnotation got {}", tagName);
 		}
-		// Element reference AnnotationRef
-		List<Element> AnnotationRef_nodeList =
-				getChildrenByTagName(element, "AnnotationRef");
-		for (Element AnnotationRef_element : AnnotationRef_nodeList)
-		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
-		}
 	}
 
 	// -- ListAnnotation API methods --
 
 	public void link(Reference reference, OMEModelObject o)
 	{
-		if (reference instanceof AnnotationRef)
-		{
-			Annotation o_casted = (Annotation) o;
-			o_casted.linkListAnnotation(this);
-			annotationList.add(o_casted);
-			return;
-		}
 		// TODO: Should be its own Exception
 		throw new RuntimeException(
 				"Unable to handle reference of type: " + reference.getClass());
 	}
 
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedAnnotationList()
-	{
-		return annotationList.size();
-	}
-
-	public List<Annotation> copyLinkedAnnotationList()
-	{
-		return new ArrayList<Annotation>(annotationList);
-	}
-
-	public Annotation getLinkedAnnotation(int index)
-	{
-		return annotationList.get(index);
-	}
-
-	public Annotation setLinkedAnnotation(int index, Annotation o)
-	{
-		return annotationList.set(index, o);
-	}
-
-	public boolean linkAnnotation(Annotation o)
-	{
-		o.linkListAnnotation(this);
-		return annotationList.add(o);
-	}
-
-	public boolean unlinkAnnotation(Annotation o)
-	{
-		o.unlinkListAnnotation(this);
-		return annotationList.remove(o);
-	}
 
 	public Element asXMLElement(Document document)
 	{
@@ -193,16 +141,6 @@ public class ListAnnotation extends Annotation
 					document.createElementNS(NAMESPACE, "ListAnnotation");
 		}
 
-		if (annotationList != null)
-		{
-			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
-			{
-				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
-				ListAnnotation_element.appendChild(o.asXMLElement(document));
-			}
-		}
 		return super.asXMLElement(document, ListAnnotation_element);
 	}
 }

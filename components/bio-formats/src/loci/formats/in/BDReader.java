@@ -304,7 +304,7 @@ public class BDReader extends FormatReader {
           }
         }
 
-        store.setObjectiveNominalMagnification(new Integer(mag), 0, 0);
+        store.setObjectiveNominalMagnification(PositiveInteger.valueOf(mag), 0, 0);
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
           store.setObjectiveLensNA(new Double(na), 0, 0);

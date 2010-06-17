@@ -917,8 +917,8 @@ public class ZeissZVIReader extends FormatReader {
           store.setExperimenterInstitution(value, 0);
         }
         else if (key.startsWith("Objective Magnification")) {
-          double mag = Double.parseDouble(value);
-          store.setObjectiveNominalMagnification((int) mag, 0, 0);
+          store.setObjectiveNominalMagnification(
+              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
@@ -936,7 +936,8 @@ public class ZeissZVIReader extends FormatReader {
               int mag = (int)
                 Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
-              store.setObjectiveNominalMagnification(mag, 0, 0);
+              store.setObjectiveNominalMagnification(
+                  new PositiveInteger(mag), 0, 0);
               store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
               break;

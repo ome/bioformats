@@ -66,6 +66,8 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -438,11 +440,11 @@ public final class AWTImageTools {
     int height = meta.getPixelsSizeY(series).getValue().intValue();
     String pixelType = meta.getPixelsType(series).toString();
     int type = FormatTools.pixelTypeFromString(pixelType);
-    Integer nChannels = meta.getChannelSamplesPerPixel(series, 0);
+    PositiveInteger nChannels = meta.getChannelSamplesPerPixel(series, 0);
     if (nChannels == null) {
       LOGGER.warn("SamplesPerPixel is null; it is assumed to be 1.");
     }
-    int channels = nChannels == null ? 1 : nChannels.intValue();
+    int channels = nChannels == null ? 1 : nChannels.getValue();
     boolean littleEndian =
       !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
     return makeImage(data, width, height, channels,

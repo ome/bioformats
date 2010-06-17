@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:15.370551
+ * Created by callan via xsd-fu on 2010-06-11 17:18:07+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -91,6 +91,8 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*FSM\\s*", "FSM");
     p.put("^\\s*LCM\\s*", "LCM");
     p.put("^\\s*Other\\s*", "Other");
+    // BEGIN custom enumeration mappings
+    p.put(".*Widefield.*", "WideField");
     return p;
   }
 
@@ -107,7 +109,8 @@ public class AcquisitionModeEnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for {}", value);
+    LOGGER.warn("Could not find enumeration for '{}'({})",
+                value, value.length());
     return AcquisitionMode.OTHER;
   }
 

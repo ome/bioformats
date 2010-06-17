@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -927,8 +930,8 @@ public class ZeissLSMReader extends FormatReader {
       store.setObjectiveCorrection(
         getCorrection(recording.correction), series, 0);
       store.setObjectiveImmersion(getImmersion(recording.immersion), series, 0);
-      store.setObjectiveNominalMagnification(recording.magnification,
-        series, 0);
+      store.setObjectiveNominalMagnification(
+          new PositiveInteger(recording.magnification), series, 0);
       store.setObjectiveLensNA(recording.lensNA, series, 0);
       store.setObjectiveIris(recording.iris, series, 0);
       store.setObjectiveID(objectiveID, series, 0);
@@ -990,14 +993,14 @@ public class ZeissLSMReader extends FormatReader {
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
           try {
-            store.setTransmittanceRangeCutIn(new Integer(v[0].trim()), series,
-              nextFilter);
+            store.setTransmittanceRangeCutIn(
+                PositiveInteger.valueOf(v[0].trim()), series, nextFilter);
           }
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
-              store.setTransmittanceRangeCutOut(new Integer(v[1].trim()),
-                series, nextFilter);
+              store.setTransmittanceRangeCutOut(
+                  PositiveInteger.valueOf(v[1].trim()), series, nextFilter);
             }
             catch (NumberFormatException e) { }
           }
@@ -1099,7 +1102,7 @@ public class ZeissLSMReader extends FormatReader {
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
           store.setTextValue(text, i, 0);
-          store.setTextFontSize(fontHeight, i, 0);
+          store.setTextFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setTextStrokeWidth(lineWidth, i, 0);
           break;
         case LINE:
@@ -1113,7 +1116,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setLineY1(startY, i, 0);
           store.setLineX2(endX, i, 0);
           store.setLineY2(endY, i, 0);
-          store.setLineFontSize(fontHeight, i, 0);
+          store.setLineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setLineStrokeWidth(lineWidth, i, 0);
           break;
         case SCALE_BAR:
@@ -1138,7 +1141,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setRectangleY(topY, i, 0);
           store.setRectangleWidth(width, i, 0);
           store.setRectangleHeight(height, i, 0);
-          store.setRectangleFontSize(fontHeight, i, 0);
+          store.setRectangleFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setRectangleStrokeWidth(lineWidth, i, 0);
 
           break;
@@ -1194,7 +1197,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseY(centerY, i, 0);
           store.setEllipseRadiusX(rx, i, 0);
           store.setEllipseRadiusY(ry, i, 0);
-          store.setEllipseFontSize(fontHeight, i, 0);
+          store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
 
           break;
@@ -1212,7 +1215,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseY(centerY, i, 0);
           store.setEllipseRadiusX(radius, i, 0);
           store.setEllipseRadiusY(radius, i, 0);
-          store.setEllipseFontSize(fontHeight, i, 0);
+          store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
 
           break;
@@ -1247,7 +1250,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseY(cy, i, 0);
           store.setEllipseRadiusX(r, i, 0);
           store.setEllipseRadiusY(r, i, 0);
-          store.setEllipseFontSize(fontHeight, i, 0);
+          store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
 
           break;
@@ -1269,7 +1272,7 @@ public class ZeissLSMReader extends FormatReader {
           }
 
           store.setPolylinePoints(p.toString(), i, 0);
-          store.setPolylineFontSize(fontHeight, i, 0);
+          store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
 
           break;
@@ -1294,7 +1297,7 @@ public class ZeissLSMReader extends FormatReader {
 
           store.setPolylinePoints(p.toString(), i, 0);
           store.setPolylineClosed(type == CLOSED_POLYLINE, i, 0);
-          store.setPolylineFontSize(fontHeight, i, 0);
+          store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
 
           break;
@@ -1319,7 +1322,7 @@ public class ZeissLSMReader extends FormatReader {
 
           store.setPolylinePoints(p.toString(), i, 0);
           store.setPolylineClosed(type != OPEN_BEZIER, i, 0);
-          store.setPolylineFontSize(fontHeight, i, 0);
+          store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
 
           break;

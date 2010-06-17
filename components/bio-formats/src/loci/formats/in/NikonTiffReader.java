@@ -224,7 +224,8 @@ public class NikonTiffReader extends BaseTiffReader {
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
       store.setImageObjectiveSettingsID(objectiveID, 0);
-      store.setObjectiveNominalMagnification(magnification, 0, 0);
+      store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
 
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);

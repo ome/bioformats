@@ -363,13 +363,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       MetadataTools.createLSID("Annotation", annotationIndex * 3 + 1);
     String valueID =
       MetadataTools.createLSID("Annotation", annotationIndex * 3 + 2);
-    omexmlMeta.setStringAnnotationID(keyID, keyIndex);
-    omexmlMeta.setStringAnnotationID(valueID, valueIndex);
-    omexmlMeta.setStringAnnotationValue(key, keyIndex);
-    omexmlMeta.setStringAnnotationValue(value, valueIndex);
-    omexmlMeta.setStringAnnotationNamespace(
+    omexmlMeta.setCommentAnnotationID(keyID, keyIndex);
+    omexmlMeta.setCommentAnnotationID(valueID, valueIndex);
+    omexmlMeta.setCommentAnnotationValue(key, keyIndex);
+    omexmlMeta.setCommentAnnotationValue(value, valueIndex);
+    omexmlMeta.setCommentAnnotationNamespace(
       StructuredAnnotations.NAMESPACE, keyIndex);
-    omexmlMeta.setStringAnnotationNamespace(
+    omexmlMeta.setCommentAnnotationNamespace(
       StructuredAnnotations.NAMESPACE, valueIndex);
     omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
     omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);

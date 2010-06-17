@@ -273,7 +273,7 @@ public final class MetadataConverter {
       if (fileAnnotationBinaryFileMIMETypeValue != null) dest.setFileAnnotationBinaryFileMIMEType(fileAnnotationBinaryFileMIMETypeValue, fileAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
-      Integer fileAnnotationBinaryFileSizeValue = src.getFileAnnotationBinaryFileSize(fileAnnotationIndex);
+      NonNegativeLong fileAnnotationBinaryFileSizeValue = src.getFileAnnotationBinaryFileSize(fileAnnotationIndex);
       if (fileAnnotationBinaryFileSizeValue != null) dest.setFileAnnotationBinaryFileSize(fileAnnotationBinaryFileSizeValue, fileAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
@@ -459,7 +459,7 @@ public final class MetadataConverter {
         if (channelPockelCellSettingValue != null) dest.setChannelPockelCellSetting(channelPockelCellSettingValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer channelSamplesPerPixelValue = src.getChannelSamplesPerPixel(imageIndex, channelIndex);
+        PositiveInteger channelSamplesPerPixelValue = src.getChannelSamplesPerPixel(imageIndex, channelIndex);
         if (channelSamplesPerPixelValue != null) dest.setChannelSamplesPerPixel(channelSamplesPerPixelValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
         try {
@@ -639,15 +639,15 @@ public final class MetadataConverter {
         if (planePositionZValue != null) dest.setPlanePositionZ(planePositionZValue, imageIndex, planeIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer planeTheCValue = src.getPlaneTheC(imageIndex, planeIndex);
+        NonNegativeInteger planeTheCValue = src.getPlaneTheC(imageIndex, planeIndex);
         if (planeTheCValue != null) dest.setPlaneTheC(planeTheCValue, imageIndex, planeIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer planeTheTValue = src.getPlaneTheT(imageIndex, planeIndex);
+        NonNegativeInteger planeTheTValue = src.getPlaneTheT(imageIndex, planeIndex);
         if (planeTheTValue != null) dest.setPlaneTheT(planeTheTValue, imageIndex, planeIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer planeTheZValue = src.getPlaneTheZ(imageIndex, planeIndex);
+        NonNegativeInteger planeTheZValue = src.getPlaneTheZ(imageIndex, planeIndex);
         if (planeTheZValue != null) dest.setPlaneTheZ(planeTheZValue, imageIndex, planeIndex);
       } catch (NullPointerException e) { }
         try {
@@ -682,23 +682,23 @@ public final class MetadataConverter {
       int tiffDataCount = src.getTiffDataCount(imageIndex);
       for (int tiffDataIndex=0; tiffDataIndex<tiffDataCount; tiffDataIndex++) {
       try {
-        Integer tiffDataFirstCValue = src.getTiffDataFirstC(imageIndex, tiffDataIndex);
+        NonNegativeInteger tiffDataFirstCValue = src.getTiffDataFirstC(imageIndex, tiffDataIndex);
         if (tiffDataFirstCValue != null) dest.setTiffDataFirstC(tiffDataFirstCValue, imageIndex, tiffDataIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer tiffDataFirstTValue = src.getTiffDataFirstT(imageIndex, tiffDataIndex);
+        NonNegativeInteger tiffDataFirstTValue = src.getTiffDataFirstT(imageIndex, tiffDataIndex);
         if (tiffDataFirstTValue != null) dest.setTiffDataFirstT(tiffDataFirstTValue, imageIndex, tiffDataIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer tiffDataFirstZValue = src.getTiffDataFirstZ(imageIndex, tiffDataIndex);
+        NonNegativeInteger tiffDataFirstZValue = src.getTiffDataFirstZ(imageIndex, tiffDataIndex);
         if (tiffDataFirstZValue != null) dest.setTiffDataFirstZ(tiffDataFirstZValue, imageIndex, tiffDataIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer tiffDataIFDValue = src.getTiffDataIFD(imageIndex, tiffDataIndex);
+        NonNegativeInteger tiffDataIFDValue = src.getTiffDataIFD(imageIndex, tiffDataIndex);
         if (tiffDataIFDValue != null) dest.setTiffDataIFD(tiffDataIFDValue, imageIndex, tiffDataIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer tiffDataPlaneCountValue = src.getTiffDataPlaneCount(imageIndex, tiffDataIndex);
+        NonNegativeInteger tiffDataPlaneCountValue = src.getTiffDataPlaneCount(imageIndex, tiffDataIndex);
         if (tiffDataPlaneCountValue != null) dest.setTiffDataPlaneCount(tiffDataPlaneCountValue, imageIndex, tiffDataIndex);
       } catch (NullPointerException e) { }
       try {
@@ -896,19 +896,19 @@ public final class MetadataConverter {
         if (filterTypeValue != null) dest.setFilterType(filterTypeValue, instrumentIndex, filterIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer transmittanceRangeCutInValue = src.getTransmittanceRangeCutIn(instrumentIndex, filterIndex);
+        PositiveInteger transmittanceRangeCutInValue = src.getTransmittanceRangeCutIn(instrumentIndex, filterIndex);
         if (transmittanceRangeCutInValue != null) dest.setTransmittanceRangeCutIn(transmittanceRangeCutInValue, instrumentIndex, filterIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer transmittanceRangeCutInToleranceValue = src.getTransmittanceRangeCutInTolerance(instrumentIndex, filterIndex);
+        NonNegativeInteger transmittanceRangeCutInToleranceValue = src.getTransmittanceRangeCutInTolerance(instrumentIndex, filterIndex);
         if (transmittanceRangeCutInToleranceValue != null) dest.setTransmittanceRangeCutInTolerance(transmittanceRangeCutInToleranceValue, instrumentIndex, filterIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer transmittanceRangeCutOutValue = src.getTransmittanceRangeCutOut(instrumentIndex, filterIndex);
+        PositiveInteger transmittanceRangeCutOutValue = src.getTransmittanceRangeCutOut(instrumentIndex, filterIndex);
         if (transmittanceRangeCutOutValue != null) dest.setTransmittanceRangeCutOut(transmittanceRangeCutOutValue, instrumentIndex, filterIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer transmittanceRangeCutOutToleranceValue = src.getTransmittanceRangeCutOutTolerance(instrumentIndex, filterIndex);
+        NonNegativeInteger transmittanceRangeCutOutToleranceValue = src.getTransmittanceRangeCutOutTolerance(instrumentIndex, filterIndex);
         if (transmittanceRangeCutOutToleranceValue != null) dest.setTransmittanceRangeCutOutTolerance(transmittanceRangeCutOutToleranceValue, instrumentIndex, filterIndex);
       } catch (NullPointerException e) { }
       try {
@@ -1094,7 +1094,7 @@ public final class MetadataConverter {
         if (otfBinaryFileMIMETypeValue != null) dest.setOTFBinaryFileMIMEType(otfBinaryFileMIMETypeValue, instrumentIndex, otfIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer otfBinaryFileSizeValue = src.getOTFBinaryFileSize(instrumentIndex, otfIndex);
+        NonNegativeLong otfBinaryFileSizeValue = src.getOTFBinaryFileSize(instrumentIndex, otfIndex);
         if (otfBinaryFileSizeValue != null) dest.setOTFBinaryFileSize(otfBinaryFileSizeValue, instrumentIndex, otfIndex);
       } catch (NullPointerException e) { }
       try {
@@ -1179,7 +1179,7 @@ public final class MetadataConverter {
         if (objectiveModelValue != null) dest.setObjectiveModel(objectiveModelValue, instrumentIndex, objectiveIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer objectiveNominalMagnificationValue = src.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
+        PositiveInteger objectiveNominalMagnificationValue = src.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
         if (objectiveNominalMagnificationValue != null) dest.setObjectiveNominalMagnification(objectiveNominalMagnificationValue, instrumentIndex, objectiveIndex);
       } catch (NullPointerException e) { }
       try {
@@ -1245,7 +1245,7 @@ public final class MetadataConverter {
       if (plateColumnNamingConventionValue != null) dest.setPlateColumnNamingConvention(plateColumnNamingConventionValue, plateIndex);
     } catch (NullPointerException e) { }
     try {
-      Integer plateColumnsValue = src.getPlateColumns(plateIndex);
+      PositiveInteger plateColumnsValue = src.getPlateColumns(plateIndex);
       if (plateColumnsValue != null) dest.setPlateColumns(plateColumnsValue, plateIndex);
     } catch (NullPointerException e) { }
     try {
@@ -1269,7 +1269,7 @@ public final class MetadataConverter {
       if (plateRowNamingConventionValue != null) dest.setPlateRowNamingConvention(plateRowNamingConventionValue, plateIndex);
     } catch (NullPointerException e) { }
     try {
-      Integer plateRowsValue = src.getPlateRows(plateIndex);
+      PositiveInteger plateRowsValue = src.getPlateRows(plateIndex);
       if (plateRowsValue != null) dest.setPlateRows(plateRowsValue, plateIndex);
     } catch (NullPointerException e) { }
     try {
@@ -1313,7 +1313,7 @@ public final class MetadataConverter {
         if (plateAcquisitionIDValue != null) dest.setPlateAcquisitionID(plateAcquisitionIDValue, plateIndex, plateAcquisitionIndex);
       } catch (NullPointerException e) { }
       try {
-        Integer plateAcquisitionMaximumFieldCountValue = src.getPlateAcquisitionMaximumFieldCount(plateIndex, plateAcquisitionIndex);
+        PositiveInteger plateAcquisitionMaximumFieldCountValue = src.getPlateAcquisitionMaximumFieldCount(plateIndex, plateAcquisitionIndex);
         if (plateAcquisitionMaximumFieldCountValue != null) dest.setPlateAcquisitionMaximumFieldCount(plateAcquisitionMaximumFieldCountValue, plateIndex, plateAcquisitionIndex);
       } catch (NullPointerException e) { }
       try {
@@ -1417,7 +1417,7 @@ public final class MetadataConverter {
           if (wellSamplePositionYValue != null) dest.setWellSamplePositionY(wellSamplePositionYValue, plateIndex, wellIndex, wellSampleIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer wellSampleTimepointValue = src.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
+          String wellSampleTimepointValue = src.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
           if (wellSampleTimepointValue != null) dest.setWellSampleTimepoint(wellSampleTimepointValue, plateIndex, wellIndex, wellSampleIndex);
         } catch (NullPointerException e) { }
           try {
@@ -2097,19 +2097,19 @@ public final class MetadataConverter {
     }
     } catch (NullPointerException e) { }
     try {
-    int stringAnnotationCount = src.getStringAnnotationCount();
-    for (int stringAnnotationIndex=0; stringAnnotationIndex<stringAnnotationCount; stringAnnotationIndex++) {
+    int commentAnnotationCount = src.getCommentAnnotationCount();
+    for (int stringAnnotationIndex=0; stringAnnotationIndex<commentAnnotationCount; stringAnnotationIndex++) {
     try {
-      String stringAnnotationIDValue = src.getStringAnnotationID(stringAnnotationIndex);
-      if (stringAnnotationIDValue != null) dest.setStringAnnotationID(stringAnnotationIDValue, stringAnnotationIndex);
+      String stringAnnotationIDValue = src.getCommentAnnotationID(stringAnnotationIndex);
+      if (stringAnnotationIDValue != null) dest.setCommentAnnotationID(stringAnnotationIDValue, stringAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
-      String stringAnnotationNamespaceValue = src.getStringAnnotationNamespace(stringAnnotationIndex);
-      if (stringAnnotationNamespaceValue != null) dest.setStringAnnotationNamespace(stringAnnotationNamespaceValue, stringAnnotationIndex);
+      String stringAnnotationNamespaceValue = src.getCommentAnnotationNamespace(stringAnnotationIndex);
+      if (stringAnnotationNamespaceValue != null) dest.setCommentAnnotationNamespace(stringAnnotationNamespaceValue, stringAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
-      String stringAnnotationValueValue = src.getStringAnnotationValue(stringAnnotationIndex);
-      if (stringAnnotationValueValue != null) dest.setStringAnnotationValue(stringAnnotationValueValue, stringAnnotationIndex);
+      String stringAnnotationValueValue = src.getCommentAnnotationValue(stringAnnotationIndex);
+      if (stringAnnotationValueValue != null) dest.setCommentAnnotationValue(stringAnnotationValueValue, stringAnnotationIndex);
     } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }

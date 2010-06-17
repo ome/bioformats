@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Objective extends ManufacturerSpec
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -83,7 +83,7 @@ public class Objective extends ManufacturerSpec
 	private Double lensNA;
 
 	// Property
-	private Integer nominalMagnification;
+	private PositiveInteger nominalMagnification;
 
 	// Property
 	private Double calibratedMagnification;
@@ -171,7 +171,7 @@ public class Objective extends ManufacturerSpec
 		if (element.hasAttribute("NominalMagnification"))
 		{
 			// Attribute property NominalMagnification
-			setNominalMagnification(Integer.valueOf(
+			setNominalMagnification(PositiveInteger.valueOf(
 					element.getAttribute("NominalMagnification")));
 		}
 		if (element.hasAttribute("CalibratedMagnification"))
@@ -262,12 +262,12 @@ public class Objective extends ManufacturerSpec
 	}
 
 	// Property
-	public Integer getNominalMagnification()
+	public PositiveInteger getNominalMagnification()
 	{
 		return nominalMagnification;
 	}
 
-	public void setNominalMagnification(Integer nominalMagnification)
+	public void setNominalMagnification(PositiveInteger nominalMagnification)
 	{
 		this.nominalMagnification = nominalMagnification;
 	}

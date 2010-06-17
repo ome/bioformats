@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:16.267317
+ * Created by callan via xsd-fu on 2010-06-11 17:48:27+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -102,7 +102,7 @@ public interface MetadataStore
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'ListAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'Shape': {u'Union': {u'ROI': {u'OME': None}}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -155,9 +155,9 @@ public interface MetadataStore
 
 	void setOTFBinaryFileMIMEType(String mimetype, int instrumentIndex, int OTFIndex);
 
-	void setFileAnnotationBinaryFileSize(Integer size, int fileAnnotationIndex);
+	void setFileAnnotationBinaryFileSize(NonNegativeLong size, int fileAnnotationIndex);
 
-	void setOTFBinaryFileSize(Integer size, int instrumentIndex, int OTFIndex);
+	void setOTFBinaryFileSize(NonNegativeLong size, int instrumentIndex, int OTFIndex);
 
 	//
 	// BooleanAnnotation property storage
@@ -165,13 +165,16 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setBooleanAnnotationAnnotationRef(String annotation, int booleanAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setBooleanAnnotationDescription(String description, int booleanAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setBooleanAnnotationID(String id, int booleanAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setBooleanAnnotationNamespace(String namespace, int booleanAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -182,7 +185,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -226,8 +228,38 @@ public interface MetadataStore
 
 	void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex);
 
-	void setChannelSamplesPerPixel(Integer samplesPerPixel, int imageIndex, int channelIndex);
+	void setChannelSamplesPerPixel(PositiveInteger samplesPerPixel, int imageIndex, int channelIndex);
 
+	//
+	// CommentAnnotation property storage
+	//
+	// {u'StructuredAnnotations': {u'OME': None}}
+	// Is multi path? False
+
+	void setCommentAnnotationAnnotationRef(String annotation, int commentAnnotationIndex, int annotationRefIndex);
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	void setCommentAnnotationDescription(String description, int commentAnnotationIndex);
+
+	// Ignoring Experimenter_BackReference back reference
+	void setCommentAnnotationID(String id, int commentAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	void setCommentAnnotationNamespace(String namespace, int commentAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	void setCommentAnnotationValue(String value, int commentAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Contact property storage
 	//
@@ -349,13 +381,16 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setDoubleAnnotationAnnotationRef(String annotation, int doubleAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setDoubleAnnotationDescription(String description, int doubleAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setDoubleAnnotationID(String id, int doubleAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setDoubleAnnotationNamespace(String namespace, int doubleAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -366,7 +401,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -377,7 +411,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setEllipseDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -388,7 +421,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setEllipseFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setEllipseFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -420,13 +453,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setEllipseTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setEllipseTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setEllipseTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setEllipseTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setEllipseTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setEllipseTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setEllipseTransform(String transform, int ROIIndex, int shapeIndex);
@@ -554,14 +587,17 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setFileAnnotationAnnotationRef(String annotation, int fileAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring BinaryFile element, complex property
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setFileAnnotationDescription(String description, int fileAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setFileAnnotationID(String id, int fileAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setFileAnnotationNamespace(String namespace, int fileAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -572,7 +608,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -868,7 +903,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setLineDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -879,7 +913,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setLineFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setLineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -911,13 +945,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setLineTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setLineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setLineTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setLineTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setLineTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setLineTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setLineTransform(String transform, int ROIIndex, int shapeIndex);
@@ -940,11 +974,12 @@ public interface MetadataStore
 
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setListAnnotationDescription(String description, int listAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setListAnnotationID(String id, int listAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setListAnnotationNamespace(String namespace, int listAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -955,7 +990,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -964,13 +998,16 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setLongAnnotationAnnotationRef(String annotation, int longAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setLongAnnotationDescription(String description, int longAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setLongAnnotationID(String id, int longAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setLongAnnotationNamespace(String namespace, int longAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -981,7 +1018,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	void setLongAnnotationValue(Long value, int longAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -992,7 +1028,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setMaskDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -1003,7 +1038,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setMaskFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setMaskFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1035,18 +1070,22 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setMaskTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setMaskTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setMaskTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setMaskTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setMaskTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setMaskTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setMaskTransform(String transform, int ROIIndex, int shapeIndex);
 
 	// Ignoring BinData element, complex property
+	void setMaskHeight(Double height, int ROIIndex, int shapeIndex);
+
+	void setMaskWidth(Double width, int ROIIndex, int shapeIndex);
+
 	void setMaskX(Double x, int ROIIndex, int shapeIndex);
 
 	void setMaskY(Double y, int ROIIndex, int shapeIndex);
@@ -1154,7 +1193,7 @@ public interface MetadataStore
 
 	void setObjectiveModel(String model, int instrumentIndex, int objectiveIndex);
 
-	void setObjectiveNominalMagnification(Integer nominalMagnification, int instrumentIndex, int objectiveIndex);
+	void setObjectiveNominalMagnification(PositiveInteger nominalMagnification, int instrumentIndex, int objectiveIndex);
 
 	void setObjectiveSerialNumber(String serialNumber, int instrumentIndex, int objectiveIndex);
 
@@ -1188,7 +1227,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setPathDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -1199,7 +1237,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setPathFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setPathFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1231,13 +1269,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setPathTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setPathTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setPathTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setPathTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setPathTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setPathTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setPathTransform(String transform, int ROIIndex, int shapeIndex);
@@ -1301,11 +1339,11 @@ public interface MetadataStore
 
 	void setPlanePositionZ(Double positionZ, int imageIndex, int planeIndex);
 
-	void setPlaneTheC(Integer theC, int imageIndex, int planeIndex);
+	void setPlaneTheC(NonNegativeInteger theC, int imageIndex, int planeIndex);
 
-	void setPlaneTheT(Integer theT, int imageIndex, int planeIndex);
+	void setPlaneTheT(NonNegativeInteger theT, int imageIndex, int planeIndex);
 
-	void setPlaneTheZ(Integer theZ, int imageIndex, int planeIndex);
+	void setPlaneTheZ(NonNegativeInteger theZ, int imageIndex, int planeIndex);
 
 	//
 	// Plate property storage
@@ -1317,7 +1355,7 @@ public interface MetadataStore
 
 	void setPlateColumnNamingConvention(NamingConvention columnNamingConvention, int plateIndex);
 
-	void setPlateColumns(Integer columns, int plateIndex);
+	void setPlateColumns(PositiveInteger columns, int plateIndex);
 
 	void setPlateDescription(String description, int plateIndex);
 
@@ -1330,7 +1368,7 @@ public interface MetadataStore
 	// Ignoring PlateAcquisition element, complex property
 	void setPlateRowNamingConvention(NamingConvention rowNamingConvention, int plateIndex);
 
-	void setPlateRows(Integer rows, int plateIndex);
+	void setPlateRows(PositiveInteger rows, int plateIndex);
 
 	void setPlateScreenRef(String screen, int plateIndex, int screenRefIndex);
 
@@ -1355,7 +1393,7 @@ public interface MetadataStore
 
 	void setPlateAcquisitionID(String id, int plateIndex, int plateAcquisitionIndex);
 
-	void setPlateAcquisitionMaximumFieldCount(Integer maximumFieldCount, int plateIndex, int plateAcquisitionIndex);
+	void setPlateAcquisitionMaximumFieldCount(PositiveInteger maximumFieldCount, int plateIndex, int plateAcquisitionIndex);
 
 	void setPlateAcquisitionName(String name, int plateIndex, int plateAcquisitionIndex);
 
@@ -1379,7 +1417,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setPointDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -1390,7 +1427,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setPointFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setPointFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1422,13 +1459,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setPointTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setPointTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setPointTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setPointTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setPointTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setPointTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setPointTransform(String transform, int ROIIndex, int shapeIndex);
@@ -1443,7 +1480,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setPolylineDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -1454,7 +1490,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setPolylineFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setPolylineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1486,13 +1522,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setPolylineTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setPolylineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setPolylineTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setPolylineTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setPolylineTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setPolylineTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setPolylineTransform(String transform, int ROIIndex, int shapeIndex);
@@ -1602,7 +1638,6 @@ public interface MetadataStore
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setRectangleDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -1613,7 +1648,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setRectangleFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setRectangleFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1645,13 +1680,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setRectangleTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setRectangleTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setRectangleTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setRectangleTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setRectangleTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setRectangleTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setRectangleTransform(String transform, int ROIIndex, int shapeIndex);
@@ -1716,19 +1751,38 @@ public interface MetadataStore
 	void setStageLabelZ(Double z, int imageIndex);
 
 	//
-	// StringAnnotation property storage
+	// StructuredAnnotations property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	// Ignoring BooleanAnnotation element, complex property
+	// Ignoring CommentAnnotation element, complex property
+	// Ignoring DoubleAnnotation element, complex property
+	// Ignoring FileAnnotation element, complex property
+	// Ignoring ListAnnotation element, complex property
+	// Ignoring LongAnnotation element, complex property
+	// Ignoring TagAnnotation element, complex property
+	// Ignoring TermAnnotation element, complex property
+	// Ignoring TimestampAnnotation element, complex property
+	// Ignoring XMLAnnotation element, complex property
+	//
+	// TagAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setTagAnnotationAnnotationRef(String annotation, int tagAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setTagAnnotationDescription(String description, int tagAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
-	void setStringAnnotationID(String id, int stringAnnotationIndex);
+	void setTagAnnotationID(String id, int tagAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
-	void setStringAnnotationNamespace(String namespace, int stringAnnotationIndex);
+	void setTagAnnotationNamespace(String namespace, int tagAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
 	// Ignoring Plane_BackReference back reference
@@ -1738,32 +1792,46 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
-	void setStringAnnotationValue(String value, int stringAnnotationIndex);
+	void setTagAnnotationValue(String value, int tagAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
-	// StructuredAnnotations property storage
+	// TermAnnotation property storage
 	//
-	// {u'OME': None}
+	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
-	// Ignoring BooleanAnnotation element, complex property
-	// Ignoring DoubleAnnotation element, complex property
-	// Ignoring FileAnnotation element, complex property
-	// Ignoring ListAnnotation element, complex property
-	// Ignoring LongAnnotation element, complex property
-	// Ignoring StringAnnotation element, complex property
-	// Ignoring TimestampAnnotation element, complex property
-	// Ignoring XMLAnnotation element, complex property
+	void setTermAnnotationAnnotationRef(String annotation, int termAnnotationIndex, int annotationRefIndex);
+
+	// Ignoring Channel_BackReference back reference
+	// Ignoring Dataset_BackReference back reference
+	void setTermAnnotationDescription(String description, int termAnnotationIndex);
+
+	// Ignoring Experimenter_BackReference back reference
+	void setTermAnnotationID(String id, int termAnnotationIndex);
+
+	// Ignoring Image_BackReference back reference
+	void setTermAnnotationNamespace(String namespace, int termAnnotationIndex);
+
+	// Ignoring Pixels_BackReference back reference
+	// Ignoring Plane_BackReference back reference
+	// Ignoring PlateAcquisition_BackReference back reference
+	// Ignoring Plate_BackReference back reference
+	// Ignoring Project_BackReference back reference
+	// Ignoring ROI_BackReference back reference
+	// Ignoring Reagent_BackReference back reference
+	// Ignoring Screen_BackReference back reference
+	void setTermAnnotationValue(String value, int termAnnotationIndex);
+
+	// Ignoring WellSample_BackReference back reference
+	// Ignoring Well_BackReference back reference
 	//
 	// Text property storage
 	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Ignoring AnnotationRef of parent abstract type
 	// Description accessor from parent Shape
 	void setTextDescription(String description, int ROIIndex, int shapeIndex);
 
@@ -1774,7 +1842,7 @@ public interface MetadataStore
 	// Ignoring FillRule of parent abstract type
 	// Ignoring FontFamily of parent abstract type
 	// FontSize accessor from parent Shape
-	void setTextFontSize(Integer fontSize, int ROIIndex, int shapeIndex);
+	void setTextFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex);
 
 	// Ignoring FontStyle of parent abstract type
 	// ID accessor from parent Shape
@@ -1806,13 +1874,13 @@ public interface MetadataStore
 
 	// Ignoring Text of parent abstract type
 	// TheC accessor from parent Shape
-	void setTextTheC(Integer theC, int ROIIndex, int shapeIndex);
+	void setTextTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex);
 
 	// TheT accessor from parent Shape
-	void setTextTheT(Integer theT, int ROIIndex, int shapeIndex);
+	void setTextTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex);
 
 	// TheZ accessor from parent Shape
-	void setTextTheZ(Integer theZ, int ROIIndex, int shapeIndex);
+	void setTextTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
 	void setTextTransform(String transform, int ROIIndex, int shapeIndex);
@@ -1829,15 +1897,15 @@ public interface MetadataStore
 	// {u'Pixels': {u'Image': {u'OME': None}}}
 	// Is multi path? False
 
-	void setTiffDataFirstC(Integer firstC, int imageIndex, int tiffDataIndex);
+	void setTiffDataFirstC(NonNegativeInteger firstC, int imageIndex, int tiffDataIndex);
 
-	void setTiffDataFirstT(Integer firstT, int imageIndex, int tiffDataIndex);
+	void setTiffDataFirstT(NonNegativeInteger firstT, int imageIndex, int tiffDataIndex);
 
-	void setTiffDataFirstZ(Integer firstZ, int imageIndex, int tiffDataIndex);
+	void setTiffDataFirstZ(NonNegativeInteger firstZ, int imageIndex, int tiffDataIndex);
 
-	void setTiffDataIFD(Integer ifd, int imageIndex, int tiffDataIndex);
+	void setTiffDataIFD(NonNegativeInteger ifd, int imageIndex, int tiffDataIndex);
 
-	void setTiffDataPlaneCount(Integer planeCount, int imageIndex, int tiffDataIndex);
+	void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex);
 
 	// Ignoring UUID element, complex property
 	//
@@ -1846,13 +1914,16 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setTimestampAnnotationAnnotationRef(String annotation, int timestampAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setTimestampAnnotationDescription(String description, int timestampAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setTimestampAnnotationID(String id, int timestampAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setTimestampAnnotationNamespace(String namespace, int timestampAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -1863,7 +1934,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	void setTimestampAnnotationValue(String value, int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1874,13 +1944,13 @@ public interface MetadataStore
 	// {u'Filter': {u'Instrument': {u'OME': None}}}
 	// Is multi path? False
 
-	void setTransmittanceRangeCutIn(Integer cutIn, int instrumentIndex, int filterIndex);
+	void setTransmittanceRangeCutIn(PositiveInteger cutIn, int instrumentIndex, int filterIndex);
 
-	void setTransmittanceRangeCutInTolerance(Integer cutInTolerance, int instrumentIndex, int filterIndex);
+	void setTransmittanceRangeCutInTolerance(NonNegativeInteger cutInTolerance, int instrumentIndex, int filterIndex);
 
-	void setTransmittanceRangeCutOut(Integer cutOut, int instrumentIndex, int filterIndex);
+	void setTransmittanceRangeCutOut(PositiveInteger cutOut, int instrumentIndex, int filterIndex);
 
-	void setTransmittanceRangeCutOutTolerance(Integer cutOutTolerance, int instrumentIndex, int filterIndex);
+	void setTransmittanceRangeCutOutTolerance(NonNegativeInteger cutOutTolerance, int instrumentIndex, int filterIndex);
 
 	void setTransmittanceRangeTransmittance(PercentFraction transmittance, int instrumentIndex, int filterIndex);
 
@@ -1947,7 +2017,7 @@ public interface MetadataStore
 
 	void setWellSamplePositionY(Double positionY, int plateIndex, int wellIndex, int wellSampleIndex);
 
-	void setWellSampleTimepoint(Integer timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
+	void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 
 	//
 	// WellSampleRef property storage
@@ -1965,13 +2035,16 @@ public interface MetadataStore
 	// {u'StructuredAnnotations': {u'OME': None}}
 	// Is multi path? False
 
+	void setXMLAnnotationAnnotationRef(String annotation, int XMLAnnotationIndex, int annotationRefIndex);
+
 	// Ignoring Channel_BackReference back reference
 	// Ignoring Dataset_BackReference back reference
+	void setXMLAnnotationDescription(String description, int XMLAnnotationIndex);
+
 	// Ignoring Experimenter_BackReference back reference
 	void setXMLAnnotationID(String id, int XMLAnnotationIndex);
 
 	// Ignoring Image_BackReference back reference
-	// Ignoring ListAnnotation_BackReference back reference
 	void setXMLAnnotationNamespace(String namespace, int XMLAnnotationIndex);
 
 	// Ignoring Pixels_BackReference back reference
@@ -1982,7 +2055,6 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	// Ignoring Shape_BackReference back reference
 	void setXMLAnnotationValue(String value, int XMLAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference

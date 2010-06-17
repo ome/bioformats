@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Mask extends Shape
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -72,6 +72,12 @@ public class Mask extends Shape
 
 	// Property
 	private Double x;
+
+	// Property
+	private Double height;
+
+	// Property
+	private Double width;
 
 	// Property which occurs more than once
 	private List<BinData> binDataList = new ArrayList<BinData>();
@@ -135,6 +141,18 @@ public class Mask extends Shape
 			setX(Double.valueOf(
 					element.getAttribute("X")));
 		}
+		if (element.hasAttribute("Height"))
+		{
+			// Attribute property Height
+			setHeight(Double.valueOf(
+					element.getAttribute("Height")));
+		}
+		if (element.hasAttribute("Width"))
+		{
+			// Attribute property Width
+			setWidth(Double.valueOf(
+					element.getAttribute("Width")));
+		}
 		// Element property BinData which is complex (has
 		// sub-elements) and occurs more than once
 		List<Element> BinData_nodeList =
@@ -176,6 +194,28 @@ public class Mask extends Shape
 	public void setX(Double x)
 	{
 		this.x = x;
+	}
+
+	// Property
+	public Double getHeight()
+	{
+		return height;
+	}
+
+	public void setHeight(Double height)
+	{
+		this.height = height;
+	}
+
+	// Property
+	public Double getWidth()
+	{
+		return width;
+	}
+
+	public void setWidth(Double width)
+	{
+		this.width = width;
 	}
 
 	// Property which occurs more than once
@@ -233,6 +273,16 @@ public class Mask extends Shape
 		{
 			// Attribute property X
 			Mask_element.setAttribute("X", x.toString());
+		}
+		if (height != null)
+		{
+			// Attribute property Height
+			Mask_element.setAttribute("Height", height.toString());
+		}
+		if (width != null)
+		{
+			// Attribute property Width
+			Mask_element.setAttribute("Width", width.toString());
 		}
 		if (binDataList != null)
 		{

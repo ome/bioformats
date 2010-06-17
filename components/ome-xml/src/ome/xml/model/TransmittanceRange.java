@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 11:40:12.532676
+ * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class TransmittanceRange extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,19 +68,19 @@ public class TransmittanceRange extends AbstractOMEModelObject
 
 
 	// Property
-	private Integer cutIn;
+	private PositiveInteger cutIn;
 
 	// Property
 	private PercentFraction transmittance;
 
 	// Property
-	private Integer cutOut;
+	private PositiveInteger cutOut;
 
 	// Property
-	private Integer cutInTolerance;
+	private NonNegativeInteger cutInTolerance;
 
 	// Property
-	private Integer cutOutTolerance;
+	private NonNegativeInteger cutOutTolerance;
 
 	// -- Constructors --
 
@@ -132,7 +132,7 @@ public class TransmittanceRange extends AbstractOMEModelObject
 		if (element.hasAttribute("CutIn"))
 		{
 			// Attribute property CutIn
-			setCutIn(Integer.valueOf(
+			setCutIn(PositiveInteger.valueOf(
 					element.getAttribute("CutIn")));
 		}
 		if (element.hasAttribute("Transmittance"))
@@ -144,19 +144,19 @@ public class TransmittanceRange extends AbstractOMEModelObject
 		if (element.hasAttribute("CutOut"))
 		{
 			// Attribute property CutOut
-			setCutOut(Integer.valueOf(
+			setCutOut(PositiveInteger.valueOf(
 					element.getAttribute("CutOut")));
 		}
 		if (element.hasAttribute("CutInTolerance"))
 		{
 			// Attribute property CutInTolerance
-			setCutInTolerance(Integer.valueOf(
+			setCutInTolerance(NonNegativeInteger.valueOf(
 					element.getAttribute("CutInTolerance")));
 		}
 		if (element.hasAttribute("CutOutTolerance"))
 		{
 			// Attribute property CutOutTolerance
-			setCutOutTolerance(Integer.valueOf(
+			setCutOutTolerance(NonNegativeInteger.valueOf(
 					element.getAttribute("CutOutTolerance")));
 		}
 	}
@@ -172,12 +172,12 @@ public class TransmittanceRange extends AbstractOMEModelObject
 
 
 	// Property
-	public Integer getCutIn()
+	public PositiveInteger getCutIn()
 	{
 		return cutIn;
 	}
 
-	public void setCutIn(Integer cutIn)
+	public void setCutIn(PositiveInteger cutIn)
 	{
 		this.cutIn = cutIn;
 	}
@@ -194,34 +194,34 @@ public class TransmittanceRange extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getCutOut()
+	public PositiveInteger getCutOut()
 	{
 		return cutOut;
 	}
 
-	public void setCutOut(Integer cutOut)
+	public void setCutOut(PositiveInteger cutOut)
 	{
 		this.cutOut = cutOut;
 	}
 
 	// Property
-	public Integer getCutInTolerance()
+	public NonNegativeInteger getCutInTolerance()
 	{
 		return cutInTolerance;
 	}
 
-	public void setCutInTolerance(Integer cutInTolerance)
+	public void setCutInTolerance(NonNegativeInteger cutInTolerance)
 	{
 		this.cutInTolerance = cutInTolerance;
 	}
 
 	// Property
-	public Integer getCutOutTolerance()
+	public NonNegativeInteger getCutOutTolerance()
 	{
 		return cutOutTolerance;
 	}
 
-	public void setCutOutTolerance(Integer cutOutTolerance)
+	public void setCutOutTolerance(NonNegativeInteger cutOutTolerance)
 	{
 		this.cutOutTolerance = cutOutTolerance;
 	}

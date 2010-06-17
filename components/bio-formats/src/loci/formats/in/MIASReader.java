@@ -49,6 +49,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -843,12 +844,12 @@ public class MIASReader extends FormatReader {
     store.setROIID(roiID, roi);
     store.setImageROIRef(roiID, series, roi);
 
-    store.setTextTheT(tv, roi, 0);
-    store.setTextTheZ(zv, roi, 0);
+    store.setTextTheT(new NonNegativeInteger(tv), roi, 0);
+    store.setTextTheZ(new NonNegativeInteger(zv), roi, 0);
     store.setTextValue(data[columns.indexOf("Label")], roi, 0);
 
-    store.setEllipseTheT(tv, roi, 1);
-    store.setEllipseTheZ(zv, roi, 1);
+    store.setEllipseTheT(new NonNegativeInteger(tv), roi, 1);
+    store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 1);
     store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 1);
     store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 1);
 
@@ -916,8 +917,8 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          int mag = (int) Double.parseDouble(value);
-          store.setObjectiveNominalMagnification(mag, 0, 0);
+          store.setObjectiveNominalMagnification(
+              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);

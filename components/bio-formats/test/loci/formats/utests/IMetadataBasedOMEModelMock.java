@@ -61,7 +61,7 @@ import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.ROI;
 import ome.xml.model.Rectangle;
-import ome.xml.model.StringAnnotation;
+import ome.xml.model.CommentAnnotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.TimestampAnnotation;
 import ome.xml.model.Union;
@@ -245,8 +245,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
 
     int wellSampleIndex = 0;
     int wellCount = 0;
-    for (int row=0; row<InOut201004Test.WELL_ROWS; row++) {
-      for (int col=0; col<InOut201004Test.WELL_COLS; col++) {
+    for (int row=0; row<InOut201004Test.WELL_ROWS.getValue(); row++) {
+      for (int col=0; col<InOut201004Test.WELL_COLS.getValue(); col++) {
 
         store.setWellID(String.format("Well:%d_%d", row, col), 0, wellCount);
         store.setWellRow(new NonNegativeInteger(row), 0, wellCount);
@@ -272,9 +272,9 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   private void makeROI() {
     store.setROIID(InOut201004Test.ROI_ID, 0);
 
-    store.setStringAnnotationID(InOut201004Test.ROI_ANNOTATION_ID, 0);
-    store.setStringAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setStringAnnotationValue(InOut201004Test.ROI_ANNOTATION_VALUE, 0);
+    store.setCommentAnnotationID(InOut201004Test.ROI_ANNOTATION_ID, 0);
+    store.setCommentAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setCommentAnnotationValue(InOut201004Test.ROI_ANNOTATION_VALUE, 0);
     
     store.setROIAnnotationRef(InOut201004Test.ROI_ANNOTATION_ID, 0, 0);
 
