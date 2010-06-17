@@ -36,9 +36,11 @@ import loci.plugins.in.ImporterOptions;
 // TODO
 
 // left off
-//   also maybe phase out *Index(ImageProcessor) to support indexed data
-//   also add pixelsTest() where necessary
-//   also expand compositeTestSubcases() to handle more pixTypes and indexed data
+//   maybe phase out *Index(ImageProcessor) to support indexed data
+//   add pixelsTest() where necessary
+//   expand compositeTestSubcases() to handle more pixTypes and indexed data
+//   finish the colorize tests
+//   implement more combo tests
 
 // seem broken but don't know status from Curtis
 //   colorized: 1/1/indexed (all indices 0 for all images), 3/1/indexed (iIndex,cIndex) (although w/ falseColor its okay),
@@ -48,10 +50,10 @@ import loci.plugins.in.ImporterOptions;
 
 // broken
 //   comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are less
-//   than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
-//   the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
-//   by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
-//   with I guess.
+//     than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
+//     the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
+//     by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
+//     with I guess.
 
 // testable code according to my notes
 //   composite, gray, custom: working for 2 <= sizeC <= 7 and nonindexed (not yet tested)
@@ -122,8 +124,7 @@ public class ImporterTest {
   static {
 
     //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
-    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.INT32, 50, 20, FakePlaneCount, 1, 1, -1, false, -1, false, -1);
-                                                                        // BDZ - INT32 is desirable for the color tests
+    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, 50, 20, FakePlaneCount, 1, 1, -1, false, -1, false, -1);
     
     FAKE_FILES = new String[] {
       String.format(template, "1", "1"),
@@ -296,56 +297,6 @@ public class ImporterTest {
     return count;
   }
   
-  /** Tests that an ImageStack is ordered ZCT according to specified from/to/by points of z/c/t */
-  private void seriesInZctOrderTest(ImagePlus imp, boolean indexed,
-      int zFrom, int zTo, int zBy,
-      int cFrom, int cTo, int cBy,
-      int tFrom, int tTo, int tBy)
-  {
-    int zs = numInSeries(zFrom,zTo,zBy);
-    int cs = numInSeries(cFrom,cTo,cBy);
-    int ts = numInSeries(tFrom,tTo,tBy);
-   
-    ImageStack st = imp.getStack();
-    
-    assertTrue((zs * cs * ts) == st.getSize());
-    
-    for (int t = 0; t < ts; t++)
-      for (int c = 0; c < cs; c++)
-        for (int z = 0; z < zs; z++)
-        {
-          int zIndex = zIndex(imp,z,c,t,indexed);
-          int cIndex = cIndex(imp,z,c,t,indexed);
-          int tIndex = tIndex(imp,z,c,t,indexed);
-          
-          int zVal = zFrom + z*zBy;
-          int cVal = cFrom + c*cBy;
-          int tVal = tFrom + t*tBy;
-
-          assertEquals(zVal,zIndex);
-          assertEquals(cVal,cIndex);
-          assertEquals(tVal,tIndex);
-        }
-  }
-
-  /** returns a set of indices ordered as ZCT */
-  private int[][] getIndicesInZctOrder(int maxZ, int maxC, int maxT)
-  {
-    int[][] indices = new int[maxZ*maxC*maxT][3];
-    
-    int i = 0;
-    for (int t = 0; t < maxT; t++)
-      for (int c = 0; c < maxC; c++)
-        for (int z = 0; z < maxZ; z++)
-        {
-          indices[i][0] = z;
-          indices[i][1] = c;
-          indices[i][2] = t;
-          i++;
-        }
-    return indices;  
-  }
-  
   // this next method useful to avoid changes to instance vars of ImagePlus by query functions
   /** Gets values of private instance variable ints from an ImagePlus */
   private int getField(ImagePlus imp, String fieldName) {
@@ -454,9 +405,6 @@ public class ImporterTest {
   /** get the actual pixel value (lookup when data is indexed) of the index of a fake image at a given z,c,t */
   private int getPixelValue(int x,int y, ImagePlus imp, int z, int c, int t, boolean indexed)
   {
-    // our indices are 0-based while IJ's are 1-based
-    //imp.setPosition(c+1, z+1, t+1);
-    //setCztPosition(imp,z,c,t);
     setZctPosition(imp,z,c,t);
     
     int rawValue = (int) (imp.getProcessor().getPixelValue(x, y));
@@ -475,12 +423,7 @@ public class ImporterTest {
     return value;
   }
   
-  /** gets the value of the index of a fake file doing LUT lookup if needed */ 
-  private int getIndexValue(ImagePlus imp, int z, int c, int t, boolean indexed)
-  {
-    return getPixelValue(10,0,imp,z,c,t,indexed);
-  }
-  
+ 
   /** calculate the effective size C of an image given various params */
   private int effectiveC(int sizeC, int rgb, int lutLen, boolean indexed, boolean falseColor)
   {
@@ -580,13 +523,10 @@ public class ImporterTest {
     assertEquals(et,tIndex(imp, z, c, t, indexed));
   }
   
-  /** tests that a FakeFile dataset has index values in ZCT order - needed for compositeTester() */
-  private void stackInSpecificOrderTest(ImagePlus imp, int maxZ, int maxC, int maxT, boolean indexed)
+  /** tests that a FakeFile dataset has index values in ZCT order */
+  private void stackInZctOrderTest(ImagePlus imp, int maxZ, int maxC, int maxT, boolean indexed)
   {
-    ImageStack st = imp.getStack();
-    
-    if ((maxZ * maxC * maxT) != st.getSize())
-      fail("testStackInSpecificOrder() - slices don't add up: z"+maxZ+" X c"+maxC+" X t"+maxT+" != "+st.getSize());
+    assertEquals(imp.getStack().getSize(),(maxZ * maxC * maxT));
 
     int iIndex = 0;
     for (int t = 0; t < maxT; t++)
@@ -605,6 +545,30 @@ public class ImporterTest {
         }
   }
   
+  /** tests that a FakeFile dataset has index values in ZCT order repeated once per series */
+  private void multipleSeriesInZtcOrderTest(ImagePlus imp, int numSeries, int maxZ, int maxC, int maxT)
+  {
+    ImageStack st = imp.getStack();
+
+    // make sure the number of slices in stack is a sum of all series
+    assertEquals(st.getSize(), (numSeries*maxZ*maxC*maxT));
+    
+    int slice = 0;
+    for (int sIndex = 0; sIndex < numSeries; sIndex++) {
+      for (int tIndex = 0; tIndex < maxT; tIndex++) {
+        for (int cIndex = 0; cIndex < maxC; cIndex++) {
+          for (int zIndex = 0; zIndex < maxZ; zIndex++) {
+            ImageProcessor proc = st.getProcessor(++slice); 
+            assertEquals(sIndex, sIndex(proc));
+            assertEquals(zIndex, zIndex(proc));
+            assertEquals(cIndex, cIndex(proc));
+            assertEquals(tIndex, tIndex(proc));
+          }
+        }
+      }
+    }
+  }
+  
   /** tests that the pixel values of a FakeFile are as expected */
   private void pixelsTest(ImagePlus imp, int pixType, boolean indexed)
   {
@@ -621,6 +585,90 @@ public class ImporterTest {
             assertEquals(i,getPixelValue(i,10,imp,z,c,t,indexed));
   }
   
+  private void groupedFilesTest(ImagePlus imp, int numDatasets, int numImagesPerDataset)
+  {
+    ImageStack st = imp.getStack();
+    
+    assertEquals(st.getSize(),numDatasets*numImagesPerDataset);
+    
+    int slice = 0;
+    for (int fnum = 0; fnum < FAKE_FILES.length; fnum++)
+    {
+      for (int plane = 0; plane < FakePlaneCount; plane++)
+      {
+        ImageProcessor proc = st.getProcessor(++slice);
+        //printVals(proc);
+        assertEquals(0,sIndex(proc));
+        assertEquals(plane,iIndex(proc));  // TODO: is this correct. it passes but looks wrong.
+        assertEquals(plane,zIndex(proc));
+        assertEquals(0,cIndex(proc));
+        assertEquals(0,tIndex(proc));
+      }
+    }
+  }
+  
+  private void swappedZtTest(ImagePlus imp, int originalZ, int originalC, int originalT)
+  {
+    ImageStack st = imp.getStack();
+    int numSlices = st.getSize();
+    assertEquals(numSlices,(originalZ*originalC*originalT));
+
+    // verify that the dimensional extents were swapped
+    final int actualSizeZ = imp.getNSlices();
+    final int actualSizeC = imp.getNChannels();
+    final int actualSizeT = imp.getNFrames();
+    assertEquals(originalT, actualSizeZ); // Z<->T swapped
+    assertEquals(originalC, actualSizeC);
+    assertEquals(originalZ, actualSizeT); // Z<->T swapped
+
+    // verify that every plane appears in the swapped order
+    int slice = 0;
+    for (int tIndex = 0; tIndex < actualSizeT; tIndex++)
+      for (int cIndex = 0; cIndex < actualSizeC; cIndex++)
+        for (int zIndex = 0; zIndex < actualSizeZ; zIndex++)
+        {
+          ImageProcessor proc = st.getProcessor(++slice);
+          final int actualZ = tIndex(proc); // Z<->T swapped
+          final int actualC = cIndex(proc);
+          final int actualT = zIndex(proc); // Z<->T swapped
+          assertEquals(zIndex, actualZ);
+          assertEquals(cIndex, actualC);
+          assertEquals(tIndex, actualT);
+        }
+  }
+  
+  /** Tests that an ImageStack is ordered ZCT according to specified from/to/by points of z/c/t */
+  private void seriesInZctOrderTest(ImagePlus imp, boolean indexed,
+      int zFrom, int zTo, int zBy,
+      int cFrom, int cTo, int cBy,
+      int tFrom, int tTo, int tBy)
+  {
+    int zs = numInSeries(zFrom,zTo,zBy);
+    int cs = numInSeries(cFrom,cTo,cBy);
+    int ts = numInSeries(tFrom,tTo,tBy);
+   
+    ImageStack st = imp.getStack();
+    
+    assertTrue((zs * cs * ts) == st.getSize());
+    
+    for (int t = 0; t < ts; t++)
+      for (int c = 0; c < cs; c++)
+        for (int z = 0; z < zs; z++)
+        {
+          int zIndex = zIndex(imp,z,c,t,indexed);
+          int cIndex = cIndex(imp,z,c,t,indexed);
+          int tIndex = tIndex(imp,z,c,t,indexed);
+          
+          int zVal = zFrom + z*zBy;
+          int cVal = cFrom + c*cBy;
+          int tVal = tFrom + t*tBy;
+
+          assertEquals(zVal,zIndex);
+          assertEquals(cVal,cIndex);
+          assertEquals(tVal,tIndex);
+        }
+  }
+
   // ******** specific testers  **********************************
   
   /** tests BioFormats when directly calling BF.openImagePlus(path) (no options set) */
@@ -678,7 +726,7 @@ public class ImporterTest {
 
     assertEquals(z*c*t,numSlices);
 
-    int procNum = 1;
+    int slice = 0;
     //System.out.println(order);
     Axis fastest = axis(chOrder,0);
     Axis middle = axis(chOrder,1);
@@ -690,7 +738,7 @@ public class ImporterTest {
       for (int j = 0; j < maxJ; j++)
         for (int k = 0; k < maxK; k++)
         {
-          ImageProcessor proc = st.getProcessor(procNum++);
+          ImageProcessor proc = st.getProcessor(++slice);
           //printVals(proc);
           assertNotNull(proc);
           assertEquals(x,proc.getWidth());
@@ -728,32 +776,7 @@ public class ImporterTest {
     
     xyzctTest(imp,x,y,t,c,z); // Z<->T swapped
 
-    ImageStack st = imp.getStack();
-    int numSlices = st.getSize();
-    assertEquals(z*c*t,numSlices);
-
-    // verify that the dimensional extents were swapped
-    final int actualSizeZ = imp.getNSlices();
-    final int actualSizeC = imp.getNChannels();
-    final int actualSizeT = imp.getNFrames();
-    assertEquals(t, actualSizeZ); // Z<->T swapped
-    assertEquals(c, actualSizeC);
-    assertEquals(z, actualSizeT); // Z<->T swapped
-
-    // verify that every plane appears in the swapped order
-    int p = 1;
-    for (int tIndex = 0; tIndex < actualSizeT; tIndex++)
-      for (int cIndex = 0; cIndex < actualSizeC; cIndex++)
-        for (int zIndex = 0; zIndex < actualSizeZ; zIndex++)
-        {
-          ImageProcessor proc = st.getProcessor(p++);
-          final int actualZ = tIndex(proc); // Z<->T swapped
-          final int actualC = cIndex(proc);
-          final int actualT = zIndex(proc); // Z<->T swapped
-          assertEquals(zIndex, actualZ);
-          assertEquals(cIndex, actualC);
-          assertEquals(tIndex, actualT);
-        }
+    swappedZtTest(imp,z,c,t);
   }
 
   private void datasetOpenAllSeriesTester(int x, int y, int z, int c, int t, int s)
@@ -833,25 +856,8 @@ public class ImporterTest {
     // test results
     
     impsCountTest(imps,1);
-    ImageStack st = imps[0].getStack();
 
-    // make sure the number of slices in stack is a sum of all series
-    assertEquals(z*c*t*s, st.getSize());
-    
-    int index = 1;
-    for (int sIndex = 0; sIndex < s; sIndex++) {
-      for (int tIndex = 0; tIndex < t; tIndex++) {
-        for (int cIndex = 0; cIndex < c; cIndex++) {
-          for (int zIndex = 0; zIndex < z; zIndex++) {
-            ImageProcessor proc = st.getProcessor(index++); 
-            assertEquals(sIndex, sIndex(proc));
-            assertEquals(zIndex, zIndex(proc));
-            assertEquals(cIndex, cIndex(proc));
-            assertEquals(tIndex, tIndex(proc));
-          }
-        }
-      }
-    }
+    multipleSeriesInZtcOrderTest(imps[0],s,z,c,t);
   }
   
   private void autoscaleTester(int pixType, boolean wantAutoscale)
@@ -986,12 +992,16 @@ public class ImporterTest {
     //System.out.println("Checking index vals");
     //System.out.println("maxes z c t = "+maxZ+" "+maxC+" "+maxT);
     
+    /*
     // check that each image in the overall series has the correct iIndex value
     int index = 0;
     for (int t = 0; t < maxT; t++)
       for (int c = 0; c < maxC; c++)
         for (int z = 0; z < maxZ; z++)
           assertEquals(index++, getIndexValue(ci,z,c,t,indexed));  // expected value from CZT order
+          //indexValuesTest(ci, z, c, t, indexed, 0, index++, z, c, t);
+    */
+    stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed);
   }
   
   private void colorColorizedTester()
@@ -1412,11 +1422,11 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       assertEquals(series*sizeC*sizeT,st.getSize());
       for (int s = 0; s < series; s++) {
-        int index = s*sizeC*sizeT;
+        int slice = s*sizeC*sizeT;
         for (int t = 0; t < sizeT; t++) {
           for (int c = 0; c < sizeC; c++) {
             //System.out.println("index "+index);
-            ImageProcessor proc = st.getProcessor(++index);
+            ImageProcessor proc = st.getProcessor(++slice);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("z c t "+z+" "+c+" "+t);
             //System.out.println("is iz ic it "+sIndex(proc)+" "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1467,10 +1477,10 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       assertEquals(series*sizeZ*sizeT,st.getSize());
       for (int s = 0; s < series; s++) {
-        int index = s*sizeZ*sizeT;
+        int slice = s*sizeZ*sizeT;
         for (int t = 0; t < sizeT; t++) {
           for (int z = 0; z < sizeZ; z++) {
-            ImageProcessor proc = st.getProcessor(++index);
+            ImageProcessor proc = st.getProcessor(++slice);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1521,10 +1531,10 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       assertEquals(series*sizeZ*sizeC,st.getSize());
       for (int s = 0; s < series; s++) {
-        int index = s*sizeZ*sizeC;
+        int slice = s*sizeZ*sizeC;
         for (int c = 0; c < sizeC; c++) {
           for (int z = 0; z < sizeZ; z++) {
-            ImageProcessor proc = st.getProcessor(++index);
+            ImageProcessor proc = st.getProcessor(++slice);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1581,7 +1591,7 @@ public class ImporterTest {
     
     colorTests(ci,sizeC,DefaultColorOrder);
       
-    stackInSpecificOrderTest(imp,sizeZ,sizeC,sizeT,indexed);
+    stackInZctOrderTest(imp,sizeZ,sizeC,sizeT,indexed);
     
     pixelsTest(imp,pixType,indexed);
   }
@@ -1629,25 +1639,8 @@ public class ImporterTest {
       }
     
     impsCountTest(imps,1);
-    
-    ImageStack st = imps[0].getStack();
-    
-    assertEquals(FAKE_FILES.length*FakePlaneCount,st.getSize());
-    
-    int slice = 1;
-    for (int fnum = 0; fnum < FAKE_FILES.length; fnum++)
-    {
-      for (int plane = 0; plane < FakePlaneCount; plane++)
-      {
-        ImageProcessor proc = st.getProcessor(slice++);
-        //printVals(proc);
-        assertEquals(0,sIndex(proc));
-        assertEquals(plane,iIndex(proc));
-        assertEquals(plane,zIndex(proc));
-        assertEquals(0,cIndex(proc));
-        assertEquals(0,tIndex(proc));
-      }
-    }
+  
+    groupedFilesTest(imps[0], FAKE_FILES.length, FakePlaneCount);
   }
 
   @Test
@@ -2097,10 +2090,10 @@ public class ImporterTest {
       xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
       ImageStack st = imp.getStack();
       assertEquals(sizeZ * sizeT,st.getSize());
-      int index = 0;
+      int slice = 0;
       for (int t = 0; t < sizeT; t++) {
         for (int z = 0; z < sizeZ; z++) {
-          ImageProcessor proc = st.getProcessor(++index);
+          ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
           assertEquals(c,cIndex(proc));
@@ -2141,10 +2134,10 @@ public class ImporterTest {
       xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
       ImageStack st = imp.getStack();
       assertEquals(sizeC * sizeT,st.getSize());
-      int index = 0;
+      int slice = 0;
       for (int t = 0; t < sizeT; t++) {
         for (int c = 0; c < sizeC; c++) {
-          ImageProcessor proc = st.getProcessor(++index);
+          ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
           assertEquals(c,cIndex(proc));
@@ -2185,10 +2178,10 @@ public class ImporterTest {
       xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
       ImageStack st = imp.getStack();
       assertEquals(sizeZ * sizeC,st.getSize());
-      int index = 0;
+      int slice = 0;
       for (int c = 0; c < sizeC; c++) {
         for (int z = 0; z < sizeZ; z++) {
-          ImageProcessor proc = st.getProcessor(++index);
+          ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
           assertEquals(c,cIndex(proc));
@@ -2299,11 +2292,11 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       assertEquals(sizeZ*numC,st.getSize());  // sizeZ = C, numC = T
       
-      int p = 1;
+      int slice = 0;
       for (int tIndex = start; tIndex < sizeC; tIndex += stepBy)
         for (int cIndex = 0; cIndex < sizeZ; cIndex++)
         {
-          ImageProcessor proc = st.getProcessor(p++);
+          ImageProcessor proc = st.getProcessor(++slice);
           
           assertEquals(cropSizeX,proc.getWidth());
           assertEquals(cropSizeY,proc.getHeight());
@@ -2360,11 +2353,11 @@ public class ImporterTest {
     imp = imps[0];
    
     System.out.println("  Returned imp: Z = " +imp.getNSlices()+ " C = " +imp.getNChannels()+" T = "+imp.getNFrames());
-    for (int cIndex = 0; cIndex < imp.getNChannels(); cIndex++)
-      for (int zIndex = 0; zIndex < imp.getNSlices(); zIndex++)
-        for (int tIndex = 0; tIndex < imp.getNFrames(); tIndex++)
+    for (int tIndex = 0; tIndex < imp.getNFrames(); tIndex++)
+      for (int cIndex = 0; cIndex < imp.getNChannels(); cIndex++)
+        for (int zIndex = 0; zIndex < imp.getNSlices(); zIndex++)
         {
-          imp.setPosition(cIndex+1,zIndex+1,tIndex+1);
+          setZctPosition(imp,zIndex,cIndex,tIndex);
           ImageProcessor proc = imp.getProcessor();
           printVals(proc);
         }
@@ -2397,13 +2390,17 @@ public class ImporterTest {
     else
       System.out.println("  Not a composite image");
 
+    /*
+    */
     int iIndex = 0;
     for (int cIndex = 0; cIndex < expectedSizeC; cIndex++)
       for (int tIndex = 0; tIndex < sizeT; tIndex++)
         for (int zIndex = 0; zIndex < sizeZ; zIndex++)
-          getIndexValue(imp, zIndex, cIndex, tIndex, indexed);
-          //assertEquals(iIndex++,getIndexValue(imp, zIndex, cIndex, tIndex, indexed));
-          // testValues(imp,0,zIndex,cIndex,tIndex,iIndex,indexed);
+          getPixelValue(10,0,imp,zIndex,cIndex,tIndex,indexed);
+          //assertEquals(iIndex++,getPixelValue(10,0,imp,zIndex,cIndex,tIndex,indexed));
+
+    // TODO - replace above nested loop with this when this test debugged :
+    //stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed);
   }
 
   @Test
@@ -2483,66 +2480,4 @@ public class ImporterTest {
     fail("unfinished but 2<=sizeC<=7 nonindexed working");
   }
 
-  /*
-  @Test
-  public void testOrderStuffTemporarily()
-  {
-    int pixType=FormatTools.UINT8, sizeX=60, sizeY=30, sizeZ=2, sizeC=3, sizeT=4, numSeries=1, rgb=-1, lutLen=-1;
-    boolean indexed = false, falseColor = false;
-    
-    String path = constructFakeFilename("tempJunk", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, indexed, rgb, falseColor, lutLen);
-
-    ImagePlus[] imps = null;
-    ImagePlus imp = null;
-    CompositeImage ci = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      imps = BF.openImagePlus(path);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsCountTest(imps,1);
-    
-    imp = imps[0];
-    
-    // print out vals in stack order
-    
-    // visit vals in czt order
-    System.out.println("About to visit in CZT order");
-    for (int t = 0; t < sizeT; t++)
-      for (int z = 0; z < sizeZ; z++)
-        for (int c = 0; c < sizeC; c++)
-        {
-          int sliceNumber = c + (z*imp.getNChannels()) + (t*imp.getNSlices()*imp.getNChannels());
-          imp.setSlice(sliceNumber+1);
-          ImageProcessor proc = imp.getProcessor();
-          System.out.println("Slice set to "+(sliceNumber+1)+" for ("+z+"z,"+c+"c,"+t+"t)");
-          printVals(proc);
-        }
-    
-    // visit vals in zct order
-    System.out.println("About to visit in ZCT order");
-    for (int t = 0; t < sizeT; t++)
-      for (int c = 0; c < sizeC; c++)
-        for (int z = 0; z < sizeZ; z++)
-        {
-          int sliceNumber = z + (c*imp.getNSlices()) + (t*imp.getNSlices()*imp.getNChannels());
-          imp.setSlice(sliceNumber+1);
-          ImageProcessor proc = imp.getProcessor();
-          System.out.println("Slice set to "+(sliceNumber+1)+" for ("+z+"z,"+c+"c,"+t+"t)");
-          printVals(proc);
-        }
-    
-    // notice:
-    //   slice indices are ordered in ZCT order
-    //   sliceNumber is the same for each loop regardless of loop order - due to calc of index differently.
-    //     in this calc the value ranges from 0..23. Basically == iIndex.
-  }
-  */
 }
