@@ -36,12 +36,20 @@ import loci.plugins.in.ImporterOptions;
 // TODO
 
 // left off
-//   maybe phase out *Index(ImageProcessor) to support indexed data
-//   add pixelsTest() where necessary
+//   do the comboConcatSplits() require options.openAllSeries()? If so, still broken.
 //   expand compositeTestSubcases() to handle more pixTypes and indexed data
 //   finish the colorize tests
 //   implement more combo tests
+//   maybe phase out *Index(ImageProcessor) to support indexed data
+//   add pixelsTest() where necessary
 //   perhaps refactor the various imageSeriesIn... and ImagesIn... order tests into a general tester and an orderBy param
+
+// broken
+//  comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are less
+//    than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
+//    the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
+//    by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
+//    with I guess.
 
 // seem broken but don't know status from Curtis
 //   colorized: 1/1/indexed (all indices 0 for all images), 3/1/indexed (iIndex,cIndex) (although w/ falseColor its okay),
@@ -50,7 +58,7 @@ import loci.plugins.in.ImporterOptions;
 //   record does not work
 
 // testable code according to my notes
-//   composite, gray, custom: working for 2 <= sizeC <= 7 and nonindexed (not yet tested)
+//   composite, gray, custom: working for 2<=sizeC<=7 nonindexed (only Composite is tested for this)
 
 // unwritten
 //   color grayscale and color custom : hoping to adapt a working color colorized method for these.
@@ -360,6 +368,7 @@ public class ImporterTest {
     }
   }
 
+  /** returns the expected min value within a FakeFile plane based on pixel type and if autoscale desired */
   private long expectedMin(int pixType, boolean wantAutoscale)
   {
     long min;
@@ -376,6 +385,7 @@ public class ImporterTest {
     return min;
   }
   
+  /** returns the expected max value within a FakeFile plane based on pixel type and if autoscale desired */
   private long expectedMax(int pixType, boolean wantAutoscale, long maxPixVal, long maxIndex)
   {
     long max;
@@ -1001,6 +1011,7 @@ public class ImporterTest {
     xyzctTest(imp,x,y,z,c,t);
   }
   
+  /** tests BF's options.setStackOrder() */
   private void outputStackOrderTester(int pixType, ChannelOrder order, int x, int y, int z, int c, int t)
   {
     String bfChOrder = bfChanOrd(order);
@@ -1033,6 +1044,7 @@ public class ImporterTest {
     stackInSpecificOrderTest(imp, chOrder);
   }
 
+  /** tests BF's options.setSwapDimensions() */
   private void datasetSwapDimsTester(int pixType, int x, int y, int z, int t)
   {
     int c = 3;
@@ -1086,6 +1098,7 @@ public class ImporterTest {
     return imps;
   }
   
+  /** tests BF's options.setOpenAllSeries() */
   private void datasetOpenAllSeriesTester(boolean allOfThem)
   {
     int x = 55, y = 20, z = 2, c = 3, t = 4, s = 5;
@@ -1102,6 +1115,7 @@ public class ImporterTest {
       xyzctTest(imps[i],x,y,z,c,t);
   }
   
+  /** tests BF's options.setOpenAllSeries() and options.setConcatenate() */
   private void datasetConcatenateTester(int pixType, int x, int y, int z, int c, int t, int s)
   {
     assertTrue(s >= 1);  // necessary for this test
@@ -1133,6 +1147,7 @@ public class ImporterTest {
     multipleSeriesInZtcOrderTest(imps[0],s,z,c,t);
   }
   
+  /** tests BF's options.setAutoscale() */
   private void autoscaleTester(int pixType, boolean wantAutoscale)
   {
     final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
@@ -1172,18 +1187,21 @@ public class ImporterTest {
     minMaxTest(imp,expectedMin,expectedMax);
   }
   
-  private void colorCompositeTester(int pixType, boolean indexed, int rgb, boolean falseColor, int sizeC, int numSeries)
+  /** tests BF's options.setColorMode(composite) */
+  private void colorCompositeTester(int pixType, boolean indexed, int channels, int chanPerPlane, boolean falseColor, int numSeries)
   {
+    System.out.println("colorCompositeTester(): pixType "+FormatTools.getPixelTypeString(pixType)+" indexed "+indexed+" channels "+channels+" chanPerPlane "+chanPerPlane+" falseColor "+falseColor+" numSeries "+numSeries);
+    
     int sizeX = 55, sizeY = 71, sizeZ = 3, sizeT = 4;
     
     // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
     
-    assertTrue(sizeC >= 2);
-    assertTrue(sizeC <= 7);
-    assertTrue(numSeries*sizeC*3 <= 25);  // slider limit in IJ
+    assertTrue(channels >= 2);
+    assertTrue(channels <= 7);
+    assertTrue(numSeries*channels*3 <= 25);  // slider limit in IJ
     
-    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries,
-        indexed, rgb, falseColor, -1);
+    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, channels, sizeT, numSeries,
+        indexed, chanPerPlane, falseColor, -1);
     
     ImagePlus[] imps = null;
     
@@ -1208,7 +1226,7 @@ public class ImporterTest {
 
     int lutLen = 3;
     
-    int expectedSizeC = effectiveC(sizeC, rgb, lutLen, indexed, falseColor);
+    int expectedSizeC = effectiveC(channels, chanPerPlane, lutLen, indexed, falseColor);
    
     xyzctTest(imp,sizeX,sizeY,sizeZ,expectedSizeC,sizeT);
     
@@ -1243,6 +1261,7 @@ public class ImporterTest {
     stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed);
   }
   
+  /** tests BF's options.setColorMode(colorized) */
   private void colorColorizedTester()
   {
     // TODO: temp first attempt: sizeC == 1 and rgb matches
@@ -1290,6 +1309,7 @@ public class ImporterTest {
     fail("unfinished");
   }
   
+  /** tests BF's options.setColorMode(gray) */
   private void colorGrayscaleTester()
   {
     int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4;
@@ -1330,6 +1350,7 @@ public class ImporterTest {
     fail("unfinished");
   }
 
+  /** tests BF's options.setColorMode(custom) */
   private void colorCustomTester(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
   {
     // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
@@ -1377,6 +1398,7 @@ public class ImporterTest {
     colorTests(ci,sizeC,CustomColorOrder);
   }
   
+  /** tests BF's options.setVirtual() */
   private void memoryVirtualStackTester(boolean desireVirtual)
   {
       int x = 604, y = 531, z = 7, c = 1, t = 1;
@@ -1409,6 +1431,7 @@ public class ImporterTest {
       assertEquals(desireVirtual,imp.getStack().isVirtual());
   }
 
+  /** tests BF's options.setVirtual() with options.setRecord() */
   private void memoryRecordModificationsTester(boolean wantToRemember)
   {
     int x = 50, y = 15, z = 3, c = 1, t = 1;
@@ -1460,6 +1483,7 @@ public class ImporterTest {
     assertEquals(expectedVal,(int)imp.getProcessor().getPixelValue(1,10));
   }
   
+  /** tests BF's options.set?Begin(), options.set?End(), and options.set?Step() */
   private void memorySpecifyRangeTester(int z, int c, int t,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
@@ -1521,6 +1545,7 @@ public class ImporterTest {
     seriesInZctOrderTest(imp,false,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
   }
   
+  /** tests BF's options.setCrop() and options.setCropRegion() */
   private void memoryCropTester(int x, int y, int ox, int oy, int cropSize)
   {
     verifyCropInput(x, y, ox, oy, cropSize);  // needed for this test
@@ -1557,6 +1582,7 @@ public class ImporterTest {
 
   // note - this test needs to rely on crop() to get predictable nonzero minimums
   
+  /** tests BF's options.setCrop() and options.setCropRegion() with options.setAutoscale() */
   private void comboCropAndAutoscaleTester(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
       int originCropX, int originCropY, int sizeCrop)
   {
@@ -1606,6 +1632,7 @@ public class ImporterTest {
     minMaxTest(imp,expectedMin,expectedMax);
   }
   
+  /** tests BF's options.setConcatenate() with options.setSplitFocalPlanes() */
   private void comboConcatSplitFocalPlanesTester()
   {
     // take a nontrivial zct set of series
@@ -1621,6 +1648,7 @@ public class ImporterTest {
 
     try {
       ImporterOptions options = new ImporterOptions();
+      //options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
       options.setConcatenate(true);
       options.setSplitFocalPlanes(true);
       options.setId(path);
@@ -1639,6 +1667,7 @@ public class ImporterTest {
     imageSeriesInZctOrderTest(imps,series,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
   
+  /** tests BF's options.setConcatenate() with options.setSplitChannels() */
   private void comboConcatSplitChannelsTester()
   {
     // take a nontrivial zct set of series
@@ -1654,6 +1683,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
+      //options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
       options.setConcatenate(true);
       options.setSplitChannels(true);
       options.setId(path);
@@ -1672,6 +1702,7 @@ public class ImporterTest {
     imageSeriesInCztOrderTest(imps,series,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
   
+  /** tests BF's options.setConcatenate() with options.setSplitTimepoints() */
   private void comboConcatSplitTimepointsTester()
   {
     // take a nontrivial zct set of series
@@ -1687,6 +1718,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
+      //options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
       options.setConcatenate(true);
       options.setSplitTimepoints(true);
       options.setId(path);
@@ -1705,6 +1737,7 @@ public class ImporterTest {
     imageSeriesInTzcOrderTest(imps,series,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
   
+  /** tests BF's options.setColormode(composite) - alternate, later definition */
   private void compositeTester(int sizeC, boolean indexed)
   {
     int pixType = FormatTools.UINT8, sizeX = 60, sizeY = 30, sizeZ = 2, sizeT = 3, numSeries = 1, rgb = -1, lutLen = -1;
@@ -1926,27 +1959,26 @@ public class ImporterTest {
     // BF only supporting C from 2 to 7 and due to IJ's slider limitation (C*numSeries*3) <= 25
 
     // these here to simplify debugging
-    colorCompositeTester(FormatTools.UINT8,false,1,false,3,1);
-    colorCompositeTester(FormatTools.UINT8,true,1,false,3,1);
+    
+    colorCompositeTester(FormatTools.UINT8,false,3,1,false,1);
+    colorCompositeTester(FormatTools.UINT8,true,3,1,false,1);
 
     int[] pixTypes = new int[] {FormatTools.UINT8};
-    int[] cs = new int[] {2,3,4,5,6,7};  // all that BF/IJ supports right now
-    int[] ts = new int[] {1,2};
+    int[] channels = new int[] {2,3,4,5,6,7};  // all that BF/IJ supports right now
     int[] series = new int[] {1,2,3,4};
-    int[] rgbs = new int[]{1,2,3};
+    int[] channelsPerPlaneVals = new int[]{1,2,3};
     
     for (int pixFormat : pixTypes)
-      for (int c : cs)
-        for (int t : ts)
-          for (int s : series)
-            if ((c*s*3) <= 25)  // IJ slider limitation
-              for (int rgb : rgbs)
-                for (boolean indexed : BooleanStates)
-                  for (boolean falseColor : BooleanStates)
-                  {
-                    //System.out.println(" format "+pixFormat+"indexed "+indexed+" rgb "+rgb+" fasleColor "+falseColor+" c "+c+" s "+s);
-                    colorCompositeTester(pixFormat,indexed,rgb,falseColor,c,s);
-                  }
+      for (int chanCount : channels)
+        for (int numSeries : series)
+          if ((chanCount*numSeries*3) <= 25)  // IJ slider limitation
+            for (int channelsPerPlane : channelsPerPlaneVals)
+              for (boolean indexed : BooleanStates)
+                for (boolean falseColor : BooleanStates)
+                {
+                  //System.out.println(" format "+pixFormat+"indexed "+indexed+" rgb "+rgb+" fasleColor "+falseColor+" c "+c+" s "+s);
+                  colorCompositeTester(pixFormat,indexed,chanCount,channelsPerPlane,falseColor,numSeries);
+                }
   }
   
   @Test
@@ -2323,14 +2355,6 @@ public class ImporterTest {
     // try various pixTypes
     for (int pixType : PixelTypes)
       comboCropAndAutoscaleTester(pixType,240,240,2,2,2,225,225,10);
-
-    // broken
-    //  comboCropAndAutoscale for INT32. I think its a limitation of Fake. The values of the cropped image are less
-    //    than the minimum representable value of an int as a float. So when we make a FloatProcessor on the int[] data
-    //    the huge negative values get clamped to the lowest representable point and thus max and min are not set correctly
-    //    by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
-    //    with I guess.
-
   }
   
   @Test
@@ -2514,7 +2538,7 @@ public class ImporterTest {
     System.out.println("3/1 indexed");
     colorColorizedTester(FormatTools.UINT8,3,1,true,false,-1);
     System.out.println("3/1 indexed falseColor");
-    colorColorizedTester(FormatTools.UINT8,3,1,true,true,-1);
+    colorColorizedTester(FormatTools.UINT8,3,1,true,true,-1);                            // TODO - might be working
 
     // sizeC = 3 and rgb = 3 : interleaved
     System.out.println("3/3 indexed");
@@ -2528,7 +2552,7 @@ public class ImporterTest {
     
     // sizeC = 4 and rgb = 4 : interleaved including alpha
     // if indexed == true this combo throws exception in CompositeImage constructor
-    System.out.println("4/4 nonindexed");
+    System.out.println("4/4 nonindexed");                                                // TODO - might be working
     colorColorizedTester(FormatTools.UINT8,4,4,false,false,-1);
 
     // sizeC = 6, rgb = 3, indexed = false
@@ -2567,7 +2591,7 @@ public class ImporterTest {
     // TODO - handle more cases with falseColor, rgb, etc.
     for (boolean indexed : BooleanStates)
       for (int channels = 2; channels <= 7; channels++)
-        if (!indexed)  // TODO - remove in future; only doing nonindexed right now
+        if (!indexed)  // TODO - remove this limitation when BF updated
           compositeTester(channels,indexed);
     fail("unfinished but 2<=sizeC<=7 nonindexed working");
   }
