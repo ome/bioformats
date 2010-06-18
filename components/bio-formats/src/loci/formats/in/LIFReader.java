@@ -178,14 +178,14 @@ public class LIFReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    if (getPixelType() != FormatTools.UINT8) return null;
+    if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
     return lastChannel < BYTE_LUTS.length ? BYTE_LUTS[lastChannel] : null;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    if (getPixelType() != FormatTools.UINT16) return null;
+    if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
     return lastChannel < SHORT_LUTS.length ? SHORT_LUTS[lastChannel] : null;
   }
 

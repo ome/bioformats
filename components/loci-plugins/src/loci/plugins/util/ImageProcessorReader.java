@@ -230,8 +230,26 @@ public class ImageProcessorReader extends ReaderWrapper {
     if (shortTable == null) return null;
     byte[][] byteTable = new byte[shortTable.length][256];
     for (int c=0; c<byteTable.length; c++) {
-      int len = Math.min(byteTable.length, shortTable[c].length);
-      for (int i=0; i<len; i++) byteTable[c][i] = (byte) shortTable[c][i];
+      int len = Math.min(byteTable[c].length, shortTable[c].length);
+
+      for (int i=0; i<len; i++) {
+        // NB: you could generate the 8-bit LUT by casting the first 256 samples
+        // in the 16-bit LUT to bytes.  However, this will not produce optimal
+        // results; in many cases, you will end up with a completely black
+        // 8-bit LUT even if the original 16-bit LUT contained non-zero samples.
+        //
+        // Another option would be to scale every 256th value in the 16-bit LUT;
+        // this may be a bit faster, but will be less accurate than the
+        // averaging approach taken below.
+
+        int valuesPerBin = shortTable[c].length / byteTable[c].length;
+        double average = 0;
+        for (int p=0; p<valuesPerBin; p++) {
+          average += shortTable[c][i * valuesPerBin + p];
+        }
+        average /= valuesPerBin;
+        byteTable[c][i] = (byte) (255 * (average / 65535.0));
+      }
     }
     return byteTable;
   }
