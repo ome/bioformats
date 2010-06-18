@@ -200,7 +200,7 @@ public class FV1000Reader extends FormatReader {
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    return lut == null ? null : lut[lastChannel];
+    return lut == null || !isIndexed() ? null : lut[lastChannel];
   }
 
   /**
