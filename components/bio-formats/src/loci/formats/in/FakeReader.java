@@ -66,13 +66,17 @@ public class FakeReader extends FormatReader {
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
 
-  /** 8-bit lookup table, if indexed color. */
-  private byte[][] lut8 = null;
+  /** 8-bit lookup table, if indexed color, one per channel. */
+  private byte[][][] lut8 = null;
 
-  /** 16-bit lookup table, if indexed color. */
-  private short[][] lut16 = null;
+  /** 16-bit lookup table, if indexed color, one per channel. */
+  private short[][][] lut16 = null;
 
-  private int[] indexToValue = null, valueToIndex = null;
+  /** For indexed color, mapping from indices to values and vice versa. */
+  private int[][] indexToValue = null, valueToIndex = null;
+
+  /** Channel of last opened image plane. */
+  private int ac = -1;
 
   // -- Constructor --
 
@@ -84,13 +88,13 @@ public class FakeReader extends FormatReader {
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return lut8;
+    return ac < 0 || lut8 == null ? null : lut8[ac];
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    return lut16;
+    return ac < 0 || lut16 == null ? null : lut16[ac];
   }
 
   /**
@@ -114,6 +118,7 @@ public class FakeReader extends FormatReader {
 
     final int[] zct = getZCTCoords(no);
     final int zIndex = zct[0], cIndex = zct[1], tIndex = zct[2];
+    ac = cIndex;
 
     // integer types start gradient at the smallest value
     long min = signed ? (long) -Math.pow(2, 8 * bpp - 1) : 0;
@@ -156,8 +161,8 @@ public class FakeReader extends FormatReader {
 
           // if indexed color with non-null LUT, convert value to index
           if (indexed) {
-            if (lut8 != null) pixel = valueToIndex[(int) (pixel % 256)];
-            if (lut16 != null) pixel = valueToIndex[(int) (pixel % 65536)];
+            if (lut8 != null) pixel = valueToIndex[ac][(int) (pixel % 256)];
+            if (lut16 != null) pixel = valueToIndex[ac][(int) (pixel % 65536)];
           }
 
           // scale pixel value by the scale factor
@@ -336,26 +341,30 @@ public class FakeReader extends FormatReader {
     // for indexed color images, create lookup tables
     if (indexed) {
       if (pixelType == FormatTools.UINT8) {
-        // create 8-bit LUT
+        // create 8-bit LUTs
         final int num = 256;
         createIndexMap(num);
-        lut8 = new byte[lutLength][num];
+        lut8 = new byte[sizeC][lutLength][num];
         // linear ramp
-        for (int c=0; c<lutLength; c++) {
-          for (int index = 0; index < num; index++) {
-            lut8[c][index] = (byte) indexToValue[index];
+        for (int c=0; c<sizeC; c++) {
+          for (int i=0; i<lutLength; i++) {
+            for (int index=0; index<num; index++) {
+              lut8[c][i][index] = (byte) indexToValue[c][index];
+            }
           }
         }
       }
       else if (pixelType == FormatTools.UINT16) {
-        // create 16-bit LUT
+        // create 16-bit LUTs
         final int num = 65536;
         createIndexMap(num);
-        lut16 = new short[lutLength][num];
+        lut16 = new short[sizeC][lutLength][num];
         // linear ramp
-        for (int c=0; c<lutLength; c++) {
-          for (int index = 0; index < num; index++) {
-            lut16[c][index] = (short) indexToValue[index];
+        for (int c=0; c<sizeC; c++) {
+          for (int i=0; i<lutLength; i++) {
+            for (int index=0; index<num; index++) {
+              lut16[c][i][index] = (short) indexToValue[c][index];
+            }
           }
         }
       }
@@ -367,22 +376,28 @@ public class FakeReader extends FormatReader {
 
   /** Creates a mapping between indices and color values. */
   private void createIndexMap(int num) {
+    int sizeC = core[0].sizeC;
+
     // create random mapping from indices to values
-    indexToValue = new int[num];
-    for (int index = 0; index < num; index++) indexToValue[index] = index;
-    shuffle(indexToValue);
+    indexToValue = new int[sizeC][num];
+    for (int c=0; c<sizeC; c++) {
+      for (int index=0; index<num; index++) indexToValue[c][index] = index;
+      shuffle(c, indexToValue[c]);
+    }
 
     // create inverse mapping: values to indices
-    valueToIndex = new int[num];
-    for (int index = 0; index < num; index++) {
-      int value = indexToValue[index];
-      valueToIndex[value] = index;
+    valueToIndex = new int[sizeC][num];
+    for (int c=0; c<sizeC; c++) {
+      for (int index=0; index<num; index++) {
+        int value = indexToValue[c][index];
+        valueToIndex[c][value] = index;
+      }
     }
   }
 
-  /** Fisher-Yates shuffle with constant seed to ensure reproducibility. */
-  private static void shuffle(int[] array) {
-    Random r = new Random(SEED);
+  /** Fisher-Yates shuffle with constant seeds to ensure reproducibility. */
+  private static void shuffle(int c, int[] array) {
+    Random r = new Random(SEED + c);
     for (int i = array.length; i > 1; i--) {
       int j = r.nextInt(i);
       int tmp = array[j];
