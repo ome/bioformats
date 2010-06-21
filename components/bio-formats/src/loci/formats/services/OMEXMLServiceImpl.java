@@ -94,6 +94,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static Templates UPDATE_200909 =
     XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
     OMEXMLServiceImpl.class);
+  private static Templates UPDATE_201004 =
+    XMLTools.getStylesheet("/loci/formats/meta/2010-04-to-2010-06.xsl",
+    OMEXMLServiceImpl.class);
 
   /**
    * Default constructor.
@@ -113,6 +116,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public String transformToLatestVersion(String xml) throws ServiceException {
     String version = getOMEXMLVersion(xml);
     if (version.equals(getLatestVersion())) return xml;
+    LOGGER.debug("Attempting to update XML with version: {}", version);
 
     String transformed = null;
     try {
@@ -129,16 +133,23 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         transformed = XMLTools.transformXML(xml, UPDATE_200802);
       }
       else transformed = xml;
+      LOGGER.debug("XML updated to at least 2008-09");
 
-      if (!version.equals("2009-09")) {
+      if (!version.equals("2009-09") && !version.equals("2010-04")) {
         transformed = XMLTools.transformXML(transformed, UPDATE_200809);
       }
-      transformed = XMLTools.transformXML(transformed, UPDATE_200909);
+      LOGGER.debug("XML updated to at least 2009-09");
+      if (!version.equals("2010-04")) {
+        transformed = XMLTools.transformXML(transformed, UPDATE_200909);
+      }
+      LOGGER.debug("XML updated to at least 2010-04");
+      transformed = XMLTools.transformXML(transformed, UPDATE_201004);
+      LOGGER.debug("XML updated to at least 2010-06");
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
       transformed = transformed.replaceAll("xmlns:ns.*?=", "xmlns:OME=");
       transformed = transformed.replaceAll("</ns.*?:", "</");
-
+      LOGGER.debug("Dump: {}", transformed);
       return transformed;
     }
     catch (IOException e) {
@@ -224,21 +235,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    */
   public String getOMEXMLVersion(Object o) {
     if (o == null) return null;
-    String name = o.getClass().getName();
-    if (o instanceof OMEXMLMetadata) {
-      final String prefix = "loci.formats.ome.OMEXML";
-      final String suffix = "Metadata";
-      if (name.startsWith(prefix) && name.endsWith(suffix)) {
-        String numbers =
-          name.substring(prefix.length(), name.length() - suffix.length());
-        if (numbers.length() == 6) {
-          return numbers.substring(0, 4) + "-" +
-            numbers.substring(4, 6).toUpperCase();
-        }
-      }
-    }
-    else if (o instanceof OMEModelObject) {
-      return getLatestVersion();
+    if (o instanceof OMEXMLMetadata || o instanceof OMEModelObject) {
+      return OMEXMLFactory.LATEST_VERSION;
     }
     else if (o instanceof String) {
       String xml = (String) o;
