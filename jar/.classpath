@@ -22,12 +22,14 @@
 	<classpathentry exported="true" kind="lib" path="ome-java.jar"/>
 	<classpathentry exported="true" kind="lib" path="omero-client-4.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="omero-common-4.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="serializer-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="skinlf.jar"/>
 	<classpathentry exported="true" kind="lib" path="slf4j-api-1.5.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="slf4j-log4j12-1.5.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="testng-5.11-jdk15.jar"/>
 	<classpathentry exported="true" kind="lib" path="velocity-1.6.3-dep.jar"/>
 	<classpathentry exported="true" kind="lib" path="visad-lite.jar"/>
+        <classpathentry exported="true" kind="lib" path="xalan-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="xmlrpc-1.2-b1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
