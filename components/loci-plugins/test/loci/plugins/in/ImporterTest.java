@@ -199,33 +199,33 @@ public class ImporterTest {
   private int tIndex(ImageProcessor proc) { return (int) proc.getPixelValue(40, 0); }
 
   /** Series number of the given ImagePlus at z,c,t index */
-  private int sIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int sIndex(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor)
   {
-    return getPixelValue(0,0,imp,z,c,t,indexed);
+    return getPixelValue(0,0,imp,z,c,t,indexed,falseColor);
   }
   
   /** Image number of the given ImagePlus at z,c,t index */
-  private int iIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int iIndex(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor)
   {
-    return getPixelValue(10,0,imp,z,c,t,indexed);
+    return getPixelValue(10,0,imp,z,c,t,indexed,falseColor);
   }
   
   /** Slice number of the given ImagePlus at z,c,t index */
-  private int zIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int zIndex(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor)
   {
-    return getPixelValue(20,0,imp,z,c,t,indexed);
+    return getPixelValue(20,0,imp,z,c,t,indexed,falseColor);
   }
   
   /** Channel number of the given ImagePlus at z,c,t index */
-  private int cIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int cIndex(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor)
   {
-    return getPixelValue(30,0,imp,z,c,t,indexed);
+    return getPixelValue(30,0,imp,z,c,t,indexed,falseColor);
   }
   
   /** Frame number of the given ImagePlus at z,c,t index */
-  private int tIndex(ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int tIndex(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor)
   {
-    return getPixelValue(40,0,imp,z,c,t,indexed);
+    return getPixelValue(40,0,imp,z,c,t,indexed,falseColor);
   }
 
   /** a debug routine for printing the SIZCT indices of a slice in a FakeFile stack */
@@ -443,13 +443,13 @@ public class ImporterTest {
   }
   
   /** get the actual pixel value (lookup when data is indexed) of the index of a fake image at a given z,c,t */
-  private int getPixelValue(int x,int y, ImagePlus imp, int z, int c, int t, boolean indexed)
+  private int getPixelValue(int x,int y, ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor)
   {
     setZctPosition(imp,z,c,t);
     
     int rawValue = (int) (imp.getProcessor().getPixelValue(x, y));
     
-    if (!indexed)
+    if ((!indexed) || (falseColor))
       return rawValue;
 
     // otherwise indexed - lookup pixel value in LUT
@@ -561,17 +561,18 @@ public class ImporterTest {
   }
   
   /** helper test that verifies the indices of a FakeFile[z,c,t] match passed in values*/
-  private void indexValuesTest(ImagePlus imp, int z, int c, int t, boolean indexed, int es, int ei, int ez, int ec, int et)
+  private void indexValuesTest(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor,
+                                  int es, int ei, int ez, int ec, int et)
   {
-    assertEquals(es,sIndex(imp, z, c, t, indexed));
-    assertEquals(ei,iIndex(imp, z, c, t, indexed));
-    assertEquals(ez,zIndex(imp, z, c, t, indexed));
-    assertEquals(ec,cIndex(imp, z, c, t, indexed));
-    assertEquals(et,tIndex(imp, z, c, t, indexed));
+    assertEquals(es,sIndex(imp, z, c, t, indexed,falseColor));
+    assertEquals(ei,iIndex(imp, z, c, t, indexed,falseColor));
+    assertEquals(ez,zIndex(imp, z, c, t, indexed,falseColor));
+    assertEquals(ec,cIndex(imp, z, c, t, indexed,falseColor));
+    assertEquals(et,tIndex(imp, z, c, t, indexed,falseColor));
   }
   
   /** tests that a FakeFile dataset has index values in ZCT order */
-  private void stackInZctOrderTest(ImagePlus imp, int maxZ, int maxC, int maxT, boolean indexed)
+  private void stackInZctOrderTest(ImagePlus imp, int maxZ, int maxC, int maxT, boolean indexed, boolean falseColor)
   {
     stackTest(imp,(maxZ * maxC * maxT));
 
@@ -588,7 +589,7 @@ public class ImporterTest {
           
           iIndex++;
           
-          indexValuesTest(imp,z,c,t,indexed,expectedS,expectedI,expectedZ,expectedC,expectedT);
+          indexValuesTest(imp,z,c,t,indexed,falseColor,expectedS,expectedI,expectedZ,expectedC,expectedT);
         }
   }
   
@@ -653,7 +654,7 @@ public class ImporterTest {
   }
   
   /** tests that the pixel values of a FakeFile are as expected */
-  private void pixelsTest(ImagePlus imp, int pixType, boolean indexed)
+  private void pixelsTest(ImagePlus imp, int pixType, boolean indexed, boolean falseColor)
   {
     assertTrue(pixType == FormatTools.UINT8);  // TODO - for now
     assertTrue(imp.getHeight() > 10);
@@ -665,7 +666,7 @@ public class ImporterTest {
       for (int c = 0; c < imp.getNChannels(); c++)
         for (int z = 0; z < imp.getNSlices(); z++)
           for (int i = 0; i < max; i++)
-            assertEquals(i,getPixelValue(i,10,imp,z,c,t,indexed));
+            assertEquals(i,getPixelValue(i,10,imp,z,c,t,indexed,falseColor));
   }
 
   /** tests that the pixels values of a cropped FakeFile are correct */
@@ -733,7 +734,7 @@ public class ImporterTest {
   }
   
   /** Tests that an ImageStack is ordered ZCT according to specified from/to/by points of z/c/t */
-  private void seriesInZctOrderTest(ImagePlus imp, boolean indexed,
+  private void seriesInZctOrderTest(ImagePlus imp, boolean indexed, boolean falseColor,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
       int tFrom, int tTo, int tBy)
@@ -748,9 +749,9 @@ public class ImporterTest {
       for (int c = 0; c < cs; c++)
         for (int z = 0; z < zs; z++)
         {
-          int zIndex = zIndex(imp,z,c,t,indexed);
-          int cIndex = cIndex(imp,z,c,t,indexed);
-          int tIndex = tIndex(imp,z,c,t,indexed);
+          int zIndex = zIndex(imp,z,c,t,indexed,falseColor);
+          int cIndex = cIndex(imp,z,c,t,indexed,falseColor);
+          int tIndex = tIndex(imp,z,c,t,indexed,falseColor);
           
           int zVal = zFrom + z*zBy;
           int cVal = cFrom + c*cBy;
@@ -1258,7 +1259,7 @@ public class ImporterTest {
           assertEquals(index++, getIndexValue(ci,z,c,t,indexed));  // expected value from CZT order
           //indexValuesTest(ci, z, c, t, indexed, 0, index++, z, c, t);
     */
-    stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed);
+    stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor);
   }
   
   /** tests BF's options.setColorMode(colorized) */
@@ -1542,7 +1543,7 @@ public class ImporterTest {
     xyzctTest(imp,x,y,numInSeries(zFrom,zTo,zBy),numInSeries(cFrom,cTo,cBy),numInSeries(tFrom,tTo,tBy));
 
     // should be in correct order
-    seriesInZctOrderTest(imp,false,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    seriesInZctOrderTest(imp,false,false,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
   }
   
   /** tests BF's options.setCrop() and options.setCropRegion() */
@@ -1777,9 +1778,9 @@ public class ImporterTest {
     
     colorTests(ci,sizeC,DefaultColorOrder);
       
-    stackInZctOrderTest(imp,sizeZ,sizeC,sizeT,indexed);
+    stackInZctOrderTest(imp,sizeZ,sizeC,sizeT,indexed,falseColor);
     
-    pixelsTest(imp,pixType,indexed);
+    pixelsTest(imp,pixType,indexed,falseColor);
   }
   
 // ** ImporterTest methods **************************************************************
@@ -1918,6 +1919,7 @@ public class ImporterTest {
     datasetConcatenateTester(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
   }
 
+  // TODO - waiting to hear how this case should behave before implementation
   @Test
   public void testColorDefault()
   {
@@ -1953,6 +1955,7 @@ public class ImporterTest {
     fail("unfinished");
   }
   
+  // TODO - older unfinished implementation : set aside for now and working on testCompositeSubcases() 
   @Test
   public void testColorComposite()
   {
@@ -1981,18 +1984,21 @@ public class ImporterTest {
                 }
   }
   
+  // TODO - older unfinished implementation : set aside for now and working on testColorizeSubcases() 
   @Test
   public void testColorColorized()
   {
     colorColorizedTester();
   }
   
+  // TODO - older unfinished implementation. Waiting to adapt the newest colorize testing code when it is working
   @Test
   public void testColorGrayscale()
   {
     colorGrayscaleTester();
   }
   
+  // TODO - older unfinished implementation. Waiting to adapt the newest colorize testing code when it is working
   @Test
   public void testColorCustom()
   {
@@ -2512,7 +2518,7 @@ public class ImporterTest {
     for (int cIndex = 0; cIndex < expectedSizeC; cIndex++)
       for (int tIndex = 0; tIndex < sizeT; tIndex++)
         for (int zIndex = 0; zIndex < sizeZ; zIndex++)
-          getPixelValue(10,0,imp,zIndex,cIndex,tIndex,indexed);
+          System.out.println("  iIndex pix val ("+zIndex+","+cIndex+","+tIndex+") = "+getPixelValue(10,0,imp,zIndex,cIndex,tIndex,indexed,falseColor));
           //assertEquals(iIndex++,getPixelValue(10,0,imp,zIndex,cIndex,tIndex,indexed));
 
     // TODO - replace above nested loop with this when this test debugged :
