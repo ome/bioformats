@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
+ * Created by callan via xsd-fu on 2010-06-21 18:12:22+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -242,25 +242,29 @@ public class Experimenter extends AbstractOMEModelObject
 
 	// -- Experimenter API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof GroupRef)
 		{
 			Group o_casted = (Group) o;
 			o_casted.linkExperimenter(this);
 			groupList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkExperimenter(this);
 			annotationList.add(o_casted);
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 

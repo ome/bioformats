@@ -50,8 +50,8 @@ import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
+import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
-import ome.xml.model.MetadataOnly;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OTF;
@@ -84,8 +84,6 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
   private StructuredAnnotations annotations;
 
-  private OMEModel model;
-
   public ObjectBasedOMEModelMock() {
     ome = new OME();
     annotations = new StructuredAnnotations();
@@ -104,11 +102,16 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     // Create <Image/>
     Image image = new Image();
     image.setID(InOut201004Test.IMAGE_ID);
+    ListAnnotation listAnnotation = new ListAnnotation();
+    listAnnotation.setID(InOut201004Test.IMAGE_LIST_ANNOTATION_ID);
+    listAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+    annotations.addListAnnotation(listAnnotation);
     BooleanAnnotation annotation = new BooleanAnnotation();
     annotation.setID(InOut201004Test.IMAGE_ANNOTATION_ID);
     annotation.setValue(InOut201004Test.IMAGE_ANNOTATION_VALUE);
     annotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
-    image.linkAnnotation(annotation);
+    listAnnotation.linkAnnotation(annotation);
+    image.linkAnnotation(listAnnotation);
     annotations.addBooleanAnnotation(annotation);
     // Create <Pixels/>
     Pixels pixels = new Pixels();

@@ -38,14 +38,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -67,6 +65,7 @@ import ome.xml.model.DoubleAnnotation;
 import ome.xml.model.External;
 import ome.xml.model.Filament;
 import ome.xml.model.LightEmittingDiode;
+import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
@@ -75,7 +74,6 @@ import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Reference;
 import ome.xml.model.CommentAnnotation;
-import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.TiffData;
 import ome.xml.model.TimestampAnnotation;
 import ome.xml.model.UUID;
@@ -88,7 +86,6 @@ import ome.xml.model.FilterSet;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
-import ome.xml.model.MetadataOnly;
 import ome.xml.model.OME;
 import ome.xml.model.OTF;
 import ome.xml.model.Pixels;
@@ -107,12 +104,10 @@ import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -131,6 +126,8 @@ public class InOut201004Test {
   public static final String GENERAL_ANNOTATION_NAMESPACE = "test-ome-InOut201004-namespace";
 
   public static final String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
+
+  public static final String IMAGE_LIST_ANNOTATION_ID = "Annotation:List0";
 
   public static final String PIXELS_ID = "Pixels:0";
 
@@ -355,8 +352,13 @@ public class InOut201004Test {
   public void testValidImageAnnotation() {
     Annotation n = ome.getImage(0).getLinkedAnnotation(0);
     assertNotNull(n);
-    assertEquals(BooleanAnnotation.class, n.getClass());
-    BooleanAnnotation b = (BooleanAnnotation) n;
+    assertEquals(ListAnnotation.class, n.getClass());
+    ListAnnotation l = (ListAnnotation) n;
+    assertEquals(l.getID(), IMAGE_LIST_ANNOTATION_ID);
+    assertEquals(l.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    Annotation n2 = l.getLinkedAnnotation(0);
+    assertEquals(BooleanAnnotation.class, n2.getClass());
+    BooleanAnnotation b = (BooleanAnnotation) n2;
     assertEquals(b.getValue(), IMAGE_ANNOTATION_VALUE);
     assertEquals(b.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertEquals(b.getID(), IMAGE_ANNOTATION_ID);
@@ -364,8 +366,10 @@ public class InOut201004Test {
 
   @Test(dependsOnMethods={"testValidImageMetadata"})
   public void testValidImageAnnotationMetadata() {
+    assertEquals(1, metadata.getListAnnotationCount());
     assertEquals(1, metadata.getBooleanAnnotationCount());
     assertEquals(1, metadata.getImageAnnotationRefCount(0));
+    assertEquals(IMAGE_LIST_ANNOTATION_ID, metadata.getListAnnotationID(0));
     assertEquals(IMAGE_ANNOTATION_VALUE, metadata.getBooleanAnnotationValue(0));
     assertEquals(GENERAL_ANNOTATION_NAMESPACE,
                  metadata.getBooleanAnnotationNamespace(0));

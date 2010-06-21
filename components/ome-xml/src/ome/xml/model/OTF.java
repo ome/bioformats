@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
+ * Created by callan via xsd-fu on 2010-06-21 18:12:22+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -225,18 +225,22 @@ public class OTF extends AbstractOMEModelObject
 
 	// -- OTF API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof FilterSetRef)
 		{
 			FilterSet o_casted = (FilterSet) o;
 			o_casted.linkOTF(this);
 			filterSet = o_casted;
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 

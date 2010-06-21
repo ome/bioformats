@@ -86,7 +86,9 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#link(ome.xml.r201004.Reference, ome.xml.r201004.OMEModelObject)
    */
-  public abstract void link(Reference reference, OMEModelObject o);
+  public boolean link(Reference reference, OMEModelObject o) {
+    return false;
+  }
 
   /**
    * Retrieves all the children of an element that have a given tag name.

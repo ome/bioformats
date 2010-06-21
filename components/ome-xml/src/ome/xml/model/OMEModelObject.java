@@ -64,6 +64,8 @@ public interface OMEModelObject {
    * <code>o</code> is of type <code>Image</code>, <code>reference</code>
    * <b>MUST</b> be of type <code>ImageRef</code>.
    * @param o Model object to link to.
+   * @return <code>true</code> if this model object was able to handle the
+   * reference, <code>false</code> otherwise.
    */
-  void link(Reference reference, OMEModelObject o);
+  boolean link(Reference reference, OMEModelObject o);
 }

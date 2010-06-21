@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:48:15+0100
+ * Created by callan via xsd-fu on 2010-06-21 18:12:22+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -358,67 +358,71 @@ public class Image extends AbstractOMEModelObject
 
 	// -- Image API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof ExperimenterRef)
 		{
 			Experimenter o_casted = (Experimenter) o;
 			o_casted.linkImage(this);
 			experimenter = o_casted;
-			return;
+			return true;
 		}
 		if (reference instanceof ExperimentRef)
 		{
 			Experiment o_casted = (Experiment) o;
 			o_casted.linkImage(this);
 			experiment = o_casted;
-			return;
+			return true;
 		}
 		if (reference instanceof GroupRef)
 		{
 			Group o_casted = (Group) o;
 			o_casted.linkImage(this);
 			group = o_casted;
-			return;
+			return true;
 		}
 		if (reference instanceof DatasetRef)
 		{
 			Dataset o_casted = (Dataset) o;
 			o_casted.linkImage(this);
 			datasetList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof InstrumentRef)
 		{
 			Instrument o_casted = (Instrument) o;
 			o_casted.linkImage(this);
 			instrument = o_casted;
-			return;
+			return true;
 		}
 		if (reference instanceof ROIRef)
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkImage(this);
 			roiList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof MicrobeamManipulationRef)
 		{
 			MicrobeamManipulation o_casted = (MicrobeamManipulation) o;
 			o_casted.linkImage(this);
 			microbeamManipulationList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkImage(this);
 			annotationList.add(o_casted);
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 
