@@ -1057,6 +1057,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								<xsd:enumeration value="FluorescenceLifetime"/><!-- Fluorescence lifetime imaging (FLIM) -->
 								<xsd:enumeration value="SpectralImaging"/>
 								<xsd:enumeration value="Photobleaching"/>
+								<xsd:enumeration value="SPIM"/><!-- Selective or Single Plane Illumination Microscopy -->
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
