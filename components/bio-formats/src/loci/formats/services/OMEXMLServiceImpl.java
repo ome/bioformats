@@ -369,9 +369,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       StructuredAnnotations.NAMESPACE, keyIndex);
     omexmlMeta.setCommentAnnotationNamespace(
       StructuredAnnotations.NAMESPACE, valueIndex);
-    // TODO : uncomment once ListAnnotation is fixed (see r6531)
-    //omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
-    //omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);
+    omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
+    omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);
   }
 
   /* (non-Javadoc)
