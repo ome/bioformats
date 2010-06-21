@@ -57,7 +57,7 @@ public class MinimumWriter {
     meta.setPixelsSizeC(new PositiveInteger(1), 0);
     meta.setPixelsSizeT(new PositiveInteger(1), 0);
     meta.setChannelID("Channel:0:0", 0, 0);
-    meta.setChannelSamplesPerPixel(1, 0, 0);
+    meta.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
 
     // write image plane to disk
     System.out.println("Writing image to '" + id + "'...");

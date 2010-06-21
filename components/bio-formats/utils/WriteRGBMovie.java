@@ -60,7 +60,7 @@ public class WriteRGBMovie {
     meta.setPixelsSizeZ(new PositiveInteger(1), 0);
     meta.setPixelsSizeC(new PositiveInteger(numChannels), 0);
     meta.setPixelsSizeT(new PositiveInteger(numFrames), 0);
-    meta.setChannelSamplesPerPixel(numChannels, 0, 0);
+    meta.setChannelSamplesPerPixel(new PositiveInteger(numChannels), 0, 0);
 
     // write image planes to disk
     System.out.print("Writing planes to '" + id + "'");
