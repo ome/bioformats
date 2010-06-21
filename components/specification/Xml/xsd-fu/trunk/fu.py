@@ -85,7 +85,7 @@ BACK_REFERENCE_OVERRIDE = {'Screen': ['Plate'], 'Plate': ['Screen'], 'Annotation
 
 # Reference properties of a given type for which back reference link methods
 # should not be code generated for.
-BACK_REFERENCE_LINK_OVERRIDE = {'Pump': ['Laser']}
+BACK_REFERENCE_LINK_OVERRIDE = {'Pump': ['Laser'], 'AnnotationRef': ['Annotation']}
 
 def updateTypeMaps(namespace):
 	"""

@@ -302,8 +302,13 @@ ${customContent}\
 
 	// -- ${klass.name} API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 {% for prop in klass.properties.values() %}\
 {% if prop.isReference %}\
 		if (reference instanceof ${prop.name})
@@ -318,13 +323,12 @@ ${customContent}\
 {% if prop.maxOccurs == 1 %}\
 			${prop.javaInstanceVariableName} = o_casted;
 {% end %}\
-			return;
+			return true;
 		}
 {% end %}\
 {% end %}\
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 {% if klass.javaType != 'Object' %}\
@@ -367,7 +371,7 @@ ${customContent}\
 
 	public boolean link${prop.javaMethodName}(${prop.javaType} o)
 	{
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 		o.link${klass.type}(this);
 {% end %}\
 		return ${prop.javaInstanceVariableName}.add(o);
