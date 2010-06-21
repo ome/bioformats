@@ -545,6 +545,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:variable name="theShapeIDRoot"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
 		<xsl:element name="ROI" namespace="{$newOMENS}">
 			<xsl:variable name="shapeEndID"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
 			<xsl:attribute name="ID">ROI:<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
@@ -552,9 +553,17 @@
 				<xsl:choose>
 					<xsl:when test="(($theMaxT = $theMinT) and ($theMaxZ = $theMinZ) and not(( $T0 = 'NaN') or ( $Z0 = 'NaN') or ( $T1 = 'NaN') or ( $Z1 = 'NaN') ))">
 						<xsl:element name="Shape" namespace="{$newOMENS}">
-							<xsl:attribute name="ID">Shape:Z<xsl:value-of select="$theMinZ"/>:T<xsl:value-of select="$theMinT"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
-							<xsl:attribute name="theZ"><xsl:value-of select="$theMinZ"/></xsl:attribute>
-							<xsl:attribute name="theT"><xsl:value-of select="$theMinT"/></xsl:attribute>
+							<xsl:attribute name="ID">Shape:SingleRect:<xsl:value-of select="$theShapeIDRoot"/></xsl:attribute>
+							<xsl:choose>
+								<xsl:when test="not( $theMinZ = 'NaN')">
+									<xsl:attribute name="theZ"><xsl:value-of select="$theMinZ"/></xsl:attribute>
+								</xsl:when>
+							</xsl:choose>
+							<xsl:choose>
+								<xsl:when test="not( $theMinT = 'NaN')">
+									<xsl:attribute name="theT"><xsl:value-of select="$theMinT"/></xsl:attribute>
+								</xsl:when>
+							</xsl:choose>
 							<xsl:comment>Converted to single Rect</xsl:comment>
 							<xsl:element name="Rect" namespace="{$newOMENS}">
 								<xsl:attribute name="x"><xsl:value-of select="$startX"/></xsl:attribute>
@@ -568,7 +577,7 @@
 						<xsl:call-template name="ByTZROI">
 							<xsl:with-param name="theTEnd"><xsl:value-of select="$theMaxT"/></xsl:with-param>
 							<xsl:with-param name="theZEnd"><xsl:value-of select="$theMaxZ"/></xsl:with-param>
-							<xsl:with-param name="parentID"><xsl:value-of select="$parentID"/></xsl:with-param>
+							<xsl:with-param name="parentID"><xsl:value-of select="$theShapeIDRoot"/></xsl:with-param>
 							<xsl:with-param name="theZ"><xsl:value-of select="$theMinZ"/></xsl:with-param>
 							<xsl:with-param name="theT"><xsl:value-of select="$theMinT"/></xsl:with-param>
 							<xsl:with-param name="x"><xsl:value-of select="$startX"/></xsl:with-param>
