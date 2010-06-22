@@ -551,7 +551,8 @@ public final class ImageTools {
     short[][] rtn = new short[lut.length][b.length / 2];
     for (int i=0; i<b.length/2; i++) {
       for (int j=0; j<lut.length; j++) {
-        rtn[j][i] = lut[j][DataTools.bytesToShort(b, i*2, 2, le)];
+        int index = DataTools.bytesToInt(b, i*2, 2, le);
+        rtn[j][i] = lut[j][index];
       }
     }
     return rtn;
