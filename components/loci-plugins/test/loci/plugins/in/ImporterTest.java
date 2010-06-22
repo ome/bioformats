@@ -449,7 +449,7 @@ public class ImporterTest {
     
     int rawValue = (int) (imp.getProcessor().getPixelValue(x, y));
     
-    if ((!indexed) || (falseColor))
+    if ((!indexed) || (falseColor)) // TODO - disabling falseColor test here improves 3/1/indexed/falseColor
       return rawValue;
 
     // otherwise indexed - lookup pixel value in LUT
@@ -458,7 +458,7 @@ public class ImporterTest {
     int value = lut.getRed(rawValue);  // since r g and b vals should be the same choose one arbitrarily.
       // OR Use red in case lut len < 3 and zero fills other channels
     
-    System.out.println("  getPixelValue("+z+","+c+","+t+") = "+value+" (rawValue = "+rawValue+")");
+    System.out.println("  did a lut lookup in getPixelValue("+z+","+c+","+t+") = "+value+" (rawValue = "+rawValue+")");
     
     return value;
   }
