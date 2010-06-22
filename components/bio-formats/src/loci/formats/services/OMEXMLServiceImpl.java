@@ -117,6 +117,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     String version = getOMEXMLVersion(xml);
     if (version.equals(getLatestVersion())) return xml;
     LOGGER.debug("Attempting to update XML with version: {}", version);
+    LOGGER.trace("Initial dump: {}", xml);
 
     String transformed = null;
     try {
@@ -134,15 +135,18 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2008-09");
+      LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
       if (!version.equals("2009-09") && !version.equals("2010-04")) {
         transformed = XMLTools.transformXML(transformed, UPDATE_200809);
       }
       LOGGER.debug("XML updated to at least 2009-09");
+      LOGGER.trace("At least 2009-09 dump: {}", transformed);
       if (!version.equals("2010-04")) {
         transformed = XMLTools.transformXML(transformed, UPDATE_200909);
       }
       LOGGER.debug("XML updated to at least 2010-04");
+      LOGGER.trace("At least 2010-04 dump: {}", transformed);
       transformed = XMLTools.transformXML(transformed, UPDATE_201004);
       LOGGER.debug("XML updated to at least 2010-06");
       // fix namespaces
