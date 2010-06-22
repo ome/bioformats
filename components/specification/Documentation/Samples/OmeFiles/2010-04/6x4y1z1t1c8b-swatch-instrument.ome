@@ -55,6 +55,7 @@
 			PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6"
 			SizeY="4" SizeZ="1">
 			<Channel Color="4294967295" ID="Channel:0:1">
+				<DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7" ReadOutRate="3200" Voltage="120"/>
 				<LightPath>
 					<ExcitationFilterRef ID="Filter:3"/>
 					<!-- Was SecondaryExcitationFilter-->
