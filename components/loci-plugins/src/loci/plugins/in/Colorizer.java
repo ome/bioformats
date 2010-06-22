@@ -35,6 +35,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.LUT;
 
+import loci.formats.ChannelFiller;
 import loci.formats.ImageReader;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
@@ -65,6 +66,7 @@ public class Colorizer {
   public List<ImagePlus> applyColors(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
     final ImageProcessorReader reader = process.getReader();
+    final ChannelFiller channelFiller = process.getChannelFiller();
     final ImageReader imageReader = process.getImageReader();
 
     for (int i=0; i<imps.size(); i++) {
@@ -96,29 +98,24 @@ public class Colorizer {
       if (options.isColorModeDefault()) {
         // NB: Default color mode behavior depends on the situation.
         final boolean isRGB = reader.isRGB() || imageReader.isRGB();
-        if (isRGB) {
+        if (isRGB || channelFiller.isFilled()) {
           // NB: The original data had more than one channel per plane
           // (e.g., RGB image planes), so we use the composite display mode.
           mode = CompositeImage.COMPOSITE;
           luts = makeLUTs(channelLUTs, true); // preserve original LUTs
         }
+        else if (hasChannelLUT) {
+          // NB: The original data had only one channel per plane,
+          // but had at least one lookup table defined. We use the color
+          // display mode, with missing LUTs as grayscale.
+          mode = CompositeImage.COLOR;
+          luts = makeLUTs(channelLUTs, false); // preserve original LUTs
+        }
         else {
           // NB: The original data had only one channel per plane,
-          // so we use the grayscale display mode.
+          // and had no lookup tables defined, so we use the grayscale mode.
           mode = CompositeImage.GRAYSCALE;
-          if (hasChannelLUT) {
-            // NB: The original data had only one channel per plane,
-            // but had at least one lookup table defined. We use the color
-            // display mode, with missing LUTs as grayscale.
-            mode = CompositeImage.COLOR;
-            luts = makeLUTs(channelLUTs, false); // preserve original LUTs
-          }
-          else {
-            // NB: The original data had only one channel per plane,
-            // and had no lookup tables defined, so we use the grayscale mode.
-            mode = CompositeImage.GRAYSCALE;
-            luts = null;
-          }
+          luts = null;
         }
       }
       else if (options.isColorModeComposite()) {
