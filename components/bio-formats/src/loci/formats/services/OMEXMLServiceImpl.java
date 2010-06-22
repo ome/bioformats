@@ -149,7 +149,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       transformed = transformed.replaceAll("<ns.*?:", "<");
       transformed = transformed.replaceAll("xmlns:ns.*?=", "xmlns:OME=");
       transformed = transformed.replaceAll("</ns.*?:", "</");
-      LOGGER.debug("Dump: {}", transformed);
+      LOGGER.trace("Transformed XML dump: {}", transformed);
       return transformed;
     }
     catch (IOException e) {
