@@ -28,10 +28,9 @@ package loci.plugins.util;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import ij.process.ShortProcessor;
 
-import java.awt.image.ColorModel;
-import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
 import loci.common.DataTools;
@@ -129,7 +128,7 @@ public class ImageProcessorReader extends ReaderWrapper {
     }
 
     // create a color model for this plane (null means default)
-    final ColorModel cm = createColorModel();
+    final LUT cm = createColorModel();
 
     // convert byte array to appropriate primitive array type
     boolean isFloat = FormatTools.isFloatingPoint(type);
@@ -214,16 +213,25 @@ public class ImageProcessorReader extends ReaderWrapper {
 
   // -- Helper methods --
 
-  private ColorModel createColorModel() throws FormatException, IOException {
+  private LUT createColorModel() throws FormatException, IOException {
     // NB: If a color table is present, we might as well use it,
     // regardless of the value of isIndexed.
     //if (!isIndexed()) return null;
 
     byte[][] byteTable = get8BitLookupTable();
     if (byteTable == null) byteTable = convertTo8Bit(get16BitLookupTable());
-    if (byteTable == null) return null;
-    return new IndexColorModel(8, byteTable[0].length,
-      byteTable[0], byteTable[1], byteTable[2]);
+    if (byteTable == null || byteTable.length == 0) return null;
+
+    // extract red, green and blue elements
+    final int colors = byteTable.length;
+    final int samples = byteTable[0].length;
+    final byte[] r = colors >= 1 ? byteTable[0] : new byte[samples];
+    final byte[] g = colors >= 2 ? byteTable[1] : new byte[samples];
+    final byte[] b = colors >= 3 ? byteTable[2] : new byte[samples];
+    LUT lut = new LUT(8, samples, r, g, b);
+    lut.min = 0;
+    lut.max = 255;
+    return lut;
   }
 
   private byte[][] convertTo8Bit(short[][] shortTable) {
